@@ -1,5 +1,6 @@
 #include "home/grass_club.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -8,7 +9,7 @@
 #include "home/grass_club_entrance.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define GrassClubAfterDuelTable 0x66eeu
+#define GrassClubAfterDuelTable (GrassClubAfterDuel_ADDR + 0x07u)
 #define ISHIHARAS_HOUSE 0x03u
 #define NIKKI_IN_GRASS_CLUB 0x02u
 /* <<< factory statics */

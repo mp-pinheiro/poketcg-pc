@@ -1,5 +1,6 @@
 #include "home/gift_center.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -16,8 +17,8 @@
  * tables resolve through ROM bank $04: .GiftCenterTextPointers at $4e0f and
  * .GiftCenterMenuParams at $4e17. */
 #define GIFT_CENTER_BANK 0x04u
-#define GIFT_CENTER_TEXT_POINTERS 0x4E0Fu
-#define GIFT_CENTER_MENU_PARAMS 0x4E17u
+#define GIFT_CENTER_TEXT_POINTERS (ScriptCommand_SetChallengeHallNPCCoords_ADDR + 0x1Au)
+#define GIFT_CENTER_MENU_PARAMS (ScriptCommand_SetChallengeHallNPCCoords_ADDR + 0x22u)
 
 #define AUTO_CLOSE_TEXTBOX 0x00u
 #define GIFT_CENTER_MENU_EXIT 0x04u

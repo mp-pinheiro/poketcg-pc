@@ -1,12 +1,14 @@
 #include "home/load_deck.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/switch_rom.h"
+#include "home/card_id_bus.h"
 #include "mem.h"
 
 #define BANK_DECK_DATA 0x0cu
-#define DECK_POINTERS  0x4000u
+#define DECK_POINTERS  DeckPointers_ADDR
 #define DECK_SIZE      60u
 #define PLAYER_TURN    ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 
@@ -16,16 +18,16 @@
 static void copy_deck_data(uint16_t src)
 {
 	uint16_t dest = (hWhoseTurn == PLAYER_TURN) ? wPlayerDeck_ADDR : wOpponentDeck_ADDR;
-	gb_write8((uint16_t)(dest + DECK_SIZE - 1u), 0);
 	uint16_t h = dest;
 	uint16_t d = src;
+	gb_write8((uint16_t)(dest + card_id_deck_bytes(DECK_SIZE) - 1u), 0);
 	for (;;) {
 		uint8_t qty = gb_read8(d++);
 		if (qty == 0)
 			break;
-		uint8_t cardid = gb_read8(d++);
+		CardId cardid = card_id_read(&d);
 		do {
-			gb_write8(h++, cardid);
+			card_id_write(&h, cardid);
 		} while (--qty);
 	}
 	gb_write8(wDeckName_ADDR, gb_read8(d++));

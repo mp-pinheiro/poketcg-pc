@@ -1,5 +1,6 @@
 #include "home/lightning_club.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -8,7 +9,7 @@
 #include "home/grass_club_entrance.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define LightningClubAfterDuelTable 0x63efu
+#define LightningClubAfterDuelTable (LightningClubAfterDuel_ADDR + 0x07u)
 #define EVENT_BEAT_JENNIFER 0x25u
 #define EVENT_BEAT_NICHOLAS 0x26u
 #define EVENT_BEAT_BRANDON 0x27u

@@ -1,5 +1,6 @@
 #include "home/duel_init.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -18,9 +19,9 @@
 
 /* duel_init.asm:57-69, in Duel_Init's own bank 04, so the interpreter reads
  * them through the bank the guard selects on entry. */
-#define OPPONENT_TITLE_AND_NAME_LABEL 0x4451u
-#define OPPONENT_DECK_NAME_LABEL      0x4456u
-#define OPPONENT_TITLES_AND_DECK_NAMES 0x445Bu
+#define OPPONENT_TITLE_AND_NAME_LABEL OpponentTitleAndNameLabel_ADDR
+#define OPPONENT_DECK_NAME_LABEL      OpponentDeckNameLabel_ADDR
+#define OPPONENT_TITLES_AND_DECK_NAMES OpponentTitlesAndDeckNames_ADDR
 /* <<< factory statics */
 
 /* >>> factory Duel_Init */

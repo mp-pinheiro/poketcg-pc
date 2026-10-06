@@ -110,9 +110,9 @@ void GetAIScoreOfAttack(uint8_t a)
 		return;
 	}
 	wAICannotDamage = 0u;
-	wTempTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+	wTempTurnDuelistCardID = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 	SwapTurn();
-	wTempNonTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+	wTempNonTurnDuelistCardID = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 	NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus(0u, 0u, 0u);
 	SwapTurn();
 	if (no_damage.f & 0x10u) {
@@ -181,7 +181,7 @@ void GetAIScoreOfAttack(uint8_t a)
 			if ((uint8_t)(arena.a << 1) < arena.c)
 				goto high_recoil_generic_checks;
 			uint8_t bench_damage = 10u;
-			if ((uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a) != MAGNEMITE_LV13)
+			if (GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a) != MAGNEMITE_LV13)
 				bench_damage = 20u;
 			if (check_if_kos_bench(1u, bench_damage).carry)
 				goto dismiss_high_recoil_atk;
@@ -196,7 +196,7 @@ void GetAIScoreOfAttack(uint8_t a)
 		}
 	high_recoil_generic_checks:
 		{
-			uint8_t id = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+			uint8_t id = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 			uint8_t bench_damage = 20u;
 			if (id == CHANSEY)
 				bench_damage = 0u;
@@ -266,7 +266,7 @@ check_defending_can_ko:
 	{
 		uint8_t defender = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 		SwapTurn();
-		uint8_t defender_id = (uint8_t)GetCardIDFromDeckIndex(defender);
+		uint8_t defender_id = GetCardIDFromDeckIndex(defender);
 		SwapTurn();
 		if (defender_id == SNORLAX)
 			goto handle_special_atks;

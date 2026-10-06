@@ -1,4 +1,5 @@
 #include "home/deck_machine_room.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -7,7 +8,7 @@
 
 #include "home/grass_club_entrance.h"
 
-#define DeckMachineRoomAfterDuelTable 0x58a6u
+#define DeckMachineRoomAfterDuelTable (DeckMachineRoomAfterDuel_ADDR + 0x07u)
 
 #include "generated/wram.h"
 
@@ -26,7 +27,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< factory statics */
-#define CLUB_MAP_NAMES 0x5985u
+#define CLUB_MAP_NAMES ClubMapNames_ADDR
 #define CLUB_MAP_NAMES_BANK 3u
 #define EVENT_AARON_BOOSTER_REWARD_OFFSET 0x1Au
 #define EVENT_AARON_BOOSTER_REWARD_MASK 0x03u

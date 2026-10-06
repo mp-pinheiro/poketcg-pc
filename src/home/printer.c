@@ -5,6 +5,7 @@
 
 #include <limits.h>
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "isr.h"
 #include "mem.h"
@@ -52,7 +53,7 @@
 #include "home/process_text.h"
 #include "home/text_box.h"
 #define CARDPAGETYPE_NOT_PLAY_AREA 0x00u
-#define RetreatWeakResistData 0x6004u
+#define RetreatWeakResistData RetreatWeakResistData_ADDR
 #define SYM_SPACE 0x00u
 #define SYM_No 0x13u
 #define TYPE_ENERGY 0x08u
@@ -188,7 +189,7 @@
  * SYM_CURSOR_R $0F, SYM_SPACE $00, NULL handler) this menu hands
  * InitCardSelectionParams, which reads them through the $4000-$7FFF window. */
 #define PRINTER_CARD_LIST_SELECTION_PARAMS_BANK 2u
-#define PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR 0x6D05u
+#define PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR (TransitionTable1_ADDR + 0x0Cu)
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -208,10 +209,10 @@
 #define NUM_FILTERS 0x09u
 #define PAD_DOWN 0x80u
 #define PAD_START 0x08u
-#define FILTERS_CARD_SELECTION_PARAMS_ADDR 0x5667u
+#define FILTERS_CARD_SELECTION_PARAMS_ADDR FiltersCardSelectionParams_ADDR
 #define PRINTER_POKEMON_CARDS_DATA_ADDR 0x6396u
 #define PRINTER_POKEMON_CARDS_PRINT_LIST_ADDR 0x642Du
-#define PRINTER_POKEMON_CARDS_SELECTION_PARAMS_ADDR 0x6D05u
+#define PRINTER_POKEMON_CARDS_SELECTION_PARAMS_ADDR (TransitionTable1_ADDR + 0x0Cu)
 #define PrintThisCardYesNoText 0x0274u
 
 #include "generated/hram.h"
@@ -232,9 +233,9 @@
 #define PleaseSetTheContrastText 0x027au
 #define PrintMenuItemsText 0x0278u
 #define WhatWouldYouLikeToPrintText 0x0279u
-#define PRINTER_MENU_PARAMETERS_ADDR 0x6DADu
+#define PRINTER_MENU_PARAMETERS_ADDR PrinterMenuParameters_ADDR
 #define PRINTER_INSTRUCTION_STACK 0xDFC6u
-#define PRINTER_QUALITY_PARAMETERS_ADDR 0x6DF5u
+#define PRINTER_QUALITY_PARAMETERS_ADDR (InputDeckName_ADDR + 0x6Cu)
 /* <<< factory statics */
 
 #define rSB 0xFF01u

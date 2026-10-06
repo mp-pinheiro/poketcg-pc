@@ -1,5 +1,6 @@
 #include "home/commands.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "home/duel.h"
 #include "home/play_animation.h"
@@ -75,7 +76,7 @@
 
 #include "home/script.h"
 #define BANK_POINTER_TABLE_ATTACK_ANIMATION 6u
-#define POINTER_TABLE_ATTACK_ANIMATION 0x51A4u
+#define POINTER_TABLE_ATTACK_ANIMATION PointerTable_AttackAnimation_ADDR
 #define DUEL_ANIM_SET_SCREEN 0x96u
 #define TRUE 0x01u
 /* <<< factory statics */

@@ -1,5 +1,6 @@
 #include "home/script.h"
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -29,7 +30,7 @@
 #include <stdlib.h>
 
 #define MAP_SCRIPTS_BANK 4u
-#define MAP_SCRIPTS 0x562Au
+#define MAP_SCRIPTS MapScripts_ADDR
 
 /* script.asm:62-95. Entry l = script selector; the entry is
  * MapScripts + wCurMap * 16 + l in bank 4. The pointer is read there and the

@@ -174,7 +174,7 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 	uint16_t id = GetCardIDFromDeckIndex(deckindex);
 	d = (uint8_t)(id >> 8);
 	wTempCardID = (uint8_t)id;
-	LoadCardDataToBuffer1_FromCardID((uint8_t)id);
+	LoadCardDataToBuffer1_FromCardID(id);
 	wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
 	wTempAI = 0xffu;
 	wCurCardCanAttack = 0xffu;
@@ -185,7 +185,7 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 		v = gb_read8(hl);
 		if (v == 0xffu)
 			break;
-		if ((uint8_t)GetCardIDFromDeckIndex(v) == DOUBLE_COLORLESS_ENERGY) {
+		if (GetCardIDFromDeckIndex(v) == DOUBLE_COLORLESS_ENERGY) {
 			if (wTempAI != 0xffu) {
 				exit_f = pick_two_cp_flags(wTempAI, 0xffu);
 				wCurCardCanAttack = gb_read8(hl);
@@ -270,7 +270,7 @@ PickEnergyResult PickAttachedEnergyCardToRemove(uint8_t a)
 		uint8_t deck = gb_read8(hl);
 		if (deck == 0xffu)
 			break;
-		if ((uint8_t)GetCardIDFromDeckIndex(deck) == DOUBLE_COLORLESS_ENERGY)
+		if (GetCardIDFromDeckIndex(deck) == DOUBLE_COLORLESS_ENERGY)
 			return (PickEnergyResult){deck, d};
 		hl = (uint16_t)(hl + 1u);
 	}
@@ -362,7 +362,7 @@ FindBasicEnergyCardsInLocationResult FindBasicEnergyCardsInLocation(uint8_t a)
 		if (location.a != wTempAI)
 			continue;
 
-		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(e);
+		uint8_t card_id = GetCardIDFromDeckIndex(e);
 		if (card_id >= DOUBLE_COLORLESS_ENERGY)
 			continue;
 
@@ -440,7 +440,7 @@ RemoveFromListDifferentCardOfGivenTypeResult RemoveFromListDifferentCardOfGivenT
 
 		hTempCardIndex_ff98 = deck_index;
 		uint16_t card_id16 = GetCardIDFromDeckIndex(deck_index);
-		uint8_t card_type = GetCardType((uint8_t)card_id16);
+		uint8_t card_type = GetCardType(card_id16);
 
 		uint8_t matches;
 		if (card_type < TYPE_ENERGY)
@@ -481,7 +481,7 @@ uint8_t CountPokemonCardsInHandAndInPlayArea(uint8_t c)
 		if (deck_index == 0xFFu)
 			break;
 		uint16_t card_id = GetCardIDFromDeckIndex(deck_index);
-		uint8_t type = GetCardType((uint8_t)card_id);
+		uint8_t type = GetCardType(card_id);
 		if (type < TYPE_ENERGY) {
 			count = (uint8_t)(count + 1u);
 			gb_write8(wTempAI_ADDR, count);
@@ -637,13 +637,13 @@ FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
 		uint8_t outer_idx = gb_read8((uint16_t)(list + outer));
 		if (outer_idx == 0xFFu)
 			break;
-		uint8_t outer_id = (uint8_t)GetCardIDFromDeckIndex(outer_idx);
+		uint8_t outer_id = GetCardIDFromDeckIndex(outer_idx);
 		uint8_t inner = (uint8_t)(outer + 1u);
 		for (;;) {
 			uint8_t inner_idx = gb_read8((uint16_t)(list + inner));
 			if (inner_idx == 0xFFu)
 				break;
-			uint8_t inner_id = (uint8_t)GetCardIDFromDeckIndex(inner_idx);
+			uint8_t inner_id = GetCardIDFromDeckIndex(inner_idx);
 			if (inner_id == outer_id) {
 				uint8_t type = GetCardType(inner_id);
 				if (type < TYPE_ENERGY)

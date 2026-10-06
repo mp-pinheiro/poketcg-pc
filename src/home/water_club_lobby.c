@@ -1,5 +1,6 @@
 #include "home/water_club_lobby.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -7,7 +8,7 @@
 #include "home/water_club_lobby.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define WaterClubLobbyAfterDuelTable 0x60a9u
+#define WaterClubLobbyAfterDuelTable (WaterClubLobbyAfterDuel_ADDR + 0x07u)
 #include "home/scripting.h"
 #define EVENT_JOSHUA_STATE 0x33u
 #define JOSHUA_DEFEATED 0x02u

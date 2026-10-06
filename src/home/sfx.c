@@ -1,6 +1,7 @@
 #include "home/sfx.h"
 
 #include <stdbool.h>
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -22,9 +23,8 @@
 
 #define SFX_BANK 0x3Fu
 
-#define SFX_NumberOfSFX_ADDR     0x4290u
-#define SFX_HeaderPointers_ADDR  0x4291u
-#define SFX_WaveInstruments_ADDR 0x4485u
+#define SFX_NumberOfSFX_ADDR     NumberOfSFX_ADDR
+#define SFX_HeaderPointers_ADDR  SFXHeaderPointers_ADDR
 
 #define rAUD1LEN   0xFF11u
 #define rAUD1ENV   0xFF12u

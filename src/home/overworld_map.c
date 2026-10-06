@@ -1,5 +1,6 @@
 #include "home/overworld_map.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -90,7 +91,7 @@ static const uint8_t overworld_map_warps[13][4] = {
 #define SFX_PLAYER_WALK_MAP 0x57u
 #define SPRITE_ANIM_FLAG_CENTERED_F 0x02u
 #define OVERWORLD_MAP_BANK 0x04u
-#define OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS 0x629Fu
+#define OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS OverworldMap_PlayerMovementPaths_ADDR
 
 #include "home/overworld_map.h"
 #include "generated/wram.h"

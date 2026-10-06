@@ -1,5 +1,6 @@
 #include "home/load_animation.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/objects.h"
@@ -47,7 +48,7 @@
 #define OAM_PAL1    0x10u
 #define OAM_PALETTE 0x07u
 
-#define SPRITE_NULL_ANIMATION_POINTER_ADDR 0x4E5Au
+#define SPRITE_NULL_ANIMATION_POINTER_ADDR SpriteNullAnimationPointer_ADDR
 #define SPRITE_NULL_ANIMATION_POINTER_BANK 0x20u
 
 /* GB ADD/ADC/SUB/SBC, carry out included: load_animation.asm's edge-clipping

@@ -1,5 +1,6 @@
 #include "home/fire_club.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -7,7 +8,7 @@
 #include "home/fire_club.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define FireClubAfterDuelTable 0x6e9au
+#define FireClubAfterDuelTable (FireClubAfterDuel_ADDR + 0x07u)
 /* <<< factory statics */
 
 /* >>> factory FireClubAfterDuel */

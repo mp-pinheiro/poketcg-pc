@@ -1,5 +1,6 @@
 #include "home/naming.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -24,7 +25,7 @@
  * data; the NAME_BUFFER_LENGTH copy runs past the 12-byte "MARK" fixed-width
  * label into the first four bytes of Unknown_128f7. */
 #define NAMING_BANK 0x04u
-#define DEFAULT_PLAYER_NAME 0x68EBu
+#define DEFAULT_PLAYER_NAME (DisplayPlayerNamingScreen_ADDR + 0x42u)
 /* <<< factory statics */
 
 /* >>> factory DisplayPlayerNamingScreen */

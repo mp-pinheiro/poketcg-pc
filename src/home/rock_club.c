@@ -1,5 +1,6 @@
 #include "home/rock_club.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -7,7 +8,7 @@
 #include "home/rock_club.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define RockClubAfterDuelTable 0x5fddu
+#define RockClubAfterDuelTable (RockClubAfterDuel_ADDR + 0x07u)
 /* <<< factory statics */
 
 /* >>> factory RockClubAfterDuel */

@@ -9,10 +9,11 @@
 #include "home/scripting.h"
 #include "mem.h"
 #include "home/mail.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/fire_club_lobby.h"
 #include "home/grass_club_entrance.h"
-#define PokemonDomeAfterDuelTable 0x76E7u
+#define PokemonDomeAfterDuelTable (PokemonDomeAfterDuel_ADDR + 0x07u)
 #define EVENT_CHALLENGED_GRAND_MASTERS 0x64u
 #define EVENT_POKEMON_DOME_STATE 0x65u
 #define EVENT_COURTNEY_STATE 0x68u
@@ -168,7 +169,7 @@ void PokemonDomeMovePlayer(void)
 	if (x >= 0x11u)
 		return;
 	gb_write8(0xD3ABu, 0x3Au);
-	(void)SetNextNPCAndScript(0x784Cu, 0x76C6u);
+	(void)SetNextNPCAndScript(Script_f84c_ADDR, PokemonDomeMovePlayer_ADDR);
 }
 /* <<< factory PokemonDomeMovePlayer */
 
@@ -180,7 +181,7 @@ void PokemonDomeLoadMap(void)
 	 * GetEventVar, which leaves the event's mask in wLoadedEventBits. */
 	if (GetEventValue(EVENT_POKEMON_DOME_IN_MENU) == 0u)
 		return;
-	SetNextScript(0x780Bu);
+	SetNextScript(Script_f80b_ADDR);
 }
 /* <<< factory PokemonDomeLoadMap */
 

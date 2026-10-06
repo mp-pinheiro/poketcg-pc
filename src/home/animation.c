@@ -1,5 +1,6 @@
 #include "home/animation.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/map.h"
@@ -17,7 +18,7 @@
 #include "home/animation.h"
 #define CONSOLE_CGB 0x02u
 #define MAP_OW_FRAMESET_POINTERS_BANK 0x20u
-#define MAP_OW_FRAMESET_POINTERS_ADDR 0x45D6u
+#define MAP_OW_FRAMESET_POINTERS_ADDR MapOWFramesetPointers_ADDR
 /* <<< factory statics */
 
 void ClearNumLoadedFramesetSubgroups(void)

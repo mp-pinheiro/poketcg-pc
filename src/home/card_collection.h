@@ -2,9 +2,10 @@
 #define POKETCG_HOME_CARD_COLLECTION_H
 
 #include <stdint.h>
+#include "home/card_id.h"
 
 void CreateTempCardCollection(void);
-void AddCardToCollection(uint8_t a);
+void AddCardToCollection(CardId a);
 
 typedef struct {
 	uint8_t d;
@@ -20,8 +21,8 @@ typedef struct {
 	uint8_t f;
 } CardCountResult;
 
-CardCountResult GetCardCountInCollectionAndDecks(uint8_t a);
-CardCountResult GetCardCountInCollection(uint8_t a);
-void RemoveCardFromCollection(uint8_t a);
+CardCountResult GetCardCountInCollectionAndDecks(CardId a);
+CardCountResult GetCardCountInCollection(CardId a);
+void RemoveCardFromCollection(CardId a);
 
 #endif /* POKETCG_HOME_CARD_COLLECTION_H */

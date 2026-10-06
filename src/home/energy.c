@@ -639,8 +639,7 @@ AIEnergyResult AIProcessEnergyCards(void)
 		if (gb_read8(wAICardListEnergyBonus_ADDR + 1u) != 0u) {
 			uint16_t list = (uint16_t)(gb_read8(wAICardListEnergyBonus_ADDR)
 					| (gb_read8(wAICardListEnergyBonus_ADDR + 1u) << 8));
-			uint8_t id = (uint8_t)GetCardIDFromDeckIndex(
-				GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD)).a);
+			uint8_t id = GetCardIDFromDeckIndex(GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD)).a);
 			for (;;) {
 				uint8_t entry = gb_read8(list++);
 				if (entry == 0u)

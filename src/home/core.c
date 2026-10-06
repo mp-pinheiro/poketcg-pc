@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "bank_guard.h"
@@ -145,7 +146,7 @@ static uint32_t duel_save_total_size(void)
  * routine immediately following the setter: setter start + 15 bytes. The
  * setter is the only writer of this pointer, which the card-list printer
  * dispatches through. */
-#define PRINT_SORT_NUMBER_IN_CARD_LIST 0x574Au
+#define PRINT_SORT_NUMBER_IN_CARD_LIST PrintSortNumberInCardList_ADDR
 
 #include "generated/wram.h"
 
@@ -154,8 +155,8 @@ static uint32_t duel_save_total_size(void)
 #include "home/play_animation.h"
 
 #define ANIM_DATA_BANK 7u
-#define ANIM_COORDS_INDEX_ADDR 0x49e0u
-#define ANIM_COORDS_ADDR 0x4a04u
+#define ANIM_COORDS_INDEX_ADDR (PrintDeckAndHandIconsAndNumberOfCards_ADDR + 0x16u)
+#define ANIM_COORDS_ADDR (PrintPlayerNumberOfHandAndDeckCards_ADDR + 0x11u)
 #define DUEL_ANIM_STRUCT_SIZE 8u
 #define PLAYER_TURN 0xc2u
 #define SPRITE_ANIM_FLAG_CENTERED   0x04u
@@ -251,7 +252,7 @@ static uint8_t is_duelist_type(uint8_t a)
 #define DUELVARS_PRIZE_CARDS 0x3Cu
 #define CARD_LOCATION_DECK 0x00u
 
-#define ANIMATIONS_ADDR 0x4e32u
+#define ANIMATIONS_ADDR Animations_ADDR
 
 /* SwitchCardPage dispatches the page-zero and overview handlers ported here. */
 
@@ -576,8 +577,7 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/tiles.h"
 #include "generated/wram.h"
 #define PROMOSTAR 0xffu
-#define DUEL_OTHER_GFX 0x4008u
-#define CardRarityTextIDs_ADDR 0x5e14u
+#define DUEL_OTHER_GFX (GameLoop_ADDR + 0x08u)
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -637,7 +637,7 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/lcd.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PracticeDuelText_SamTurn4 0x5346u
+#define PracticeDuelText_SamTurn4 PracticeDuelText_SamTurn4_ADDR
 
 #include "home/core.h"
 #include "home/tiles.h"
@@ -681,7 +681,7 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SELECT_COMPUTER_OPPONENT_DATA_ADDR_580 0x7408u
+#define SELECT_COMPUTER_OPPONENT_DATA_ADDR_580 SelectComputerOpponentData_ADDR
 
 #include "home/core.h"
 #include "generated/hram.h"
@@ -955,7 +955,7 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define HEADER_POKEMON 0x02u
 #define HEADER_TRAINER 0x00u
 #define LARGE_CARD_PICTURE 0x08u
-#define LARGE_CARD_TILE_DATA 0x5EB7u
+#define LARGE_CARD_TILE_DATA LargeCardTileData_ADDR
 
 #include "generated/wram.h"
 #include "home/core.h"
@@ -1003,12 +1003,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/menus.h"
 #include "home/print_text.h"
 #define DuelistHandText 0x00a7u
-#define CARD_LIST_PARAMETERS 0x5710u
+#define CARD_LIST_PARAMETERS CardListParameters_ADDR
 /* duel/core.asm:3380, the eight menu parameter bytes CardListItemSelectionMenu
  * passes to InitializeMenuParameters. The port held 0x0E01, which is that
  * table's own first two bytes read as a little-endian word rather than its
  * address (01:5708), so the read landed in SerialHandleSend's code. */
-#define ITEM_SELECTION_MENU_PARAMETERS 0x5708u
+#define ITEM_SELECTION_MENU_PARAMETERS ItemSelectionMenuParameters_ADDR
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -1063,7 +1063,7 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 #include "home/menus.h"
 #include "home/print_text.h"
-#define NoBasicPokemonCardListParameters 0x4e37u
+#define NoBasicPokemonCardListParameters NoBasicPokemonCardListParameters_ADDR
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -1084,7 +1084,7 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/lcd.h"
 #include "home/duel.h"
 #define ChooseEnergyCardToDiscardText 0x0050u
-#define EnergyDiscardCardListParameters 0x46f3u
+#define EnergyDiscardCardListParameters EnergyDiscardCardListParameters_ADDR
 
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -1180,9 +1180,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "mem.h"
 #define CARDPAGETYPE_NOT_PLAY_AREA 0x00u
 #define SYM_COLORLESS 0x07u
-#define CARD_PAGE_RETREAT_WR_TEXT_DATA 0x5D05u
-#define CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA 0x5D12u
-#define CARD_PAGE_NO_TEXT_TILE_DATA 0x5D1Au
+#define CARD_PAGE_RETREAT_WR_TEXT_DATA CardPageRetreatWRTextData_ADDR
+#define CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA CardPageLvHPNoTextTileData_ADDR
+#define CARD_PAGE_NO_TEXT_TILE_DATA CardPageNoTextTileData_ADDR
 
 #include "generated/wram.h"
 #include "home/core.h"
@@ -1196,7 +1196,7 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
  * PracticeDuelTextPointerTable` resolves in the routine's own bank, which is
  * bank $01 for every callsite, so the pointer pair is read from there. */
 #define PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK 0x01u
-#define PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR 0x52C5u
+#define PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR PracticeDuelTextPointerTable_ADDR
 
 #define NeedPracticeAgainPracticeDuelText 0x01d9u
 
@@ -1488,8 +1488,8 @@ static void TossCoin_WaitForOpponent(uint8_t a)
  * it (two 4-byte blocks plus the $ff terminator) and CardPageLengthWeightTextData
  * the 9 bytes ahead of that (two 4-byte `textitem`s -- `db x, y` plus a 2-byte
  * `tx` -- plus the $ff terminator). */
-#define CARD_PAGE_LENGTH_WEIGHT_TEXT_DATA 0x5E02u
-#define CARD_PAGE_LV_HP_TEXT_TILE_DATA 0x5E0Bu
+#define CARD_PAGE_LENGTH_WEIGHT_TEXT_DATA CardPageLengthWeightTextData_ADDR
+#define CARD_PAGE_LV_HP_TEXT_TILE_DATA CardPageLvHPTextTileData_ADDR
 
 #define TX_KATAKANA 0x0fu
 #define LbsText 0x0010u
@@ -2328,7 +2328,7 @@ EnergyFlagsResult CheckEnergyFlagsNeededInList(uint8_t a)
 		if (deck_index == 0xffu)
 			return (EnergyFlagsResult){0xffu, 0u};
 
-		uint8_t energy = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		uint8_t energy = GetCardIDFromDeckIndex(deck_index);
 		uint8_t flags;
 
 		if (energy == FIRE_ENERGY)
@@ -2769,7 +2769,7 @@ CoreCardListResult CreateEnergyCardListFromHand(uint8_t a)
 	(void)a;
 	while (remaining != 0u) {
 		uint8_t deck_index = gb_read8(hand++);
-		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
 		if ((GetCardType(card_id) & TYPE_ENERGY) != 0u)
 			gb_write8(dst++, deck_index);
 		remaining--;
@@ -2789,7 +2789,7 @@ CoreCardListResult LookForCardIDInHand(uint8_t a)
 	uint8_t last_id = 0u;
 	for (uint8_t i = 0; i < count; i++) {
 		uint8_t deck_index = gb_read8((uint16_t)(hand + i));
-		last_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		last_id = GetCardIDFromDeckIndex(deck_index);
 		if (last_id == a)
 			return (CoreCardListResult){deck_index, deck_index == 0u ? 0x80u : 0x00u};
 	}
@@ -2918,7 +2918,7 @@ uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a)
 		bench.hl = (uint16_t)(bench.hl + 1u);
 		if (deck_index == 0xFFu)
 			return bench.hl;
-		if ((uint8_t)GetCardIDFromDeckIndex(deck_index) != a)
+		if (GetCardIDFromDeckIndex(deck_index) != a)
 			continue;
 		uint16_t score = (uint16_t)(0xCDE4u + e);
 		gb_write8(score, (uint8_t)(gb_read8(score) + 5u));
@@ -3387,7 +3387,7 @@ LookForCardIDInLocationResult LookForCardIDInLocation_Bank5(
 		DuelistVarResult locations = GetTurnDuelistVariable(index);
 		hl = locations.hl;
 		if (locations.a == location &&
-		    (uint8_t)GetCardIDFromDeckIndex(index) == card_id)
+		    GetCardIDFromDeckIndex(index) == card_id)
 			return (LookForCardIDInLocationResult){index, location, card_id, 0u,
 				index, 0x90u, hl};
 		index++;
@@ -3416,7 +3416,7 @@ void LoadDefendingPokemonColorWRAndPrizeCards(void)
 /* >>> factory CheckIfEnergyIsUseful */
 CheckIfEnergyIsUsefulResult CheckIfEnergyIsUseful(uint8_t a)
 {
-	uint8_t energy = (uint8_t)GetCardIDFromDeckIndex(a);
+	uint8_t energy = GetCardIDFromDeckIndex(a);
 	if (energy == DOUBLE_COLORLESS_ENERGY || wTempCardType == TYPE_ENERGY_DOUBLE_COLORLESS)
 		return (CheckIfEnergyIsUsefulResult){0x90u};
 	uint8_t required = 0u;
@@ -3490,7 +3490,7 @@ RemoveCardIDResult RemoveCardIDInList(uint16_t *hl, uint8_t e)
 		if (index == 0xFFu)
 			return (RemoveCardIDResult){index, 0x00u};
 		hTempCardIndex_ff98 = index;
-		if ((uint8_t)GetCardIDFromDeckIndex(index) != e)
+		if (GetCardIDFromDeckIndex(index) != e)
 			continue;
 		uint16_t dst = (uint16_t)(scan - 1u);
 		uint16_t src = scan;
@@ -3529,7 +3529,7 @@ SortTempHandResult SortTempHandByIDList(uint8_t b, uint8_t c, uint8_t d, uint8_t
 			hTempCardIndex_ff98 = entry;
 			if (entry == 0xFFu)
 				break;
-			if ((uint8_t)GetCardIDFromDeckIndex(entry) == b) {
+			if (GetCardIDFromDeckIndex(entry) == b) {
 				uint16_t slot = (uint16_t)(wDuelTempList_ADDR + c);
 				uint8_t old = gb_read8(slot);
 				gb_write8(slot, entry);
@@ -3737,8 +3737,8 @@ uint8_t DoPracticeDuelAction(uint8_t a)
  * tiles, rows 5-6 two tiles at x=9, row 7 from x=9 for 11 -- the separator
  * sits under the opponent's HUD, not at the left edge. CGB writes the same
  * blocks of palette 2 into VRAM bank 1. */
-#define DUEL_HORIZONTAL_SEPARATOR_TILE_DATA 0x5199u
-#define DUEL_HORIZONTAL_SEPARATOR_CGB_PAL_DATA 0x51C0u
+#define DUEL_HORIZONTAL_SEPARATOR_TILE_DATA DuelHorizontalSeparatorTileData_ADDR
+#define DUEL_HORIZONTAL_SEPARATOR_CGB_PAL_DATA DuelHorizontalSeparatorCGBPalData_ADDR
 void DrawDuelHorizontalSeparator(void)
 {
 	uint16_t data = DUEL_HORIZONTAL_SEPARATOR_TILE_DATA;
@@ -4875,7 +4875,7 @@ loop_bench:
 	if (gb_read8((uint16_t)(wSamePokemonEnergyScoreHandled_ADDR + e)) != 0u)
 		goto loop_bench;
 
-	wSamePokemonCardID = (uint8_t)GetCardIDFromDeckIndex(wSamePokemonCardID);
+	wSamePokemonCardID = GetCardIDFromDeckIndex(wSamePokemonCardID);
 
 	{
 		uint16_t saved_hl = hl;
@@ -4895,7 +4895,7 @@ loop_bench:
 			hl++;
 			if (deck_index == 0xFFu)
 				break;
-			uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+			uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
 			if (card_id != wSamePokemonCardID)
 				continue;
 			uint8_t dam = GetCardDamageAndMaxHP(e).a;
@@ -5338,7 +5338,7 @@ CheckAbleToRetreatResult CheckAbleToRetreat(void)
 	}
 	DuelistVarResult deck_idx = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	uint16_t card_id = GetCardIDFromDeckIndex(deck_idx.a);
-	LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+	LoadCardDataToBuffer1_FromCardID(card_id);
 	uint8_t card_type = wLoadedCard1Type;
 	if (card_type == TYPE_TRAINER) {
 		return (CheckAbleToRetreatResult){TYPE_TRAINER, 0x90u, UnableToRetreatText};
@@ -6593,7 +6593,7 @@ void DisplayPracticeDuelPlayerHandScreen(void)
 }
 /* <<< factory DisplayPracticeDuelPlayerHandScreen */
 
-#define DUEL_E_AND_HP_TILE_DATA 0x5188u
+#define DUEL_E_AND_HP_TILE_DATA DuelEAndHPTileData_ADDR
 /* >>> factory DrawDuelMainScene */
 void DrawDuelMainScene(void)
 {
@@ -7254,15 +7254,15 @@ void OpenActivePokemonScreen(void)
 	if (arena.a == 0xFFu)
 		return;
 	uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
-	LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+	LoadCardDataToBuffer1_FromCardID(card_id);
 	wCurPlayAreaSlot = 0u;
 	wCurPlayAreaY = 0u;
 	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
 }
 /* <<< factory OpenActivePokemonScreen */
 
-#define PLAY_AREA_PARAMS_INCLUDED 0x60BEu
-#define PLAY_AREA_PARAMS_EXCLUDED 0x60C6u
+#define PLAY_AREA_PARAMS_INCLUDED PlayAreaScreenMenuParameters_ActivePokemonIncluded_ADDR
+#define PLAY_AREA_PARAMS_EXCLUDED PlayAreaScreenMenuParameters_ActivePokemonExcluded_ADDR
 /* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
 /* core.asm:5618-5675. Carry (f bit 4) is the B press that leaves without a
  * power; a chosen power returns with it clear and hTemp_ffa0 holding the
@@ -7315,7 +7315,7 @@ draw_screen:
 			uint8_t item = (uint8_t)(hCurMenuItem + DUELVARS_ARENA_CARD);
 			DuelistVarResult arena = GetTurnDuelistVariable(item);
 			uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
-			LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+			LoadCardDataToBuffer1_FromCardID(card_id);
 			OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
 			goto draw_screen;
 		}
@@ -8275,8 +8275,8 @@ DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScree
 /* >>> factory PrintDeckAndHandIconsAndNumberOfCards */
 /* core.asm:1490-1504. The x, y, bytes[], 0 blocks live in this bank
  * ($01:4A35, $01:4A6E) and are passed by address, never copied into WRAM. */
-#define DECK_AND_HAND_ICONS_TILE_DATA 0x4A35u
-#define DECK_AND_HAND_ICONS_CGB_PAL_DATA 0x4A6Eu
+#define DECK_AND_HAND_ICONS_TILE_DATA DeckAndHandIconsTileData_ADDR
+#define DECK_AND_HAND_ICONS_CGB_PAL_DATA DeckAndHandIconsCGBPalData_ADDR
 void PrintDeckAndHandIconsAndNumberOfCards(void)
 {
 	uint16_t data = DECK_AND_HAND_ICONS_TILE_DATA;
@@ -8307,7 +8307,7 @@ CheckDamageToMrMimeResult CheckDamageToMrMime(uint8_t a, uint8_t f, uint8_t b, u
 	uint8_t original_a = a;
 	DuelistVarResult arena = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	SwapTurn();
-	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	uint8_t card_id = GetCardIDFromDeckIndex(arena.a);
 	SwapTurn();
 	if (card_id != MR_MIME)
 		return (CheckDamageToMrMimeResult){card_id, 0x10u};
@@ -8746,7 +8746,7 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
 {
 	uint8_t selected_attack = wSelectedAttack;
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	uint8_t card_id = GetCardIDFromDeckIndex(arena.a);
 	uint8_t flags = 0x00u;
 	/* ai/core.asm:2049 `.no_carry: or a / ret`: the flags come from whatever
 	 * `a` held on the way there -- the card id, wSelectedAttack, or a
@@ -9615,7 +9615,7 @@ init_menu:
 
 			if (card.a != 0xFFu) {
 				LoadCardDataToBuffer1_FromCardID(
-					(uint8_t)GetCardIDFromDeckIndex(card.a));
+					GetCardIDFromDeckIndex(card.a));
 				OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, 0u, 0u);
 			}
 			goto redraw;
@@ -9743,7 +9743,7 @@ HandleSpecialDuelMainSceneHotkeysResult HandleSpecialDuelMainSceneHotkeys(uint8_
 		if (arena == 0xffu)
 			return (HandleSpecialDuelMainSceneHotkeysResult){arena, 0x90u};
 		uint16_t card_id = GetCardIDFromDeckIndex(arena);
-		LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+		LoadCardDataToBuffer1_FromCardID(card_id);
 		wCurPlayAreaSlot = 0u;
 		wCurPlayAreaY = 0u;
 		OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
@@ -9971,7 +9971,7 @@ void DuelMainInterface(void)
 }
 /* <<< factory DuelMainInterface */
 
-#define DUEL_MENU_DATA 0x54E9u
+#define DUEL_MENU_DATA DuelMenuData_ADDR
 static void duel_menu_items_printed(void);
 /* >>> factory PrintDuelMenuAndHandleInput */
 /* core.asm:301-349. Prints the duel menu, then loops on input. Holding B turns
@@ -10384,7 +10384,7 @@ void DuelMenuShortcut_BothActivePokemon(void)
 /* core.asm:981-1058. The exits are tail jumps into the duel loops
  * (PrintDuelMenuAndHandleInput, RestartPracticeDuelTurn, DuelMainInterface)
  * or the plain `ret` after a successful UseAttackOrPokemonPower. */
-#define ATTACK_MENU_PARAMETERS 0x47E4u
+#define ATTACK_MENU_PARAMETERS AttackMenuParameters_ADDR
 #define NoSelectableAttackText 0x003Cu
 #define NotEnoughEnergyCardsText 0x00C0u
 void DuelMenu_Attack(void)
@@ -10616,7 +10616,7 @@ void HandleWaitingLinkOpponentMenu(void)
 static void handle_between_turns_status(void)
 {
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	wTempNonTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	wTempNonTurnDuelistCardID = GetCardIDFromDeckIndex(arena.a);
 	uint16_t status = (uint16_t)(((uint16_t)hWhoseTurn << 8) | DUELVARS_ARENA_CARD_STATUS);
 	if (gb_read8(status) == 0u)
 		return;
@@ -10649,7 +10649,7 @@ void HandleBetweenTurnsEvents(void)
 	(void)DrawWideTextBox_WaitForInput(BetweenTurnsText);
 
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	wTempNonTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	wTempNonTurnDuelistCardID = GetCardIDFromDeckIndex(arena.a);
 	uint16_t status = (uint16_t)(((uint16_t)hWhoseTurn << 8) | DUELVARS_ARENA_CARD_STATUS);
 	if (gb_read8(status) != 0u && (HandlePoisonDamage(0u, status).f & 0x10u) == 0u) {
 		(void)HandleSleepCheck(status);

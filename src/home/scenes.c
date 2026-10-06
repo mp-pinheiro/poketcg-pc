@@ -1,5 +1,6 @@
 #include "home/scenes.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -101,7 +102,7 @@ static void write_mint_attributes(uint8_t b, uint8_t c)
 #include "home/sprite_animations.h"
 #include "mem.h"
 #define SCENE_POINTERS_BANK 0x04u
-#define SCENE_POINTERS_ADDR 0x6D6Fu
+#define SCENE_POINTERS_ADDR ScenePointers_ADDR
 #define SPRITE_ANIM_COORD_X 0x02u
 
 #include "home/palettes.h"

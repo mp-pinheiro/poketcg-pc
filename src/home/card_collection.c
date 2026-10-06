@@ -3,10 +3,11 @@
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/copy.h"
+#include "home/card_id_bus.h"
 #include "home/switch_sram.h"
 #include "mem.h"
 
-#define CARD_SLOT(table, id) ((uint16_t)(((table) & 0xFF00u) | (uint8_t)(id)))
+#define CARD_SLOT(table, id) ((uint16_t)(((table) & 0xFF00u) | (uint16_t)(id)))
 
 /* card_collection.asm:129-146 .AddDeckCards. */
 static void add_deck_cards(uint16_t de)
@@ -15,8 +16,7 @@ static void add_deck_cards(uint16_t de)
 		return;
 	de = (uint16_t)(de + 24); /* DECK_NAME_SIZE: sDeck1Cards - sDeck1Name */
 	for (uint8_t i = 0; i < 60; i++) { /* DECK_SIZE */
-		uint8_t card = gb_read8(de);
-		de++;
+		CardId card = card_id_read(&de);
 		uint16_t hl = CARD_SLOT(wTempCardCollection_ADDR, card);
 		gb_write8(hl, (uint8_t)(gb_read8(hl) + 1));
 	}
@@ -27,7 +27,7 @@ void CreateTempCardCollection(void)
 	EnableSRAM();
 	uint16_t hl = sCardCollection_ADDR;
 	uint16_t de = wTempCardCollection_ADDR;
-	CopyDataHLtoDE(&hl, &de, 0x0100u); /* CARD_COLLECTION_SIZE */
+	CopyDataHLtoDE(&hl, &de, card_id_collection_bytes());
 	add_deck_cards(sDeck1Name_ADDR);
 	add_deck_cards(sDeck2Name_ADDR);
 	add_deck_cards(sDeck3Name_ADDR);
@@ -35,7 +35,7 @@ void CreateTempCardCollection(void)
 	DisableSRAM();
 }
 
-void AddCardToCollection(uint8_t a)
+void AddCardToCollection(CardId a)
 {
 	CreateTempCardCollection();
 	EnableSRAM();
@@ -82,7 +82,7 @@ uint16_t GetAmountOfCardsOwned(void)
 			hl = (uint16_t)(hl + 60); /* DECK_SIZE */
 		de = (uint16_t)(de + (sDeck2Cards_ADDR - sDeck1Cards_ADDR));
 	}
-	for (uint16_t i = 0; i < 0x100u; i++) { /* CARD_COLLECTION_SIZE */
+	for (uint16_t i = 0; i < card_id_collection_bytes(); i++) { /* CARD_COLLECTION_SIZE */
 		uint8_t card = gb_read8((uint16_t)(sCardCollection_ADDR + i));
 		if (!(card & 0x80u)) /* CARD_NOT_OWNED_F */
 			hl = (uint16_t)(hl + card);
@@ -98,7 +98,7 @@ uint16_t GetAmountOfCardsOwned(void)
  * always the deck's original start, never the post-walk position. Adds the match
  * count onto the collection's owned count unless CARD_NOT_OWNED_F is set, masks
  * to CARD_COUNT_MASK, and returns carry set iff the masked result is 0. */
-CardCountResult GetCardCountInCollectionAndDecks(uint8_t id)
+CardCountResult GetCardCountInCollectionAndDecks(CardId id)
 {
 	EnableSRAM();
 	uint8_t matches = 0;
@@ -127,7 +127,7 @@ CardCountResult GetCardCountInCollectionAndDecks(uint8_t id)
  * outputs: a (masked owned count) and carry (set iff a==0). Returns straight
  * after `and CARD_COUNT_MASK` with no intervening `or a`, so H stays set by the
  * `and` on the nonzero exit (0x20), unlike the *AndDecks sibling above. */
-CardCountResult GetCardCountInCollection(uint8_t id)
+CardCountResult GetCardCountInCollection(CardId id)
 {
 	EnableSRAM();
 	uint8_t a = (uint8_t)(gb_read8(CARD_SLOT(sCardCollection_ADDR, id)) & 0x7Fu); /* CARD_COUNT_MASK */
@@ -140,7 +140,7 @@ CardCountResult GetCardCountInCollection(uint8_t id)
  * whatever DisableSRAM leaves behind -- no caller reads either (grep:
  * scripting.asm:1068-1069/1110-1111/1229-1230), so neither is part of the
  * contract; b/c/d/e are never referenced at all and pass through untouched. */
-void RemoveCardFromCollection(uint8_t id)
+void RemoveCardFromCollection(CardId id)
 {
 	EnableSRAM();
 	uint16_t hl = CARD_SLOT(sCardCollection_ADDR, id);

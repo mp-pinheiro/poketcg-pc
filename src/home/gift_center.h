@@ -1,3 +1,4 @@
+#include "generated/rom.h"
 #ifndef POKETCG_HOME_GIFT_CENTER_H
 #define POKETCG_HOME_GIFT_CENTER_H
 
@@ -25,6 +26,6 @@ Func_fcadResult Func_fcad(void);
 typedef struct { uint8_t a; uint8_t f; } GiftCenterMenuResult;
 GiftCenterMenuResult GiftCenterMenu(void);
 /* <<< factory GiftCenterMenu */
-#define Func_fc7a_START_SCRIPT 0x7c82u
+#define Func_fc7a_START_SCRIPT (Func_fc7a_ADDR + 0x08u)
 #define Func_fcad_START_SCRIPT 0x7cb5u
 #endif /* POKETCG_HOME_GIFT_CENTER_H */

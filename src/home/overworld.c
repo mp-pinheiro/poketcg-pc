@@ -4,7 +4,9 @@
 #include <stdlib.h>
 
 #include "home/script_entry_dispatch.h"
+#include "home/card_id_bus.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -145,7 +147,7 @@
 
 #include "generated/wram.h"
 #include "home/labels.h"
-#define PAUSE_MENU_PARAMS 0x4D98u
+#define PAUSE_MENU_PARAMS PauseMenuParams_ADDR
 
 #include "generated/wram.h"
 #include "home/lcd_enable_frame.h"
@@ -159,7 +161,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PC_MENU_PARAMS 0x4DA9u
+#define PC_MENU_PARAMS PCMenuParams_ADDR
 /* Bank $04 holds the menu implementations and their data: the params tables
  * PauseMenuParams ($04:4D98) and PCMenuParams ($04:4DA9), InitAndPrintMenu
  * ($04:51E9), and every _PauseMenu_* body ($04:4059-$04:4548) with its labels
@@ -169,7 +171,7 @@
 #define MENUS_BANK 0x04u
 
 #define PAUSE_MENU_TEXT_LIST_BANK 0x03u
-#define PAUSE_MENU_TEXT_LIST_ADDR 0x427Cu
+#define PAUSE_MENU_TEXT_LIST_ADDR PauseMenuTextList_ADDR
 
 #include "home/status.h"
 
@@ -257,8 +259,8 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define MUSIC_PAUSE_MENU 0x05u
-#define DISPLAY_PAUSE_MENU 0x4797u
-#define DISPLAY_PC_MENU 0x484Eu
+#define DISPLAY_PAUSE_MENU DisplayPauseMenu_ADDR
+#define DISPLAY_PC_MENU DisplayPCMenu_ADDR
 #define MUSIC_PC_MAIN_MENU 0x06u
 #define TurnedPCOnText 0x0352u
 #define TurnedPCOffText 0x0353u
@@ -1390,8 +1392,9 @@ void PauseMenu_Card(void)
 /* >>> factory EnterScript */
 EnterScriptResult EnterScript(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
-	uint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8));
-	ScriptEntryRegs r = ScriptEntryEnterWith(target, f, b, c, d, e);
+	uint8_t bank;
+	uint16_t target = script_pointer_read(&bank);
+	ScriptEntryRegs r = ScriptEntryEnterWithBank(target, bank, f, b, c, d, e);
 	return (EnterScriptResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory EnterScript */
@@ -1613,7 +1616,7 @@ void LoadMap(void)
 }
 /* <<< factory LoadMap */
 
-#define PCMENU_PRINT_ADDR 0x4877u
+#define PCMENU_PRINT_ADDR PCMenu_Print_ADDR
 
 /* >>> factory PCMenu_Print */
 void PCMenu_Print(void)

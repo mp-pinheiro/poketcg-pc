@@ -1,5 +1,6 @@
 #include "home/tiles.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/copy.h"
@@ -76,7 +77,7 @@ void Copy1bppTiles(uint16_t *hl, uint16_t *de)
  * BANK_FONTS (0x1d) with the far-pointer offset already subtracted, matching
  * how each caller in tiles.asm encodes them (see CopyFontsOrDuelGraphicsTiles). */
 #define DUEL_OTHER_GFX 0x4008u
-#define DUEL_BOX_MESSAGES 0x4318u
+#define DUEL_BOX_MESSAGES DuelBoxMessages_ADDR
 #define SYMBOLS_FONT_FAR 0x2968u
 #define SYMBOLS_FONT_TILES 0x38u
 #define DUEL_CARD_HEADER_GFX_FAR 0x2ce8u

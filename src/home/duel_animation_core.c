@@ -1,4 +1,5 @@
 #include "home/duel_animation_core.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/load_animation.h"
 #include "home/core.h"
@@ -19,7 +20,7 @@
 #define BUFFER_MASK 0x7fu
 #define UPDATE_ADDR 0x3BA2u
 #define ANIMATIONS_BANK 7u
-#define ANIMATIONS_ADDR 0x4E32u
+#define ANIMATIONS_ADDR Animations_ADDR
 #define ANIM_ENTRY_SIZE 6u
 #define SPRITE_UNSKIPPABLE 0x80u
 

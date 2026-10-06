@@ -1,5 +1,6 @@
 #include "home/ai.h"
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/load_deck.h"
@@ -26,8 +27,8 @@
 #include "mem.h"
 
 #define BANK_DECK_AI_POINTER_TABLE 5u
-#define DECK_AI_POINTER_TABLE_ADDR 0x4000u
-#define AI_ACTION_TABLE_SAM_PRACTICE_ADDR 0x47BDu
+#define DECK_AI_POINTER_TABLE_ADDR DeckAIPointerTable_ADDR
+#define AI_ACTION_TABLE_SAM_PRACTICE_ADDR AIActionTable_SamPractice_ADDR
 
 #define AIACTION_START_DUEL 0x02u
 #define AIACTION_FORCED_SWITCH 0x03u

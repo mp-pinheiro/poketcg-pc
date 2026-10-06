@@ -3,6 +3,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
+#include "home/duel.h"
 #include "home/substatus.h"
 #include "mem.h"
 
@@ -19,10 +20,9 @@ static uint8_t turn_duel_var(uint8_t off)
 	return gb_read8((uint16_t)(((uint16_t)hWhoseTurn << 8) + off));
 }
 
-static uint8_t deck_card_id(uint8_t idx)
+static CardId deck_card_id(uint8_t idx)
 {
-	uint16_t base = (hWhoseTurn == PLAYER_TURN) ? wPlayerDeck_ADDR : wOpponentDeck_ADDR;
-	return gb_read8((uint16_t)(base + idx));
+	return GetCardIDFromDeckIndex(idx);
 }
 
 static uint8_t card_weakness_of(uint8_t duelvar_off)

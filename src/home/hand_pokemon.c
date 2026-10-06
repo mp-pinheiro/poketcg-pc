@@ -324,7 +324,7 @@ void AIDecidePlayLegendaryBirds(void)
 		uint8_t opponent_arena =
 			GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 		SwapTurn();
-		uint8_t opponent_card = (uint8_t)GetCardIDFromDeckIndex(opponent_arena);
+		uint8_t opponent_card = GetCardIDFromDeckIndex(opponent_arena);
 		SwapTurn();
 		if (opponent_card == SNORLAX) {
 			AIDiscourage(100u);

@@ -1,5 +1,6 @@
 #include "home/challenge_hall_lobby.h"
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/challenge_hall_lobby.h"
@@ -17,13 +18,13 @@
 #define EVENT_CHALLENGE_CUP_STARTING 0x42u
 #define EVENT_CHALLENGE_CUP_NOT_STARTED 0u
 #define NPC_RONALD1 0x02u
-#define SCRIPT_F166 0x7166u
-#define CUP1_TABLE 0x7146u
+#define SCRIPT_F166 Script_f166_ADDR
+#define CUP1_TABLE RonaldChallengeHallLobbyCup1States_ADDR
 #define EVENT_CHALLENGE_CUP_STARTING_OFFSET 0x10u
 #define EVENT_CHALLENGE_CUP_STARTING_MASK 0x80u
 #define MUSIC_CHALLENGE_HALL 0x0Bu
 #define W_DEFAULT_SONG_ADDR 0xD111u
-#define CUP2_TABLE 0x7156u
+#define CUP2_TABLE RonaldChallengeHallLobbyCup2States_ADDR
 
 /* >>> factory Preload_ChallengeHallNPCs1 */
 /* challenge_hall_lobby.asm:6-14 */

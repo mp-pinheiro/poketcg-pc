@@ -155,7 +155,7 @@ HandleSpecialAIAttacksResult HandleSpecialAIAttacks(void)
 {
 	uint8_t location = hTempPlayAreaLocation_ff9d;
 	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
-	uint8_t card = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	uint8_t card = GetCardIDFromDeckIndex(arena.a);
 
 	switch (card) {
 	case NIDORANF:
@@ -206,7 +206,7 @@ HandleSpecialAIAttacksResult HandleSpecialAIAttacks(void)
 			uint8_t index = gb_read8(hl++);
 			if (index == 0xFFu)
 				return (HandleSpecialAIAttacksResult){0x82u, 0xC0u};
-			if (GetCardType((uint8_t)GetCardIDFromDeckIndex(index)) == color)
+			if (GetCardType(GetCardIDFromDeckIndex(index)) == color)
 				return special_zero_score();
 		}
 	}

@@ -1,5 +1,6 @@
 #include "home/init_menu.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/color.h"

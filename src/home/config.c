@@ -1,5 +1,6 @@
 #include "home/config.h"
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 
 #include "home/bg_map.h"
@@ -11,7 +12,7 @@
 #define sTextSpeed_ADDR_L 0xA006u
 #define sAnimationsDisabled_ADDR_L 0xA007u
 #define sSkipDelayAllowed_ADDR_L 0xA009u
-#define ConfigScreenLabels 0x45bcu
+#define ConfigScreenLabels ConfigScreenLabels_ADDR
 
 /* config.asm:158-161 TextDelaySettings (TEXT_SPEED_1..TEXT_SPEED_5) */
 static const uint8_t kTextDelaySettings[5] = { 0x06u, 0x04u, 0x02u, 0x01u, 0x00u };

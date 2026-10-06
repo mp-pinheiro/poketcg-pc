@@ -1,4 +1,5 @@
 #include "home/intro.h"
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/load_animation.h"
@@ -18,7 +19,7 @@
 #include "home/sound.h"
 #include "home/play_animation.h"
 #define HANDLE_ALL_SPRITE_ANIMATIONS 0x3CB4u
-#define INTRO_SEQUENCE 0x559Du
+#define INTRO_SEQUENCE IntroSequence_ADDR
 #define SCENE_TITLE_SCREEN 0x00u
 #define MUSIC_TITLESCREEN 0x01u
 #define PAD_A 0x01u

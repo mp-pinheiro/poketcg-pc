@@ -1,4 +1,5 @@
 #include "home/music2.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
@@ -12,16 +13,16 @@
 #define MUSIC2_BANK 0x3Eu
 
 /* ── ROM table addresses (bank $3e) ─────────────────────────────────── */
-#define ADR_NumberOfSongs2      0x4EE5u
-#define ADR_SongBanks2          0x4EE6u
-#define ADR_SongHeaderPointers2 0x4F05u
-#define ADR_ChannelLoopStacks   0x4C20u
-#define ADR_OctaveOffsets       0x4C28u
-#define ADR_Pitches             0x4C30u
-#define ADR_WaveInstruments     0x4CDAu
-#define ADR_NoiseInstruments    0x4D34u
-#define ADR_VibratoTypes        0x4DDEu
-#define ADR_SFXPriorities       0x4E85u
+#define ADR_NumberOfSongs2      NumberOfSongs2_ADDR
+#define ADR_SongBanks2          SongBanks2_ADDR
+#define ADR_SongHeaderPointers2 SongHeaderPointers2_ADDR
+#define ADR_ChannelLoopStacks   Music2_ChannelLoopStacks_ADDR
+#define ADR_OctaveOffsets       Music2_OctaveOffsets_ADDR
+#define ADR_Pitches             Music2_Pitches_ADDR
+#define ADR_WaveInstruments     Music2_WaveInstruments_ADDR
+#define ADR_NoiseInstruments    Music2_NoiseInstruments_ADDR
+#define ADR_VibratoTypes        Music2_VibratoTypes_ADDR
+#define ADR_SFXPriorities       Music2_SFXPriorities_ADDR
 
 /* ── APU register addresses ─────────────────────────────────────────── */
 #define APU_AUD1SWEEP 0xFF10u

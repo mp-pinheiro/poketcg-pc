@@ -1,5 +1,6 @@
 #include "home/psychic_club_entrance.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -8,21 +9,18 @@
 #include "home/scripting.h"
 #include "generated/wram.h"
 #define NPC_RONALD1 0x02u
-#define Script_FirstRonaldEncounter_ADDR 0x6862u
 
 #include "home/map.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
 #define NPC_RONALD2 0x71u
 #define EVENT_RONALD_FIRST_DUEL_STATE 0x4Cu
-#define Script_FirstRonaldDuel_ADDR 0x68C0u
 
 #include "home/psychic_club_entrance.h"
 #include "home/map.h"
 #include "home/scripting.h"
 #define NPC_RONALD3 0x72u
 #define EVENT_RONALD_SECOND_DUEL_STATE 0x4Du
-#define Script_SecondRonaldDuel_ADDR 0x691Eu
 
 #include "home/psychic_club_entrance.h"
 
@@ -30,7 +28,7 @@
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define ClubEntranceAfterDuelTable 0x67FCu
+#define ClubEntranceAfterDuelTable (ClubEntranceAfterDuel_ADDR + 0x06u)
 
 #include "home/scripting.h"
 #include "generated/wram.h"

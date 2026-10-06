@@ -1,5 +1,6 @@
 #include "home/effect_functions.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -1569,11 +1570,11 @@ void BankswitchROM(uint8_t bank);
 
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define HANDLE_COLOR_CHANGE_MENU_PARAMS 0x45B6u
+#define HANDLE_COLOR_CHANGE_MENU_PARAMS (HandleColorChangeScreen_ADDR + 0x2Eu)
 #define CONSOLE_CGB 0x02u
-#define SHIFT_MENU_DATA 0x46A1u /* ShiftMenuData, bank $0b */
-#define COLOR_TILE_AND_BGP 0x46AEu /* ColorTileAndBGP, bank $0b */
-#define SHIFT_LIST_ITEM_TO_COLOR 0x46BAu /* ShiftListItemToColor, bank $0b */
+#define SHIFT_MENU_DATA ShiftMenuData_ADDR /* ShiftMenuData, bank $0b */
+#define COLOR_TILE_AND_BGP ColorTileAndBGP_ADDR /* ColorTileAndBGP, bank $0b */
+#define SHIFT_LIST_ITEM_TO_COLOR ShiftListItemToColor_ADDR /* ShiftListItemToColor, bank $0b */
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -2197,7 +2198,7 @@ CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_
 	for (uint8_t index = 0; index < DECK_SIZE; index++) {
 		if (gb_read8((uint16_t)(locations + index)) != 0x10u)
 			continue;
-		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index);
+		uint8_t card_id = GetCardIDFromDeckIndex(index);
 		if (GetCardType(card_id) != a)
 			continue;
 		gb_write8(dst++, index);
@@ -2811,7 +2812,7 @@ void Sprout_AISelectEffect(uint8_t c, uint16_t de)
 		hTemp_ffa0 = card;
 		if (card == 0xffu)
 			return;
-		if ((uint8_t)GetCardIDFromDeckIndex(card) == ODDISH)
+		if (GetCardIDFromDeckIndex(card) == ODDISH)
 			return;
 	}
 }
@@ -2887,7 +2888,7 @@ void BellsproutCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 		hTemp_ffa0 = card;
 		if (card == 0xffu)
 			return;
-		if ((uint8_t)GetCardIDFromDeckIndex(card) == BELLSPROUT)
+		if (GetCardIDFromDeckIndex(card) == BELLSPROUT)
 			return;
 	}
 }
@@ -2921,7 +2922,7 @@ void NidoranFCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 		hTemp_ffa0 = card;
 		if (card == 0xffu)
 			return;
-		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(card);
+		uint8_t card_id = GetCardIDFromDeckIndex(card);
 		if ((uint8_t)card_id == NIDORANF || (uint8_t)card_id == NIDORANM)
 			return;
 	}
@@ -3098,7 +3099,7 @@ CheckIfCardHasGrassEnergyAttachedResult CheckIfCardHasGrassEnergyAttached(uint8_
 	for (uint8_t index = 0; index < DECK_SIZE; index++) {
 		if (gb_read8((uint16_t)(locations.hl + index)) != e)
 			continue;
-		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index);
+		uint8_t card_id = GetCardIDFromDeckIndex(index);
 		if (GetCardType(card_id) != TYPE_ENERGY_GRASS)
 			continue;
 		return (CheckIfCardHasGrassEnergyAttachedResult){
@@ -3335,7 +3336,7 @@ EnergyTransCheckPlayAreaResult EnergyTrans_CheckPlayArea(void)
 		if ((gb_read8(entry) & CARD_LOCATION_PLAY_AREA) == 0u)
 			continue;
 		uint16_t card_id = GetCardIDFromDeckIndex(index);
-		uint8_t card_type = GetCardType((uint8_t)card_id);
+		uint8_t card_type = GetCardType(card_id);
 		if (card_type == TYPE_ENERGY_GRASS)
 			return (EnergyTransCheckPlayAreaResult){card_type, 0xC0u, entry, card_id};
 	}
@@ -3369,7 +3370,7 @@ uint16_t GetEnergyAttachedMultiplierDamage(void)
 	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
 		if (gb_read8((uint16_t)(locations.hl + i)) != CARD_LOCATION_ARENA)
 			continue;
-		if ((GetCardType((uint8_t)GetCardIDFromDeckIndex(i)) & TYPE_ENERGY) != 0u)
+		if ((GetCardType(GetCardIDFromDeckIndex(i)) & TYPE_ENERGY) != 0u)
 			count++;
 	}
 	SwapTurn();
@@ -3474,7 +3475,7 @@ EnergyBurnCheckResult EnergyBurnCheck_Unreferenced(void)
     if (incapable.f & 0x10u)
         return (EnergyBurnCheckResult){0x00u, incapable.f};
     DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-    uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+    uint8_t card_id = GetCardIDFromDeckIndex(arena.a);
     if (card_id == 0x32u)
         return (EnergyBurnCheckResult){card_id, 0x00u};
     return (EnergyBurnCheckResult){card_id, 0x10u};
@@ -6606,7 +6607,7 @@ HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelectio
 	hCurSelectionItem = 0u;
 	for (;;) {
 		uint8_t count = PrintAndLoadAttacksToDuelTempList();
-		uint16_t menu_parameters = 0x43F4u;
+		uint16_t menu_parameters = (HandleDefendingPokemonAttackSelection_ADDR + 0x63u);
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		EnableLCD();
@@ -6727,7 +6728,7 @@ void StrangeBehavior_SelectAndSwapEffect(void)
 	SetupPlayAreaScreen();
 	for (;;) {
 		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e0u;
+		uint16_t menu_parameters = PlayAreaSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		for (;;) {
@@ -6781,11 +6782,11 @@ static uint8_t LookForCardsInDeck_Found(uint8_t d, uint8_t e)
 			return 0u;
 		switch (d) {
 		case SEARCHEFFECT_CARD_ID:
-			if ((uint8_t)GetCardIDFromDeckIndex(index) == e)
+			if (GetCardIDFromDeckIndex(index) == e)
 				return 1u;
 			break;
 		case SEARCHEFFECT_NIDORAN: {
-			uint8_t id = (uint8_t)GetCardIDFromDeckIndex(index);
+			uint8_t id = GetCardIDFromDeckIndex(index);
 			if (id == NIDORANF || id == NIDORANM)
 				return 1u;
 			break;
@@ -6796,13 +6797,13 @@ static uint8_t LookForCardsInDeck_Found(uint8_t d, uint8_t e)
 				return 1u;
 			break;
 		case SEARCHEFFECT_BASIC_ENERGY: {
-			uint8_t type = GetCardType((uint8_t)GetCardIDFromDeckIndex(index));
+			uint8_t type = GetCardType(GetCardIDFromDeckIndex(index));
 			if (type != TYPE_ENERGY_DOUBLE_COLORLESS && (type & TYPE_ENERGY) != 0u)
 				return 1u;
 			break;
 		}
 		default: /* SEARCHEFFECT_POKEMON */
-			if (GetCardType((uint8_t)GetCardIDFromDeckIndex(index)) < TYPE_ENERGY)
+			if (GetCardType(GetCardIDFromDeckIndex(index)) < TYPE_ENERGY)
 				return 1u;
 			break;
 		}
@@ -7611,7 +7612,7 @@ uint8_t EnergyTrans_TransferEffect(void)
 	SetupPlayAreaScreen();
 	for (;;) {
 		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e0u;
+		uint16_t menu_parameters = PlayAreaSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		for (;;) {
@@ -7670,7 +7671,7 @@ void DamageSwap_SelectAndSwapEffect(void)
 	SetupPlayAreaScreen();
 	for (;;) {
 		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e0u;
+		uint16_t menu_parameters = PlayAreaSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		for (;;) {
@@ -7746,7 +7747,7 @@ void Gigashock_PlayerSelectEffect(void)
 	SetupPlayAreaScreen();
 	for (;;) {
 		uint8_t items = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e8u;
+		uint16_t menu_parameters = BenchSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(wCurGigashockItem, &menu_parameters);
 		wNumMenuItems = (uint8_t)(items - 1u);
 		HandleMenuInputResult input;
@@ -8037,7 +8038,7 @@ Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void)
 	for (;;) {
 		/* .start: re-renders the list and re-seats the menu. */
 		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
-		uint16_t menu_parameters = 0x46e0u;
+		uint16_t menu_parameters = PlayAreaSelectionMenuParameters_ADDR;
 		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
 		wNumMenuItems = count;
 		uint8_t restart = 0u;
@@ -8570,7 +8571,7 @@ ShuffleCardsInDeckResult Firegiver_AddToHandEffect(uint8_t b)
 		if (gb_read8((uint16_t)(locations.hl + index)) != FG_CARD_LOCATION_DECK)
 			continue;
 		uint16_t card_id = GetCardIDFromDeckIndex(index);
-		if (GetCardType((uint8_t)card_id) != FG_TYPE_ENERGY_FIRE)
+		if (GetCardType(card_id) != FG_TYPE_ENERGY_FIRE)
 			continue;
 		gb_write8(list, index);
 		list++;
@@ -10834,7 +10835,7 @@ void MagneticStormEffect(void)
 		if ((gb_read8((uint16_t)(locations.hl + index)) & CARD_LOCATION_PLAY_AREA) == 0u)
 			continue;
 		uint16_t card_id = GetCardIDFromDeckIndex(index);
-		if ((GetCardType((uint8_t)card_id) & TYPE_ENERGY) == 0u)
+		if ((GetCardType(card_id) & TYPE_ENERGY) == 0u)
 			continue;
 		gb_write8(energy_list++, index);
 		energy_count++;
@@ -11034,7 +11035,7 @@ void LassEffect(void)
 			break;
 		hTempCardIndex_ff98 = index;
 		uint16_t card_id = GetCardIDFromDeckIndex(index);
-		if (GetCardType((uint8_t)card_id) != TYPE_TRAINER)
+		if (GetCardType(card_id) != TYPE_TRAINER)
 			continue;
 		RemoveCardFromHand(index);
 		ReturnCardToDeck(index);
@@ -12500,7 +12501,7 @@ DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void)
 #define ChoosePokemonToAttachEnergyCardText 0x011du
 static uint8_t energy_spike_is_basic_energy(uint8_t deck_index)
 {
-	uint8_t type = GetCardType((uint8_t)GetCardIDFromDeckIndex(deck_index));
+	uint8_t type = GetCardType(GetCardIDFromDeckIndex(deck_index));
 	return (uint8_t)(type < TYPE_ENERGY_DOUBLE_COLORLESS && (type & TYPE_ENERGY) != 0u);
 }
 
@@ -12533,7 +12534,7 @@ void EnergySpike_PlayerSelectEffect(void)
 		for (uint8_t index = 0u; index < DECK_SIZE; index++) {
 			if (GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a != CARD_LOCATION_DECK)
 				continue;
-			if ((GetCardType((uint8_t)GetCardIDFromDeckIndex(index)) & TYPE_ENERGY) != 0u) {
+			if ((GetCardType(GetCardIDFromDeckIndex(index)) & TYPE_ENERGY) != 0u) {
 				forced = 1u;
 				break;
 			}

@@ -69,10 +69,10 @@ uint8_t CreateCardPopCandidateList(uint8_t a)
 	uint16_t out = wCardPopCardCandidates_ADDR;
 	uint8_t rarity = a;
 	for (uint16_t id = FIRST_CARD_ID; id < 256u; id++) {
-		CardPtrResult ptr = GetCardPointer((uint8_t)id);
+		CardPtrResult ptr = GetCardPointer(id);
 		if (ptr.carry)
 			break;
-		LoadCardDataToBuffer1_FromCardID((uint8_t)id);
+		LoadCardDataToBuffer1_FromCardID(id);
 		if ((uint8_t)(wLoadedCard1Type & TYPE_ENERGY) != 0)
 			continue;
 		if (wLoadedCard1Rarity != rarity)

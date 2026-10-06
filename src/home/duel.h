@@ -2,6 +2,7 @@
 #define POKETCG_HOME_DUEL_H
 
 #include <stdint.h>
+#include "home/card_id.h"
 
 #include "home/process_text.h"
 
@@ -39,7 +40,7 @@ typedef struct {
 	uint16_t hl;
 } DeckEntryResult;
 DeckCardResult _GetCardIDFromDeckIndex(uint8_t a);
-uint16_t GetCardIDFromDeckIndex(uint8_t a);
+CardId GetCardIDFromDeckIndex(uint8_t a);
 DeckCardResult GetCardIDFromDeckIndex_bc(uint8_t a, uint16_t hl);
 DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl);
 DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl);

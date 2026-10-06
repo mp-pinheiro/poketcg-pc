@@ -1,4 +1,5 @@
 #include "home/mail.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -57,7 +58,7 @@
  * loaded as a plain 16-bit pointer exactly like status.c's StatusScreenLabels. */
 #define PAD_A 0x01u
 #define SFX_CONFIRM 0x02u
-#define MailScreenLabels 0x47D2u
+#define MailScreenLabels MailScreenLabels_ADDR
 
 /* PCMailTextPages' text ids (mail.asm:200-261). `tx Label` expands to
  * `dw Label_`, the textpointer index from text_offsets.asm:1029-1052. */

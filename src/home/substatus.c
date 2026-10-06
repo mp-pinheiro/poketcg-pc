@@ -534,7 +534,7 @@ RainDanceResult CheckRainDanceScenario(void)
 {
 	uint8_t card_idx = hTempCardIndex_ff98;
 	uint16_t card_id = GetCardIDFromDeckIndex(card_idx);
-	uint8_t card_type = GetCardType((uint8_t)card_id);
+	uint8_t card_type = GetCardType(card_id);
 	if (card_type != TYPE_ENERGY_WATER)
 		return (RainDanceResult){card_type, 0x00u};
 	uint8_t color = GetPlayAreaCardColor(hTempPlayAreaLocation_ff9d);
@@ -702,7 +702,7 @@ HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de)
 {
 	uint8_t e = (uint8_t)de;
 	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e));
-	uint8_t card = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	uint8_t card = GetCardIDFromDeckIndex(arena.a);
 	if (card == MEW_LV8) {
 		DuelistVarResult stage = GetNonTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + e));
 		if (stage.a != 0u) {

@@ -1,5 +1,6 @@
 #include "home/deck_machine.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -61,7 +62,7 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 #define EmptyDeckNameText 0x025bu
-#define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR 0x74D4u
+#define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR (PrintDeckMachineEntry_ADDR + 0xB0u)
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -109,9 +110,8 @@
  * 02:52a7 DeckNameSuffix,
  * 02:6e91 HandleDeckMissingCardsList.DeckConfirmationCardSelectionParams,
  * 02:6e9a HandleDeckMissingCardsList.CardListUpdateFunction. */
-#define DeckNameSuffix_ADDR 0x52A7u
-#define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR 0x6E91u
-#define CARD_LIST_UPDATE_FUNCTION_ADDR 0x6E9Au
+#define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR (HandleDeckMissingCardsList_ADDR + 0x93u)
+#define CARD_LIST_UPDATE_FUNCTION_ADDR (HandleDeckMissingCardsList_ADDR + 0x9Cu)
 
 #define ALL_DECKS 0xffu
 #define ChooseADeckToDismantleText 0x0269u
@@ -185,7 +185,7 @@
 #define ThisDeckCanOnlyBeBuiltIfYouDismantleText 0x026cu
 #define YouDoNotOwnAllCardsNeededToBuildThisDeckText 0x026du
 /* poketcg.sym: 02:7609 DeckMachineMenuParameters. */
-#define DECK_MACHINE_MENU_PARAMETERS_ADDR 0x7609u
+#define DECK_MACHINE_MENU_PARAMETERS_ADDR DeckMachineMenuParameters_ADDR
 
 #include "home/auto_deck_machines.h"
 #include "home/credits_sequence_commands.h"
@@ -221,30 +221,30 @@
 #define HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR 0x7B6Eu
 #define HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR 0x7B76u
 #define HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR 0x7B83u
-#define UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR 0x73FEu
+#define UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR UpdateDeckMachineScrollArrowsAndEntries_ADDR
 
 #include "generated/wram.h"
 #include "mem.h"
-#define DRAW_DECK_MACHINE_SCREEN_ADDR 0x7403u
+#define DRAW_DECK_MACHINE_SCREEN_ADDR DrawDeckMachineScreen_ADDR
 
 #define PleaseChooseDeckConfigurationToPrintText 0x0275u
 #define PrintThisDeckText 0x0276u
-#define PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR 0x76FBu
+#define PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR DeckMachineSelectionParams_ADDR
 
 #include "generated/wram.h"
 #define DeckSaveMachineText 0x025cu
 #define NoDeckIsSavedText 0x0264u
 #define OKIfFileDeletedText 0x0272u
-#define DECK_MACHINE_SELECTION_PARAMS_ADDR 0x76FBu
-#define DECK_MACHINE_MENU_DATA_ADDR 0x7274u
+#define DECK_MACHINE_SELECTION_PARAMS_ADDR DeckMachineSelectionParams_ADDR
+#define DECK_MACHINE_MENU_DATA_ADDR (HandleDeckSaveMachineMenu_ADDR + 0xD7u)
 
 #include "home/common.h"
 #include "home/save.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define DATA_B04A_ADDR 0x704Au
-#define SHOW_RECEIVED_CARDS_LIST_ADDR 0x7053u
+#define DATA_B04A_ADDR Data_b04a_ADDR
+#define SHOW_RECEIVED_CARDS_LIST_ADDR ShowReceivedCardsList_ADDR
 
 #include "home/common.h"
 #include "home/save.h"
@@ -881,7 +881,7 @@ HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void)
 
 	uint8_t cursor = 0u;
 	for (;;) {
-		uint16_t menu_parameters = 0x7609u;
+		uint16_t menu_parameters = DeckMachineMenuParameters_ADDR;
 		InitializeMenuParameters(cursor, &menu_parameters);
 		(void)DrawWideTextBox_PrintText(ChooseADeckToDismantleText);
 
@@ -921,7 +921,7 @@ HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void)
 
 			DrawDecksScreen(ALL_DECKS);
 			cursor = wCurDeck;
-			menu_parameters = 0x7609u;
+			menu_parameters = DeckMachineMenuParameters_ADDR;
 			InitializeMenuParameters(cursor, &menu_parameters);
 			DrawCursor2();
 			SafelySwitchToTempSRAMBank();
@@ -1067,7 +1067,7 @@ SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void)
 	uint8_t a = 0u;
 	DrawDecksScreen(ALL_DECKS);
 	for (;;) {
-		uint16_t menu_parameters = 0x7609u;
+		uint16_t menu_parameters = DeckMachineMenuParameters_ADDR;
 		InitializeMenuParameters(a, &menu_parameters);
 		(void)DrawWideTextBox_PrintText(ChooseADeckToSaveText);
 		for (;;) {
@@ -1100,7 +1100,7 @@ SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void)
 			DrawListScrollArrows();
 			PrintNumSavedDecks();
 			uint8_t list_cursor = wTempDeckMachineCursorPos;
-			uint16_t selection_parameters = 0x76fbu;
+			uint16_t selection_parameters = DeckMachineSelectionParams_ADDR;
 			(void)InitCardSelectionParams(list_cursor, &selection_parameters);
 			(void)DrawListCursor_Visible();
 			source = GetPointerToDeckName();

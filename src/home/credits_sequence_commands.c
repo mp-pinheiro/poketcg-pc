@@ -2,6 +2,7 @@
 #include "home/indirect_dispatch.h"
 #include "home/overworld_map.h"
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -66,7 +67,7 @@
 #include "generated/wram.h"
 /* <<< factory statics */
 
-#define CREDITS_SEQUENCE_ADDR 0x5AEFu
+#define CREDITS_SEQUENCE_ADDR CreditsSequence_ADDR
 
 void SetCreditsSequenceCmdPtr(void)
 {
@@ -82,9 +83,9 @@ void ExecuteCreditsSequenceCmd(void)
 		uint16_t address;
 		uint8_t arity;
 	} commands[] = {
-		{0x5853u, 1u}, {0x585au, 3u}, {0x5878u, 3u}, {0x5897u, 1u}, {0x59d5u, 3u},
-		{0x59dbu, 0u}, {0x59e1u, 0u}, {0x59eeu, 0u}, {0x5a04u, 2u}, {0x5a17u, 4u},
-		{0x5a2cu, 4u}, {0x5a3eu, 4u}, {0x5a54u, 4u}, {0x5a9eu, 0u}, {0x5aa5u, 4u},
+		{CreditsSequenceCmd_Wait_ADDR, 1u}, {CreditsSequenceCmd_LoadScene_ADDR, 3u}, {CreditsSequenceCmd_LoadBooster_ADDR, 3u}, {CreditsSequenceCmd_LoadClubMap_ADDR, 1u}, {CreditsSequenceCmd_LoadOWMap_ADDR, 3u},
+		{CreditsSequenceCmd_DisableLCD_ADDR, 0u}, {CreditsSequenceCmd_FadeIn_ADDR, 0u}, {CreditsSequenceCmd_FadeOut_ADDR, 0u}, {CreditsSequenceCmd_DrawRectangle_ADDR, 2u}, {CreditsSequenceCmd_PrintText_ADDR, 4u},
+		{CreditsSequenceCmd_PrintTextBox_ADDR, 4u}, {CreditsSequenceCmd_InitOverlay_ADDR, 4u}, {CreditsSequenceCmd_LoadNPC_ADDR, 4u}, {CreditsSequenceCmd_InitVolcanoSprite_ADDR, 0u}, {CreditsSequenceCmd_TransformOverlay_ADDR, 4u},
 	};
 	for (;;) {
 		uint8_t delay = gb_read8(wSequenceDelay_ADDR);
@@ -110,46 +111,46 @@ void ExecuteCreditsSequenceCmd(void)
 			args[i] = gb_read8((uint16_t)(ptr + 2u + i));
 		uint8_t c = args[0], b = args[1], e = args[2], d = args[3];
 		switch (cmd) {
-		case 0x5853u:
+		case CreditsSequenceCmd_Wait_ADDR:
 			CreditsSequenceCmd_Wait(c);
 			break;
-		case 0x585au:
+		case CreditsSequenceCmd_LoadScene_ADDR:
 			(void)CreditsSequenceCmd_LoadScene(d, 0u, b, c, d, e, cmd);
 			break;
-		case 0x5878u:
+		case CreditsSequenceCmd_LoadBooster_ADDR:
 			CreditsSequenceCmd_LoadBooster(b, c, d, e);
 			break;
-		case 0x5897u:
+		case CreditsSequenceCmd_LoadClubMap_ADDR:
 			CreditsSequenceCmd_LoadClubMap(c);
 			break;
-		case 0x59d5u:
+		case CreditsSequenceCmd_LoadOWMap_ADDR:
 			CreditsSequenceCmd_LoadOWMap(b, c, d, e);
 			break;
-		case 0x59dbu:
+		case CreditsSequenceCmd_DisableLCD_ADDR:
 			CreditsSequenceCmd_DisableLCD();
 			break;
-		case 0x59e1u:
+		case CreditsSequenceCmd_FadeIn_ADDR:
 			CreditsSequenceCmd_FadeIn();
 			break;
-		case 0x59eeu:
+		case CreditsSequenceCmd_FadeOut_ADDR:
 			CreditsSequenceCmd_FadeOut();
 			break;
-		case 0x5a04u:
+		case CreditsSequenceCmd_DrawRectangle_ADDR:
 			(void)CreditsSequenceCmd_DrawRectangle(b, c);
 			break;
-		case 0x5a17u:
+		case CreditsSequenceCmd_PrintText_ADDR:
 			CreditsSequenceCmd_PrintText(b, c, (uint16_t)(((uint16_t)d << 8) | e));
 			break;
-		case 0x5a2cu:
+		case CreditsSequenceCmd_PrintTextBox_ADDR:
 			CreditsSequenceCmd_PrintTextBox(b, c, d, e);
 			break;
-		case 0x5a3eu:
+		case CreditsSequenceCmd_InitOverlay_ADDR:
 			CreditsSequenceCmd_InitOverlay(b, c, d, e);
 			break;
-		case 0x5a54u:
+		case CreditsSequenceCmd_LoadNPC_ADDR:
 			CreditsSequenceCmd_LoadNPC(b, c, d, e);
 			break;
-		case 0x5a9eu:
+		case CreditsSequenceCmd_InitVolcanoSprite_ADDR:
 			CreditsSequenceCmd_InitVolcanoSprite(d);
 			break;
 		default:

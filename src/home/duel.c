@@ -1,10 +1,12 @@
 #include "home/duel.h"
 #include <stdio.h>
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
+#include "home/card_id_bus.h"
 #include "home/duel_core.h"
 #include "home/card_color.h"
 #include "home/substatus.h"
@@ -47,13 +49,15 @@ void SwapTurn(void)
 DeckCardResult _GetCardIDFromDeckIndex(uint8_t a)
 {
 	uint16_t deck = hWhoseTurn == PLAYER_TURN ? wPlayerDeck_ADDR : wOpponentDeck_ADDR;
-	return (DeckCardResult){gb_read8((uint16_t)(deck + a)), (uint16_t)(deck + a)};
+	CardId id = card_id_read_at(card_id_index_address(deck, a));
+	return (DeckCardResult){(uint8_t)id, (uint16_t)(deck + a)};
 }
 
 /* duel.asm:701-711: id in de, af and hl preserved (both pushed and popped). */
-uint16_t GetCardIDFromDeckIndex(uint8_t a)
+CardId GetCardIDFromDeckIndex(uint8_t a)
 {
-	return _GetCardIDFromDeckIndex(a).a;
+	uint16_t deck = hWhoseTurn == PLAYER_TURN ? wPlayerDeck_ADDR : wOpponentDeck_ADDR;
+	return card_id_read_at(card_id_index_address(deck, a));
 }
 
 /* duel.asm:661-668: id in a and c, b = 0, hl preserved. */
@@ -83,10 +87,10 @@ DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl)
 /* duel.asm:778-812. `push af` keeps the deck index for the trainer conversion;
  * de carries the card id through both calls, so the final `ld a, e` is the id's
  * low byte. Every other register is restored by the pops. */
-static uint8_t load_card_data_from_deck_index(uint8_t a, uint16_t buffer, void (*load)(uint8_t))
+static uint8_t load_card_data_from_deck_index(uint8_t a, uint16_t buffer, void (*load)(CardId))
 {
-	uint16_t id = GetCardIDFromDeckIndex(a);
-	load((uint8_t)id);
+	CardId id = GetCardIDFromDeckIndex(a);
+	load(id);
 	(void)ConvertSpecialTrainerCardToPokemon(a, buffer, id);
 	return (uint8_t)id;
 }
@@ -431,8 +435,8 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/duel.h"
 #include "generated/wram.h"
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xEDu
-#define PLAYER_ICON_COORDS 0x4635u
-#define OPPONENT_ICON_COORDS 0x463Bu
+#define PLAYER_ICON_COORDS PlayAreaIconCoordinates_ADDR
+#define OPPONENT_ICON_COORDS (PlayAreaIconCoordinates_ADDR + 0x06u)
 
 #include "home/duel.h"
 #include "generated/wram.h"
@@ -450,8 +454,8 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/objects.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define PLAYER_ICON_COORDINATES_ADDR 0x4BE6u
-#define OPP_ICON_COORDINATES_ADDR 0x4BECu
+#define PLAYER_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x61u)
+#define OPP_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x67u)
 #define wTileMapFill_ADDR 0xCAB6u
 #define wCheckMenuPlayAreaWhichDuelist_ADDR 0xCE50u
 #define wCheckMenuPlayAreaWhichLayout_ADDR 0xCE51u
@@ -618,10 +622,10 @@ static const uint8_t kCursorTileData[16] = {
  * 02:48fa (poketcg.sym). Every constant is prefixed because duel.c already
  * defines TRUE, MENU_CANCEL, PAD_A/PAD_B, PLAYER_TURN, DUELVARS_PRIZES and
  * DUELVARS_PRIZE_CARDS for earlier routines. */
-#define PEEK_MENU_PARAMETERS 0x4811u
-#define PEEK_MENU_TEXT_ITEMS 0x4808u
-#define PEEK_YOUR_TRANSITION_TABLE 0x48C2u
-#define PEEK_OPP_TRANSITION_TABLE 0x48FAu
+#define PEEK_MENU_PARAMETERS (_HandlePeekSelection_ADDR + 0xADu)
+#define PEEK_MENU_TEXT_ITEMS (_HandlePeekSelection_ADDR + 0xA4u)
+#define PEEK_YOUR_TRANSITION_TABLE PeekYourPlayAreaTransitionTable_ADDR
+#define PEEK_OPP_TRANSITION_TABLE PeekOppPlayAreaTransitionTable_ADDR
 #define PEEK_WHICH_CARD_TEXT 0x024Cu
 #define PEEK_MENU_CANCEL 0xFFu
 #define PEEK_PLAYER_TURN 0xC2u
@@ -631,10 +635,10 @@ static const uint8_t kCursorTileData[16] = {
 #define PEEK_DUELVARS_PRIZE_CARDS 0x3Cu
 
 #include "home/deck_selection.h"
-#define CHECK_MENU_DATA_ADDR 0x4158u
-#define YOUR_PLAY_AREA_MENU_DATA_ADDR 0x4169u
-#define OPP_PLAY_AREA_MENU_DATA_ADDR 0x4176u
-#define OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR 0x417Fu
+#define CHECK_MENU_DATA_ADDR CheckMenuData_ADDR
+#define YOUR_PLAY_AREA_MENU_DATA_ADDR YourPlayAreaMenuData_ADDR
+#define OPP_PLAY_AREA_MENU_DATA_ADDR OppPlayAreaMenuData_ADDR
+#define OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR OppPlayAreaMenuData_WithClairvoyance_ADDR
 
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -2208,9 +2212,9 @@ void DrawPlayArea_PrizeCards(uint16_t hl)
 /* duel.asm:796-849, ROM bank 2 (this file's bank): x, y pairs read by
  * DrawPlayArea_PrizeCards through hl. Passed by ROM address, never copied
  * into WRAM -- the asm writes nothing while pointing at them. */
-#define PRIZE_COORDS_YOUR_OR_OPP_PLAYER 0x44B4u
-#define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT 0x44C0u
-#define PRIZE_COORDS_2_PLAYER 0x44CCu
+#define PRIZE_COORDS_YOUR_OR_OPP_PLAYER PrizeCardsCoordinateData_YourOrOppPlayArea_ADDR
+#define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT (PrizeCardsCoordinateData_YourOrOppPlayArea_ADDR + 0x0Cu)
+#define PRIZE_COORDS_2_PLAYER PrizeCardsCoordinateData_2_ADDR
 #define PRIZE_COORDS_2_OPPONENT 0x44D8u
 
 /* >>> factory _DrawPlayersPrizeAndBenchCards */
@@ -2319,11 +2323,11 @@ void SaveDuelStateToSRAM(void)
 	BankswitchSRAM(sDuelBuffer0_BANK);
 
 	DuelistVarResult r1 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	uint8_t turnCardId = (uint8_t)GetCardIDFromDeckIndex(r1.a);
+	uint8_t turnCardId = GetCardIDFromDeckIndex(r1.a);
 	wTempTurnDuelistCardID = turnCardId;
 	SwapTurn();
 	DuelistVarResult r2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	uint8_t nonTurnCardId = (uint8_t)GetCardIDFromDeckIndex(r2.a);
+	uint8_t nonTurnCardId = GetCardIDFromDeckIndex(r2.a);
 	wTempNonTurnDuelistCardID = nonTurnCardId;
 	SwapTurn();
 
@@ -2694,9 +2698,9 @@ void _DrawAIPeekScreen(uint8_t b)
 		SwapTurn();
 		wIsSwapTurnPending = 1u;
 		turn = hWhoseTurn;
-		transition_table = 0x48FAu;
+		transition_table = PeekOppPlayAreaTransitionTable_ADDR;
 	} else {
-		transition_table = 0x48C2u;
+		transition_table = PeekYourPlayAreaTransitionTable_ADDR;
 	}
 
 	DrawYourOrOppPlayAreaScreen((uint16_t)(((uint16_t)turn << 8) | turn));
@@ -2875,16 +2879,16 @@ void DrawInPlayAreaScreen(void)
 
 	wCheckMenuPlayAreaWhichDuelist = hWhoseTurn;
 	wCheckMenuPlayAreaWhichLayout = hWhoseTurn;
-	DrawPlayArea_PrizeCards(0x44E4u); /* PrizeCardsCoordinateData_InPlayArea.player */
+	DrawPlayArea_PrizeCards(PrizeCardsCoordinateData_InPlayArea_ADDR); /* PrizeCardsCoordinateData_InPlayArea.player */
 	DrawPlayArea_BenchCards(3u, 3u, 15u);
-	DrawInPlayArea_Icons(0x4641u); /* PlayAreaIconCoordinates.player2 */
+	DrawInPlayArea_Icons((PlayAreaIconCoordinates_ADDR + 0x0Cu)); /* PlayAreaIconCoordinates.player2 */
 	SwapTurn();
 	wCheckMenuPlayAreaWhichDuelist = hWhoseTurn;
 	SwapTurn();
-	DrawPlayArea_PrizeCards(0x44F0u); /* PrizeCardsCoordinateData_InPlayArea.opponent */
+	DrawPlayArea_PrizeCards((PrizeCardsCoordinateData_InPlayArea_ADDR + 0x0Cu)); /* PrizeCardsCoordinateData_InPlayArea.opponent */
 	DrawPlayArea_BenchCards(3u, 3u, 0u);
 	SwapTurn();
-	DrawInPlayArea_Icons(0x4647u); /* PlayAreaIconCoordinates.opponent2 */
+	DrawInPlayArea_Icons((PlayAreaIconCoordinates_ADDR + 0x12u)); /* PlayAreaIconCoordinates.opponent2 */
 	SwapTurn();
 	DrawInPlayArea_ActiveCardGfx();
 }
@@ -2984,8 +2988,8 @@ void _SelectPrizeCards(void)
 		(void)DrawWideTextBox();
 		InitTextPrinting(1u, 14u);
 		(void)ProcessTextFromID(PleaseChooseAPrizeText);
-		wMenuInputTablePointer = (uint8_t)0x4B5Bu;
-		gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u), (uint8_t)(0x4B5Bu >> 8));
+		wMenuInputTablePointer = (uint8_t)(_SelectPrizeCards_ADDR + 0xB1u);
+		gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u), (uint8_t)((_SelectPrizeCards_ADDR + 0xB1u) >> 8));
 		uint8_t mask;
 		for (;;) {
 			wVBlankOAMCopyToggle = TRUE;
@@ -3183,7 +3187,7 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_
 	{
 		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + b));
 		hl = card.hl;
-		wTempNonTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(card.a);
+		wTempNonTurnDuelistCardID = GetCardIDFromDeckIndex(card.a);
 	}
 	wNoDamageOrEffect = 0u;
 	if (b == 0u && wIsDamageToSelf == 0u)

@@ -1,3 +1,4 @@
+#include "generated/rom.h"
 #ifndef POKETCG_HOME_SCIENCE_CLUB_LOBBY_H
 #define POKETCG_HOME_SCIENCE_CLUB_LOBBY_H
 
@@ -15,5 +16,5 @@ ScriptSpecs2Result Script_Specs2(void);
 typedef struct { uint8_t a; uint8_t f; } PreloadImakuniInScienceClubLobbyResult;
 PreloadImakuniInScienceClubLobbyResult Preload_ImakuniInScienceClubLobby(void);
 /* <<< factory Preload_ImakuniInScienceClubLobby */
-#define Script_Specs2_START_SCRIPT 0x6bddu
+#define Script_Specs2_START_SCRIPT (Script_Specs2_ADDR + 0x18u)
 #endif /* POKETCG_HOME_SCIENCE_CLUB_LOBBY_H */

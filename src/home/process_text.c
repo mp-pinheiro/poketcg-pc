@@ -4,6 +4,7 @@
 #include "home/text_box.h"
 
 #include "home/copy.h"
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"

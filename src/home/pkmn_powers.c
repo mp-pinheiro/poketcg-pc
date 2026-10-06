@@ -39,7 +39,7 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 			return 0u;
 		}
 		uint16_t card_id = GetCardIDFromDeckIndex(idx);
-		uint8_t wr = TranslateColorToWR(GetCardType((uint8_t)card_id));
+		uint8_t wr = TranslateColorToWR(GetCardType(card_id));
 		if ((uint8_t)(wr & b) != 0u) { /* and b ; jr z,.loop_play_area */
 			*f = 0x30u;
 			return 1u;
@@ -363,7 +363,7 @@ static HandleAIDamageSwapResult HandleAIDamageSwap_CheckForTargetInBench(void)
 	uint8_t without_energy = 0xffu;
 	for (uint8_t location = PLAY_AREA_BENCH_1; location != count; location++) {
 		uint8_t index = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD)).a;
-		uint8_t id = (uint8_t)GetCardIDFromDeckIndex(index);
+		uint8_t id = GetCardIDFromDeckIndex(index);
 		if (id != CHANSEY && id != KANGASKHAN && id != SNORLAX && id != MR_MIME)
 			continue;
 		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location)).a < 20u)
@@ -397,7 +397,7 @@ HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f)
 	if (muk.f & 0x10u)
 		return (HandleAIDamageSwapResult){muk.a, muk.f};
 	uint8_t arena_index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
-	uint8_t arena_id = (uint8_t)GetCardIDFromDeckIndex(arena_index);
+	uint8_t arena_id = GetCardIDFromDeckIndex(arena_index);
 	if (arena_id != ALAKAZAM && arena_id != KADABRA && arena_id != ABRA && arena_id != MR_MIME) {
 		uint8_t half_borrow = (uint8_t)((arena_id & 0x0fu) < (MR_MIME & 0x0fu));
 		uint8_t borrow = (uint8_t)(arena_id < MR_MIME);
@@ -510,7 +510,7 @@ HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
 		if (wLoadedAttackCategory == POKEMON_POWER) {
 			TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2, 0u, 0u, 0u);
 			if (!(effect.f & 0x10u)) {
-				uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+				uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
 				if (card_id == VILEPLUME)
 					(void)HandleAIHeal(c);
 				else if (card_id == VENOMOTH)
@@ -581,7 +581,7 @@ HandleAICowardiceResult HandleAICowardice(void)
 			return (HandleAICowardiceResult){c, 0xC0u};
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + c)).a;
 		wce08 = deck_index;
-		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
 		/* `cp TENTACOOL` then `jr nc, .next`: a card whose id is below
 		 * Tentacool's leaves carry set and takes the "used Cowardice" path
 		 * without using anything (the ROM's own bug, kept). */
@@ -666,7 +666,7 @@ AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void
 
 		hTempCardIndex_ff9f = card.a;
 		wAIVenusaurLv67DeckIndex = card.a;
-		if ((uint8_t)GetCardIDFromDeckIndex(card.a) == VENUSAUR_LV67)
+		if (GetCardIDFromDeckIndex(card.a) == VENUSAUR_LV67)
 			break;
 		if (slot == 0u)
 			return (AIEnergyTransTransferEnergyToBenchResult){0u, 0x80u};
@@ -692,7 +692,7 @@ AIEnergyTransTransferEnergyToBenchResult AIEnergyTransTransferEnergyToBench(void
 			if (GetTurnDuelistVariable(
 				(uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a
 					== CARD_LOCATION_ARENA
-			    && (uint8_t)GetCardIDFromDeckIndex(index)
+			    && GetCardIDFromDeckIndex(index)
 					== GRASS_ENERGY)
 				break;
 			index++;
@@ -747,7 +747,7 @@ static uint8_t energy_trans_count_grass_in_bench(void)
 			(uint8_t)(DUELVARS_CARD_LOCATIONS + index)).a & 0x1Fu);
 		if (location < CARD_LOCATION_BENCH_1)
 			continue;
-		if ((uint8_t)GetCardIDFromDeckIndex(index) == GRASS_ENERGY)
+		if (GetCardIDFromDeckIndex(index) == GRASS_ENERGY)
 			count++;
 	}
 	return count;
@@ -758,7 +758,7 @@ static uint8_t energy_trans_count_grass_in_bench(void)
 static HandleAIEnergyTransResult energy_trans_check_attack(void)
 {
 	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
-	if ((uint8_t)GetCardIDFromDeckIndex(arena) == EXEGGUTOR) {
+	if (GetCardIDFromDeckIndex(arena) == EXEGGUTOR) {
 		/* .is_exeggutor: any Grass energy on the bench will do */
 		uint8_t count = energy_trans_count_grass_in_bench();
 		if (count == 0u)
@@ -835,7 +835,7 @@ HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)
 	for (;;) {
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + slot)).a;
 		hTempCardIndex_ff9f = deck_index;
-		if ((uint8_t)GetCardIDFromDeckIndex(deck_index) == VENUSAUR_LV67)
+		if (GetCardIDFromDeckIndex(deck_index) == VENUSAUR_LV67)
 			break;
 		if (slot == 0u)
 			return (HandleAIEnergyTransResult){0u, 0x80u};
@@ -853,7 +853,7 @@ HandleAIEnergyTransResult HandleAIEnergyTrans(uint8_t a)
 		if (location < CARD_LOCATION_BENCH_1)
 			continue;
 		hTempPlayAreaLocation_ffa1 = (uint8_t)(location & 0x0Fu);
-		if ((uint8_t)GetCardIDFromDeckIndex(index) != GRASS_ENERGY)
+		if (GetCardIDFromDeckIndex(index) != GRASS_ENERGY)
 			continue;
 		hAIEnergyTransEnergyCard = index;
 		for (uint8_t frame = 30u; frame != 0u; frame--)

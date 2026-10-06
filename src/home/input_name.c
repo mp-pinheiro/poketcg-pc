@@ -1,5 +1,6 @@
 #include "home/input_name.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -14,7 +15,7 @@
  * and every nonzero case differs from it by exactly 3*index). The routine only
  * computes the address; callers dereference it through the bus under the bank
  * they switched, so no rom_ptr here. */
-#define DECKNAMING_KEYBOARD_DATA 0x7019u
+#define DECKNAMING_KEYBOARD_DATA DeckNamingScreen_KeyboardData_ADDR
 
 #include "home/sound.h"
 
@@ -28,7 +29,7 @@
 
 #include "home/random.h"
 
-#define PLAYER_NAMING_SCREEN_KEYBOARD_DATA 0x6bafu
+#define PLAYER_NAMING_SCREEN_KEYBOARD_DATA PlayerNamingScreen_KeyboardData_ADDR
 
 #include "home/sound.h"
 
@@ -67,7 +68,7 @@
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define CHAR_UNDERBAR_ADDR 0x68F2u
+#define CHAR_UNDERBAR_ADDR (PrintPlayerNameFromInput_ADDR + 0x27u)
 
 #include "home/input_name.h"
 #include "home/lcd.h"
@@ -76,13 +77,13 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define PlayerNameKeyboardText 0x0221u
-#define DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR 0x68BCu
+#define DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR (DrawPlayerNamingScreenBG_ADDR + 0x2Au)
 
 #include "home/input_name.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PLAYER_NAMING_TRANSITION_TABLE1 0x6CF9u
-#define PLAYER_NAMING_TRANSITION_TABLE2 0x6D5Fu
+#define PLAYER_NAMING_TRANSITION_TABLE1 TransitionTable1_ADDR
+#define PLAYER_NAMING_TRANSITION_TABLE2 TransitionTable2_ADDR
 
 #include "mem.h"
 #define TILE_SIZE 16u
@@ -118,7 +119,7 @@
  * $0d + PlaySFXConfirmOrCancel_Bank6 $0f). InitializeInputName stores it in
  * wNamingScreenQuestionPointer and DrawPlayerNamingScreenBG walks it as a
  * textitem list. */
-#define WHAT_IS_YOUR_NAME_DATA 0x675Eu
+#define WHAT_IS_YOUR_NAME_DATA WhatIsYourNameData_ADDR
 
 /* Suffixed _IPN because this module's statics block already carries MENU_CANCEL,
  * TX_END and a PAD_* set for the sibling fragments; redefining those names with

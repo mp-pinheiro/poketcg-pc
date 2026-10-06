@@ -1,5 +1,6 @@
 #include "home/play_area.h"
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/objects.h"
 #include "mem.h"
@@ -57,9 +58,9 @@
 #include "mem.h"
 
 #define BANK_OPEN_IN_PLAY_AREA_SCREEN 0x06u
-#define OPEN_IN_PLAY_AREA_TEXT_TABLE 0x42BBu
-#define OPEN_IN_PLAY_AREA_TRANSITION_TABLE1 0x42DBu
-#define OPEN_IN_PLAY_AREA_TRANSITION_TABLE2 0x434Bu
+#define OPEN_IN_PLAY_AREA_TEXT_TABLE OpenInPlayAreaScreen_TextTable_ADDR
+#define OPEN_IN_PLAY_AREA_TRANSITION_TABLE1 OpenInPlayAreaScreen_TransitionTable1_ADDR
+#define OPEN_IN_PLAY_AREA_TRANSITION_TABLE2 OpenInPlayAreaScreen_TransitionTable2_ADDR
 #define EMPTY_LINE_TEXT 0x0251u
 #define HAND_TEXT_2 0x024Eu
 #define PLAY_AREA_BENCH_5 0x05u
@@ -103,7 +104,7 @@ static void open_in_play_area_print_associated_text(uint8_t position)
 	if (position >= INPLAYAREA_PLAYER_HAND)
 		SwapTurn();
 	uint16_t card_id = GetCardIDFromDeckIndex(duel.a);
-	LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+	LoadCardDataToBuffer1_FromCardID(card_id);
 	if (position >= INPLAYAREA_PLAYER_HAND)
 		SwapTurn();
 	(void)CopyCardNameAndLevel(18u, 0u, 0u, 0u, 0u);
@@ -243,7 +244,7 @@ void OpenInPlayAreaScreen_TurnHolderPlayArea(void)
 	if (duel.a == 0xFFu)
 		return;
 	uint16_t card_id = GetCardIDFromDeckIndex(duel.a);
-	LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+	LoadCardDataToBuffer1_FromCardID(card_id);
 	wCurPlayAreaY = 0u;
 	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
 }
@@ -261,7 +262,7 @@ void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void)
 		return;
 	SwapTurn();
 	uint16_t card_id = GetCardIDFromDeckIndex(duel.a);
-	LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+	LoadCardDataToBuffer1_FromCardID(card_id);
 	wCurPlayAreaY = 0u;
 	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
 	SwapTurn();

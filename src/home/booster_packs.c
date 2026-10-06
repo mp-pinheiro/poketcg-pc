@@ -1,5 +1,6 @@
 #include "home/booster_packs.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -65,7 +66,7 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 
 #include "generated/wram.h"
 
-#define BOOSTER_DATA_BASE 0x64E4u
+#define BOOSTER_DATA_BASE BoosterPack_ColosseumNeutral_ADDR
 
 #include "home/booster_packs.h"
 #include "generated/wram.h"
@@ -231,21 +232,21 @@ AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergy(void)
 /* >>> factory GenerateEnergyBoosterGrassPsychic */
 GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterGrassPsychic(void)
 {
-	return GenerateTwoTypesEnergyBooster(0x63CDu);
+	return GenerateTwoTypesEnergyBooster(EnergyBoosterGrassPsychicData_ADDR);
 }
 /* <<< factory GenerateEnergyBoosterGrassPsychic */
 
 /* >>> factory GenerateEnergyBoosterLightningFire */
 GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterLightningFire(void)
 {
-	return GenerateTwoTypesEnergyBooster(0x63C9u);
+	return GenerateTwoTypesEnergyBooster(EnergyBoosterLightningFireData_ADDR);
 }
 /* <<< factory GenerateEnergyBoosterLightningFire */
 
 /* >>> factory GenerateEnergyBoosterWaterFighting */
 GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterWaterFighting(void)
 {
-	return GenerateTwoTypesEnergyBooster(0x63CBu);
+	return GenerateTwoTypesEnergyBooster(EnergyBoosterWaterFightingData_ADDR);
 }
 /* <<< factory GenerateEnergyBoosterWaterFighting */
 
@@ -349,11 +350,11 @@ void GenerateBoosterEnergies(void)
 	if (hi != 0u) {
 		uint8_t lo = gb_read8(ptr_addr);
 		uint16_t target = (uint16_t)(lo | ((uint16_t)hi << 8));
-		if (target == 0x6387u) { GenerateRandomEnergy(); return; }
-		if (target == 0x6390u) { GenerateRandomEnergyBooster(); return; }
-		if (target == 0x639Cu) { GenerateEnergyBoosterLightningFire(); return; }
-		if (target == 0x63A1u) { GenerateEnergyBoosterWaterFighting(); return; }
-		if (target == 0x63A6u) { GenerateEnergyBoosterGrassPsychic(); return; }
+		if (target == GenerateRandomEnergy_ADDR) { GenerateRandomEnergy(); return; }
+		if (target == GenerateRandomEnergyBooster_ADDR) { GenerateRandomEnergyBooster(); return; }
+		if (target == GenerateEnergyBoosterLightningFire_ADDR) { GenerateEnergyBoosterLightningFire(); return; }
+		if (target == GenerateEnergyBoosterWaterFighting_ADDR) { GenerateEnergyBoosterWaterFighting(); return; }
+		if (target == GenerateEnergyBoosterGrassPsychic_ADDR) { GenerateEnergyBoosterGrassPsychic(); return; }
 		return;
 	}
 	uint8_t a = gb_read8(ptr_addr);

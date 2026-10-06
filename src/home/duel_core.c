@@ -1,5 +1,6 @@
 #include "home/duel_core.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/palettes.h"
@@ -33,7 +34,7 @@ static void load_tx_ram2(uint16_t text_id)
 #define CARD_LOCATION_PLAY_AREA 0x10u
 #define CARD_DATA_HP 0x08u
 #define CARD_DATA_AI_INFO 0x40u
-#define TRAINER_TO_PKMN_DATA 0x6db9u /* bank 1 */
+#define TRAINER_TO_PKMN_DATA (ConvertSpecialTrainerCardToPokemon_ADDR + 0x35u) /* bank 1 */
 #define MYSTERIOUS_FOSSIL 0xccu
 #define CLEFAIRY_DOLL 0xcbu
 

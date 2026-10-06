@@ -1,12 +1,13 @@
 #include "home/npc_data.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
 #include "mem.h"
 #define NPC_HEADER_POINTERS_BANK 0x04u
-#define NPC_HEADER_POINTERS_ADDR 0x58F5u
+#define NPC_HEADER_POINTERS_ADDR NPCHeaderPointers_ADDR
 
 #define NPC_DATA_NAME_TEXT 0x07u
 
@@ -23,7 +24,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define NPC_DUEL_CONFIGURATIONS_BANK 0x04u
-#define NPC_DUEL_CONFIGURATIONS_ADDR 0x5FAEu
+#define NPC_DUEL_CONFIGURATIONS_ADDR DeckIDDuelConfigurations_ADDR
 
 #include "home/npc_data.h"
 #include "generated/wram.h"

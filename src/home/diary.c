@@ -1,5 +1,6 @@
 #include "home/diary.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -26,7 +27,7 @@ void _PauseMenu_Diary(void)
 	uint8_t saved_d291 = wd291;
 	InitMenuRegs init = InitMenuScreen();
 	DrawRegularTextBox(&init.hl, 0u, 20u, 12u, 0u, 0u);
-	LabelsResult labels = PrintLabels(0x40F7u, 0u, 0u);
+	LabelsResult labels = PrintLabels(DiaryScreenLabels_ADDR, 0u, 0u);
 	DrawPauseMenuPlayerPortrait(1u, 3u); /* menus/diary.asm:11 lb bc, 1, 3 */
 	PrintAlbumProgress(12u, 8u);
 	PrintPlayTime(13u, 10u);

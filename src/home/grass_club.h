@@ -1,3 +1,4 @@
+#include "generated/rom.h"
 #ifndef POKETCG_HOME_GRASS_CLUB_H
 #define POKETCG_HOME_GRASS_CLUB_H
 
@@ -15,5 +16,5 @@ ScriptNikkiResult Script_Nikki(void);
 typedef struct { uint8_t a; uint8_t f; } PreloadNikkiInGrassClubResult;
 PreloadNikkiInGrassClubResult Preload_NikkiInGrassClub(void);
 /* <<< factory Preload_NikkiInGrassClub */
-#define Script_Nikki_START_SCRIPT 0x67a6u
+#define Script_Nikki_START_SCRIPT (Script_Nikki_ADDR + 0x08u)
 #endif /* POKETCG_HOME_GRASS_CLUB_H */

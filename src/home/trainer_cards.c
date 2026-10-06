@@ -475,14 +475,14 @@ FindDupResult FindDuplicateCards(uint16_t hl, uint8_t d)
 		if (idx == 0xFFu)
 			break;
 		d = 0u;
-		uint8_t b = (uint8_t)GetCardIDFromDeckIndex(idx);
+		uint8_t b = GetCardIDFromDeckIndex(idx);
 		uint16_t inner = outer;
 		for (;;) {
 			uint8_t c = gb_read8(inner);
 			inner = (uint16_t)(inner + 1u);
 			if (c == 0xFFu)
 				break;
-			if ((uint8_t)GetCardIDFromDeckIndex(c) != b)
+			if (GetCardIDFromDeckIndex(c) != b)
 				continue;
 			if (GetCardType(b) < TYPE_ENERGY)
 				wce0f = c;
@@ -523,7 +523,7 @@ PickPokedexResult PickPokedexCards(void)
 	wAIPokedexCounter = 0;
 	for (uint8_t i = 0; i < 5; i++) {
 		indices[i] = gb_read8((uint16_t)(deck + i));
-		types[i] = GetCardType((uint8_t)GetCardIDFromDeckIndex(indices[i]));
+		types[i] = GetCardType(GetCardIDFromDeckIndex(indices[i]));
 		gb_write8((uint16_t)(wce08_ADDR + i), types[i]);
 		gb_write8((uint16_t)(wce0f_ADDR + i), indices[i]);
 	}
@@ -725,7 +725,7 @@ AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(uint8_t d)
 		return (AIDecidePokemonFluteResult){count, count == 0u ? 0x80u : 0u, d};
 	wce06 = count;
 	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
-	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(arena);
+	uint8_t card_id = GetCardIDFromDeckIndex(arena);
 	if (card_id == WIGGLYTUFF)
 		return (AIDecidePokemonFluteResult){card_id, 0x90u, 0u};
 	if (count < 4u)
@@ -849,7 +849,7 @@ PickPokedexResult PickPokedexCards_Unreferenced(void)
 	wAIPokedexCounter = 0;
 	for (uint8_t i = 0; i < 5u; i++) {
 		indices[i] = gb_read8((uint16_t)(deck + i));
-		types[i] = GetCardType((uint8_t)GetCardIDFromDeckIndex(indices[i]));
+		types[i] = GetCardType(GetCardIDFromDeckIndex(indices[i]));
 		gb_write8((uint16_t)(wce08_ADDR + i), types[i]);
 		gb_write8((uint16_t)(wce0f_ADDR + i), indices[i]);
 	}
@@ -986,7 +986,7 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a, uint8_t d)
 	uint8_t e = PLAY_AREA_ARENA;
 	while (d != 0u) {
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
-		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
 		wTempCardID = card_id;
 		LoadCardDataToBuffer1_FromCardID(card_id);
 		wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
@@ -1077,7 +1077,7 @@ AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a, uint
 	uint8_t e = PLAY_AREA_ARENA;
 	while (d != 0u) {
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
-		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
 		wTempCardID = card_id;
 		LoadCardDataToBuffer1_FromCardID(card_id);
 		wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
@@ -1224,7 +1224,7 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 			if (evolve.f & 0x10u)
 				continue;
 
-			uint8_t evolving_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+			uint8_t evolving_id = GetCardIDFromDeckIndex(deck_index);
 			uint8_t dragonite_carry = 0u;
 			if (evolving_id == DRAGONITE_LV41) {
 				if (e == 0u) {
@@ -2597,7 +2597,7 @@ static AIEnergySearchScanResult energy_search_scan(uint8_t type_filter)
 	uint8_t e = PLAY_AREA_ARENA;
 	for (;;) {
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
-		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
 		wTempCardID = card_id;
 		LoadCardDataToBuffer1_FromCardID(card_id);
 		uint8_t type = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
@@ -2991,7 +2991,7 @@ AIDecideParameterResult AIDecide_PlusPower_Phase14(uint8_t d)
 	if (boosted < 30u)
 		return (AIDecideParameterResult){boosted, 0x10u, d};
 	SwapTurn();
-	uint8_t defender = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+	uint8_t defender = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 	d = 0u;
 	SwapTurn();
 	if (defender == MR_MIME)
@@ -3169,7 +3169,7 @@ AIDecideGustOfWindResult AIDecide_GustOfWind(uint8_t d, uint8_t e)
 			return (AIDecideGustOfWindResult){energy.a, or_a_flags(energy.a), d, e};
 	}
 	/* .check_id */
-	uint8_t arena_id = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+	uint8_t arena_id = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 	d = 0u;
 	e = arena_id;
 	if (arena_id == MEW_LV23 || arena_id == MEWTWO_LV53)
@@ -3503,7 +3503,7 @@ AIDecide_ScoopUpResult AIDecide_ScoopUp(uint8_t d)
 			slot = bench.a;
 			goto articuno_bench;
 		}
-		uint8_t arena_id = (uint8_t)GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+		uint8_t arena_id = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 		d = 0u;
 		if (arena_id != ARTICUNO_LV37 && arena_id != CHANSEY)
 			return (AIDecide_ScoopUpResult){arena_id, or_a_flags(arena_id), d};
@@ -3607,7 +3607,7 @@ decide_switch:
 articuno_bench:
 	{
 		/* `push af` keeps the bench slot around the defender's id lookup. */
-		uint8_t defender_id = (uint8_t)GetCardIDFromDeckIndex(GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+		uint8_t defender_id = GetCardIDFromDeckIndex(GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 		d = 0u;
 		if (defender_id == SNORLAX)
 			return (AIDecide_ScoopUpResult){defender_id, or_a_flags(defender_id), d};
@@ -3875,11 +3875,11 @@ AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(uint8_t d)
 
 	/* .cannot_ko */
 	DuelistVarResult attacker = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	wTempTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(attacker.a);
+	wTempTurnDuelistCardID = GetCardIDFromDeckIndex(attacker.a);
 
 	SwapTurn();
 	DuelistVarResult defender = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	uint8_t defending_id = (uint8_t)GetCardIDFromDeckIndex(defender.a);
+	uint8_t defending_id = GetCardIDFromDeckIndex(defender.a);
 	d = 0u;
 	wTempNonTurnDuelistCardID = defending_id;
 	NoDamageOrEffectResult prevented =
@@ -3927,7 +3927,7 @@ AIDecide_PlusPower_Phase13Result AIDecide_PlusPower_Phase13(uint8_t d)
 				SwapTurn();
 				DuelistVarResult arena =
 					GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-				uint8_t defending = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+				uint8_t defending = GetCardIDFromDeckIndex(arena.a);
 				d = 0u;
 				SwapTurn();
 				/* `cp MR_MIME` / `ret z` returns with a = MR_MIME and Z set,

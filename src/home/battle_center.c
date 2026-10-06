@@ -1,5 +1,6 @@
 #include "home/battle_center.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -19,11 +20,11 @@ void Func_fc2b(void)
 		a = 2u;
 	uint16_t bc;
 	if (a == 0u)
-		bc = 0x7C64u;
+		bc = Script_fc64_ADDR;
 	else if (a == 1u)
-		bc = 0x7C68u;
+		bc = Script_fc68_ADDR;
 	else
-		bc = 0x7C60u;
+		bc = Script_fc60_ADDR;
 	wCurrentNPCNameTx = (uint8_t)(0x03B0u & 0xFFu);
 	gb_write8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u), (uint8_t)(0x03B0u >> 8));
 	SetNextScript(bc);

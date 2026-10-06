@@ -50,6 +50,7 @@ typedef struct {
 } ScriptEntryRow;
 
 const ScriptEntryRow *ScriptEntryLookup(uint16_t address);
+const ScriptEntryRow *ScriptEntryLookupBank(uint8_t bank, uint16_t address);
 
 /* Performs EnterScript's `jp hl` and returns the entry's exit flags, which the
  * jump makes the caller's: FindNPCOrObject tests carry after the PRESSED_A slot
@@ -57,6 +58,8 @@ const ScriptEntryRow *ScriptEntryLookup(uint16_t address);
  * script entry, or one whose routine is unported, so a whole-game run fails
  * loudly instead of silently skipping a script. */
 ScriptEntryRegs ScriptEntryEnter(uint16_t target);
+ScriptEntryRegs ScriptEntryEnterWithBank(uint16_t target, uint8_t bank, uint8_t f,
+                                         uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 ScriptEntryRegs ScriptEntryEnterWith(uint16_t target, uint8_t f, uint8_t b, uint8_t c,
                                      uint8_t d, uint8_t e);
 

@@ -8,6 +8,9 @@
 #include "home/palettes.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+#ifndef wConsolePaletteData_ADDR
+#define wConsolePaletteData_ADDR wBGP_ADDR
+#endif
 
 static void fill_words(uint16_t address, uint16_t count, uint8_t lo, uint8_t hi)
 {

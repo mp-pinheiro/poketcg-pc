@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -89,7 +90,6 @@
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define DeckNameSuffix_ADDR 0x52A7u
 
 #include "home/process_text.h"
 #include "home/print_text.h"
@@ -165,7 +165,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define NewDeckText 0x0223u
-#define DECK_NAME_SUFFIX_ADDR_590 0x52A7u
+#define DECK_NAME_SUFFIX_ADDR_590 DeckNameSuffix_ADDR
 
 #include "home/deck_configuration.h"
 #include "mem.h"
@@ -190,7 +190,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define DECK_NAME_SIZE_WO_SUFFIX 0x15u
-#define APPEND_DECK_NAME_TEXT_START_ADDR 0x52F8u
+#define APPEND_DECK_NAME_TEXT_START_ADDR (AppendDeckName_ADDR + 0x3Au)
 
 #include "home/deck_configuration.h"
 #include "home/text_box.h"
@@ -202,7 +202,7 @@
 #include "generated/hram.h"
 #include "mem.h"
 #define TRUE 0x01u
-#define DECK_NAME_MENU_DATA_ADDR 0x5242u
+#define DECK_NAME_MENU_DATA_ADDR DeckNameMenuData_ADDR
 
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
@@ -213,7 +213,7 @@
 
 #define SYM_CURSOR_U 0x0Cu
 #define SYM_CURSOR_D 0x2Fu
-#define Text_9a36 0x5A36u
+#define Text_9a36 Text_9a36_ADDR
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
 #include "home/menus.h"
@@ -228,7 +228,7 @@
 #define NUM_DECK_CONFIRMATION_VISIBLE_CARDS 0x07u
 static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 0x05u, 0x06u, 0x10u, 0x20u};
 
-#define Text_9a30 0x5A30u
+#define Text_9a30 Text_9a30_ADDR
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
 #include "home/menus.h"
@@ -314,7 +314,7 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define PRINT_CUR_DECK_NAME_SUFFIX_ADDR 0x52A7u
+#define PRINT_CUR_DECK_NAME_SUFFIX_ADDR DeckNameSuffix_ADDR
 #define PRINT_CUR_DECK_MIDDLE_DOT 0x77u
 
 #include "generated/hram.h"
@@ -336,14 +336,14 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 /* poketcg.sym / poketcg.map, bank 02:
  *   $5eaf HandleDeckConfirmationMenu.CardSelectionParams,
  *   $5e31 UpdateConfirmationCardScreen. */
-#define DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR 0x5EAFu
-#define UPDATE_CONFIRMATION_CARD_SCREEN_ADDR 0x5E31u
+#define DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR (HandleDeckConfirmationMenu_ADDR + 0x6Eu)
+#define UPDATE_CONFIRMATION_CARD_SCREEN_ADDR UpdateConfirmationCardScreen_ADDR
 
 #include "home/deck_configuration.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define FILTERS_CARD_SELECTION_PARAMS_ADDR 0x5667u
+#define FILTERS_CARD_SELECTION_PARAMS_ADDR FiltersCardSelectionParams_ADDR
 
 #include "home/deck_configuration.h"
 #include "home/menus.h"
@@ -379,9 +379,9 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
 #include "home/sound.h"
-#define HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR 0x59B0u
-#define HANDLE_SELECT_UPDATE_CONFIRM_ADDR 0x5E31u
-#define HANDLE_SELECT_PRINT_CARD_ADDR 0x642Du
+#define HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR PrintDeckBuildingCardList_ADDR
+#define HANDLE_SELECT_UPDATE_CONFIRM_ADDR UpdateConfirmationCardScreen_ADDR
+#define HANDLE_SELECT_PRINT_CARD_ADDR PrintCardSelectionList_ADDR
 
 /* Remaining wCardListUpdateFunction targets armed outside this file
  * (poketcg.sym): 02:66fa PrintCardSetListEntries (card_album.asm:685-688),
@@ -390,16 +390,16 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
  * (deck_machine.asm:250-253), 02:73fe
  * UpdateDeckMachineScrollArrowsAndEntries (deck_machine.asm:1899-1902),
  * 02:7403 DrawDeckMachineScreen (deck_machine.asm:638-641). */
-#define CARD_LIST_PRINT_CARD_SET_ADDR 0x66FAu
-#define CARD_LIST_MISSING_CARDS_ADDR 0x6E9Au
-#define CARD_LIST_SHOW_RECEIVED_ADDR 0x7053u
-#define CARD_LIST_UPDATE_MACHINE_ARROWS_ADDR 0x73FEu
-#define CARD_LIST_DRAW_MACHINE_SCREEN_ADDR 0x7403u
+#define CARD_LIST_PRINT_CARD_SET_ADDR PrintCardSetListEntries_ADDR
+#define CARD_LIST_MISSING_CARDS_ADDR (HandleDeckMissingCardsList_ADDR + 0x9Cu)
+#define CARD_LIST_SHOW_RECEIVED_ADDR ShowReceivedCardsList_ADDR
+#define CARD_LIST_UPDATE_MACHINE_ARROWS_ADDR UpdateDeckMachineScrollArrowsAndEntries_ADDR
+#define CARD_LIST_DRAW_MACHINE_SCREEN_ADDR DrawDeckMachineScreen_ADDR
 
-#define HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR 0x5667u
-#define DECK_CONFIGURATION_MENU_HANDLER 0x5480u
-#define SEND_DECK_CONFIGURATION_MENU_HANDLER 0x6201u
-#define HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR 0x5670u
+#define HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR FiltersCardSelectionParams_ADDR
+#define DECK_CONFIGURATION_MENU_HANDLER HandleDeckConfigurationMenu_ADDR
+#define SEND_DECK_CONFIGURATION_MENU_HANDLER HandleSendDeckConfigurationMenu_ADDR
+#define HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR FilteredCardListSelectionParams_ADDR
 
 #include "home/deck_configuration.h"
 #include "home/deck_selection.h"
@@ -409,8 +409,8 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define HANDLE_PLAYERS_CARDS_DATA_ADDR 0x6396u
-#define HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR 0x642Du
+#define HANDLE_PLAYERS_CARDS_DATA_ADDR Data_a396_ADDR
+#define HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR PrintCardSelectionList_ADDR
 
 #include "home/card_album.h"
 #include "home/deck_configuration.h"
@@ -425,8 +425,8 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define SendTheseCardsText 0x0282u
-#define HANDLE_SEND_DECK_CONFIGURATION_MENU_DATA_ADDR 0x61F4u
-#define DATA_B04A_ADDR 0x704Au
+#define HANDLE_SEND_DECK_CONFIGURATION_MENU_DATA_ADDR SendDeckConfigurationMenuData_ADDR
+#define DATA_B04A_ADDR Data_b04a_ADDR
 #define CANCEL_SEND_DECK_CONFIGURATION_ADDR 0x627Du
 
 #include "home/deck_configuration.h"
@@ -446,7 +446,7 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define DECK_BUILD_MENU_DATA_ADDR 0x5751u
+#define DECK_BUILD_MENU_DATA_ADDR DeckBuildMenuData_ADDR
 /* <<< factory statics */
 
 
@@ -899,7 +899,7 @@ DrawListCursorResult DrawListCursor_Visible(void)
 void CountNumberOfCardsForEachCardType(void)
 {
 	uint16_t hl = wCardFilterCounts_ADDR;
-	const uint8_t *de = rom_ptr(2u, 0x597Du);
+	const uint8_t *de = rom_ptr(2u, CardTypeFilters_ADDR);
 	uint8_t type;
 	while ((type = *de++) != 0xFFu)
 		gb_write8(hl++, CountNumberOfCardsOfType(type));

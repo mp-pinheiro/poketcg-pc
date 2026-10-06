@@ -1,5 +1,6 @@
 #include "home/status.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -13,7 +14,7 @@
 #include "home/scenes.h"
 #include "home/scripting.h"
 #define EVENT_MEDAL_FLAGS 0x10u
-#define StatusScreenLabels 0x4095u
+#define StatusScreenLabels StatusScreenLabels_ADDR
 #define PAD_A 0x01u
 #define PAD_B 0x02u
 #define PAD_START 0x08u

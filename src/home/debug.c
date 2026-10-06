@@ -1,5 +1,6 @@
 #include "home/debug.h"
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/lcd.h"
 #include "home/tiles.h"
@@ -14,7 +15,7 @@
 
 #define SINGLE_SPACED 0x01u
 #define FUNC_80C64_BANK 0x20u
-#define FUNC_80C64_MENU_PARAMS_ADDR 0x4cbbu
+#define FUNC_80C64_MENU_PARAMS_ADDR CopyPalsToSRAMBuffer_ADDR
 #define FUNC_80C64_WIN_LOSE_PRIZES_TEXT 0x0385u
 #define FUNC_80C64_USE_DUELISTS_DECK_TEXT 0x0386u
 
@@ -30,9 +31,9 @@
 #include "mem.h"
 
 #define DEBUG_CREATE_BOOSTER_BANK 0x04u
-#define DEBUG_CREATE_BOOSTER_MENU_PARAMS 0x6919u
-#define DEBUG_CREATE_BOOSTER_MENU_POINTERS 0x67F1u
-#define DEBUG_CREATE_BOOSTER_TYPES 0x67FBu
+#define DEBUG_CREATE_BOOSTER_MENU_PARAMS Unknown_12919_ADDR
+#define DEBUG_CREATE_BOOSTER_MENU_POINTERS Unknown_127f1_ADDR
+#define DEBUG_CREATE_BOOSTER_TYPES Unknown_127fb_ADDR
 
 #include "home/sound.h"
 
@@ -57,7 +58,7 @@
 
 #include "generated/sram.h"
 #include "home/switch_sram.h"
-#define DEBUG_DUEL_MENU_PARAMS 0x6908u
+#define DEBUG_DUEL_MENU_PARAMS Unknown_12908_ADDR
 /* <<< factory statics */
 
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,

@@ -1,5 +1,6 @@
 #include "home/intro_sequence_commands.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -100,22 +101,22 @@ static void UpdateSpriteAttributes(void)
 
 #include "home/intro_sequence_commands.h"
 #include "generated/wram.h"
-#define INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION 0x5444u
-#define INTRO_SEQUENCE_CMD_WAIT 0x5460u
-#define INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS 0x5469u
-#define INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES 0x5486u
-#define INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC 0x5519u
-#define INTRO_SEQUENCE_CMD_WAIT_SFX 0x5523u
-#define INTRO_SEQUENCE_CMD_PLAY_SFX 0x5530u
-#define INTRO_SEQUENCE_CMD_FADE_IN 0x5539u
-#define INTRO_SEQUENCE_CMD_FADE_OUT 0x5543u
-#define INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE 0x5551u
-#define INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE 0x5558u
-#define INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE 0x555fu
-#define INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE 0x5575u
-#define INTRO_SEQUENCE_LOAD_OPENING_SCENE_AND_UPDATE_SGB_BORDER 0x5564u
-#define INTRO_SEQUENCE_LOAD_OPENING_SCENE 0x5582u
-#define INTRO_SEQUENCE_EMPTY_FUNC 0x559cu
+#define INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION IntroSequenceCmd_WaitOrbsAnimation_ADDR
+#define INTRO_SEQUENCE_CMD_WAIT IntroSequenceCmd_Wait_ADDR
+#define INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS IntroSequenceCmd_SetOrbsAnimations_ADDR
+#define INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES IntroSequenceCmd_SetOrbsCoordinates_ADDR
+#define INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC IntroSequenceCmd_PlayTitleScreenMusic_ADDR
+#define INTRO_SEQUENCE_CMD_WAIT_SFX IntroSequenceCmd_WaitSFX_ADDR
+#define INTRO_SEQUENCE_CMD_PLAY_SFX IntroSequenceCmd_PlaySFX_ADDR
+#define INTRO_SEQUENCE_CMD_FADE_IN IntroSequenceCmd_FadeIn_ADDR
+#define INTRO_SEQUENCE_CMD_FADE_OUT IntroSequenceCmd_FadeOut_ADDR
+#define INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE IntroSequenceCmd_LoadCharizardScene_ADDR
+#define INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE IntroSequenceCmd_LoadScytherScene_ADDR
+#define INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE IntroSequenceCmd_LoadAerodactylScene_ADDR
+#define INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE IntroSequenceCmd_LoadTitleScreenScene_ADDR
+#define INTRO_SEQUENCE_LOAD_OPENING_SCENE_AND_UPDATE_SGB_BORDER LoadOpeningSceneAndUpdateSGBBorder_ADDR
+#define INTRO_SEQUENCE_LOAD_OPENING_SCENE LoadOpeningScene_ADDR
+#define INTRO_SEQUENCE_EMPTY_FUNC IntroSequenceEmptyFunc_ADDR
 
 /* <<< factory statics */
 

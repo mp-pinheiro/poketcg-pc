@@ -1,5 +1,6 @@
 #include "home/fire_club_lobby.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -11,11 +12,11 @@
 #include "home/fire_club_lobby.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520 0x6D5Eu
+#define SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520 SlowpokePaintingObjectTable_ADDR
 
 #include "home/grass_club_entrance.h"
 #include "mem.h"
-#define AFTER_DUEL_TABLE_830 0x6D50u
+#define AFTER_DUEL_TABLE_830 (FireClubLobbyAfterDuel_ADDR + 0x07u)
 #define EVENT_LAD2_STATE 0x21u
 #define LAD2_SLOWPOKE_AVAILABLE 0x01u
 #define EVENT_PUPIL_JESSICA_STATE 0x20u

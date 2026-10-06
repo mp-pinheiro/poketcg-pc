@@ -1,5 +1,6 @@
 #include "home/debug_main.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 /* >>> factory statics */
 #include "generated/wram.h"
@@ -15,7 +16,7 @@
 
 /* debug_main.asm:21 `ld hl, Unknown_128f7` (naming.asm:42). $12661 is bank 4
  * ($12661 - 4 * $4000 + $4000 = $6661), so the label's banked address is $68F7. */
-#define UNKNOWN_128F7 0x68F7u
+#define UNKNOWN_128F7 Unknown_128f7_ADDR
 #define SINGLE_SPACED 0x01u
 #define DOUBLE_SPACED 0x00u
 /* <<< factory statics */
@@ -27,7 +28,7 @@ Func126b3Result Func_126b3(void)
 {
 	const uint8_t menu = gb_read8(hCurMenuItem_ADDR);
 	if (menu == 10u)
-		return (Func126b3Result){0x61u, 0x00u, 0x6861u};
+		return (Func126b3Result){0x61u, 0x00u, DebugQuit_ADDR};
 	return (Func126b3Result){0x00u, 0x80u, 0x0000u};
 }
 

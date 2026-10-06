@@ -1,5 +1,6 @@
 #include "home/challenge_hall_entrance.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -36,9 +37,9 @@ PreloadClerk9Result Preload_Clerk9(uint8_t b, uint8_t c, uint8_t d, uint8_t e, u
 	 * jumped to; the event helpers keep hl, so it is the exit value. A count
 	 * of nine or more skips the table and keeps the table's own address. */
 	static const uint16_t jump_table[9] = {
-		0x6FE4u, 0x6FE4u, 0x6FE4u, 0x6FBAu, 0x6FDEu, 0x6FC9u, 0x6FD8u, 0x6FD8u, 0x6FD8u,
+		(Preload_Clerk9_ADDR + 0x4Eu), (Preload_Clerk9_ADDR + 0x4Eu), (Preload_Clerk9_ADDR + 0x4Eu), (Preload_Clerk9_ADDR + 0x24u), (Preload_Clerk9_ADDR + 0x48u), (Preload_Clerk9_ADDR + 0x33u), (Preload_Clerk9_ADDR + 0x42u), (Preload_Clerk9_ADDR + 0x42u), (Preload_Clerk9_ADDR + 0x42u),
 	};
-	result.hl = medals < 9u ? jump_table[medals] : 0x6FA8u;
+	result.hl = medals < 9u ? jump_table[medals] : (Preload_Clerk9_ADDR + 0x12u);
 	if (medals < 9u) {
 		if (medals == 3u) {
 			if (GetEventValue(EVENT_CHALLENGE_CUP_1_STATE) == CHALLENGE_CUP_NOT_STARTED) {

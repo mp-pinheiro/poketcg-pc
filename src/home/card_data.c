@@ -2,6 +2,8 @@
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+#include "generated/rom.h"
+#include "home/card_id_bus.h"
 #include "home/copy.h"
 #include "home/frames.h"
 #include "home/switch_rom.h"
@@ -19,45 +21,63 @@
 /* Card data and CardPointers both live in ROM bank 0x0c (data/cards.asm). The asm
  * reaches them through BankpushROM2/BankpopROM, whose net effect is a temporary bank
  * switch -- collapsed here to direct rom_ptr reads. */
-#define BANK_CARD_DATA      0x0cu
-#define CARD_POINTERS       0x4c5cu
+#define BANK_CARD_DATA      CardPointers_BANK
+#define CARD_POINTERS       CardPointers_ADDR
 #define CARD_DATA_TYPE      0x00u
 #define CARD_DATA_NAME      0x03u
 #define CARD_DATA_RARITY    0x05u
 #define CARD_DATA_SET       0x06u
+#ifndef POKETCG_CARD_COUNT
+#define POKETCG_CARD_COUNT 228u
+#endif
+#define NUM_CARDS POKETCG_CARD_COUNT
+#define GETCARDPTR_BOUND ((uint16_t)(CARD_POINTERS + 2u + 2u * NUM_CARDS))
 
-static uint16_t get_card_pointer(uint8_t cardid)
+static CardPtrResult get_card_pointer(CardId cardid)
 {
-	const uint8_t *p = rom_ptr(BANK_CARD_DATA, (uint16_t)(CARD_POINTERS + (uint16_t)cardid * 2u));
-	return (uint16_t)(p[0] | (uint16_t)p[1] << 8);
+#ifdef POKETCG_PROFILE_EXTENDED
+	uint16_t entry = (uint16_t)(CARD_POINTERS + (uint16_t)cardid * 3u);
+	uint16_t bound = (uint16_t)(CARD_POINTERS + 3u * (NUM_CARDS + 1u));
+	if (entry >= bound)
+		return (CardPtrResult){entry, 1u, (uint8_t)(entry == bound), 0u};
+	const uint8_t *p = rom_ptr(BANK_CARD_DATA, entry);
+	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0u, 0u, p[2]};
+#else
+	uint16_t entry = (uint16_t)(CARD_POINTERS + (uint16_t)cardid * 2u);
+	if (entry >= GETCARDPTR_BOUND)
+		return (CardPtrResult){entry, 1u, (uint8_t)(entry == GETCARDPTR_BOUND), 0u};
+	const uint8_t *p = rom_ptr(BANK_CARD_DATA, entry);
+	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0u, 0u, BANK_CARD_DATA};
+#endif
 }
 
-static const uint8_t *card_data(uint8_t cardid)
+static const uint8_t *card_data(CardId cardid)
 {
-	return rom_ptr(BANK_CARD_DATA, get_card_pointer(cardid));
+	CardPtrResult pointer = get_card_pointer(cardid);
+	return rom_ptr(pointer.bank, pointer.hl);
 }
 
 /* card_data.asm:84-96 */
-uint8_t GetCardType(uint8_t e)
+uint8_t GetCardType(CardId e)
 {
 	return card_data(e)[CARD_DATA_TYPE];
 }
 
 /* card_data.asm:99-114 */
-uint16_t GetCardName(uint8_t e)
+uint16_t GetCardName(CardId e)
 {
 	const uint8_t *p = card_data(e) + CARD_DATA_NAME;
 	return (uint16_t)(p[0] | (uint16_t)p[1] << 8);
 }
 
 /* card_data.asm:117-138 */
-CardTRS GetCardTypeRarityAndSet(uint8_t a)
+CardTRS GetCardTypeRarityAndSet(CardId a)
 {
 	const uint8_t *p = card_data(a);
 	return (CardTRS){p[CARD_DATA_TYPE], p[CARD_DATA_RARITY], p[CARD_DATA_SET]};
 }
 
-static void load_card_data(uint8_t cardid, uint16_t dest)
+static void load_card_data(CardId cardid, uint16_t dest)
 {
 	LoadCardDataToHL_FromCardID(cardid, &dest, dest);
 }
@@ -67,12 +87,11 @@ static void load_card_data(uint8_t cardid, uint16_t dest)
  * CardPointers[229] is the NULL terminator. */
 void LoadCardDataToBuffer1_FromName(uint16_t de)
 {
-	for (uint8_t i = 1u;; i++) {
-		const uint8_t *tp = rom_ptr(BANK_CARD_DATA, (uint16_t)(CARD_POINTERS + (uint16_t)i * 2u));
-		uint16_t ptr = (uint16_t)(tp[0] | (uint16_t)tp[1] << 8);
-		if (ptr == 0)
+	for (CardId i = 1u;; i++) {
+		CardPtrResult pointer = get_card_pointer(i);
+		if (pointer.carry)
 			return;
-		const uint8_t *cd = rom_ptr(BANK_CARD_DATA, ptr);
+		const uint8_t *cd = rom_ptr(pointer.bank, pointer.hl);
 		uint16_t name = (uint16_t)(cd[CARD_DATA_NAME] | (uint16_t)cd[CARD_DATA_NAME + 1u] << 8);
 		if (name == de) {
 			load_card_data(i, wLoadedCard1_ADDR);
@@ -81,18 +100,17 @@ void LoadCardDataToBuffer1_FromName(uint16_t de)
 	}
 }
 
-void LoadCardDataToBuffer1_FromCardID(uint8_t e)
+void LoadCardDataToBuffer1_FromCardID(CardId e)
 {
 	load_card_data(e, wLoadedCard1_ADDR);
 }
 
-void LoadCardDataToBuffer2_FromCardID(uint8_t e)
+void LoadCardDataToBuffer2_FromCardID(CardId e)
 {
 	load_card_data(e, wLoadedCard2_ADDR);
 }
 
-#define BANK_CARD_GFX 0x31u
-#define PAL_SIZE      0x08u
+#define BANK_CARD_GFX  CardGraphics_BANK
 
 /* card_data.asm:176-205. The gfx index encodes its bank offset in bits 15-11
  * (bank = BANK(CardGraphics) + idx>>11) and the tile address in the rest (*8,
@@ -103,31 +121,25 @@ void LoadCardGfx(uint16_t hl, uint16_t de, uint8_t b, uint8_t c)
 	BankswitchROM((uint8_t)(BANK_CARD_GFX + (hl >> 11)));
 	uint16_t src = (uint16_t)(hl << 3);
 	src = (uint16_t)(((src & 0x7F00u) | 0x4000u) | (src & 0x00FFu));
+	src = card_gfx_prepare(src);
 	CopyGfxData(&src, &de, b, c);
-	uint16_t pal = wCardPalette_ADDR;
-	for (uint8_t i = 0; i < PAL_SIZE; i++)
-		gb_write8(pal++, gb_read8(src++));
+	card_gfx_finish(src);
 	BankswitchROM(saved);
 }
 
-#define NUM_CARDS 228u
-#define GETCARDPTR_BOUND ((uint16_t)(CARD_POINTERS + 2u + 2u * NUM_CARDS))
+
 
 /* card_data.asm:140-168. e indexes CardPointers (2 bytes/entry, skipping neither
  * the leading NULL nor the trailing terminator here -- e > NUM_CARDS is out of
  * bounds). bound_zero mirrors the asm's own `cp`-pair Z bit at the boundary
  * check, needed by the probe adapter to reproduce the exact exit flags. */
-CardPtrResult GetCardPointer(uint8_t e)
+CardPtrResult GetCardPointer(CardId e)
 {
-	uint16_t hl = (uint16_t)(CARD_POINTERS + (uint16_t)e * 2u);
-	if (hl >= GETCARDPTR_BOUND)
-		return (CardPtrResult){hl, 1, (uint8_t)(hl == GETCARDPTR_BOUND)};
-	const uint8_t *p = rom_ptr(BANK_CARD_DATA, hl);
-	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0, 0};
+	return get_card_pointer(e);
 }
 
 /* >>> factory LoadCardDataToHL_FromCardID */
-void LoadCardDataToHL_FromCardID(uint8_t e, uint16_t *hl, uint16_t saved_hl)
+void LoadCardDataToHL_FromCardID(CardId e, uint16_t *hl, uint16_t saved_hl)
 {
 	uint16_t de = *hl;
 	CardPtrResult card = GetCardPointer(e);
@@ -136,7 +148,7 @@ void LoadCardDataToHL_FromCardID(uint8_t e, uint16_t *hl, uint16_t saved_hl)
 		return;
 	}
 	uint16_t bank_stack = (uint16_t)((uint16_t)hBankROM << 8);
-	BankpushROM2Result pushed = BankpushROM2(BANK_CARD_DATA, 0u, 0u, 0u, 0u, e, card.hl);
+	BankpushROM2Result pushed = BankpushROM2(card.bank, 0u, 0u, 0u, 0u, e, card.hl);
 	uint16_t src = pushed.hl;
 	uint8_t copy_length = PKMN_CARD_DATA_LENGTH;
 	uint8_t spill[PKMN_CARD_DATA_LENGTH];

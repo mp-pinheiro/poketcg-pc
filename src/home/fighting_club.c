@@ -1,5 +1,6 @@
 #include "home/fighting_club.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -7,7 +8,7 @@
 #include "home/fighting_club.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define FightingClubAfterDuelTable 0x5daau
+#define FightingClubAfterDuelTable (FightingClubAfterDuel_ADDR + 0x07u)
 
 #include "home/scripting.h"
 #define EVENT_PUPIL_MICHAEL_STATE 0x11u

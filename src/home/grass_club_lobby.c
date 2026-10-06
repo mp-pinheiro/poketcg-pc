@@ -1,5 +1,6 @@
 #include "home/grass_club_lobby.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -7,7 +8,7 @@
 #include "home/grass_club_lobby.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define GrassClubLobbyAfterDuelTable 0x65cbu
+#define GrassClubLobbyAfterDuelTable (GrassClubLobbyAfterDuel_ADDR + 0x07u)
 #include "home/scripting.h"
 #define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
 #define TRUE 0x01u

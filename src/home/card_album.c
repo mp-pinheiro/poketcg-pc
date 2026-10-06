@@ -1,5 +1,6 @@
 #include "home/card_album.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -453,10 +454,10 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 /* card_album.asm:685-688 parks PrintCardSetListEntries (02:66fa) in
  * wCardListUpdateFunction; deck_configuration.c's CallIndirect registry
  * dispatches it. */
-#define PRINT_CARD_SET_LIST_ENTRIES 0x66FAu
+#define PRINT_CARD_SET_LIST_ENTRIES PrintCardSetListEntries_ADDR
 /* >>> factory CardAlbum */
-#define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS 0x6A02u
-#define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS 0x6A0Au
+#define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS (CardAlbum_ADDR + 0xEFu)
+#define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum_ADDR + 0xF7u)
 #define CARD_ALBUM_BOOSTER_PACKS_MENU_DATA 0x6B62u
 #define MENU_CANCEL 0xFFu
 #define MENU_CONFIRM 0x01u

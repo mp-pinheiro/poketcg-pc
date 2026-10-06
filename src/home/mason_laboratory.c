@@ -1,17 +1,18 @@
 #include "home/mason_laboratory.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
 #include "home/card_collection.h"
-#define ENERGY_CARD_LIST 0x55C4u
+#define ENERGY_CARD_LIST EnergyCardList_ADDR
 #define ENERGY_CARD_LIST_BANK 3u
 #define ENERGY_CARD_LIST_LEN 6u
 #define MASON_LAB_IN_PRACTICE_DUEL 0x01u
 
 #include "home/grass_club_entrance.h"
-#define MasonLaboratoryAfterDuelTable 0x5542u
+#define MasonLaboratoryAfterDuelTable (MasonLaboratoryAfterDuel_ADDR + 0x07u)
 
 #include "home/fire_club_lobby.h"
 #include "home/map.h"
@@ -22,8 +23,8 @@
 #define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
 #define MASON_LAB_RECEIVED_STARTER_DECK 0x03u
 #define NPC_DRMASON 0x01u
-#define SCRIPT_ENTER_LAB_FIRST_TIME 0x5753u
-#define CHALLENGE_MACHINE_OBJECT_TABLE 0x5572u
+#define SCRIPT_ENTER_LAB_FIRST_TIME Script_EnterLabFirstTime_ADDR
+#define CHALLENGE_MACHINE_OBJECT_TABLE ChallengeMachineObjectTable_ADDR
 
 #define MAP_EVENT_CHALLENGE_MACHINE 0x0au
 #define SOUTH 0x02u

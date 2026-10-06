@@ -1,5 +1,6 @@
 #include "home/load_gfx.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
@@ -14,7 +15,7 @@
 #include "home/switch_sram.h"
 #include "mem.h"
 
-#define GFX_TABLE_POINTERS 0x4e5du
+#define GFX_TABLE_POINTERS GfxTablePointers_ADDR
 #define GFX_TABLE_TILEMAPS 0u
 #define GFX_TABLE_TILESETS 2u
 #define GFX_TABLE_SPRITES 4u

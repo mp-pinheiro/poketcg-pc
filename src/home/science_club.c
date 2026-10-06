@@ -1,5 +1,6 @@
 #include "home/science_club.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -10,7 +11,7 @@
 #define WEST 0x03u
 
 #include "home/grass_club_entrance.h"
-#define ScienceClubAfterDuelTable 0x6bf8u
+#define ScienceClubAfterDuelTable (ScienceClubAfterDuel_ADDR + 0x07u)
 /* <<< factory statics */
 
 /* >>> factory Preload_Joseph */

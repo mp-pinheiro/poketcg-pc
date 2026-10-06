@@ -1,5 +1,6 @@
 #include "home/lightning_club_lobby.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -7,7 +8,7 @@
 #include "home/lightning_club_lobby.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define LightningClubLobbyAfterDuelTable 0x6374u
+#define LightningClubLobbyAfterDuelTable (LightningClubLobbyAfterDuel_ADDR + 0x07u)
 #include "home/scripting.h"
 #define EVENT_TEMP_DUELED_IMAKUNI 0x03u
 #define EVENT_IMAKUNI_STATE 0x13u

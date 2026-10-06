@@ -1,3 +1,4 @@
+#include "generated/rom.h"
 #ifndef POKETCG_HOME_POKEMON_DOME_ENTRANCE_H
 #define POKETCG_HOME_POKEMON_DOME_ENTRANCE_H
 
@@ -17,7 +18,7 @@ void PokemonDomeEntranceCloseTextBox(void);
  * into. Reached by `jp hl`, so b, c, d, e and hl are the caller's. */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } ScriptF631OwsF63cResult;
 ScriptF631OwsF63cResult Script_f631_ows_f63c(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
-#define Script_f631_ows_f63c_START_SCRIPT 0x7651u
+#define Script_f631_ows_f63c_START_SCRIPT (Script_f631_ADDR + 0x20u)
 /* <<< factory Script_f631_ows_f63c */
 /* >>> factory Script_f631 */
 void Script_f631(void);

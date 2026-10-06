@@ -1,15 +1,16 @@
 #include "home/science_club_lobby.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
-#define DATA_EBE7 0x6BE7u
+#define DATA_EBE7 Data_ebe7_ADDR
 #define DATA_EBE7_BANK 3u
 #include "home/science_club_lobby.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define ScienceClubLobbyAfterDuelTable 0x6b5eu
+#define ScienceClubLobbyAfterDuelTable (ScienceClubLobbyAfterDuel_ADDR + 0x07u)
 #include "home/scripting.h"
 #include "home/random.h"
 #include "home/card_data.h"

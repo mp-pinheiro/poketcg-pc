@@ -1,6 +1,7 @@
 #include "home/print_text.h"
 
 #include "generated/hram.h"
+#include "generated/rom.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/process_text.h"
@@ -30,18 +31,18 @@ uint16_t GetTextOffsetFromTextID(uint16_t text_id)
 		}
 	}
 	uint16_t index = (uint16_t)(text_id * 3u);
-	uint16_t table = (uint16_t)(0x4000u + index);
+	uint16_t table = (uint16_t)(TextOffsets_ADDR + index);
 	uint8_t lo;
 	uint8_t hi;
 	uint8_t bank_bits;
 
-	BankswitchROM(0x0d);
+	BankswitchROM(TextOffsets_BANK);
 	lo = gb_read8(table);
 	table++;
 	hi = gb_read8(table);
 	table++;
 	bank_bits = gb_read8(table);
-	BankswitchROM((uint8_t)(0x0d + (bank_bits << 2) + (hi >> 6)));
+	BankswitchROM((uint8_t)(TextOffsets_BANK + (bank_bits << 2) + (hi >> 6)));
 	return (uint16_t)(0x4000u | ((uint16_t)(hi & 0x3fu) << 8) | lo);
 }
 

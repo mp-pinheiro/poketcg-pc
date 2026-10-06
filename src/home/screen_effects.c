@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -18,7 +19,7 @@
 #include "mem.h"
 
 #define rSCX 0xFF43u
-#define DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR 0x4CBCu
+#define DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR DefaultScreenAnimationUpdate_ADDR
 #define RST00_ADDR 0x0000u
 
 #include "generated/wram.h"
@@ -28,7 +29,7 @@
 #include "generated/hram.h"
 #include "mem.h"
 
-#define SHAKE_SCREEN_X_UPDATE_FUNC_ADDR 0x4CFFu
+#define SHAKE_SCREEN_X_UPDATE_FUNC_ADDR (ShakeScreenX_ADDR + 0x11u)
 
 #include "generated/wram.h"
 #include "home/play_animation.h"
@@ -37,7 +38,7 @@
 
 #include "home/scroll.h"
 #include "generated/wram.h"
-#define DISTORTSCREEN_UPDATEFUNC_ADDR 0x4DDFu
+#define DISTORTSCREEN_UPDATEFUNC_ADDR (DistortScreen_ADDR + 0x1Cu)
 #define APPLYBACKGROUNDSCROLL_ADDR 0x3EA6u
 
 #include "home/copy.h"
@@ -46,12 +47,12 @@
 #include "home/screen_effects.h"
 #include "generated/wram.h"
 #define PALRGB_WHITE 0x7FFFu
-#define WHITEFLASHSCREEN_UPDATEFUNC_ADDR 0x4DA3u
+#define WHITEFLASHSCREEN_UPDATEFUNC_ADDR (WhiteFlashScreen_ADDR + 0x2Du)
 
 #include "home/screen_effects.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR 0x4D2Bu
+#define SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR (ShakeScreenY_ADDR + 0x11u)
 
 #include "home/screen_effects.h"
 #include "mem.h"
@@ -190,7 +191,7 @@ void Func_1ce03(uint8_t a)
 void (*ScreenEffectForAddress(uint16_t address))(void)
 {
 	static const uint16_t addresses[8] = {
-		0x50F4u, 0x5132u, 0x5199u, 0x51A3u, 0x51A3u, 0x51A3u, 0x51A3u, 0x51A3u,
+		(HandleTitleScreen_ADDR + 0x7Cu), (HandleStartMenu_ADDR + 0x16u), (HandleStartMenu_ADDR + 0x7Du), (HandleStartMenu_ADDR + 0x87u), (HandleStartMenu_ADDR + 0x87u), (HandleStartMenu_ADDR + 0x87u), (HandleStartMenu_ADDR + 0x87u), (HandleStartMenu_ADDR + 0x87u),
 	};
 	for (size_t i = 0; i < 8u; i++)
 		if (addresses[i] == address)
@@ -222,14 +223,14 @@ static void shake_screen_y_update(void)
 /* >>> factory ShakeScreenX_Big */
 void ShakeScreenX_Big(void)
 {
-	ShakeScreenX(0x4d61u);
+	ShakeScreenX(BigShakeOffsets_ADDR);
 }
 /* <<< factory ShakeScreenX_Big */
 
 /* >>> factory ShakeScreenX_Small */
 void ShakeScreenX_Small(void)
 {
-	ShakeScreenX(0x4d55u);
+	ShakeScreenX(SmallShakeOffsets_ADDR);
 }
 /* <<< factory ShakeScreenX_Small */
 
@@ -305,14 +306,14 @@ void ShakeScreenY(uint16_t hl)
 /* >>> factory ShakeScreenY_Big */
 void ShakeScreenY_Big(void)
 {
-	ShakeScreenY(0x4D61u);
+	ShakeScreenY(BigShakeOffsets_ADDR);
 }
 /* <<< factory ShakeScreenY_Big */
 
 /* >>> factory ShakeScreenY_Small */
 void ShakeScreenY_Small(void)
 {
-	ShakeScreenY(0x4D55u);
+	ShakeScreenY(SmallShakeOffsets_ADDR);
 }
 /* <<< factory ShakeScreenY_Small */
 

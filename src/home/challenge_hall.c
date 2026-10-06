@@ -1,5 +1,6 @@
 #include "home/challenge_hall.h"
 
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/scripting.h"
@@ -11,15 +12,14 @@
 #define NPC_HOST 0x4Au
 #define NPC_RONALD1 0x02u
 #define CHALLENGE_HALL_BANK 3u
-#define ChallengeHallAfterDuelTable_ADDR 0x7254u
 #define EVENT_CHALLENGE_CUP_IN_MENU 0x47u
 #define EVENT_CHALLENGE_CUP_STARTING 0x42u
 #define EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN 0x46u
 #define EVENT_CHALLENGE_CUP_OPPONENT_NUMBER 0x45u
 #define EVENT_CHALLENGE_CUP_NUMBER 0x44u
 #define CHALLENGE_HALL_NPC_COUNT 25u
-#define CHALLENGE_HALL_NPCS_ADDR 0x75B3u
-#define CHALLENGE_HALL_SCRIPT_F433 0x7433u
+#define CHALLENGE_HALL_NPCS_ADDR ChallengeHallNPCs_ADDR
+#define CHALLENGE_HALL_SCRIPT_F433 Script_f433_ADDR
 /* <<< factory statics */
 
 /* >>> factory ChallengeHallLoadMap */
@@ -76,7 +76,7 @@ PreloadChallengeHallOpponentResult Preload_ChallengeHallOpponent(void)
 			index = Random(count);
 		} while ((Func_f5cc(index).f & 0x10u) != 0u);
 		(void)Func_f5d4(index);
-		picked = gb_read8((uint16_t)(0x75B3u + index));
+		picked = gb_read8((uint16_t)(ChallengeHallNPCs_ADDR + index));
 	}
 	wTempNPC = picked;
 	wChallengeHallNPC = picked;

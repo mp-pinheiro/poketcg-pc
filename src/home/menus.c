@@ -1,5 +1,6 @@
 #include "home/menus.h"
 
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/bg_map.h"
@@ -21,8 +22,8 @@
  * ($01:60CE) into wMenuUpdateFunc; core.asm:3395 CardListFunction ($01:5719)
  * into wListFunctionPointer. */
 #define CARD_LIST_MENU_FUNCTION 0x283Fu
-#define PLAY_AREA_SCREEN_MENU_FUNCTION 0x60CEu
-#define CARD_LIST_FUNCTION 0x5719u
+#define PLAY_AREA_SCREEN_MENU_FUNCTION PlayAreaScreenMenuFunction_ADDR
+#define CARD_LIST_FUNCTION CardListFunction_ADDR
 #include "home/core.h"
 #include "home/indirect_dispatch.h"
 
