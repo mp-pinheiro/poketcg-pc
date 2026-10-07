@@ -5790,12 +5790,6 @@ void DrawDuelMainScene(void)
 	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	LoadPlayAreaCardGfx(result.a, (uint16_t)(V0_TILES1 + 0x500u));
 	SetBGP5ToCardPalette();
-	SwapTurn();
-	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	LoadPlayAreaCardGfx(result.a, (uint16_t)(V0_TILES1 + 0x200u));
-	SetBGP2ToCardPalette();
-	FlushAllPalettes();
-	SwapTurn();
 	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	if (result.a != 0xFFu) {
 		FillRectangle(0xD0u, 8u, 6u, 0x0005u, 0x0601u);
@@ -5803,11 +5797,15 @@ void DrawDuelMainScene(void)
 	}
 	SwapTurn();
 	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	LoadPlayAreaCardGfx(result.a, (uint16_t)(V0_TILES1 + 0x200u));
+	SetBGP2ToCardPalette();
+	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	if (result.a != 0xFFu) {
 		FillRectangle(0xA0u, 8u, 6u, 0x0C01u, 0x0601u);
 		(void)ApplyCardCGBAttributes(0u, 0x0C01u);
+		SwapTurn();
 	}
-	SwapTurn();
+	FlushAllPalettes();
 	/* core.asm:2394 passes `DuelEAndHPTileData` ($01:5188); the callee walks
 	 * hl until a block's first byte has bit 7 set. */
 	uint16_t tile_data = DUEL_E_AND_HP_TILE_DATA;
