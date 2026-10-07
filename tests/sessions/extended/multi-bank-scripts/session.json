@@ -1,0 +1,8 @@
+{
+  "goal": "Multi-bank overworld scripts: Continue from the diary in Mason Lab (MasonLabLoadMap and Script_DrMason from bank 3, MasonLabNPCS from bank 4), out to the overworld map, to the Fighting Club entrance (LoadClubEntrance and Ronald's first club-entrance encounter from bank 3, FightingClubEntranceNPCS from bank 4), into the Fighting Club hall to talk to Mitch, and back out through the entrance",
+  "name": "multi-bank-scripts",
+  "ordinals": 9917,
+  "pokes": {},
+  "recorded": "2026-10-07T04:55:24+00:00",
+  "schema": 1
+}

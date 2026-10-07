@@ -20,6 +20,12 @@
   "extended-animations-3": {
     "confirmed_ordinal": 9812
   },
+  "extended-attack-animations": {
+    "confirmed_ordinal": 24412
+  },
+  "multi-bank-scripts": {
+    "confirmed_ordinal": 9917
+  },
   "new-game": {
     "confirmed_ordinal": 5891
   },
