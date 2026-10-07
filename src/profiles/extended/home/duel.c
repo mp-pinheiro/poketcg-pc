@@ -341,10 +341,7 @@ void YourOrOppPlayAreaScreen_DrawCursor(void)
 #define BPA_DUELVARS_NUM_POKEMON 0xEFu
 #define BPA_DUELVARS_BENCH1_STAGE 0xCFu
 #define BPA_MAX_PLAY_AREA_POKEMON 0x06u
-#define BPA_CONSOLE_CGB 0x02u
 #define BPA_TILE_STAGE_BASE 0xE4u
-#define BPA_TILE_TWO_STAGE 0xECu
-#define BPA_TILE_TWO_STAGE_ALT 0xF0u
 #define BPA_TILE_EMPTY_SLOT 0xF4u
 #define BPA_RECT_STEPS_TILES 0x0102u
 #define BPA_RECT_STEPS_FLAT 0x0000u
@@ -1941,15 +1938,12 @@ void DrawPlayArea_BenchCards(uint8_t c, uint8_t d, uint8_t e)
 		tile = (uint8_t)((uint8_t)(stage << 2) + BPA_TILE_STAGE_BASE);
 		FillRectangle(tile, 2u, 2u, (uint16_t)((uint16_t)d << 8 | e),
 			BPA_RECT_STEPS_TILES);
-		if (wConsole == BPA_CONSOLE_CGB) {
-			uint8_t color = (tile == BPA_TILE_TWO_STAGE
-				|| tile == BPA_TILE_TWO_STAGE_ALT) ? 0x01u : 0x02u;
-
-			gb_write8(BPA_RVBK, 1u);
-			FillRectangle(color, 2u, 2u,
-				(uint16_t)((uint16_t)d << 8 | e), BPA_RECT_STEPS_FLAT);
-			gb_write8(BPA_RVBK, 0u);
-		}
+		hBankVRAM = 1u;
+		gb_write8(BPA_RVBK, 1u);
+		FillRectangle(0x00u, 2u, 2u,
+			(uint16_t)((uint16_t)d << 8 | e), BPA_RECT_STEPS_FLAT);
+		hBankVRAM = 0u;
+		gb_write8(BPA_RVBK, 0u);
 		d = (uint8_t)(d + c);
 	}
 
@@ -1965,12 +1959,12 @@ void DrawPlayArea_BenchCards(uint8_t c, uint8_t d, uint8_t e)
 			break;
 		FillRectangle(BPA_TILE_EMPTY_SLOT, 2u, 2u,
 			(uint16_t)((uint16_t)d << 8 | e), BPA_RECT_STEPS_TILES);
-		if (wConsole == BPA_CONSOLE_CGB) {
-			gb_write8(BPA_RVBK, 1u);
-			FillRectangle(0x02u, 2u, 2u,
-				(uint16_t)((uint16_t)d << 8 | e), BPA_RECT_STEPS_FLAT);
-			gb_write8(BPA_RVBK, 0u);
-		}
+		hBankVRAM = 1u;
+		gb_write8(BPA_RVBK, 1u);
+		FillRectangle(0x01u, 2u, 2u,
+			(uint16_t)((uint16_t)d << 8 | e), BPA_RECT_STEPS_FLAT);
+		hBankVRAM = 0u;
+		gb_write8(BPA_RVBK, 0u);
 		d = (uint8_t)(d + c);
 	}
 }
@@ -2092,11 +2086,11 @@ void DrawPlayArea_PrizeCards(uint16_t hl)
 		hl = (uint16_t)(hl + 1u);
 		uint16_t de = (uint16_t)(((uint16_t)y << 8) | x);
 		FillRectangle(tile, 2u, 2u, de, 0x0102u);
-		if (wConsole == CONSOLE_CGB) {
-			gb_write8(0xFF4Fu, 1u);
-			FillRectangle(0x02u, 2u, 2u, de, 0x0000u);
-			gb_write8(0xFF4Fu, 0u);
-		}
+		hBankVRAM = 1u;
+		gb_write8(0xFF4Fu, 1u);
+		FillRectangle(0x00u, 2u, 2u, de, 0x0000u);
+		hBankVRAM = 0u;
+		gb_write8(0xFF4Fu, 0u);
 	}
 }
 /* <<< factory DrawPlayArea_PrizeCards */
@@ -2152,13 +2146,11 @@ void DrawPlayArea_IconWithValue(uint8_t a, uint8_t b, uint16_t *hl)
 	uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
 	FillRectangle(a, 2u, 2u, de, 0x0102u);
 
-	if (wConsole == CONSOLE_CGB) {
-		hBankVRAM = 1u;
-		gb_write8(0xFF4Fu, 1u);
-		FillRectangle(0x02u, 2u, 2u, de, 0x0000u);
-		hBankVRAM = 0u;
-		gb_write8(0xFF4Fu, 0u);
-	}
+	hBankVRAM = 1u;
+	gb_write8(0xFF4Fu, 1u);
+	FillRectangle(0x00u, 2u, 2u, de, 0x0000u);
+	hBankVRAM = 0u;
+	gb_write8(0xFF4Fu, 0u);
 
 	d = (uint8_t)(d + 2u);
 	e = (uint8_t)(e + 1u);
