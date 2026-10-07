@@ -1,0 +1,9 @@
+{
+  "fn": "HandleAIHeal",
+  "case": "tests/profiles/extended/cases/pkmn_powers.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleAIHeal\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49664\": \"01\", \"49851\": \"00\", \"49864\": \"c9\", \"49903\": \"01\", \"51896\": \"01\", \"52111\": \"00\", \"52131\": \"01\", \"52145\": \"00\", \"52623\": \"00\", \"65431\": \"c2\", \"65437\": \"00\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAIHeal\", \"mismatches\": {\"completion\": [\"AIMakeDecision\", \"return\"]}}\n",
+  "restored": "{\"fn\": \"HandleAIHeal\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49664\": \"01\", \"49851\": \"00\", \"49864\": \"c9\", \"49903\": \"01\", \"51896\": \"01\", \"52111\": \"00\", \"52131\": \"01\", \"52145\": \"00\", \"52623\": \"00\", \"65431\": \"c2\", \"65437\": \"00\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

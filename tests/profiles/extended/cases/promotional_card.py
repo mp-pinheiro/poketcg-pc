@@ -6,20 +6,25 @@ CONTRACT = {
 
 CASES = {
     '_ShowPromotionalCardScreen': [
-        {   'oracle': False,
-            'why': 'Extended promotional screen waits for song and input completion outside the isolated oracle.',
-            'a': 0x1E,
-            'expect': {0xCBD2: b'\x02', 0xFF97: b'\x01', 0xCCB2: b'\x01', 0xCCB4: b'\x02', 0xFFA8: b'\x01'}},
-        {   'oracle': False,
-            'why': 'Extended promotional screen waits for song and input completion outside the isolated oracle.',
-            'a': 0xAA,
+        {   'd': 0x00,
+            'e': 0x1E,
+            'keys': [0x00, 0x02],
+            'read': {0xCBD2: 0x02, 0xFF97: 0x01},
+            'setup': [{'fn': 'CopyDMAFunction'}],
+            'instruction_budget': 0x1312D00,
+            'cycle_budget': 0x4C4B400},
+        {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
             'c': 0xCC,
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'expect': {0xCBD2: b'\x02', 0xFF97: b'\x01', 0xCCB2: b'\x01', 0xCCB4: b'\x02', 0xFFA8: b'\x01'}},
+            'keys': [0x00, 0x02],
+            'read': {0xCBD2: 0x02, 0xFF97: 0x01},
+            'setup': [{'fn': 'CopyDMAFunction'}],
+            'instruction_budget': 0x1312D00,
+            'cycle_budget': 0x4C4B400},
     ],
 }
 
@@ -33,3 +38,5 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _record in SCHEMA2_CASES["_ShowPromotionalCardScreen"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x5779}

@@ -1,0 +1,9 @@
+{
+  "fn": "ReturnToOverworldNoCallback",
+  "case": "tests/profiles/extended/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ReturnToOverworldNoCallback\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53422\": \"7e\", \"53500\": \"000037\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ReturnToOverworldNoCallback\", \"mismatches\": {\"a\": [8, 9]}}\n",
+  "restored": "{\"fn\": \"ReturnToOverworldNoCallback\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53422\": \"7e\", \"53500\": \"000037\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

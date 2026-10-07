@@ -865,12 +865,25 @@ CASES = {
         dict(high_recoil_fixture(vram=False), **HIGH_RECOIL_REGS),
     ],
     'ShowPromotionalCardScreen': [
-        {   'oracle': False,
-            'why': 'Extended promotional screen waits for song and input completion outside the isolated oracle.',
-            'expect': {0xCBD2: b'\x02', 0xFF97: b'\x01', 0xCCB2: b'\x01', 0xCCB4: b'\x02', 0xFFA8: b'\x01'}},
-        {   'oracle': False,
-            'why': 'Extended promotional screen waits for song and input completion outside the isolated oracle.',
-            'expect': {0xCBD2: b'\x02', 0xFF97: b'\x01', 0xCCB2: b'\x01', 0xCCB4: b'\x02', 0xFFA8: b'\x01'}},
+        {   'd': 0x00,
+            'e': 0x1E,
+            'keys': [0x00, 0x02],
+            'read': {0xCBD2: 0x02, 0xFF97: 0x01, 0xCCB2: 0x01, 0xCCB4: 0x02, 0xFFA8: 0x01},
+            'setup': [{'fn': 'CopyDMAFunction'}],
+            'instruction_budget': 0x1312D00,
+            'cycle_budget': 0x4C4B400},
+        {   'a': 0xAA,
+            'f': 0xF0,
+            'b': 0xBB,
+            'c': 0xCC,
+            'd': 0xDD,
+            'e': 0xEE,
+            'hl': 0x1234,
+            'keys': [0x00, 0x02],
+            'read': {0xCBD2: 0x02, 0xFF97: 0x01, 0xCCB2: 0x01, 0xCCB4: 0x02, 0xFFA8: 0x01},
+            'setup': [{'fn': 'CopyDMAFunction'}],
+            'instruction_budget': 0x1312D00,
+            'cycle_budget': 0x4C4B400},
     ],
 }
 
@@ -1082,3 +1095,5 @@ MUTATIONS["LookForCardIDInPlayArea_Bank8"] = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _record in SCHEMA2_CASES["ShowPromotionalCardScreen"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x2DFC, "bank": 0, "routine": "AssertSongFinished"}

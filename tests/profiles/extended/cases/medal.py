@@ -6,24 +6,33 @@ CONTRACT = {
 
 CASES = {
     'ShowMedalReceivedScreen': [
-        {   'oracle': False,
-            'why': 'Extended medal screen waits for song and frame-driven animation completion outside the isolated oracle.',
-            'a': 0x08,
-            'expect': {0xD101: b'\xfa', 0xD102: b'\x00', 0xD103: b'\xe0', 0xD11E: b'\x1e'}},
-        {   'oracle': False,
-            'why': 'Extended medal screen waits for song and frame-driven animation completion outside the isolated oracle.',
-            'a': 0x0F,
-            'expect': {0xD101: b'\xfa', 0xD102: b'\x07', 0xD103: b'\xe0', 0xD11E: b'\x23'}},
-        {   'oracle': False,
-            'why': 'Extended medal screen waits for song and frame-driven animation completion outside the isolated oracle.',
-            'a': 0x0A,
+        {   'a': 0x08,
+            'keys': [0x00, 0x01],
+            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
+            'wram': {0xCABB: b'\x00', 0xCAB4: b'\x00'},
+            'read': {0xD101: 0x03, 0xCE05: 0x02},
+            'instruction_budget': 0x3938700,
+            'cycle_budget': 0xE4E1C00},
+        {   'a': 0x0F,
+            'keys': [0x00, 0x01],
+            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
+            'wram': {0xCABB: b'\x00', 0xCAB4: b'\x00'},
+            'read': {0xD101: 0x03, 0xCE05: 0x02},
+            'instruction_budget': 0x3938700,
+            'cycle_budget': 0xE4E1C00},
+        {   'a': 0x0A,
             'f': 0xF0,
             'b': 0xBB,
             'c': 0xCC,
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'expect': {0xD101: b'\xfa', 0xD102: b'\x02', 0xD103: b'\xe0', 0xD11E: b'\x20'}},
+            'keys': [0x00, 0x01],
+            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
+            'wram': {0xCABB: b'\x00', 0xCAB4: b'\x00'},
+            'read': {0xD101: 0x03, 0xCE05: 0x02},
+            'instruction_budget': 0x3938700,
+            'cycle_budget': 0xE4E1C00},
     ],
 }
 
@@ -39,3 +48,5 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _record in SCHEMA2_CASES["ShowMedalReceivedScreen"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x2DFC, "bank": 0, "routine": "AssertSongFinished"}
