@@ -7,10 +7,12 @@ the fix changed: each must be an Extended function, have oracle cases in the
 Extended case modules, pass in the scoreboard, and have a revert: a mutation
 that puts the vanilla behavior back into the port, with a receipt under
 tools/oracle/fix_receipts proving an Extended case fails on it (`--prove`
-writes the receipts). A `data` row is a fix to text, graphics or map data,
-which the native port reads from the ROM-derived data pack, so the pack check
-is its evidence. A `removed` row belongs to a feature the profile removed
-(Card Pop!).
+writes the receipts). An `unfixed` row is a heading whose upstream **Fix** is
+still TODO: Extended keeps the vanilla behavior, so its routines only need
+cases that pass in the scoreboard. A `data` row is a fix to text, graphics or
+map data, which the native port reads from the ROM-derived data pack, so the
+pack check is its evidence. A `removed` row belongs to a feature the profile
+removed (Card Pop!).
 """
 
 from __future__ import annotations
@@ -35,11 +37,25 @@ FIXES = ROOT / "profiles" / "extended" / "fixes.toml"
 SCOREBOARD = ROOT / "build-extended" / "completion" / "scoreboard.json"
 RECEIPTS = ROOT / "tools" / "oracle" / "fix_receipts"
 REVERT_KEYS = ("routine", "source", "before", "after", "case", "index")
-KINDS = {"code", "data", "removed"}
+KINDS = {"code", "unfixed", "data", "removed"}
+
+
+def sections() -> dict[str, str]:
+    result: dict[str, str] = {}
+    heading = None
+    for line in SOURCE.read_text().splitlines():
+        if line.startswith("### "):
+            heading = line[4:].strip()
+            result[heading] = ""
+        elif line.startswith("## "):
+            heading = None
+        elif heading is not None:
+            result[heading] += line + "\n"
+    return result
 
 
 def headings() -> set[str]:
-    return {line[4:].strip() for line in SOURCE.read_text().splitlines() if line.startswith("### ")}
+    return set(sections())
 
 
 def case_routines(profile) -> set[str]:
@@ -122,10 +138,9 @@ def main() -> int:
             failures.append(f"{heading}: kind {kind!r} is not one of {sorted(KINDS)}")
             continue
         counts[kind] += 1
-        if kind == "code":
+        if kind in ("code", "unfixed"):
             if not routines:
-                failures.append(f"{heading}: a code fix names no routine")
-            reverts = row.get("reverts", [])
+                failures.append(f"{heading}: a {kind} row names no routine")
             for routine in routines:
                 if routine not in functions:
                     failures.append(f"{heading}: {routine} is not an Extended function")
@@ -133,6 +148,11 @@ def main() -> int:
                     failures.append(f"{heading}: {routine} has no Extended oracle cases")
                 elif status.get(routine) != "pass":
                     failures.append(f"{heading}: {routine} is {status.get(routine, 'not scored')} in the scoreboard")
+        if kind == "unfixed" and "**Fix:** TODO" not in sections().get(heading, ""):
+            failures.append(f"{heading}: upstream documents a fix, so the row must be code")
+        if kind == "code":
+            reverts = row.get("reverts", [])
+            for routine in routines:
                 if not any(revert.get("routine") == routine for revert in reverts):
                     failures.append(f"{heading}: {routine} has no revert")
             for revert in reverts:
@@ -159,7 +179,8 @@ def main() -> int:
             print(failure)
         print(f"extended-fixes: FAIL rows={len(rows)} failures={len(failures)}")
         return 1
-    print(f"extended-fixes: PASS rows={len(rows)} code={counts['code']} data={counts['data']} removed={counts['removed']}")
+    print(f"extended-fixes: PASS rows={len(rows)} code={counts['code']} unfixed={counts['unfixed']} "
+          f"data={counts['data']} removed={counts['removed']}")
     return 0
 
 

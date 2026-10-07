@@ -7,6 +7,13 @@ heading = "AI wrongfully adds score twice for attaching energy to Arena card"
 kind = "code"
 routines = ["DetermineAIScoreOfAttackEnergyRequirement"]
 
+[[fixes.reverts]]
+routine = "DetermineAIScoreOfAttackEnergyRequirement"
+source = "src/profiles/extended/home/energy.c"
+before = "\t\t(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);\n\t\tif (GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a > gb_read8(wDamage_ADDR))\n\t\t\tgoto check_evolution;"
+after = "\t\tif (hTempPlayAreaLocation_ff9d != 0u)\n\t\t\tgoto check_evolution;\n\t\t(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);\n\t\tif (GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a > gb_read8(wDamage_ADDR))\n\t\t\tgoto check_evolution;"
+case = "tests/profiles/extended/cases/energy.py"
+index = 4
 [[fixes]]
 heading = "Cards in AI decks that are not supposed to be placed as Prize cards are ignored"
 kind = "code"
@@ -25,36 +32,85 @@ heading = "AI score modifiers for retreating are never used"
 kind = "code"
 routines = ["AIDoAction_StartDuel"]
 
+[[fixes.reverts]]
+routine = "AIDoAction_StartDuel"
+source = "src/profiles/extended/home/ai.c"
+before = "\t\tif (lists[i] == 0u)\n\t\t\tcontinue;"
+after = "\t\tif (lists[i] == 0u || i == 4u)\n\t\t\tcontinue;"
+case = "tests/profiles/extended/cases/ai.py"
+index = 2
 [[fixes]]
 heading = "AI handles Basic Pokémon cards in hand wrong when scoring Professor Oak use"
 kind = "code"
 routines = ["AIDecide_ProfessorOak"]
 
+[[fixes.reverts]]
+routine = "AIDecide_ProfessorOak"
+source = "src/profiles/extended/home/trainer_cards.c"
+before = "if (wLoadedCard1Type >= TYPE_ENERGY)\n\t\t\tcontinue;"
+after = "if (wLoadedCard1Type < TYPE_ENERGY)\n\t\t\tcontinue;"
+case = "tests/profiles/extended/cases/trainer_cards.py"
+index = 4
 [[fixes]]
 heading = "Rick never plays Energy Search"
 kind = "code"
 routines = ["AIDecide_EnergySearch"]
 
+[[fixes.reverts]]
+routine = "AIDecide_EnergySearch"
+source = "src/profiles/extended/home/trainer_cards.c"
+before = "else if (deck_id == WONDERS_OF_SCIENCE_DECK_ID)\n\t\tfilter = TYPE_ENERGY_GRASS;"
+after = "else if (deck_id == WONDERS_OF_SCIENCE_DECK_ID)\n\t\tfilter = TYPE_ENERGY_FIRE;"
+case = "tests/profiles/extended/cases/trainer_cards.py"
+index = 5
 [[fixes]]
 heading = "Rick uses wrong Pokédex AI subroutine"
 kind = "code"
 routines = ["AIDecide_Pokedex"]
 
+[[fixes.reverts]]
+routine = "AIDecide_Pokedex"
+source = "src/profiles/extended/home/trainer_cards.c"
+before = "PickPokedexResult picked = wOpponentDeckID == WONDERS_OF_SCIENCE_DECK_ID\n\t\t? pick_pokedex_pokemon_first() : PickPokedexCards();"
+after = "PickPokedexResult picked = PickPokedexCards();"
+case = "tests/profiles/extended/cases/trainer_cards.py"
+index = 5
 [[fixes]]
 heading = "Chris never uses Revive on Kangaskhan"
 kind = "code"
 routines = ["AIDecide_Revive"]
 
+[[fixes.reverts]]
+routine = "AIDecide_Revive"
+source = "src/profiles/extended/home/trainer_cards.c"
+before = "if (card_id == HITMONCHAN || card_id == HITMONLEE ||\n\t\t    card_id == TAUROS || card_id == KANGASKHAN)"
+after = "if (card_id == HITMONCHAN || card_id == HITMONLEE ||\n\t\t    card_id == TAUROS)"
+case = "tests/profiles/extended/cases/trainer_cards.py"
+index = 4
 [[fixes]]
 heading = "AI Pokémon Trader may result in unintended effects"
 kind = "code"
 routines = ["AIDecide_PokemonTrader_PowerGenerator"]
 
+[[fixes.reverts]]
+routine = "AIDecide_PokemonTrader_PowerGenerator"
+source = "src/profiles/extended/home/trainer_cards.c"
+before = "if (r16.f & 0x10u)\n\t\t\tgoto find_duplicates;\n\t\treturn (AIDecide_PokemonTrader_PowerGeneratorResult){a,\n\t\t\t(uint8_t)(a == 0u ? 0x80u : 0u), d};\n\nfind_duplicates:"
+after = "if (r16.f & 0x10u)\n\t\t\tgoto find_duplicates;\n\nfind_duplicates:"
+case = "tests/profiles/extended/cases/trainer_cards.py"
+index = 0
 [[fixes]]
 heading = "AI Full Heal has flawed logic for sleep"
 kind = "code"
 routines = ["AIDecide_FullHeal"]
 
+[[fixes.reverts]]
+routine = "AIDecide_FullHeal"
+source = "src/profiles/extended/home/trainer_cards.c"
+before = "if (status == ASLEEP) {\n\t\tLookForCardIDInPlayAreaResult ghost;\n\t\tSwapTurn();\n\t\tghost = LookForCardIDInPlayArea_Bank8(GASTLY_LV8, PLAY_AREA_ARENA);\n\t\tSwapTurn();\n\t\tif (ghost.f & 0x10u)\n\t\t\treturn (AIDecideFullHealResult){ghost.a, (uint8_t)((ghost.f & 0x80u) | 0x10u), d};\n\t\tSwapTurn();\n\t\tghost = LookForCardIDInPlayArea_Bank8(GASTLY_LV17, PLAY_AREA_ARENA);\n\t\tSwapTurn();\n\t\tif (ghost.f & 0x10u)\n\t\t\treturn (AIDecideFullHealResult){ghost.a, (uint8_t)((ghost.f & 0x80u) | 0x10u), d};\n\t\tSwapTurn();\n\t\tghost = LookForCardIDInPlayArea_Bank8(HAUNTER_LV22, PLAY_AREA_ARENA);\n\t\tSwapTurn();\n\t\tif (ghost.f & 0x10u)\n\t\t\treturn (AIDecideFullHealResult){ghost.a, (uint8_t)((ghost.f & 0x80u) | 0x10u), d};\n\t}"
+after = "if (status == ASLEEP) {\n\t\tLookForCardIDInPlayAreaResult ghost = LookForCardIDInPlayArea_Bank8(GASTLY_LV8, PLAY_AREA_ARENA);\n\t\tif (ghost.f & 0x10u)\n\t\t\treturn (AIDecideFullHealResult){ghost.a, (uint8_t)((ghost.f & 0x80u) | 0x10u), d};\n\t\tghost = LookForCardIDInPlayArea_Bank8(GASTLY_LV17, PLAY_AREA_ARENA);\n\t\tif (ghost.f & 0x10u)\n\t\t\treturn (AIDecideFullHealResult){ghost.a, (uint8_t)((ghost.f & 0x80u) | 0x10u), d};\n\t\tghost = LookForCardIDInPlayArea_Bank8(HAUNTER_LV22, PLAY_AREA_ARENA);\n\t\tif (ghost.f & 0x10u)\n\t\t\treturn (AIDecideFullHealResult){ghost.a, (uint8_t)((ghost.f & 0x80u) | 0x10u), d};\n\t}"
+case = "tests/profiles/extended/cases/trainer_cards.py"
+index = 4
 [[fixes]]
 heading = "AI Full Heal has flawed logic for paralysis"
 kind = "code"
@@ -67,7 +123,7 @@ routines = ["AIDecideEvolution"]
 
 [[fixes]]
 heading = "AI never uses Energy Trans in order to retreat Arena card"
-kind = "code"
+kind = "unfixed"
 routines = ["AIProcessRetreat"]
 
 [[fixes]]
@@ -85,16 +141,37 @@ heading = "AI does not use Cowardice properly"
 kind = "code"
 routines = ["HandleAICowardice"]
 
+[[fixes.reverts]]
+routine = "HandleAICowardice"
+source = "src/profiles/extended/home/pkmn_powers.c"
+before = "\t\t\tif ((flags & CAN_EVOLVE_THIS_TURN) == 0u) {"
+after = "\t\t\tif (flags & 0u) {"
+case = "tests/profiles/extended/cases/pkmn_powers.py"
+index = 4
 [[fixes]]
 heading = "AI does not pay attention to Acid effect when retreating"
 kind = "code"
 routines = ["AITryToRetreat"]
 
+[[fixes.reverts]]
+routine = "AITryToRetreat"
+source = "src/profiles/extended/home/retreat.c"
+before = "\tRetreatEffectResult unable = CheckUnableToRetreatDueToEffect();\n\tif (unable.f & FLAG_C)\n\t\treturn (AITryToRetreatResult){SUBSTATUS2_ACID, unable.f};\n"
+after = ""
+case = "tests/profiles/extended/cases/retreat.py"
+index = 2
 [[fixes]]
 heading = "AI has flawed logic when considering MewLv8 as a target for switching"
 kind = "code"
 routines = ["AIDecideBenchPokemonToSwitchTo"]
 
+[[fixes.reverts]]
+routine = "AIDecideBenchPokemonToSwitchTo"
+source = "src/profiles/extended/home/retreat.c"
+before = "\t\t\tSwapTurn();\n\t\t\tuint8_t defending_arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;\n\t\t\t(void)LoadCardDataToBuffer2_FromDeckIndex(defending_arena);\n\t\t\tSwapTurn();\n\t\t\traise = wLoadedCard2Stage != 0u;"
+after = "\t\t\t(void)LoadCardDataToBuffer2_FromDeckIndex(\n\t\t\t\tGetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a);\n\t\t\traise = wLoadedCard2Stage != 0u;"
+case = "tests/profiles/extended/cases/retreat.py"
+index = 1
 [[fixes]]
 heading = "AI has flawed logic when considering the Earthquake attack"
 kind = "code"
@@ -126,6 +203,13 @@ after = "\t\t\telse if (wLoadedCard1AIInfo == AI_INFO_ENCOURAGE_EVO)"
 case = "tests/profiles/extended/cases/hand_pokemon.py"
 index = 1
 
+[[fixes.reverts]]
+routine = "AIDecideBenchPokemonToSwitchTo"
+source = "src/profiles/extended/home/retreat.c"
+before = "\t\tif ((wLoadedCard1AIInfo & 0x0Fu) == AI_INFO_BENCH_UTILITY)\n\t\t\tAIDiscourage(2u);"
+after = "\t\tif (wLoadedCard1AIInfo == AI_INFO_BENCH_UTILITY)\n\t\t\tAIDiscourage(2u);"
+case = "tests/profiles/extended/cases/retreat.py"
+index = 2
 [[fixes]]
 heading = "Attack damage is not correctly halved"
 kind = "code"
