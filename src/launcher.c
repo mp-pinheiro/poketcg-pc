@@ -343,6 +343,10 @@ int main(int argc, char **argv)
 		child_argv[count++] = child;
 		for (int index = 0; index < user_count; index++)
 			child_argv[count++] = user[index];
+		if (!has_option(user_count, user, "--frames") && !has_option(user_count, user, "--headless")) {
+			child_argv[count++] = "--frames";
+			child_argv[count++] = "0";
+		}
 		if (!has_option(user_count, user, "--data-pack")) {
 			child_argv[count++] = "--data-pack";
 			child_argv[count++] = pack;
