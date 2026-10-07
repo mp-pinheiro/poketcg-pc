@@ -1,0 +1,14 @@
+{
+  "ai_deck": 27,
+  "branch_ordinal": 8517,
+  "derived_from": "practice-begin",
+  "duel_finished_ordinal": 27742,
+  "duel_turns": 19,
+  "goal": "AI-versus-AI duel, deck id 27, branched from practice-begin at 8517",
+  "name": "legendary-ronald",
+  "ordinals": 29242,
+  "prizes": null,
+  "recorded": "2026-10-07T05:59:08+00:00",
+  "schema": 1,
+  "seed": null
+}

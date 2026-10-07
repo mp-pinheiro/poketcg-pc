@@ -4,6 +4,6 @@
   "index": 0,
   "status": "RED",
   "baseline": "{\"fn\": \"LookForCardIDInDeck_GivenCardIDInHandAndPlayArea\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 171, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardIDInDeck_GivenCardIDInHandAndPlayArea\", \"mismatches\": {\"a\": [60, 6], \"d\": [0, 197]}}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardIDInDeck_GivenCardIDInHandAndPlayArea\", \"mismatches\": {\"a\": [60, 6]}}\n",
   "restored": "{\"fn\": \"LookForCardIDInDeck_GivenCardIDInHandAndPlayArea\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 171, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }

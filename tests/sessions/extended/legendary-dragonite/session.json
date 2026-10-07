@@ -1,0 +1,14 @@
+{
+  "ai_deck": 15,
+  "branch_ordinal": 8517,
+  "derived_from": "practice-begin",
+  "duel_finished_ordinal": 25894,
+  "duel_turns": 22,
+  "goal": "AI-versus-AI duel, deck id 15, branched from practice-begin at 8517",
+  "name": "legendary-dragonite",
+  "ordinals": 27394,
+  "prizes": null,
+  "recorded": "2026-10-07T05:58:53+00:00",
+  "schema": 1,
+  "seed": null
+}

@@ -1,0 +1,14 @@
+{
+  "ai_deck": 12,
+  "branch_ordinal": 8517,
+  "derived_from": "practice-begin",
+  "duel_finished_ordinal": 27238,
+  "duel_turns": 17,
+  "goal": "AI-versus-AI duel, deck id 12, branched from practice-begin at 8517",
+  "name": "legendary-moltres",
+  "ordinals": 28738,
+  "prizes": null,
+  "recorded": "2026-10-07T05:58:13+00:00",
+  "schema": 1,
+  "seed": null
+}

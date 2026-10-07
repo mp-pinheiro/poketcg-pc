@@ -1,0 +1,14 @@
+{
+  "ai_deck": 14,
+  "branch_ordinal": 8517,
+  "derived_from": "practice-begin",
+  "duel_finished_ordinal": 25726,
+  "duel_turns": 21,
+  "goal": "AI-versus-AI duel, deck id 14, branched from practice-begin at 8517",
+  "name": "legendary-articuno",
+  "ordinals": 27226,
+  "prizes": null,
+  "recorded": "2026-10-07T05:58:38+00:00",
+  "schema": 1,
+  "seed": null
+}
