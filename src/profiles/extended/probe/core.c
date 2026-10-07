@@ -1189,7 +1189,9 @@ static void adapt_PrintDuelResultStats(ProbeState *s)
 /* >>> factory ConvertColorToEnergyCardID */
 static void adapt_ConvertColorToEnergyCardID(ProbeState *s)
 {
-	s->a = ConvertColorToEnergyCardID(s->a);
+	ConvertColorResult result = ConvertColorToEnergyCardID(s->a);
+	s->d = result.d;
+	s->e = result.e;
 }
 /* <<< factory ConvertColorToEnergyCardID */
 

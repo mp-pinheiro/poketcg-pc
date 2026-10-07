@@ -14,6 +14,7 @@
 #define F_C 0x10u
 
 #include "home/card_data.h"
+#include "home/card_id_bus.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "mem.h"
@@ -295,15 +296,16 @@ CopyListBank8Result CopyListWithFFTerminatorFromHLToDE_Bank8(uint16_t *hl, uint1
 /* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank8 */
 
 /* >>> factory LookForCardIDInPlayArea_Bank8 */
-LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(uint8_t a, uint8_t b)
+LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(CardId de, uint8_t b)
 {
-	wTempCardIDToLook = a;
+	gb_write8(wTempCardIDToLook_ADDR, (uint8_t)de);
+	gb_write8((uint16_t)(wTempCardIDToLook_ADDR + 1u), (uint8_t)(de >> 8));
 	for (;;) {
 		DuelistVarResult r = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + b));
 		if (r.a == 0xffu)
 			return (LookForCardIDInPlayAreaResult){0xffu, b, 0xc0u};
-		uint8_t c = LoadCardDataToBuffer1_FromDeckIndex(r.a);
-		if (wTempCardIDToLook == c)
+		(void)LoadCardDataToBuffer1_FromDeckIndex(r.a);
+		if (card_id_read_at(wLoadedCard1ID_ADDR) == de)
 			return (LookForCardIDInPlayAreaResult){b, b, 0x90u};
 		b++;
 		if (b == MAX_PLAY_AREA_POKEMON)
@@ -313,9 +315,8 @@ LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(uint8_t a, uint8_t b
 /* <<< factory LookForCardIDInPlayArea_Bank8 */
 
 /* >>> factory CheckIfHasCardIDInHand */
-CheckIfHasCardIDInHandResult CheckIfHasCardIDInHand(uint8_t a)
+CheckIfHasCardIDInHandResult CheckIfHasCardIDInHand(CardId de)
 {
-	wTempCardIDToLook = a;
 	(void)CreateHandCardList(0u);
 	uint8_t *scan = wDuelTempList_PTR;
 	uint8_t count = 0u;
@@ -324,8 +325,8 @@ CheckIfHasCardIDInHandResult CheckIfHasCardIDInHand(uint8_t a)
 		if (index == 0xFFu)
 			return (CheckIfHasCardIDInHandResult){0xFFu, 0xC0u};
 		hTempCardIndex_ff98 = index;
-		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(index);
-		if (card_id != wTempCardIDToLook)
+		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (card_id_read_at(wLoadedCard1ID_ADDR) != de)
 			continue;
 		if (count != 0u)
 			return (CheckIfHasCardIDInHandResult){hTempCardIndex_ff98, 0x10u};
@@ -477,14 +478,13 @@ uint8_t CountPokemonCardsInHandAndInPlayArea(uint8_t c)
 /* <<< factory CountPokemonCardsInHandAndInPlayArea */
 
 /* >>> factory LookForCardIDInLocation_Bank8 */
-LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t location, uint8_t card_id_byte)
+LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t location, CardId de)
 {
 	for (uint8_t e = 0u; e < DECK_SIZE; e++) {
 		uint8_t loc = GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + e)).a;
 		if (loc != location)
 			continue;
-		uint16_t card_id = GetCardIDFromDeckIndex(e);
-		if ((uint8_t)card_id == card_id_byte)
+		if (GetCardIDFromDeckIndex(e) == de)
 			return (LookForCardIDInLocationBank8Result){e, 0x90u};
 	}
 	return (LookForCardIDInLocationBank8Result){DECK_SIZE, 0x00u};
@@ -492,12 +492,11 @@ LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t locatio
 /* <<< factory LookForCardIDInLocation_Bank8 */
 
 /* >>> factory LookForCardIDInHandList_Bank8 */
-LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(uint8_t a)
+LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(CardId de)
 {
-	wTempCardIDToLook = a;
+	gb_write8(wTempCardIDToLook_ADDR, (uint8_t)de);
+	gb_write8((uint16_t)(wTempCardIDToLook_ADDR + 1u), (uint8_t)(de >> 8));
 	(void)CreateHandCardList(0u);
-	/* CreateHandCardList fills wDuelTempList through de and leaves it there;
-	 * the hand holds at most 60 entries, so d is the list's page. */
 	uint8_t d = (uint8_t)(wDuelTempList_ADDR >> 8);
 	uint8_t *scan = wDuelTempList_PTR;
 	for (;;) {
@@ -505,20 +504,20 @@ LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(uint8_t a)
 		if (index == 0xFFu)
 			return (LookForCardIDInHandListResult){0xFFu, 0xC0u, d};
 		hTempCardIndex_ff98 = index;
-		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(index);
-		if (card_id == wTempCardIDToLook)
+		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (card_id_read_at(wLoadedCard1ID_ADDR) == de)
 			return (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u, d};
 	}
 }
 /* <<< factory LookForCardIDInHandList_Bank8 */
 
 /* >>> factory LookForCardIDInHandAndPlayArea */
-LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(uint8_t a)
+LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(CardId de)
 {
-	LookForCardIDInHandListResult r1 = LookForCardIDInHandList_Bank8(a);
+	LookForCardIDInHandListResult r1 = LookForCardIDInHandList_Bank8(de);
 	if (r1.f & 0x10u)
 		return (LookForCardIDInHandAndPlayAreaResult){r1.a, r1.f};
-	LookForCardIDInPlayAreaResult r2 = LookForCardIDInPlayArea_Bank8(a, PLAY_AREA_ARENA);
+	LookForCardIDInPlayAreaResult r2 = LookForCardIDInPlayArea_Bank8(de, PLAY_AREA_ARENA);
 	if (r2.f & 0x10u)
 		return (LookForCardIDInHandAndPlayAreaResult){r2.a, r2.f};
 	uint8_t f = (r2.a == 0u) ? 0x80u : 0u;
@@ -527,51 +526,53 @@ LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(uint8_t a)
 /* <<< factory LookForCardIDInHandAndPlayArea */
 
 /* >>> factory LookForCardIDToTradeWithDifferentHandCard */
-LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferentHandCard(uint8_t a, uint8_t e)
+LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferentHandCard(CardId de, CardId bc)
 {
-	wCurCardCanAttack = e;
-	wTempAI = a;
-	LookForCardIDInHandListResult r1 = LookForCardIDInHandList_Bank8(a);
+	gb_write8(wTempAI_ADDR, (uint8_t)de);
+	gb_write8((uint16_t)(wTempAI_ADDR + 1u), (uint8_t)(de >> 8));
+	gb_write8(wTempAI2_ADDR, (uint8_t)bc);
+	gb_write8((uint16_t)(wTempAI2_ADDR + 1u), (uint8_t)(bc >> 8));
+	LookForCardIDInHandListResult r1 = LookForCardIDInHandList_Bank8(de);
 	if (r1.f & 0x10u) {
 		uint8_t f = (r1.a == 0u) ? 0x80u : 0u;
-		return (LookForCardIDToTradeWithDifferentHandCardResult){r1.a, f, e, 0xC5u};
+		return (LookForCardIDToTradeWithDifferentHandCardResult){r1.a, f, 0u, 0xC5u};
 	}
-	LookForCardIDInLocationBank8Result r2 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, wTempAI);
+	LookForCardIDInLocationBank8Result r2 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, de);
 	if (!(r2.f & 0x10u)) {
 		uint8_t f = (r2.a == 0u) ? 0x80u : 0u;
-		return (LookForCardIDToTradeWithDifferentHandCardResult){r2.a, f, e, 0u};
+		return (LookForCardIDToTradeWithDifferentHandCardResult){r2.a, f, 0u, 0u};
 	}
 	wTempAI = r2.a;
-	uint8_t c = wCurCardCanAttack;
 	(void)CreateHandCardList(0u);
 	uint8_t *scan = wDuelTempList_PTR;
 	for (;;) {
 		uint8_t index = *scan++;
 		if (index == 0xFFu)
-			return (LookForCardIDToTradeWithDifferentHandCardResult){0xFFu, 0x00u, e, 0xC5u};
-		uint8_t b = index;
-		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(index);
-		if (card_id == c)
+			return (LookForCardIDToTradeWithDifferentHandCardResult){0xFFu, 0x00u, 0u, 0xC5u};
+		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (card_id_read_at(wLoadedCard1ID_ADDR) == bc)
 			continue;
 		if (wLoadedCard1Type < TYPE_ENERGY)
-			return (LookForCardIDToTradeWithDifferentHandCardResult){wTempAI, 0x10u, b, 0xC5u};
+			return (LookForCardIDToTradeWithDifferentHandCardResult){wTempAI, 0x10u, index, 0xC5u};
 	}
 }
 /* <<< factory LookForCardIDToTradeWithDifferentHandCard */
 
 /* >>> factory LookForCardIDInDeck_GivenCardIDInHand */
-LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHand(uint8_t a, uint8_t b)
+LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHand(CardId de, CardId bc)
 {
-	wTempAI = b;
-	wCurCardCanAttack = a;
-	LookForCardIDInLocationBank8Result r1 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, a);
+	gb_write8(wTempAI_ADDR, (uint8_t)de);
+	gb_write8((uint16_t)(wTempAI_ADDR + 1u), (uint8_t)(de >> 8));
+	gb_write8(wTempAI2_ADDR, (uint8_t)bc);
+	gb_write8((uint16_t)(wTempAI2_ADDR + 1u), (uint8_t)(bc >> 8));
+	LookForCardIDInLocationBank8Result r1 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, de);
 	if (!(r1.f & 0x10u))
 		return (LookForCardIDInDeck_GivenCardIDInHandResult){r1.a, r1.f, 0u};
 	wTempAIPokemonCard = r1.a;
-	LookForCardIDInHandListResult r2 = LookForCardIDInHandList_Bank8(wTempAI);
+	LookForCardIDInHandListResult r2 = LookForCardIDInHandList_Bank8(bc);
 	if (!(r2.f & 0x10u))
 		return (LookForCardIDInDeck_GivenCardIDInHandResult){r2.a, r2.f, 0xC5u};
-	LookForCardIDInHandAndPlayAreaResult r3 = LookForCardIDInHandAndPlayArea(wCurCardCanAttack);
+	LookForCardIDInHandAndPlayAreaResult r3 = LookForCardIDInHandAndPlayArea(de);
 	if (r3.f & 0x10u) {
 		uint8_t f = (r3.a == 0u) ? 0x80u : 0u;
 		return (LookForCardIDInDeck_GivenCardIDInHandResult){r3.a, f, 0xC5u};
@@ -582,18 +583,20 @@ LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHan
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHand */
 
 /* >>> factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
-LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(uint8_t a, uint8_t b)
+LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CardId de, CardId bc)
 {
-	wTempAI = b;
-	wCurCardCanAttack = a;
-	LookForCardIDInLocationBank8Result r1 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, a);
+	gb_write8(wTempAI_ADDR, (uint8_t)bc);
+	gb_write8((uint16_t)(wTempAI_ADDR + 1u), (uint8_t)(bc >> 8));
+	gb_write8(wTempAI2_ADDR, (uint8_t)de);
+	gb_write8((uint16_t)(wTempAI2_ADDR + 1u), (uint8_t)(de >> 8));
+	LookForCardIDInLocationBank8Result r1 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, de);
 	if (!(r1.f & 0x10u))
 		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r1.a, r1.f, 0u};
 	wTempAIPokemonCard = r1.a;
-	LookForCardIDInHandAndPlayAreaResult r2 = LookForCardIDInHandAndPlayArea(wTempAI);
+	LookForCardIDInHandAndPlayAreaResult r2 = LookForCardIDInHandAndPlayArea(bc);
 	if (!(r2.f & 0x10u))
 		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r2.a, r2.f, 0xC5u};
-	LookForCardIDInHandAndPlayAreaResult r3 = LookForCardIDInHandAndPlayArea(wCurCardCanAttack);
+	LookForCardIDInHandAndPlayAreaResult r3 = LookForCardIDInHandAndPlayArea(de);
 	if (r3.f & 0x10u) {
 		uint8_t f = (r3.a == 0u) ? 0x80u : 0u;
 		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f, 0xC5u};
@@ -743,9 +746,9 @@ AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void)
  * case stops both lanes at AssertSongFinished's entry instead of at a `ret`
  * (src/trace.h trace_set_stop). The whole screen therefore runs here rather
  * than the hand-written prefix that used to stand in for it. */
-void ShowPromotionalCardScreen(uint8_t a)
+void ShowPromotionalCardScreen(CardId de)
 {
-	_ShowPromotionalCardScreen(a);
+	_ShowPromotionalCardScreen(de);
 }
 /* <<< factory ShowPromotionalCardScreen */
 

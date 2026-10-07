@@ -429,13 +429,19 @@ uint16_t DecrementDeckCardsInCollection(uint16_t hl)
 /* deck_configuration.asm:74-91 */
 uint16_t AddDeckToCollection(uint16_t hl)
 {
-	uint16_t p = hl;
-	for (uint8_t d = 0u; d < DECK_SIZE; d++) {
-		CardId id = card_id_read(&p);
-		if (id == 0u)
-			break;
-		uint16_t addr = (uint16_t)(sCardCollection_ADDR + id);
-		gb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));
+	uint16_t source = hl;
+	uint8_t remaining = DECK_SIZE;
+	while (remaining != 0u) {
+		uint8_t command = gb_read8(source++);
+		for (uint8_t bit = 0u; bit < 8u && remaining != 0u; bit++) {
+			CardId id = gb_read8(source++);
+			if ((command & 0x80u) != 0u)
+				id = (CardId)(id | 0x0100u);
+			uint16_t addr = (uint16_t)(sCardCollection_ADDR + id);
+			gb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));
+			command = (uint8_t)(command << 1);
+			remaining = (uint8_t)(remaining - 1u);
+		}
 	}
 	return hl;
 }
@@ -675,12 +681,15 @@ void CreateCardCollectionListWithDeckCards(uint8_t a)
 GetSelectedVisibleCardIDResult GetSelectedVisibleCardID(void)
 {
 	uint8_t cursor = wCardListCursorPos;
-	uint8_t a = (uint8_t)(cursor << 1);
-	uint8_t f = (uint8_t)((a == 0u ? 0x80u : 0u) |
+	uint8_t offset = (uint8_t)(cursor << 1);
+	uint8_t f = (uint8_t)((offset == 0u ? 0x80u : 0u) |
 		((cursor & 0x80u) != 0u ? 0x10u : 0u));
-	uint16_t hl = (uint16_t)(wVisibleListCardIDs_ADDR + a);
-	CardId id = card_id_read(&hl);
-	return (GetSelectedVisibleCardIDResult){id, a, f, hl};
+	uint16_t hl = (uint16_t)(wVisibleListCardIDs_ADDR + offset);
+	uint8_t low = gb_read8(hl);
+	uint8_t high = gb_read8((uint16_t)(hl + 1u));
+	return (GetSelectedVisibleCardIDResult){
+		(CardId)(((uint16_t)high << 8) | low), offset, f,
+		(uint16_t)(hl + 1u)};
 }
 /* <<< factory GetSelectedVisibleCardID */
 
@@ -841,21 +850,21 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor_Visible(void)
 /* deck_configuration.asm:1133-1190 */
 IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, CardId id)
 {
-	(void)f;
 	const uint16_t decks[] = {
 		sDeck1Cards_ADDR,
 		sDeck2Cards_ADDR,
 		sDeck3Cards_ADDR,
 		sDeck4Cards_ADDR,
 	};
+	uint8_t final_bits = 5u;
 	for (uint8_t deck = 0u; deck < 4u; deck++) {
 		EnableSRAM();
 		uint16_t address = decks[deck];
-		uint8_t b = DECK_SIZE;
-		uint8_t c = 8u;
-		while (b != 0u) {
+		uint8_t remaining = DECK_SIZE;
+		while (remaining != 0u) {
 			uint8_t command = gb_read8(address++);
-			for (c = 8u; c != 0u && b != 0u; c--) {
+			uint8_t bits = 8u;
+			while (bits != 0u) {
 				uint8_t low = gb_read8(address++);
 				CardId card = (CardId)low;
 				if ((command & 0x80u) != 0u)
@@ -864,15 +873,20 @@ IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, CardId id)
 				if (card == id) {
 					DisableSRAM();
 					return (IsCardInAnyDeckResult){
-						(a == 0u) ? 0x80u : 0x00u, b, c
+						(a == 0u) ? 0x80u : 0x00u, remaining, bits
 					};
 				}
-				b = (uint8_t)(b - 1u);
+				remaining = (uint8_t)(remaining - 1u);
+				if (remaining == 0u) {
+					final_bits = bits;
+					break;
+				}
+				bits = (uint8_t)(bits - 1u);
 			}
 		}
 		DisableSRAM();
 	}
-	return (IsCardInAnyDeckResult){0x10u, 0u, 1u};
+	return (IsCardInAnyDeckResult){(f & 0x80u) | 0x10u, 0u, final_bits};
 }
 /* <<< factory IsCardInAnyDeck */
 
@@ -1706,7 +1720,7 @@ PrintFilteredCardListResult PrintFilteredCardList(uint8_t a, uint8_t f, uint8_t 
 	d = 0x01u;
 	gb_write8(wCardListCoords_ADDR, 0x07u);
 	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x01u);
-	hl = 0xCEE1u;
+	hl = (uint16_t)(wFilteredCardList_ADDR + 0x0Du);
 	PrintDeckBuildingCardList();
 	return (PrintFilteredCardListResult){saved_a, saved_f, b, c, d, e, hl};
 }
@@ -1805,7 +1819,7 @@ CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void
 		if (wLoadedCard1Stage != 0u)
 			continue;
 		return (CheckIfThereAreAnyBasicCardsInDeckResult){
-			0u, 0x10u, (uint8_t)card, hl
+			0u, 0x90u, (uint8_t)card, hl
 		};
 	}
 	return (CheckIfThereAreAnyBasicCardsInDeckResult){0u, 0x80u, 0u, hl};
@@ -1845,7 +1859,7 @@ SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)
 	}
 	gb_write8(out++, 0u);
 	gb_write8(out, 0u);
-	return (SortCurDeckCardsByIDResult){(uint8_t)order};
+	return (SortCurDeckCardsByIDResult){(uint8_t)(order - 1u)};
 }
 /* <<< factory SortCurDeckCardsByID */
 
@@ -1855,28 +1869,28 @@ GetCardTypeIconPaletteResult GetCardTypeIconPalette(uint8_t a, uint8_t f, uint8_
 	uint8_t palette = 0xffu;
 	f = 0x80u;
 	if (a == 0xe0u) {
-		palette = 1u;
+		palette = 2u;
 		f = 0xc0u;
 	} else if (a == 0xe4u) {
-		palette = 2u;
+		palette = 3u;
 		f = 0xc0u;
 	} else if (a == 0xe8u) {
-		palette = 1u;
-		f = 0xc0u;
-	} else if (a == 0xecu) {
 		palette = 2u;
 		f = 0xc0u;
-	} else if (a == 0xf0u) {
+	} else if (a == 0xecu) {
 		palette = 3u;
 		f = 0xc0u;
+	} else if (a == 0xf0u) {
+		palette = 4u;
+		f = 0xc0u;
 	} else if (a == 0xf4u) {
-		palette = 3u;
+		palette = 4u;
 		f = 0xc0u;
 	} else if (a == 0xf8u) {
 		palette = 0u;
 		f = 0xc0u;
 	} else if (a == 0xfcu || a == 0xd0u || a == 0xd4u || a == 0xd8u || a == 0xdcu) {
-		palette = (a == 0xd8u) ? 1u : 2u;
+		palette = (a == 0xd8u) ? 2u : 3u;
 		f = 0xc0u;
 	}
 	return (GetCardTypeIconPaletteResult){palette, f, b, c, d, e, hl};
@@ -2000,7 +2014,7 @@ CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)
 	}
 	wNumUniqueCards = count;
 	return (CreateCurDeckUniqueCardListResult){
-		count, 0x80u, 0u, 0u, (uint8_t)(de >> 8), (uint8_t)de, hl
+		0u, 0x80u, 0u, 0u, (uint8_t)(de >> 8), (uint8_t)de, hl
 	};
 }
 /* <<< factory CreateCurDeckUniqueCardList */

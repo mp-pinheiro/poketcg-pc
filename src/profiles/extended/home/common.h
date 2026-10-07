@@ -2,6 +2,7 @@
 #define POKETCG_HOME_COMMON_H
 
 #include <stdint.h>
+#include "home/card_id.h"
 
 /* >>> factory CountOppEnergyCardsInHand */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; } CountOppEnergyResult;
@@ -33,11 +34,11 @@ CopyListBank8Result CopyListWithFFTerminatorFromHLToDE_Bank8(uint16_t *hl, uint1
 /* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank8 */
 /* >>> factory LookForCardIDInPlayArea_Bank8 */
 typedef struct { uint8_t a; uint8_t b; uint8_t f; } LookForCardIDInPlayAreaResult;
-LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(uint8_t a, uint8_t b);
+LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(CardId de, uint8_t b);
 /* <<< factory LookForCardIDInPlayArea_Bank8 */
 /* >>> factory CheckIfHasCardIDInHand */
 typedef struct { uint8_t a; uint8_t f; } CheckIfHasCardIDInHandResult;
-CheckIfHasCardIDInHandResult CheckIfHasCardIDInHand(uint8_t a);
+CheckIfHasCardIDInHandResult CheckIfHasCardIDInHand(CardId de);
 /* <<< factory CheckIfHasCardIDInHand */
 /* >>> factory FindBasicEnergyCardsInLocation */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; uint16_t hl; } FindBasicEnergyCardsInLocationResult;
@@ -69,27 +70,27 @@ uint8_t CountPokemonCardsInHandAndInPlayArea(uint8_t c);
 /* <<< factory CountPokemonCardsInHandAndInPlayArea */
 /* >>> factory LookForCardIDInLocation_Bank8 */
 typedef struct { uint8_t a; uint8_t f; } LookForCardIDInLocationBank8Result;
-LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t location, uint8_t card_id_byte);
+LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t location, CardId de);
 /* <<< factory LookForCardIDInLocation_Bank8 */
 /* >>> factory LookForCardIDInHandList_Bank8 */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } LookForCardIDInHandListResult;
-LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(uint8_t a);
+LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(CardId de);
 /* <<< factory LookForCardIDInHandList_Bank8 */
 /* >>> factory LookForCardIDInHandAndPlayArea */
 typedef struct { uint8_t a; uint8_t f; } LookForCardIDInHandAndPlayAreaResult;
-LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(uint8_t a);
+LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(CardId de);
 /* <<< factory LookForCardIDInHandAndPlayArea */
 /* >>> factory LookForCardIDToTradeWithDifferentHandCard */
 typedef struct { uint8_t a; uint8_t f; uint8_t e; uint8_t d; } LookForCardIDToTradeWithDifferentHandCardResult;
-LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferentHandCard(uint8_t a, uint8_t e);
+LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferentHandCard(CardId de, CardId bc);
 /* <<< factory LookForCardIDToTradeWithDifferentHandCard */
 /* >>> factory LookForCardIDInDeck_GivenCardIDInHand */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } LookForCardIDInDeck_GivenCardIDInHandResult;
-LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHand(uint8_t a, uint8_t b);
+LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHand(CardId de, CardId bc);
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHand */
 /* >>> factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult;
-LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(uint8_t a, uint8_t b);
+LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CardId de, CardId bc);
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
 /* >>> factory AddStarterDeck */
 void AddStarterDeck(uint8_t a);
@@ -113,6 +114,6 @@ typedef struct { uint8_t f; uint8_t d; } AICheckIfAttackIsHighRecoilResult;
 AICheckIfAttackIsHighRecoilResult AICheckIfAttackIsHighRecoil(void);
 /* <<< factory AICheckIfAttackIsHighRecoil */
 /* >>> factory ShowPromotionalCardScreen */
-void ShowPromotionalCardScreen(uint8_t a);
+void ShowPromotionalCardScreen(CardId de);
 /* <<< factory ShowPromotionalCardScreen */
 #endif /* POKETCG_HOME_COMMON_H */

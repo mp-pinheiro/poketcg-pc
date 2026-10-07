@@ -488,15 +488,15 @@ CASES = {
             'vread': {0x00: {0x9883: 0x14}, 0x01: {0x9883: 0x14}}},
     ],
     'OpenDeckConfigurationMenu': [
-        {   'wram': {0xCE18: b'\xff', 0xCE4D: b'\xff', 0xCABB: b'\x00', 0xCFD6: b'\x80T'},
+        {   'wram': {0xCE18: b'\xff', 0xCE4D: b'\xff', 0xCABB: b'\x00', 0xCFD6: b'\x07S'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
+            'keys': 0x02,
             'read': {0xCE18: 0x01, 0xCE19: 0x02, 0xCE1B: 0x01, 0xCE4D: 0x01},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
-        {   'wram': {0xCE18: b'\x01', 0xCE4D: b'\x7f', 0xCABB: b'\x00', 0xCFD6: b'\x80T'},
+        {   'wram': {0xCE18: b'\x01', 0xCE4D: b'\x7f', 0xCABB: b'\x00', 0xCFD6: b'\x07S'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
+            'keys': 0x02,
             'read': {0xCE18: 0x01, 0xCE19: 0x02, 0xCE1B: 0x01, 0xCE4D: 0x01},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
@@ -507,9 +507,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCE18: b'\xa5', 0xCE4D: b'\x12', 0xCABB: b'\x00', 0xCFD6: b'\x80T'},
+            'wram': {0xCE18: b'\xa5', 0xCE4D: b'\x12', 0xCABB: b'\x00', 0xCFD6: b'\x07S'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
+            'keys': 0x02,
             'read': {0xCE18: 0x01, 0xCE19: 0x02, 0xCE1B: 0x01, 0xCE4D: 0x01},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
@@ -1478,7 +1478,7 @@ CASES = {
             'read': {0xCE7C: 0x01},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
-        {   'wram': {   0xC000: b'\x80\x80\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00\x00\x00\x00\x00'
+        {   'wram': {   0xC100: b'\x80\x80\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x80\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x80'
                                 b'\x00\x00\x00\x00\x00\x00\x80\x80\x80\x80\x80\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x80\x80\x80\x80\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -3821,7 +3821,7 @@ CASES = {
             'd': 0x56,
             'e': 0x78,
             'hl': 0xC100,
-            'expect_regs': {   'a': 0x01,
+            'expect_regs': {   'a': 0x02,
                                'f': 0xC0,
                                'b': 0x12,
                                'c': 0x34,
@@ -3917,10 +3917,10 @@ CASES = {
                                                  b'\xf8\xf9\xdc\xdd\xfc\xfd',
                                          0x9861: b'\xe6\xe7\xe2\xe3\xee\xef\xea\xeb\xf2\xf3\xf6\xf7'
                                                  b'\xfa\xfb\xde\xdf\xfe\xff'},
-                               0x01: {   0x9841: b'\x02\x02\x01\x01\x02\x02\x01\x01\x03\x03\x03\x03'
-                                                 b'\x00\x00\x02\x02\x02\x02',
-                                         0x9861: b'\x02\x02\x01\x01\x02\x02\x01\x01\x03\x03\x03\x03'
-                                                 b'\x00\x00\x02\x02\x02\x02'}},
+                               0x01: {   0x9841: b'\x03\x03\x02\x02\x03\x03\x02\x02\x04\x04\x04\x04'
+                                                 b'\x00\x00\x03\x03\x03\x03',
+                                         0x9861: b'\x03\x03\x02\x02\x03\x03\x02\x02\x04\x04\x04\x04'
+                                                 b'\x00\x00\x03\x03\x03\x03'}},
             'instruction_budget': 0x186A0,
             'cycle_budget': 0x61A80},
     ],
@@ -9953,7 +9953,7 @@ CASES = {
             'wram': {0xFF8F: b'\x00', 0xCE53: b'\x01', 0xCE4C: b'\x01', 0xCFE7: b'\x08'}},
     ],
     'HandleDeckBuildScreen': [
-        {   'wram': {0xCABB: b'\x00', 0xCFD6: b'\x80T'},
+        {   'wram': {0xCABB: b'\x00', 0xCFD6: b'\x07S'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'keys': [0x00, 0x02],
             'read': {0xCE4C: 0x01},
@@ -9966,7 +9966,7 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCABB: b'\x00', 0xCFD6: b'\x80T'},
+            'wram': {0xCABB: b'\x00', 0xCFD6: b'\x07S'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'keys': [0x00, 0x02],
             'read': {0xCE4C: 0x01},
@@ -10096,7 +10096,7 @@ CASES = {
             'cycle_budget': 0x4C4B400},
     ],
     'HandleDeckConfigurationMenu': [
-        {   'wram': {0xCABB: b'\x00', 0xCE85: b'\x12', 0xCE84: b'\x00', 0xCFD6: b'\x80T'},
+        {   'wram': {0xCABB: b'\x00', 0xCE85: b'\x12', 0xCE84: b'\x00', 0xCFD6: b'\x07S'},
             'sram': {0x00: {}},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'keys': [0x00, 0x02],
@@ -10111,7 +10111,7 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCABB: b'\x00', 0xCE85: b'\x12', 0xCE84: b'\x00', 0xCFD6: b'\x80T'},
+            'wram': {0xCABB: b'\x00', 0xCE85: b'\x12', 0xCE84: b'\x00', 0xCFD6: b'\x07S'},
             'sram': {0x00: {}},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'keys': [0x00, 0x02],
@@ -10239,8 +10239,8 @@ MUTATIONS = {
         'case_ids': ['CreateCardCollectionListWithDeckCards-1'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
     'GetSelectedVisibleCardID': {   'source_symbol': 'GetSelectedVisibleCardID',
-        'before': '\treturn gb_read8((uint16_t)(wVisibleListCardIDs_ADDR + cursor));',
-        'after': '\treturn gb_read8((uint16_t)(wVisibleListCardIDs_ADDR + cursor + 1u));',
+        'before': '\tuint8_t high = gb_read8((uint16_t)(hl + 1u));',
+        'after': '\tuint8_t high = gb_read8((uint16_t)(hl + 2u));',
         'case_ids': [   'GetSelectedVisibleCardID-0',
                         'GetSelectedVisibleCardID-1',
                         'GetSelectedVisibleCardID-2'],

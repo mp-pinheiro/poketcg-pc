@@ -557,7 +557,8 @@ void PrintPlayerNumberOfHandAndDeckCards(void);
 void PrintDuelResultStats(void);
 /* <<< factory PrintDuelResultStats */
 /* >>> factory ConvertColorToEnergyCardID */
-uint8_t ConvertColorToEnergyCardID(uint8_t a);
+typedef struct { uint8_t a; uint8_t d; uint8_t e; } ConvertColorResult;
+ConvertColorResult ConvertColorToEnergyCardID(uint8_t a);
 /* <<< factory ConvertColorToEnergyCardID */
 /* >>> factory PrintPracticeDuelNumberedInstruction */
 typedef struct {

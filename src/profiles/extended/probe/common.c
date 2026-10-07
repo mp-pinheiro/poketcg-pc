@@ -2,6 +2,10 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+static CardId probe_card_id(const ProbeState *s)
+{
+	return (CardId)(((uint16_t)s->d << 8) | s->e);
+}
 
 /* >>> factory CountOppEnergyCardsInHand */
 static void adapt_CountOppEnergyCardsInHand(ProbeState *s)
@@ -70,7 +74,7 @@ static void adapt_CopyListWithFFTerminatorFromHLToDE_Bank8(ProbeState *s)
 /* >>> factory LookForCardIDInPlayArea_Bank8 */
 static void adapt_LookForCardIDInPlayArea_Bank8(ProbeState *s)
 {
-	LookForCardIDInPlayAreaResult r = LookForCardIDInPlayArea_Bank8(s->a, s->b);
+	LookForCardIDInPlayAreaResult r = LookForCardIDInPlayArea_Bank8(probe_card_id(s), s->b);
 	s->a = r.a;
 	s->b = r.b;
 	s->f = r.f;
@@ -80,7 +84,7 @@ static void adapt_LookForCardIDInPlayArea_Bank8(ProbeState *s)
 /* >>> factory CheckIfHasCardIDInHand */
 static void adapt_CheckIfHasCardIDInHand(ProbeState *s)
 {
-	CheckIfHasCardIDInHandResult r = CheckIfHasCardIDInHand(s->a);
+	CheckIfHasCardIDInHandResult r = CheckIfHasCardIDInHand(probe_card_id(s));
 	s->a = r.a;
 	s->f = r.f;
 }
@@ -140,7 +144,7 @@ static void adapt_CountPokemonCardsInHandAndInPlayArea(ProbeState *s)
 /* >>> factory LookForCardIDInLocation_Bank8 */
 static void adapt_LookForCardIDInLocation_Bank8(ProbeState *s)
 {
-	LookForCardIDInLocationBank8Result r = LookForCardIDInLocation_Bank8(s->a, s->e);
+	LookForCardIDInLocationBank8Result r = LookForCardIDInLocation_Bank8(s->a, probe_card_id(s));
 	s->a = r.a;
 	s->f = r.f;
 }
@@ -149,7 +153,7 @@ static void adapt_LookForCardIDInLocation_Bank8(ProbeState *s)
 /* >>> factory LookForCardIDInHandList_Bank8 */
 static void adapt_LookForCardIDInHandList_Bank8(ProbeState *s)
 {
-	LookForCardIDInHandListResult r = LookForCardIDInHandList_Bank8(s->a);
+	LookForCardIDInHandListResult r = LookForCardIDInHandList_Bank8(probe_card_id(s));
 	s->a = r.a;
 	s->f = r.f;
 	s->d = r.d;
@@ -159,7 +163,7 @@ static void adapt_LookForCardIDInHandList_Bank8(ProbeState *s)
 /* >>> factory LookForCardIDInHandAndPlayArea */
 static void adapt_LookForCardIDInHandAndPlayArea(ProbeState *s)
 {
-	LookForCardIDInHandAndPlayAreaResult r = LookForCardIDInHandAndPlayArea(s->a);
+	LookForCardIDInHandAndPlayAreaResult r = LookForCardIDInHandAndPlayArea(probe_card_id(s));
 	s->a = r.a;
 	s->f = r.f;
 }
@@ -168,7 +172,8 @@ static void adapt_LookForCardIDInHandAndPlayArea(ProbeState *s)
 /* >>> factory LookForCardIDToTradeWithDifferentHandCard */
 static void adapt_LookForCardIDToTradeWithDifferentHandCard(ProbeState *s)
 {
-	LookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(s->a, s->e);
+	LookForCardIDToTradeWithDifferentHandCardResult r =
+		LookForCardIDToTradeWithDifferentHandCard(probe_card_id(s), (CardId)((uint16_t)s->b << 8 | s->c));
 	s->a = r.a;
 	s->f = r.f;
 	s->d = r.d;
@@ -179,7 +184,8 @@ static void adapt_LookForCardIDToTradeWithDifferentHandCard(ProbeState *s)
 /* >>> factory LookForCardIDInDeck_GivenCardIDInHand */
 static void adapt_LookForCardIDInDeck_GivenCardIDInHand(ProbeState *s)
 {
-	LookForCardIDInDeck_GivenCardIDInHandResult r = LookForCardIDInDeck_GivenCardIDInHand(s->a, s->b);
+	LookForCardIDInDeck_GivenCardIDInHandResult r =
+		LookForCardIDInDeck_GivenCardIDInHand(probe_card_id(s), (CardId)((uint16_t)s->b << 8 | s->c));
 	s->a = r.a;
 	s->f = r.f;
 	s->d = r.d;
@@ -189,7 +195,9 @@ static void adapt_LookForCardIDInDeck_GivenCardIDInHand(ProbeState *s)
 /* >>> factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
 static void adapt_LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ProbeState *s)
 {
-	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(s->a, s->b);
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(probe_card_id(s),
+			(CardId)((uint16_t)s->b << 8 | s->c));
 	s->a = r.a;
 	s->f = r.f;
 	s->d = r.d;
@@ -251,7 +259,7 @@ static void adapt_AICheckIfAttackIsHighRecoil(ProbeState *s)
 /* >>> factory ShowPromotionalCardScreen */
 static void adapt_ShowPromotionalCardScreen(ProbeState *s)
 {
-	ShowPromotionalCardScreen(s->a);
+	ShowPromotionalCardScreen(probe_card_id(s));
 }
 /* <<< factory ShowPromotionalCardScreen */
 

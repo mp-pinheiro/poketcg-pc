@@ -19,30 +19,29 @@
 /* <<< factory statics */
 
 /* >>> factory _ShowPromotionalCardScreen */
-void _ShowPromotionalCardScreen(uint8_t a)
+void _ShowPromotionalCardScreen(CardId de)
 {
 	/* promotional_card.asm:5. `.legendary_card_text` is not a helper label:
 	 * with a == 0 the routine `call`s its own tail three times -- Moltres,
 	 * Articuno, Zapdos -- and then falls into it a fourth time for Dragonite,
 	 * so only that last pass's `ret` reaches the caller. Any other `a` is a
 	 * card id and runs the tail exactly once. */
-	const uint8_t legendary_cards[4] = {MOLTRES_LV37, ARTICUNO_LV37,
+	const CardId legendary_cards[4] = {MOLTRES_LV37, ARTICUNO_LV37,
 					    ZAPDOS_LV68, DRAGONITE_LV41};
 	uint8_t pass = 0u;
 
 	(void)SetupText(0x38u, 0x9Fu);
 
 	for (;;) {
-		uint8_t card;
-		uint16_t text;
+		CardId card;
+		uint16_t text = ReceivedCardText;
 		uint16_t name;
 
-		if (a == 0u) {
+		if (de == 0u) {
 			card = legendary_cards[pass];
 			text = ReceivedLegendaryCardText;
 		} else {
-			card = a;
-			text = ReceivedCardText;
+			card = de;
 			if (card != VILEPLUME && card != BLASTOISE) {
 				text = ReceivedPromotionalFlyingPikachuText;
 				if (card != FLYING_PIKACHU) {
@@ -71,7 +70,7 @@ void _ShowPromotionalCardScreen(uint8_t a)
 		 * OpenCardPage_FromHand overwrites `a` with its own page type. */
 		OpenCardPage_FromHand(0u, 0u, 0u, 0u, 0u, 0u, 0u);
 
-		if (a != 0u || pass == 3u)
+		if (de != 0u || pass == 3u)
 			return;
 		pass++;
 	}

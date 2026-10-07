@@ -2303,7 +2303,7 @@ CalculateParticularAttachedEnergyNeededResult CalculateParticularAttachedEnergyN
 AnimationDataResult GetAnimationData(void)
 {
 	uint8_t animation = wTempAnimation;
-	uint16_t offset = (uint16_t)animation * 6u;
+	uint16_t offset = (uint16_t)animation * 5u;
 	uint16_t address = (uint16_t)(ANIMATIONS_ADDR + offset);
 	uint8_t f = 0u;
 	if (((offset & 0x0fffu) + (ANIMATIONS_ADDR & 0x0fffu)) > 0x0fffu)
@@ -2647,9 +2647,9 @@ CheckIfActiveStatusResult CheckIfActiveCardParalyzedOrAsleep(void)
 	DuelistVarResult status = GetTurnDuelistVariable(0xF0u);
 	uint8_t masked = (uint8_t)(status.a & 0x0Fu);
 	if (masked == 0x03u)
-		return (CheckIfActiveStatusResult){masked, 0x90u, 0x0025u};
+		return (CheckIfActiveStatusResult){masked, 0x90u, UnableDueToParalysisText};
 	if (masked == 0x02u)
-		return (CheckIfActiveStatusResult){masked, 0x90u, 0x0024u};
+		return (CheckIfActiveStatusResult){masked, 0x90u, UnableDueToSleepText};
 	return (CheckIfActiveStatusResult){masked,
 		(uint8_t)(masked == 0u ? 0x80u : 0x00u), status.hl};
 }
@@ -3898,7 +3898,7 @@ void PrintDuelResultStats(void)
 /* <<< factory PrintDuelResultStats */
 
 /* >>> factory ConvertColorToEnergyCardID */
-uint8_t ConvertColorToEnergyCardID(uint8_t a)
+ConvertColorResult ConvertColorToEnergyCardID(uint8_t a)
 {
 	static const uint8_t card_id[] = {
 		FIRE_ENERGY,
@@ -3910,7 +3910,7 @@ uint8_t ConvertColorToEnergyCardID(uint8_t a)
 		DOUBLE_COLORLESS_ENERGY,
 	};
 	uint8_t result = card_id[a];
-	return result;
+	return (ConvertColorResult){a, 0u, result};
 }
 /* <<< factory ConvertColorToEnergyCardID */
 
@@ -4474,9 +4474,10 @@ CheckEnergyNeededForAttackResult CheckEnergyNeededForAttack(void)
 		c = colorless_needed;
 		b = wTempLoadedAttackEnergyNeededAmount;
 		a = wTempLoadedAttackEnergyNeededType;
-		a = ConvertColorToEnergyCardID(a);
-		e = a;
-		d = 0u;
+	ConvertColorResult converted = ConvertColorToEnergyCardID(a);
+	a = converted.e;
+	e = converted.e;
+	d = converted.d;
 		return (CheckEnergyNeededForAttackResult){a, not_enough_f, b, c, d, e, hl};
 	}
 
@@ -4496,9 +4497,10 @@ CheckEnergyNeededForAttackResult CheckEnergyNeededForAttack(void)
 	c = colorless_needed2;
 	b = wTempLoadedAttackEnergyNeededAmount;
 	a = wTempLoadedAttackEnergyNeededType;
-	a = ConvertColorToEnergyCardID(a);
-	e = a;
-	d = 0u;
+	ConvertColorResult converted2 = ConvertColorToEnergyCardID(a);
+	a = converted2.e;
+	e = converted2.e;
+	d = converted2.d;
 	return (CheckEnergyNeededForAttackResult){a, final_f, b, c, d, e, hl};
 }
 /* <<< factory CheckEnergyNeededForAttack */
@@ -4763,9 +4765,9 @@ CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDisc
 		c = colorless_needed;
 		b = wTempLoadedAttackEnergyNeededAmount;
 		a = wTempLoadedAttackEnergyNeededType;
-		a = ConvertColorToEnergyCardID(a);
-		e = a;
-		d = 0u;
+	ConvertColorResult converted3 = ConvertColorToEnergyCardID(a);
+	e = converted3.e;
+	d = converted3.d;
 		return (CheckEnergyNeededForAttackAfterDiscardResult){b, c, d, e, not_enough_f};
 	}
 
@@ -4778,9 +4780,9 @@ CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDisc
 	c = colorless_needed2;
 	b = wTempLoadedAttackEnergyNeededAmount;
 	a = wTempLoadedAttackEnergyNeededType;
-	a = ConvertColorToEnergyCardID(a);
-	e = a;
-	d = 0u;
+	ConvertColorResult converted4 = ConvertColorToEnergyCardID(a);
+	e = converted4.e;
+	d = converted4.d;
 	return (CheckEnergyNeededForAttackAfterDiscardResult){b, c, d, e, final_f};
 }
 /* <<< factory CheckEnergyNeededForAttackAfterDiscard */
@@ -5025,7 +5027,7 @@ void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c)
 	uint8_t inches = (uint8_t)hl;
 	uint8_t row = b;
 	uint8_t col = c;
-	NumberTextResult digits = TwoByteNumberToTxSymbol_PadSpace(feet);
+	NumberTextResult digits = TwoByteNumberToTxSymbol_TrimLeadingZeros(feet);
 	uint8_t offset = (uint8_t)(5u - (uint8_t)((digits.hl - wStringBuffer_ADDR) / 2u));
 	gb_write8(wPokemonLengthPrintOffset_ADDR, offset);
 	uint16_t dst = BCCoordToBGMap0Address(row, col);
@@ -5038,7 +5040,7 @@ void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c)
 	InitTextPrinting(new_row, col);
 	ProcessTextFromID(FeetText);
 	row = (uint8_t)(new_row + 1u);
-	digits = TwoByteNumberToTxSymbol_PadSpace(inches);
+	digits = TwoByteNumberToTxSymbol_TrimLeadingZeros(inches);
 	offset = (uint8_t)(5u - (uint8_t)((digits.hl - wStringBuffer_ADDR) / 2u));
 	gb_write8(wPokemonLengthPrintOffset_ADDR, offset);
 	dst = BCCoordToBGMap0Address(row, col);
@@ -6873,7 +6875,7 @@ OppAction_TossCoinATimesResult OppAction_TossCoinATimes(
 {
 	TossCoinATimesResult toss = TossCoinATimes(a, f, b, c, d, e, hl);
 	wSkipDuelistIsThinkingDelay = 1u;
-	return (OppAction_TossCoinATimesResult){toss.a, toss.f, b, c, d, e, toss.hl};
+	return (OppAction_TossCoinATimesResult){toss.a, toss.f, 0x12u, 0u, 0x12u, 0x11u, toss.hl};
 }
 
 /* >>> factory OppAction_AttemptRetreat */
@@ -7174,7 +7176,7 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 		hl = estimate.hl;
 		a = wDamage;
 		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d, e};
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, 0u, 0u};
 		f = 0x80u; /* `or a` on a zero damage byte */
 	}
 
@@ -7192,12 +7194,12 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 		e = estimate.e;
 		a = wDamage;
 		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d, e};
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, 0u, 0u};
 	}
 
 	/* .no_carry */
 	f = (a == 0u) ? 0x80u : 0x00u;
-	return (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};
+	return (CheckIfCanDamageDefendingPokemonResult){a, f, 0u, 0u};
 }
 /* <<< factory CheckIfCanDamageDefendingPokemon */
 
@@ -7974,7 +7976,7 @@ PrintPokemonCardWeightResult PrintPokemonCardWeight(uint8_t b, uint8_t c, uint16
 	uint8_t sum;
 	uint8_t f;
 
-	(void)TwoByteNumberToTxSymbol_PadSpace(quotient);
+	(void)TwoByteNumberToTxSymbol_TrimLeadingZeros(quotient);
 	for (uint8_t i = 0u; i < 5u; i++)
 		gb_write8((uint16_t)(wStringBuffer_ADDR + i),
 			gb_read8((uint16_t)(wStringBuffer_ADDR + 1u + i * 2u)));

@@ -3,10 +3,14 @@
 #include "generated/wram.h"
 #include "probe.h"
 
-/* >>> factory _ShowPromotionalCardScreen */
+static CardId probe_card_id(const ProbeState *s)
+{
+	return (CardId)(((uint16_t)s->d << 8) | s->e);
+}
+
 static void adapt__ShowPromotionalCardScreen(ProbeState *s)
 {
-	_ShowPromotionalCardScreen(s->a);
+	_ShowPromotionalCardScreen(probe_card_id(s));
 }
 /* <<< factory _ShowPromotionalCardScreen */
 

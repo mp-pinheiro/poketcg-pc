@@ -327,15 +327,17 @@ FindDupResult FindDuplicateCards(uint16_t hl, uint8_t d)
 		outer = (uint16_t)(outer + 1u);
 		if (idx == 0xFFu)
 			break;
-		d = 0u;
 		CardId b = GetCardIDFromDeckIndex(idx);
+		d = (uint8_t)(b >> 8);
 		uint16_t inner = outer;
 		for (;;) {
 			uint8_t c = gb_read8(inner);
 			inner = (uint16_t)(inner + 1u);
 			if (c == 0xFFu)
 				break;
-			if (GetCardIDFromDeckIndex(c) != b)
+			CardId current = GetCardIDFromDeckIndex(c);
+			d = (uint8_t)(current >> 8);
+			if (current != b)
 				continue;
 			if (GetCardType(b) < TYPE_ENERGY)
 				wce0f = c;
@@ -619,23 +621,23 @@ AIDecideParameterResult AIDecide_Gambler(uint8_t d)
 /* >>> factory AIDecide_Revive */
 AIDecideReviveResult AIDecide_Revive(uint8_t d)
 {
-	(void)d;
-	CardListResult discard = CreateDiscardPileCardList(0);
+	CardListResult discard = CreateDiscardPileCardList(0u);
 	if (discard.f & 0x10u)
-		return (AIDecideReviveResult){discard.a, 0x80u, 0xC5u};
-	if (GetTurnDuelistVariable(0xEFu).a >= 4u) {
-		uint8_t count = GetTurnDuelistVariable(0xEFu).a;
-		return (AIDecideReviveResult){count, 0, 0xC5u};
-	}
-	for (uint16_t p = wDuelTempList_ADDR;; p++) {
-		uint8_t index = gb_read8(p);
+		return (AIDecideReviveResult){discard.a, 0x80u, discard.d};
+	if (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a >= 4u)
+		return (AIDecideReviveResult){GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a,
+			0u, discard.d};
+	uint16_t p = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t index = gb_read8(p++);
 		if (index == 0xFFu)
-			return (AIDecideReviveResult){0xFFu, 0, 0xC5u};
-		uint8_t card = LoadCardDataToBuffer1_FromDeckIndex(index);
-		if (card == 0x88u || card == 0x87u)
-			return (AIDecideReviveResult){index, 0x90u, 0xC5u};
-		if (card == 0xBAu)
-			return (AIDecideReviveResult){0, 0x10u, 0xC5u};
+			return (AIDecideReviveResult){0xFFu, 0u, d};
+		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		CardId card_id = card_id_read_at(wLoadedCard1ID_ADDR);
+		d = (uint8_t)(card_id >> 8);
+		if (card_id == HITMONCHAN || card_id == HITMONLEE ||
+		    card_id == TAUROS || card_id == KANGASKHAN)
+			return (AIDecideReviveResult){index, 0x90u, d};
 	}
 }
 /* <<< factory AIDecide_Revive */
@@ -679,19 +681,20 @@ AIDecide_ItemFinderResult AIDecide_ItemFinder(uint8_t d)
 {
 	CardListResult discard = CreateDiscardPileCardList(0u);
 	uint8_t a = discard.a;
-	d = 0xC5u;
+	d = discard.d;
 	if (!(discard.f & 0x10u)) {
 		uint16_t hl = wDuelTempList_ADDR;
 		uint8_t deck_index = 0u;
 		uint8_t found = 0u;
 		for (;;) {
-			deck_index = gb_read8(hl);
-			hl = (uint16_t)(hl + 1u);
+			deck_index = gb_read8(hl++);
 			if (deck_index == 0xFFu) {
 				a = 0xFFu;
 				break;
 			}
-			uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+			(void)LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+			CardId card_id = card_id_read_at(wLoadedCard1ID_ADDR);
+			d = (uint8_t)(card_id >> 8);
 			if (card_id == ENERGY_REMOVAL) {
 				found = 1u;
 				break;
@@ -700,15 +703,18 @@ AIDecide_ItemFinderResult AIDecide_ItemFinder(uint8_t d)
 		if (found) {
 			wce06 = deck_index;
 
-			(void)CreateHandCardList(0u);
+			HandListResult hand = CreateHandCardList(0u);
+			d = hand.d;
 			hl = wDuelTempList_ADDR;
 			for (;;) {
 				uint8_t v = gb_read8(hl);
-				hl = (uint16_t)(hl + 1u);
+				hl++;
 				if (v == 0xFFu)
 					break;
-				uint8_t card_id2 = LoadCardDataToBuffer1_FromDeckIndex(v);
-				if (card_id2 == MR_MIME || card_id2 == POKEMON_TRADER)
+				(void)LoadCardDataToBuffer1_FromDeckIndex(v);
+				CardId card_id = card_id_read_at(wLoadedCard1ID_ADDR);
+				d = (uint8_t)(card_id >> 8);
+				if (card_id == MR_MIME || card_id == POKEMON_TRADER)
 					RemoveCardFromList(&hl);
 			}
 
@@ -1940,8 +1946,7 @@ AIDecide_PokeballResult AIDecide_Pokeball(uint8_t d)
 			}
 		}
 
-		uint8_t f = (deck_id == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokeballResult){deck_id, f, d};
+		return (AIDecide_PokeballResult){h.a, or_a_flags(h.a), d};
 	}
 
 	if (deck_id == LOVELY_NIDORAN_DECK_ID) {
@@ -1982,8 +1987,8 @@ AIDecide_PokeballResult AIDecide_Pokeball(uint8_t d)
 /* >>> factory AIDecide_MrFuji */
 AIDecideParameterResult AIDecide_MrFuji(uint8_t d)
 {
-	gb_write8(0xCE06u, 0xFFu);
-	gb_write8(0xCE08u, 0xFFu);
+	gb_write8(wce06_ADDR, 0xFFu);
+	gb_write8(wce08_ADDR, 0xFFu);
 
 	DuelistVarResult r1 = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	uint8_t count = r1.a;
@@ -2003,16 +2008,16 @@ AIDecideParameterResult AIDecide_MrFuji(uint8_t d)
 		uint8_t counters = ConvertHPToDamageCounters_Bank8(dmg.a);
 		if (counters != 0u) {
 			CalculateBDividedByA_Bank8Result div = CalculateBDividedByA_Bank8(counters, maxHP);
-			if (div.a < 20u && div.a < gb_read8(0xCE08u)) {
-				gb_write8(0xCE08u, div.a);
-				gb_write8(0xCE06u, e);
+			if (div.a < 20u && div.a < wce08) {
+				wce08 = div.a;
+				wce06 = e;
 			}
 		}
 		e++;
 		d--;
 	}
 
-	uint8_t chosen = gb_read8(0xCE06u);
+	uint8_t chosen = wce06;
 	if (chosen == 0xFFu)
 		return (AIDecideParameterResult){chosen, 0xC0u, 0u};
 	return (AIDecideParameterResult){chosen, 0x10u, 0u};

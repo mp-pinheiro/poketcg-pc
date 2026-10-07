@@ -58,10 +58,10 @@
 #include "home/input_name.h"
 #include "home/write_number.h"
 #include "mem.h"
-#define INPUT_CUR_DECK_DECK1_DATA (PrintCardSetListEntries_ADDR + 0x69u)
-#define INPUT_CUR_DECK_DECK2_DATA (PrintCardSetListEntries_ADDR + 0x72u)
-#define INPUT_CUR_DECK_DECK3_DATA (PrintCardSetListEntries_ADDR + 0x7Bu)
-#define INPUT_CUR_DECK_DECK4_DATA (PrintCardSetListEntries_ADDR + 0x84u)
+#define INPUT_CUR_DECK_DECK1_DATA Deck1Data_ADDR
+#define INPUT_CUR_DECK_DECK2_DATA Deck2Data_ADDR
+#define INPUT_CUR_DECK_DECK3_DATA Deck3Data_ADDR
+#define INPUT_CUR_DECK_DECK4_DATA Deck4Data_ADDR
 
 #include "home/frames.h"
 #include "home/menus.h"

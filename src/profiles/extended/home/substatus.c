@@ -312,7 +312,8 @@ NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t d, uint8_t e, uin
 	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower_ArenaCard();
 	hl = incapable.hl;
 	if (!(incapable.f & 0x10u))
-		return HandleNoDamageOrEffectSubstatus_PkmnPower(d, e, incapable.hl);
+		return HandleNoDamageOrEffectSubstatus_PkmnPower(d, e,
+			wTempNonTurnDuelistCardID_ADDR);
 	return (NoDamageOrEffectResult){0x00u, d, e, incapable.hl};
 }
 
@@ -486,10 +487,10 @@ RainDanceResult CheckRainDanceScenario(void)
 	uint16_t card_id = GetCardIDFromDeckIndex(card_idx);
 	uint8_t card_type = GetCardType(card_id);
 	if (card_type != TYPE_ENERGY_WATER)
-		return (RainDanceResult){card_type, 0x00u};
+		return (RainDanceResult){card_type, (uint8_t)(card_type == 0u ? 0x80u : 0u)};
 	uint8_t color = GetPlayAreaCardColor(hTempPlayAreaLocation_ff9d);
 	if (color != TYPE_PKMN_WATER)
-		return (RainDanceResult){color, 0x00u};
+		return (RainDanceResult){color, (uint8_t)(color == 0u ? 0x80u : 0u)};
 	return (RainDanceResult){TYPE_PKMN_WATER, 0x90u};
 }
 
@@ -652,27 +653,35 @@ HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de)
 {
 	uint8_t e = (uint8_t)de;
 	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e));
-	uint8_t card = GetCardIDFromDeckIndex(arena.a);
-	if (card == MEW_LV8) {
+	CardId card_id = GetCardIDFromDeckIndex(arena.a);
+	if (card_id == MEW_LV8) {
 		DuelistVarResult stage = GetNonTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + e));
 		if (stage.a != 0u) {
 			gb_write8(wNoDamageOrEffect_ADDR, NO_DAMAGE_OR_EFFECT_NSHIELD);
 			(void)DrawWideTextBox_WaitForInput(NoDamageOrEffectDueToNShieldText);
-			return (HandleNShieldAndTransparencyResult){0u, 0x90u, (uint8_t)(de >> 8), e, NoDamageOrEffectDueToNShieldText};
+			return (HandleNShieldAndTransparencyResult){0u, 0x90u, (uint8_t)(de >> 8), e,
+				NoDamageOrEffectDueToNShieldText};
 		}
-		return (HandleNShieldAndTransparencyResult){stage.a, stage.a ? 0u : 0x80u, (uint8_t)(de >> 8), e, stage.hl};
+		return (HandleNShieldAndTransparencyResult){stage.a, stage.a ? 0u : 0x80u,
+			(uint8_t)(de >> 8), e, stage.hl};
 	}
-	if (card == HAUNTER_LV17) {
+	if (card_id == HAUNTER_LV17) {
 		wDuelDisplayedScreen = 0u;
 		TossCoinRoutineResult toss = TossCoin(TransparencyCheckText, arena.hl);
 		if (toss.f & 0x10u) {
 			gb_write8(wNoDamageOrEffect_ADDR, NO_DAMAGE_OR_EFFECT_TRANSPARENCY);
 			(void)DrawWideTextBox_WaitForInput(NoDamageOrEffectDueToTransparencyText);
-			return (HandleNShieldAndTransparencyResult){0u, 0x90u, (uint8_t)(de >> 8), e, NoDamageOrEffectDueToTransparencyText};
+			return (HandleNShieldAndTransparencyResult){0u, 0x90u, (uint8_t)(de >> 8), e,
+				NoDamageOrEffectDueToTransparencyText};
 		}
-		return (HandleNShieldAndTransparencyResult){toss.a, toss.a ? 0u : 0x80u, (uint8_t)(de >> 8), e, toss.hl};
+		return (HandleNShieldAndTransparencyResult){toss.a, toss.a ? 0u : 0x80u,
+			(uint8_t)(de >> 8), e, toss.hl};
 	}
-	return (HandleNShieldAndTransparencyResult){card, card ? 0u : 0x80u, (uint8_t)(de >> 8), e, arena.hl};
+	uint8_t compare_a = (uint8_t)(card_id >> 8);
+	if (compare_a == (uint8_t)(MEW_LV8 >> 8))
+		compare_a = (uint8_t)card_id;
+	return (HandleNShieldAndTransparencyResult){compare_a, compare_a ? 0u : 0x80u,
+		(uint8_t)(de >> 8), e, arena.hl};
 }
 /* <<< factory HandleNShieldAndTransparency */
 
@@ -681,11 +690,13 @@ HandleTransparencyResult HandleTransparency(uint16_t hl)
 {
 	uint8_t card = wTempNonTurnDuelistCardID;
 	if (card != HAUNTER_LV17)
-		return (HandleTransparencyResult){card, card ? 0u : 0x80u, hl};
+		return (HandleTransparencyResult){card, card ? 0u : 0x80u,
+			wTempNonTurnDuelistCardID_ADDR};
 
 	uint8_t category = wLoadedAttackCategory;
 	if (category == POKEMON_POWER) {
-		return (HandleTransparencyResult){category, category ? 0u : 0x80u, hl};
+		return (HandleTransparencyResult){category, category ? 0u : 0x80u,
+			wTempNonTurnDuelistCardID_ADDR};
 	}
 
 	uint8_t location = wTempPlayAreaLocation_cceb;

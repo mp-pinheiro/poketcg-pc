@@ -2,6 +2,7 @@
 
 #include "generated/text_ids.h"
 #include "generated/constants.h"
+#include "generated/rom.h"
 #define MENU_CONFIRM 0x01u
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -17,6 +18,8 @@
 
 
 #include "home/deck_configuration.h"
+#include "home/card_id_bus.h"
+#include "home/load_deck.h"
 #include "generated/sram.h"
 
 
@@ -45,13 +48,13 @@
 
 #include "home/deck_machine.h"
 #include "home/deck_configuration.h"
-#define WMACHINEDECKPTRS_ADDR 0xD00Du
+#define WMACHINEDECKPTRS_ADDR wMachineDeckPtrs_ADDR
 
 #include "home/deck_machine.h"
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
 #include "home/print_text.h"
-#define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR 0x74D4u
+#define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR PrintDeckMachineEntry__text_ADDR
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -94,9 +97,8 @@
  * 02:52a7 DeckNameSuffix,
  * 02:6e91 HandleDeckMissingCardsList.DeckConfirmationCardSelectionParams,
  * 02:6e9a HandleDeckMissingCardsList.CardListUpdateFunction. */
-#define DeckNameSuffix_ADDR 0x52A7u
-#define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR 0x6E91u
-#define CARD_LIST_UPDATE_FUNCTION_ADDR 0x6E9Au
+#define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR HandleDeckMissingCardsList__DeckConfirmationCardSelectionParams_ADDR
+#define CARD_LIST_UPDATE_FUNCTION_ADDR HandleDeckMissingCardsList__CardListUpdateFunction_ADDR
 
 
 #include "home/deck_machine.h"
@@ -151,7 +153,7 @@
 #include "mem.h"
 
 /* poketcg.sym: 02:7609 DeckMachineMenuParameters. */
-#define DECK_MACHINE_MENU_PARAMETERS_ADDR 0x7609u
+#define DECK_MACHINE_MENU_PARAMETERS_ADDR DeckMachineMenuParameters_ADDR
 
 #include "home/auto_deck_machines.h"
 #include "home/credits_sequence_commands.h"
@@ -182,29 +184,27 @@
  * The first two are handed to InitializeMenuParameters/PlaceTextItems, which
  * read them off the bus, so the case has to map bank 2; the title list is read
  * with an explicit rom_ptr() because it is this routine's own data. */
-#define HANDLE_AUTO_DECK_MENU_BANK 0x02u
-#define HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR 0x7B6Eu
-#define HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR 0x7B76u
-#define HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR 0x7B83u
-#define UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR 0x73FEu
+#define HANDLE_AUTO_DECK_MENU_BANK HandleAutoDeckMenu_BANK
+#define HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR HandleAutoDeckMenu__MenuParameters_ADDR
+#define HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR HandleAutoDeckMenu__DeckMachineMenuData_ADDR
+#define HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR HandleAutoDeckMenu__DeckMachineTitleTextList_ADDR
+#define UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR UpdateDeckMachineScrollArrowsAndEntries_ADDR
 
 #include "generated/wram.h"
 #include "mem.h"
-#define DRAW_DECK_MACHINE_SCREEN_ADDR 0x7403u
+#define DRAW_DECK_MACHINE_SCREEN_ADDR DrawDeckMachineScreen_ADDR
 
-#define PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR 0x76FBu
+#define PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR DeckMachineSelectionParams_ADDR
 
 #include "generated/wram.h"
-#define DECK_MACHINE_SELECTION_PARAMS_ADDR 0x76FBu
-#define DECK_MACHINE_MENU_DATA_ADDR 0x7274u
+#define DECK_MACHINE_SELECTION_PARAMS_ADDR DeckMachineSelectionParams_ADDR
+#define DECK_MACHINE_MENU_DATA_ADDR HandleDeckSaveMachineMenu__DeckMachineMenuData_ADDR
 
 #include "home/common.h"
 #include "home/save.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-#define DATA_B04A_ADDR 0x704Au
-#define SHOW_RECEIVED_CARDS_LIST_ADDR 0x7053u
 
 #include "home/common.h"
 #include "home/save.h"
@@ -271,26 +271,24 @@ void SafelySwitchToTempSRAMBank(void)
 /* deck_machine.asm:1290-1323. */
 DeckBuildCheckResult CheckIfHasEnoughCardsToBuildDeck(uint16_t *hl)
 {
-	EnableSRAM();
-	uint16_t deck = *hl;
+	uint16_t source = *hl;
 	uint16_t collection = wTempCardCollection_ADDR;
-
-	for (uint8_t i = 0; i < DECK_SIZE; i++) {
-		uint8_t card = gb_read8(deck);
-		deck = (uint16_t)(deck + 1u);
-		uint16_t slot = (uint16_t)(collection + card);
-		uint8_t count = gb_read8(slot);
-		if (count == 0u || count == CARD_NOT_OWNED) {
-			*hl = deck;
-			DisableSRAM();
-			return (DeckBuildCheckResult){ .a = count, .f = 0x90u };
+	for (uint8_t count = 0u; count < DECK_SIZE; count++) {
+		uint8_t low = gb_read8(source++);
+		uint8_t high = gb_read8(source);
+		uint16_t slot = (uint16_t)(collection + low +
+			((uint16_t)high << 8));
+		uint8_t owned = gb_read8(slot);
+		if (owned == 0u || owned == CARD_NOT_OWNED) {
+			*hl = source;
+			return (DeckBuildCheckResult){
+				owned, (owned == 0u) ? 0x90u : 0xD0u};
 		}
-		gb_write8(slot, (uint8_t)(count - 1u));
+		gb_write8(slot, (uint8_t)(owned - 1u));
+		source = (uint16_t)(source + 1u);
 	}
-
-	*hl = deck;
-	DisableSRAM();
-	return (DeckBuildCheckResult){ .a = DECK_SIZE, .f = 0x00u };
+	*hl = source;
+	return (DeckBuildCheckResult){DECK_SIZE, 0x00u};
 }
 /* <<< factory CheckIfHasEnoughCardsToBuildDeck */
 
@@ -307,7 +305,7 @@ void GetSavedDeckPointers(uint16_t *hl, uint16_t *de)
 	for (uint8_t i = 0; i < NUM_DECK_SAVE_MACHINE_SLOTS; i++) {
 		gb_write8(d++, (uint8_t)h);
 		gb_write8(d++, (uint8_t)(h >> 8));
-		h = (uint16_t)(h + DECK_STRUCT_SIZE);
+		h = (uint16_t)(h + DECK_COMPRESSED_STRUCT_SIZE);
 	}
 	*hl = h;
 	*de = d;
@@ -321,8 +319,8 @@ void GetSavedDeckCount(void)
 	EnableSRAM();
 	uint8_t count = 0;
 	for (uint8_t i = 0; i < NUM_DECK_SAVE_MACHINE_SLOTS; i++) {
-		uint16_t hl = (uint16_t)(sSavedDecks_ADDR + i * DECK_STRUCT_SIZE);
-		if (gb_read8(hl) != 0)
+		uint16_t hl = (uint16_t)(sSavedDecks_ADDR + i * DECK_COMPRESSED_STRUCT_SIZE);
+		if (gb_read8(hl) != 0u)
 			count++;
 	}
 	wNumSavedDecks = count;
@@ -390,23 +388,20 @@ SetDeckMachineTitleTextResult SetDeckMachineTitleText(void)
 /* >>> factory FindFirstEmptyDeckSlot */
 FindFirstEmptyDeckSlotResult FindFirstEmptyDeckSlot(void)
 {
-	uint16_t hl = 0xA218u;
-	uint8_t a = gb_read8(hl);
-	if (a == 0u)
-		return (FindFirstEmptyDeckSlotResult){0u, 0x80u, hl};
-	hl = 0xA26Cu;
-	a = gb_read8(hl);
-	if (a == 0u)
-		return (FindFirstEmptyDeckSlotResult){1u, 0x80u, hl};
-	hl = 0xA2C0u;
-	a = gb_read8(hl);
-	if (a == 0u)
-		return (FindFirstEmptyDeckSlotResult){2u, 0x80u, hl};
-	hl = 0xA314u;
-	a = gb_read8(hl);
-	if (a == 0u)
-		return (FindFirstEmptyDeckSlotResult){3u, 0x80u, hl};
-	return (FindFirstEmptyDeckSlotResult){a, 0x10u, hl};
+	const uint16_t slots[] = {
+		sDeck1Cards_ADDR, sDeck2Cards_ADDR, sDeck3Cards_ADDR, sDeck4Cards_ADDR
+	};
+	uint8_t last = 0u;
+	uint16_t hl = slots[0];
+	for (uint8_t i = 0u; i < 4u; i++) {
+		hl = slots[i];
+		uint8_t low = gb_read8(hl++);
+		uint8_t high = gb_read8(hl);
+		last = (uint8_t)(low | high);
+		if (last == 0u)
+			return (FindFirstEmptyDeckSlotResult){i, 0x80u, hl};
+	}
+	return (FindFirstEmptyDeckSlotResult){last, 0x10u, hl};
 }
 /* <<< factory FindFirstEmptyDeckSlot */
 
@@ -440,7 +435,11 @@ DeckBuildCheckResult CheckIfCanBuildSavedDeck(uint8_t a, uint8_t b)
 	uint16_t hl = (uint16_t)(WMACHINEDECKPTRS_ADDR + c);
 	uint16_t ptr = (uint16_t)(gb_read8(hl) | (uint16_t)gb_read8((uint16_t)(hl + 1u)) << 8);
 	ptr = (uint16_t)(ptr + DECK_NAME_SIZE);
-	DeckBuildCheckResult r = CheckIfHasEnoughCardsToBuildDeck(&ptr);
+	EnableSRAM();
+	DecompressSRAMDeck(ptr, wCurDeckCards_ADDR);
+	DisableSRAM();
+	uint16_t cards = wCurDeckCards_ADDR;
+	DeckBuildCheckResult r = CheckIfHasEnoughCardsToBuildDeck(&cards);
 	return r;
 }
 /* <<< factory CheckIfCanBuildSavedDeck */
@@ -461,12 +460,15 @@ static uint8_t deck_machine_num_cards_missing(uint8_t b)
 	CreateCardCollectionListWithDeckCards(0u);
 	SafelySwitchToTempSRAMBank();
 	uint16_t table = (uint16_t)(wMachineDeckPtrs_ADDR + (uint16_t)((uint8_t)(b << 1)));
-	uint16_t hl = (uint16_t)(gb_read8(table) | (uint16_t)gb_read8((uint16_t)(table + 1u)) << 8);
-	hl = (uint16_t)(hl + DECK_NAME_SIZE);
+	uint16_t compressed = (uint16_t)(gb_read8(table) |
+		(uint16_t)gb_read8((uint16_t)(table + 1u)) << 8);
+	compressed = (uint16_t)(compressed + DECK_NAME_SIZE);
 	EnableSRAM();
+	DecompressSRAMDeck(compressed, wCurDeckCards_ADDR);
+	uint16_t cards = wCurDeckCards_ADDR;
 	uint8_t missing = 0u;
-	for (uint8_t index = 1u; index <= DECK_SIZE; index++) {
-		uint8_t card = gb_read8(hl++);
+	for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+		CardId card = card_id_read(&cards);
 		uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);
 		uint8_t count = (uint8_t)(gb_read8(slot) & CARD_COUNT_MASK);
 		if (count == 0u)
@@ -546,7 +548,7 @@ TryDeleteSavedDeckResult TryDeleteSavedDeck(void)
 	uint16_t deck = GetSelectedSavedDeckPtr();
 	EnableSRAM();
 	(void)CopyDeckName(deck);
-	ClearMemory_Bank2(DECK_STRUCT_SIZE, deck);
+	ClearMemory_Bank2(DECK_COMPRESSED_STRUCT_SIZE, deck);
 	DisableSRAM();
 	gb_write8(wTxRam2_ADDR, 0u);
 	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
@@ -751,7 +753,7 @@ HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void)
 			EnableSRAM();
 			CopyListFromHLToDE(&source, &destination);
 			(void)AddDeckToCollection((uint16_t)(deck_name + DECK_NAME_SIZE));
-			ClearMemory_Bank2(DECK_STRUCT_SIZE, deck_name);
+			ClearMemory_Bank2(DECK_COMPRESSED_STRUCT_SIZE, deck_name);
 			DisableSRAM();
 
 			DrawDecksScreen(ALL_DECKS);
@@ -929,7 +931,7 @@ SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void)
 			uint16_t source = GetPointerToDeckName();
 			uint16_t destination = GetSelectedSavedDeckPtr();
 			EnableSRAM();
-			CopyNBytesFromHLToDE(&source, &destination, DECK_STRUCT_SIZE);
+			CopyNBytesFromHLToDE(&source, &destination, DECK_COMPRESSED_STRUCT_SIZE);
 			DisableSRAM();
 			ClearScreenAndDrawDeckMachineScreen();
 			DrawListScrollArrows();
@@ -968,34 +970,30 @@ typedef struct { uint8_t a; uint8_t missing; } TbdmdMissing;
 /* .DismantleDeck: a = DECK_*_F. */
 static void tbdmd_dismantle_deck(uint8_t deck)
 {
-	uint16_t hl = HtimesL((uint16_t)(((uint16_t)DECK_STRUCT_SIZE << 8) | deck));
+	uint16_t hl = HtimesL((uint16_t)(((uint16_t)DECK_COMPRESSED_STRUCT_SIZE << 8) | deck));
 	hl = (uint16_t)(hl + sBuiltDecks_ADDR);
 	(void)AddDeckToCollection((uint16_t)(hl + DECK_NAME_SIZE));
-	ClearMemory_Bank2(DECK_STRUCT_SIZE, hl);
+	ClearMemory_Bank2(DECK_COMPRESSED_STRUCT_SIZE, hl);
 }
 
 /* .CheckIfCardIsMissing: `missing` is the asm's carry, `a` the difference it
  * reports when the collection is short. */
-static TbdmdMissing tbdmd_check_if_card_is_missing(uint8_t card, uint16_t hl)
+static TbdmdMissing tbdmd_check_if_card_is_missing(CardId card, uint16_t hl)
 {
-	uint8_t d = 0u;
-
-	for (;;) { /* .loop_deck_cards */
-		uint8_t id = gb_read8(hl);
-
-		hl = (uint16_t)(hl + 1u);
+	uint8_t deck_count = 0u;
+	for (;;) {
+		CardId id = card_id_read(&hl);
 		if (id == 0u)
 			break;
 		if (id == card)
-			d = (uint8_t)(d + 1u);
+			deck_count = (uint8_t)(deck_count + 1u);
 	}
 
-	uint8_t e = (uint8_t)(gb_read8((uint16_t)(wTempCardCollection_ADDR + card))
+	uint8_t owned = (uint8_t)(gb_read8((uint16_t)(wTempCardCollection_ADDR + card))
 		& CARD_COUNT_MASK);
-
-	if (e < d)
-		return (TbdmdMissing){(uint8_t)(d - e), 1u};
-	return (TbdmdMissing){e, 0u};
+	if (owned < deck_count)
+		return (TbdmdMissing){(uint8_t)(deck_count - owned), 1u};
+	return (TbdmdMissing){owned, 0u};
 }
 
 /* .DismantleDecksNeededToBuild: returns the flag byte left by its `scf` (the
@@ -1054,13 +1052,12 @@ TryBuildDeckMachineDeckResult TryBuildDeckMachineDeck(void)
 			wCurDeck = wSelectedDeckMachineEntry;
 
 			uint16_t saved = GetSelectedSavedDeckPtr();
-			uint16_t src = (uint16_t)(saved + DECK_NAME_SIZE);
-			uint16_t dst = wCurDeckCards_ADDR;
-
+			uint16_t source = (uint16_t)(saved + DECK_NAME_SIZE);
 			EnableSRAM();
-			CopyNBytesFromHLToDE(&src, &dst, DECK_SIZE);
+			DecompressSRAMDeck(source, wCurDeckCards_ADDR);
 			DisableSRAM();
-			gb_write8((uint16_t)(wCurDeckCards_ADDR + DECK_SIZE), 0u);
+			gb_write8((uint16_t)(wCurDeckCards_ADDR + DECK_SIZE * 2u), 0u);
+			gb_write8((uint16_t)(wCurDeckCards_ADDR + DECK_SIZE * 2u + 1u), 0u);
 
 			(void)SortCurDeckCardsByID();
 			(void)CreateCurDeckUniqueCardList();
@@ -1071,41 +1068,34 @@ TryBuildDeckMachineDeckResult TryBuildDeckMachineDeck(void)
 
 			uint16_t list = wUniqueDeckCardList_ADDR;
 			uint16_t out = wFilteredCardList_ADDR;
-
-			for (;;) { /* .loop_deck_configuration */
-				uint8_t card = gb_read8(list);
-
-				list = (uint16_t)(list + 1u);
+			for (;;) {
+				CardId card = card_id_read(&list);
 				if (card == 0u)
 					break;
-
 				TbdmdMissing missing =
 					tbdmd_check_if_card_is_missing(card, wCurDeckCards_ADDR);
-
 				if (!missing.missing)
 					continue;
-
-				uint8_t needed = missing.a;
-
-				do { /* .loop_number_missing */
-					gb_write8(out, card);
-					out = (uint16_t)(out + 1u);
-					needed = (uint8_t)(needed - 1u);
-				} while (needed != 0u);
+				for (uint8_t count = missing.a; count != 0u; count--)
+					card_id_write(&out, card);
 			}
+			card_id_write(&out, 0u);
 
-			/* .finish_missing_card_list */
-			gb_write8(out, 0u);
-
-			gb_write8(wCardConfirmationText_ADDR, (uint8_t)TheseCardsAreNeededToBuildThisDeckText);
+			gb_write8(wCardConfirmationText_ADDR,
+				(uint8_t)TheseCardsAreNeededToBuildThisDeckText);
 			gb_write8((uint16_t)(wCardConfirmationText_ADDR + 1u),
-				  (uint8_t)(TheseCardsAreNeededToBuildThisDeckText >> 8));
+				(uint8_t)(TheseCardsAreNeededToBuildThisDeckText >> 8));
+
+			uint16_t missing_list = wFilteredCardList_ADDR;
+			uint16_t deck_cards = wCurDeckCards_ADDR;
+			for (uint8_t count = 0u; count < DECK_SIZE; count++) {
+				card_id_write(&deck_cards, card_id_read(&missing_list));
+			}
+			card_id_write(&deck_cards, 0u);
 
 			uint16_t name = GetSelectedSavedDeckPtr();
 			HandleDeckMissingCardsListResult shown =
-				HandleDeckMissingCardsList(name, wFilteredCardList_ADDR);
-
-			/* .set_carry_and_return */
+				HandleDeckMissingCardsList(name, deck_cards);
 			return (TryBuildDeckMachineDeckResult){wCardListCursorPos,
 				(uint8_t)((shown.f & 0x80u) | CARRY_FLAG)};
 		}
@@ -1149,24 +1139,26 @@ TryBuildDeckMachineDeckResult TryBuildDeckMachineDeck(void)
 	uint16_t deck = (uint16_t)(gb_read8(table)
 		| ((uint16_t)gb_read8((uint16_t)(table + 1u)) << 8));
 
-	uint16_t src = deck;
-	uint16_t dst = wDeckToBuild_ADDR;
+	uint16_t src_name = deck;
+	uint16_t dst_name = wDeckToBuild_ADDR;
 
 	EnableSRAM();
-	CopyNBytesFromHLToDE(&src, &dst, DECK_STRUCT_SIZE);
+	CopyNBytesFromHLToDE(&src_name, &dst_name, DECK_NAME_SIZE);
+	uint16_t compressed = (uint16_t)(deck + DECK_NAME_SIZE);
+	uint16_t uncompressed = (uint16_t)(wDeckToBuild_ADDR + DECK_NAME_SIZE);
+	DecompressSRAMDeck(compressed, uncompressed);
 
 	SafelySwitchToSRAM0();
-	(void)DecrementDeckCardsInCollection((uint16_t)(wDeckToBuild_ADDR + DECK_NAME_SIZE));
+	(void)DecrementDeckCardsInCollection(uncompressed);
 
-	uint16_t built = HtimesL((uint16_t)(((uint16_t)DECK_STRUCT_SIZE << 8)
+	uint16_t built = HtimesL((uint16_t)(((uint16_t)DECK_COMPRESSED_STRUCT_SIZE << 8)
 		| wDeckSlotForNewDeck));
-
 	built = (uint16_t)(built + sBuiltDecks_ADDR);
-
 	uint16_t copy_src = wDeckToBuild_ADDR;
 	uint16_t copy_dst = built;
-
-	CopyNBytesFromHLToDE(&copy_src, &copy_dst, DECK_STRUCT_SIZE);
+	CopyNBytesFromHLToDE(&copy_src, &copy_dst, DECK_NAME_SIZE);
+	uint16_t compressed_dst = (uint16_t)(built + DECK_NAME_SIZE);
+	CompressDeckToSRAM(uncompressed, compressed_dst);
 	DisableSRAM();
 
 	DrawDecksScreen(ALL_DECKS);
@@ -1218,7 +1210,7 @@ static void hadm_create_auto_deck_pointer_list(void)
 	for (uint8_t i = NUM_DECK_MACHINE_SLOTS; i != 0u; i--) {
 		gb_write8(de++, (uint8_t)hl);
 		gb_write8(de++, (uint8_t)(hl >> 8));
-		hl = (uint16_t)(hl + DECK_STRUCT_SIZE);
+		hl = (uint16_t)(hl + DECK_COMPRESSED_STRUCT_SIZE);
 	}
 }
 
