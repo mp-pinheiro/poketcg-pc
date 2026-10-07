@@ -12,10 +12,6 @@ static void adapt_DecompressSRAMDeck(ProbeState *s)
 }
 /* <<< factory DecompressSRAMDeck */
 /* >>> part probe_entries_load_deck */
-const ProbeEntry probe_entries_load_deck[] = {
-	{ "LoadDeck", adapt_LoadDeck },
 	{ "CompressDeckToSRAM", adapt_CompressDeckToSRAM },
 	{ "DecompressSRAMDeck", adapt_DecompressSRAMDeck },
-	{ NULL, NULL },
-};
 /* <<< part probe_entries_load_deck */

@@ -70,15 +70,4 @@ static void adapt_LoadCardDataToHL_FromCardID(ProbeState *s)
 /* <<< factory LoadCardDataToHL_FromCardID */
 /* --- factory CopyFontsOrDuelGraphicsTiles2 */
 /* >>> part probe_entries_card_data */
-const ProbeEntry probe_entries_card_data[] = {
-	{ "GetCardType", adapt_GetCardType },
-	{ "GetCardName", adapt_GetCardName },
-	{ "GetCardTypeRarityAndSet", adapt_GetCardTypeRarityAndSet },
-	{ "LoadCardDataToBuffer1_FromCardID", adapt_LoadCardDataToBuffer1_FromCardID },
-	{ "LoadCardDataToBuffer2_FromCardID", adapt_LoadCardDataToBuffer2_FromCardID },
-	{ "LoadCardDataToBuffer1_FromName", adapt_LoadCardDataToBuffer1_FromName },
-	{ "GetCardPointer", adapt_GetCardPointer },
-	{ "LoadCardDataToHL_FromCardID", adapt_LoadCardDataToHL_FromCardID },
-	{ NULL, NULL },
-};
 /* <<< part probe_entries_card_data */

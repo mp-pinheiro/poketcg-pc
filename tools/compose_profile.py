@@ -16,6 +16,7 @@ from tools.profiles import Profile, get_profile  # noqa: E402
 KINDS = (("home", ".c"), ("home", ".h"), ("probe", ".c"))
 ADAPTER_RE = re.compile(r"^\s*static\s+void\s+(adapt_\w+)\s*\(", re.MULTILINE)
 ROW_RE = re.compile(r"\{\s*\"[^\"]*\"\s*,\s*(adapt_\w+)\s*\}")
+ROW_FULL_RE = re.compile(r"\{\s*\"([^\"]*)\"\s*,\s*(adapt_\w+)\s*\}")
 TABLE_RE = re.compile(r"^probe_entries_\w+$")
 
 
@@ -85,6 +86,11 @@ def compose(shared: str, override: str, *, probe: bool = False, origins: tuple[P
     removed = {directive.name for directive in patch.directives if directive.op == "---"}
     moved = {block.name for block in patch.blocks if block.name in removed}
     replaced = {block.name: block for block in patch.blocks if block.name in names and block.name not in moved}
+    merge_rows = None
+    if probe:
+        table = next((name for name in replaced if TABLE_RE.match(name)), None)
+        if table is not None:
+            merge_rows = table_rows(replaced.pop(table).body)
     entries: list[Block | Directive] = sorted(
         [*patch.blocks, *patch.directives],
         key=lambda entry: entry.open_line if isinstance(entry, Block) else entry.line)
@@ -144,19 +150,34 @@ def compose(shared: str, override: str, *, probe: bool = False, origins: tuple[P
         for extra in following.get(None, ()):
             out += emit(extra, 1)
     text = "\n".join(out)
-    return filter_table(text) if probe else text
+    return filter_table(text, merge_rows) if probe else text
 
 
-def filter_table(text: str) -> str:
+def table_rows(lines: list[str]) -> list[tuple[str, str]]:
+    return [(name, adapter) for line in lines for name, adapter in ROW_FULL_RE.findall(line)]
+
+
+def filter_table(text: str, extra: list[tuple[str, str]] | None = None) -> str:
     defined = set(ADAPTER_RE.findall(text))
     parsed = parse(text)
     table = next((block for block in parsed.blocks if TABLE_RE.match(block.name)), None)
     if table is None:
         return text
     lines = parsed.lines
-    kept = [line for line in table.body
-            if not (ROW_RE.search(line) and ROW_RE.search(line).group(1) not in defined)]
-    return "\n".join(lines[:table.open_line + 1] + kept + lines[table.close_line:])
+    if extra is None:
+        kept = [line for line in table.body
+                if not (ROW_RE.search(line) and ROW_RE.search(line).group(1) not in defined)]
+        return "\n".join(lines[:table.open_line + 1] + kept + lines[table.close_line:])
+    rows = dict(table_rows(table.body))
+    order = list(rows)
+    for name, adapter in extra:
+        if name not in rows:
+            order.append(name)
+        rows[name] = adapter
+    header = next(line for line in table.body if table.name in line)
+    body = [header, *(f'\t{{ "{name}", {rows[name]} }},' for name in order if rows[name] in defined),
+            "\t{ NULL, NULL },", "};"]
+    return "\n".join(lines[:table.open_line + 1] + body + lines[table.close_line:])
 
 
 def rendered(unit: Unit, line_marks: bool) -> str:

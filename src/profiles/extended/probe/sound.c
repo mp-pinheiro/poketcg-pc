@@ -54,15 +54,4 @@ static void adapt_ResumeSong(ProbeState *s)
 }
 /* <<< factory ResumeSong */
 /* >>> part probe_entries_sound */
-const ProbeEntry probe_entries_sound[] = {
-	{ "SetupSound", adapt_SetupSound },
-	{ "PlaySong", adapt_PlaySong },
-	{ "AssertSongFinished", adapt_AssertSongFinished },
-	{ "AssertSFXFinished", adapt_AssertSFXFinished },
-	{ "PlaySFX_InvalidChoice", adapt_PlaySFX_InvalidChoice },
-	{ "PlaySFX", adapt_PlaySFX },
-	{ "PauseSong", adapt_PauseSong },
-	{ "ResumeSong", adapt_ResumeSong },
-	{ NULL, NULL },
-};
 /* <<< part probe_entries_sound */
