@@ -21,8 +21,11 @@
 #include <unistd.h>
 #endif
 
+#include "game_switch.h"
+
 static const char *const PROFILE_VANILLA = "vanilla";
 static const char *const PROFILE_EXTENDED = "extended";
+static const char *const LAST_GAME_FILE = "last-game";
 
 static void draw_text(SDL_Renderer *renderer, const char *text, int x, int y)
 {
@@ -181,12 +184,72 @@ static int file_exists(const char *path)
 	return 1;
 }
 
-static int has_option(int argc, char **argv, const char *name)
+static int has_option(int count, char **items, const char *name)
 {
-	for (int index = 1; index < argc; index++)
-		if (strcmp(argv[index], name) == 0)
+	for (int index = 0; index < count; index++)
+		if (strcmp(items[index], name) == 0)
 			return 1;
 	return 0;
+}
+
+static const char *other_profile(const char *profile)
+{
+	return strcmp(profile, PROFILE_EXTENDED) == 0 ? PROFILE_VANILLA : PROFILE_EXTENDED;
+}
+
+static const char *profile_binary(const char *profile)
+{
+	return strcmp(profile, PROFILE_EXTENDED) == 0 ? "poketcg-extended" : "poketcg";
+}
+
+static const char *profile_switch_label(const char *profile)
+{
+	return strcmp(profile, PROFILE_EXTENDED) == 0 ? "EXTENDED" : "ORIGINAL";
+}
+
+static int binary_exists(const char *directory, const char *profile)
+{
+	char path[PATH_MAX];
+#ifdef _WIN32
+	const char *suffix = ".exe";
+#else
+	const char *suffix = "";
+#endif
+	if (snprintf(path, sizeof path, "%s/%s%s", directory, profile_binary(profile), suffix) >= (int)sizeof path)
+		return 0;
+	return file_exists(path);
+}
+
+static const char *read_last_game(const char *data_dir)
+{
+	char path[PATH_MAX];
+	if (snprintf(path, sizeof path, "%s/%s", data_dir, LAST_GAME_FILE) >= (int)sizeof path)
+		return NULL;
+	FILE *stream = fopen(path, "rb");
+	if (!stream)
+		return NULL;
+	char text[16] = {0};
+	size_t length = fread(text, 1u, sizeof text - 1u, stream);
+	fclose(stream);
+	while (length > 0u && (text[length - 1u] == '\n' || text[length - 1u] == '\r'))
+		text[--length] = '\0';
+	if (strcmp(text, PROFILE_VANILLA) == 0)
+		return PROFILE_VANILLA;
+	if (strcmp(text, PROFILE_EXTENDED) == 0)
+		return PROFILE_EXTENDED;
+	return NULL;
+}
+
+static void write_last_game(const char *data_dir, const char *profile)
+{
+	char path[PATH_MAX];
+	if (snprintf(path, sizeof path, "%s/%s", data_dir, LAST_GAME_FILE) >= (int)sizeof path)
+		return;
+	FILE *stream = fopen(path, "wb");
+	if (!stream)
+		return;
+	fprintf(stream, "%s\n", profile);
+	fclose(stream);
 }
 
 static int run_child(const char *path, char **argv)
@@ -214,75 +277,98 @@ static int run_child(const char *path, char **argv)
 int main(int argc, char **argv)
 {
 	const char *override = NULL;
-	char **forwarded = calloc((size_t)argc + 8u, sizeof(*forwarded));
-	if (!forwarded)
+	char **user = calloc((size_t)argc + 1u, sizeof(*user));
+	char **child_argv = calloc((size_t)argc + 12u, sizeof(*child_argv));
+	if (!user || !child_argv) {
+		free(user);
+		free(child_argv);
 		return 2;
-	int forwarded_count = 1;
+	}
+	int user_count = 0;
 	for (int index = 1; index < argc; index++) {
 		if (strcmp(argv[index], "--profile") == 0) {
 			if (++index >= argc || (strcmp(argv[index], PROFILE_VANILLA) != 0 && strcmp(argv[index], PROFILE_EXTENDED) != 0)) {
 				fprintf(stderr, "unknown profile\n");
-				free(forwarded);
+				free(user);
+				free(child_argv);
 				return 2;
 			}
 			override = argv[index];
 			continue;
 		}
-		forwarded[forwarded_count++] = argv[index];
+		user[user_count++] = argv[index];
+	}
+	char directory[PATH_MAX];
+	char data_dir[PATH_MAX];
+	if (executable_directory(directory, sizeof directory) != 0 ||
+	    save_directory(data_dir, sizeof data_dir) != 0) {
+		free(user);
+		free(child_argv);
+		return 2;
 	}
 	const char *profile = override;
+	if (!profile) {
+		profile = read_last_game(data_dir);
+		if (profile && !binary_exists(directory, profile))
+			profile = NULL;
+	}
 	if (!profile) {
 		int selected = choose_profile();
 		if (selected < 0) {
 			fprintf(stderr, "profile chooser requires SDL; pass --profile vanilla or extended\n");
-			free(forwarded);
+			free(user);
+			free(child_argv);
 			return 2;
 		}
 		profile = selected == 0 ? PROFILE_VANILLA : PROFILE_EXTENDED;
 	}
-	char directory[PATH_MAX];
-	if (executable_directory(directory, sizeof directory) != 0) {
-		free(forwarded);
-		return 2;
-	}
-	char child[PATH_MAX];
-	char pack[PATH_MAX];
-	const char *pack_name = strcmp(profile, PROFILE_EXTENDED) == 0 ? "data-pack-extended.bin" : "data-pack.bin";
-	if (snprintf(child, sizeof child, "%s/%s", directory,
-	             strcmp(profile, PROFILE_EXTENDED) == 0 ? "poketcg-extended" : "poketcg") >= (int)sizeof child ||
-	    snprintf(pack, sizeof pack, "%s/%s", directory, pack_name) >= (int)sizeof pack ||
-	    (!file_exists(pack) &&
-	     snprintf(pack, sizeof pack, "%s/completion/%s", directory, pack_name) >= (int)sizeof pack)) {
-		free(forwarded);
-		return 2;
-	}
-	char data_dir[PATH_MAX];
-	char save[PATH_MAX];
-	if (save_directory(data_dir, sizeof data_dir) != 0 ||
-	    snprintf(save, sizeof save, "%s/%s", data_dir,
-	             strcmp(profile, PROFILE_EXTENDED) == 0 ? "poketcg-extended.sav" : "poketcg.sav") >= (int)sizeof save) {
-		free(forwarded);
-		return 2;
-	}
-	forwarded[0] = child;
-	if (!has_option(forwarded_count, forwarded, "--data-pack")) {
-		forwarded[forwarded_count++] = "--data-pack";
-		forwarded[forwarded_count++] = pack;
-	}
-	if (!has_option(forwarded_count, forwarded, "--save")) {
-		forwarded[forwarded_count++] = "--save";
-		forwarded[forwarded_count++] = save;
-	}
-	if (!has_option(forwarded_count, forwarded, "--load-save")) {
-		FILE *stream = fopen(save, "rb");
-		if (stream) {
-			fclose(stream);
-			forwarded[forwarded_count++] = "--load-save";
-			forwarded[forwarded_count++] = save;
+	int explicit_paths = has_option(user_count, user, "--data-pack") ||
+		has_option(user_count, user, "--save") || has_option(user_count, user, "--load-save");
+	int result = 2;
+	for (;;) {
+		char child[PATH_MAX];
+		char pack[PATH_MAX];
+		char save[PATH_MAX];
+		const char *pack_name = strcmp(profile, PROFILE_EXTENDED) == 0 ? "data-pack-extended.bin" : "data-pack.bin";
+		if (snprintf(child, sizeof child, "%s/%s", directory, profile_binary(profile)) >= (int)sizeof child ||
+		    snprintf(pack, sizeof pack, "%s/%s", directory, pack_name) >= (int)sizeof pack ||
+		    (!file_exists(pack) &&
+		     snprintf(pack, sizeof pack, "%s/completion/%s", directory, pack_name) >= (int)sizeof pack) ||
+		    snprintf(save, sizeof save, "%s/%s", data_dir,
+		             strcmp(profile, PROFILE_EXTENDED) == 0 ? "poketcg-extended.sav" : "poketcg.sav") >= (int)sizeof save) {
+			result = 2;
+			break;
 		}
+		int count = 0;
+		child_argv[count++] = child;
+		for (int index = 0; index < user_count; index++)
+			child_argv[count++] = user[index];
+		if (!has_option(user_count, user, "--data-pack")) {
+			child_argv[count++] = "--data-pack";
+			child_argv[count++] = pack;
+		}
+		if (!has_option(user_count, user, "--save")) {
+			child_argv[count++] = "--save";
+			child_argv[count++] = save;
+		}
+		if (!has_option(user_count, user, "--load-save") && file_exists(save)) {
+			child_argv[count++] = "--load-save";
+			child_argv[count++] = save;
+		}
+		const char *other = other_profile(profile);
+		int switchable = !explicit_paths && binary_exists(directory, other);
+		if (switchable) {
+			child_argv[count++] = "--switch-to";
+			child_argv[count++] = (char *)profile_switch_label(other);
+		}
+		child_argv[count] = NULL;
+		write_last_game(data_dir, profile);
+		result = run_child(child, child_argv);
+		if (!switchable || result != POKETCG_EXIT_SWITCH_GAME)
+			break;
+		profile = other;
 	}
-	forwarded[forwarded_count] = NULL;
-	int result = run_child(child, forwarded);
-	free(forwarded);
+	free(user);
+	free(child_argv);
 	return result;
 }

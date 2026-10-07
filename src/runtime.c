@@ -1013,6 +1013,15 @@ int runtime_run_with_input(
 			pthread_mutex_unlock(&state.lock);
 			continue;
 		}
+		if (runtime_game_switch_requested()) {
+			pthread_mutex_lock(&state.lock);
+			state.stop = 1;
+			state.stopped_by_user = 1;
+			state.resume = 1;
+			pthread_cond_broadcast(&state.condition);
+			pthread_mutex_unlock(&state.lock);
+			continue;
+		}
 		shell_sync_options(shell);
 		InputFrame input = host_input.game;
 #ifdef POKETCG_DEBUG_MENU

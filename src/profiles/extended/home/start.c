@@ -136,6 +136,7 @@ static uint8_t start_menu_pc_index(void)
 #define PC_PAGE_ROW_Y 15u
 #define PC_OPTION_SGB 2u
 #define PC_OPTION_BORDER 6u
+#define PC_OPTION_SWITCH_GAME 12u
 #define PC_SFX_CURSOR 0x01u
 #define PC_SFX_CANCEL 0x03u
 typedef struct {
@@ -146,7 +147,7 @@ typedef struct {
 static const PcOptionPage kPcPages[] = {
 	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
 	{"SOUND", 3u, {3u, 4u, 8u}},
-	{"GAMEPLAY", 1u, {11u}},
+	{"GAMEPLAY", 2u, {11u, PC_OPTION_SWITCH_GAME}},
 };
 #define PC_PAGE_COUNT (sizeof kPcPages / sizeof kPcPages[0])
 static const char *const kPcFontNames[] = {
@@ -168,6 +169,8 @@ static uint8_t pc_visible_options(uint8_t page, uint8_t *out)
 	for (uint8_t i = 0u; i < kPcPages[page].count; ++i) {
 		uint8_t option = kPcPages[page].options[i];
 		if (option == PC_OPTION_BORDER && !runtime_pc_option_value(PC_OPTION_SGB))
+			continue;
+		if (option == PC_OPTION_SWITCH_GAME && !runtime_game_switch_label())
 			continue;
 		out[count++] = option;
 	}
@@ -217,6 +220,9 @@ static void print_pc_option_line(uint8_t y, uint8_t option)
 		break;
 	case 11u:
 		snprintf(text, sizeof text, "NEW GAME SELECT %s", value ? "ON" : "OFF");
+		break;
+	case PC_OPTION_SWITCH_GAME:
+		snprintf(text, sizeof text, "PLAY %s", runtime_game_switch_label());
 		break;
 	default:
 		snprintf(text, sizeof text, "SMALL FONT %s", value ? "TOM THUMB" : "ORIGINAL");
@@ -359,6 +365,12 @@ static void RunPCOptionsMenu(void)
 				count = draw_pc_options(page, options);
 				row = count;
 				PlaySFX(PC_SFX_CURSOR);
+			} else if (options[row] == PC_OPTION_SWITCH_GAME) {
+				if ((pressed & PAD_A) != 0u) {
+					PlaySFX(SFX_CONFIRM);
+					runtime_request_game_switch();
+					return;
+				}
 			} else if ((pressed & PAD_A) == 0u || pc_option_toggles(options[row])) {
 				runtime_pc_option_adjust(options[row], direction);
 				if (options[row] == 10u) {

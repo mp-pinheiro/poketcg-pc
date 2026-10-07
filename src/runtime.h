@@ -56,6 +56,10 @@ int runtime_pc_option_value(unsigned option);
 void runtime_pc_option_adjust(unsigned option, int direction);
 void runtime_set_pc_options_enabled(int enabled);
 int runtime_pc_options_enabled(void);
+void runtime_set_game_switch_label(const char *label);
+const char *runtime_game_switch_label(void);
+void runtime_request_game_switch(void);
+int runtime_game_switch_requested(void);
 int runtime_text_mixed_case(void);
 
 typedef void (*RuntimeStateDumpCb)(uint32_t frame, const RuntimeResult *result);

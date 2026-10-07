@@ -1,0 +1,6 @@
+#ifndef POKETCG_GAME_SWITCH_H
+#define POKETCG_GAME_SWITCH_H
+
+#define POKETCG_EXIT_SWITCH_GAME 3
+
+#endif

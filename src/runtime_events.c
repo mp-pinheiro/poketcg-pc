@@ -6,6 +6,7 @@
 #include "generated/wram.h"
 
 #include <limits.h>
+#include <stdatomic.h>
 
 #define PC_FONT_COUNT 4
 #define PC_OPTION_PLAYER_CHARACTER 10u
@@ -196,6 +197,30 @@ void runtime_set_pc_options_enabled(int enabled)
 int runtime_pc_options_enabled(void)
 {
 	return g_pc_options_enabled;
+}
+
+static const char *g_game_switch_label;
+static atomic_int g_game_switch_requested;
+
+void runtime_set_game_switch_label(const char *label)
+{
+	g_game_switch_label = label;
+}
+
+const char *runtime_game_switch_label(void)
+{
+	return g_pc_options_enabled ? g_game_switch_label : NULL;
+}
+
+void runtime_request_game_switch(void)
+{
+	if (runtime_game_switch_label())
+		atomic_store(&g_game_switch_requested, 1);
+}
+
+int runtime_game_switch_requested(void)
+{
+	return atomic_load(&g_game_switch_requested);
 }
 
 int runtime_text_mixed_case(void)

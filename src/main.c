@@ -14,6 +14,7 @@
 #include "digest.h"
 #include "trace.h"
 #include "pc_options.h"
+#include "game_switch.h"
 
 #include <ctype.h>
 #ifdef _WIN32
@@ -677,6 +678,7 @@ int main(int argc, char **argv)
 	uint16_t required_address = 0;
 	const char *save_path = NULL;
 	const char *load_save_path = NULL;
+	const char *switch_label = NULL;
 	const char *dump_state_path = NULL;
 	const char *dump_state_frames_text = NULL;
 	const char *input_path = NULL;
@@ -720,6 +722,8 @@ int main(int argc, char **argv)
 			save_path = argv[++i];
 		} else if (strcmp(argv[i], "--load-save") == 0 && i + 1 < argc) {
 			load_save_path = argv[++i];
+		} else if (strcmp(argv[i], "--switch-to") == 0 && i + 1 < argc) {
+			switch_label = argv[++i];
 		} else if (strcmp(argv[i], "--dump-state") == 0 && i + 1 < argc) {
 			dump_state_path = argv[++i];
 		} else if (strcmp(argv[i], "--dump-state-frames") == 0 && i + 1 < argc) {
@@ -803,7 +807,7 @@ int main(int argc, char **argv)
 			       "[--digest-out PATH [--digest-mask FILE]] [--lag-track PATH] "
 			       "[--trace-entries PATH] [--trace-calls PATH] "
 			       "[--trace-window LO HI --trace-window-out PATH] "
-			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--serial-track PATH] [--presentation 4:3|sgb] [--dump-pcm PATH] [--printer-dir DIR]\n");
+			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--serial-track PATH] [--presentation 4:3|sgb] [--dump-pcm PATH] [--printer-dir DIR] [--switch-to LABEL]\n");
 			printf("--frames 0 runs until the window closes\n");
 			printf("--input is one byte per host frame (a movie axis); "
 			       "--input-ordinal is one byte per DoFrame and never wraps: "
@@ -1007,6 +1011,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	runtime_set_pc_options_enabled(shell_has_window(shell));
+	runtime_set_game_switch_label(switch_label);
 	g_dump_state_path = dump_state_path;
 	if (g_dump_frame_count)
 		runtime_set_state_dump_frames(
@@ -1113,5 +1118,7 @@ int main(int argc, char **argv)
 		       shell_backend_name(shell), runtime.frames, g_io[0]);
 	shell_destroy(shell);
 	rom_pack_free();
-	return status == 0 ? 0 : 1;
+	if (status != 0)
+		return 1;
+	return runtime_game_switch_requested() ? POKETCG_EXIT_SWITCH_GAME : 0;
 }
