@@ -50,13 +50,13 @@ static void draw_text(SDL_Renderer *renderer, const char *text, int x, int y)
 			for (int row = 0; row < 5; row++)
 				for (int column = 0; column < 5; column++)
 					if ((glyphs[c - 'A'][row] & (1u << (4 - column))) != 0u) {
-						glyph.x = x + column * 3;
-						glyph.y = y + row * 3;
+						glyph.x = x + column * 2;
+						glyph.y = y + row * 2;
 						SDL_RenderFillRect(renderer, &glyph);
 					}
-			x += 18;
+			x += 12;
 		} else {
-			x += 9;
+			x += 8;
 		}
 	}
 }
@@ -66,7 +66,7 @@ static int choose_profile(void)
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		return -1;
 	SDL_Window *window = SDL_CreateWindow("poketcg-pc", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-	                                      160, 144, SDL_WINDOW_SHOWN);
+	                                      320, 288, SDL_WINDOW_SHOWN);
 	SDL_Renderer *renderer = window ? SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE) : NULL;
 	if (!window || !renderer) {
 		if (renderer)
@@ -93,12 +93,12 @@ static int choose_profile(void)
 		SDL_SetRenderDrawColor(renderer, 10, 16, 32, 255);
 		SDL_RenderClear(renderer);
 		for (int index = 0; index < 2; index++) {
-			SDL_Rect row = {8, 30 + index * 48, 144, 32};
+			SDL_Rect row = {16, 96 + index * 56, 288, 40};
 			SDL_SetRenderDrawColor(renderer, index == selected ? 55 : 25, index == selected ? 95 : 45,
 			                     index == selected ? 150 : 75, 255);
 			SDL_RenderFillRect(renderer, &row);
 			SDL_SetRenderDrawColor(renderer, 230, 240, 255, 255);
-			draw_text(renderer, index == 0 ? "Pokémon TCG" : "Pokémon TCG Extended", 16, 40 + index * 48);
+			draw_text(renderer, index == 0 ? "Pokemon TCG" : "Pokemon TCG Extended", 32, 111 + index * 56);
 		}
 		SDL_RenderPresent(renderer);
 		SDL_Delay(16);
@@ -172,6 +172,15 @@ profile_dir:
 	return 0;
 }
 
+static int file_exists(const char *path)
+{
+	FILE *stream = fopen(path, "rb");
+	if (!stream)
+		return 0;
+	fclose(stream);
+	return 1;
+}
+
 static int has_option(int argc, char **argv, const char *name)
 {
 	for (int index = 1; index < argc; index++)
@@ -238,10 +247,12 @@ int main(int argc, char **argv)
 	}
 	char child[PATH_MAX];
 	char pack[PATH_MAX];
+	const char *pack_name = strcmp(profile, PROFILE_EXTENDED) == 0 ? "data-pack-extended.bin" : "data-pack.bin";
 	if (snprintf(child, sizeof child, "%s/%s", directory,
 	             strcmp(profile, PROFILE_EXTENDED) == 0 ? "poketcg-extended" : "poketcg") >= (int)sizeof child ||
-	    snprintf(pack, sizeof pack, "%s/%s", directory,
-	             strcmp(profile, PROFILE_EXTENDED) == 0 ? "data-pack-extended.bin" : "data-pack.bin") >= (int)sizeof pack) {
+	    snprintf(pack, sizeof pack, "%s/%s", directory, pack_name) >= (int)sizeof pack ||
+	    (!file_exists(pack) &&
+	     snprintf(pack, sizeof pack, "%s/completion/%s", directory, pack_name) >= (int)sizeof pack)) {
 		free(forwarded);
 		return 2;
 	}
