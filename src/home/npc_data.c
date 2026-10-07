@@ -7,25 +7,41 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "mem.h"
+/* <<< part includes_2 */
+/* >>> part NPC_HEADER_POINTERS_BANK */
 #define NPC_HEADER_POINTERS_BANK 0x04u
+/* <<< part NPC_HEADER_POINTERS_BANK */
+/* >>> part NPC_HEADER_POINTERS_ADDR */
 #define NPC_HEADER_POINTERS_ADDR NPCHeaderPointers_ADDR
+/* <<< part NPC_HEADER_POINTERS_ADDR */
 
 
+/* >>> part includes_NPC_DATA_BANK */
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_NPC_DATA_BANK */
+/* >>> part NPC_DATA_BANK */
 #define NPC_DATA_BANK 0x04u
+/* <<< part NPC_DATA_BANK */
 
+/* >>> part includes_NPC_DUEL_CONFIGURATIONS_BANK */
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_NPC_DUEL_CONFIGURATIONS_BANK */
+/* >>> part NPC_DUEL_CONFIGURATIONS_BANK */
 #define NPC_DUEL_CONFIGURATIONS_BANK 0x04u
+/* <<< part NPC_DUEL_CONFIGURATIONS_BANK */
+/* >>> part NPC_DUEL_CONFIGURATIONS_ADDR */
 #define NPC_DUEL_CONFIGURATIONS_ADDR DeckIDDuelConfigurations_ADDR
+/* <<< part NPC_DUEL_CONFIGURATIONS_ADDR */
 
+/* >>> part includes_tail */
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -37,7 +53,7 @@
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory GetNPCHeaderPointer */
 GetNPCHeaderPointerResult GetNPCHeaderPointer(uint8_t a)

@@ -5,13 +5,12 @@
 #include "generated/rom.h"
 #include "mem.h"
 /* <<< part includes */
-
 /* >>> part MAP_HEADERS_BANK */
 #define MAP_HEADERS_BANK MapHeaders_BANK
-#define MAP_HEADERS MapHeaders_ADDR
-#define MAP_HEADER_SIZE 4u
 /* <<< part MAP_HEADERS_BANK */
-
+/* >>> part MAP_HEADER_SIZE */
+#define MAP_HEADER_SIZE 4u
+/* <<< part MAP_HEADER_SIZE */
 /* >>> factory LoadMapHeader */
 void LoadMapHeader(void)
 {

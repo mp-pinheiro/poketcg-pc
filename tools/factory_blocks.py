@@ -67,6 +67,7 @@ def parse(text: str, path: Path = Path("<text>")) -> Parsed:
     parsed = Parsed(path, text.split("\n"))
     current: tuple[str, str, int] | None = None
     seen: set[str] = set()
+    removals: set[str] = set()
     for index, line in enumerate(parsed.lines):
         marker = MARKER_RE.match(line)
         directive = DIRECTIVE_RE.match(line)
@@ -80,9 +81,9 @@ def parse(text: str, path: Path = Path("<text>")) -> Parsed:
                 parsed.errors.append(f"{where}: directive inside block {current[1]}")
             op, kind, name = directive.groups()
             parsed.directives.append(Directive(op, kind, name, index))
-            if name in seen:
+            if name in (removals if op == "---" else seen):
                 parsed.errors.append(f"{where}: duplicate name {name}")
-            seen.add(name)
+            (removals if op == "---" else seen).add(name)
             continue
         op, kind, name = marker.groups()
         if op == ">>>":
@@ -333,7 +334,7 @@ def unique(name: str, taken: set[str]) -> str:
     return candidate
 
 
-def wrap_text(text: str, path: Path, context: Context) -> str:
+def wrap_text(text: str, path: Path, context: Context, fine_defines: bool = False) -> str:
     parsed = parse(text, path)
     if parsed.errors:
         raise BlockError("; ".join(parsed.errors))
@@ -370,7 +371,8 @@ def wrap_text(text: str, path: Path, context: Context) -> str:
         previous_end = region_start - 1
         groups: list[list[Item]] = []
         for item in items:
-            if groups and item.kind in {"include", "define"} and groups[-1][-1].kind == item.kind:
+            if groups and item.kind in {"include", "define"} and groups[-1][-1].kind == item.kind \
+                    and not (fine_defines and item.kind == "define"):
                 groups[-1].append(item)
             else:
                 groups.append([item])
@@ -427,6 +429,34 @@ def wrap_text(text: str, path: Path, context: Context) -> str:
             out.extend(lines[moved_index] for moved_index in moves[index])
         out.extend(inserts_after.get(index, ()))
     return "\n".join(out)
+
+
+def coarse(block: Block, lines: list[str], code: list[str]) -> bool:
+    if block.kind == "factory" and block.name == "statics":
+        return True
+    if block.kind != "part":
+        return False
+    try:
+        items = scan_items(lines, code, block.open_line + 1, block.close_line, set())
+    except BlockError:
+        return False
+    return all(item.kind in {"include", "define"} for item in items) \
+        and sum(1 for item in items if item.kind == "define") >= 2
+
+
+def split_text(text: str, path: Path, context: Context) -> str:
+    parsed = parse(text, path)
+    if parsed.errors:
+        raise BlockError("; ".join(parsed.errors))
+    code = code_mask(text).split("\n")
+    drop = set()
+    for block in parsed.blocks:
+        if coarse(block, parsed.lines, code):
+            drop.update((block.open_line, block.close_line))
+    if not drop:
+        return text
+    unwrapped = "\n".join(line for index, line in enumerate(parsed.lines) if index not in drop)
+    return wrap_text(unwrapped, path, context, fine_defines=True)
 
 
 def tree_paths(roots: list[Path]) -> list[Path]:
@@ -501,6 +531,9 @@ def main() -> int:
     wrap = sub.add_parser("wrap", help="wrap every construct outside a block in a named block")
     wrap.add_argument("paths", nargs="*", type=Path)
     wrap.add_argument("--check", action="store_true", help="report files wrap would change, write nothing")
+    split = sub.add_parser("split", help="split statics and multi-define blocks into one block per define")
+    split.add_argument("paths", nargs="*", type=Path)
+    split.add_argument("--check", action="store_true", help="report files split would change, write nothing")
     args = parser.parse_args()
     paths = tree_paths(args.paths or default_roots())
     if args.command == "lint":
@@ -519,7 +552,8 @@ def main() -> int:
     for path in paths:
         text = path.read_text()
         try:
-            wrapped = wrap_text(text, path, context_for(path, contexts))
+            transform = split_text if args.command == "split" else wrap_text
+            wrapped = transform(text, path, context_for(path, contexts))
         except BlockError as error:
             print(f"{path}: {error}")
             failures += 1
@@ -528,7 +562,7 @@ def main() -> int:
             changed += 1
             if not args.check:
                 path.write_text(wrapped)
-    print(f"wrap-blocks: files={len(paths)} changed={changed} failed={failures}")
+    print(f"{args.command}-blocks: files={len(paths)} changed={changed} failed={failures}")
     return 1 if failures else 0
 
 

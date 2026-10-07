@@ -11,7 +11,9 @@ typedef uint16_t CardId;
 
 /* >>> part CARD_ID_MAX */
 #define CARD_ID_MAX ((CardId)0x01FFu)
-#define CARD_ID_INVALID ((CardId)0x0200u)
 /* <<< part CARD_ID_MAX */
+/* >>> part CARD_ID_INVALID */
+#define CARD_ID_INVALID ((CardId)0x0200u)
+/* <<< part CARD_ID_INVALID */
 
 #endif

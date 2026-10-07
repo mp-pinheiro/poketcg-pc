@@ -7,19 +7,27 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/psychic_club.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
+/* >>> part PsychicClubAfterDuelTable */
 #define PsychicClubAfterDuelTable (PsychicClubAfterDuel__after_duel_table_ADDR)
+/* <<< part PsychicClubAfterDuelTable */
 
+/* >>> part includes_EVENT_MEDAL_COUNT_530 */
 #include "home/scripting.h"
 #include "mem.h"
+/* <<< part includes_EVENT_MEDAL_COUNT_530 */
+/* >>> part EVENT_MEDAL_COUNT_530 */
 #define EVENT_MEDAL_COUNT_530 EVENT_MEDAL_COUNT
+/* <<< part EVENT_MEDAL_COUNT_530 */
 
+/* >>> part includes_tail */
 #include "home/psychic_club.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory PsychicClubAfterDuel */
 PsychicClubAfterDuelResult PsychicClubAfterDuel(void)

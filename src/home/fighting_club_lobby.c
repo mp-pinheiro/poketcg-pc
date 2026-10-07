@@ -7,14 +7,20 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/fighting_club_lobby.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
+/* >>> part FightingClubLobbyAfterDuelTable */
 #define FightingClubLobbyAfterDuelTable (FightingClubLobbyAfterDuel__after_duel_table_ADDR)
+/* <<< part FightingClubLobbyAfterDuelTable */
+/* >>> part includes_TRUE */
 #include "home/scripting.h"
+/* <<< part includes_TRUE */
+/* >>> part TRUE */
 #define TRUE 0x01u
-/* <<< factory statics */
+/* <<< part TRUE */
 
 /* >>> factory FightingClubLobbyAfterDuel */
 FightingClubLobbyAfterDuelResult FightingClubLobbyAfterDuel(void)

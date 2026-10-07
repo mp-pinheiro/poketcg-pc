@@ -12,10 +12,14 @@
 #include "home/color.h"
 #include "home/map_events.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part EVENT_VAR_MASKS_BANK */
 #define EVENT_VAR_MASKS_BANK 3u
+/* <<< part EVENT_VAR_MASKS_BANK */
+/* >>> part EVENT_VAR_MASKS */
 #define EVENT_VAR_MASKS EventVarMasks_ADDR
+/* <<< part EVENT_VAR_MASKS */
 
+/* >>> part adc_zero_flags */
 static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 {
 	uint8_t flags = result == 0 ? 0x80u : 0u;
@@ -25,7 +29,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 		flags |= 0x10u;
 	return flags;
 }
+/* <<< part adc_zero_flags */
 
+/* >>> part includes_TRUE */
 #include "home/scripting.h"
 
 #include "home/card_collection.h"
@@ -52,20 +58,28 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/map.h"
 #include "home/npc_core.h"
 #include "mem.h"
+/* <<< part includes_TRUE */
 
 
+/* >>> part TRUE */
 #define TRUE                     0x01u
+/* <<< part TRUE */
 
+/* >>> part includes_MAP_NAMES */
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_MAP_NAMES */
 
+/* >>> part MAP_NAMES */
 /* scripting.asm:1391 MapNames, a table of 12 tx (2-byte) name text ids in the
  * overworld script bank. The routine does not switch banks itself, so the table
  * is reached through ordinary bus reads at this $4000-$7fff window offset;
  * poketcg.sym puts it at 03:5153. */
 #define MAP_NAMES MapNames_ADDR
+/* <<< part MAP_NAMES */
 
+/* >>> part includes_CHALLENGE_HALL_NPC_COUNT */
 #include "generated/wram.h"
 
 #include "generated/wram.h"
@@ -121,10 +135,18 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/challenge_hall.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_CHALLENGE_HALL_NPC_COUNT */
+/* >>> part CHALLENGE_HALL_NPC_COUNT */
 #define CHALLENGE_HALL_NPC_COUNT 25u
+/* <<< part CHALLENGE_HALL_NPC_COUNT */
+/* >>> part CHALLENGE_HALL_NPCS_BANK */
 #define CHALLENGE_HALL_NPCS_BANK 3u
+/* <<< part CHALLENGE_HALL_NPCS_BANK */
+/* >>> part CHALLENGE_HALL_NPCS_ADDR */
 #define CHALLENGE_HALL_NPCS_ADDR ChallengeHallNPCs_ADDR
+/* <<< part CHALLENGE_HALL_NPCS_ADDR */
 
+/* >>> part includes_Script_BeginGame */
 #include "home/scripting.h"
 #include "home/card_data.h"
 #include "generated/wram.h"
@@ -155,8 +177,12 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "generated/wram.h"
 
 #include "home/scripting.h"
+/* <<< part includes_Script_BeginGame */
+/* >>> part Script_BeginGame */
 #define Script_BeginGame Script_BeginGame_ADDR
+/* <<< part Script_BeginGame */
 
+/* >>> part includes_LIGHTNING_AND_FIRE_DECK_ID */
 #include "home/scripting.h"
 #include "home/mail.h"
 #include "generated/wram.h"
@@ -179,14 +205,24 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_LIGHTNING_AND_FIRE_DECK_ID */
+/* >>> part LIGHTNING_AND_FIRE_DECK_ID */
 #define LIGHTNING_AND_FIRE_DECK_ID 0x09u
+/* <<< part LIGHTNING_AND_FIRE_DECK_ID */
+/* >>> part WATER_AND_FIGHTING_DECK_ID */
 #define WATER_AND_FIGHTING_DECK_ID 0x0Au
+/* <<< part WATER_AND_FIGHTING_DECK_ID */
+/* >>> part GRASS_AND_PSYCHIC_DECK_ID */
 #define GRASS_AND_PSYCHIC_DECK_ID 0x0Bu
+/* <<< part GRASS_AND_PSYCHIC_DECK_ID */
+/* >>> part sAaronDeckIDs */
 static const uint8_t sAaronDeckIDs[] = {
 	LIGHTNING_AND_FIRE_DECK_ID, WATER_AND_FIGHTING_DECK_ID,
 	GRASS_AND_PSYCHIC_DECK_ID, GRASS_AND_PSYCHIC_DECK_ID
 };
+/* <<< part sAaronDeckIDs */
 
+/* >>> part includes_SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK */
 #include "home/scripting.h"
 #include "home/npc_data.h"
 #include "home/npc_core.h"
@@ -264,12 +300,22 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/scripting.h"
 #include "home/switch_rom.h"
 #include "generated/wram.h"
+/* <<< part includes_SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK */
+/* >>> part SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK */
 #define SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK 0x03u
+/* <<< part SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK */
+/* >>> part MULTICHOICE_MENU_ARGS */
 #define MULTICHOICE_MENU_ARGS (ScriptCommand_ChooseStarterDeckMultichoice__multichoice_menu_args_ADDR)
+/* <<< part MULTICHOICE_MENU_ARGS */
 
+/* >>> part includes_EVENT_PLAYER_GENDER */
 #include "home/scripting.h"
 #include "generated/wram.h"
+/* <<< part includes_EVENT_PLAYER_GENDER */
+/* >>> part EVENT_PLAYER_GENDER */
 #define EVENT_PLAYER_GENDER 0x77u
+/* <<< part EVENT_PLAYER_GENDER */
+/* >>> part includes_MAN1_REQUESTED_CARDS_BANK */
 #include "generated/wram.h"
 #include "home/give_booster_pack.h"
 #include "home/overworld.h"
@@ -308,18 +354,38 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/script.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_MAN1_REQUESTED_CARDS_BANK */
 
+/* >>> part MAN1_REQUESTED_CARDS_BANK */
 #define MAN1_REQUESTED_CARDS_BANK 3u
+/* <<< part MAN1_REQUESTED_CARDS_BANK */
+/* >>> part MAN1_REQUESTED_CARDS_ADDR */
 #define MAN1_REQUESTED_CARDS_ADDR Man1RequestedCardsList_ADDR
+/* <<< part MAN1_REQUESTED_CARDS_ADDR */
+/* >>> part MAN1_REQUESTED_CARDS_COUNT */
 #define MAN1_REQUESTED_CARDS_COUNT 5u
+/* <<< part MAN1_REQUESTED_CARDS_COUNT */
+/* >>> part CHALLENGE_CUP_PRIZE_CARDS_BANK */
 #define CHALLENGE_CUP_PRIZE_CARDS_BANK 3u
+/* <<< part CHALLENGE_CUP_PRIZE_CARDS_BANK */
+/* >>> part CHALLENGE_CUP_PRIZE_CARDS_ADDR */
 #define CHALLENGE_CUP_PRIZE_CARDS_ADDR ChallengeCupPrizeCards_ADDR
+/* <<< part CHALLENGE_CUP_PRIZE_CARDS_ADDR */
+/* >>> part CHALLENGE_CUP_PRIZE_CARD_COUNT */
 #define CHALLENGE_CUP_PRIZE_CARD_COUNT 15u
+/* <<< part CHALLENGE_CUP_PRIZE_CARD_COUNT */
+/* >>> part LEGENDARY_CARDS_BANK */
 #define LEGENDARY_CARDS_BANK 3u
+/* <<< part LEGENDARY_CARDS_BANK */
+/* >>> part LEGENDARY_CARDS_ADDR */
 #define LEGENDARY_CARDS_ADDR LegendaryCards_ADDR
+/* <<< part LEGENDARY_CARDS_ADDR */
+/* >>> part LEGENDARY_CARD_EVENTS_BANK */
 #define LEGENDARY_CARD_EVENTS_BANK 3u
+/* <<< part LEGENDARY_CARD_EVENTS_BANK */
+/* >>> part LEGENDARY_CARD_EVENTS_ADDR */
 #define LEGENDARY_CARD_EVENTS_ADDR LegendaryCardEvents_ADDR
-/* <<< factory statics */
+/* <<< part LEGENDARY_CARD_EVENTS_ADDR */
 
 
 /* >>> factory IncreaseScriptPointer */

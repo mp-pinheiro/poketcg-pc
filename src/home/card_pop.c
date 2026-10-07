@@ -7,7 +7,7 @@
 #include "home/card_data.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "home/switch_sram.h"
@@ -20,13 +20,21 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
+/* <<< part includes_2 */
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xc2u
+/* <<< part PLAYER_TURN */
 
+/* >>> part includes_CARDPOP_NAME_LIST_SIZE */
 #include "home/copy.h"
 #include "home/ir_functions.h"
 #include "home/ir_core.h"
+/* <<< part includes_CARDPOP_NAME_LIST_SIZE */
+/* >>> part CARDPOP_NAME_LIST_SIZE */
 #define CARDPOP_NAME_LIST_SIZE 0x100u
+/* <<< part CARDPOP_NAME_LIST_SIZE */
 
+/* >>> part includes_CARDPOP_NAME_LENGTH */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/card_pop.h"
@@ -39,12 +47,14 @@
 #include "home/save.h"
 #include "home/sound.h"
 #include "home/sprite_vblank.h"
-/* <<< factory statics */
+/* <<< part includes_CARDPOP_NAME_LENGTH */
 
 /* >>> part CARDPOP_NAME_LENGTH */
 #define CARDPOP_NAME_LENGTH 16u
-#define FIRST_CARD_ID 8u
 /* <<< part CARDPOP_NAME_LENGTH */
+/* >>> part FIRST_CARD_ID */
+#define FIRST_CARD_ID 8u
+/* <<< part FIRST_CARD_ID */
 
 /* >>> factory CreateCardPopCandidateList */
 uint8_t CreateCardPopCandidateList(uint8_t a)

@@ -5,7 +5,7 @@
 #include "generated/rom.h"
 #include "generated/hram.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/credits_sequence_commands.h"
 #include "home/default_palettes.h"
@@ -16,11 +16,13 @@
 #include "home/menus.h"
 #include "home/process_text.h"
 #include "home/tiles.h"
+/* <<< part includes_2 */
 
+/* >>> part UNKNOWN_128F7 */
 /* debug_main.asm:21 `ld hl, Unknown_128f7` (naming.asm:42). $12661 is bank 4
  * ($12661 - 4 * $4000 + $4000 = $6661), so the label's banked address is $68F7. */
 #define UNKNOWN_128F7 Unknown_128f7_ADDR
-/* <<< factory statics */
+/* <<< part UNKNOWN_128F7 */
 
 /* >>> factory Func_126b3 */
 /* debug_main.asm:38-54. Menu item 10 dispatches to DebugQuit. The jump-table

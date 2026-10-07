@@ -15,17 +15,25 @@
 #include "home/random.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/color.h"
 #include "home/init_menu.h"
 #include "home/lcd.h"
 #include "home/sound.h"
 #include "home/play_animation.h"
+/* <<< part includes_2 */
+/* >>> part HANDLE_ALL_SPRITE_ANIMATIONS */
 #define HANDLE_ALL_SPRITE_ANIMATIONS HandleAllSpriteAnimations_ADDR
+/* <<< part HANDLE_ALL_SPRITE_ANIMATIONS */
+/* >>> part INTRO_SEQUENCE */
 #define INTRO_SEQUENCE IntroSequence_ADDR
+/* <<< part INTRO_SEQUENCE */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_START */
 #define PAD_START 0x08u
-/* <<< factory statics */
+/* <<< part PAD_START */
 
 
 /* >>> factory LoadTitleScreenSprites */

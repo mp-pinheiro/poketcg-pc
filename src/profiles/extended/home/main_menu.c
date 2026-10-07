@@ -13,23 +13,7 @@
 #include "home/starter_deck.h"
 #include "home/switch_sram.h"
 /* <<< part includes */
-/* >>> factory statics */
-#include "home/common.h"
-#include "home/lcd_enable_frame.h"
-#include "home/overworld.h"
-#include "home/sound.h"
-#include "generated/wram.h"
-#define PLAYER_TURN 0xC2u
-#define START_MENU_PC_OPTIONS 0xFEu
-
-#include "home/scripting.h"
-
-#include "home/objects.h"
-#include "generated/wram.h"
-#include "home/frames.h"
-#include "home/save.h"
-/* <<< factory statics */
-
+/* --- factory MainMenu_CardPop */
 /* >>> factory MainMenu_NewGame */
 uint8_t MainMenu_NewGame(void)
 {
@@ -61,7 +45,6 @@ uint8_t MainMenu_NewGame(void)
 	return 0x00u; /* or a; ret */
 }
 /* <<< factory MainMenu_NewGame */
-
 /* >>> factory MainMenu_ContinueFromDiary */
 uint8_t MainMenu_ContinueFromDiary(void)
 {
@@ -85,25 +68,6 @@ uint8_t MainMenu_ContinueFromDiary(void)
 	return 0x00u; /* or a; ret */
 }
 /* <<< factory MainMenu_ContinueFromDiary */
-
-/* >>> factory MainMenu_ContinueDuel */
-uint8_t MainMenu_ContinueDuel(void)
-{
-	PlaySong(MUSIC_STOP);
-	ClearEvents();
-	if (!frame_boundary_is_installed()) {
-		/* Probe world: the oracle stops pre-ret after ClearEvents
-		 * (main_menu.asm:85-86), before the bank-$04 save load. */
-		return 0x00u;
-	}
-	LoadGeneralSaveData();
-	/* SetMainSGBBorder is SGB-only; see MainMenu_NewGame. */
-	wGameEvent = GAME_EVENT_CONTINUE_DUEL;
-	ExecuteGameEvent();
-	return 0x00u; /* or a; ret */
-}
-/* <<< factory MainMenu_ContinueDuel */
-
 /* >>> factory _GameLoop */
 typedef uint8_t (*MainMenuFunction)(void);
 
@@ -142,3 +106,4 @@ void _GameLoop(void)
 	}
 }
 /* <<< factory _GameLoop */
+/* === factory MainMenu_ContinueDuel */

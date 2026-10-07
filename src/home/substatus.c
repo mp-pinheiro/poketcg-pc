@@ -15,7 +15,7 @@
 #include "home/print_text.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "home/core.h"
@@ -41,8 +41,12 @@
 #include "home/coin_toss.h"
 #include "home/duel.h"
 #include "home/menus.h"
+/* <<< part includes_2 */
+/* >>> part DUELVARS_ARENA_CARD_STAGE */
 #define DUELVARS_ARENA_CARD_STAGE 0xceu
+/* <<< part DUELVARS_ARENA_CARD_STAGE */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_SUBSTATUS2 */
 #include "generated/wram.h"
 #include "home/coin_toss.h"
 #include "home/substatus.h"
@@ -51,17 +55,29 @@
 #include "home/coin_toss.h"
 #include "home/menus.h"
 #include "home/substatus.h"
-/* <<< factory statics */
+/* <<< part includes_DUELVARS_ARENA_CARD_SUBSTATUS2 */
 
 /* >>> part DUELVARS_ARENA_CARD_SUBSTATUS2 */
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
-#define SAND_ATTACK_CHECK_TEXT 0x00deu
-#define SMOKESCREEN_CHECK_TEXT 0x00dfu
-#define DUELVARS_ARENA_CARD 0xbbu
-#define DUELVARS_BENCH 0xbcu
-#define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define wTempPokemonID_ADDR wTempPokemonID_ce7c_ADDR
 /* <<< part DUELVARS_ARENA_CARD_SUBSTATUS2 */
+/* >>> part SAND_ATTACK_CHECK_TEXT */
+#define SAND_ATTACK_CHECK_TEXT 0x00deu
+/* <<< part SAND_ATTACK_CHECK_TEXT */
+/* >>> part SMOKESCREEN_CHECK_TEXT */
+#define SMOKESCREEN_CHECK_TEXT 0x00dfu
+/* <<< part SMOKESCREEN_CHECK_TEXT */
+/* >>> part DUELVARS_ARENA_CARD */
+#define DUELVARS_ARENA_CARD 0xbbu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_BENCH */
+#define DUELVARS_BENCH 0xbcu
+/* <<< part DUELVARS_BENCH */
+/* >>> part DUELVARS_ARENA_CARD_STATUS */
+#define DUELVARS_ARENA_CARD_STATUS 0xf0u
+/* <<< part DUELVARS_ARENA_CARD_STATUS */
+/* >>> part wTempPokemonID_ADDR */
+#define wTempPokemonID_ADDR wTempPokemonID_ce7c_ADDR
+/* <<< part wTempPokemonID_ADDR */
 
 /* >>> factory CountTurnDuelistPokemonWithActivePkmnPower */
 /* substatus.asm:544-590. Counts arena (if not status-incapable) plus bench
@@ -136,9 +152,16 @@ SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de)
 
 /* >>> part DUELVARS_ARENA_CARD_SUBSTATUS1 */
 #define DUELVARS_ARENA_CARD_SUBSTATUS1 0xe7u
+/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS1 */
+/* >>> part DUELVARS_ARENA_CARD_SUBSTATUS3 */
 #define DUELVARS_ARENA_CARD_SUBSTATUS3 0xebu
+/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS3 */
+/* >>> part DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX */
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xf2u
+/* <<< part DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX */
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_TYPE */
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xd4u
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_TYPE */
 
 
 
@@ -146,25 +169,52 @@ SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de)
 
 
 
+/* >>> part CANNOT_USE_DUE_TO_STATUS_TEXT_ID */
 /* ldtx's compile-time text ids, matching text_offsets.asm's index (the same
  * convention as duel.c's PLAYER2_TEXT_ID). */
 #define CANNOT_USE_DUE_TO_STATUS_TEXT_ID 0x00cbu
+/* <<< part CANNOT_USE_DUE_TO_STATUS_TEXT_ID */
+/* >>> part UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID */
 #define UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID 0x00d4u
+/* <<< part UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID */
+/* >>> part UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID */
 #define UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID 0x00feu
+/* <<< part UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID */
+/* >>> part UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID */
 #define UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID 0x00ffu
+/* <<< part UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID */
+/* >>> part UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID */
 #define UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID 0x0100u
+/* <<< part UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID */
+/* >>> part UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID */
 #define UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID 0x0101u
+/* <<< part UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID */
+/* >>> part UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID */
 #define UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID 0x0102u
+/* <<< part UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID */
+/* >>> part UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID */
 #define UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID 0x0103u
+/* <<< part UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID */
+/* >>> part UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID */
 #define UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID 0x0106u
+/* <<< part UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID */
+/* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID */
 #define NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID 0x0107u
+/* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID */
+/* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID */
 #define NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID 0x0108u
+/* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID */
+/* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID */
 #define NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID 0x0109u
+/* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID */
+/* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID */
 #define NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID 0x010bu
+/* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID */
 
+/* >>> part NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR */
 /* substatus.asm:476-481, ROM0 fixed bank (00:34d8 per poketcg.sym). */
 #define NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR NoDamageOrEffectTextIDTable_ADDR
-/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS1 */
+/* <<< part NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR */
 
 /* >>> factory CheckIsIncapableOfUsingPkmnPower */
 PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower(uint8_t a)
@@ -557,10 +607,16 @@ RainDanceResult CheckRainDanceScenario(void)
 
 /* >>> part MACHAMP_ID */
 #define MACHAMP_ID 0x7Fu
-#define MUK_ID     0x27u
-#define DUELVARS_ARENA_CARD_HP 0xc8u
-#define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT 0x0105u
 /* <<< part MACHAMP_ID */
+/* >>> part MUK_ID */
+#define MUK_ID     0x27u
+/* <<< part MUK_ID */
+/* >>> part DUELVARS_ARENA_CARD_HP */
+#define DUELVARS_ARENA_CARD_HP 0xc8u
+/* <<< part DUELVARS_ARENA_CARD_HP */
+/* >>> part RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT */
+#define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT 0x0105u
+/* <<< part RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT */
 /* >>> part f_or */
 static uint8_t f_or(uint8_t result) { return (uint8_t)(result ? 0x00u : 0x80u); }
 /* <<< part f_or */

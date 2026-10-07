@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import importlib.util
 import sys
@@ -77,9 +78,16 @@ def uncased_routines(modules: list[tuple[Path, object]]) -> list[tuple[str, str]
             # block carries the identifier form.
             cased.add(fn.replace(".", "_"))
     excluded = {fn for entries in EXCLUSIONS.values() if isinstance(entries, dict) for fn in entries}
+    inventory = PROFILE.artifact_path("inventory", ROOT)
+    in_rom = None
+    if inventory.is_file():
+        functions = json.loads(inventory.read_text()).get("functions", {})
+        in_rom = set(functions) | {name.replace(".", "_") for name in functions}
     missing = []
     for source in PROFILE.home_sources(ROOT):
         for fn in C_BLOCK.findall(source.read_text()):
+            if in_rom is not None and fn not in in_rom:
+                continue
             if fn != "statics" and fn not in cased and fn not in excluded:
                 missing.append((source.name, fn))
     return missing

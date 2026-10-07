@@ -11,18 +11,34 @@
 
 /* >>> part rLCDC */
 #define rLCDC 0xFF40u
+/* <<< part rLCDC */
+/* >>> part rSTAT */
 #define rSTAT 0xFF41u
+/* <<< part rSTAT */
+/* >>> part rLYC */
 #define rLYC  0xFF45u
+/* <<< part rLYC */
+/* >>> part rWX */
 #define rWX   0xFF4Bu
+/* <<< part rWX */
+/* >>> part rIE */
 #define rIE   0xFFFFu
+/* <<< part rIE */
 
+/* >>> part LCDC_OBJS */
 #define LCDC_OBJS 0x02u
+/* <<< part LCDC_OBJS */
+/* >>> part STAT_LYC */
 #define STAT_LYC  0x40u
+/* <<< part STAT_LYC */
+/* >>> part IE_STAT */
 #define IE_STAT   0x02u
+/* <<< part IE_STAT */
 
+/* >>> part BGSCROLL_DATA */
 /* BGScrollData, scroll.asm:112, read live from bank 0. */
 #define BGSCROLL_DATA BGScrollData_ADDR
-/* <<< part rLCDC */
+/* <<< part BGSCROLL_DATA */
 
 /* >>> factory Func_3e44 */
 void Func_3e44(void)

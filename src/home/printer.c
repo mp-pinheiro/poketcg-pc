@@ -13,7 +13,7 @@
 #include "isr.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 
 #include "home/process_text.h"
@@ -35,15 +35,23 @@
 #include "mem.h"
 
 #include "home/printer.h"
+/* <<< part includes_2 */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part includes_SYM_CROSS */
 #include "generated/wram.h"
 #include "home/menus.h"
 #include "home/process_text.h"
 #include "home/bg_map.h"
 #include "home/core.h"
+/* <<< part includes_SYM_CROSS */
+/* >>> part SYM_CROSS */
 #define SYM_CROSS 0x2Du
+/* <<< part SYM_CROSS */
 
+/* >>> part includes_RetreatWeakResistData */
 #include "home/menus.h"
 
 #include "generated/sram.h"
@@ -54,10 +62,18 @@
 #include "home/print_text.h"
 #include "home/process_text.h"
 #include "home/text_box.h"
+/* <<< part includes_RetreatWeakResistData */
+/* >>> part RetreatWeakResistData */
 #define RetreatWeakResistData RetreatWeakResistData_ADDR
+/* <<< part RetreatWeakResistData */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
+/* >>> part SYM_No */
 #define SYM_No 0x13u
+/* <<< part SYM_No */
 
+/* >>> part includes_PAD_B */
 #include "home/menus.h"
 #include "home/lcd.h"
 #include "home/load_animation.h"
@@ -67,9 +83,15 @@
 #include "home/frames.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_PAD_B */
+/* >>> part PAD_B */
 #define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part FALSE */
 #define FALSE 0x00u
+/* <<< part FALSE */
 
+/* >>> part includes_SYM_Lv */
 #include "home/printer.h"
 
 #include "generated/wram.h"
@@ -110,9 +132,15 @@
 #include "home/sprite_vblank.h"
 #include "home/text_box.h"
 #include "home/tiles.h"
+/* <<< part includes_SYM_Lv */
+/* >>> part SYM_Lv */
 #define SYM_Lv 0x11u
+/* <<< part SYM_Lv */
+/* >>> part SYM_HP */
 #define SYM_HP 0x10u
+/* <<< part SYM_HP */
 
+/* >>> part includes_PAD_SELECT */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -126,8 +154,14 @@
 #include "home/sprite_vblank.h"
 #include "home/text_box.h"
 #include "home/tiles.h"
+/* <<< part includes_PAD_SELECT */
+/* >>> part PAD_SELECT */
 #define PAD_SELECT 0x04u
+/* <<< part PAD_SELECT */
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xC2u
+/* <<< part PLAYER_TURN */
+/* >>> part includes_SYM_BOX_TOP */
 /* PROMOTIONAL EQU CARD_SET_PROMOTIONAL << 4, and CARD_SET_PROMOTIONAL is $04
  * (card_data_constants.asm), so the byte is $40. */
 
@@ -142,14 +176,22 @@
 #include "home/lcd.h"
 #include "home/print_text.h"
 #include "home/process_text.h"
+/* <<< part includes_SYM_BOX_TOP */
+/* >>> part SYM_BOX_TOP */
 #define SYM_BOX_TOP 0x1Cu
+/* <<< part SYM_BOX_TOP */
+/* >>> part PRINTER_CARD_LIST_SELECTION_PARAMS_BANK */
 /* Data_ad05 is `02:6d05 Data_ad05` in poketcg.sym: the nine card-selection
  * parameter bytes (x 3, y 3, y spacing 0, x spacing 4, 2 entries,
  * SYM_CURSOR_R $0F, SYM_SPACE $00, NULL handler) this menu hands
  * InitCardSelectionParams, which reads them through the $4000-$7FFF window. */
 #define PRINTER_CARD_LIST_SELECTION_PARAMS_BANK 2u
+/* <<< part PRINTER_CARD_LIST_SELECTION_PARAMS_BANK */
+/* >>> part PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR */
 #define PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR (TransitionTable1_ADDR + 0x0Cu)
+/* <<< part PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR */
 
+/* >>> part includes_MENU_CANCEL */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/common.h"
@@ -162,14 +204,30 @@
 #include "home/process_text.h"
 #include "home/tiles.h"
 #include "mem.h"
+/* <<< part includes_MENU_CANCEL */
+/* >>> part MENU_CANCEL */
 #define MENU_CANCEL 0xFFu
+/* <<< part MENU_CANCEL */
+/* >>> part PAD_DOWN */
 #define PAD_DOWN 0x80u
+/* <<< part PAD_DOWN */
+/* >>> part PAD_START */
 #define PAD_START 0x08u
+/* <<< part PAD_START */
+/* >>> part FILTERS_CARD_SELECTION_PARAMS_ADDR */
 #define FILTERS_CARD_SELECTION_PARAMS_ADDR FiltersCardSelectionParams_ADDR
+/* <<< part FILTERS_CARD_SELECTION_PARAMS_ADDR */
+/* >>> part PRINTER_POKEMON_CARDS_DATA_ADDR */
 #define PRINTER_POKEMON_CARDS_DATA_ADDR 0x6396u
+/* <<< part PRINTER_POKEMON_CARDS_DATA_ADDR */
+/* >>> part PRINTER_POKEMON_CARDS_PRINT_LIST_ADDR */
 #define PRINTER_POKEMON_CARDS_PRINT_LIST_ADDR 0x642Du
+/* <<< part PRINTER_POKEMON_CARDS_PRINT_LIST_ADDR */
+/* >>> part PRINTER_POKEMON_CARDS_SELECTION_PARAMS_ADDR */
 #define PRINTER_POKEMON_CARDS_SELECTION_PARAMS_ADDR (TransitionTable1_ADDR + 0x0Cu)
+/* <<< part PRINTER_POKEMON_CARDS_SELECTION_PARAMS_ADDR */
 
+/* >>> part includes_PRINTER_MENU_PARAMETERS_ADDR */
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
@@ -185,17 +243,29 @@
 #include "home/printer.h"
 #include "home/switch_sram.h"
 #include "home/text_box.h"
+/* <<< part includes_PRINTER_MENU_PARAMETERS_ADDR */
+/* >>> part PRINTER_MENU_PARAMETERS_ADDR */
 #define PRINTER_MENU_PARAMETERS_ADDR PrinterMenuParameters_ADDR
+/* <<< part PRINTER_MENU_PARAMETERS_ADDR */
+/* >>> part PRINTER_INSTRUCTION_STACK */
 #define PRINTER_INSTRUCTION_STACK 0xDFC6u
+/* <<< part PRINTER_INSTRUCTION_STACK */
+/* >>> part PRINTER_QUALITY_PARAMETERS_ADDR */
 #define PRINTER_QUALITY_PARAMETERS_ADDR (InputDeckName_ADDR + 0x6Cu)
-/* <<< factory statics */
+/* <<< part PRINTER_QUALITY_PARAMETERS_ADDR */
 
 /* >>> part rSB */
 #define rSB 0xFF01u
-#define rSC 0xFF02u
-#define SC_INTERNAL 0x01u
-#define SC_START 0x80u
 /* <<< part rSB */
+/* >>> part rSC */
+#define rSC 0xFF02u
+/* <<< part rSC */
+/* >>> part SC_INTERNAL */
+#define SC_INTERNAL 0x01u
+/* <<< part SC_INTERNAL */
+/* >>> part SC_START */
+#define SC_START 0x80u
+/* <<< part SC_START */
 
 /* >>> factory SendNextPrinterPacketByte */
 SendNextPrinterPacketByteResult SendNextPrinterPacketByte(void)

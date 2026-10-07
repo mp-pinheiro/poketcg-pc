@@ -8,58 +8,138 @@
 #include "home/sfx.h"
 #include "home/frames.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/music2.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> part MUSIC2_BANK */
 #define MUSIC2_BANK 0x3Eu
+/* <<< part MUSIC2_BANK */
 
+/* >>> part ADR_NumberOfSongs2 */
 /* ── ROM table addresses (bank $3e) ─────────────────────────────────── */
 #define ADR_NumberOfSongs2      NumberOfSongs2_ADDR
+/* <<< part ADR_NumberOfSongs2 */
+/* >>> part ADR_SongBanks2 */
 #define ADR_SongBanks2          SongBanks2_ADDR
+/* <<< part ADR_SongBanks2 */
+/* >>> part ADR_SongHeaderPointers2 */
 #define ADR_SongHeaderPointers2 SongHeaderPointers2_ADDR
+/* <<< part ADR_SongHeaderPointers2 */
+/* >>> part ADR_ChannelLoopStacks */
 #define ADR_ChannelLoopStacks   Music2_ChannelLoopStacks_ADDR
+/* <<< part ADR_ChannelLoopStacks */
+/* >>> part ADR_OctaveOffsets */
 #define ADR_OctaveOffsets       Music2_OctaveOffsets_ADDR
+/* <<< part ADR_OctaveOffsets */
+/* >>> part ADR_Pitches */
 #define ADR_Pitches             Music2_Pitches_ADDR
+/* <<< part ADR_Pitches */
+/* >>> part ADR_WaveInstruments */
 #define ADR_WaveInstruments     Music2_WaveInstruments_ADDR
+/* <<< part ADR_WaveInstruments */
+/* >>> part ADR_NoiseInstruments */
 #define ADR_NoiseInstruments    Music2_NoiseInstruments_ADDR
+/* <<< part ADR_NoiseInstruments */
+/* >>> part ADR_VibratoTypes */
 #define ADR_VibratoTypes        Music2_VibratoTypes_ADDR
+/* <<< part ADR_VibratoTypes */
+/* >>> part ADR_SFXPriorities */
 #define ADR_SFXPriorities       Music2_SFXPriorities_ADDR
+/* <<< part ADR_SFXPriorities */
 
+/* >>> part APU_AUD1SWEEP */
 /* ── APU register addresses ─────────────────────────────────────────── */
 #define APU_AUD1SWEEP 0xFF10u
+/* <<< part APU_AUD1SWEEP */
+/* >>> part APU_AUD1LEN */
 #define APU_AUD1LEN   0xFF11u
+/* <<< part APU_AUD1LEN */
+/* >>> part APU_AUD1ENV */
 #define APU_AUD1ENV   0xFF12u
+/* <<< part APU_AUD1ENV */
+/* >>> part APU_AUD1LOW */
 #define APU_AUD1LOW   0xFF13u
+/* <<< part APU_AUD1LOW */
+/* >>> part APU_AUD1HIGH */
 #define APU_AUD1HIGH  0xFF14u
+/* <<< part APU_AUD1HIGH */
+/* >>> part APU_AUD2LEN */
 #define APU_AUD2LEN   0xFF16u
+/* <<< part APU_AUD2LEN */
+/* >>> part APU_AUD2ENV */
 #define APU_AUD2ENV   0xFF17u
+/* <<< part APU_AUD2ENV */
+/* >>> part APU_AUD2LOW */
 #define APU_AUD2LOW   0xFF18u
+/* <<< part APU_AUD2LOW */
+/* >>> part APU_AUD2HIGH */
 #define APU_AUD2HIGH  0xFF19u
+/* <<< part APU_AUD2HIGH */
+/* >>> part APU_AUD3ENA */
 #define APU_AUD3ENA   0xFF1Au
+/* <<< part APU_AUD3ENA */
+/* >>> part APU_AUD3LEN */
 #define APU_AUD3LEN   0xFF1Bu
+/* <<< part APU_AUD3LEN */
+/* >>> part APU_AUD3LEVEL */
 #define APU_AUD3LEVEL 0xFF1Cu
+/* <<< part APU_AUD3LEVEL */
+/* >>> part APU_AUD3LOW */
 #define APU_AUD3LOW   0xFF1Du
+/* <<< part APU_AUD3LOW */
+/* >>> part APU_AUD3HIGH */
 #define APU_AUD3HIGH  0xFF1Eu
+/* <<< part APU_AUD3HIGH */
+/* >>> part APU_AUD4LEN */
 #define APU_AUD4LEN   0xFF20u
+/* <<< part APU_AUD4LEN */
+/* >>> part APU_AUD4ENV */
 #define APU_AUD4ENV   0xFF21u
+/* <<< part APU_AUD4ENV */
+/* >>> part APU_AUD4POLY */
 #define APU_AUD4POLY  0xFF22u
+/* <<< part APU_AUD4POLY */
+/* >>> part APU_AUD4GO */
 #define APU_AUD4GO    0xFF23u
+/* <<< part APU_AUD4GO */
+/* >>> part APU_VOL */
 #define APU_VOL       0xFF24u
+/* <<< part APU_VOL */
+/* >>> part APU_TERM */
 #define APU_TERM      0xFF25u
+/* <<< part APU_TERM */
+/* >>> part APU_ENA */
 #define APU_ENA       0xFF26u
+/* <<< part APU_ENA */
+/* >>> part APU_WAVE */
 #define APU_WAVE      0xFF30u
+/* <<< part APU_WAVE */
 
+/* >>> part K_AUDENA_ON */
 #define K_AUDENA_ON    0x80u
+/* <<< part K_AUDENA_ON */
+/* >>> part K_AUDENV_UP */
 #define K_AUDENV_UP    0x08u
+/* <<< part K_AUDENV_UP */
+/* >>> part K_RESTART */
 #define K_RESTART      0x80u
+/* <<< part K_RESTART */
+/* >>> part K_LEVEL_MUTE */
 #define K_LEVEL_MUTE   0x00u
+/* <<< part K_LEVEL_MUTE */
+/* >>> part K_AUD3ENA_ON */
 #define K_AUD3ENA_ON   0x80u
+/* <<< part K_AUD3ENA_ON */
+/* >>> part K_SWEEP_DOWN */
 #define K_SWEEP_DOWN   0x08u
+/* <<< part K_SWEEP_DOWN */
+/* >>> part K_LEN_TIMER */
 #define K_LEN_TIMER    0x3Fu
+/* <<< part K_LEN_TIMER */
+/* >>> part K_WAVE_SIZE */
 #define K_WAVE_SIZE    16
-/* <<< part MUSIC2_BANK */
+/* <<< part K_WAVE_SIZE */
 
 /* >>> part pnn_note_decl */
 /* ── Forward declarations ───────────────────────────────────────────── */

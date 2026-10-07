@@ -12,10 +12,14 @@
 #include "runtime.h"
 #include "home/frames.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/warp.h"
+/* <<< part includes_2 */
+/* >>> part BANK_HANDLE_MAP_WARP */
 #define BANK_HANDLE_MAP_WARP 7u
+/* <<< part BANK_HANDLE_MAP_WARP */
 
+/* >>> part includes_tail */
 #include "generated/sram.h"
 #include "home/scripting.h"
 #include "home/switch_sram.h"
@@ -68,7 +72,7 @@
 #include "home/overworld.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> part BANK_EXECUTE_NPC_MOVEMENT */
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u

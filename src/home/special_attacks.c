@@ -6,14 +6,20 @@
 #include "home/duel.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/damage_calculation.h"
+/* <<< part includes_2 */
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xBBu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD_HP */
 #define DUELVARS_ARENA_CARD_HP 0xC8u
+/* <<< part DUELVARS_ARENA_CARD_HP */
 
+/* >>> part includes_DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
@@ -24,8 +30,10 @@
 #include "home/damage_calculation.h"
 #include "home/card_color.h"
 #include "home/card_data.h"
+/* <<< part includes_DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
-/* <<< factory statics */
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 
 /* >>> part DUELVARS_CARD_LOCATIONS */
 #define DUELVARS_CARD_LOCATIONS 0x00u

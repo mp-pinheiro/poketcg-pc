@@ -1,33 +1,3 @@
-/* >>> part includes */
-#include "home/intro.h"
-#include "generated/constants.h"
-#include "generated/rom.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/load_animation.h"
-#include "home/frames.h"
-#include "home/intro_sequence_commands.h"
-#include "home/load_gfx.h"
-#include "home/sprite_animations.h"
-#include "home/switch_rom.h"
-#include "home/scenes.h"
-#include "home/lcd_enable_frame.h"
-#include "home/random.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
-#include "home/color.h"
-#include "home/init_menu.h"
-#include "home/lcd.h"
-#include "home/sound.h"
-#include "home/play_animation.h"
-#define HANDLE_ALL_SPRITE_ANIMATIONS HandleAllSpriteAnimations_ADDR
-#define INTRO_SEQUENCE IntroSequence_ADDR
-#define PAD_A 0x01u
-#define PAD_START 0x08u
-/* <<< factory statics */
-
-
 /* >>> factory LoadTitleScreenSprites */
 void LoadTitleScreenSprites(void)
 {
@@ -51,23 +21,6 @@ void LoadTitleScreenSprites(void)
     }
 }
 /* <<< factory LoadTitleScreenSprites */
-
-/* >>> part ShowPressStart */
-/* intro.asm:55-73 .ShowPressStart */
-static void ShowPressStart(void)
-{
-	CreateSpriteAndAnimBufferEntry(SPRITE_PRESS_START, 0u);
-	uint16_t property = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
-	gb_write8(property, 48u);         /* x */
-	gb_write8((uint16_t)(property + 1u), 112u); /* y */
-	uint8_t anim = SPRITE_ANIM_190;
-	if (wConsole == CONSOLE_CGB)
-		anim = SPRITE_ANIM_191;
-	Func_12ac9(anim, 60u); /* bc = 60 */
-}
-/* <<< part ShowPressStart */
-
-
 /* >>> factory PlayIntroSequence */
 void PlayIntroSequence(void)
 {
@@ -118,4 +71,3 @@ void PlayIntroSequence(void)
 	EnableLCD();
 }
 /* <<< factory PlayIntroSequence */
-

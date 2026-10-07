@@ -6,27 +6,47 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/card_data.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/hram.h"
+/* <<< part includes_2 */
 
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xBBu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD_STATUS */
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
+/* <<< part DUELVARS_ARENA_CARD_STATUS */
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
+/* >>> part FLAG_C */
 #define FLAG_C 0x10u
+/* <<< part FLAG_C */
+/* >>> part FLAG_Z */
 #define FLAG_Z 0x80u
+/* <<< part FLAG_Z */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_HP */
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/hram.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_HP */
+/* >>> part DUELVARS_ARENA_CARD_HP */
 #define DUELVARS_ARENA_CARD_HP 0xC8u
+/* <<< part DUELVARS_ARENA_CARD_HP */
 
+/* >>> part includes_DUELVARS_BENCH */
 #include "home/card_color.h"
+/* <<< part includes_DUELVARS_BENCH */
+/* >>> part DUELVARS_BENCH */
 #define DUELVARS_BENCH 0xBCu
+/* <<< part DUELVARS_BENCH */
+/* >>> part TRUE */
 #define TRUE 0x01u
-/* <<< factory statics */
+/* <<< part TRUE */
 
 /* >>> part OPPONENT_TURN */
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))

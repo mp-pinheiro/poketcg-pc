@@ -7,13 +7,15 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/grass_club.h"
 #include "home/grass_club_entrance.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
+/* >>> part GrassClubAfterDuelTable */
 #define GrassClubAfterDuelTable (GrassClubAfterDuel__after_duel_table_ADDR)
-/* <<< factory statics */
+/* <<< part GrassClubAfterDuelTable */
 
 /* >>> factory GrassClubAfterDuel */
 GrassClubAfterDuelResult GrassClubAfterDuel(void)

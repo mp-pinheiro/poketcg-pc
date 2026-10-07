@@ -7,13 +7,15 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/scripting.h"
 #include "generated/wram.h"
 
 #include "home/grass_club_entrance.h"
+/* <<< part includes_2 */
+/* >>> part ScienceClubAfterDuelTable */
 #define ScienceClubAfterDuelTable (ScienceClubAfterDuel__after_duel_table_ADDR)
-/* <<< factory statics */
+/* <<< part ScienceClubAfterDuelTable */
 
 /* >>> factory Preload_Joseph */
 PreloadJosephResult Preload_Joseph(void)

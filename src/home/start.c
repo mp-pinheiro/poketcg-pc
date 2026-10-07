@@ -14,21 +14,31 @@
 #include "home/bg_map.h"
 #include "home/palettes.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/start.h"
 #include "home/save.h"
 #include "home/core.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
+/* >>> part FALSE */
 #define FALSE 0x00u
+/* <<< part FALSE */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part includes_OVERWORLD_MAP_NAMES */
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "home/print_stats.h"
 #include "home/text_box.h"
+/* <<< part includes_OVERWORLD_MAP_NAMES */
+/* >>> part OVERWORLD_MAP_NAMES */
 #define OVERWORLD_MAP_NAMES OverworldMapNames_ADDR /* home/map.asm OverworldMapNames; fixed bank $00 */
+/* <<< part OVERWORLD_MAP_NAMES */
+/* >>> part includes_SYM_CURSOR_R */
 #include "home/lcd.h"
 #include "home/lcd_enable_frame.h"
 #include "home/load_animation.h"
@@ -50,13 +60,23 @@
 #include "home/sound.h"
 #include "home/process_text.h"
 #include "home/random.h"
+/* <<< part includes_SYM_CURSOR_R */
+/* >>> part SYM_CURSOR_R */
 #define SYM_CURSOR_R 0x0Fu
+/* <<< part SYM_CURSOR_R */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
 
+/* >>> part includes_HANDLEALLSPRITEANIMATIONS_ADDR */
 #include "home/color.h"
 #include "home/play_animation.h"
+/* <<< part includes_HANDLEALLSPRITEANIMATIONS_ADDR */
+/* >>> part HANDLEALLSPRITEANIMATIONS_ADDR */
 #define HANDLEALLSPRITEANIMATIONS_ADDR HandleAllSpriteAnimations_ADDR
+/* <<< part HANDLEALLSPRITEANIMATIONS_ADDR */
 
+/* >>> part includes_BANK_GAME_LOOP */
 #include "home/lcd.h"
 #include "home/lcd_enable_frame.h"
 #include "home/load_animation.h"
@@ -87,24 +107,50 @@
 #include "home/time.h"
 #include "mem.h"
 #include "runtime.h"
+/* <<< part includes_BANK_GAME_LOOP */
+/* >>> part BANK_GAME_LOOP */
 #define BANK_GAME_LOOP 0x01u
+/* <<< part BANK_GAME_LOOP */
+/* >>> part rIF */
 #define rIF 0xFF0Fu
+/* <<< part rIF */
+/* >>> part rIE */
 #define rIE 0xFFFFu
+/* <<< part rIE */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_START */
 #define PAD_START 0x08u
+/* <<< part PAD_START */
+/* >>> part PAD_B */
 #define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part PAD_RIGHT */
 #define PAD_RIGHT 0x10u
+/* <<< part PAD_RIGHT */
+/* >>> part PAD_LEFT */
 #define PAD_LEFT 0x20u
+/* <<< part PAD_LEFT */
+/* >>> part PAD_UP */
 #define PAD_UP 0x40u
+/* <<< part PAD_UP */
+/* >>> part PAD_DOWN */
 #define PAD_DOWN 0x80u
+/* <<< part PAD_DOWN */
+/* >>> part START_MENU_PC_OPTIONS */
 #define START_MENU_PC_OPTIONS 0xFEu
+/* <<< part START_MENU_PC_OPTIONS */
+/* >>> part rVBK */
 #define rVBK 0xFF4Fu
-/* <<< factory statics */
+/* <<< part rVBK */
 
 /* >>> part DISCLAIMER_TEXT_ID */
 #define DISCLAIMER_TEXT_ID 0x0378u
-#define SYM_CURSOR_D 0x2Fu
 /* <<< part DISCLAIMER_TEXT_ID */
+/* >>> part SYM_CURSOR_D */
+#define SYM_CURSOR_D 0x2Fu
+/* <<< part SYM_CURSOR_D */
 /* >>> part print_text_bytes */
 static void print_text_bytes(const uint8_t *text, uint8_t d, uint8_t e)
 {
@@ -145,13 +191,25 @@ static uint8_t start_menu_pc_index(void)
 /* <<< part start_menu_pc_index */
 /* >>> part PC_PAGE_SLOTS */
 #define PC_PAGE_SLOTS 6u
-#define PC_PAGE_ROW_Y 15u
-#define PC_OPTION_SGB 2u
-#define PC_OPTION_BORDER 6u
-#define PC_OPTION_SWITCH_GAME 12u
-#define PC_SFX_CURSOR 0x01u
-#define PC_SFX_CANCEL 0x03u
 /* <<< part PC_PAGE_SLOTS */
+/* >>> part PC_PAGE_ROW_Y */
+#define PC_PAGE_ROW_Y 15u
+/* <<< part PC_PAGE_ROW_Y */
+/* >>> part PC_OPTION_SGB */
+#define PC_OPTION_SGB 2u
+/* <<< part PC_OPTION_SGB */
+/* >>> part PC_OPTION_BORDER */
+#define PC_OPTION_BORDER 6u
+/* <<< part PC_OPTION_BORDER */
+/* >>> part PC_OPTION_SWITCH_GAME */
+#define PC_OPTION_SWITCH_GAME 12u
+/* <<< part PC_OPTION_SWITCH_GAME */
+/* >>> part PC_SFX_CURSOR */
+#define PC_SFX_CURSOR 0x01u
+/* <<< part PC_SFX_CURSOR */
+/* >>> part PC_SFX_CANCEL */
+#define PC_SFX_CANCEL 0x03u
+/* <<< part PC_SFX_CANCEL */
 /* >>> part PcOptionPage */
 typedef struct {
 	const char *name;

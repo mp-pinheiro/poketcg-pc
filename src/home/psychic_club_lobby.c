@@ -7,22 +7,32 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/map.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
 
 #include "home/grass_club_entrance.h"
+/* <<< part includes_2 */
+/* >>> part PsychicClubLobbyAfterDuelTable */
 #define PsychicClubLobbyAfterDuelTable (PsychicClubLobbyAfterDuel__after_duel_table_ADDR)
+/* <<< part PsychicClubLobbyAfterDuelTable */
 
+/* >>> part includes_EVENT_MEDAL_COUNT_540 */
 #include "home/scripting.h"
 #include "mem.h"
+/* <<< part includes_EVENT_MEDAL_COUNT_540 */
+/* >>> part EVENT_MEDAL_COUNT_540 */
 #define EVENT_MEDAL_COUNT_540 EVENT_MEDAL_COUNT
+/* <<< part EVENT_MEDAL_COUNT_540 */
+/* >>> part EVENT_RONALD_ENCOUNTER_540 */
 #define EVENT_RONALD_ENCOUNTER_540 0x32u
+/* <<< part EVENT_RONALD_ENCOUNTER_540 */
 
+/* >>> part includes_tail */
 #include "home/psychic_club_lobby.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory PsychicClubLobbyLoadMap */
 PsychicClubLobbyLoadMapResult PsychicClubLobbyLoadMap(uint8_t b, uint8_t c, uint16_t hl)

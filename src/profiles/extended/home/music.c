@@ -13,53 +13,141 @@
 
 /* >>> part MUSIC_BANK */
 #define MUSIC_BANK 0x42u
-#define ADR_CHANNEL_LOOP_STACKS ChannelLoopStacks_ADDR
-#define ADR_OCTAVE_OFFSETS OctaveOffsets_ADDR
-#define ADR_PITCHES Pitches_ADDR
-#define ADR_WAVE_INSTRUMENTS WaveInstruments_ADDR
-#define ADR_NOISE_INSTRUMENTS NoiseInstruments_ADDR
-#define ADR_VIBRATO_TYPES VibratoTypes_ADDR
-#define ADR_NUMBER_OF_SONGS NumberOfSongs_ADDR
-#define ADR_SONG_HEADER_POINTERS SongHeaderPointers_ADDR
-
-#define APU_AUD1SWEEP 0xFF10u
-#define APU_AUD1LEN 0xFF11u
-#define APU_AUD1ENV 0xFF12u
-#define APU_AUD1LOW 0xFF13u
-#define APU_AUD1HIGH 0xFF14u
-#define APU_AUD2LEN 0xFF16u
-#define APU_AUD2ENV 0xFF17u
-#define APU_AUD2LOW 0xFF18u
-#define APU_AUD2HIGH 0xFF19u
-#define APU_AUD3ENA 0xFF1Au
-#define APU_AUD3LEN 0xFF1Bu
-#define APU_AUD3LEVEL 0xFF1Cu
-#define APU_AUD3LOW 0xFF1Du
-#define APU_AUD3HIGH 0xFF1Eu
-#define APU_AUD4LEN 0xFF20u
-#define APU_AUD4ENV 0xFF21u
-#define APU_AUD4POLY 0xFF22u
-#define APU_AUD4GO 0xFF23u
-#define APU_VOL 0xFF24u
-#define APU_TERM 0xFF25u
-#define APU_ENA 0xFF26u
-#define APU_WAVE 0xFF30u
-
-#define AUDENA_ON 0x80u
-#define AUD1ENV_UP 0x08u
-#define AUD2ENV_UP 0x08u
-#define AUD4ENV_UP 0x08u
-#define AUD1HIGH_RESTART 0x80u
-#define AUD2HIGH_RESTART 0x80u
-#define AUD3HIGH_RESTART 0x80u
-#define AUD4GO_RESTART 0x80u
-#define AUD3LEVEL_MUTE 0x00u
-#define AUD3ENA_ON 0x80u
-#define AUD1SWEEP_DOWN 0x08u
-#define AUD1LEN_TIMER 0x3Fu
-#define AUD2LEN_TIMER 0x3Fu
-#define AUD3WAVE_SIZE 16u
 /* <<< part MUSIC_BANK */
+/* >>> part ADR_CHANNEL_LOOP_STACKS */
+#define ADR_CHANNEL_LOOP_STACKS ChannelLoopStacks_ADDR
+/* <<< part ADR_CHANNEL_LOOP_STACKS */
+/* >>> part ADR_OCTAVE_OFFSETS */
+#define ADR_OCTAVE_OFFSETS OctaveOffsets_ADDR
+/* <<< part ADR_OCTAVE_OFFSETS */
+/* >>> part ADR_PITCHES */
+#define ADR_PITCHES Pitches_ADDR
+/* <<< part ADR_PITCHES */
+/* >>> part ADR_WAVE_INSTRUMENTS */
+#define ADR_WAVE_INSTRUMENTS WaveInstruments_ADDR
+/* <<< part ADR_WAVE_INSTRUMENTS */
+/* >>> part ADR_NOISE_INSTRUMENTS */
+#define ADR_NOISE_INSTRUMENTS NoiseInstruments_ADDR
+/* <<< part ADR_NOISE_INSTRUMENTS */
+/* >>> part ADR_VIBRATO_TYPES */
+#define ADR_VIBRATO_TYPES VibratoTypes_ADDR
+/* <<< part ADR_VIBRATO_TYPES */
+/* >>> part ADR_NUMBER_OF_SONGS */
+#define ADR_NUMBER_OF_SONGS NumberOfSongs_ADDR
+/* <<< part ADR_NUMBER_OF_SONGS */
+/* >>> part ADR_SONG_HEADER_POINTERS */
+#define ADR_SONG_HEADER_POINTERS SongHeaderPointers_ADDR
+/* <<< part ADR_SONG_HEADER_POINTERS */
+
+/* >>> part APU_AUD1SWEEP */
+#define APU_AUD1SWEEP 0xFF10u
+/* <<< part APU_AUD1SWEEP */
+/* >>> part APU_AUD1LEN */
+#define APU_AUD1LEN 0xFF11u
+/* <<< part APU_AUD1LEN */
+/* >>> part APU_AUD1ENV */
+#define APU_AUD1ENV 0xFF12u
+/* <<< part APU_AUD1ENV */
+/* >>> part APU_AUD1LOW */
+#define APU_AUD1LOW 0xFF13u
+/* <<< part APU_AUD1LOW */
+/* >>> part APU_AUD1HIGH */
+#define APU_AUD1HIGH 0xFF14u
+/* <<< part APU_AUD1HIGH */
+/* >>> part APU_AUD2LEN */
+#define APU_AUD2LEN 0xFF16u
+/* <<< part APU_AUD2LEN */
+/* >>> part APU_AUD2ENV */
+#define APU_AUD2ENV 0xFF17u
+/* <<< part APU_AUD2ENV */
+/* >>> part APU_AUD2LOW */
+#define APU_AUD2LOW 0xFF18u
+/* <<< part APU_AUD2LOW */
+/* >>> part APU_AUD2HIGH */
+#define APU_AUD2HIGH 0xFF19u
+/* <<< part APU_AUD2HIGH */
+/* >>> part APU_AUD3ENA */
+#define APU_AUD3ENA 0xFF1Au
+/* <<< part APU_AUD3ENA */
+/* >>> part APU_AUD3LEN */
+#define APU_AUD3LEN 0xFF1Bu
+/* <<< part APU_AUD3LEN */
+/* >>> part APU_AUD3LEVEL */
+#define APU_AUD3LEVEL 0xFF1Cu
+/* <<< part APU_AUD3LEVEL */
+/* >>> part APU_AUD3LOW */
+#define APU_AUD3LOW 0xFF1Du
+/* <<< part APU_AUD3LOW */
+/* >>> part APU_AUD3HIGH */
+#define APU_AUD3HIGH 0xFF1Eu
+/* <<< part APU_AUD3HIGH */
+/* >>> part APU_AUD4LEN */
+#define APU_AUD4LEN 0xFF20u
+/* <<< part APU_AUD4LEN */
+/* >>> part APU_AUD4ENV */
+#define APU_AUD4ENV 0xFF21u
+/* <<< part APU_AUD4ENV */
+/* >>> part APU_AUD4POLY */
+#define APU_AUD4POLY 0xFF22u
+/* <<< part APU_AUD4POLY */
+/* >>> part APU_AUD4GO */
+#define APU_AUD4GO 0xFF23u
+/* <<< part APU_AUD4GO */
+/* >>> part APU_VOL */
+#define APU_VOL 0xFF24u
+/* <<< part APU_VOL */
+/* >>> part APU_TERM */
+#define APU_TERM 0xFF25u
+/* <<< part APU_TERM */
+/* >>> part APU_ENA */
+#define APU_ENA 0xFF26u
+/* <<< part APU_ENA */
+/* >>> part APU_WAVE */
+#define APU_WAVE 0xFF30u
+/* <<< part APU_WAVE */
+
+/* >>> part AUDENA_ON */
+#define AUDENA_ON 0x80u
+/* <<< part AUDENA_ON */
+/* >>> part AUD1ENV_UP */
+#define AUD1ENV_UP 0x08u
+/* <<< part AUD1ENV_UP */
+/* >>> part AUD2ENV_UP */
+#define AUD2ENV_UP 0x08u
+/* <<< part AUD2ENV_UP */
+/* >>> part AUD4ENV_UP */
+#define AUD4ENV_UP 0x08u
+/* <<< part AUD4ENV_UP */
+/* >>> part AUD1HIGH_RESTART */
+#define AUD1HIGH_RESTART 0x80u
+/* <<< part AUD1HIGH_RESTART */
+/* >>> part AUD2HIGH_RESTART */
+#define AUD2HIGH_RESTART 0x80u
+/* <<< part AUD2HIGH_RESTART */
+/* >>> part AUD3HIGH_RESTART */
+#define AUD3HIGH_RESTART 0x80u
+/* <<< part AUD3HIGH_RESTART */
+/* >>> part AUD4GO_RESTART */
+#define AUD4GO_RESTART 0x80u
+/* <<< part AUD4GO_RESTART */
+/* >>> part AUD3LEVEL_MUTE */
+#define AUD3LEVEL_MUTE 0x00u
+/* <<< part AUD3LEVEL_MUTE */
+/* >>> part AUD3ENA_ON */
+#define AUD3ENA_ON 0x80u
+/* <<< part AUD3ENA_ON */
+/* >>> part AUD1SWEEP_DOWN */
+#define AUD1SWEEP_DOWN 0x08u
+/* <<< part AUD1SWEEP_DOWN */
+/* >>> part AUD1LEN_TIMER */
+#define AUD1LEN_TIMER 0x3Fu
+/* <<< part AUD1LEN_TIMER */
+/* >>> part AUD2LEN_TIMER */
+#define AUD2LEN_TIMER 0x3Fu
+/* <<< part AUD2LEN_TIMER */
+/* >>> part AUD3WAVE_SIZE */
+#define AUD3WAVE_SIZE 16u
+/* <<< part AUD3WAVE_SIZE */
 
 /* >>> part rom_read8 */
 static uint8_t rom_read8(uint16_t addr)

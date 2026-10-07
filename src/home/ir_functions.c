@@ -2,7 +2,7 @@
 #include "home/ir_functions.h"
 /* <<< part includes */
 
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/text_ids.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
@@ -10,9 +10,13 @@
 #include "generated/sram.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xC2u
+/* <<< part PLAYER_TURN */
 
+/* >>> part includes_tail */
 #include "generated/wram.h"
 #include "home/menus.h"
 #include "home/lcd.h"
@@ -41,7 +45,7 @@
 #include "home/frames.h"
 
 #include "home/sound.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 
 /* >>> factory PlayCardPopSong */

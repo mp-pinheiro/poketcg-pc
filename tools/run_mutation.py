@@ -17,6 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+from tools.compose_profile import mutation_source  # noqa: E402
 from tools.profiles import get_profile  # noqa: E402
 
 PROFILE = get_profile(root=ROOT)
@@ -97,8 +98,7 @@ def main() -> int:
     case_path = (ROOT / args.case).resolve()
     module = load_case(case_path)
     mutation = json.loads(args.mutation.read_text()) if args.mutation else module.MUTATIONS[args.fn]
-    home_sources = {path.stem: path for path in PROFILE.home_sources(ROOT)}
-    default_source = home_sources.get(case_path.stem, ROOT / "src" / "home" / f"{case_path.stem}.c")
+    default_source = mutation_source(PROFILE, case_path.stem, mutation.get("source_symbol", args.fn), mutation["before"])
     source_value = mutation.get("source", default_source.relative_to(ROOT).as_posix())
     if not isinstance(source_value, str) or not source_value:
         raise SystemExit("mutation source must be a relative src/home or src/profiles path")

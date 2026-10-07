@@ -31,7 +31,7 @@ NUMBER_RE = re.compile(r"\$([0-9A-Fa-f]+)|%([01]+)|(?<![A-Za-z0-9_.$%])(\d+)\b")
 IDENT_RE = re.compile(r"(?<![A-Za-z0-9_.])[A-Za-z_][A-Za-z0-9_]*")
 ARITHMETIC_RE = re.compile(r"[0-9+\-*/()<>&|^~ ]+")
 FUNCTION_RE = re.compile(r"^[A-Za-z_][\w \t\*]*?\b([A-Za-z_]\w*)\s*\([^;{}]*\)\s*\{", re.MULTILINE)
-BLOCK_RE = re.compile(r"^/\* (>>>|---|===) factory (\w+) \*/[ \t]*$", re.MULTILINE)
+BLOCK_RE = re.compile(r"^/\* (>>>|---|===) (?:factory|part) (\w+) \*/[ \t]*$", re.MULTILINE)
 PROBE_ROW_RE = re.compile(r'\{\s*"([A-Za-z_][A-Za-z0-9_.]*)"\s*,\s*adapt_\w+\s*\}')
 BYTE_MNEMONICS = frozenset({"CP", "AND", "OR", "XOR", "SUB", "ADD", "ADC", "SBC", "DB"})
 REGISTERS8 = frozenset({"A", "B", "C", "D", "E", "H", "L", "[HL]"})
@@ -413,18 +413,19 @@ def audit(profile: Profile, differences: list[Difference]) -> list[str]:
     removed_basenames = profile.removed_basenames
     for difference in differences:
         names = c_names(difference.name)
-        shared_files = {stem for name in names for stem in shared_defined.get(name, ())} - removed_basenames
+        everywhere = {stem for name in names for stem in shared_defined.get(name, ())}
+        shared_files = everywhere - removed_basenames
         overlay_files = {stem for name in names for stem in overlay_defined.get(name, ())}
         replaced = overlay_files or any(name in markers[">>>"] for name in names)
         declared = any(name in markers["==="] for name in names)
         removed = any(name in markers["---"] for name in names)
         if difference.needs_port and not (replaced or declared):
+            if everywhere and not shared_files and not overlay_files:
+                continue
             where = basename_of(difference.profile_path)
             failures.append(f"routine differs without override: {difference.name} ({difference.status}, {where})")
-        if difference.status == "removed" and not removed:
-            compiled = {stem for stem in shared_files if not (overlay_home and (overlay_home / f"{stem}.c").is_file())}
-            if compiled or overlay_files:
-                failures.append(f"routine missing from profile asm is still compiled: {difference.name} ({', '.join(sorted(compiled | overlay_files))})")
+        if difference.status == "removed" and not (removed or declared) and (shared_files or overlay_files):
+            failures.append(f"routine missing from profile asm is still compiled: {difference.name} ({', '.join(sorted(shared_files | overlay_files))})")
     return failures
 
 

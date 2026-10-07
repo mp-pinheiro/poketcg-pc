@@ -8,7 +8,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/overworld.h"
 #include "home/print_stats.h"
 #include "home/text_box.h"
@@ -19,7 +19,7 @@
 #include "home/save.h"
 #include "home/menus.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> factory _PauseMenu_Diary */
 void _PauseMenu_Diary(void)

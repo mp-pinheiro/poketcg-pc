@@ -1,33 +1,3 @@
-/* >>> part includes */
-#include "home/science_club_lobby.h"
-
-#include "generated/constants.h"
-#include "generated/rom.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
-#define DATA_EBE7 Data_ebe7_ADDR
-#define DATA_EBE7_BANK 3u
-#include "home/science_club_lobby.h"
-#include "home/grass_club_entrance.h"
-#include "generated/wram.h"
-#define ScienceClubLobbyAfterDuelTable (ScienceClubLobbyAfterDuel__after_duel_table_ADDR)
-#include "home/scripting.h"
-#include "home/random.h"
-#include "home/card_data.h"
-/* <<< factory statics */
-
-/* >>> factory ScienceClubLobbyAfterDuel */
-ScienceClubLobbyAfterDuelResult ScienceClubLobbyAfterDuel(void)
-{
-	gb_write8(0x2000u, 0x03u);
-	FindEndOfDuelScriptResult r = FindEndOfDuelScript(ScienceClubLobbyAfterDuelTable);
-	return (ScienceClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
-}
-/* <<< factory ScienceClubLobbyAfterDuel */
-
 /* >>> factory Script_Specs2 */
 /* science_club_lobby.asm:68-81 -- the routine's entire CODE portion, 24 bytes,
  * straight-line with a single exit. The `start_script` macro assembles to
@@ -55,23 +25,3 @@ ScriptSpecs2Result Script_Specs2(void)
 	                            (uint8_t)(text >> 8), (uint8_t)text, hl};
 }
 /* <<< factory Script_Specs2 */
-
-/* >>> factory Preload_ImakuniInScienceClubLobby */
-/* science_club_lobby.asm:13-30: every `.dont_load` exit is `or a` on the value last
- * loaded (the state, the temp-duel flag or the room); the load exit is `scf`
- * over the `cp`'s Z. */
-PreloadImakuniInScienceClubLobbyResult Preload_ImakuniInScienceClubLobby(void)
-{
-	uint8_t state = GetEventValue(EVENT_IMAKUNI_STATE);
-	if (state < IMAKUNI_TALKED)
-		return (PreloadImakuniInScienceClubLobbyResult){state, state == 0u ? 0x80u : 0u};
-	uint8_t dueled = GetEventValue(EVENT_TEMP_DUELED_IMAKUNI);
-	if (dueled != 0u)
-		return (PreloadImakuniInScienceClubLobbyResult){dueled, 0u};
-	uint8_t room = GetEventValue(EVENT_IMAKUNI_ROOM);
-	if (room != IMAKUNI_SCIENCE_CLUB)
-		return (PreloadImakuniInScienceClubLobbyResult){room, room == 0u ? 0x80u : 0u};
-	wDefaultSong = MUSIC_IMAKUNI;
-	return (PreloadImakuniInScienceClubLobbyResult){MUSIC_IMAKUNI, 0x90u};
-}
-/* <<< factory Preload_ImakuniInScienceClubLobby */

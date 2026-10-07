@@ -5,13 +5,21 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/sram.h"
+/* <<< part includes_2 */
 
+/* >>> part RRAMG_ADDR */
 #define RRAMG_ADDR             0x0000u
+/* <<< part RRAMG_ADDR */
+/* >>> part RAMG_SRAM_ENABLE */
 #define RAMG_SRAM_ENABLE       0x0Au
+/* <<< part RAMG_SRAM_ENABLE */
+/* >>> part SAVE_VALIDATION_RANGE */
 #define SAVE_VALIDATION_RANGE  0x250u
+/* <<< part SAVE_VALIDATION_RANGE */
 
+/* >>> part includes_tail */
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
@@ -22,7 +30,7 @@
 #include "home/process_text.h"
 #include "home/tiles.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory StubbedUnusedSaveDataValidation */
 /* unused_save_validation.asm:6-7 */

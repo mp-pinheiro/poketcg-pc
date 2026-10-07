@@ -9,7 +9,7 @@
 #include "home/process_text.h"
 #include "home/tiles.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/text_ids.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
@@ -21,12 +21,22 @@
 #include "home/switch_sram.h"
 #include "home/unused_save_validation.h"
 #include "mem.h"
+/* <<< part includes_2 */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_B */
 #define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part IE_VBLANK */
 #define IE_VBLANK 0x01u
+/* <<< part IE_VBLANK */
+/* >>> part IE_TIMER */
 #define IE_TIMER 0x04u
+/* <<< part IE_TIMER */
+/* >>> part rIE */
 #define rIE 0xFFFFu
-/* <<< factory statics */
+/* <<< part rIE */
 
 /* >>> factory SetupResetBackUpRamScreen */
 void SetupResetBackUpRamScreen(void)

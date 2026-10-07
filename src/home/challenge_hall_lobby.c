@@ -13,13 +13,25 @@
 /* <<< part includes */
 /* >>> part EVENT_CHALLENGE_CUP_NOT_STARTED */
 #define EVENT_CHALLENGE_CUP_NOT_STARTED 0u
-#define SCRIPT_F166 Script_f166_ADDR
-#define CUP1_TABLE RonaldChallengeHallLobbyCup1States_ADDR
-#define EVENT_CHALLENGE_CUP_STARTING_OFFSET 0x10u
-#define EVENT_CHALLENGE_CUP_STARTING_MASK 0x80u
-#define W_DEFAULT_SONG_ADDR wDefaultSong_ADDR
-#define CUP2_TABLE RonaldChallengeHallLobbyCup2States_ADDR
 /* <<< part EVENT_CHALLENGE_CUP_NOT_STARTED */
+/* >>> part SCRIPT_F166 */
+#define SCRIPT_F166 Script_f166_ADDR
+/* <<< part SCRIPT_F166 */
+/* >>> part CUP1_TABLE */
+#define CUP1_TABLE RonaldChallengeHallLobbyCup1States_ADDR
+/* <<< part CUP1_TABLE */
+/* >>> part EVENT_CHALLENGE_CUP_STARTING_OFFSET */
+#define EVENT_CHALLENGE_CUP_STARTING_OFFSET 0x10u
+/* <<< part EVENT_CHALLENGE_CUP_STARTING_OFFSET */
+/* >>> part EVENT_CHALLENGE_CUP_STARTING_MASK */
+#define EVENT_CHALLENGE_CUP_STARTING_MASK 0x80u
+/* <<< part EVENT_CHALLENGE_CUP_STARTING_MASK */
+/* >>> part W_DEFAULT_SONG_ADDR */
+#define W_DEFAULT_SONG_ADDR wDefaultSong_ADDR
+/* <<< part W_DEFAULT_SONG_ADDR */
+/* >>> part CUP2_TABLE */
+#define CUP2_TABLE RonaldChallengeHallLobbyCup2States_ADDR
+/* <<< part CUP2_TABLE */
 
 /* >>> factory Preload_ChallengeHallNPCs1 */
 /* challenge_hall_lobby.asm:6-14 */

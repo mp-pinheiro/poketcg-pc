@@ -1,25 +1,7 @@
-#ifndef POKETCG_HOME_SUBSTATUS_H
-#define POKETCG_HOME_SUBSTATUS_H
-
 /* >>> part includes */
 #include <stdint.h>
 #include "home/card_id.h"
 /* <<< part includes */
-/* >>> part SandAttackCheckResult */
-/* poketcg/src/home/substatus.asm */
-
-typedef struct {
-	uint8_t a;
-	uint8_t f;
-	uint16_t de;
-	uint16_t hl;
-} SandAttackCheckResult;
-/* <<< part SandAttackCheckResult */
-
-/* >>> factory CheckSandAttackOrSmokescreenSubstatus */
-SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de);
-/* <<< factory CheckSandAttackOrSmokescreenSubstatus */
-
 /* >>> part PkmnPowerCountResult */
 /* Pkmn-power counters (substatus.asm:495-590). Count cards of the given id in
  * the play areas, skipping status-incapable arena cards. Exit a = the count;
@@ -37,137 +19,9 @@ PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(CardId target);
 /* >>> factory CountPokemonWithActivePkmnPowerInBothPlayAreas */
 PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(CardId target);
 /* <<< factory CountPokemonWithActivePkmnPowerInBothPlayAreas */
-
-/* >>> part PkmnPowerIncapableResult */
-typedef struct {
-	uint8_t a;
-	uint8_t f;
-	uint16_t hl;
-} PkmnPowerIncapableResult;
-/* <<< part PkmnPowerIncapableResult */
-/* >>> factory CheckIsIncapableOfUsingPkmnPower */
-PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower(uint8_t a);
-/* <<< factory CheckIsIncapableOfUsingPkmnPower */
-/* >>> factory CheckIsIncapableOfUsingPkmnPower_ArenaCard */
-PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower_ArenaCard(void);
-/* <<< factory CheckIsIncapableOfUsingPkmnPower_ArenaCard */
-
-/* >>> factory HandleDoubleDamageSubstatus */
-/* substatus.asm:1-27. The SUBSTATUS1/SUBSTATUS2 reads that follow the double
- * are dead: `call nz, .retN` into a bare `.retN: ret` just pops its own
- * return address, so they are not reproduced. */
-uint16_t HandleDoubleDamageSubstatus(uint16_t de);
-/* <<< factory HandleDoubleDamageSubstatus */
-
 /* >>> factory HandleDamageReductionExceptSubstatus2 */
 uint16_t HandleDamageReductionExceptSubstatus2(uint16_t de);
 /* <<< factory HandleDamageReductionExceptSubstatus2 */
-/* >>> part HandleDamageReductionExceptSubstatus2_PkmnPower */
-uint16_t HandleDamageReductionExceptSubstatus2_PkmnPower(uint16_t de);
-/* <<< part HandleDamageReductionExceptSubstatus2_PkmnPower */
-
-/* >>> factory HandleDamageReduction */
-uint16_t HandleDamageReduction(uint16_t de);
-/* <<< factory HandleDamageReduction */
-
-/* >>> part CantAttackResult */
-/* substatus.asm:284-304. GetTurnDuelistVariable has no push/pop, so hl is
- * always left at the SUBSTATUS2 duelvar's address unless a match overwrites
- * it with the text id; there is no caller-hl passthrough. b/c/d/e preserved. */
-typedef struct {
-	uint8_t f;
-	uint16_t hl;
-} CantAttackResult;
-/* <<< part CantAttackResult */
-/* >>> factory HandleCantAttackSubstatus */
-CantAttackResult HandleCantAttackSubstatus(void);
-/* <<< factory HandleCantAttackSubstatus */
-
-/* >>> part AmnesiaResult */
-/* substatus.asm:306-328. Same as HandleCantAttackSubstatus: hl always ends at
- * the SUBSTATUS2 (or disabled-attack) duelvar's address, or the text id on a
- * match. d/e are never touched by the asm at all. */
-typedef struct {
-	uint8_t f;
-	uint16_t hl;
-} AmnesiaResult;
-/* <<< part AmnesiaResult */
-/* >>> factory HandleAmnesiaSubstatus */
-AmnesiaResult HandleAmnesiaSubstatus(void);
-/* <<< factory HandleAmnesiaSubstatus */
-
-/* >>> part NoDamageOrEffectResult */
-/* substatus.asm:367-418. e/hl pass through untouched only on the
- * POKEMON_POWER early exit (before any duelvar read); the `cp` that decides
- * it sets N, so that exit's f is $C0, not $80. Past the FLY/BARRIER/AGILITY
- * checks, hl is clobbered again by CheckIsIncapableOfUsingPkmnPower_ArenaCard
- * (no push/pop there either) before the Neutralizing Shield check, and only
- * NShield's own ldtx overwrites it again. e ends up holding
- * wTempTurnDuelistCardID's raw value on the Neutralizing Shield path (not a
- * NO_DAMAGE_OR_EFFECT_* constant), because that path reuses e for the
- * LoadCardDataToBuffer2_FromCardID call. */
-typedef struct {
-	uint8_t f;
-	uint8_t d;
-	uint8_t e;
-	uint16_t hl;
-} NoDamageOrEffectResult;
-/* <<< part NoDamageOrEffectResult */
-/* >>> factory HandleNoDamageOrEffectSubstatus */
-NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t d, uint8_t e, uint16_t hl);
-/* <<< factory HandleNoDamageOrEffectSubstatus */
-/* >>> part HandleNoDamageOrEffectSubstatus_PkmnPower */
-NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t d, uint8_t e, uint16_t hl);
-/* <<< part HandleNoDamageOrEffectSubstatus_PkmnPower */
-
-/* >>> part NoDamageOrEffectCheckResult */
-/* substatus.asm:448-474. Carry is always set on this path. hl is the resolved
- * id from NoDamageOrEffectTextIDTable, $0000 if bit 7 already marked the text
- * shown, or passed through untouched when wNoDamageOrEffect is 0. Sets bit 7
- * of wNoDamageOrEffect as a side effect the first time through. b/c preserved. */
-typedef struct {
-	uint8_t f;
-	uint16_t hl;
-} NoDamageOrEffectCheckResult;
-/* <<< part NoDamageOrEffectCheckResult */
-/* >>> factory CheckNoDamageOrEffect */
-NoDamageOrEffectCheckResult CheckNoDamageOrEffect(uint16_t hl);
-/* <<< factory CheckNoDamageOrEffect */
-
-/* >>> factory IsClairvoyanceActive */
-/* substatus.asm:483-491. a is 0 when Muk's Toxic Gas blocks the check outright,
- * else the matching Omanyte count. b/c/d/e/hl preserved. */
-PkmnPowerCountResult IsClairvoyanceActive(void);
-/* <<< factory IsClairvoyanceActive */
-
-/* >>> factory GetLoadedCard1RetreatCost */
-uint8_t GetLoadedCard1RetreatCost(void);
-/* <<< factory GetLoadedCard1RetreatCost */
-
-/* >>> part RetreatEffectResult */
-/* substatus.asm:624-637. hl always ends at the SUBSTATUS2 duelvar's address,
- * or the text id on a match; no caller-hl passthrough. b/c/d/e preserved. */
-typedef struct {
-	uint8_t f;
-	uint16_t hl;
-} RetreatEffectResult;
-/* <<< part RetreatEffectResult */
-/* >>> factory CheckUnableToRetreatDueToEffect */
-RetreatEffectResult CheckUnableToRetreatDueToEffect(void);
-/* <<< factory CheckUnableToRetreatDueToEffect */
-
-/* >>> part TrainerEffectResult */
-/* substatus.asm:639-648. $A0 rather than $80 on the clear path: `bit` always
- * sets H, and only the set path's `scf` clears it back. b/c/d/e preserved. */
-typedef struct {
-	uint8_t f;
-	uint16_t hl;
-} TrainerEffectResult;
-/* <<< part TrainerEffectResult */
-/* >>> factory CheckCantUseTrainerDueToEffect */
-TrainerEffectResult CheckCantUseTrainerDueToEffect(void);
-/* <<< factory CheckCantUseTrainerDueToEffect */
-
 /* >>> part PrehistoricPowerResult */
 /* substatus.asm:650-659. a/hl pass through untouched from the Aerodactyl
  * check until the Muk check runs. b/c/d/e preserved. */
@@ -178,95 +32,9 @@ typedef struct {
 	uint16_t hl;
 } PrehistoricPowerResult;
 /* <<< part PrehistoricPowerResult */
-/* >>> factory IsPrehistoricPowerActive */
-PrehistoricPowerResult IsPrehistoricPowerActive(uint16_t hl);
-/* <<< factory IsPrehistoricPowerActive */
-
-/* >>> factory ClearDamageReductionSubstatus2 */
-void ClearDamageReductionSubstatus2(void);
-/* <<< factory ClearDamageReductionSubstatus2 */
-
-/* >>> factory UpdateSubstatusConditions_StartOfTurn */
-void UpdateSubstatusConditions_StartOfTurn(void);
-/* <<< factory UpdateSubstatusConditions_StartOfTurn */
-
-/* >>> factory UpdateSubstatusConditions_EndOfTurn */
-void UpdateSubstatusConditions_EndOfTurn(void);
-/* <<< factory UpdateSubstatusConditions_EndOfTurn */
-
-/* >>> factory IsRainDanceActive */
-PkmnPowerCountResult IsRainDanceActive(void);
-/* <<< factory IsRainDanceActive */
-
-/* >>> factory ClearChangedTypesIfMuk */
-/* substatus.asm:838-857. The asm calls its zeroing subroutine once explicitly
- * (post-SwapTurn) then falls into it a second time (post-SwapTurn-back), so
- * both duelists' CHANGED_TYPE runs get cleared, not just one. */
-void ClearChangedTypesIfMuk(uint8_t a);
-/* <<< factory ClearChangedTypesIfMuk */
-
-/* >>> part RainDanceResult */
-typedef struct { uint8_t a, f; } RainDanceResult;
-/* <<< part RainDanceResult */
-/* >>> factory CheckRainDanceScenario */
-RainDanceResult CheckRainDanceScenario(void);
-/* <<< factory CheckRainDanceScenario */
-
 /* >>> part StrikesBackResult */
 typedef struct { uint8_t a, f, d, e; uint16_t hl; } StrikesBackResult;
 /* <<< part StrikesBackResult */
 /* >>> factory HandleStrikesBack_AgainstDamagingAttack */
 StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de, uint16_t hl);
 /* <<< factory HandleStrikesBack_AgainstDamagingAttack */
-
-
-/* >>> factory ApplyStrikesBack_AgainstResidualAttack */
-typedef struct { uint8_t a, f; } ApplyStrikesBackResult;
-ApplyStrikesBackResult ApplyStrikesBack_AgainstResidualAttack(uint16_t hl);
-/* <<< factory ApplyStrikesBack_AgainstResidualAttack */
-/* >>> factory HandleStrikesBack_AgainstResidualAttack */
-typedef struct { uint8_t a, f; } HandleStrikesBackResidualResult;
-HandleStrikesBackResidualResult HandleStrikesBack_AgainstResidualAttack(void);
-/* <<< factory HandleStrikesBack_AgainstResidualAttack */
-/* >>> factory HandleDestinyBondSubstatus */
-/* substatus.asm:746-809. a/f are the register state of the test that returned;
- * hl is the duelvar address the last lookup left in it, since nothing on the
- * early-exit paths preserves hl. b/c/d/e are never observed. */
-typedef struct {
-	uint8_t a;
-	uint8_t f;
-	uint16_t hl;
-} DestinyBondResult;
-DestinyBondResult HandleDestinyBondSubstatus(void);
-/* <<< factory HandleDestinyBondSubstatus */
-/* >>> factory HandleNShieldAndTransparency */
-typedef struct {
-	uint8_t a;
-	uint8_t f;
-	uint8_t d;
-	uint8_t e;
-	uint16_t hl;
-} HandleNShieldAndTransparencyResult;
-HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de);
-/* <<< factory HandleNShieldAndTransparency */
-/* >>> factory HandleTransparency */
-typedef struct {
-	uint8_t a;
-	uint8_t f;
-	uint16_t hl;
-} HandleTransparencyResult;
-HandleTransparencyResult HandleTransparency(uint16_t hl);
-/* <<< factory HandleTransparency */
-/* >>> factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
-typedef struct {
-	uint8_t f;
-	uint16_t de;
-	uint16_t hl;
-} HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult;
-HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl);
-/* <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
-/* >>> factory HandleSandAttackOrSmokescreenSubstatus */
-typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; uint16_t bc; } HandleSandAttackOrSmokescreenSubstatusResult;
-HandleSandAttackOrSmokescreenSubstatusResult HandleSandAttackOrSmokescreenSubstatus(uint16_t de, uint16_t hl);
-/* <<< factory HandleSandAttackOrSmokescreenSubstatus */
-#endif

@@ -2,7 +2,7 @@
 #include "home/give_booster_pack.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/text_ids.h"
 #include "generated/constants.h"
 #include "generated/wram.h"
@@ -18,17 +18,19 @@
 #include "home/print_text.h"
 #include "home/sound.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
 
 
 
-/* BoosterScenesAndNameTexts' four `tx` entries (give_booster_pack.asm:90-101),
- * resolved through poketcg/src/text/text_offsets.asm:940-943. */
-/* <<< factory statics */
 
 /* >>> factory _PauseMenu_Exit */
+/* BoosterScenesAndNameTexts' four `tx` entries (give_booster_pack.asm:90-101),
+ * resolved through poketcg/src/text/text_offsets.asm:940-943. */
 /* engine/menus/give_booster_pack.asm:113. _PauseMenu_Exit is a bare ret. */
 void _PauseMenu_Exit(void)
 {

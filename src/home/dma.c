@@ -4,10 +4,12 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
+/* <<< part includes_2 */
+/* >>> part DMA_COPY_LENGTH */
 #define DMA_COPY_LENGTH 10u
-/* <<< factory statics */
+/* <<< part DMA_COPY_LENGTH */
 
 /* >>> factory DMA */
 void DMA(void)

@@ -8,20 +8,32 @@
 #include "home/starter_deck.h"
 #include "home/promotional_card.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/core.h"
+/* <<< part includes_2 */
 
+/* >>> part CARD_LIST_TERMINATOR */
 #define CARD_LIST_TERMINATOR 0xFFu
+/* <<< part CARD_LIST_TERMINATOR */
+/* >>> part F_Z */
 #define F_Z 0x80u
+/* <<< part F_Z */
+/* >>> part F_C */
 #define F_C 0x10u
+/* <<< part F_C */
 
+/* >>> part includes_DUELVARS_ARENA_CARD */
 #include "home/card_data.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "mem.h"
+/* <<< part includes_DUELVARS_ARENA_CARD */
 
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD     0xbbu
+/* <<< part DUELVARS_ARENA_CARD */
 
+/* >>> part includes_DUELVARS_CARD_LOCATIONS */
 #include "home/card_data.h"
 #include "home/duel.h"
 #include "mem.h"
@@ -43,10 +55,14 @@
 #include "generated/hram.h"
 #include "home/duel.h"
 #include "mem.h"
+/* <<< part includes_DUELVARS_CARD_LOCATIONS */
 
+/* >>> part DUELVARS_CARD_LOCATIONS */
 #define DUELVARS_CARD_LOCATIONS 0x00u
+/* <<< part DUELVARS_CARD_LOCATIONS */
 
 
+/* >>> part includes_DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #include "home/duel.h"
 #include "home/card_data.h"
 #include "generated/wram.h"
@@ -54,11 +70,15 @@
 
 #include "home/duel.h"
 #include "home/card_data.h"
+/* <<< part includes_DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 
 
 
+/* >>> part includes_DUELVARS_ARENA_CARD_480 */
 #include "home/common.h"
 #include "home/duel.h"
 #include "home/card_data.h"
@@ -71,14 +91,24 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_480 */
+/* >>> part DUELVARS_ARENA_CARD_480 */
 #define DUELVARS_ARENA_CARD_480 0xBBu
+/* <<< part DUELVARS_ARENA_CARD_480 */
+/* >>> part TYPE_ENERGY_480 */
 #define TYPE_ENERGY_480 0x08u
+/* <<< part TYPE_ENERGY_480 */
 
+/* >>> part includes_AI_MEWTWO_MILL */
 #include "home/core.h"
 #include "generated/wram.h"
+/* <<< part includes_AI_MEWTWO_MILL */
 
+/* >>> part AI_MEWTWO_MILL */
 #define AI_MEWTWO_MILL (1u << AI_MEWTWO_MILL_F)
+/* <<< part AI_MEWTWO_MILL */
 
+/* >>> part includes_tail */
 #include "home/booster_pack.h"
 
 #include "home/printer.h"
@@ -105,7 +135,7 @@
 #include "home/sprite_vblank.h"
 #include "home/time.h"
 #include "home/lcd.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory CountOppEnergyCardsInHand */
 /* common.asm:434-452 */

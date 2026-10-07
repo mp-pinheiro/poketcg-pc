@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 import tomllib
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -167,17 +168,20 @@ class Profile:
             merged.update({path.stem: path for path in sorted(overlay.glob(f"*{suffix}"))})
         return [merged[stem] for stem in sorted(merged)]
 
+    def _composed(self, tree: str, suffix: str, root: Path) -> list[Path]:
+        if str(ROOT) not in sys.path:
+            sys.path.insert(0, str(ROOT))
+        from tools.compose_profile import merged_paths
+        return merged_paths(self, tree, suffix, root)
+
     def home_sources(self, root: Path = ROOT) -> list[Path]:
-        overlay = self.overlay_path(root)
-        return self._merged(root / "src" / "home", overlay / "home" if overlay else None, ".c")
+        return self._composed("home", ".c", root)
 
     def home_headers(self, root: Path = ROOT) -> list[Path]:
-        overlay = self.overlay_path(root)
-        return self._merged(root / "src" / "home", overlay / "home" if overlay else None, ".h")
+        return self._composed("home", ".h", root)
 
     def probe_sources(self, root: Path = ROOT) -> list[Path]:
-        overlay = self.overlay_path(root)
-        return self._merged(root / "src" / "probe", overlay / "probe" if overlay else None, ".c")
+        return self._composed("probe", ".c", root)
 
     def case_modules(self, root: Path = ROOT) -> list[Path]:
         shared = root / "tests" / "cases"

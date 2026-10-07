@@ -11,23 +11,20 @@
 #include "mem.h"
 #include "home/write_number.h"
 /* <<< part includes */
+/* --- part BANK_FONTS */
+/* --- part includes_SYM_SPACE */
 /* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
-#define SYM_0 0x20u
-#define FW_SPACE 0x70u
-#define TILE_SIZE 16u
 /* <<< part SYM_SPACE */
-
-/* >>> factory InitTextFormat */
-void InitTextFormat(void)
-{
-	wFontWidth = 0;
-	hTextLineCurPos = 0;
-	wHalfWidthPrintState = 0;
-	hJapaneseSyllabary = TX_KATAKANA;
-}
-/* <<< factory InitTextFormat */
-
+/* >>> part SYM_0 */
+#define SYM_0 0x20u
+/* <<< part SYM_0 */
+/* >>> part FW_SPACE */
+#define FW_SPACE 0x70u
+/* <<< part FW_SPACE */
+/* >>> part TILE_SIZE */
+#define TILE_SIZE 16u
+/* <<< part TILE_SIZE */
 /* >>> factory CaseHalfWidthLetter */
 uint8_t CaseHalfWidthLetter(uint8_t *e)
 {
@@ -39,78 +36,6 @@ uint8_t CaseHalfWidthLetter(uint8_t *e)
 	return *e;
 }
 /* <<< factory CaseHalfWidthLetter */
-
-/* >>> factory ClassifyTextCharacterPair */
-/* Returns the exit flag byte. The carry is the real output -- callers branch on it to
- * decide whether the pair was swapped -- so it has to be modelled rather than reported
- * as a bool in `a`, which the asm leaves holding path-dependent residue.
- * Every path ends on `or a` (Z from the value in a, carry clear) except the swap, which
- * ends on `scf`; the `cp` before it excludes equality, so Z is clear there. */
-uint8_t ClassifyTextCharacterPair(uint8_t *d, uint8_t *e)
-{
-	if (wFontWidth)
-		return wFontWidth ? 0x00 : 0x80;
-	if (*e >= TX_CTRL_END && *e < 0x60 && hJapaneseSyllabary == TX_KATAKANA) {
-		*d = TX_KATAKANA;
-		return hJapaneseSyllabary ? 0x00 : 0x80;
-	}
-	if (*e < TX_CTRL_START) {
-		uint8_t first = *e;
-		*e = *d;
-		*d = first;
-		return 0x10;
-	}
-	/* a holds e on the >= $60 and >= TX_CTRL_START paths, and hJapaneseSyllabary on
-	 * the wrong-syllabary path; only the latter can be zero and set Z. */
-	uint8_t resid = (*e >= TX_CTRL_END && *e < 0x60) ? hJapaneseSyllabary : *e;
-	*d = 0;
-	return resid ? 0x00 : 0x80;
-}
-/* <<< factory ClassifyTextCharacterPair */
-
-/* >>> factory GetTextLengthInHalfTiles */
-TextLength GetTextLengthInHalfTiles(uint16_t hl)
-{
-	TextLength out = {0, 0, 0};
-	uint16_t p = hl;
-	while (1) {
-		uint8_t a = gb_read8(p++);
-		if (!a) break;
-		out.c++;
-		if (a >= TX_CTRL_START && a < TX_CTRL_END) {
-			if (a == TX_SYMBOL) {
-				out.b++;
-				out.c++;
-				p++;
-			}
-			continue;
-		}
-		uint8_t e = a;
-		uint8_t d = gb_read8(p);
-		out.b++;
-		if (!ClassifyTextCharacterPair(&d, &e)) continue;
-		out.c++;
-		p++;
-	}
-	out.a = (uint8_t)(0 - out.b);
-	return out;
-}
-/* <<< factory GetTextLengthInHalfTiles */
-
-/* >>> factory GetTextLengthInTiles */
-TextLength GetTextLengthInTiles(uint16_t hl)
-{
-	if (gb_read8(hl) == TX_HALFWIDTH) {
-		TextLength out = GetTextLengthInHalfTiles(hl);
-		out.b = (uint8_t)((out.b + 1) >> 1);
-		out.a = (uint8_t)(0 - out.b);
-		return out;
-	}
-	wFontWidth = 0;
-	return GetTextLengthInHalfTiles(hl);
-}
-/* <<< factory GetTextLengthInTiles */
-
 /* >>> factory GetFullWidthFontTileOffset */
 FullWidthOffsetResult GetFullWidthFontTileOffset(uint8_t d, uint8_t e)
 {
@@ -133,29 +58,6 @@ FullWidthOffsetResult GetFullWidthFontTileOffset(uint8_t d, uint8_t e)
 	return (FullWidthOffsetResult){a, b, c, d, e, hl};
 }
 /* <<< factory GetFullWidthFontTileOffset */
-
-/* >>> factory ConvertTileNumberToTileDataAddress */
-uint16_t ConvertTileNumberToTileDataAddress(uint8_t *b, uint8_t *c)
-{
-	uint8_t n = (uint8_t)(*b ^ wTilePatternSelectorCorrection);
-	uint16_t out = (uint16_t)(((uint16_t)wTilePatternSelector << 8) +
-		(uint16_t)n * TILE_SIZE);
-	*b = wTilePatternSelector;
-	*c = TILE_SIZE;
-	return out;
-}
-/* <<< factory ConvertTileNumberToTileDataAddress */
-
-/* >>> part font_byte */
-/* `ld a, [hli]` is a bus read, so the font tables resolve under whichever ROM bank the
- * caller left mapped -- these routines never bank-switch for themselves. Indexing the
- * ROM image at the fonts' own bank instead would read data the hardware would not. */
-static uint8_t font_byte(uint16_t address)
-{
-	return gb_read8(address);
-}
-/* <<< part font_byte */
-
 /* >>> factory CopyHalfWidthCharacterToDE */
 FontTileResult CopyHalfWidthCharacterToDE(uint8_t a, uint16_t de)
 {
@@ -170,7 +72,6 @@ FontTileResult CopyHalfWidthCharacterToDE(uint8_t a, uint16_t de)
 	return (FontTileResult){last, 0u, 0u, de, source};
 }
 /* <<< factory CopyHalfWidthCharacterToDE */
-
 /* >>> factory CreateHalfWidthFontTile */
 FontTileResult CreateHalfWidthFontTile(uint8_t d, uint8_t e)
 {
@@ -192,7 +93,6 @@ FontTileResult CreateHalfWidthFontTile(uint8_t d, uint8_t e)
 		(uint16_t)(wTextTileBuffer_ADDR + TILE_SIZE)};
 }
 /* <<< factory CreateHalfWidthFontTile */
-
 /* >>> factory CreateFullWidthFontTile */
 FontTileResult CreateFullWidthFontTile(uint16_t hl)
 {
@@ -213,7 +113,6 @@ FontTileResult CreateFullWidthFontTile(uint16_t hl)
 		(uint16_t)(src + TILE_SIZE_1BPP)};
 }
 /* <<< factory CreateFullWidthFontTile */
-
 /* >>> factory CreateFullWidthFontTile_ConvertToTileDataAddress */
 FontTileResult CreateFullWidthFontTile_ConvertToTileDataAddress(uint8_t d, uint8_t e,
 	uint8_t b)
@@ -226,26 +125,8 @@ return (FontTileResult){wTilePatternSelector, wTilePatternSelector, c,
 	wTextTileBuffer_ADDR, address};
 }
 /* <<< factory CreateFullWidthFontTile_ConvertToTileDataAddress */
-
-/* >>> factory GenerateTextTile */
-uint8_t GenerateTextTile(uint8_t b, uint8_t d, uint8_t e)
-{
-	uint16_t source = wTextTileBuffer_ADDR;
-	uint16_t destination;
-	uint8_t c;
-	if (wFontWidth) {
-		CreateHalfWidthFontTile(d, e);
-		destination = ConvertTileNumberToTileDataAddress(&b, &c);
-	} else {
-		FontTileResult tile = CreateFullWidthFontTile_ConvertToTileDataAddress(d, e, b);
-		destination = tile.hl;
-		c = TILE_SIZE;
-	}
-	return SafeCopyDataDEtoHL(&source, &destination, c);
-}
-/* <<< factory GenerateTextTile */
-
-
+/* --- factory TwoByteNumberToTxSymbol_PadSpace */
+/* === factory GenerateTextTile */
 /* >>> factory TwoByteNumberToTxSymbol_TrimLeadingZeros */
 /* Returns the asm's two live exit registers: a is the FIRST non-SYM_0 digit byte
  * (SYM_0 when every digit was trimmed), and hl points one before it. bc and de are
@@ -288,17 +169,6 @@ NumberTextResult TwoByteNumberToTxSymbol_TrimLeadingZeros(uint16_t value)
 	return (NumberTextResult){a, hl};
 }
 /* <<< factory TwoByteNumberToTxSymbol_TrimLeadingZeros */
-
-
-
-/* >>> part text_result */
-static ProcessTextResult text_result(uint8_t a, uint8_t d, uint8_t e, uint8_t f,
-	uint16_t hl)
-{
-	return (ProcessTextResult){a, d, e, f, hl};
-}
-/* <<< part text_result */
-
 /* >>> factory Func_235e */
 ProcessTextResult Func_235e(uint8_t d, uint8_t e)
 {
@@ -339,7 +209,6 @@ ProcessTextResult Func_235e(uint8_t d, uint8_t e)
 	return text_result(old, d, e, f, 0);
 }
 /* <<< factory Func_235e */
-
 /* >>> factory Func_2325 */
 ProcessTextResult Func_2325(uint8_t d, uint8_t e)
 {
@@ -374,86 +243,6 @@ ProcessTextResult Func_2325(uint8_t d, uint8_t e)
 	return text_result(0, found.d, found.e, 0x80, 0);
 }
 /* <<< factory Func_2325 */
-
-
-/* >>> factory Func_22ca */
-/* Exported: four callers outside this file (print_text.asm:289,
- * deck_machine.asm:970/1002, printer.asm:715). */
-uint8_t Func_22ca(uint8_t d, uint8_t e)
-{
-	if (hffb0 & 1)
-		return Func_235e(d, e).a;
-	ProcessTextResult out = Func_2325(d, e);
-	if (!(out.f & 0x10)) {
-		if (out.a)
-			return out.a;
-		GenerateTextTile(hffa9, out.d, out.e);
-	}
-	uint8_t gate = (uint8_t)(hffb0 & 2u);
-	if (gate)
-		return gate;
-	return PlaceNextTextTile(gb_read8(hffa9_ADDR)).a;
-}
-/* <<< factory Func_22ca */
-
-/* >>> factory PlaceNextTextTile */
-PlaceTextResult PlaceNextTextTile(uint8_t a)
-{
-	wCurTextTile = a;
-	uint16_t address = (uint16_t)(hTextBGMap0Address |
-		((uint16_t)gb_read8(0xffabu) << 8));
-	address++;
-	hTextBGMap0Address = (uint8_t)address;
-	gb_write8(0xffabu, (uint8_t)(address >> 8));
-	uint16_t destination = (uint16_t)(address - 1);
-	uint16_t source = wCurTextTile_ADDR;
-	uint8_t copied = SafeCopyDataDEtoHL(&source, &destination, 1);
-	uint8_t restored_c = (wLCDC & 0x80u) != 0u ? 1u : 0u;
-	hTextLineCurPos++;
-	return (PlaceTextResult){copied, 0, restored_c,
-		(uint8_t)(source >> 8), (uint8_t)source, hTextLineCurPos_ADDR};
-}
-/* <<< factory PlaceNextTextTile */
-
-/* >>> factory TerminateHalfWidthText */
-ProcessTextResult TerminateHalfWidthText(uint8_t d, uint8_t e, uint16_t hl)
-{
-	/* Both early exits are `or a / ret z` (process_text.asm:264-269), so the Z
-	 * flag is set on the way out; callers scf on top of it. */
-	if (!wFontWidth || !wHalfWidthPrintState) return text_result(0, d, e, 0x80, hl);
-	uint8_t pair = ' ';
-	uint8_t exit_a = Func_22ca(d, pair);
-	return text_result(exit_a, d, e, 0, hl);
-}
-/* <<< factory TerminateHalfWidthText */
-
-/* >>> part next_line */
-/* hTextBGMap0Address is a 16-bit pair at $FFAA/$FFAB; the asm carries the low-byte
- * add into the high byte with `adc $0`. */
-static void next_line(void)
-{
-	uint8_t b = (uint8_t)(hTextHorizontalAlign + 32u);
-	uint16_t bg = (uint16_t)((hTextBGMap0Address & 0xe0u) + b);
-
-	hTextLineCurPos = 0;
-	hTextBGMap0Address = (uint8_t)bg;
-	gb_write8(0xffabu, (uint8_t)(gb_read8(0xffabu) + (bg >> 8)));
-	wCurTextLine++;
-}
-/* <<< part next_line */
-
-/* >>> part end_of_line */
-/* `call z, .next_line` falls through into .next_line, so a DOUBLE_SPACED line
- * advances twice. */
-static void end_of_line(uint16_t hl)
-{
-	TerminateHalfWidthText(0, 0, hl);
-	if (!wLineSeparation)
-		next_line();
-	next_line();
-}
-/* <<< part end_of_line */
-
 /* >>> factory ProcessSpecialTextCharacter */
 ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)
 {
@@ -491,7 +280,6 @@ ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)
 	return text_result(0u, 0u, 0u, 0u, hl);
 }
 /* <<< factory ProcessSpecialTextCharacter */
-
 /* >>> factory SetupText */
 uint16_t SetupText(uint8_t d, uint8_t e)
 {
@@ -507,113 +295,4 @@ uint16_t SetupText(uint8_t d, uint8_t e)
 	return wc600_ADDR;
 }
 /* <<< factory SetupText */
-
-/* >>> factory InitTextPrinting */
-void InitTextPrinting(uint8_t d, uint8_t e)
-{
-	hTextHorizontalAlign = d;
-	hTextLineLength = 0;
-	wCurTextLine = 0;
-	uint16_t bg = DECoordToBGMap0Address(d, e);
-	hTextBGMap0Address = (uint8_t)bg;
-	gb_write8(0xffabu, (uint8_t)(bg >> 8));
-	InitTextFormat();
-	wHalfWidthPrintState = 0;
-}
-/* <<< factory InitTextPrinting */
-
-/* >>> factory InitTextPrintingInTextbox */
-void InitTextPrintingInTextbox(uint8_t a, uint8_t d, uint8_t e)
-{
-	InitTextPrinting(d, e);
-	hTextLineLength = a;
-}
-/* <<< factory InitTextPrintingInTextbox */
-
-/* >>> part process_text_core */
-static ProcessTextResult process_text_core(uint16_t *hl)
-{
-	InitTextFormat();
-	uint8_t a;
-	while ((a = gb_read8((*hl)++)) != 0) {
-		if (a >= TX_CTRL_START && a < TX_CTRL_END) {
-			/* hl stays in a register across the asm's call, so whatever the
-			 * handler leaves there -- past any payload byte it consumed -- is
-			 * where the next character is read from. */
-			*hl = ProcessSpecialTextCharacter(a, *hl).hl;
-			continue;
-		}
-		uint8_t e = a;
-		uint8_t d = gb_read8(*hl);
-		uint8_t carry = ClassifyTextCharacterPair(&d, &e);
-		if (carry & 0x10) (*hl)++;
-		Func_22ca(d, e);
-		*hl = ProcessSpecialTextCharacter(0, *hl).hl;
-	}
-	return TerminateHalfWidthText(0, 0, *hl);
-}
-/* <<< part process_text_core */
-
-/* >>> factory ProcessText */
-ProcessTextResult ProcessText(uint16_t *hl)
-{
-	return process_text_core(hl);
-}
-/* <<< factory ProcessText */
-
-
-/* >>> factory CopyTextData */
-CopyTextResult CopyTextData(uint8_t a, uint16_t hl, uint16_t de)
-{
-	wTextMaxLength = a;
-
-	uint8_t half = gb_read8(hl) == TX_HALFWIDTH;
-	/* the half-width branch pads with an ascii space, the full-width one with its
-	 * own space tile; `add a` doubling the budget is 8-bit, so it wraps */
-	uint8_t fill = half ? ' ' : FW_SPACE;
-	uint8_t d = half ? (uint8_t)(a * 2u) : a;
-	uint16_t src = hl;
-	uint16_t dst = de;
-	uint8_t e = 0;
-	int truncated = 0;
-
-	for (;;) {
-		uint8_t ch = gb_read8(src);
-
-		if (!ch)
-			break;
-		src++;
-		gb_write8(dst++, ch);
-		/* a plain control character is copied but neither counts towards e nor
-		 * spends budget: the asm jumps straight back to .loop */
-		if (ch >= TX_CTRL_START && ch < TX_CTRL_END)
-			continue;
-
-		uint8_t pair_e = ch;
-		uint8_t pair_d = gb_read8(src);
-
-		if (ClassifyTextCharacterPair(&pair_d, &pair_e) & 0x10) {
-			gb_write8(dst++, gb_read8(src));
-			src++;
-		}
-		e++;
-		if (--d == 0) {
-			gb_write8(dst, 0); /* TX_END */
-			truncated = 1;
-			break;
-		}
-	}
-
-	if (!truncated) {
-		/* pad out the rest of the budget, then terminate. The asm brackets this
-		 * with push hl / pop hl, so the exit pointer is the pre-fill one. */
-		uint16_t end = dst;
-
-		do {
-			gb_write8(end++, fill);
-		} while (--d);
-		gb_write8(end, 0);
-	}
-	return (CopyTextResult){e, 0, e, dst};
-}
-/* <<< factory CopyTextData */
+/* --- part InitTextPrinting_ProcessText */

@@ -7,13 +7,14 @@
 /* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 /* <<< part MENU_CONFIRM */
+/* --- part includes_tail */
 /* >>> part includes_tail */
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes_tail */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/card_id_bus.h"
 
 #include "generated/wram.h"
@@ -22,39 +23,9 @@
 #include "home/deck_configuration.h"
 #include "home/menus.h"
 #include "home/process_text.h"
-#define FALSE 0x00u
-#define TRUE 0x01u
-#define SYM_BOX_TOP_R 0x19u
-#define SYM_BOX_BTM_R 0x1Bu
-#define SYM_CURSOR_U 0x0Cu
-#define SYM_CURSOR_D 0x2Fu
-#define SYM_0 0x20u
-#define SYM_SPACE 0x00u
-
-#include "home/deck_configuration.h"
-#include "home/card_data.h"
-#include "mem.h"
-
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/card_data.h"
-#include "home/core.h"
-#include "home/deck_configuration.h"
-#include "home/frames.h"
-#include "home/lcd.h"
-#include "home/process_text.h"
-#include "home/sound.h"
-#include "mem.h"
-/* hardware.inc:88-106 -- this game uses the swapped-nybble combined input byte,
- * so the Control Pad lives in the HIGH nybble and PAD_BUTTONS is $0F, not $F0. */
-#define PAD_A       0x01u
-#define PAD_START   0x08u
-#define PAD_RIGHT   0x10u
-#define PAD_LEFT    0x20u
-#define PAD_UP      0x40u
-#define PAD_DOWN    0x80u
-#define PAD_BUTTONS 0x0Fu
-
+/* <<< part includes_2 */
+/* === part PAD_BUTTONS */
+/* >>> part includes_tail_2 */
 #include "home/deck_configuration.h"
 #include "home/card_album.h"
 #include "home/switch_sram.h"
@@ -64,30 +35,7 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-/* <<< factory statics */
-
-/* >>> factory GetFirstOwnedCardIndex */
-/* card_album.asm:612-624. Scans wOwnedCardsCountList for the first entry
- * that is not CARD_NOT_OWNED; no bound check, so it relies on the caller
- * guaranteeing at least one owned entry (card_album.asm:660-662,717-719).
- * hl exits one past the byte that ended the scan (post-increment ld a,[hli]
- * on every iteration, including the last). */
-GetFirstOwnedCardIndexResult GetFirstOwnedCardIndex(void)
-{
-	uint16_t hl = wOwnedCardsCountList_ADDR;
-	uint8_t index = 0;
-
-	for (;;) {
-		uint8_t card = gb_read8(hl++);
-		if (card != CARD_NOT_OWNED)
-			break;
-		index++;
-	}
-	gb_write8(wFirstOwnedCardIndex_ADDR, index);
-	return (GetFirstOwnedCardIndexResult){ .a = index, .b = index, .hl = hl };
-}
-/* <<< factory GetFirstOwnedCardIndex */
-
+/* <<< part includes_tail_2 */
 /* >>> factory PrintCardSetListEntries */
 /* card_album.asm:270-460. The list index goes into wCurDeckName after the
  * set's two-byte prefix; the energy rows print from that offset, the others
@@ -190,7 +138,6 @@ PrintCardSetListEntriesResult PrintCardSetListEntries(void)
 	}
 }
 /* <<< factory PrintCardSetListEntries */
-
 /* >>> factory CreateCardSetList */
 void CreateCardSetList(uint8_t a)
 {
@@ -258,208 +205,6 @@ void CreateCardSetList(uint8_t a)
 	gb_write8((uint16_t)(terminator + 1u), 0u);
 }
 /* <<< factory CreateCardSetList */
-
-/* >>> factory HandleCardAlbumCardPage */
-/* card_album.asm:476-604. Card Album card-page viewer. Opens the card page
- * for the list entry under the cursor when that entry is owned, then loops on
- * the D-pad: PAD_UP/PAD_DOWN scroll the list and jump back to the top of the
- * routine, PAD_LEFT/PAD_RIGHT edit the deck when wced2 is set, and any of
- * PAD_BUTTONS ($0F in this game's swapped-nybble pad byte) exits.
- *
- * `jp HandleCardAlbumCardPage` is a tail jump, not a call, so the restart is
- * the enclosing for(;;) and the frame never grows.
- *
- * `bank1call OpenCardPage.input_loop` re-enters OpenCardPage past its scene
- * setup. That label has no exported C symbol, so core.asm:3512-3529 is inlined
- * below; it reloads b from hDPadHeld before any use, so the incoming b is dead.
- *
- * The `call TryAddCardToDeck` path falls through into `.open_card_page_pop_af_2`
- * with no matching `push af`, so the real ROM pops its own return address into
- * af there. Both halves are overwritten before their next read, so the C body
- * just drops the word; the GB-side stack damage has no C analogue.
- *
- * One exit only. `and PAD_BUTTONS` / `jp nz` leaves Z=0 N=0 H=1 C=0 and nothing
- * after it touches flags, so f is always $20 and a is always the byte reloaded
- * from wCardListCursorPos. */
-HandleCardAlbumCardPageResult HandleCardAlbumCardPage(uint8_t d, uint8_t e)
-{
-	uint8_t a = 0u;
-	uint8_t b = 0u;
-	uint8_t c = 0u;
-	uint8_t saved_a = 0u;
-	uint16_t hl = 0u;
-
-	for (;;) {
-		b = wCardListCursorPos;
-		c = (uint8_t)(wCardListVisibleOffset + b);
-		b = 0u;
-		hl = (uint16_t)(wOwnedCardsCountList_ADDR + c);
-		if (gb_read8(hl) != CARD_NOT_OWNED) {
-			hl = (uint16_t)(gb_read8(wCurCardListPtr_ADDR) |
-					((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8));
-			hl = (uint16_t)(hl + c);
-			e = gb_read8(hl);
-			d = 0u;
-			/* push de: the pair below is what the matching pop restores,
-			 * so the $38/$9f handed to SetupText and the card page is a
-			 * separate de that never reaches the input handler. */
-			LoadCardDataToBuffer1_FromCardID(e);
-			hl = SetupText(0x38u, 0x9Fu);
-			OpenCardPage_FromCheckHandOrDiscardPile(0u, 0u, 0u, 0u, 0x38u, 0x9Fu, hl);
-		}
-
-	handle_input:
-		b = hDPadHeld;
-		if ((uint8_t)(b & PAD_BUTTONS) != 0u)
-			break;
-		wMenuInputSFX = FALSE;
-		c = wCardListNumCursorPositions;
-		a = wCardListCursorPos;
-
-		if ((b & PAD_UP) != 0u) {
-			saved_a = a;
-			wMenuInputSFX = SFX_CURSOR;
-			a = (uint8_t)(wCardListCursorPos + wCardListVisibleOffset);
-			if (a == wFirstOwnedCardIndex) {
-				a = saved_a;
-				goto open_card_page;
-			}
-			a = (uint8_t)(saved_a - 1u);
-			if ((a & 0x80u) == 0u)
-				goto got_new_pos;
-			a = wCardListVisibleOffset;
-			if (a == 0u)
-				goto open_card_page;
-			wCardListVisibleOffset = (uint8_t)(a - 1u);
-			a = 0u;
-			goto got_new_pos;
-		}
-
-		if ((b & PAD_DOWN) != 0u) {
-			wMenuInputSFX = SFX_CURSOR;
-			a = (uint8_t)(a + 1u);
-			if (a < c)
-				goto got_new_pos;
-			saved_a = a;
-			hl = (uint16_t)(gb_read8(wCurCardListPtr_ADDR) |
-					((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8));
-			c = wCardListCursorPos;
-			b = 0u;
-			hl = (uint16_t)(hl + c);
-			c = (uint8_t)(wCardListVisibleOffset + 1u);
-			b = 0u;
-			hl = (uint16_t)(hl + c);
-			if (gb_read8(hl) == 0u) {
-				a = saved_a;
-				goto open_card_page;
-			}
-			wCardListVisibleOffset = (uint8_t)(wCardListVisibleOffset + 1u);
-			a = (uint8_t)(saved_a - 1u);
-			goto got_new_pos;
-		}
-
-		a = wced2;
-		if (a == 0u)
-			goto open_card_page;
-		if ((b & PAD_LEFT) != 0u) {
-			RemoveCardFromDeckResult removed =
-				RemoveCardFromDeck(b, c, d, e, hl);
-			/* Only de outlives the call: .open_card_page pushes and pops
-			 * it, while a, b, c and hl are rewritten before their next
-			 * read at .handle_input and in the inlined input loop. */
-			d = removed.d;
-			e = removed.e;
-			goto open_card_page;
-		}
-		if ((b & PAD_RIGHT) == 0u)
-			goto open_card_page;
-		(void)TryAddCardToDeck(e);
-		goto open_card_page;
-
-	got_new_pos:
-		wCardListCursorPos = a;
-		a = wMenuInputSFX;
-		if (a != 0u)
-			PlaySFX(a);
-		continue;
-
-	open_card_page:
-		for (;;) {
-			DoFrame();
-			b = hDPadHeld;
-			if ((uint8_t)(wCardPageExitKeys & b) != 0u)
-				break;
-			a = (uint8_t)(hKeysPressed & (PAD_START | PAD_A));
-			if (a != 0u) {
-				CardPageNavigationResult page =
-					DisplayFirstOrNextCardPage(b);
-				if ((page.f & 0x10u) != 0u)
-					break;
-				EnableLCD();
-				continue;
-			}
-			a = (uint8_t)(hKeysPressed & (PAD_RIGHT | PAD_LEFT));
-			if (a != 0u)
-				DisplayCardPageOnLeftOrRightPressed(a);
-		}
-		goto handle_input;
-	}
-
-	wVBlankOAMCopyToggle = TRUE;
-	a = wCardListCursorPos;
-	wTempCardListCursorPos = a;
-	return (HandleCardAlbumCardPageResult){ .a = a, .f = 0x20u };
-}
-/* <<< factory HandleCardAlbumCardPage */
-
-/* >>> factory CreateCardSetListAndInitListCoords */
-void CreateCardSetListAndInitListCoords(uint8_t a)
-{
-	uint16_t hl = sCardCollection_ADDR;
-	uint16_t de = wTempCardCollection_ADDR;
-	EnableSRAM();
-	CopyNBytesFromHLToDE(&hl, &de, (uint8_t)(CARD_COLLECTION_SIZE - 1u));
-	DisableSRAM();
-
-	uint8_t prefix = 0x30u;
-	if (a == CARD_SET_EVOLUTION)
-		prefix = 0x31u;
-	else if (a == CARD_SET_MYSTERY)
-		prefix = 0x32u;
-	else if (a == CARD_SET_LABORATORY)
-		prefix = 0x33u;
-	else if (a == CARD_SET_PROMOTIONAL)
-		prefix = 0x3Fu;
-	gb_write8(wCurDeckName_ADDR, 0x03u);
-	gb_write8((uint16_t)(wCurDeckName_ADDR + 1u), prefix);
-
-	CreateCardSetList(a);
-	wNumVisibleCardListEntries = NUM_CARD_ALBUM_VISIBLE_CARDS;
-	gb_write8(wCardListCoords_ADDR, 0x04u);
-	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x02u);
-}
-/* <<< factory CreateCardSetListAndInitListCoords */
-
-/* >>> part includes_PRINT_CARD_SET_LIST_ENTRIES */
-#include "home/credits_sequence_commands.h"
-#include "home/deck_check.h"
-#include "home/duel.h"
-#include "home/duel_core.h"
-#include "home/empty_screen.h"
-#include "home/lcd.h"
-#include "home/menus.h"
-#include "home/objects.h"
-#include "home/print_text.h"
-#include "home/switch_sram.h"
-#include "home/text_box.h"
-#include "home/tiles.h"
-/* <<< part includes_PRINT_CARD_SET_LIST_ENTRIES */
-/* >>> part PRINT_CARD_SET_LIST_ENTRIES */
-/* card_album.asm:685-688 parks PrintCardSetListEntries (02:66fa) in
- * wCardListUpdateFunction; deck_configuration.c's CallIndirect registry
- * dispatches it. */
-#define PRINT_CARD_SET_LIST_ENTRIES PrintCardSetListEntries_ADDR
-/* <<< part PRINT_CARD_SET_LIST_ENTRIES */
 /* >>> factory CardAlbum */
 #define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS (CardAlbum_ADDR + 0xEDu)
 #define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum_ADDR + 0xF5u)
@@ -667,3 +412,5 @@ void CardAlbum(void)
 	}
 }
 /* <<< factory CardAlbum */
+/* === factory CreateCardSetListAndInitListCoords */
+/* === factory HandleCardAlbumCardPage */

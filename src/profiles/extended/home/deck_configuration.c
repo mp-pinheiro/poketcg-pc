@@ -9,23 +9,23 @@
 /* <<< part includes */
 /* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
-#define CURSOR_BLINK_PERIOD_MASK 0x0Fu
-#define B_CURSOR_BLINK_PERIOD 4u
 /* <<< part MENU_CONFIRM */
+/* >>> part CURSOR_BLINK_PERIOD_MASK */
+#define CURSOR_BLINK_PERIOD_MASK 0x0Fu
+/* <<< part CURSOR_BLINK_PERIOD_MASK */
+/* >>> part B_CURSOR_BLINK_PERIOD */
+#define B_CURSOR_BLINK_PERIOD 4u
+/* <<< part B_CURSOR_BLINK_PERIOD */
 /* >>> part includes_tail */
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes_tail */
-/* >>> factory statics */
-#define SCARDCOLLECTION_ADDR 0xA100u
-#include "home/card_data.h"
-#include "mem.h"
-
-#define SYM_0 0x20u
-#define FILTER_TRAINER 0x10u
+/* >>> part HFFB3 */
 #define HFFB3 0xffb3u
+/* <<< part HFFB3 */
+/* >>> part includes_SYM_SPACE */
 #include "home/deck_configuration.h"
 
 #include "home/deck_selection.h"
@@ -63,323 +63,23 @@
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
-#define SYM_SPACE 0x00u
-
-#include "generated/wram.h"
-#include "home/random.h"
-#include "home/bg_map.h"
-
-#include "home/random.h"
-#include "home/bg_map.h"
-#include "generated/wram.h"
-
-#include "home/deck_configuration.h"
-#include "generated/wram.h"
-
-#include "generated/sram.h"
-#include "home/switch_sram.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "home/process_text.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/process_text.h"
-#include "home/print_text.h"
-#include "generated/wram.h"
-
-#include "home/sound.h"
-#include "generated/wram.h"
-
-#include "home/switch_sram.h"
-#include "home/deck_selection.h"
-#include "generated/wram.h"
-#include "generated/sram.h"
-
-#include "home/card_data.h"
-#include "generated/wram.h"
-
-#include "home/deck_configuration.h"
-#include "home/deck_check.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-
-
-
-#include "generated/wram.h"
-#include "generated/hram.h"
-#include "home/deck_configuration.h"
-#include "home/deck_check.h"
-#define FALSE 0x00u
-#define MENU_CANCEL 0xFFu
-#define B_PAD_LEFT 5u
-#define B_PAD_RIGHT 4u
-#define PAD_A 0x01u
-#define PAD_B 0x02u
-
-#include "generated/wram.h"
-#include "generated/hram.h"
-#include "home/sound.h"
-#define PAD_RIGHT 0x10u
-#define PAD_LEFT 0x20u
-
-#include "home/deck_configuration.h"
-#include "home/duel.h"
-#include "home/process_text.h"
-#include "home/print_text.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "home/switch_sram.h"
-#include "generated/wram.h"
-#include "generated/sram.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "home/switch_sram.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "home/process_text.h"
-#include "home/print_text.h"
-#include "generated/wram.h"
-#include "mem.h"
-#define DECK_NAME_SUFFIX_ADDR_590 DeckNameSuffix_ADDR
-
-#include "home/deck_configuration.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "home/random.h"
-#include "home/process_text.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "mem.h"
-#define SYM_SLASH 0x2Eu
-
-#include "home/deck_configuration.h"
-#include "home/process_text.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "home/process_text.h"
-#include "generated/wram.h"
-#include "mem.h"
-#define APPEND_DECK_NAME_TEXT_START_ADDR (AppendDeckName__text_start_ADDR)
-
-#include "home/deck_configuration.h"
-#include "home/text_box.h"
-#include "home/deck_selection.h"
-#include "home/lcd.h"
-#include "home/switch_sram.h"
-#include "home/print_text.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-#include "mem.h"
-#define TRUE 0x01u
-#define DECK_NAME_MENU_DATA_ADDR DeckNameMenuData_ADDR
-
-#include "home/deck_configuration.h"
-#include "home/process_text.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-
-#define SYM_CURSOR_U 0x0Cu
-#define SYM_CURSOR_D 0x2Fu
-#define Text_9a36 Text_9a36_ADDR
-#include "generated/wram.h"
-#include "home/deck_configuration.h"
-#include "home/menus.h"
-#include "home/process_text.h"
-#include "home/card_data.h"
-#include "home/bg_map.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "generated/wram.h"
-#include "mem.h"
-static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 0x05u, 0x06u, 0x10u, 0x20u};
-
-#define Text_9a30 Text_9a30_ADDR
-#include "generated/wram.h"
-#include "home/deck_configuration.h"
-#include "home/menus.h"
-#include "home/process_text.h"
-#include "home/card_data.h"
-#include "home/bg_map.h"
-#include "mem.h"
-
-#include "generated/sram.h"
-#include "generated/wram.h"
-#include "home/deck_configuration.h"
-#include "home/deck_selection.h"
-#include "home/switch_sram.h"
-
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/card_data.h"
-#include "home/core.h"
-#include "home/process_text.h"
-#include "home/switch_rom.h"
-#include "mem.h"
-#define F9CED_TRUE 0x01u
-#define F9CED_BANK_DUEL_CORE 0x01u
-
-#include "home/card_data.h"
-#include "home/core.h"
-#include "home/process_text.h"
-#include "home/sound.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#define PAD_SELECT 0x04u
-#define PAD_START 0x08u
-#define PAD_UP 0x40u
-#define PAD_DOWN 0x80u
-#define B_PAD_UP 6u
-#define B_PAD_DOWN 7u
-
-#include "generated/wram.h"
-#include "home/card_data.h"
-
-#include "home/duel.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#define OPPONENT_TURN 0xC3u
-
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/tiles.h"
-#include "mem.h"
-
-#include "home/deck_configuration.h"
-#include "home/deck_selection.h"
-#include "home/lcd.h"
-#define SYM_BOX_TOP 0x1Cu
-
-#define SYM_CROSS 0x2Du
-#include "generated/wram.h"
-#include "home/deck_configuration.h"
-#include "home/menus.h"
-#include "home/tiles.h"
-#include "home/process_text.h"
-#include "home/card_data.h"
-
-#include "generated/wram.h"
-#include "home/card_data.h"
-#include "home/deck_configuration.h"
-#include "home/sound.h"
-
-#include "generated/wram.h"
-#include "generated/hram.h"
-#include "home/deck_configuration.h"
-#include "home/deck_check.h"
-#include "home/sound.h"
-
-#include "home/deck_configuration.h"
-#include "home/process_text.h"
-#include "generated/wram.h"
-#include "mem.h"
-#define PRINT_CUR_DECK_NAME_SUFFIX_ADDR DeckNameSuffix_ADDR
-#define PRINT_CUR_DECK_MIDDLE_DOT 0x77u
-
-#include "generated/hram.h"
-#include "home/deck_configuration.h"
-
-#include "generated/wram.h"
-#include "generated/sram.h"
-#include "home/deck_configuration.h"
-#include "home/deck_selection.h"
-#include "home/lcd.h"
-#include "home/switch_sram.h"
-#include "home/text_box.h"
-
-#include "generated/hram.h"
-#include "home/deck_configuration.h"
-#include "home/deck_check.h"
-#include "home/frames.h"
-
+/* <<< part includes_SYM_SPACE */
+/* >>> part DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR */
 /* poketcg.sym / poketcg.map, bank 02:
  *   $5eaf HandleDeckConfirmationMenu.CardSelectionParams,
  *   $5e31 UpdateConfirmationCardScreen. */
 #define DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR (HandleDeckConfirmationMenu_ADDR + 0x6Du)
-#define UPDATE_CONFIRMATION_CARD_SCREEN_ADDR UpdateConfirmationCardScreen_ADDR
-
-#include "home/deck_configuration.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-#define FILTERS_CARD_SELECTION_PARAMS_ADDR FiltersCardSelectionParams_ADDR
-
-#include "home/deck_configuration.h"
-#include "home/menus.h"
-#include "generated/wram.h"
-/* DECK_SIZE is already #define'd as 60u earlier in this statics block. */
-
-#include "home/deck_configuration.h"
-#include "home/deck_selection.h"
-#include "home/switch_sram.h"
-#include "home/menus.h"
-#include "home/lcd.h"
-#include "home/credits_sequence_commands.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* DECK_SIZE (60u) and FILTERS_CARD_SELECTION_PARAMS_ADDR are already defined
- * earlier in this statics block, so they are not repeated here. */
-
-#include "home/deck_configuration.h"
-#include "home/menus.h"
-#include "generated/wram.h"
-
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/deck_configuration.h"
-#include "home/sound.h"
-#define HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR PrintDeckBuildingCardList_ADDR
-#define HANDLE_SELECT_UPDATE_CONFIRM_ADDR UpdateConfirmationCardScreen_ADDR
-#define HANDLE_SELECT_PRINT_CARD_ADDR PrintCardSelectionList_ADDR
-
-/* Remaining wCardListUpdateFunction targets armed outside this file
- * (poketcg.sym): 02:66fa PrintCardSetListEntries (card_album.asm:685-688),
- * 02:6e9a HandleDeckMissingCardsList.CardListUpdateFunction
- * (deck_machine.asm:49-52), 02:7053 ShowReceivedCardsList
- * (deck_machine.asm:250-253), 02:73fe
- * UpdateDeckMachineScrollArrowsAndEntries (deck_machine.asm:1899-1902),
- * 02:7403 DrawDeckMachineScreen (deck_machine.asm:638-641). */
-#define CARD_LIST_PRINT_CARD_SET_ADDR PrintCardSetListEntries_ADDR
+/* <<< part DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR */
+/* >>> part CARD_LIST_MISSING_CARDS_ADDR */
 #define CARD_LIST_MISSING_CARDS_ADDR (HandleDeckMissingCardsList__DeckConfirmationCardSelectionParams_ADDR)
-#define CARD_LIST_UPDATE_MACHINE_ARROWS_ADDR UpdateDeckMachineScrollArrowsAndEntries_ADDR
-#define CARD_LIST_DRAW_MACHINE_SCREEN_ADDR DrawDeckMachineScreen_ADDR
-
-#define HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR FiltersCardSelectionParams_ADDR
-#define DECK_CONFIGURATION_MENU_HANDLER HandleDeckConfigurationMenu_ADDR
-#define HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR FilteredCardListSelectionParams_ADDR
-
-#include "home/deck_configuration.h"
-#include "home/deck_selection.h"
-#include "home/deck_check.h"
-#include "home/frames.h"
-#include "home/lcd.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-#define HANDLE_PLAYERS_CARDS_DATA_ADDR Data_a396_ADDR
-#define HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR PrintCardSelectionList_ADDR
-
+/* <<< part CARD_LIST_MISSING_CARDS_ADDR */
+/* --- part CARD_LIST_SHOW_RECEIVED_ADDR */
+/* --- part SEND_DECK_CONFIGURATION_MENU_HANDLER */
+/* --- part includes_HANDLE_SEND_DECK_CONFIGURATION_MENU_DATA_ADDR */
+/* --- part HANDLE_SEND_DECK_CONFIGURATION_MENU_DATA_ADDR */
+/* --- part DATA_B04A_ADDR */
+/* --- part CANCEL_SEND_DECK_CONFIGURATION_ADDR */
+/* >>> part includes_PREPARE_TO_BUILD_DECK_TEXT_ADDR */
 #include "home/card_album.h"
 #include "home/deck_configuration.h"
 #include "home/deck_machine.h"
@@ -396,24 +96,7 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/deck_configuration.h"
 #include "home/deck_selection.h"
 #include "generated/wram.h"
-#define PREPARE_TO_BUILD_DECK_TEXT_ADDR 0x61C2u
-#define PREPARE_TO_BUILD_DECK_PARAMS_ADDR 0x61D8u
-
-#include "home/deck_configuration.h"
-#include "home/deck_selection.h"
-
-#include "home/deck_configuration.h"
-#include "home/duel.h"
-#include "home/frames.h"
-#include "home/print_text.h"
-#include "home/text_box.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-#define DECK_BUILD_MENU_DATA_ADDR DeckBuildMenuData_ADDR
-/* <<< factory statics */
-
-
+/* <<< part includes_PREPARE_TO_BUILD_DECK_TEXT_ADDR */
 /* >>> factory DecrementDeckCardsInCollection */
 /* deck_configuration.asm:4-21 */
 uint16_t DecrementDeckCardsInCollection(uint16_t hl)
@@ -429,8 +112,6 @@ uint16_t DecrementDeckCardsInCollection(uint16_t hl)
 	return hl;
 }
 /* <<< factory DecrementDeckCardsInCollection */
-
-
 /* >>> factory AddDeckToCollection */
 /* deck_configuration.asm:74-91 */
 uint16_t AddDeckToCollection(uint16_t hl)
@@ -452,47 +133,7 @@ uint16_t AddDeckToCollection(uint16_t hl)
 	return hl;
 }
 /* <<< factory AddDeckToCollection */
-
-
-/* >>> factory CopyListFromHLToDE */
-/* deck_configuration.asm:279-285 */
-void CopyListFromHLToDE(uint16_t *hl, uint16_t *de)
-{
-	uint16_t h = *hl;
-	uint16_t d = *de;
-	for (;;) {
-		uint8_t a = gb_read8(h++);
-		gb_write8(d, a);
-		if (a == 0)
-			break;
-		d++;
-	}
-	*hl = h;
-	*de = d;
-}
-/* <<< factory CopyListFromHLToDE */
-
-
-/* >>> factory CalculateOnesAndTensDigits */
-/* deck_configuration.asm:1286-1318 */
-void CalculateOnesAndTensDigits(uint8_t a)
-{
-	uint8_t c = 0xffu;
-
-	for (;;) {
-		c = (uint8_t)(c + 1u);
-		a = (uint8_t)(a - 10u);
-		if (a >= 0xf6u)
-			break;
-	}
-	a = (uint8_t)(a + 10u);
-	gb_write8(wDecimalDigitsSymbols_ADDR, (uint8_t)(a + SYM_0));
-	uint8_t tens = c;
-	if (tens != 0u)
-		tens = (uint8_t)(tens + SYM_0);
-	gb_write8((uint16_t)(wDecimalDigitsSymbols_ADDR + 1u), tens);
-}
-/* <<< factory CalculateOnesAndTensDigits */
+/* === factory CalculateOnesAndTensDigits */
 /* >>> factory CalculateOnesAndTensDigits_Long */
 void CalculateOnesAndTensDigits_Long(uint16_t hl)
 {
@@ -508,86 +149,6 @@ void CalculateOnesAndTensDigits_Long(uint16_t hl)
 	}
 }
 /* <<< factory CalculateOnesAndTensDigits_Long */
-
-
-
-
-/* >>> factory InitCardSelectionParams */
-/* deck_configuration.asm:1664-1685 */
-uint8_t InitCardSelectionParams(uint8_t a, uint16_t *hl)
-{
-	wCardListCursorPos = a;
-	gb_write8(HFFB3, a);
-	for (uint8_t i = 0; i < 9u; i++)
-		gb_write8((uint16_t)(wCardListCursorXPos_ADDR + i), gb_read8((*hl)++));
-	wCheckMenuCursorBlinkCounter = 0;
-	return 0;
-}
-/* <<< factory InitCardSelectionParams */
-
-/* >>> factory ClearMemory_Bank2 */
-/* deck_configuration.asm:1185-1197 */
-void ClearMemory_Bank2(uint8_t a, uint16_t hl)
-{
-	uint8_t count = a;
-	uint16_t address = hl;
-	uint32_t n = count ? count : 0x100u;
-
-	while (n-- != 0u) {
-		gb_write8(address, 0u);
-		address = (uint16_t)(address + 1u);
-	}
-}
-/* <<< factory ClearMemory_Bank2 */
-
-/* >>> factory CheckIfHasOtherValidDecks */
-/* deck_configuration.asm:803-841 */
-uint8_t CheckIfHasOtherValidDecks(void)
-{
-	uint16_t hl = wDecksValid_ADDR;
-	uint8_t valid = 0;
-	uint8_t b = 0;
-
-	for (;;) {
-		b++;
-		if (b > NUM_DECKS)
-			break;
-		if (gb_read8(hl) == 0) {
-			hl++;
-			continue;
-		}
-		hl++;
-		valid++;
-		if (valid >= 2)
-			return 0x00u;
-	}
-
-	hl = GetPointerToDeckCards();
-	EnableSRAM();
-	uint8_t a = gb_read8(hl);
-	DisableSRAM();
-	return a != 0 ? 0x10u : 0x80u;
-}
-/* <<< factory CheckIfHasOtherValidDecks */
-
-/* >>> factory FillDEWithA */
-void FillDEWithA(uint8_t a, uint8_t b, uint16_t de)
-{
-	uint16_t count = b ? b : 0x100u;
-	uint16_t address = de;
-	do {
-		gb_write8(address++, a);
-	} while (--count);
-}
-/* <<< factory FillDEWithA */
-
-/* >>> factory DrawHandCardsTileAtDE */
-void DrawHandCardsTileAtDE(uint16_t de)
-{
-	FillRectangle(0x38u, 2u, 2u, de, 0x0102u);
-}
-/* <<< factory DrawHandCardsTileAtDE */
-
 /* >>> factory CountNumberOfCardsOfType */
 uint8_t CountNumberOfCardsOfType(uint8_t a)
 {
@@ -610,20 +171,7 @@ uint8_t CountNumberOfCardsOfType(uint8_t a)
 	return count;
 }
 /* <<< factory CountNumberOfCardsOfType */
-
-/* >>> factory CopyNBytesFromHLToDE */
-void CopyNBytesFromHLToDE(uint16_t *hl, uint16_t *de, uint8_t b)
-{
-	uint16_t src = *hl;
-	uint16_t dst = *de;
-	uint32_t n = b ? b : 0x100u;
-	do {
-		gb_write8(dst++, gb_read8(src++));
-	} while (--n);
-	*hl = src;
-	*de = dst;
-}
-/* <<< factory CopyNBytesFromHLToDE */
+/* === factory CopyNBytesFromHLToDE */
 /* >>> factory CopyNBytesFromHLToDE_Long */
 CopyNBytesFromHLToDELongResult CopyNBytesFromHLToDE_Long(
 	uint16_t *hl, uint16_t *de, uint16_t bc)
@@ -639,7 +187,6 @@ CopyNBytesFromHLToDELongResult CopyNBytesFromHLToDE_Long(
 	return (CopyNBytesFromHLToDELongResult){0u, 0x80u, 0u, 0u, src, dst};
 }
 /* <<< factory CopyNBytesFromHLToDE_Long */
-
 /* >>> factory IncrementDeckCardsInTempCollection */
 void IncrementDeckCardsInTempCollection(uint16_t de)
 {
@@ -661,7 +208,6 @@ void IncrementDeckCardsInTempCollection(uint16_t de)
 	DisableSRAM();
 }
 /* <<< factory IncrementDeckCardsInTempCollection */
-
 /* >>> factory CreateCardCollectionListWithDeckCards */
 void CreateCardCollectionListWithDeckCards(uint8_t a)
 {
@@ -682,7 +228,6 @@ void CreateCardCollectionListWithDeckCards(uint8_t a)
 		IncrementDeckCardsInTempCollection(sDeck4Cards_ADDR);
 }
 /* <<< factory CreateCardCollectionListWithDeckCards */
-
 /* >>> factory GetSelectedVisibleCardID */
 GetSelectedVisibleCardIDResult GetSelectedVisibleCardID(void)
 {
@@ -698,7 +243,6 @@ GetSelectedVisibleCardIDResult GetSelectedVisibleCardID(void)
 		(uint16_t)(hl + 1u)};
 }
 /* <<< factory GetSelectedVisibleCardID */
-
 /* >>> factory CheckIfDeckHasCards */
 uint8_t CheckIfDeckHasCards(uint16_t hl)
 {
@@ -709,7 +253,6 @@ uint8_t CheckIfDeckHasCards(uint16_t hl)
 	return id == 0u ? 0x90u : 0x00u;
 }
 /* <<< factory CheckIfDeckHasCards */
-
 /* >>> factory FillBGMapLineWithA */
 void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c)
 {
@@ -722,7 +265,6 @@ void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c)
 	gb_write8(0xFF4Fu, 0u);
 }
 /* <<< factory FillBGMapLineWithA */
-
 /* >>> factory OpenDeckConfigurationMenu */
 DeckBuildScreenResult OpenDeckConfigurationMenu(void)
 {
@@ -749,64 +291,6 @@ DeckBuildScreenResult OpenDeckConfigurationMenu_SkipInit(void)
 	}
 }
 /* <<< factory OpenDeckConfigurationMenu */
-
-/* >>> factory PrintTotalNumberOfCardsInCollection */
-void PrintTotalNumberOfCardsInCollection(void)
-{
-	CreateCardCollectionListWithDeckCards(ALL_DECKS);
-
-	uint16_t collection = (uint16_t)(wTempCardCollection_ADDR + 1u);
-	uint16_t total = 0u;
-	for (uint8_t b = 0u; b < NUM_CARDS; b++) {
-		uint8_t count = (uint8_t)(gb_read8(collection++) & 0x7fu);
-		total = (uint16_t)(total + count);
-	}
-
-	uint16_t remainder = total;
-	uint16_t digit_output = wDecimalDigitsSymbols_ADDR;
-	const uint16_t places[5] = {10000u, 1000u, 100u, 10u, 1u};
-	for (uint8_t i = 0u; i < 5u; i++) {
-		uint8_t digit = 0u;
-		while (remainder >= places[i]) {
-			remainder = (uint16_t)(remainder - places[i]);
-			digit++;
-		}
-		gb_write8(digit_output++, (uint8_t)(SYM_0 + digit));
-	}
-
-	uint16_t text = wTempCardCollection_ADDR;
-	uint16_t symbols = wDecimalDigitsSymbols_ADDR;
-	uint8_t leading = 0u;
-	for (uint8_t i = 0u; i < 5u; i++) {
-		gb_write8(text++, TX_SYMBOL);
-		uint8_t digit = gb_read8(symbols++);
-		if (leading == 0u && digit == SYM_0) {
-			gb_write8(text++, SYM_SPACE);
-		} else {
-			gb_write8(text++, digit);
-			leading = 1u;
-		}
-	}
-	gb_write8(text++, 0x07u);
-	gb_write8(text, TX_END);
-
-	InitTextPrinting(13u, 0u);
-	uint16_t printed = wTempCardCollection_ADDR;
-	ProcessText(&printed);
-}
-/* <<< factory PrintTotalNumberOfCardsInCollection */
-
-/* >>> factory DrawHorizontalListCursor */
-DrawHorizontalListCursorResult DrawHorizontalListCursor(uint8_t a)
-{
-	uint16_t product = HtimesL((uint16_t)(((uint16_t)wCardListCursorPos << 8) | wCardListXSpacing));
-	uint8_t x = (uint8_t)((uint8_t)product + wCardListCursorXPos);
-	uint8_t y = wCardListCursorYPos;
-	WriteByteToBGMap0(a, x, y);
-	return (DrawHorizontalListCursorResult){x, y};
-}
-/* <<< factory DrawHorizontalListCursor */
-
 /* >>> factory GetCountOfCardInCurDeck */
 GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(CardId id)
 {
@@ -822,36 +306,6 @@ GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(CardId id)
 	return (GetCountOfCardInCurDeckResult){count, 0x80u, (uint8_t)(id >> 8)};
 }
 /* <<< factory GetCountOfCardInCurDeck */
-
-/* >>> factory DrawListCursor */
-DrawListCursorResult DrawListCursor(uint8_t a)
-{
-	uint8_t e = a;
-	uint16_t hl = (uint16_t)(((uint16_t)wCardListCursorPos << 8) | wCardListXSpacing);
-	uint8_t x = (uint8_t)((uint8_t)HtimesL(hl) + wCardListCursorXPos);
-	hl = (uint16_t)(((uint16_t)wCardListCursorPos << 8) | wCardListYSpacing);
-	uint8_t y = (uint8_t)((uint8_t)HtimesL(hl) + wCardListCursorYPos);
-	WriteByteToBGMap0(e, x, y);
-	return (DrawListCursorResult){x, y};
-}
-/* <<< factory DrawListCursor */
-
-/* >>> factory DrawHorizontalListCursor_Invisible */
-DrawHorizontalListCursorResult DrawHorizontalListCursor_Invisible(void)
-{
-	uint8_t tile = wInvisibleCursorTile;
-	return DrawHorizontalListCursor(tile);
-}
-/* <<< factory DrawHorizontalListCursor_Invisible */
-
-/* >>> factory DrawHorizontalListCursor_Visible */
-DrawHorizontalListCursorResult DrawHorizontalListCursor_Visible(void)
-{
-	uint8_t tile = wVisibleCursorTile;
-	return DrawHorizontalListCursor(tile);
-}
-/* <<< factory DrawHorizontalListCursor_Visible */
-
 /* >>> factory IsCardInAnyDeck */
 /* deck_configuration.asm:1133-1190 */
 IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, CardId id)
@@ -895,49 +349,6 @@ IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, CardId id)
 	return (IsCardInAnyDeckResult){(f & 0x80u) | 0x10u, 0u, final_bits};
 }
 /* <<< factory IsCardInAnyDeck */
-
-/* >>> factory DrawListCursor_Invisible */
-DrawListCursorResult DrawListCursor_Invisible(void)
-{
-	uint8_t tile = wInvisibleCursorTile;
-	return DrawListCursor(tile);
-}
-/* <<< factory DrawListCursor_Invisible */
-
-/* >>> factory DrawListCursor_Visible */
-DrawListCursorResult DrawListCursor_Visible(void)
-{
-	uint8_t tile = wVisibleCursorTile;
-	return DrawListCursor(tile);
-}
-/* <<< factory DrawListCursor_Visible */
-
-/* >>> factory CountNumberOfCardsForEachCardType */
-void CountNumberOfCardsForEachCardType(void)
-{
-	uint16_t hl = wCardFilterCounts_ADDR;
-	const uint8_t *de = rom_ptr(2u, CardTypeFilters_ADDR);
-	uint8_t type;
-	while ((type = *de++) != 0xFFu)
-		gb_write8(hl++, CountNumberOfCardsOfType(type));
-}
-/* <<< factory CountNumberOfCardsForEachCardType */
-
-/* >>> factory CopyDeckName */
-CopyDeckNameResult CopyDeckName(uint16_t hl)
-{
-	uint16_t de = wDefaultText_ADDR;
-	CopyListFromHLToDE(&hl, &de);
-	uint16_t hl2 = wDefaultText_ADDR;
-	TextLength len = GetTextLengthInTiles(hl2);
-	uint16_t hl3 = (uint16_t)(wDefaultText_ADDR + len.c);
-	uint16_t de2 = hl3;
-	uint16_t hl4 = DeckNameSuffix_ADDR;
-	CopyListFromHLToDE(&hl4, &de2);
-	return (CopyDeckNameResult){hl4, (uint8_t)(de2 >> 8), (uint8_t)(de2 & 0xFFu)};
-}
-/* <<< factory CopyDeckName */
-
 /* >>> factory GetOwnedCardCount */
 GetOwnedCardCountResult GetOwnedCardCount(CardId id)
 {
@@ -955,25 +366,6 @@ GetOwnedCardCountResult GetOwnedCardCount(CardId id)
 	}
 }
 /* <<< factory GetOwnedCardCount */
-
-/* >>> factory TallyCardsInCardFilterLists */
-TallyCardsInCardFilterListsResult TallyCardsInCardFilterLists(uint8_t d, uint8_t e)
-{
-	uint8_t sum = 0u;
-	uint16_t hl = wCardFilterCounts_ADDR;
-	for (uint8_t i = 0u; i < NUM_FILTERS; i++) {
-		uint8_t a = gb_read8(hl);
-		hl = (uint16_t)(hl + 1u);
-		sum = (uint8_t)(sum + a);
-	}
-	if (sum != 0u)
-		return (TallyCardsInCardFilterListsResult){sum, 0x00u, d, e, hl};
-	InitTextPrinting(11u, 1u);
-	ProcessTextHeaderResult result = ProcessTextFromID(NoCardsChosenText);
-	return (TallyCardsInCardFilterListsResult){result.a, result.f, 11u, 1u, result.hl};
-}
-/* <<< factory TallyCardsInCardFilterLists */
-
 /* >>> factory RemoveCardFromDeck */
 RemoveCardFromDeckResult RemoveCardFromDeck(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -1007,7 +399,6 @@ RemoveCardFromDeckResult RemoveCardFromDeck(uint8_t b, uint8_t c, uint8_t d, uin
 	};
 }
 /* <<< factory RemoveCardFromDeck */
-
 /* >>> factory CheckIfCurrentDeckWasChanged */
 CheckIfCurrentDeckWasChangedResult CheckIfCurrentDeckWasChanged(void)
 {
@@ -1071,7 +462,6 @@ CheckIfCurrentDeckWasChangedResult CheckIfCurrentDeckWasChanged(void)
 	return (CheckIfCurrentDeckWasChangedResult){0u, 0x80u};
 }
 /* <<< factory CheckIfCurrentDeckWasChanged */
-
 /* >>> factory CreateFilteredCardList */
 CreateFilteredCardListResult CreateFilteredCardList(
 	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
@@ -1118,18 +508,6 @@ CreateFilteredCardListResult CreateFilteredCardList(
 	return (CreateFilteredCardListResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory CreateFilteredCardList */
-
-/* >>> factory ConfirmSelectionAndReturnCarry */
-ConfirmSelectionAndReturnCarryResult ConfirmSelectionAndReturnCarry(void)
-{
-	(void)DrawHorizontalListCursor_Visible();
-	PlaySFXConfirmOrCancel(MENU_CONFIRM);
-	uint8_t e = wCardListCursorPos;
-	uint8_t a = hffb3;
-	return (ConfirmSelectionAndReturnCarryResult){a, e};
-}
-/* <<< factory ConfirmSelectionAndReturnCarry */
-
 /* >>> factory AddCardIDToVisibleList */
 void AddCardIDToVisibleList(uint8_t b, CardId id)
 {
@@ -1140,42 +518,6 @@ void AddCardIDToVisibleList(uint8_t b, CardId id)
 	card_id_write(&address, id);
 }
 /* <<< factory AddCardIDToVisibleList */
-
-/* >>> factory HandleCardSelectionCursorBlink */
-DrawHorizontalListCursorResult HandleCardSelectionCursorBlink(void)
-{
-	uint8_t sfx = wMenuInputSFX;
-	if (sfx != 0u)
-		PlaySFX(sfx);
-
-	uint8_t counter_old = gb_read8(wCheckMenuCursorBlinkCounter_ADDR);
-	gb_write8(wCheckMenuCursorBlinkCounter_ADDR, (uint8_t)(counter_old + 1u));
-	if ((counter_old & CURSOR_BLINK_PERIOD_MASK) != 0u)
-		return (DrawHorizontalListCursorResult){0u, 0u};
-
-	uint8_t counter_new = (uint8_t)(counter_old + 1u);
-	uint8_t tile = wVisibleCursorTile;
-	if ((counter_new & (1u << B_CURSOR_BLINK_PERIOD)) == 0u)
-		return DrawHorizontalListCursor(tile);
-	return DrawHorizontalListCursor_Invisible();
-}
-/* <<< factory HandleCardSelectionCursorBlink */
-
-/* >>> factory DrawHandCardsTileOnCurDeck */
-void DrawHandCardsTileOnCurDeck(void)
-{
-	/* rebuild after quarantine */
-	EnableSRAM();
-	uint8_t deck = gb_read8(sCurrentlySelectedDeck_ADDR);
-	DisableSRAM();
-	uint16_t hl = (uint16_t)(((uint16_t)3u << 8) | deck);
-	uint16_t product = HtimesL(hl);
-	uint8_t e = (uint8_t)((uint8_t)product + 1u);
-	uint16_t de = (uint16_t)(((uint16_t)2u << 8) | e);
-	DrawHandCardsTileAtDE(de);
-}
-/* <<< factory DrawHandCardsTileOnCurDeck */
-
 /* >>> factory HandleCardSelectionInput */
 HandleCardSelectionInputResult HandleCardSelectionInput(void)
 {
@@ -1219,7 +561,6 @@ HandleCardSelectionInputResult HandleCardSelectionInput(void)
 	return (HandleCardSelectionInputResult){MENU_CANCEL, 0u, 0u, 0u, 1};
 }
 /* <<< factory HandleCardSelectionInput */
-
 /* >>> part DispatchCardListUpdateFunction */
 /* CallIndirect(wCardListUpdateFunction), deck_configuration.asm:1823-1824,
  * 1849-1850, 2483-2484, 2532-2533: the card-list input handlers fire the
@@ -1268,109 +609,7 @@ static void DispatchCardListUpdateFunction(void)
 	}
 }
 /* <<< part DispatchCardListUpdateFunction */
-
-/* >>> factory HandleLeftRightInCardList */
-HandleLeftRightInCardListResult HandleLeftRightInCardList(void)
-{
-	uint8_t num_positions = wCardListNumCursorPositions;
-	uint8_t old_offset = wCardListVisibleOffset;
-	uint8_t dpad = hDPadHeld;
-
-	if (dpad != PAD_RIGHT && dpad != PAD_LEFT) {
-		uint8_t f = (dpad == 0u) ? 0x80u : 0x00u;
-		return (HandleLeftRightInCardListResult){f};
-	}
-
-	uint8_t new_offset;
-	if (dpad == PAD_RIGHT) {
-		new_offset = (uint8_t)(old_offset + num_positions);
-		if ((uint8_t)(new_offset + num_positions) >= wNumCardListEntries)
-			new_offset = (uint8_t)(wNumCardListEntries - num_positions);
-	} else {
-		if (old_offset < num_positions)
-			new_offset = 0u;
-		else
-			new_offset = (uint8_t)(old_offset - num_positions);
-	}
-	wCardListVisibleOffset = new_offset;
-	if (new_offset == old_offset)
-		return (HandleLeftRightInCardListResult){0x90u};
-
-	PlaySFX(SFX_CURSOR);
-	DispatchCardListUpdateFunction();
-	return (HandleLeftRightInCardListResult){0x10u};
-}
-/* <<< factory HandleLeftRightInCardList */
-
-/* >>> factory PrintPlayersCardsText */
-void PrintPlayersCardsText(void)
-{
-	InitTextPrinting(1u, 0u);
-	uint16_t de = wDefaultText_ADDR;
-	(void)CopyPlayerName(de);
-	uint16_t hl = wDefaultText_ADDR;
-	ProcessText(&hl);
-	hl = wDefaultText_ADDR;
-	TextLength len = GetTextLengthInTiles(hl);
-	uint8_t d = (uint8_t)(len.b + 1u);
-	InitTextPrinting(d, 0u);
-	hl = SCardsText;
-	(void)ProcessTextFromID(hl);
-}
-/* <<< factory PrintPlayersCardsText */
-
-/* >>> factory ConvertToNumericalDigits */
-ConvertToNumericalDigitsResult ConvertToNumericalDigits(uint8_t a, uint16_t hl)
-{
-	CalculateOnesAndTensDigits(a);
-	uint8_t ones = wDecimalDigitsSymbols;
-	uint8_t tens = gb_read8((uint16_t)(wDecimalDigitsSymbols_ADDR + 1u));
-	gb_write8(hl, TX_SYMBOL);
-	hl = (uint16_t)(hl + 1u);
-	gb_write8(hl, tens);
-	hl = (uint16_t)(hl + 1u);
-	gb_write8(hl, TX_SYMBOL);
-	hl = (uint16_t)(hl + 1u);
-	gb_write8(hl, ones);
-	hl = (uint16_t)(hl + 1u);
-	return (ConvertToNumericalDigitsResult){ones, ones, hl};
-}
-/* <<< factory ConvertToNumericalDigits */
-
-/* >>> factory CopyListFromHLToDEInSRAM */
-CopyListFromHLToDEInSRAMResult CopyListFromHLToDEInSRAM(uint16_t hl, uint16_t de)
-{
-	EnableSRAM();
-	CopyListFromHLToDE(&hl, &de);
-	DisableSRAM();
-	return (CopyListFromHLToDEInSRAMResult){0x80u, hl, de};
-}
-/* <<< factory CopyListFromHLToDEInSRAM */
-
-/* >>> factory PrintDeckName */
-void PrintDeckName(uint16_t hl, uint8_t d, uint8_t e)
-{
-	uint8_t flags = CheckIfDeckHasCards(hl);
-	if (flags & 0x10u) {
-		InitTextPrinting(d, e);
-		(void)ProcessTextFromID(NewDeckText);
-		return;
-	}
-
-	uint16_t dst = wDefaultText_ADDR;
-	(void)CopyListFromHLToDEInSRAM(hl, dst);
-
-	TextLength len = GetTextLengthInTiles(wDefaultText_ADDR);
-	uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + len.c);
-	uint16_t suffix_src = DECK_NAME_SUFFIX_ADDR_590;
-	CopyListFromHLToDE(&suffix_src, &suffix_dst);
-
-	InitTextPrinting(d, e);
-	uint16_t text_ptr = wDefaultText_ADDR;
-	ProcessText(&text_ptr);
-}
-/* <<< factory PrintDeckName */
-
+/* --- factory AddGiftCenterDeckCardsToCollection */
 /* >>> factory AppendOwnedCardCountNumber */
 void AppendOwnedCardCountNumber(uint16_t hl, CardId id)
 {
@@ -1382,27 +621,6 @@ void AppendOwnedCardCountNumber(uint16_t hl, CardId id)
 	gb_write8(r2.hl, 0u);
 }
 /* <<< factory AppendOwnedCardCountNumber */
-
-/* >>> factory PrintNumberValueInCursorYPos */
-void PrintNumberValueInCursorYPos(uint8_t a)
-{
-	uint16_t hl = wDefaultText_ADDR;
-	ConvertToNumericalDigitsResult r1 = ConvertToNumericalDigits(a, hl);
-	hl = r1.hl;
-	gb_write8(hl, TX_END);
-
-	uint8_t spacing = wCardListYSpacing;
-	uint8_t cursor_pos = wCardListCursorPos;
-	uint16_t product = HtimesL((uint16_t)(((uint16_t)cursor_pos << 8) | spacing));
-	uint8_t lo = (uint8_t)product;
-	uint8_t cursor_y = wCardListCursorYPos;
-	uint8_t e = (uint8_t)(lo + cursor_y);
-	InitTextPrinting(14u, e);
-	uint16_t text_hl = wDefaultText_ADDR;
-	ProcessText(&text_hl);
-}
-/* <<< factory PrintNumberValueInCursorYPos */
-
 /* >>> factory AppendOwnedCardCountAndStorageCountNumbers */
 void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, CardId id)
 {
@@ -1419,171 +637,6 @@ void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, CardId id)
 	gb_write8(r4.hl, TX_END);
 }
 /* <<< factory AppendOwnedCardCountAndStorageCountNumbers */
-
-/* >>> factory PrintCardTypeCounts */
-void PrintCardTypeCounts(void)
-{
-	uint16_t hl = wDefaultText_ADDR;
-	for (uint8_t c = 0; c < NUM_FILTERS; c++) {
-		uint8_t count = gb_read8((uint16_t)(wCardFilterCounts_ADDR + c));
-		ConvertToNumericalDigitsResult r = ConvertToNumericalDigits(count, hl);
-		hl = r.hl;
-	}
-	gb_write8(hl, TX_END);
-	InitTextPrinting(1u, 4u);
-	uint16_t text_hl = wDefaultText_ADDR;
-	ProcessText(&text_hl);
-}
-/* <<< factory PrintCardTypeCounts */
-
-/* >>> factory AppendDeckName */
-uint8_t AppendDeckName(uint16_t hl, uint8_t d, uint8_t e)
-{
-	uint8_t no_cards = CheckIfDeckHasCards(hl);
-	if (no_cards & 0x10u) {
-		return no_cards;
-	}
-
-	uint16_t dst_de = wDefaultText_ADDR;
-	(void)CopyListFromHLToDEInSRAM(hl, dst_de);
-
-	uint16_t name_hl = wDefaultText_ADDR;
-	TextLength len = GetTextLengthInTiles(name_hl);
-	uint8_t c = len.c;
-	if (c >= DECK_NAME_SIZE_WO_SUFFIX) {
-		c = DECK_NAME_SIZE_WO_SUFFIX;
-	}
-	uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + c);
-	uint16_t suffix_src = APPEND_DECK_NAME_TEXT_START_ADDR;
-	CopyNBytesFromHLToDE(&suffix_src, &suffix_dst, 0x1Cu);
-
-	gb_write8((uint16_t)(wDefaultText_ADDR + DECK_NAME_SIZE + 2u), TX_END);
-
-	InitTextPrinting(d, e);
-	uint16_t print_hl = wDefaultText_ADDR;
-	ProcessText(&print_hl);
-	return 0u;
-}
-/* <<< factory AppendDeckName */
-
-/* >>> factory DrawDecksScreen */
-void DrawDecksScreen(uint8_t a)
-{
-	hffb5 = a;
-	EmptyScreenAndLoadFontDuelAndHandCardsIcons();
-
-	uint16_t box1 = 0;
-	DrawRegularTextBox(&box1, 0u, 20u, 4u, 0u, 0u);
-	uint16_t box2 = 0;
-	DrawRegularTextBox(&box2, 0u, 20u, 4u, 0u, 3u);
-	uint16_t box3 = 0;
-	DrawRegularTextBox(&box3, 0u, 20u, 4u, 0u, 6u);
-	uint16_t box4 = 0;
-	DrawRegularTextBox(&box4, 0u, 20u, 4u, 0u, 9u);
-
-	(void)PlaceTextItems(DECK_NAME_MENU_DATA_ADDR);
-
-	ClearMemory_Bank2(NUM_DECKS, wDecksValid_ADDR);
-
-	uint8_t flags = hffb5;
-	if (flags & 0x01u) {
-		PrintDeckName(sDeck1Name_ADDR, 6u, 2u);
-	}
-	uint8_t nc1 = CheckIfDeckHasCards(sDeck1Cards_ADDR);
-	if (!(nc1 & 0x10u)) {
-		wDeck1Valid = TRUE;
-	}
-
-	flags = hffb5;
-	if (flags & 0x02u) {
-		PrintDeckName(sDeck2Name_ADDR, 6u, 5u);
-	}
-	uint8_t nc2 = CheckIfDeckHasCards(sDeck2Cards_ADDR);
-	if (!(nc2 & 0x10u)) {
-		wDeck2Valid = TRUE;
-	}
-
-	flags = hffb5;
-	if (flags & 0x04u) {
-		PrintDeckName(sDeck3Name_ADDR, 6u, 8u);
-	}
-	uint8_t nc3 = CheckIfDeckHasCards(sDeck3Cards_ADDR);
-	if (!(nc3 & 0x10u)) {
-		wDeck3Valid = TRUE;
-	}
-
-	flags = hffb5;
-	if (flags & 0x08u) {
-		PrintDeckName(sDeck4Name_ADDR, 6u, 11u);
-	}
-	uint8_t nc4 = CheckIfDeckHasCards(sDeck4Cards_ADDR);
-	if (!(nc4 & 0x10u)) {
-		wDeck4Valid = TRUE;
-	}
-
-	EnableSRAM();
-	uint8_t c = gb_read8(sCurrentlySelectedDeck_ADDR);
-	uint8_t d = 2u;
-	for (;;) {
-		uint8_t valid = gb_read8((uint16_t)(wDecksValid_ADDR + c));
-		if (valid != 0u) {
-			break;
-		}
-		c = (uint8_t)(c + 1u);
-		if (c == NUM_DECKS) {
-			c = 0u;
-			d = (uint8_t)(d - 1u);
-			if (d == 0u) {
-				break;
-			}
-		}
-	}
-	gb_write8(sCurrentlySelectedDeck_ADDR, c);
-	DisableSRAM();
-	DrawHandCardsTileOnCurDeck();
-	EnableLCD();
-}
-/* <<< factory DrawDecksScreen */
-
-/* >>> factory PrintTotalCardCount */
-void PrintTotalCardCount(uint8_t d, uint8_t e)
-{
-	uint8_t sum = 0u;
-	uint8_t count = 0u;
-	uint16_t hl = wCardFilterCounts_ADDR;
-	while (count != NUM_FILTERS) {
-		uint8_t value = gb_read8(hl);
-		sum = (uint8_t)(value + sum);
-		hl = (uint16_t)(hl + 1u);
-		count = (uint8_t)(count + 1u);
-	}
-
-	hl = wDefaultText_ADDR;
-	wTotalCardCount = sum;
-	ConvertToNumericalDigitsResult digits = ConvertToNumericalDigits(sum, hl);
-	hl = digits.hl;
-	gb_write8(hl, TX_END);
-	InitTextPrinting(d, e);
-	hl = wDefaultText_ADDR;
-	ProcessText(&hl);
-}
-/* <<< factory PrintTotalCardCount */
-
-/* >>> factory RemoveCardFromDeckAndUpdateCount */
-RemoveCardFromDeckAndUpdateCountResult RemoveCardFromDeckAndUpdateCount(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
-{
-	RemoveCardFromDeckResult r = RemoveCardFromDeck(b, c, d, e, hl);
-	if (!(r.f & 0x10u)) {
-		return (RemoveCardFromDeckAndUpdateCountResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
-	}
-	PrintCardTypeCounts();
-	PrintTotalCardCount(15u, 0u);
-	GetCountOfCardInCurDeckResult r2 = GetCountOfCardInCurDeck(r.e);
-	PrintNumberValueInCursorYPos(r2.a);
-	return (RemoveCardFromDeckAndUpdateCountResult){r2.a, r2.f, r.b, r.c, r2.d, r.e, r.hl};
-}
-/* <<< factory RemoveCardFromDeckAndUpdateCount */
-
 /* >>> factory PrintCardSelectionList */
 void PrintCardSelectionList(void)
 {
@@ -1632,23 +685,6 @@ void PrintCardSelectionList(void)
 	WriteByteToBGMap0(tile, 19u, (uint8_t)(e - 2u));
 }
 /* <<< factory PrintCardSelectionList */
-
-/* >>> factory PrintFilteredCardSelectionList */
-void PrintFilteredCardSelectionList(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
-{
-	(void)b; (void)c; (void)hl;
-	uint8_t input_a = a;
-	uint8_t filter = (input_a < 9u) ? card_type_filters[input_a] : 0xffu;
-	CreateCardCollectionListWithDeckCards(ALL_DECKS);
-	(void)CreateFilteredCardList(filter, f, 0u, input_a, d, e, wCardListCoords_ADDR);
-	gb_write8(wNumVisibleCardListEntries_ADDR, NUM_DECK_CONFIRMATION_VISIBLE_CARDS);
-	gb_write8(wCardListCoords_ADDR, 0x05u);
-	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x02u);
-	gb_write8(wCursorAlternateTile_ADDR, SYM_SPACE);
-	PrintCardSelectionList();
-}
-/* <<< factory PrintFilteredCardSelectionList */
-
 /* >>> factory PrintDeckBuildingCardList */
 void PrintDeckBuildingCardList(void)
 {
@@ -1691,7 +727,6 @@ void PrintDeckBuildingCardList(void)
 	WriteByteToBGMap0(tile, 19u, (uint8_t)(e - 2u));
 }
 /* <<< factory PrintDeckBuildingCardList */
-
 /* >>> factory PrintFilteredCardList */
 PrintFilteredCardListResult PrintFilteredCardList(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -1733,7 +768,7 @@ PrintFilteredCardListResult PrintFilteredCardList(uint8_t a, uint8_t f, uint8_t 
 	return (PrintFilteredCardListResult){saved_a, saved_f, b, c, d, e, hl};
 }
 /* <<< factory PrintFilteredCardList */
-
+/* --- factory Func_9ced */
 /* >>> factory OpenCardPageFromCardList */
 void OpenCardPageFromCardList(void)
 {
@@ -1812,7 +847,6 @@ exit:
 	wTempCardListCursorPos = cursor;
 }
 /* <<< factory OpenCardPageFromCardList */
-
 /* >>> factory CheckIfThereAreAnyBasicCardsInDeck */
 CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void)
 {
@@ -1833,7 +867,6 @@ CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void
 	return (CheckIfThereAreAnyBasicCardsInDeckResult){0u, 0x80u, 0u, hl};
 }
 /* <<< factory CheckIfThereAreAnyBasicCardsInDeck */
-
 /* >>> factory SortCurDeckCardsByID */
 SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)
 {
@@ -1870,7 +903,6 @@ SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)
 	return (SortCurDeckCardsByIDResult){(uint8_t)(order - 1u)};
 }
 /* <<< factory SortCurDeckCardsByID */
-
 /* >>> factory GetCardTypeIconPalette */
 GetCardTypeIconPaletteResult GetCardTypeIconPalette(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -1904,41 +936,6 @@ GetCardTypeIconPaletteResult GetCardTypeIconPalette(uint8_t a, uint8_t f, uint8_
 	return (GetCardTypeIconPaletteResult){palette, f, b, c, d, e, hl};
 }
 /* <<< factory GetCardTypeIconPalette */
-
-/* >>> factory DrawCardTypeIcons */
-void DrawCardTypeIcons(void)
-{
-	static const uint8_t icons[] = {0xE4u, 0xE0u, 0xECu, 0xE8u, 0xF0u, 0xF4u, 0xF8u, 0xDCu, 0xFCu, 0x00u};
-	static const uint8_t xs[] = {1u, 3u, 5u, 7u, 9u, 11u, 13u, 15u, 17u};
-	for (uint8_t i = 0u; icons[i] != 0u; i++) {
-		uint8_t tile = icons[i];
-		uint8_t x = xs[i];
-		uint16_t de = (uint16_t)(((uint16_t)x << 8) | 2u);
-		FillRectangle(tile, 2u, 2u, de, 0x0102u);
-		GetCardTypeIconPaletteResult palette = GetCardTypeIconPalette(tile, 0u, 0u, 0u, 0u, 0u, 0u);
-		if (wConsole == 0x02u) {
-			hBankVRAM = 1u;
-			gb_write8(0xFF4Fu, 1u);
-			FillRectangle(palette.a, 2u, 2u, de, 0x0000u);
-			hBankVRAM = 0u;
-			gb_write8(0xFF4Fu, 0u);
-		}
-	}
-}
-/* <<< factory DrawCardTypeIcons */
-
-/* >>> factory PrintPlayersCardsHeaderInfo */
-void PrintPlayersCardsHeaderInfo(void)
-{
-	Set_OBJ_8x8();
-	PrepareMenuGraphics();
-	FillBGMapLineWithA(0x1Cu, 0u, 4u);
-	PrintTotalNumberOfCardsInCollection();
-	PrintPlayersCardsText();
-	DrawCardTypeIcons();
-}
-/* <<< factory PrintPlayersCardsHeaderInfo */
-
 /* >>> factory PrintConfirmationCardList */
 void PrintConfirmationCardList(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 {
@@ -2002,7 +999,6 @@ void PrintConfirmationCardList(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 	(void)a; (void)d; (void)e; (void)hl;
 }
 /* <<< factory PrintConfirmationCardList */
-
 /* >>> factory CreateCurDeckUniqueCardList */
 CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)
 {
@@ -2026,7 +1022,6 @@ CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)
 	};
 }
 /* <<< factory CreateCurDeckUniqueCardList */
-
 /* >>> factory TryAddCardToDeck */
 TryAddCardToDeckResult TryAddCardToDeck(CardId id)
 {
@@ -2072,7 +1067,6 @@ TryAddCardToDeckResult TryAddCardToDeck(CardId id)
 	return (TryAddCardToDeckResult){0u, 0u};
 }
 /* <<< factory TryAddCardToDeck */
-
 /* >>> factory AddCardToDeckAndUpdateCount */
 AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(CardId id)
 {
@@ -2086,7 +1080,6 @@ AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(CardId id)
 	return (AddCardToDeckAndUpdateCountResult){r2.a, r2.f, (uint8_t)id};
 }
 /* <<< factory AddCardToDeckAndUpdateCount */
-
 /* >>> factory HandleDeckCardSelectionList */
 HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)
 {
@@ -2140,281 +1133,6 @@ HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)
 	return out;
 }
 /* <<< factory HandleDeckCardSelectionList */
-
-/* >>> factory PrintCurDeckNumberAndName */
-void PrintCurDeckNumberAndName(void)
-{
-	uint8_t current_deck = wCurDeck;
-	if (current_deck != 0xFFu) {
-		InitTextPrinting(3u, 2u);
-		uint8_t deck_numeral = current_deck;
-		if (deck_numeral & 0x80u)
-			deck_numeral = (uint8_t)(deck_numeral & 0x7Fu);
-		else
-			deck_numeral = (uint8_t)(deck_numeral + 1u);
-		ConvertToNumericalDigitsResult digits =
-			ConvertToNumericalDigits(deck_numeral, wDefaultText_ADDR);
-		gb_write8(digits.hl, PRINT_CUR_DECK_MIDDLE_DOT);
-		gb_write8((uint16_t)(digits.hl + 1u), 0u);
-		uint16_t numeral_text = wDefaultText_ADDR;
-		ProcessText(&numeral_text);
-	}
-
-	uint16_t name_src = wCurDeckName_ADDR;
-	uint16_t name_dst = wDefaultText_ADDR;
-	CopyListFromHLToDE(&name_src, &name_dst);
-
-	if (wCurDeck == 0xFFu) {
-		InitTextPrinting(2u, 2u);
-		uint16_t blank_text = wDefaultText_ADDR;
-		ProcessText(&blank_text);
-		return;
-	}
-
-	TextLength name_length = GetTextLengthInTiles(wDefaultText_ADDR);
-	uint16_t suffix_base = wDefaultText_ADDR;
-	uint16_t suffix_destination = (uint16_t)(suffix_base + name_length.c);
-	uint16_t suffix_source = PRINT_CUR_DECK_NAME_SUFFIX_ADDR;
-	CopyListFromHLToDE(&suffix_source, &suffix_destination);
-	InitTextPrinting(6u, 2u);
-	uint16_t name_text = wDefaultText_ADDR;
-	ProcessText(&name_text);
-}
-/* <<< factory PrintCurDeckNumberAndName */
-
-/* >>> factory UpdateConfirmationCardScreen */
-void UpdateConfirmationCardScreen(void)
-{
-	hffb0 = 1u;
-	PrintCurDeckNumberAndName();
-
-	hffb0 = 0u;
-	PrintConfirmationCardList(0u, 0u, 0u, (uint16_t *)0);
-}
-/* <<< factory UpdateConfirmationCardScreen */
-
-/* >>> factory PrintSlashSixty */
-/* deck_configuration.asm:1017-1035. Builds the TX_SYMBOL encoding for "/60",
- * then prints it at the caller-supplied d/e coordinates. */
-void PrintSlashSixty(uint8_t d, uint8_t e)
-{
-	uint16_t text = wDefaultText_ADDR;
-	gb_write8(text++, TX_SYMBOL);
-	gb_write8(text++, SYM_SLASH);
-	gb_write8(text++, TX_SYMBOL);
-	gb_write8(text++, (uint8_t)(SYM_0 + 6u));
-	gb_write8(text++, TX_SYMBOL);
-	gb_write8(text++, SYM_0);
-	gb_write8(text, TX_END);
-	InitTextPrinting(d, e);
-	text = wDefaultText_ADDR;
-	ProcessText(&text);
-}
-/* <<< factory PrintSlashSixty */
-
-/* >>> factory ShowDeckInfoHeader */
-void ShowDeckInfoHeader(void)
-{
-	EmptyScreenAndLoadFontDuelAndHandCardsIcons();
-	uint16_t box = 0u;
-	DrawRegularTextBox(&box, 0u, 20u, 4u, 0u, 0u);
-	if (wCurDeckName != 0u) {
-		PrintCurDeckNumberAndName();
-		uint8_t current_deck = wCurDeck;
-		EnableSRAM();
-		uint8_t selected_deck = sCurrentlySelectedDeck;
-		DisableSRAM();
-		if (selected_deck == current_deck)
-			DrawHandCardsTileAtDE(0x0201u);
-	}
-	PrintTotalCardCount(14u, 1u);
-	PrintSlashSixty(16u, 1u);
-	(void)TallyCardsInCardFilterLists(16u, 1u);
-	EnableLCD();
-}
-/* <<< factory ShowDeckInfoHeader */
-
-/* >>> factory DrawCardTypeIconsAndPrintCardCounts */
-uint8_t DrawCardTypeIconsAndPrintCardCounts(void)
-{
-	Set_OBJ_8x8();
-	PrepareMenuGraphics();
-	FillBGMapLineWithA(SYM_BOX_TOP, 0u, 5u);
-	DrawCardTypeIcons();
-	PrintCardTypeCounts();
-	PrintTotalCardCount(15u, 0u);
-	PrintSlashSixty(17u, 0u);
-	return EnableLCD();
-}
-/* <<< factory DrawCardTypeIconsAndPrintCardCounts */
-
-/* >>> factory ShowConfirmationCardScreen */
-void ShowConfirmationCardScreen(void)
-{
-	ShowDeckInfoHeader();
-	wCardListCoords = 5u;
-	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 3u);
-	PrintConfirmationCardList(0u, 3u, 5u, (uint16_t *)0);
-}
-/* <<< factory ShowConfirmationCardScreen */
-
-/* >>> factory ShowDeckInfoHeaderAndWaitForBButton */
-void ShowDeckInfoHeaderAndWaitForBButton(void)
-{
-	ShowDeckInfoHeader();
-	for (;;) {
-		DoFrame();
-		if ((hKeysPressed & 0x02u) != 0u)
-			break;
-	}
-	PlaySFXConfirmOrCancel(MENU_CANCEL);
-}
-/* <<< factory ShowDeckInfoHeaderAndWaitForBButton */
-
-/* >>> factory HandleDeckConfirmationMenu */
-/* deck_configuration.asm:2364-2438. The opening `jp z,
- * ShowDeckInfoHeaderAndWaitForBButton` is a tail call: its `ret` returns
- * straight to this routine's caller, so the port calls it and returns behind
- * it. That exit leaves the callee's registers while the cancel `ret z` in
- * .selection_made leaves a = [hffb3] = MENU_CANCEL and f = $C0; the two
- * disagree, so the contract observes no registers.
- *
- * The `jr .init_params` from .selected_card re-enters past the `xor a`, so
- * InitCardSelectionParams takes the a OpenCardPageFromCardList's .exit
- * leaves, [wCardListCursorPos] (deck_configuration.asm:2084-2089) -- the
- * same handoff HandleDeckMissingCardsList records. UpdateConfirmationCard
- * Screen is only parked in wCardListUpdateFunction for CallIndirect, which
- * this tree does not dispatch (see the note on HandleLeftRightInCardList);
- * the two bytes stored are the real bank-2 address, so the WRAM still
- * matches the reference. */
-void HandleDeckConfirmationMenu(void)
-{
-	if (wTotalCardCount == 0u) { /* if deck is empty, just show deck info header with empty card list */
-		ShowDeckInfoHeaderAndWaitForBButton();
-		return;
-	}
-
-	/* create list of all unique cards */
-	(void)SortCurDeckCardsByID();
-	(void)CreateCurDeckUniqueCardList();
-
-	wCardListVisibleOffset = 0u;
-	uint8_t cursor = 0u; /* the `xor a` before .init_params */
-
-	for (;;) { /* .init_params */
-		uint16_t params = DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR;
-
-		(void)InitCardSelectionParams(cursor, &params);
-
-		uint8_t entries = wNumUniqueCards;
-
-		wNumCardListEntries = entries;
-		if (entries >= NUM_DECK_CONFIRMATION_VISIBLE_CARDS) /* jr c, .no_cap */
-			entries = NUM_DECK_CONFIRMATION_VISIBLE_CARDS;
-		wCardListNumCursorPositions = entries;
-		wNumVisibleCardListEntries = entries;
-
-		ShowConfirmationCardScreen();
-
-		gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)UPDATE_CONFIRMATION_CARD_SCREEN_ADDR);
-		gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
-			  (uint8_t)(UPDATE_CONFIRMATION_CARD_SCREEN_ADDR >> 8));
-
-		wced2 = 0u;
-
-		for (;;) { /* .loop_input */
-			DoFrame();
-			HandleDeckCardSelectionListResult selection = HandleDeckCardSelectionList();
-			if (selection.f & 0x10u) { /* .selection_made */
-				uint8_t selected = hffb3;
-
-				if (selected == MENU_CANCEL)
-					return; /* operation cancelled */
-				break;
-			}
-			if ((HandleLeftRightInCardList().f & 0x10u) != 0u)
-				continue;
-			if ((hDPadHeld & PAD_START) == 0u)
-				continue;
-			break; /* .selected_card */
-		}
-
-		PlaySFXConfirmOrCancel(MENU_CONFIRM);
-		wced7 = wCardListCursorPos;
-
-		/* set wUniqueDeckCardList as current card list
-		 * and show card page screen */
-		gb_write8(wCurCardListPtr_ADDR, (uint8_t)wUniqueDeckCardList_ADDR);
-		gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u),
-			  (uint8_t)(wUniqueDeckCardList_ADDR >> 8));
-		OpenCardPageFromCardList();
-		cursor = wCardListCursorPos; /* jr .init_params */
-	}
-}
-/* <<< factory HandleDeckConfirmationMenu */
-
-/* >>> factory ConfirmDeckConfiguration */
-void ConfirmDeckConfiguration(void)
-{
-	uint8_t visible_offset = wCardListVisibleOffset;
-	wCardListVisibleOffsetBackup = visible_offset;
-	HandleDeckConfirmationMenu();
-	wCardListVisibleOffset = wCardListVisibleOffsetBackup;
-	uint8_t flush = DrawCardTypeIconsAndPrintCardCounts();
-	uint16_t params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
-	(void)InitCardSelectionParams(flush, &params);
-	wTempCardTypeFilter = wCurCardTypeFilter;
-	(void)DrawHorizontalListCursor_Visible();
-	(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u, FILTERS_CARD_SELECTION_PARAMS_ADDR);
-	wCardListCursorPos = wced6;
-}
-/* <<< factory ConfirmDeckConfiguration */
-
-/* >>> factory SaveDeckConfiguration */
-/* deck_configuration.asm:642 */
-SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0)
-{
-	/* Entered through JumpToFunctionInTable, so the word at sp is the return
-	 * address back into HandleDeckConfigurationMenu. The two `add sp, $2`
-	 * exits drop it to return one frame further out; the value is never read. */
-	(void)w0;
-	if (wTotalCardCount != DECK_SIZE) {
-		(void)DrawWideTextBox_WaitForInput(ThisIsntA60CardDeckText);
-		HandleYesOrNoMenuResult keep =
-			YesOrNoMenuWithText(ReturnToOriginalConfigurationText);
-		if ((keep.f & 0x10u) == 0u) {
-			/* add sp, $2 / or a / ret */
-			uint8_t or_a = keep.a;
-			return (SaveDeckConfigurationResult){
-				or_a, (uint8_t)(or_a == 0u ? 0x80u : 0x00u), 1u};
-		}
-		(void)DrawWideTextBox_WaitForInput(TheDeckMustInclude60CardsText);
-	} else {
-		HandleYesOrNoMenuResult save = YesOrNoMenuWithText(SaveThisDeckText);
-		if ((save.f & 0x10u) == 0u) {
-			CheckIfThereAreAnyBasicCardsInDeckResult basic =
-				CheckIfThereAreAnyBasicCardsInDeck();
-			if ((basic.f & 0x10u) != 0u) {
-				/* add sp, $2 / scf / ret: scf keeps Z, clears N and H */
-				return (SaveDeckConfigurationResult){
-					basic.a, (uint8_t)((basic.f & 0x80u) | 0x10u), 1u};
-			}
-			(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInThisDeckText);
-			(void)DrawWideTextBox_WaitForInput(YouMustIncludeABasicPokemonInTheDeckText);
-		}
-	}
-	/* .go_back leaves with a plain `ret`, one frame out. Its flags are whatever
-	 * PrintDeckBuildingCardList left behind, which that routine's ported void
-	 * signature does not carry; every caller of this label falls straight into
-	 * OpenDeckConfigurationMenu.skip_init without testing them. */
-	DrawCardTypeIconsAndPrintCardCounts();
-	PrintDeckBuildingCardList();
-	uint8_t cursor = wced6;
-	wCardListCursorPos = cursor;
-	return (SaveDeckConfigurationResult){cursor, 0u, 0u};
-}
-/* <<< factory SaveDeckConfiguration */
-
 /* >>> factory DismantleDeck */
 /* deck_configuration.asm:684-716 */
 DismantleDeckResult DismantleDeck(uint16_t w0)
@@ -2468,400 +1186,9 @@ DismantleDeckResult DismantleDeck(uint16_t w0)
 	return (DismantleDeckResult){a, 1u};
 }
 /* <<< factory DismantleDeck */
-
-/* >>> factory CancelDeckModifications */
-/* deck_configuration.asm:629-640 */
-CancelDeckModificationsResult CancelDeckModifications(uint16_t w0)
-{
-	/* Reached through HandleDeckConfigurationMenu's JumpToFunctionInTable, so
-	 * the word at sp is that menu's own return address. The `add sp, $2` exit
-	 * drops it to return one frame further out; the value is never read, just
-	 * as the landed SaveDeckConfiguration models its own w0. */
-	(void)w0;
-
-	CheckIfCurrentDeckWasChangedResult changed = CheckIfCurrentDeckWasChanged();
-	uint8_t a = changed.a;
-
-	if ((changed.f & 0x10u) != 0u) { /* deck was changed: prompt the player */
-		HandleYesOrNoMenuResult quit = YesOrNoMenuWithText(QuitModifyingTheDeckText);
-		if ((quit.f & 0x10u) != 0u) {
-			/* jr c, SaveDeckConfiguration.go_back. That label is interior to
-			 * the sibling routine and has no entry of its own, so its body is
-			 * repeated here. It leaves with a plain `ret`, one frame in, and
-			 * its flags are whatever PrintDeckBuildingCardList left behind,
-			 * which that routine's ported void signature does not carry. */
-			DrawCardTypeIconsAndPrintCardCounts();
-			PrintDeckBuildingCardList();
-			uint8_t cursor = wced6;
-			wCardListCursorPos = cursor;
-			return (CancelDeckModificationsResult){cursor, 0u, 0u};
-		}
-		a = quit.a;
-	}
-
-	/* .cancel_modification: add sp, $2 / or a / ret */
-	return (CancelDeckModificationsResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u), 1u};
-}
-/* <<< factory CancelDeckModifications */
-
-/* >>> factory HandleSelectUpAndDownInList */
-HandleSelectUpAndDownInListResult HandleSelectUpAndDownInList(void)
-{
-	uint8_t positions = wCardListNumCursorPositions;
-	uint8_t old_offset = wCardListVisibleOffset;
-	uint8_t held = hDPadHeld;
-
-	if (held != (uint8_t)(PAD_SELECT | PAD_DOWN) &&
-		held != (uint8_t)(PAD_SELECT | PAD_UP)) {
-		return (HandleSelectUpAndDownInListResult){
-			(uint8_t)(held == 0u ? 0x80u : 0u)
-		};
-	}
-
-	uint8_t next;
-	if (held == (uint8_t)(PAD_SELECT | PAD_DOWN)) {
-		uint8_t candidate = (uint8_t)(old_offset + positions);
-		uint8_t doubled = (uint8_t)(candidate + positions);
-		if (doubled < wNumCardListEntries) {
-			next = candidate;
-		} else {
-			next = (uint8_t)(wNumCardListEntries - positions);
-		}
-	} else {
-		if (old_offset >= positions)
-			next = (uint8_t)(old_offset - positions);
-		else
-			next = 0u;
-	}
-
-	wCardListVisibleOffset = next;
-	if (next == old_offset)
-		return (HandleSelectUpAndDownInListResult){0x90u};
-
-	PlaySFX(SFX_CURSOR);
-	DispatchCardListUpdateFunction();
-	return (HandleSelectUpAndDownInListResult){0x10u};
-}
-/* <<< factory HandleSelectUpAndDownInList */
-
-/* >>> factory HandleDeckBuildScreen */
-DeckBuildScreenResult HandleDeckBuildScreen(void)
-{
-	(void)WriteCardListsTerminatorBytes();
-	CountNumberOfCardsForEachCardType();
-	return HandleDeckBuildScreen_SkipCount();
-}
-
-DeckBuildScreenResult HandleDeckBuildScreen_SkipCount(void)
-{
-	(void)DrawCardTypeIconsAndPrintCardCounts();
-
-	wCardListVisibleOffset = 0u;
-	wCurCardTypeFilter = 0u;
-	PrintFilteredCardListResult printed = PrintFilteredCardList(0u, 0u, 0u, 0u, 0u, 0u,
-		HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR);
-	return HandleDeckBuildScreen_SkipDraw(printed.a);
-}
-
-DeckBuildScreenResult HandleDeckBuildScreen_SkipDraw(uint8_t a)
-{
-	uint16_t params;
-	params = HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR;
-	(void)InitCardSelectionParams(a, &params);
-
-	for (;;) {
-		DoFrame();
-		if ((hDPadHeld & PAD_START) != 0u) {
-			PlaySFXConfirmOrCancel(MENU_CONFIRM);
-			ConfirmDeckConfiguration();
-			wTempCardTypeFilter = wCurCardTypeFilter;
-			continue;
-		}
-
-		uint8_t current_filter = wCurCardTypeFilter;
-		uint8_t temporary_filter = wTempCardTypeFilter;
-		if (temporary_filter != current_filter) {
-			wCurCardTypeFilter = temporary_filter;
-			wCardListVisibleOffset = 0u;
-			(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
-				HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR);
-			wCardListNumCursorPositions = NUM_FILTERS;
-		}
-
-		uint8_t jump_to_list = 0u;
-		if ((hDPadHeld & PAD_DOWN) != 0u) {
-			(void)ConfirmSelectionAndReturnCarry();
-			jump_to_list = 1u;
-		} else {
-			HandleCardSelectionInputResult input = HandleCardSelectionInput();
-			if (input.carry == 0u)
-				continue;
-			if (hffb3 == MENU_CANCEL)
-				return OpenDeckConfigurationMenu();
-			jump_to_list = 1u;
-		}
-
-		if (jump_to_list == 0u || wNumEntriesInCurFilter == 0u)
-			continue;
-
-		uint8_t list_cursor = 0u;
-		uint8_t back_to_filter = 0u;
-		for (;;) {
-			params = HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR;
-			(void)InitCardSelectionParams(list_cursor, &params);
-			uint8_t entries = wNumEntriesInCurFilter;
-			wNumCardListEntries = entries;
-			if (entries < wNumVisibleCardListEntries)
-				wCardListNumCursorPositions = entries;
-
-			wCardListUpdateFunction = (uint8_t)HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR;
-			gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
-				(uint8_t)(HANDLE_SELECT_PRINT_DECK_BUILDING_ADDR >> 8));
-			wced2 = 1u;
-
-			uint8_t restart_list = 0u;
-			for (;;) {
-				DoFrame();
-				if ((hDPadHeld & PAD_START) != 0u) {
-					PlaySFXConfirmOrCancel(MENU_CONFIRM);
-					wTempFilteredCardListNumCursorPositions = wCardListCursorPos;
-					ConfirmDeckConfiguration();
-					list_cursor = wTempFilteredCardListNumCursorPositions;
-					restart_list = 1u;
-					break;
-				}
-
-				HandleSelectUpAndDownInListResult page = HandleSelectUpAndDownInList();
-				if ((page.f & 0x10u) != 0u)
-					continue;
-
-				HandleDeckCardSelectionListResult selection = HandleDeckCardSelectionList();
-				if ((selection.f & 0x10u) == 0u)
-					continue;
-
-				(void)DrawListCursor_Invisible();
-				wTempCardListCursorPos = wCardListCursorPos;
-				if (hffb3 == MENU_CANCEL) {
-					params = HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR;
-					(void)InitCardSelectionParams(MENU_CANCEL, &params);
-					wTempCardTypeFilter = wCurCardTypeFilter;
-					back_to_filter = 1u;
-					break;
-				}
-
-				PlaySFXConfirmOrCancel(MENU_CONFIRM);
-				wTempCardListNumCursorPositions = wCardListNumCursorPositions;
-				wTempCardListCursorPos = wCardListCursorPos;
-				gb_write8(wCurCardListPtr_ADDR, (uint8_t)wFilteredCardList_ADDR);
-				gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u),
-					(uint8_t)(wFilteredCardList_ADDR >> 8));
-				OpenCardPageFromCardList();
-				DrawCardTypeIconsAndPrintCardCounts();
-
-				params = HANDLE_DECK_BUILD_FILTERS_PARAMS_ADDR;
-				(void)InitCardSelectionParams(0u, &params);
-				wTempCardTypeFilter = wCurCardTypeFilter;
-				(void)DrawHorizontalListCursor_Visible();
-				PrintDeckBuildingCardList();
-				params = HANDLE_DECK_BUILD_FILTERED_PARAMS_ADDR;
-				(void)InitCardSelectionParams(0u, &params);
-				wCardListNumCursorPositions = wTempCardListNumCursorPositions;
-				list_cursor = wTempCardListCursorPos;
-				wCardListCursorPos = list_cursor;
-			}
-
-			if (back_to_filter != 0u)
-				break;
-			if (restart_list != 0u)
-				continue;
-		}
-	}
-}
-/* <<< factory HandleDeckBuildScreen */
-
-/* >>> factory HandlePlayersCardsScreen */
-void HandlePlayersCardsScreen(void)
-{
-	(void)WriteCardListsTerminatorBytes();
-	(void)PrintPlayersCardsHeaderInfo();
-
-	wCardListVisibleOffset = 0u;
-	wCurCardTypeFilter = 0u;
-	PrintFilteredCardSelectionList(0u, 0x80u, 0u, 0u, 0u, 0u, wCardListCoords_ADDR);
-	EnableLCD();
-
-	uint16_t filter_params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
-	(void)InitCardSelectionParams(0u, &filter_params);
-
-	for (;;) {
-		DoFrame();
-		uint8_t current_filter = wCurCardTypeFilter;
-		uint8_t temp_filter = wTempCardTypeFilter;
-		if (temp_filter != current_filter) {
-			wCurCardTypeFilter = temp_filter;
-			wCardListVisibleOffset = 0u;
-			PrintFilteredCardSelectionList(temp_filter, 0u, 0u, 0u, 0u, 0u, wCardListVisibleOffset_ADDR);
-			hffb0 = 1u;
-			PrintPlayersCardsText();
-			hffb0 = 0u;
-			wCardListNumCursorPositions = NUM_FILTERS;
-		}
-
-		if ((hDPadHeld & PAD_DOWN) != 0u) {
-			(void)ConfirmSelectionAndReturnCarry();
-		} else {
-			HandleCardSelectionInputResult input = HandleCardSelectionInput();
-			if (input.carry == 0u)
-				continue;
-			if (hffb3 == MENU_CANCEL)
-				return;
-		}
-
-		if (wNumEntriesInCurFilter == 0u)
-			continue;
-
-		uint16_t list_params = HANDLE_PLAYERS_CARDS_DATA_ADDR;
-		(void)InitCardSelectionParams(0u, &list_params);
-		uint8_t entries = wNumEntriesInCurFilter;
-		wNumCardListEntries = entries;
-		if (entries < wNumVisibleCardListEntries)
-			wCardListNumCursorPositions = entries;
-		gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR);
-		gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
-			  (uint8_t)(HANDLE_PLAYERS_CARDS_PRINT_LIST_ADDR >> 8));
-		wced2 = 0u;
-
-		uint8_t return_to_filter = 0u;
-		for (;;) {
-			DoFrame();
-			HandleSelectUpAndDownInListResult move = HandleSelectUpAndDownInList();
-			if ((move.f & 0x10u) != 0u)
-				continue;
-			HandleDeckCardSelectionListResult selection = HandleDeckCardSelectionList();
-			if ((selection.f & 0x10u) != 0u) {
-				(void)DrawListCursor_Invisible();
-				wTempCardListCursorPos = wCardListCursorPos;
-				if (hffb3 == MENU_CANCEL) {
-					uint16_t params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
-					(void)InitCardSelectionParams(hffb3, &params);
-					wTempCardTypeFilter = wCurCardTypeFilter;
-					hffb0 = 1u;
-					PrintPlayersCardsText();
-					hffb0 = 0u;
-					return_to_filter = 1u;
-					break;
-				}
-			}
-			else if ((hDPadHeld & PAD_START) == 0u) {
-				continue;
-			}
-
-			PlaySFXConfirmOrCancel(MENU_CONFIRM);
-			wTempCardListNumCursorPositions = wCardListNumCursorPositions;
-			wTempCardListCursorPos = wCardListCursorPos;
-			gb_write8(wCurCardListPtr_ADDR, (uint8_t)wFilteredCardList_ADDR);
-			gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u),
-			  (uint8_t)(wFilteredCardList_ADDR >> 8));
-			OpenCardPageFromCardList();
-			(void)PrintPlayersCardsHeaderInfo();
-			filter_params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
-			(void)InitCardSelectionParams(0u, &filter_params);
-			wTempCardTypeFilter = wCurCardTypeFilter;
-			(void)DrawHorizontalListCursor_Visible();
-			PrintCardSelectionList();
-			EnableLCD();
-			list_params = HANDLE_PLAYERS_CARDS_DATA_ADDR;
-			(void)InitCardSelectionParams(0u, &list_params);
-			wCardListNumCursorPositions = wTempCardListNumCursorPositions;
-			wCardListCursorPos = wTempCardListCursorPos;
-		}
-		if (return_to_filter != 0u)
-			continue;
-	}
-}
-/* <<< factory HandlePlayersCardsScreen */
-
-/* >>> factory ChangeDeckName */
-void ChangeDeckName(void)
-{
-	InputCurDeckName();
-}
-/* <<< factory ChangeDeckName */
-
-/* >>> factory HandleDeckConfigurationMenu */
-DeckBuildScreenResult HandleDeckConfigurationMenu(void)
-{
-	uint16_t box = 0u;
-	DrawRegularTextBox(&box, 0u, 20u, 6u, 0u, 0u);
-	(void)PlaceTextItems(DECK_BUILD_MENU_DATA_ADDR);
-	for (;;) {
-		wVBlankOAMCopyToggle = TRUE;
-		DoFrame();
-		YourOrOppPlayAreaScreenInputResult input = YourOrOppPlayAreaScreen_HandleInput();
-		if ((input.f & 0x10u) == 0u)
-			continue;
-		uint8_t selection = input.a;
-		uint8_t selected_item = selection;
-		wced6 = selected_item;
-		if (selection == MENU_CANCEL) {
-			DrawCardTypeIconsAndPrintCardCounts();
-			wCardListCursorPos = wTempCardListCursorPos;
-			PrintFilteredCardListResult printed = PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
-				FILTERS_CARD_SELECTION_PARAMS_ADDR);
-			return HandleDeckBuildScreen_SkipDraw(printed.a);
-		}
-		/* deck_configuration.asm:585-591: the cursor is drawn and the OAM
-		 * copy armed before the table dispatch, for every selection but
-		 * MENU_CANCEL. */
-		YourOrOppPlayAreaScreen_DrawCursor();
-		wVBlankOAMCopyToggle = TRUE;
-		switch (selection) {
-		case 0u:
-			ConfirmDeckConfiguration();
-			break;
-		case 3u: {
-			SaveDeckConfigurationResult saved = SaveDeckConfiguration(0u);
-			if (saved.unwound)
-				return (DeckBuildScreenResult){saved.a, saved.f};
-			break;
-		}
-		case 4u: {
-			DismantleDeckResult dismantled = DismantleDeck(0u);
-			if (dismantled.unwound)
-				return (DeckBuildScreenResult){dismantled.a, 0x00u};
-			break;
-		}
-		case 5u: {
-			CancelDeckModificationsResult cancelled = CancelDeckModifications(0u);
-			if (cancelled.unwound)
-				return (DeckBuildScreenResult){cancelled.a, cancelled.f};
-			break;
-		}
-		case 1u:
-			return ModifyDeckConfiguration(0u);
-		case 2u:
-			ChangeDeckName();
-			return HandleDeckBuildScreen_SkipCount();
-		default:
-			break;
-		}
-		return OpenDeckConfigurationMenu_SkipInit();
-	}
-}
-/* <<< factory HandleDeckConfigurationMenu */
-
-/* >>> factory ModifyDeckConfiguration */
-DeckBuildScreenResult ModifyDeckConfiguration(uint16_t w0)
-{
-	(void)w0;
-	/* deck_configuration.asm:624-626: `add sp, $2` drops the caller's return
-	 * address and the routine falls into HandleDeckConfigurationMenu's
-	 * .draw_icons, whose tail is `jp HandleDeckBuildScreen.skip_draw`. The
-	 * caller returns straight after this call for that unwind. */
-	DrawCardTypeIconsAndPrintCardCounts();
-	wCardListCursorPos = wTempCardListCursorPos;
-	PrintFilteredCardListResult printed = PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u,
-		FILTERS_CARD_SELECTION_PARAMS_ADDR);
-	return HandleDeckBuildScreen_SkipDraw(printed.a);
-}
-/* <<< factory ModifyDeckConfiguration */
+/* --- factory HandleSendDeckConfigurationMenu */
+/* --- factory PrepareToBuildDeckConfigurationToSend */
+/* === factory CheckIfHasOtherValidDecks */
+/* === factory DrawCardTypeIcons */
+/* === factory HandleCardSelectionCursorBlink */
+/* === factory PrintTotalNumberOfCardsInCollection */

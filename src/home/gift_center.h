@@ -32,6 +32,8 @@ GiftCenterMenuResult GiftCenterMenu(void);
 /* <<< factory GiftCenterMenu */
 /* >>> part Func_fc7a_START_SCRIPT */
 #define Func_fc7a_START_SCRIPT (Func_fc7a_ADDR + 0x08u)
-#define Func_fcad_START_SCRIPT 0x7cb5u
 /* <<< part Func_fc7a_START_SCRIPT */
+/* >>> part Func_fcad_START_SCRIPT */
+#define Func_fcad_START_SCRIPT 0x7cb5u
+/* <<< part Func_fcad_START_SCRIPT */
 #endif /* POKETCG_HOME_GIFT_CENTER_H */

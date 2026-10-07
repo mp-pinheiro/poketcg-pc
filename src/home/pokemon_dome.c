@@ -4,8 +4,8 @@
 #include "home/map_events.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
 
+/* >>> part includes_2 */
 #include "home/pokemon_dome.h"
 #include "home/scripting.h"
 #include "mem.h"
@@ -15,8 +15,12 @@
 #include "generated/wram.h"
 #include "home/fire_club_lobby.h"
 #include "home/grass_club_entrance.h"
+/* <<< part includes_2 */
+/* >>> part PokemonDomeAfterDuelTable */
 #define PokemonDomeAfterDuelTable (PokemonDomeAfterDuel__after_duel_table_ADDR)
+/* <<< part PokemonDomeAfterDuelTable */
 
+/* >>> part preload_grand_master */
 static PokemonDomeResult preload_grand_master(uint8_t event, uint8_t x, uint8_t y,
 	uint8_t challenged, uint8_t defeated)
 {
@@ -29,13 +33,17 @@ static PokemonDomeResult preload_grand_master(uint8_t event, uint8_t x, uint8_t 
 		return Func_f762();
 	return (PokemonDomeResult){a, 0x90u};
 }
-/* <<< factory statics */
+/* <<< part preload_grand_master */
 
 /* >>> part W_LOAD_NPC_X_POS_ADDR */
 #define W_LOAD_NPC_X_POS_ADDR wLoadNPCXPos_ADDR
-#define W_LOAD_NPC_Y_POS_ADDR wLoadNPCYPos_ADDR
-#define W_LOAD_NPC_DIRECTION_ADDR wLoadNPCDirection_ADDR
 /* <<< part W_LOAD_NPC_X_POS_ADDR */
+/* >>> part W_LOAD_NPC_Y_POS_ADDR */
+#define W_LOAD_NPC_Y_POS_ADDR wLoadNPCYPos_ADDR
+/* <<< part W_LOAD_NPC_Y_POS_ADDR */
+/* >>> part W_LOAD_NPC_DIRECTION_ADDR */
+#define W_LOAD_NPC_DIRECTION_ADDR wLoadNPCDirection_ADDR
+/* <<< part W_LOAD_NPC_DIRECTION_ADDR */
 
 /* >>> part carry_flags */
 static uint8_t carry_flags(uint8_t f)

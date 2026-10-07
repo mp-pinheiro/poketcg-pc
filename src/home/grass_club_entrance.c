@@ -7,12 +7,14 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/grass_club_entrance.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
+/* >>> part GrassClubEntranceAfterDuelTable */
 #define GrassClubEntranceAfterDuelTable GrassClubEntranceAfterDuelTable_ADDR
-/* <<< factory statics */
+/* <<< part GrassClubEntranceAfterDuelTable */
 
 /* >>> factory FindEndOfDuelScript */
 FindEndOfDuelScriptResult FindEndOfDuelScript(uint16_t hl)

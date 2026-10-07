@@ -15,10 +15,16 @@
  * WRAM reads keyed by hWhoseTurn. ConvertSpecialTrainerCardToPokemon is a no-op for the
  * pokemon cards these routines query, so LoadCardDataToBuffer2_FromCardID alone matches. */
 #define PLAYER_TURN                       ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
-#define DUELVARS_ARENA_CARD               0xBBu
-#define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS   0xE9u
-#define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xEAu
 /* <<< part PLAYER_TURN */
+/* >>> part DUELVARS_ARENA_CARD */
+#define DUELVARS_ARENA_CARD               0xBBu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_WEAKNESS */
+#define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS   0xE9u
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_WEAKNESS */
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_RESISTANCE */
+#define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xEAu
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_RESISTANCE */
 
 /* >>> part turn_duel_var */
 static uint8_t turn_duel_var(uint8_t off)
@@ -110,8 +116,10 @@ uint8_t GetPlayAreaCardResistance(uint8_t a)
 
 /* >>> part DUELVARS_ARENA_CARD_CHANGED_TYPE */
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
-#define HAS_CHANGED_COLOR_F_MASK 0x80u
 /* <<< part DUELVARS_ARENA_CARD_CHANGED_TYPE */
+/* >>> part HAS_CHANGED_COLOR_F_MASK */
+#define HAS_CHANGED_COLOR_F_MASK 0x80u
+/* <<< part HAS_CHANGED_COLOR_F_MASK */
 
 /* >>> factory GetPlayAreaCardColor */
 uint8_t GetPlayAreaCardColor(uint8_t a)

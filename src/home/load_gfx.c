@@ -19,21 +19,49 @@
 
 /* >>> part GFX_TABLE_POINTERS */
 #define GFX_TABLE_POINTERS GfxTablePointers_ADDR
-#define GFX_TABLE_TILEMAPS 0u
-#define GFX_TABLE_TILESETS 2u
-#define GFX_TABLE_SPRITES 4u
-#define GFX_TABLE_PALETTES 8u
-#define TILE_SIZE 16u
-#define TILESET_MINT 0x57u
-#define TILESET_MINT_SINGLE 0x58u
-#define SPRITE_OW_MINT 0x72u
-#define PALETTE_MINT 0xa1u
-#define PALETTE_MINT_SINGLE 0xa2u
-#define MINT_PALETTE_BYTES 26u
-#define MINT_SINGLE_PALETTE_OFFSET 62u
-#define MINT_SINGLE_PALETTE_BYTES 10u
-#define MINT_ASSET_ADDR 0x4000u
 /* <<< part GFX_TABLE_POINTERS */
+/* >>> part GFX_TABLE_TILEMAPS */
+#define GFX_TABLE_TILEMAPS 0u
+/* <<< part GFX_TABLE_TILEMAPS */
+/* >>> part GFX_TABLE_TILESETS */
+#define GFX_TABLE_TILESETS 2u
+/* <<< part GFX_TABLE_TILESETS */
+/* >>> part GFX_TABLE_SPRITES */
+#define GFX_TABLE_SPRITES 4u
+/* <<< part GFX_TABLE_SPRITES */
+/* >>> part GFX_TABLE_PALETTES */
+#define GFX_TABLE_PALETTES 8u
+/* <<< part GFX_TABLE_PALETTES */
+/* >>> part TILE_SIZE */
+#define TILE_SIZE 16u
+/* <<< part TILE_SIZE */
+/* >>> part TILESET_MINT */
+#define TILESET_MINT 0x57u
+/* <<< part TILESET_MINT */
+/* >>> part TILESET_MINT_SINGLE */
+#define TILESET_MINT_SINGLE 0x58u
+/* <<< part TILESET_MINT_SINGLE */
+/* >>> part SPRITE_OW_MINT */
+#define SPRITE_OW_MINT 0x72u
+/* <<< part SPRITE_OW_MINT */
+/* >>> part PALETTE_MINT */
+#define PALETTE_MINT 0xa1u
+/* <<< part PALETTE_MINT */
+/* >>> part PALETTE_MINT_SINGLE */
+#define PALETTE_MINT_SINGLE 0xa2u
+/* <<< part PALETTE_MINT_SINGLE */
+/* >>> part MINT_PALETTE_BYTES */
+#define MINT_PALETTE_BYTES 26u
+/* <<< part MINT_PALETTE_BYTES */
+/* >>> part MINT_SINGLE_PALETTE_OFFSET */
+#define MINT_SINGLE_PALETTE_OFFSET 62u
+/* <<< part MINT_SINGLE_PALETTE_OFFSET */
+/* >>> part MINT_SINGLE_PALETTE_BYTES */
+#define MINT_SINGLE_PALETTE_BYTES 10u
+/* <<< part MINT_SINGLE_PALETTE_BYTES */
+/* >>> part MINT_ASSET_ADDR */
+#define MINT_ASSET_ADDR 0x4000u
+/* <<< part MINT_ASSET_ADDR */
 
 /* >>> part mint_tileset_bank */
 static uint8_t mint_tileset_bank(uint8_t tileset)

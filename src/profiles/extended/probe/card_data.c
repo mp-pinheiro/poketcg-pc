@@ -3,21 +3,18 @@
 #include "generated/hram.h"
 #include "probe.h"
 /* <<< part includes */
-
 /* >>> part probe_card_id */
 static CardId probe_card_id(const ProbeState *s)
 {
 	return (CardId)(((uint16_t)s->d << 8) | s->e);
 }
 /* <<< part probe_card_id */
-
 /* >>> factory GetCardType */
 static void adapt_GetCardType(ProbeState *s)
 {
 	s->a = GetCardType(probe_card_id(s));
 }
 /* <<< factory GetCardType */
-
 /* >>> factory GetCardName */
 static void adapt_GetCardName(ProbeState *s)
 {
@@ -26,7 +23,6 @@ static void adapt_GetCardName(ProbeState *s)
 	s->e = (uint8_t)de;
 }
 /* <<< factory GetCardName */
-
 /* >>> factory GetCardTypeRarityAndSet */
 static void adapt_GetCardTypeRarityAndSet(ProbeState *s)
 {
@@ -39,28 +35,19 @@ static void adapt_GetCardTypeRarityAndSet(ProbeState *s)
 	s->c = r.set;
 }
 /* <<< factory GetCardTypeRarityAndSet */
-
 /* >>> factory LoadCardDataToBuffer1_FromCardID */
 static void adapt_LoadCardDataToBuffer1_FromCardID(ProbeState *s)
 {
 	LoadCardDataToBuffer1_FromCardID(probe_card_id(s));
 }
 /* <<< factory LoadCardDataToBuffer1_FromCardID */
-
 /* >>> factory LoadCardDataToBuffer2_FromCardID */
 static void adapt_LoadCardDataToBuffer2_FromCardID(ProbeState *s)
 {
 	LoadCardDataToBuffer2_FromCardID(probe_card_id(s));
 }
 /* <<< factory LoadCardDataToBuffer2_FromCardID */
-
-/* >>> factory LoadCardDataToBuffer1_FromName */
-static void adapt_LoadCardDataToBuffer1_FromName(ProbeState *s)
-{
-	LoadCardDataToBuffer1_FromName((uint16_t)(s->d << 8 | s->e));
-}
-/* <<< factory LoadCardDataToBuffer1_FromName */
-
+/* --- factory LoadCardGfx */
 /* >>> factory GetCardPointer */
 static void adapt_GetCardPointer(ProbeState *s)
 {
@@ -75,14 +62,13 @@ static void adapt_GetCardPointer(ProbeState *s)
 	}
 }
 /* <<< factory GetCardPointer */
-
 /* >>> factory LoadCardDataToHL_FromCardID */
 static void adapt_LoadCardDataToHL_FromCardID(ProbeState *s)
 {
 	LoadCardDataToHL_FromCardID(probe_card_id(s), &s->hl, s->stack[0]);
 }
 /* <<< factory LoadCardDataToHL_FromCardID */
-
+/* --- factory CopyFontsOrDuelGraphicsTiles2 */
 /* >>> part probe_entries_card_data */
 const ProbeEntry probe_entries_card_data[] = {
 	{ "GetCardType", adapt_GetCardType },

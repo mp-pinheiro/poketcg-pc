@@ -12,22 +12,42 @@
 #include "mem.h"
 /* <<< part includes */
 
-/* >>> factory statics */
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
+/* <<< part PLAYER_TURN */
+/* >>> part OPPONENT_TURN */
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
+/* <<< part OPPONENT_TURN */
 
+/* >>> part ANIMCMD_END */
 /* AnimationCommandPointerTable indices (commands.asm:162-171, table order). */
 #define ANIMCMD_END 0x00u
+/* <<< part ANIMCMD_END */
+/* >>> part ANIMCMD_NORMAL */
 #define ANIMCMD_NORMAL 0x01u
+/* <<< part ANIMCMD_NORMAL */
+/* >>> part ANIMCMD_PLAYER_SIDE */
 #define ANIMCMD_PLAYER_SIDE 0x02u
+/* <<< part ANIMCMD_PLAYER_SIDE */
+/* >>> part ANIMCMD_OPP_SIDE */
 #define ANIMCMD_OPP_SIDE 0x03u
+/* <<< part ANIMCMD_OPP_SIDE */
+/* >>> part ANIMCMD_SET_SCREEN */
 #define ANIMCMD_SET_SCREEN 0x04u
+/* <<< part ANIMCMD_SET_SCREEN */
+/* >>> part ANIMCMD_PLAY_AREA */
 #define ANIMCMD_PLAY_AREA 0x05u
+/* <<< part ANIMCMD_PLAY_AREA */
+/* >>> part ANIMCMD_END_UNUSED */
 #define ANIMCMD_END_UNUSED 0x06u
+/* <<< part ANIMCMD_END_UNUSED */
 
+/* >>> part DUEL_ANIM_SET_SCREEN_CMD */
 /* animation_constants.asm: values are the file's own hex annotations. */
 #define DUEL_ANIM_SET_SCREEN_CMD 0x96u
+/* <<< part DUEL_ANIM_SET_SCREEN_CMD */
 
+/* >>> part includes_BANK_POINTER_TABLE_ATTACK_ANIMATION */
 #include "mem.h"
 
 #include "generated/wram.h"
@@ -49,10 +69,16 @@
 #include "home/duel_menus.h"
 
 #include "home/script.h"
+/* <<< part includes_BANK_POINTER_TABLE_ATTACK_ANIMATION */
+/* >>> part BANK_POINTER_TABLE_ATTACK_ANIMATION */
 #define BANK_POINTER_TABLE_ATTACK_ANIMATION 6u
+/* <<< part BANK_POINTER_TABLE_ATTACK_ANIMATION */
+/* >>> part POINTER_TABLE_ATTACK_ANIMATION */
 #define POINTER_TABLE_ATTACK_ANIMATION PointerTable_AttackAnimation_ADDR
+/* <<< part POINTER_TABLE_ATTACK_ANIMATION */
+/* >>> part TRUE */
 #define TRUE 0x01u
-/* <<< factory statics */
+/* <<< part TRUE */
 
 
 

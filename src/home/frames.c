@@ -18,17 +18,33 @@
 
 /* >>> part PAD_CTRL_PAD */
 #define PAD_CTRL_PAD 0xF0u
+/* <<< part PAD_CTRL_PAD */
+/* >>> part PAD_BUTTONS */
 #define PAD_BUTTONS 0x0Fu
+/* <<< part PAD_BUTTONS */
+/* >>> part PAD_SELECT */
 #define PAD_SELECT 0x04u
+/* <<< part PAD_SELECT */
 
+/* >>> part DO_FRAME_UPDATE_QUEUED_ANIMATIONS */
 /* Registered targets of wDoFrameFunction that this tree has a C body for. */
 #define DO_FRAME_UPDATE_QUEUED_ANIMATIONS UpdateQueuedAnimations_ADDR
+/* <<< part DO_FRAME_UPDATE_QUEUED_ANIMATIONS */
+/* >>> part DO_FRAME_OVERWORLD */
 #define DO_FRAME_OVERWORLD OverworldDoFrameFunction_ADDR
+/* <<< part DO_FRAME_OVERWORLD */
+/* >>> part DO_FRAME_FUNC_3E31 */
 #define DO_FRAME_FUNC_3E31 Func_3e31_ADDR
+/* <<< part DO_FRAME_FUNC_3E31 */
+/* >>> part DO_FRAME_ALL_SPRITE_ANIMATIONS */
 #define DO_FRAME_ALL_SPRITE_ANIMATIONS HandleAllSpriteAnimations_ADDR
+/* <<< part DO_FRAME_ALL_SPRITE_ANIMATIONS */
+/* >>> part DO_FRAME_LINK_OPPONENT_TURN */
 #define DO_FRAME_LINK_OPPONENT_TURN LinkOpponentTurnFrameFunction_ADDR
+/* <<< part DO_FRAME_LINK_OPPONENT_TURN */
+/* >>> part DO_FRAME_NOOP */
 #define DO_FRAME_NOOP NoOp_ADDR
-/* <<< part PAD_CTRL_PAD */
+/* <<< part DO_FRAME_NOOP */
 
 /* >>> part g_frame_boundary_hook */
 static FrameBoundaryHook g_frame_boundary_hook;

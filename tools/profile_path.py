@@ -13,12 +13,15 @@ ROOT = Path(__file__).resolve().parent.parent
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("kind", choices=("source", "rom", "map", "sym", "binary", "probe", "pack",
-                                         "inventory", "removed-basenames"))
+                                         "inventory", "removed-basenames", "overlay-root"))
     parser.add_argument("--profile")
     args = parser.parse_args()
     profile = get_profile(args.profile, root=ROOT)
     if args.kind == "removed-basenames":
         print(";".join(sorted(profile.removed_basenames)))
+        return 0
+    if args.kind == "overlay-root":
+        print(profile.overlay_root or "")
         return 0
     paths = {
         "source": profile.source_path(ROOT),

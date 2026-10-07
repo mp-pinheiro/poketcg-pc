@@ -12,30 +12,62 @@
 
 /* >>> part rSCY */
 #define rSCY 0xFF42u
+/* <<< part rSCY */
+/* >>> part rSCX */
 #define rSCX 0xFF43u
+/* <<< part rSCX */
+/* >>> part rWY */
 #define rWY  0xFF4Au
+/* <<< part rWY */
+/* >>> part rWX */
 #define rWX  0xFF4Bu
+/* <<< part rWX */
+/* >>> part rWBK */
 #define rWBK 0xFF70u
+/* <<< part rWBK */
+/* >>> part rBGP */
 #define rBGP  0xFF47u
+/* <<< part rBGP */
+/* >>> part rOBP0 */
 #define rOBP0 0xFF48u
+/* <<< part rOBP0 */
+/* >>> part rOBP1 */
 #define rOBP1 0xFF49u
+/* <<< part rOBP1 */
 
+/* >>> part BOOTUP_A_CGB */
 #define BOOTUP_A_CGB 0x11u
+/* <<< part BOOTUP_A_CGB */
 
+/* >>> part LCDC_BG_OBJ_WIN */
 #define LCDC_BG_OBJ_WIN 0x47u /* LCDC_BG_ON | LCDC_OBJ_ON | LCDC_OBJ_16 | LCDC_WIN_9C00 */
+/* <<< part LCDC_BG_OBJ_WIN */
 
+/* >>> part V0TILES0 */
 #define V0TILES0 0x8000u
+/* <<< part V0TILES0 */
+/* >>> part V0BGMAP0 */
 #define V0BGMAP0 0x9800u
+/* <<< part V0BGMAP0 */
+/* >>> part BGMAP_SIZE */
 #define BGMAP_SIZE 0x0400u          /* v0BGMap1 - v0BGMap0 == v1BGMap1 - v1BGMap0 */
+/* <<< part BGMAP_SIZE */
+/* >>> part TILE_AREA_SIZE */
 #define TILE_AREA_SIZE 0x1800u      /* v0BGMap0 - v0Tiles0 */
+/* <<< part TILE_AREA_SIZE */
 
+/* >>> part PAL_SIZE */
 #define PAL_SIZE 8u
+/* <<< part PAL_SIZE */
 
+/* >>> part NOOP_ADDR */
 /* poketcg.sym (bank 0, fixed for this disassembly): the two ROM addresses the
  * asm bakes into its self-modifying trampoline/copy code. */
 #define NOOP_ADDR NoOp_ADDR
+/* <<< part NOOP_ADDR */
+/* >>> part INITIAL_PALETTE_ADDR */
 #define INITIAL_PALETTE_ADDR InitialPalette_ADDR
-/* <<< part rSCY */
+/* <<< part INITIAL_PALETTE_ADDR */
 
 /* >>> factory NoOp */
 void NoOp(void)

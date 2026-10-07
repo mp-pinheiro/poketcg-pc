@@ -9,8 +9,10 @@
 
 /* >>> part CARD_DECK_SIZE */
 #define CARD_DECK_SIZE 60u
-#define CARD_DECK_COMPRESSED_SIZE 68u
 /* <<< part CARD_DECK_SIZE */
+/* >>> part CARD_DECK_COMPRESSED_SIZE */
+#define CARD_DECK_COMPRESSED_SIZE 68u
+/* <<< part CARD_DECK_COMPRESSED_SIZE */
 
 /* >>> part CompressCardIdDeck */
 uint8_t CompressCardIdDeck(const CardId *cards, uint8_t *compressed);

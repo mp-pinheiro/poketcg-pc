@@ -8,17 +8,27 @@
 
 /* >>> part rSTAT */
 #define rSTAT   0xFF41u
+/* <<< part rSTAT */
+/* >>> part rBGP */
 #define rBGP    0xFF47u
+/* <<< part rBGP */
+/* >>> part rOBP0 */
 #define rOBP0   0xFF48u
+/* <<< part rOBP0 */
+/* >>> part rOBP1 */
 #define rOBP1   0xFF49u
+/* <<< part rOBP1 */
 
+/* >>> part PAL_SIZE */
 /* palettes.asm:74: `bit FLUSH_ALL_PALS_F, a` tests bit 6 alone, not the full
  * FLUSH_ALL_PALS (0xC0) pattern. Every single-palette flush request also has
  * FLUSH_ONE_PAL (bit 7) set, so masking with FLUSH_ALL_PALS instead of this
  * bit routed every CGB single-palette flush through FlushAllCGBPalettes. */
 #define PAL_SIZE                8u
+/* <<< part PAL_SIZE */
+/* >>> part STAT_BUSY */
 #define STAT_BUSY               0x02u
-/* <<< part rSTAT */
+/* <<< part STAT_BUSY */
 
 /* >>> factory CopyCGBPalettes */
 CopyCGBPalettesResult CopyCGBPalettes(uint8_t a, uint8_t b)

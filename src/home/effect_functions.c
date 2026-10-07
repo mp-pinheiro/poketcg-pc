@@ -9,45 +9,87 @@
 #include "mem.h"
 #include "home/bg_map.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/duel.h"
 #include "home/effect_functions.h"
+/* <<< part includes_2 */
 
+/* >>> part DUELVARS_DUELIST_TYPE */
 #define DUELVARS_DUELIST_TYPE             0xf1u
+/* <<< part DUELVARS_DUELIST_TYPE */
+/* >>> part DUELVARS_ARENA_CARD_STATUS */
 #define DUELVARS_ARENA_CARD_STATUS        0xf0u
+/* <<< part DUELVARS_ARENA_CARD_STATUS */
+/* >>> part DUELVARS_ARENA_CARD_SUBSTATUS1 */
 #define DUELVARS_ARENA_CARD_SUBSTATUS1    0xe7u
+/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS1 */
 
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
+/* >>> part includes_DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE */
 #include "home/random.h"
 
 #include "home/substatus.h"
+/* <<< part includes_DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE */
 
 
+/* >>> part DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE */
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xEDu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE */
+/* >>> part DUELVARS_DECK_CARDS */
 #define DUELVARS_DECK_CARDS 0x7Eu
+/* <<< part DUELVARS_DECK_CARDS */
+/* >>> part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
+/* >>> part TX_ThereAreNoTrainerCardsInDiscardPileText */
 #define TX_ThereAreNoTrainerCardsInDiscardPileText 0x00C4u
+/* <<< part TX_ThereAreNoTrainerCardsInDiscardPileText */
+/* >>> part TX_NoCardsLeftInTheDeckText */
 #define TX_NoCardsLeftInTheDeckText 0x00B1u
+/* <<< part TX_NoCardsLeftInTheDeckText */
 
 
+/* >>> part includes_DUELVARS_ARENA_CARD */
 #include "home/effect_functions.h"
 
 #include "home/damage.h"
 #include "home/duel.h"
+/* <<< part includes_DUELVARS_ARENA_CARD */
 
 
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD       0xBBu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD_HP */
 #define DUELVARS_ARENA_CARD_HP    0xC8u
+/* <<< part DUELVARS_ARENA_CARD_HP */
+/* >>> part DUELVARS_ARENA_CARD_STAGE */
 #define DUELVARS_ARENA_CARD_STAGE 0xCEu
+/* <<< part DUELVARS_ARENA_CARD_STAGE */
 
 
+/* >>> part COLOR_TEXT_FIRE */
 #define COLOR_TEXT_FIRE      0x48u
+/* <<< part COLOR_TEXT_FIRE */
+/* >>> part COLOR_TEXT_GRASS */
 #define COLOR_TEXT_GRASS     0x47u
+/* <<< part COLOR_TEXT_GRASS */
+/* >>> part COLOR_TEXT_LIGHTNING */
 #define COLOR_TEXT_LIGHTNING 0x4au
+/* <<< part COLOR_TEXT_LIGHTNING */
+/* >>> part COLOR_TEXT_WATER */
 #define COLOR_TEXT_WATER     0x49u
+/* <<< part COLOR_TEXT_WATER */
+/* >>> part COLOR_TEXT_FIGHTING */
 #define COLOR_TEXT_FIGHTING  0x4bu
+/* <<< part COLOR_TEXT_FIGHTING */
+/* >>> part COLOR_TEXT_PSYCHIC */
 #define COLOR_TEXT_PSYCHIC   0x4cu
+/* <<< part COLOR_TEXT_PSYCHIC */
 
+/* >>> part color_to_text */
 static const uint16_t color_to_text[] = {
 	COLOR_TEXT_FIRE,
 	COLOR_TEXT_GRASS,
@@ -56,9 +98,13 @@ static const uint16_t color_to_text[] = {
 	COLOR_TEXT_FIGHTING,
 	COLOR_TEXT_PSYCHIC,
 };
+/* <<< part color_to_text */
 
+/* >>> part DUELVARS_BENCH1_CARD_HP */
 #define DUELVARS_BENCH1_CARD_HP 0xC9u
+/* <<< part DUELVARS_BENCH1_CARD_HP */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_FLAGS */
 #include "home/math.h"
 
 #include "generated/hram.h"
@@ -70,10 +116,14 @@ static const uint16_t color_to_text[] = {
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "mem.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_FLAGS */
 
 
+/* >>> part DUELVARS_ARENA_CARD_FLAGS */
 #define DUELVARS_ARENA_CARD_FLAGS 0xC2u
+/* <<< part DUELVARS_ARENA_CARD_FLAGS */
 
+/* >>> part includes_DUELVARS_CARD_LOCATIONS */
 #include "home/damage.h"
 #include "home/duel.h"
 #include "home/math.h"
@@ -81,26 +131,38 @@ static const uint16_t color_to_text[] = {
 
 #include "home/duel.h"
 #include "home/card_data.h"
+/* <<< part includes_DUELVARS_CARD_LOCATIONS */
+/* >>> part DUELVARS_CARD_LOCATIONS */
 #define DUELVARS_CARD_LOCATIONS 0x00u
+/* <<< part DUELVARS_CARD_LOCATIONS */
 
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_TYPE */
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_TYPE */
 
 
 
 
 
+/* >>> part includes_DUELVARS_HAND */
 #include "home/duel.h"
 #include "home/card_data.h"
+/* <<< part includes_DUELVARS_HAND */
 
 
+/* >>> part DUELVARS_HAND */
 #define DUELVARS_HAND 0x42u
+/* <<< part DUELVARS_HAND */
+/* >>> part DUELVARS_NUMBER_OF_CARDS_IN_HAND */
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_IN_HAND */
 
 
 
 
 
 
+/* >>> part includes_DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER */
 #include "generated/hram.h"
 
 
@@ -122,9 +184,13 @@ static const uint16_t color_to_text[] = {
 
 #include "home/duel.h"
 #include "generated/hram.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER */
 
+/* >>> part DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER */
 #define DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER 0xe0u
+/* <<< part DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER */
 
+/* >>> part effect_compare */
 static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 {
 	uint8_t f = 0x40u;
@@ -136,7 +202,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 		f |= 0x10u;
 	return f;
 }
+/* <<< part effect_compare */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_LAST_TURN_EFFECT */
 #include "home/effect_functions.h"
 
 #include "generated/hram.h"
@@ -152,13 +220,17 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/duel.h"
 #include "home/substatus.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_LAST_TURN_EFFECT */
 
 
 
+/* >>> part DUELVARS_ARENA_CARD_LAST_TURN_EFFECT */
 #define DUELVARS_ARENA_CARD_LAST_TURN_EFFECT 0xf8u
+/* <<< part DUELVARS_ARENA_CARD_LAST_TURN_EFFECT */
 
 
 
+/* >>> part includes_DUELVARS_ARENA_CARD_CHANGED_RESISTANCE */
 #include "home/random.h"
 
 
@@ -320,17 +392,27 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_CHANGED_RESISTANCE */
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_RESISTANCE */
 #define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xEAu
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_RESISTANCE */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_CHANGED_WEAKNESS */
 #include "home/effect_functions.h"
 #include "home/duel.h"
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "home/menus.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_CHANGED_WEAKNESS */
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_WEAKNESS */
 #define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS 0xE9u
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_WEAKNESS */
+/* >>> part DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK */
 #define DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK 0xF7u
+/* <<< part DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
 #include "home/core.h"
 #include "home/serial.h"
 #include "generated/hram.h"
@@ -364,8 +446,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
+/* >>> part DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
 #define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xDAu
+/* <<< part DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2 */
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/menus.h"
@@ -376,22 +462,36 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #include "home/duel.h"
 #include "mem.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2 */
+/* >>> part DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2 */
 #define DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2 0xf6u
+/* <<< part DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2 */
+/* >>> part DUELVARS_ARENA_CARD_SUBSTATUS2 */
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
+/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS2 */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/effect_functions.h"
 #include "home/menus.h"
 #include "home/duel.h"
 #include "home/print_text.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX */
+/* >>> part DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX */
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xF2u
+/* <<< part DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE */
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "generated/wram.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE */
+/* >>> part DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE */
 #define DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE 0xf3u
+/* <<< part DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE */
 
+/* >>> part includes_PAD_B */
 #include "home/effect_functions.h"
 
 #include "home/effect_functions.h"
@@ -428,10 +528,18 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "home/menus.h"
+/* <<< part includes_PAD_B */
+/* >>> part PAD_B */
 #define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part PAD_START */
 #define PAD_START 0x08u
+/* <<< part PAD_START */
+/* >>> part MENU_CANCEL */
 #define MENU_CANCEL 0xFFu
+/* <<< part MENU_CANCEL */
 
+/* >>> part includes_BANK_DUEL_CORE */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
@@ -462,17 +570,31 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/core.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_BANK_DUEL_CORE */
+/* >>> part BANK_DUEL_CORE */
 #define BANK_DUEL_CORE 0x01u
+/* <<< part BANK_DUEL_CORE */
+/* >>> part KADABRA_TYPE_ENERGY_PSYCHIC */
 #define KADABRA_TYPE_ENERGY_PSYCHIC 0x0du
+/* <<< part KADABRA_TYPE_ENERGY_PSYCHIC */
 
+/* >>> part includes_Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA */
+/* >>> part Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA */
 #define Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA 0x00u
+/* <<< part Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA */
+/* >>> part Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE */
 #define Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE 0x01u
+/* <<< part Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE */
+/* >>> part Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC */
 #define Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC 0x0du
+/* <<< part Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC */
 
+/* >>> part includes_SR_PLAY_AREA_ARENA */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/effect_functions.h"
@@ -482,10 +604,18 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/core.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_SR_PLAY_AREA_ARENA */
+/* >>> part SR_PLAY_AREA_ARENA */
 #define SR_PLAY_AREA_ARENA 0x00u
+/* <<< part SR_PLAY_AREA_ARENA */
+/* >>> part SR_BANK_DUEL_CORE */
 #define SR_BANK_DUEL_CORE 0x01u
+/* <<< part SR_BANK_DUEL_CORE */
+/* >>> part SR_TYPE_ENERGY_WATER */
 #define SR_TYPE_ENERGY_WATER 0x0Bu
+/* <<< part SR_TYPE_ENERGY_WATER */
 
+/* >>> part includes_C1_PLAY_AREA_ARENA */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/effect_functions.h"
@@ -519,8 +649,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "generated/hram.h"
 #include "home/effect_functions.h"
+/* <<< part includes_C1_PLAY_AREA_ARENA */
+/* >>> part C1_PLAY_AREA_ARENA */
 #define C1_PLAY_AREA_ARENA 0x00u
+/* <<< part C1_PLAY_AREA_ARENA */
 
+/* >>> part includes_SAH_BANK_DUEL_CORE */
 #include "home/effect_functions.h"
 #include "generated/hram.h"
 
@@ -534,15 +668,23 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_SAH_BANK_DUEL_CORE */
+/* >>> part SAH_BANK_DUEL_CORE */
 #define SAH_BANK_DUEL_CORE 0x01u
+/* <<< part SAH_BANK_DUEL_CORE */
 
+/* >>> part includes_RAH_BANK_DUEL_CORE */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_RAH_BANK_DUEL_CORE */
+/* >>> part RAH_BANK_DUEL_CORE */
 #define RAH_BANK_DUEL_CORE 0x01u
+/* <<< part RAH_BANK_DUEL_CORE */
 
+/* >>> part includes_Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/menus.h"
@@ -556,33 +698,57 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #define Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+/* <<< part Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+/* <<< part Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
+/* >>> part includes_NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #define NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+/* <<< part NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+/* <<< part NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
+/* >>> part includes_MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #define MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+/* <<< part MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+/* <<< part MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
+/* >>> part includes_KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #define KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+/* <<< part KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+/* <<< part KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
+/* >>> part includes_RV_BANK_DUEL_CORE */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
@@ -594,25 +760,41 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes_RV_BANK_DUEL_CORE */
+/* >>> part RV_BANK_DUEL_CORE */
 #define RV_BANK_DUEL_CORE 0x01u
+/* <<< part RV_BANK_DUEL_CORE */
+/* >>> part RV_DUELVARS_ARENA_CARD_HP */
 #define RV_DUELVARS_ARENA_CARD_HP 0xC8u
+/* <<< part RV_DUELVARS_ARENA_CARD_HP */
 
+/* >>> part includes_IF_BANK_DUEL_CORE */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes_IF_BANK_DUEL_CORE */
+/* >>> part IF_BANK_DUEL_CORE */
 #define IF_BANK_DUEL_CORE 0x01u
+/* <<< part IF_BANK_DUEL_CORE */
 
+/* >>> part includes_BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+/* <<< part includes_BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 #define BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+/* <<< part BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
+/* >>> part BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+/* <<< part BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
+/* >>> part includes_SYM_GRASS */
 #include "home/switch_rom.h"
 
 #include "generated/hram.h"
@@ -641,11 +823,19 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #include "home/serial.h"
 #include "home/sound.h"
+/* <<< part includes_SYM_GRASS */
+/* >>> part SYM_GRASS */
 #define SYM_GRASS 0x02u
+/* <<< part SYM_GRASS */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
+/* >>> part SYM_LIGHTNING */
 #define SYM_LIGHTNING 0x03u
+/* <<< part SYM_LIGHTNING */
 
 
+/* >>> part includes_TRUE */
 #include "home/effect_functions.h"
 #include "home/frames.h"
 #include "home/menus.h"
@@ -747,9 +937,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/card_color.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
+/* <<< part includes_TRUE */
 
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part chain_lightning_damage_same_color_bench */
 /* effect_functions.asm:6753-6779, ChainLightningEffect.DamageSameColorBench.
  * The entry jumps straight to .next_bench, so `inc d` / `dec e` both run
  * before the first color check: the arena slot is never examined, and a play
@@ -771,7 +965,9 @@ static void chain_lightning_damage_same_color_bench(void)
 			(void)DealDamageToPlayAreaPokemon_RegularAnim(d, 10u, 0u);
 	}
 }
+/* <<< part chain_lightning_damage_same_color_bench */
 
+/* >>> part includes_FG_ATK_ANIM_FIREGIVER_OPP */
 #include "home/card_data.h"
 #include "home/core.h"
 #include "home/duel.h"
@@ -783,20 +979,44 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_FG_ATK_ANIM_FIREGIVER_OPP */
 
 
+/* >>> part FG_ATK_ANIM_FIREGIVER_OPP */
 #define FG_ATK_ANIM_FIREGIVER_OPP 0x85u
+/* <<< part FG_ATK_ANIM_FIREGIVER_OPP */
+/* >>> part FG_ATK_ANIM_FIREGIVER_PLAYER */
 #define FG_ATK_ANIM_FIREGIVER_PLAYER 0x84u
+/* <<< part FG_ATK_ANIM_FIREGIVER_PLAYER */
+/* >>> part FG_CARD_LOCATION_DECK */
 #define FG_CARD_LOCATION_DECK 0x00u
+/* <<< part FG_CARD_LOCATION_DECK */
+/* >>> part FG_DECK_SIZE */
 #define FG_DECK_SIZE 60u
+/* <<< part FG_DECK_SIZE */
+/* >>> part FG_DUELIST_TYPE_PLAYER */
 #define FG_DUELIST_TYPE_PLAYER 0x00u
+/* <<< part FG_DUELIST_TYPE_PLAYER */
+/* >>> part FG_DUELVARS_CARD_LOCATIONS */
 #define FG_DUELVARS_CARD_LOCATIONS 0x00u
+/* <<< part FG_DUELVARS_CARD_LOCATIONS */
+/* >>> part FG_DUELVARS_NUMBER_OF_CARDS_IN_HAND */
 #define FG_DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
+/* <<< part FG_DUELVARS_NUMBER_OF_CARDS_IN_HAND */
+/* >>> part FG_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #define FG_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
+/* <<< part FG_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
+/* >>> part FG_LIST_TERMINATOR */
 #define FG_LIST_TERMINATOR 0xFFu
+/* <<< part FG_LIST_TERMINATOR */
+/* >>> part FG_PLAY_AREA_ARENA */
 #define FG_PLAY_AREA_ARENA 0x00u
+/* <<< part FG_PLAY_AREA_ARENA */
+/* >>> part FG_TYPE_ENERGY_FIRE */
 #define FG_TYPE_ENERGY_FIRE 0x08u
+/* <<< part FG_TYPE_ENERGY_FIRE */
 
+/* >>> part includes_Pokedex_PlayerSelection_BANK_DUEL_CORE */
 #include "home/core.h"
 #include "home/duel_core.h"
 #include "generated/hram.h"
@@ -874,7 +1094,9 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/menus.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes_Pokedex_PlayerSelection_BANK_DUEL_CORE */
 
+/* >>> part Pokedex_PlayerSelection_BANK_DUEL_CORE */
 /* Every `bank1call` below reaches a bank 1 routine that reads its own tables
  * out of the $4000-$7FFF window (InitAndDrawCardListScreenLayout and
  * DisplayCardList both go through CardListParameters at $5710), so the bank has
@@ -885,7 +1107,9 @@ static void chain_lightning_damage_same_color_bench(void)
  * DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK are already defined earlier in this
  * statics block and are deliberately not repeated. */
 #define Pokedex_PlayerSelection_BANK_DUEL_CORE 0x01u
+/* <<< part Pokedex_PlayerSelection_BANK_DUEL_CORE */
 
+/* >>> part includes_HandleProphecyScreen_BANK_DUEL_CORE */
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/print_text.h"
@@ -920,9 +1144,15 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/duel.h"
 #include "home/menus.h"
 #include "mem.h"
+/* <<< part includes_HandleProphecyScreen_BANK_DUEL_CORE */
+/* >>> part HandleProphecyScreen_BANK_DUEL_CORE */
 #define HandleProphecyScreen_BANK_DUEL_CORE 0x01u
+/* <<< part HandleProphecyScreen_BANK_DUEL_CORE */
+/* >>> part BankswitchROM_decl */
 void BankswitchROM(uint8_t bank);
+/* <<< part BankswitchROM_decl */
 
+/* >>> part includes_OPPONENT_TURN */
 #include "home/effect_functions.h"
 #include "generated/wram.h"
 
@@ -1092,9 +1322,15 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "home/menus.h"
+/* <<< part includes_OPPONENT_TURN */
+/* >>> part OPPONENT_TURN */
 #define OPPONENT_TURN 0xc3u
+/* <<< part OPPONENT_TURN */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
 
+/* >>> part includes_FALSE */
 #include "generated/hram.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
@@ -1129,8 +1365,12 @@ void BankswitchROM(uint8_t bank);
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "generated/wram.h"
+/* <<< part includes_FALSE */
+/* >>> part FALSE */
 #define FALSE 0x00u
+/* <<< part FALSE */
 
+/* >>> part includes_HANDLE_COLOR_CHANGE_MENU_PARAMS */
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "generated/wram.h"
@@ -1298,11 +1538,19 @@ void BankswitchROM(uint8_t bank);
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_HANDLE_COLOR_CHANGE_MENU_PARAMS */
+/* >>> part HANDLE_COLOR_CHANGE_MENU_PARAMS */
 #define HANDLE_COLOR_CHANGE_MENU_PARAMS (HandleColorChangeScreen__menu_params_ADDR)
+/* <<< part HANDLE_COLOR_CHANGE_MENU_PARAMS */
+/* >>> part SHIFT_MENU_DATA */
 #define SHIFT_MENU_DATA ShiftMenuData_ADDR /* ShiftMenuData, bank $0b */
+/* <<< part SHIFT_MENU_DATA */
+/* >>> part COLOR_TILE_AND_BGP */
 #define COLOR_TILE_AND_BGP ColorTileAndBGP_ADDR /* ColorTileAndBGP, bank $0b */
+/* <<< part COLOR_TILE_AND_BGP */
+/* >>> part SHIFT_LIST_ITEM_TO_COLOR */
 #define SHIFT_LIST_ITEM_TO_COLOR ShiftListItemToColor_ADDR /* ShiftListItemToColor, bank $0b */
-/* <<< factory statics */
+/* <<< part SHIFT_LIST_ITEM_TO_COLOR */
 
 /* >>> factory SleepEffect */
 /* effect_functions.asm:14-16 */

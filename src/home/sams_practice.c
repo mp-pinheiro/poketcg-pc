@@ -7,7 +7,7 @@
 #include "home/duel.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/core.h"
 
 
@@ -15,8 +15,10 @@
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/retreat.h"
+/* <<< part includes_2 */
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xBBu
-/* <<< factory statics */
+/* <<< part DUELVARS_ARENA_CARD */
 
 /* >>> factory IsAIPracticeScriptedTurn */
 SamsPracticeResult IsAIPracticeScriptedTurn(uint8_t a, uint8_t f, uint8_t b,

@@ -8,7 +8,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/credits_sequence_commands.h"
 #include "home/color.h"
 #include "home/lcd.h"
@@ -65,7 +65,7 @@
 
 #include "home/credits_sequence_commands.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> part CREDITS_SEQUENCE_ADDR */
 #define CREDITS_SEQUENCE_ADDR CreditsSequence_ADDR

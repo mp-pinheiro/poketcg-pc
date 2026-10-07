@@ -19,10 +19,16 @@
 /* <<< part includes_SYM_SPACE */
 /* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00
-#define SYM_0 0x20
-#define FW_SPACE 0x70
-#define TILE_SIZE 16
 /* <<< part SYM_SPACE */
+/* >>> part SYM_0 */
+#define SYM_0 0x20
+/* <<< part SYM_0 */
+/* >>> part FW_SPACE */
+#define FW_SPACE 0x70
+/* <<< part FW_SPACE */
+/* >>> part TILE_SIZE */
+#define TILE_SIZE 16
+/* <<< part TILE_SIZE */
 
 /* >>> factory InitTextFormat */
 void InitTextFormat(void)

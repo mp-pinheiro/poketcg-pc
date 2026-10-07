@@ -17,15 +17,27 @@
 /* <<< part includes */
 
 
-/* >>> factory statics */
+/* >>> part R_STAT */
 #define R_STAT        0xFF41u
+/* <<< part R_STAT */
+/* >>> part R_IE */
 #define R_IE          0xFFFFu
+/* <<< part R_IE */
+/* >>> part STAT_LYC_MASK */
 #define STAT_LYC_MASK 0x40u
+/* <<< part STAT_LYC_MASK */
+/* >>> part IE_STAT_MASK */
 #define IE_STAT_MASK  0x02u
+/* <<< part IE_STAT_MASK */
 
+/* >>> part WX_OFS */
 #define WX_OFS 0x07u
+/* <<< part WX_OFS */
+/* >>> part B_LCDC_OBJS */
 #define B_LCDC_OBJS 0x01u
+/* <<< part B_LCDC_OBJS */
 
+/* >>> part includes_R_LYC */
 #include "home/tiles.h"
 
 #include "home/lcd.h"
@@ -40,11 +52,17 @@
 #include "home/load_animation.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_R_LYC */
 
+/* >>> part R_LYC */
 #define R_LYC 0xFF45u
+/* <<< part R_LYC */
+/* >>> part FUNC_3E31 */
 #define FUNC_3E31 Func_3e31_ADDR
+/* <<< part FUNC_3E31 */
+/* >>> part FUNC_3E44 */
 #define FUNC_3E44 Func_3e44_ADDR
-/* <<< factory statics */
+/* <<< part FUNC_3E44 */
 
 /* >>> factory Func_1d758 */
 /* credits.asm:79-86 */

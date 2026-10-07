@@ -8,18 +8,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/effect_commands.h"
 #include "home/switch_rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> part BANK_EFFECT_COMMANDS */
 #define BANK_EFFECT_COMMANDS 0x06u
-#define BANK_EFFECT_FUNCTIONS 0x0Bu
 /* <<< part BANK_EFFECT_COMMANDS */
+/* >>> part BANK_EFFECT_FUNCTIONS */
+#define BANK_EFFECT_FUNCTIONS 0x0Bu
+/* <<< part BANK_EFFECT_FUNCTIONS */
 
 /* >>> factory CheckMatchingCommand */
 /* engine/duel/effect_commands.asm:37-85. hl walks a command list (2 bytes/entry:

@@ -7,23 +7,39 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/card_collection.h"
+/* <<< part includes_2 */
+/* >>> part ENERGY_CARD_LIST */
 #define ENERGY_CARD_LIST EnergyCardList_ADDR
+/* <<< part ENERGY_CARD_LIST */
+/* >>> part ENERGY_CARD_LIST_BANK */
 #define ENERGY_CARD_LIST_BANK 3u
+/* <<< part ENERGY_CARD_LIST_BANK */
+/* >>> part ENERGY_CARD_LIST_LEN */
 #define ENERGY_CARD_LIST_LEN 6u
+/* <<< part ENERGY_CARD_LIST_LEN */
 
+/* >>> part includes_MasonLaboratoryAfterDuelTable */
 #include "home/grass_club_entrance.h"
+/* <<< part includes_MasonLaboratoryAfterDuelTable */
+/* >>> part MasonLaboratoryAfterDuelTable */
 #define MasonLaboratoryAfterDuelTable (MasonLaboratoryAfterDuel__after_duel_table_ADDR)
+/* <<< part MasonLaboratoryAfterDuelTable */
 
+/* >>> part includes_SCRIPT_ENTER_LAB_FIRST_TIME */
 #include "home/fire_club_lobby.h"
 #include "home/map.h"
 #include "home/overworld.h"
 #include "home/scripting.h"
 #include "home/map_events.h"
+/* <<< part includes_SCRIPT_ENTER_LAB_FIRST_TIME */
+/* >>> part SCRIPT_ENTER_LAB_FIRST_TIME */
 #define SCRIPT_ENTER_LAB_FIRST_TIME Script_EnterLabFirstTime_ADDR
+/* <<< part SCRIPT_ENTER_LAB_FIRST_TIME */
+/* >>> part CHALLENGE_MACHINE_OBJECT_TABLE */
 #define CHALLENGE_MACHINE_OBJECT_TABLE ChallengeMachineObjectTable_ADDR
-/* <<< factory statics */
+/* <<< part CHALLENGE_MACHINE_OBJECT_TABLE */
 
 /* >>> factory Func_d703 */
 FuncD703Result Func_d703(void)

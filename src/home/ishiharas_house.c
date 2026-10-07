@@ -6,23 +6,29 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/scripting.h"
+/* <<< part includes_2 */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part cp_flags */
 static uint8_t cp_flags(uint8_t a, uint8_t n)
 {
 	return (uint8_t)(0x40u | ((a == n) ? 0x80u : 0u)
 		| (((a & 0x0Fu) < (n & 0x0Fu)) ? 0x20u : 0u)
 		| ((a < n) ? 0x10u : 0u));
 }
+/* <<< part cp_flags */
 
+/* >>> part ccf_cp_flags */
 static uint8_t ccf_cp_flags(uint8_t a, uint8_t n)
 {
 	uint8_t f = cp_flags(a, n);
 	return (uint8_t)((f & 0x80u) | ((f & 0x10u) ? 0u : 0x10u));
 }
-/* <<< factory statics */
+/* <<< part ccf_cp_flags */
 
 /* >>> factory Preload_NikkiInIshiharasHouse */
 PreloadNikkiInIshiharasHouseResult Preload_NikkiInIshiharasHouse(void)

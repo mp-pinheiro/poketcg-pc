@@ -8,7 +8,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/frames.h"
@@ -22,11 +22,19 @@
 #include "home/print_text.h"
 #include "home/objects.h"
 #include "mem.h"
+/* <<< part includes_2 */
+/* >>> part PAD_B */
 #define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part PAD_SELECT */
 #define PAD_SELECT 0x04u
+/* <<< part PAD_SELECT */
+/* >>> part MENU_CANCEL */
 #define MENU_CANCEL 0xffu
+/* <<< part MENU_CANCEL */
+/* >>> part TRUE */
 #define TRUE 0x01u
-/* <<< factory statics */
+/* <<< part TRUE */
 
 /* >>> factory OpenGlossaryScreen */
 #define SYM_1 0x21u

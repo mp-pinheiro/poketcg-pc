@@ -1,76 +1,11 @@
-/* >>> part includes */
-#include "home/retreat.h"
-#include "home/damage_calculation.h"
-
-#include "generated/constants.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/card_data.h"
 #include "home/core.h"
 #include "home/card_id_bus.h"
 #include "home/substatus.h"
 #include "home/duel.h"
 #include "generated/hram.h"
-
-#define DUELVARS_ARENA_CARD 0xBBu
-#define DUELVARS_ARENA_CARD_STATUS 0xF0u
-#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
-#define FLAG_C 0x10u
-#define FLAG_Z 0x80u
-
-#include "home/core.h"
-#include "home/duel.h"
-#include "generated/hram.h"
-#define DUELVARS_ARENA_CARD_HP 0xC8u
-
-#include "home/card_color.h"
-#define DUELVARS_BENCH 0xBCu
-#define TRUE 0x01u
-/* <<< factory statics */
-
-/* >>> part OPPONENT_TURN */
-#define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
-/* <<< part OPPONENT_TURN */
-
-/* >>> part flag_cp */
-static uint8_t flag_cp(uint8_t a, uint8_t value)
-{
-	uint8_t f = 0x40u;
-	if (a == value)
-		f |= 0x80u;
-	if ((a & 0x0fu) < (value & 0x0fu))
-		f |= 0x20u;
-	if (a < value)
-		f |= 0x10u;
-	return f;
-}
-/* <<< part flag_cp */
-
-/* >>> factory SetAIRetreatFlags */
-SetAIRetreatFlagsResult SetAIRetreatFlags(void)
-{
-	gb_write8(wAIRetreatFlags_ADDR, 0);
-	uint8_t turn = gb_read8(wWhoseTurn_ADDR);
-	if (turn == OPPONENT_TURN) {
-		uint8_t tried = gb_read8(wAITriedAttack_ADDR);
-		uint8_t f = tried ? 0x00u : 0x80u;
-		if (tried)
-			return (SetAIRetreatFlagsResult){tried, f};
-		gb_write8(wAIRetreatFlags_ADDR, 0x80u);
-		return (SetAIRetreatFlagsResult){0x80u, f};
-	}
-
-	uint8_t category = gb_read8(wLoadedAttackCategory_ADDR);
-	uint8_t f = flag_cp(category, POKEMON_POWER);
-	if (category == POKEMON_POWER)
-		return (SetAIRetreatFlagsResult){category, f};
-	gb_write8(wAIRetreatFlags_ADDR, 0x80u);
-	return (SetAIRetreatFlagsResult){0x80u, f};
-}
-/* <<< factory SetAIRetreatFlags */
-
+/* <<< part includes_2 */
 /* >>> factory AITryToRetreat */
 /* engine/duel/ai/retreat.asm:775-1012. The entry `push af` is popped exactly
  * once on every path, so the frame balances and the caller's a/f -- the Play
@@ -221,7 +156,6 @@ end_retreat_list:
 	return (AITryToRetreatResult){retreated.a, retreated.a == 0u ? 0x80u : 0x00u};
 }
 /* <<< factory AITryToRetreat */
-
 /* >>> factory AIDecideBenchPokemonToSwitchTo */
 /* retreat.asm AIDecideBenchPokemonToSwitchTo. Scores every bench card from
  * 50 and hands the scores to FindHighestBenchScore; the arena card keeps 50
@@ -365,7 +299,6 @@ AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(uint8_t d)
 	return (AIDecideBenchPokemonToSwitchToResult){best.a, best.f, best.d};
 }
 /* <<< factory AIDecideBenchPokemonToSwitchTo */
-
 /* >>> factory AIDecideWhetherToRetreat */
 AIDecideWhetherToRetreatResult AIDecideWhetherToRetreat(uint8_t d)
 {

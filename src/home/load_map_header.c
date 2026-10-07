@@ -9,9 +9,13 @@
 
 /* >>> part MAP_HEADERS_BANK */
 #define MAP_HEADERS_BANK 7u
-#define MAP_HEADERS MapHeaders_ADDR
-#define MAP_HEADER_SIZE 6u
 /* <<< part MAP_HEADERS_BANK */
+/* >>> part MAP_HEADERS */
+#define MAP_HEADERS MapHeaders_ADDR
+/* <<< part MAP_HEADERS */
+/* >>> part MAP_HEADER_SIZE */
+#define MAP_HEADER_SIZE 6u
+/* <<< part MAP_HEADER_SIZE */
 
 /* >>> factory LoadMapHeader */
 void LoadMapHeader(void)

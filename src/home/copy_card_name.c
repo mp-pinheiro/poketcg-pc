@@ -3,16 +3,22 @@
 
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/print_text.h"
 #include "home/process_text.h"
+/* <<< part includes_2 */
+/* >>> part SYM_Lv */
 #define SYM_Lv 0x11u
+/* <<< part SYM_Lv */
+/* >>> part SYM_0 */
 #define SYM_0 0x20u
+/* <<< part SYM_0 */
+/* >>> part FULLWIDTH_SPACE */
 #define FULLWIDTH_SPACE 0x70u
-/* <<< factory statics */
+/* <<< part FULLWIDTH_SPACE */
 
 /* >>> factory _CopyCardNameAndLevel_HalfwidthText */
 CopyCardNameAndLevelResult _CopyCardNameAndLevel_HalfwidthText(uint16_t caller_bc,

@@ -7,16 +7,22 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/core.h"
 #include "home/process_text.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
 
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xC2u
+/* <<< part PLAYER_TURN */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_START */
 #define PAD_START 0x08u
-/* <<< factory statics */
+/* <<< part PAD_START */
 
 /* >>> factory _OpenBoosterPack */
 void _OpenBoosterPack(void)

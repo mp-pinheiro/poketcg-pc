@@ -5,12 +5,12 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/init_menu.h"
 #include "home/glossary.h"
 #include "home/process_text.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> factory _PCMenu_Glossary */
 void _PCMenu_Glossary(void)

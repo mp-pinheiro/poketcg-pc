@@ -26,8 +26,10 @@
 /* >>> part OPPONENT_TURN */
 /* HIGH(wOpponentDuelVariables), the value hWhoseTurn carries on the opponent's turn. */
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
-#define PLAYER_TURN ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 /* <<< part OPPONENT_TURN */
+/* >>> part PLAYER_TURN */
+#define PLAYER_TURN ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
+/* <<< part PLAYER_TURN */
 
 /* >>> factory GetTurnDuelistVariable */
 /* duel.asm:1316-1323: [hWhoseTurn << 8 | a], the current turn holder's duelvar a. */
@@ -159,8 +161,10 @@ SubtractHPResult SubtractHP(uint16_t hl, uint16_t de)
 
 /* >>> part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
-#define DUELVARS_DECK_CARDS 0x7eu
 /* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
+/* >>> part DUELVARS_DECK_CARDS */
+#define DUELVARS_DECK_CARDS 0x7eu
+/* <<< part DUELVARS_DECK_CARDS */
 
 /* >>> factory CreateDeckCardList */
 /* duel.asm:398-431. Copies DECK_SIZE - n remaining deck ids into wDuelTempList.
@@ -229,12 +233,22 @@ TempListResult CountCardsInDuelTempList(void)
 
 /* >>> part DUELVARS_HAND */
 #define DUELVARS_HAND 0x42u
-#define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
-#define DUELVARS_CARD_LOCATIONS 0x00u
-#define DUELVARS_ARENA_CARD 0xbbu
-#define DUELVARS_ARENA_CARD_HP 0xc8u
-#define PLAY_AREA_MASK 0x10u
 /* <<< part DUELVARS_HAND */
+/* >>> part DUELVARS_NUMBER_OF_CARDS_IN_HAND */
+#define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_IN_HAND */
+/* >>> part DUELVARS_CARD_LOCATIONS */
+#define DUELVARS_CARD_LOCATIONS 0x00u
+/* <<< part DUELVARS_CARD_LOCATIONS */
+/* >>> part DUELVARS_ARENA_CARD */
+#define DUELVARS_ARENA_CARD 0xbbu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD_HP */
+#define DUELVARS_ARENA_CARD_HP 0xc8u
+/* <<< part DUELVARS_ARENA_CARD_HP */
+/* >>> part PLAY_AREA_MASK */
+#define PLAY_AREA_MASK 0x10u
+/* <<< part PLAY_AREA_MASK */
 
 /* >>> factory GetCardDamageAndMaxHP */
 /* duel.asm:2306-2320. The final `sub [hl]` borrows when the damage exceeds the
@@ -329,41 +343,77 @@ HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a)
 /* >>> part includes_tail */
 #include "home/random.h"
 /* <<< part includes_tail */
-/* >>> factory statics */
 
+/* >>> part includes_TRUE_8BF2 */
 #include "home/bg_map.h"
 #include "home/objects.h"
 #include "home/random.h"
 #include "home/tiles.h"
+/* <<< part includes_TRUE_8BF2 */
+/* >>> part TRUE_8BF2 */
 #define TRUE_8BF2 0x01u
+/* <<< part TRUE_8BF2 */
 
+/* >>> part includes_YOPA_PAD_A */
 #include "home/random.h"
 #include "home/sound.h"
 #include "home/deck_check.h"
 #include "home/objects.h"
+/* <<< part includes_YOPA_PAD_A */
 
+/* >>> part YOPA_PAD_A */
 #define YOPA_PAD_A       0x01u
+/* <<< part YOPA_PAD_A */
+/* >>> part YOPA_PAD_B */
 #define YOPA_PAD_B       0x02u
+/* <<< part YOPA_PAD_B */
+/* >>> part YOPA_PAD_RIGHT */
 #define YOPA_PAD_RIGHT   0x10u
+/* <<< part YOPA_PAD_RIGHT */
+/* >>> part YOPA_PAD_LEFT */
 #define YOPA_PAD_LEFT    0x20u
+/* <<< part YOPA_PAD_LEFT */
+/* >>> part YOPA_PAD_UP */
 #define YOPA_PAD_UP      0x40u
+/* <<< part YOPA_PAD_UP */
+/* >>> part YOPA_PAD_DOWN */
 #define YOPA_PAD_DOWN    0x80u
+/* <<< part YOPA_PAD_DOWN */
+/* >>> part YOPA_SFX_CURSOR */
 #define YOPA_SFX_CURSOR  0x01u
+/* <<< part YOPA_SFX_CURSOR */
+/* >>> part YOPA_MENU_CANCEL */
 #define YOPA_MENU_CANCEL 0xFFu
+/* <<< part YOPA_MENU_CANCEL */
+/* >>> part YOPA_MENU_CONFIRM */
 #define YOPA_MENU_CONFIRM 0x01u
+/* <<< part YOPA_MENU_CONFIRM */
+/* >>> part YOPA_PRIZES_3 */
 #define YOPA_PRIZES_3    0x03u
+/* <<< part YOPA_PRIZES_3 */
+/* >>> part YOPA_PRIZES_5 */
 #define YOPA_PRIZES_5    0x05u
+/* <<< part YOPA_PRIZES_5 */
+/* >>> part YOPA_BLINK_MASK */
 #define YOPA_BLINK_MASK  0x0Fu
+/* <<< part YOPA_BLINK_MASK */
+/* >>> part YOPA_BLINK_BIT */
 #define YOPA_BLINK_BIT   0x10u
+/* <<< part YOPA_BLINK_BIT */
+/* >>> part YOPA_ITEM_LEN */
 #define YOPA_ITEM_LEN    0x07u
+/* <<< part YOPA_ITEM_LEN */
 
+/* >>> part yoopa_table_ptr */
 /* duel.asm:1701-1943 helper: [wTransitionTablePtr] as a 16-bit address. */
 static uint16_t yoopa_table_ptr(void)
 {
 	return (uint16_t)(gb_read8(wTransitionTablePtr_ADDR) |
 		(uint16_t)gb_read8((uint16_t)(wTransitionTablePtr_ADDR + 1u)) << 8);
 }
+/* <<< part yoopa_table_ptr */
 
+/* >>> part YourOrOppPlayAreaScreen_DrawCursor */
 /* duel.asm:1701-1943 .draw_cursor, which deck_configuration.asm:586 calls
  * across modules (`call YourOrOppPlayAreaScreen_HandleInput.draw_cursor`). */
 void YourOrOppPlayAreaScreen_DrawCursor(void)
@@ -377,51 +427,99 @@ void YourOrOppPlayAreaScreen_DrawCursor(void)
 	uint8_t b = gb_read8((uint16_t)(hl + 2u));
 	SetOneObjectAttributes(e, d, 0x00u, b);
 }
+/* <<< part YourOrOppPlayAreaScreen_DrawCursor */
 
+/* >>> part includes_BPA_DUELVARS_NUM_POKEMON */
 #include "home/tiles.h"
+/* <<< part includes_BPA_DUELVARS_NUM_POKEMON */
 
+/* >>> part BPA_DUELVARS_NUM_POKEMON */
 #define BPA_DUELVARS_NUM_POKEMON 0xEFu
+/* <<< part BPA_DUELVARS_NUM_POKEMON */
+/* >>> part BPA_DUELVARS_BENCH1_STAGE */
 #define BPA_DUELVARS_BENCH1_STAGE 0xCFu
+/* <<< part BPA_DUELVARS_BENCH1_STAGE */
+/* >>> part BPA_MAX_PLAY_AREA_POKEMON */
 #define BPA_MAX_PLAY_AREA_POKEMON 0x06u
+/* <<< part BPA_MAX_PLAY_AREA_POKEMON */
+/* >>> part BPA_CONSOLE_CGB */
 #define BPA_CONSOLE_CGB 0x02u
+/* <<< part BPA_CONSOLE_CGB */
+/* >>> part BPA_TILE_STAGE_BASE */
 #define BPA_TILE_STAGE_BASE 0xE4u
+/* <<< part BPA_TILE_STAGE_BASE */
+/* >>> part BPA_TILE_TWO_STAGE */
 #define BPA_TILE_TWO_STAGE 0xECu
+/* <<< part BPA_TILE_TWO_STAGE */
+/* >>> part BPA_TILE_TWO_STAGE_ALT */
 #define BPA_TILE_TWO_STAGE_ALT 0xF0u
+/* <<< part BPA_TILE_TWO_STAGE_ALT */
+/* >>> part BPA_TILE_EMPTY_SLOT */
 #define BPA_TILE_EMPTY_SLOT 0xF4u
+/* <<< part BPA_TILE_EMPTY_SLOT */
+/* >>> part BPA_RECT_STEPS_TILES */
 #define BPA_RECT_STEPS_TILES 0x0102u
+/* <<< part BPA_RECT_STEPS_TILES */
+/* >>> part BPA_RECT_STEPS_FLAT */
 #define BPA_RECT_STEPS_FLAT 0x0000u
+/* <<< part BPA_RECT_STEPS_FLAT */
+/* >>> part BPA_SYM_SPACE */
 #define BPA_SYM_SPACE 0x00u
+/* <<< part BPA_SYM_SPACE */
+/* >>> part BPA_RVBK */
 #define BPA_RVBK 0xFF4Fu
+/* <<< part BPA_RVBK */
 
+/* >>> part includes_V0_TILES0 */
 #include "home/tiles.h"
 #include "home/bg_map.h"
+/* <<< part includes_V0_TILES0 */
 
+/* >>> part V0_TILES0 */
 #define V0_TILES0 0x8000u
+/* <<< part V0_TILES0 */
+/* >>> part R_VBK */
 #define R_VBK 0xFF4Fu
+/* <<< part R_VBK */
+/* >>> part PRIZE_TILE */
 #define PRIZE_TILE 0xACu
+/* <<< part PRIZE_TILE */
+/* >>> part PRIZE_TILE_CGB_ATTR */
 #define PRIZE_TILE_CGB_ATTR 0x02u
+/* <<< part PRIZE_TILE_CGB_ATTR */
 
+/* >>> part kCursorTileData */
 static const uint8_t kCursorTileData[16] = {
 	0xE0u, 0xC0u, 0x98u, 0xB0u, 0x84u, 0x8Cu, 0x83u, 0x82u,
 	0x86u, 0x8Fu, 0x9Du, 0xBEu, 0xF4u, 0xF8u, 0x50u, 0x60u
 };
+/* <<< part kCursorTileData */
 
+/* >>> part includes_SYM_SPACE */
 #include "generated/wram.h"
 
 #include "home/bg_map.h"
 
 #include "generated/wram.h"
 #include "home/duel.h"
+/* <<< part includes_SYM_SPACE */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
 
+/* >>> part includes_TRUE */
 #include "home/duel.h"
 #include "generated/wram.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/serial.h"
+/* <<< part includes_TRUE */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part includes_SYM_CROSS */
 #include "home/duel.h"
 #include "home/tiles.h"
 #include "generated/wram.h"
@@ -438,8 +536,12 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
+/* <<< part includes_SYM_CROSS */
+/* >>> part SYM_CROSS */
 #define SYM_CROSS 0x2du
+/* <<< part SYM_CROSS */
 
+/* >>> part includes_SYM_CURSOR_R */
 #include "home/deck_configuration.h"
 #include "home/tiles.h"
 #include "home/process_text.h"
@@ -455,26 +557,56 @@ static const uint8_t kCursorTileData[16] = {
 #include "mem.h"
 
 #include "home/duel.h"
+/* <<< part includes_SYM_CURSOR_R */
+/* >>> part SYM_CURSOR_R */
 #define SYM_CURSOR_R 0x0Fu
+/* <<< part SYM_CURSOR_R */
 
+/* >>> part includes_MENU_CANCEL */
 #include "home/duel.h"
 #include "home/sound.h"
 #include "home/deck_check.h"
+/* <<< part includes_MENU_CANCEL */
+/* >>> part MENU_CANCEL */
 #define MENU_CANCEL 0xFFu
+/* <<< part MENU_CANCEL */
+/* >>> part B_PAD_LEFT */
 #define B_PAD_LEFT 5u
+/* <<< part B_PAD_LEFT */
+/* >>> part B_PAD_RIGHT */
 #define B_PAD_RIGHT 4u
+/* <<< part B_PAD_RIGHT */
+/* >>> part B_PAD_UP */
 #define B_PAD_UP 6u
+/* <<< part B_PAD_UP */
+/* >>> part B_PAD_DOWN */
 #define B_PAD_DOWN 7u
+/* <<< part B_PAD_DOWN */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_B */
 #define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part WCE5E_ADDR */
 #define WCE5E_ADDR wce5e_ADDR
+/* <<< part WCE5E_ADDR */
 
+/* >>> part includes_DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE */
 #include "home/duel.h"
 #include "generated/wram.h"
+/* <<< part includes_DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE */
+/* >>> part DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE */
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xEDu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE */
+/* >>> part PLAYER_ICON_COORDS */
 #define PLAYER_ICON_COORDS PlayAreaIconCoordinates_ADDR
+/* <<< part PLAYER_ICON_COORDS */
+/* >>> part OPPONENT_ICON_COORDS */
 #define OPPONENT_ICON_COORDS (PlayAreaIconCoordinates__opponent1_ADDR)
+/* <<< part OPPONENT_ICON_COORDS */
 
+/* >>> part includes_PLAYER_ICON_COORDINATES_ADDR */
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -490,9 +622,15 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/objects.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_PLAYER_ICON_COORDINATES_ADDR */
+/* >>> part PLAYER_ICON_COORDINATES_ADDR */
 #define PLAYER_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards__player_icon_coordinates_ADDR)
+/* <<< part PLAYER_ICON_COORDINATES_ADDR */
+/* >>> part OPP_ICON_COORDINATES_ADDR */
 #define OPP_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards__opp_icon_coordinates_ADDR)
+/* <<< part OPP_ICON_COORDINATES_ADDR */
 
+/* >>> part includes_DUELVARS_PRIZE_CARDS */
 #include "home/duel.h"
 #include "home/serial.h"
 #include "home/duel_core.h"
@@ -577,8 +715,12 @@ static const uint8_t kCursorTileData[16] = {
 
 #include "home/duel.h"
 #include "mem.h"
+/* <<< part includes_DUELVARS_PRIZE_CARDS */
+/* >>> part DUELVARS_PRIZE_CARDS */
 #define DUELVARS_PRIZE_CARDS 0x3Cu
+/* <<< part DUELVARS_PRIZE_CARDS */
 
+/* >>> part includes_PEEK_MENU_PARAMETERS */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
@@ -617,6 +759,8 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "home/process_text.h"
+/* <<< part includes_PEEK_MENU_PARAMETERS */
+/* >>> part PEEK_MENU_PARAMETERS */
 /* engine/menus/duel.asm:1376-1544. The four PEEK_ addresses are this routine's
  * own bank-2 ROM data, read through the bank window like _DrawAIPeekScreen's
  * transition tables: .PlayAreaMenuParameters 02:4811, .YourOrOppPlayAreaData
@@ -625,23 +769,55 @@ static const uint8_t kCursorTileData[16] = {
  * defines TRUE, MENU_CANCEL, PAD_A/PAD_B, PLAYER_TURN, DUELVARS_PRIZES and
  * DUELVARS_PRIZE_CARDS for earlier routines. */
 #define PEEK_MENU_PARAMETERS (_HandlePeekSelection__PlayAreaMenuParameters_ADDR)
+/* <<< part PEEK_MENU_PARAMETERS */
+/* >>> part PEEK_MENU_TEXT_ITEMS */
 #define PEEK_MENU_TEXT_ITEMS (_HandlePeekSelection__YourOrOppPlayAreaData_ADDR)
+/* <<< part PEEK_MENU_TEXT_ITEMS */
+/* >>> part PEEK_YOUR_TRANSITION_TABLE */
 #define PEEK_YOUR_TRANSITION_TABLE PeekYourPlayAreaTransitionTable_ADDR
+/* <<< part PEEK_YOUR_TRANSITION_TABLE */
+/* >>> part PEEK_OPP_TRANSITION_TABLE */
 #define PEEK_OPP_TRANSITION_TABLE PeekOppPlayAreaTransitionTable_ADDR
+/* <<< part PEEK_OPP_TRANSITION_TABLE */
+/* >>> part PEEK_WHICH_CARD_TEXT */
 #define PEEK_WHICH_CARD_TEXT 0x024Cu
+/* <<< part PEEK_WHICH_CARD_TEXT */
+/* >>> part PEEK_MENU_CANCEL */
 #define PEEK_MENU_CANCEL 0xFFu
+/* <<< part PEEK_MENU_CANCEL */
+/* >>> part PEEK_PLAYER_TURN */
 #define PEEK_PLAYER_TURN 0xC2u
+/* <<< part PEEK_PLAYER_TURN */
+/* >>> part PEEK_OPPONENT_TURN */
 #define PEEK_OPPONENT_TURN 0xC3u
+/* <<< part PEEK_OPPONENT_TURN */
+/* >>> part PEEK_TRUE */
 #define PEEK_TRUE 0x01u
+/* <<< part PEEK_TRUE */
+/* >>> part PEEK_DUELVARS_PRIZES */
 #define PEEK_DUELVARS_PRIZES 0xECu
+/* <<< part PEEK_DUELVARS_PRIZES */
+/* >>> part PEEK_DUELVARS_PRIZE_CARDS */
 #define PEEK_DUELVARS_PRIZE_CARDS 0x3Cu
+/* <<< part PEEK_DUELVARS_PRIZE_CARDS */
 
+/* >>> part includes_CHECK_MENU_DATA_ADDR */
 #include "home/deck_selection.h"
+/* <<< part includes_CHECK_MENU_DATA_ADDR */
+/* >>> part CHECK_MENU_DATA_ADDR */
 #define CHECK_MENU_DATA_ADDR CheckMenuData_ADDR
+/* <<< part CHECK_MENU_DATA_ADDR */
+/* >>> part YOUR_PLAY_AREA_MENU_DATA_ADDR */
 #define YOUR_PLAY_AREA_MENU_DATA_ADDR YourPlayAreaMenuData_ADDR
+/* <<< part YOUR_PLAY_AREA_MENU_DATA_ADDR */
+/* >>> part OPP_PLAY_AREA_MENU_DATA_ADDR */
 #define OPP_PLAY_AREA_MENU_DATA_ADDR OppPlayAreaMenuData_ADDR
+/* <<< part OPP_PLAY_AREA_MENU_DATA_ADDR */
+/* >>> part OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR */
 #define OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR OppPlayAreaMenuData_WithClairvoyance_ADDR
+/* <<< part OPP_PLAY_AREA_MENU_DATA_CLAIRVOYANCE_ADDR */
 
+/* >>> part includes_tail_2 */
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/duel_core.h"
@@ -673,8 +849,8 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/menus.h"
 #include "home/serial.h"
 #include "home/substatus.h"
+/* <<< part includes_tail_2 */
 
-/* <<< factory statics */
 
 /* >>> factory ShuffleCards */
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -916,21 +1092,49 @@ CopyTextResult CopyOpponentName(uint16_t de)
 
 /* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
-#define DUELVARS_PRIZES 0xecu
-#define DUELVARS_ARENA_CARD_FLAGS 0xc2u
-#define DUELVARS_ARENA_CARD_STAGE 0xceu
-#define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xd4u
-#define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xdau
-#define DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER 0xe0u
-#define DUELVARS_ARENA_CARD_SUBSTATUS1 0xe7u
-#define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
-#define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS 0xe9u
-#define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xeau
-#define DUELVARS_ARENA_CARD_SUBSTATUS3 0xebu
-#define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xf2u
-#define ATTACK_DATA_LEN 0x13u
 /* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
+/* >>> part DUELVARS_PRIZES */
+#define DUELVARS_PRIZES 0xecu
+/* <<< part DUELVARS_PRIZES */
+/* >>> part DUELVARS_ARENA_CARD_FLAGS */
+#define DUELVARS_ARENA_CARD_FLAGS 0xc2u
+/* <<< part DUELVARS_ARENA_CARD_FLAGS */
+/* >>> part DUELVARS_ARENA_CARD_STAGE */
+#define DUELVARS_ARENA_CARD_STAGE 0xceu
+/* <<< part DUELVARS_ARENA_CARD_STAGE */
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_TYPE */
+#define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xd4u
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_TYPE */
+/* >>> part DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
+#define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xdau
+/* <<< part DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
+/* >>> part DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER */
+#define DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER 0xe0u
+/* <<< part DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER */
+/* >>> part DUELVARS_ARENA_CARD_SUBSTATUS1 */
+#define DUELVARS_ARENA_CARD_SUBSTATUS1 0xe7u
+/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS1 */
+/* >>> part DUELVARS_ARENA_CARD_SUBSTATUS2 */
+#define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
+/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS2 */
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_WEAKNESS */
+#define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS 0xe9u
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_WEAKNESS */
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_RESISTANCE */
+#define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xeau
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_RESISTANCE */
+/* >>> part DUELVARS_ARENA_CARD_SUBSTATUS3 */
+#define DUELVARS_ARENA_CARD_SUBSTATUS3 0xebu
+/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS3 */
+/* >>> part DUELVARS_ARENA_CARD_STATUS */
+#define DUELVARS_ARENA_CARD_STATUS 0xf0u
+/* <<< part DUELVARS_ARENA_CARD_STATUS */
+/* >>> part DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX */
+#define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xf2u
+/* <<< part DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX */
+/* >>> part ATTACK_DATA_LEN */
+#define ATTACK_DATA_LEN 0x13u
+/* <<< part ATTACK_DATA_LEN */
 
 /* >>> factory CopyDeckData */
 /* duel.asm:60-104. */
@@ -1671,8 +1875,10 @@ DiscardIfInPlayResult MoveCardToDiscardPileIfInPlayArea(uint16_t de, uint8_t pag
 
 /* >>> part WEAKNESS */
 #define WEAKNESS  (1u << 1)
-#define RESISTANCE (1u << 2)
 /* <<< part WEAKNESS */
+/* >>> part RESISTANCE */
+#define RESISTANCE (1u << 2)
+/* <<< part RESISTANCE */
 
 /* >>> factory ApplyDamageModifiers_DamageToTarget */
 uint16_t ApplyDamageModifiers_DamageToTarget(void)
@@ -2323,10 +2529,16 @@ void DrawPlayArea_PrizeCards(uint16_t hl)
  * DrawPlayArea_PrizeCards through hl. Passed by ROM address, never copied
  * into WRAM -- the asm writes nothing while pointing at them. */
 #define PRIZE_COORDS_YOUR_OR_OPP_PLAYER PrizeCardsCoordinateData_YourOrOppPlayArea_ADDR
-#define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT (PrizeCardsCoordinateData_YourOrOppPlayArea__opponent_ADDR)
-#define PRIZE_COORDS_2_PLAYER PrizeCardsCoordinateData_2_ADDR
-#define PRIZE_COORDS_2_OPPONENT 0x44D8u
 /* <<< part PRIZE_COORDS_YOUR_OR_OPP_PLAYER */
+/* >>> part PRIZE_COORDS_YOUR_OR_OPP_OPPONENT */
+#define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT (PrizeCardsCoordinateData_YourOrOppPlayArea__opponent_ADDR)
+/* <<< part PRIZE_COORDS_YOUR_OR_OPP_OPPONENT */
+/* >>> part PRIZE_COORDS_2_PLAYER */
+#define PRIZE_COORDS_2_PLAYER PrizeCardsCoordinateData_2_ADDR
+/* <<< part PRIZE_COORDS_2_PLAYER */
+/* >>> part PRIZE_COORDS_2_OPPONENT */
+#define PRIZE_COORDS_2_OPPONENT 0x44D8u
+/* <<< part PRIZE_COORDS_2_OPPONENT */
 
 /* >>> factory _DrawPlayersPrizeAndBenchCards */
 void _DrawPlayersPrizeAndBenchCards(void)

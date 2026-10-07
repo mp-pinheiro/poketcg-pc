@@ -6,7 +6,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/card_color.h"
 #include "home/card_data.h"
 #include "home/core.h"
@@ -16,12 +16,20 @@
 #include "generated/wram.h"
 
 #include "mem.h"
+/* <<< part includes_2 */
 
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD                 0xbbu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part WCE08_ADDR */
 /* wce08: AI scratch byte holding the deck index the Pkmn Power acts on. */
 #define WCE08_ADDR                          wAISetupEnergyCount_ADDR
+/* <<< part WCE08_ADDR */
+/* >>> part WCE06_ADDR */
 #define WCE06_ADDR                          wAIDefendingPokemonWeakness_ADDR
+/* <<< part WCE06_ADDR */
 
+/* >>> part check_turn_duelist_has_color */
 /* pkmn_powers.asm:618-729 (.CheckWhetherTurnDuelistHasColor). Returns 1 with
  * carry set if the turn duelist has a card in play whose color matches the
  * weakness WR mask in b: walks the play area slots starting at the arena card
@@ -46,30 +54,50 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 		}
 	}
 }
+/* <<< part check_turn_duelist_has_color */
 
+/* >>> part includes_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/random.h"
+/* <<< part includes_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 
+/* >>> part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK  0xbau
+/* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
+/* >>> part DUELVARS_PRIZES */
 #define DUELVARS_PRIZES                       0xecu
+/* <<< part DUELVARS_PRIZES */
 
+/* >>> part DUELVARS_ARENA_CARD_HP */
 #define DUELVARS_ARENA_CARD_HP 0xc8u
+/* <<< part DUELVARS_ARENA_CARD_HP */
+/* >>> part DUELVARS_CARD_LOCATIONS */
 #define DUELVARS_CARD_LOCATIONS 0x00u
+/* <<< part DUELVARS_CARD_LOCATIONS */
+/* >>> part OPPACTION_DUEL_MAIN_SCENE_269 */
 #define OPPACTION_DUEL_MAIN_SCENE_269 0x16u
+/* <<< part OPPACTION_DUEL_MAIN_SCENE_269 */
+/* >>> part GRASS_ENERGY_COUNT_ADDR */
 /* wAttachedEnergies ($CC1B) indexed by GRASS ($01). */
 #define GRASS_ENERGY_COUNT_ADDR 0xCC1Cu
+/* <<< part GRASS_ENERGY_COUNT_ADDR */
 
+/* >>> part includes_DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #include "home/attacks.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_STATUS */
 #include "home/core.h"
 #include "home/common.h"
 #include "home/duel.h"
@@ -82,13 +110,21 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #include "home/effect_commands.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_STATUS */
 
+/* >>> part DUELVARS_ARENA_CARD_STATUS */
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
+/* <<< part DUELVARS_ARENA_CARD_STATUS */
 
+/* >>> part includes_GO_GO_RAIN_DANCE_DECK_ID */
 #include "home/energy.h"
 #include "home/substatus.h"
+/* <<< part includes_GO_GO_RAIN_DANCE_DECK_ID */
+/* >>> part GO_GO_RAIN_DANCE_DECK_ID */
 #define GO_GO_RAIN_DANCE_DECK_ID 0x12u
+/* <<< part GO_GO_RAIN_DANCE_DECK_ID */
 
+/* >>> part includes_tail */
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/retreat.h"
@@ -101,7 +137,7 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 
 #include "home/core.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory HandleAIShift */
 /* pkmn_powers.asm:618-729. AI handler for Venomoth's Shift power. c is the

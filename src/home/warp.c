@@ -6,8 +6,10 @@
 /* <<< part includes */
 /* >>> part WARP_DATA_BANK */
 #define WARP_DATA_BANK 0x07u
-#define WARP_DATA_POINTERS WarpDataPointers_ADDR
 /* <<< part WARP_DATA_BANK */
+/* >>> part WARP_DATA_POINTERS */
+#define WARP_DATA_POINTERS WarpDataPointers_ADDR
+/* <<< part WARP_DATA_POINTERS */
 /* >>> part warp_rom_read */
 static uint8_t warp_rom_read(uint16_t address){uint8_t bank=address<0x4000u?0u:WARP_DATA_BANK;return *rom_ptr(bank,address);}
 /* <<< part warp_rom_read */

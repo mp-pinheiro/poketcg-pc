@@ -1,144 +1,8 @@
-/* >>> part includes */
-#include "home/booster_packs.h"
-
-#include "generated/constants.h"
-#include "generated/rom.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/card_id_bus.h"
 #include "generated/wram.h"
 #include "mem.h"
-
-
-/* booster_packs.asm:166-184 (CardTypeTable) */
-static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
-	BOOSTER_CARD_TYPE_FIRE,
-	BOOSTER_CARD_TYPE_GRASS,
-	BOOSTER_CARD_TYPE_LIGHTNING,
-	BOOSTER_CARD_TYPE_WATER,
-	BOOSTER_CARD_TYPE_FIGHTING,
-	BOOSTER_CARD_TYPE_PSYCHIC,
-	BOOSTER_CARD_TYPE_COLORLESS,
-	BOOSTER_CARD_TYPE_TRAINER,
-	BOOSTER_CARD_TYPE_ENERGY,
-	BOOSTER_CARD_TYPE_ENERGY,
-	BOOSTER_CARD_TYPE_ENERGY,
-	BOOSTER_CARD_TYPE_ENERGY,
-	BOOSTER_CARD_TYPE_ENERGY,
-	BOOSTER_CARD_TYPE_ENERGY,
-	BOOSTER_CARD_TYPE_ENERGY,
-	BOOSTER_CARD_TYPE_TRAINER,
-	BOOSTER_CARD_TYPE_TRAINER,
-};
-
-#include "generated/wram.h"
-
-#include "home/booster_packs.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "generated/wram.h"
-#include "home/booster_packs.h"
-
-#include "home/booster_packs.h"
-#include "mem.h"
-
-
-#include "home/booster_packs.h"
-#include "home/random.h"
-
-
-#include "home/booster_packs.h"
-
-#include "home/booster_packs.h"
-
-#include "generated/wram.h"
-
-#define BOOSTER_DATA_BASE BoosterPack_ColosseumNeutral_ADDR
-
-#include "home/booster_packs.h"
-#include "generated/wram.h"
-
-#include "home/booster_packs.h"
-#include "home/card_collection.h"
-#include "generated/wram.h"
-
-#include "home/random.h"
-#include "generated/wram.h"
-
-#include "home/card_data.h"
-#include "generated/wram.h"
-
-
-
-#include "home/copy.h"
-#include "home/division.h"
-#include "home/booster_packs.h"
-#include "generated/wram.h"
-#include "mem.h"
-#define BOOSTER_PACKS_BANK 0x07u
-/* <<< factory statics */
-
-/* >>> factory GetCurrentRarityAmount */
-/* booster_packs.asm:57-65 */
-RarityAmount GetCurrentRarityAmount(void)
-{
-	uint8_t a = wBoosterCurrentRarity;
-	return (RarityAmount){a, (uint16_t)(wBoosterData_CommonAmount_ADDR + a)};
-}
-/* <<< factory GetCurrentRarityAmount */
-
-/* >>> factory GetBoosterCardType */
-/* booster_packs.asm:152-164 */
-uint8_t GetBoosterCardType(uint8_t a)
-{
-	if (a >= NUM_CARD_TYPES)
-		return CardTypeTable[0];
-	return CardTypeTable[a];
-}
-/* <<< factory GetBoosterCardType */
-
-/* >>> factory CalculateTypeChances */
-/* booster_packs.asm:190-217 */
-uint8_t CalculateTypeChances(void)
-{
-	for (uint8_t i = 0; i < NUM_BOOSTER_CARD_TYPES; i++)
-		gb_write8((uint16_t)(wBoosterTempTypeChancesTable_ADDR + i), 0u);
-	wTempBoosterChances = 0u;
-	for (uint8_t c = 0; c < NUM_BOOSTER_CARD_TYPES; c++) {
-		uint8_t amount = gb_read8((uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + c));
-		if (amount == 0u)
-			continue;
-		uint8_t chance = gb_read8((uint16_t)(wBoosterData_TypeChances_ADDR + c));
-		if (chance == 0u)
-			continue;
-		gb_write8((uint16_t)(wBoosterTempTypeChancesTable_ADDR + c), chance);
-		wTempBoosterChances = (uint8_t)(wTempBoosterChances + chance);
-	}
-	return wTempBoosterChances;
-}
-/* <<< factory CalculateTypeChances */
-
-/* >>> factory UpdateBoosterCardTypesChanceByte */
-/* booster_packs.asm:293-311 */
-uint8_t UpdateBoosterCardTypesChanceByte(void)
-{
-	uint16_t hl = (uint16_t)(wBoosterData_TypeChances_ADDR + wBoosterJustDrawnCardType);
-	uint8_t c = wBoosterAveragedTypeChances;
-	uint8_t v = gb_read8(hl);
-	uint8_t res = (uint8_t)(v - c);
-	gb_write8(hl, res);
-	if (res == 0u || v < c) {
-		res = 1u;
-		gb_write8(hl, res);
-	}
-	return res;
-}
-/* <<< factory UpdateBoosterCardTypesChanceByte */
-
+/* <<< part includes_2 */
 /* >>> factory AppendCurrentCardToHL */
 void AppendCurrentCardToHL(uint16_t *hl)
 {
@@ -154,7 +18,6 @@ void AppendCurrentCardToHL(uint16_t *hl)
 	*hl = (uint16_t)(cursor - 1u);
 }
 /* <<< factory AppendCurrentCardToHL */
-
 /* >>> factory AddBoosterCardToTempCardCollection */
 AddBoosterCardToTempCardCollectionResult AddBoosterCardToTempCardCollection(void)
 {
@@ -172,7 +35,6 @@ AddBoosterCardToTempCardCollectionResult AddBoosterCardToTempCardCollection(void
 	return (AddBoosterCardToTempCardCollectionResult){(uint8_t)(slot >> 8), flags};
 }
 /* <<< factory AddBoosterCardToTempCardCollection */
-
 /* >>> factory AddBoosterCardToDrawnEnergies */
 AddBoosterCardToDrawnEnergiesResult AddBoosterCardToDrawnEnergies(void)
 {
@@ -183,7 +45,6 @@ AddBoosterCardToDrawnEnergiesResult AddBoosterCardToDrawnEnergies(void)
 	return (AddBoosterCardToDrawnEnergiesResult){result.a, result.f};
 }
 /* <<< factory AddBoosterCardToDrawnEnergies */
-
 /* >>> factory AddBoosterEnergyToDrawnEnergies */
 AddBoosterEnergyToDrawnEnergiesResult AddBoosterEnergyToDrawnEnergies(CardId a)
 {
@@ -195,16 +56,6 @@ AddBoosterEnergyToDrawnEnergiesResult AddBoosterEnergyToDrawnEnergies(CardId a)
 		result.a, result.f, (uint8_t)(a >> 8), (uint8_t)a};
 }
 /* <<< factory AddBoosterEnergyToDrawnEnergies */
-
-/* >>> factory ZeroBoosterRarityData */
-void ZeroBoosterRarityData(void)
-{
-	wBoosterData_CommonAmount = 0u;
-	wBoosterData_UncommonAmount = 0u;
-	wBoosterData_RareAmount = 0u;
-}
-/* <<< factory ZeroBoosterRarityData */
-
 /* >>> factory GenerateTwoTypesEnergyBooster */
 GenerateTwoTypesEnergyBoosterResult GenerateTwoTypesEnergyBooster(uint16_t hl)
 {
@@ -221,7 +72,6 @@ GenerateTwoTypesEnergyBoosterResult GenerateTwoTypesEnergyBooster(uint16_t hl)
 		0u, 0x80u, 0u, 0u, (uint8_t)(last >> 8), (uint8_t)last, hl};
 }
 /* <<< factory GenerateTwoTypesEnergyBooster */
-
 /* >>> factory GenerateRandomEnergy */
 /* booster_packs.asm:342-350 */
 AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergy(void)
@@ -230,27 +80,7 @@ AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergy(void)
 	return AddBoosterEnergyToDrawnEnergies((CardId)(random + 1u));
 }
 /* <<< factory GenerateRandomEnergy */
-
-/* >>> factory GenerateEnergyBoosterGrassPsychic */
-GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterGrassPsychic(void)
-{
-	return GenerateTwoTypesEnergyBooster(EnergyBoosterGrassPsychicData_ADDR);
-}
-/* <<< factory GenerateEnergyBoosterGrassPsychic */
-
-/* >>> factory GenerateEnergyBoosterLightningFire */
-GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterLightningFire(void)
-{
-	return GenerateTwoTypesEnergyBooster(EnergyBoosterLightningFireData_ADDR);
-}
-/* <<< factory GenerateEnergyBoosterLightningFire */
-
-/* >>> factory GenerateEnergyBoosterWaterFighting */
-GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterWaterFighting(void)
-{
-	return GenerateTwoTypesEnergyBooster(EnergyBoosterWaterFightingData_ADDR);
-}
-/* <<< factory GenerateEnergyBoosterWaterFighting */
+/* === factory GenerateEnergyBoosterWaterFighting */
 /* >>> factory GenerateFightingEnergy */
 AddBoosterEnergyToDrawnEnergiesResult GenerateFightingEnergy(void)
 {
@@ -287,7 +117,6 @@ AddBoosterEnergyToDrawnEnergiesResult GenerateWaterEnergy(void)
 	return AddBoosterEnergyToDrawnEnergies(WATER_ENERGY);
 }
 /* <<< factory GenerateWaterEnergy */
-
 /* >>> factory GenerateRandomEnergyBooster */
 AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergyBooster(void)
 {
@@ -301,7 +130,6 @@ AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergyBooster(void)
 	return (AddBoosterEnergyToDrawnEnergiesResult){0u, 0x80u, last.d, last.e};
 }
 /* <<< factory GenerateRandomEnergyBooster */
-
 /* >>> factory PutEnergiesAndNonEnergiesTogether */
 PutEnergiesAndNonEnergiesTogetherResult PutEnergiesAndNonEnergiesTogether(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -318,62 +146,6 @@ PutEnergiesAndNonEnergiesTogetherResult PutEnergiesAndNonEnergiesTogether(uint8_
 	return (PutEnergiesAndNonEnergiesTogetherResult){0u, 0x80u, b, c, d, e, hl};
 }
 /* <<< factory PutEnergiesAndNonEnergiesTogether */
-
-/* >>> factory LoadRarityAmountsToWram */
-void LoadRarityAmountsToWram(void)
-{
-	uint8_t set = gb_read8(wBoosterData_Set_ADDR);
-	uint8_t common = (set < 2u) ? 5u : 6u;
-	uint8_t uncommon = 3u;
-	uint8_t rare = 1u;
-	gb_write8(wBoosterData_CommonAmount_ADDR, common);
-	gb_write8(wBoosterData_UncommonAmount_ADDR, uncommon);
-	gb_write8(wBoosterData_RareAmount_ADDR, rare);
-}
-/* <<< factory LoadRarityAmountsToWram */
-
-/* >>> factory DetermineBoosterCardType */
-uint8_t DetermineBoosterCardType(uint8_t a)
-{
-	wTempBoosterChances = a;
-	uint8_t c = 0;
-	uint8_t *table = wBoosterTempTypeChancesTable_PTR;
-	for (;;) {
-		uint8_t chance = *table;
-		if (chance != 0u) {
-			uint8_t remaining = wTempBoosterChances;
-			uint8_t next = (uint8_t)(remaining - chance);
-			wTempBoosterChances = next;
-			if (remaining < chance)
-				break;
-		}
-		++table;
-		++c;
-		if (c >= NUM_BOOSTER_CARD_TYPES)
-			break;
-	}
-	wBoosterJustDrawnCardType = c;
-	return c;
-}
-/* <<< factory DetermineBoosterCardType */
-
-/* >>> factory FindBoosterDataPointer */
-uint16_t FindBoosterDataPointer(void)
-{
-	uint8_t pack = gb_read8(wBoosterPackID_ADDR);
-	return (uint16_t)(BOOSTER_DATA_BASE + (uint16_t)pack * 0x0Cu);
-}
-/* <<< factory FindBoosterDataPointer */
-
-/* >>> factory AddBoosterCardToDrawnNonEnergies */
-void AddBoosterCardToDrawnNonEnergies(void)
-{
-	uint16_t cursor = wBoosterTempNonEnergiesDrawn_ADDR;
-	AppendCurrentCardToHL(&cursor);
-	AddBoosterCardToTempCardCollection();
-}
-/* <<< factory AddBoosterCardToDrawnNonEnergies */
-
 /* >>> factory AddBoosterCardsToCollection */
 void AddBoosterCardsToCollection(void)
 {
@@ -386,7 +158,6 @@ void AddBoosterCardsToCollection(void)
 	}
 }
 /* <<< factory AddBoosterCardsToCollection */
-
 /* >>> factory GenerateBoosterEnergies */
 void GenerateBoosterEnergies(void)
 {
@@ -440,7 +211,6 @@ void GenerateBoosterEnergies(void)
 		(void)GenerateEnergyBoosterGrassPsychic();
 }
 /* <<< factory GenerateBoosterEnergies */
-
 /* >>> factory DetermineBoosterCard */
 DetermineBoosterCardResult DetermineBoosterCard(uint8_t d, uint8_t e)
 {
@@ -473,7 +243,6 @@ DetermineBoosterCardResult DetermineBoosterCard(uint8_t d, uint8_t e)
 	}
 }
 /* <<< factory DetermineBoosterCard */
-
 /* >>> factory CheckCardInSetAndRarity */
 CheckCardInSetAndRarityResult CheckCardInSetAndRarity(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -507,7 +276,6 @@ CheckCardInSetAndRarityResult CheckCardInSetAndRarity(uint8_t b, uint8_t c, uint
 	return (CheckCardInSetAndRarityResult){a, 0x00u, b, c, d, e, hl};
 }
 /* <<< factory CheckCardInSetAndRarity */
-
 /* >>> factory CheckCardAlreadyDrawn */
 CheckCardAlreadyDrawnResult CheckCardAlreadyDrawn(void)
 {
@@ -520,7 +288,6 @@ CheckCardAlreadyDrawnResult CheckCardAlreadyDrawn(void)
 	return (CheckCardAlreadyDrawnResult){value, f};
 }
 /* <<< factory CheckCardAlreadyDrawn */
-
 /* >>> factory FindCardsInSetAndRarity */
 void FindCardsInSetAndRarity(void)
 {
@@ -551,37 +318,6 @@ void FindCardsInSetAndRarity(void)
 	}
 }
 /* <<< factory FindCardsInSetAndRarity */
-
-/* >>> factory GenerateBoosterNonEnergies */
-GenerateBoosterNonEnergiesResult GenerateBoosterNonEnergies(void)
-{
-	wBoosterCurrentRarity = STAR;
-	for (;;) {
-		RarityAmount ra = GetCurrentRarityAmount();
-		uint8_t amount = gb_read8(ra.hl);
-		if (amount != 0u) {
-			FindCardsInSetAndRarity();
-			uint8_t chances = CalculateTypeChances();
-			if (chances == 0u)
-				return (GenerateBoosterNonEnergiesResult){0u, 0x10u};
-			uint8_t roll = Random(chances);
-			uint8_t type = DetermineBoosterCardType(roll);
-			(void)DetermineBoosterCard(0u, type);
-			(void)UpdateBoosterCardTypesChanceByte();
-			AddBoosterCardToDrawnNonEnergies();
-			RarityAmount ra2 = GetCurrentRarityAmount();
-			gb_write8(ra2.hl, (uint8_t)(gb_read8(ra2.hl) - 1u));
-			continue;
-		}
-		uint8_t rarity = (uint8_t)(wBoosterCurrentRarity - 1u);
-		wBoosterCurrentRarity = rarity;
-		if (!(rarity & 0x80u))
-			continue;
-		return (GenerateBoosterNonEnergiesResult){rarity, 0x00u};
-	}
-}
-/* <<< factory GenerateBoosterNonEnergies */
-
 /* >>> factory InitBoosterData */
 void InitBoosterData(void)
 {
@@ -612,20 +348,3 @@ void InitBoosterData(void)
 	wBoosterAveragedTypeChances = (uint8_t)r.quotient;
 }
 /* <<< factory InitBoosterData */
-
-/* >>> factory GenerateBoosterPack */
-void GenerateBoosterPack(uint8_t a)
-{
-	wBoosterPackID = a;
-	for (;;) {
-		InitBoosterData();
-		GenerateBoosterEnergies();
-		GenerateBoosterNonEnergiesResult r = GenerateBoosterNonEnergies();
-		if ((r.f & 0x10u) != 0u)
-			continue;
-		(void)PutEnergiesAndNonEnergiesTogether(0u, 0u, 0u, 0u, 0u, 0u, 0u);
-		AddBoosterCardsToCollection();
-		return;
-	}
-}
-/* <<< factory GenerateBoosterPack */

@@ -7,21 +7,8 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
-#include "home/copy.h"
-#include "home/input_name.h"
-#include "home/lcd.h"
-#include "home/lcd_enable_frame.h"
-#include "home/memory.h"
-#include "home/overworld.h"
-#include "home/random.h"
-#include "home/switch_sram.h"
-#include "generated/sram.h"
-
-
-#define DEFAULT_PLAYER_NAME (DisplayPlayerNamingScreen__default_name_ADDR)
-/* <<< factory statics */
-
+/* --- part MINT_NAME */
+/* --- part NAMING_BANK */
 /* >>> factory DisplayPlayerNamingScreen */
 /* naming.asm:1-40 (poketcg.sym 04:68a9, 66 bytes of code). Clears the name
  * buffer, hands it to InputPlayerName, and copies either the typed name or

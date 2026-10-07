@@ -4,10 +4,10 @@
 #include "generated/hram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/switch_rom.h"
 #include "generated/hram.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> factory BankswitchROM */
 /* BankswitchROM:: ldh [hBankROM], a / ld [rROMB], a / ret

@@ -19,9 +19,13 @@
 
 /* >>> part rSCX */
 #define rSCX 0xFF43u
-#define rSCY 0xFF42u
-#define LCDC_ON 0x80u
 /* <<< part rSCX */
+/* >>> part rSCY */
+#define rSCY 0xFF42u
+/* <<< part rSCY */
+/* >>> part LCDC_ON */
+#define LCDC_ON 0x80u
+/* <<< part LCDC_ON */
 
 /* >>> factory InitMenuScreen */
 InitMenuRegs InitMenuScreen(void)

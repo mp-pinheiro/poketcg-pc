@@ -513,8 +513,10 @@ TextResult DrawTextReadyLabeledOrRegularTextBox(uint16_t hl)
 
 /* >>> part SYM_CURSOR_D */
 #define SYM_CURSOR_D 0x2Fu
-#define SYM_BOX_BOTTOM 0x1Du
 /* <<< part SYM_CURSOR_D */
+/* >>> part SYM_BOX_BOTTOM */
+#define SYM_BOX_BOTTOM 0x1Du
+/* <<< part SYM_BOX_BOTTOM */
 
 /* >>> factory WaitForPlayerToAdvanceText */
 WaitResult WaitForPlayerToAdvanceText(void)

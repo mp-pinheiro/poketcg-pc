@@ -9,9 +9,11 @@
 #include "home/frames.h"
 #include "home/tiles.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/load_animation.h"
+/* <<< part includes_2 */
 
+/* >>> part kMedalCoordsAndTilemaps */
 static const uint8_t kMedalCoordsAndTilemaps[24] = {
 	 1u, 10u, 0x3eu,
 	 6u, 10u, 0x3fu,
@@ -22,13 +24,21 @@ static const uint8_t kMedalCoordsAndTilemaps[24] = {
 	11u, 14u, 0x44u,
 	16u, 14u, 0x43u,
 };
+/* <<< part kMedalCoordsAndTilemaps */
 
+/* >>> part includes_SYM_0 */
 #include "home/print_stats.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_SYM_0 */
+/* >>> part SYM_0 */
 #define SYM_0 0x20u
+/* <<< part SYM_0 */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
 
+/* >>> part includes_tail */
 #include "home/print_stats.h"
 #include "home/empty_screen.h"
 #include "home/bg_map.h"
@@ -56,7 +66,7 @@ static const uint8_t kMedalCoordsAndTilemaps[24] = {
 #include "home/load_gfx.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory DrawPauseMenuPlayerPortrait */
 void DrawPauseMenuPlayerPortrait(uint8_t b, uint8_t c)

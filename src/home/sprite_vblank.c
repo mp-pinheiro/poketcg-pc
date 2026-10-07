@@ -3,21 +3,25 @@
 
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/empty_screen.h"
 #include "home/lcd.h"
 #include "home/load_animation.h"
 #include "home/process_text.h"
 #include "home/core.h"
+/* <<< part includes_2 */
 
+/* >>> part HANDLEALLSPRITEANIMATIONS_ADDR */
 /* poketcg.sym bank 00: home HandleAllSpriteAnimations trampoline entry,
  * the address baked into wVBlankFunctionTrampoline by
  * SetSpriteAnimationsAsVBlankFunction. */
 #define HANDLEALLSPRITEANIMATIONS_ADDR HandleAllSpriteAnimations_ADDR
+/* <<< part HANDLEALLSPRITEANIMATIONS_ADDR */
 
+/* >>> part includes_tail */
 #include "generated/rom.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory BackupVBlankFunctionTrampoline */
 uint8_t BackupVBlankFunctionTrampoline(uint16_t *hl, uint16_t *de)

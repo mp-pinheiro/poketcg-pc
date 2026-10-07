@@ -3,19 +3,29 @@
 #include "generated/constants.h"
 #include "home/sgb.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/sgb.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
+/* >>> part JOYP_SGB_START */
 #define JOYP_SGB_START 0x00u
+/* <<< part JOYP_SGB_START */
+/* >>> part JOYP_SGB_ONE */
 #define JOYP_SGB_ONE 0x10u
+/* <<< part JOYP_SGB_ONE */
+/* >>> part JOYP_SGB_ZERO */
 #define JOYP_SGB_ZERO 0x20u
+/* <<< part JOYP_SGB_ZERO */
+/* >>> part JOYP_SGB_FINISH */
 #define JOYP_SGB_FINISH 0x30u
+/* <<< part JOYP_SGB_FINISH */
 
+/* >>> part includes_tail */
 #include "home/sgb.h"
 
 #include "home/sgb.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory Wait */
 /* sgb.asm:258-274. The delay loop has no observable effects beyond its

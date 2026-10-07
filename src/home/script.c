@@ -6,15 +6,21 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "home/duel_animation_core.h"
 #include "home/objects.h"
+/* <<< part includes_2 */
 
+/* >>> part TRUE */
 #define TRUE 1u
+/* <<< part TRUE */
+/* >>> part BANK_ANIMATION_CORE */
 #define BANK_ANIMATION_CORE 0x07u
+/* <<< part BANK_ANIMATION_CORE */
 
+/* >>> part includes_BANK_GAME_LOOP */
 #include "home/npc_data.h"
 
 #include "home/overworld.h"
@@ -22,8 +28,10 @@
 
 
 #include "home/main_menu.h"
+/* <<< part includes_BANK_GAME_LOOP */
+/* >>> part BANK_GAME_LOOP */
 #define BANK_GAME_LOOP 0x04u
-/* <<< factory statics */
+/* <<< part BANK_GAME_LOOP */
 
 /* >>> part includes_MAP_SCRIPTS_BANK */
 #include "home/script_dispatch.h"
@@ -33,8 +41,10 @@
 
 /* >>> part MAP_SCRIPTS_BANK */
 #define MAP_SCRIPTS_BANK 4u
-#define MAP_SCRIPTS MapScripts_ADDR
 /* <<< part MAP_SCRIPTS_BANK */
+/* >>> part MAP_SCRIPTS */
+#define MAP_SCRIPTS MapScripts_ADDR
+/* <<< part MAP_SCRIPTS */
 
 /* >>> factory GetMapScriptPointer */
 /* script.asm:62-95. Entry l = script selector; the entry is

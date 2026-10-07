@@ -7,7 +7,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "home/duel.h"
@@ -27,10 +27,18 @@
 #include "home/trainer_cards.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_2 */
+/* >>> part DUELVARS_NUMBER_OF_CARDS_IN_HAND */
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_IN_HAND */
+/* >>> part DUELVARS_ARENA_CARD_STATUS */
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
+/* <<< part DUELVARS_ARENA_CARD_STATUS */
+/* >>> part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 
+/* >>> part includes_DUELVARS_ARENA_CARD */
 #include "home/duel.h"
 #include "home/card_data.h"
 #include "home/trainer_cards.h"
@@ -54,19 +62,30 @@
 #include "home/card_data.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_DUELVARS_ARENA_CARD */
 
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xbbu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
+/* >>> part GO_GO_RAIN_DANCE_DECK_ID */
 #define GO_GO_RAIN_DANCE_DECK_ID 0x12u
+/* <<< part GO_GO_RAIN_DANCE_DECK_ID */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_HP */
 #include "home/duel.h"
 #include "home/common.h"
 #include "home/substatus.h"
 #include "home/core.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_HP */
 
+/* >>> part DUELVARS_ARENA_CARD_HP */
 #define DUELVARS_ARENA_CARD_HP 0xc8u
+/* <<< part DUELVARS_ARENA_CARD_HP */
 
 
 
@@ -74,22 +93,45 @@
 
 
 
+/* >>> part ANGER_DECK_ID */
 #define ANGER_DECK_ID 0x31u
+/* <<< part ANGER_DECK_ID */
+/* >>> part FIRE_CHARGE_DECK_ID */
 #define FIRE_CHARGE_DECK_ID 0x17u
+/* <<< part FIRE_CHARGE_DECK_ID */
+/* >>> part ROCK_CRUSHER_DECK_ID */
 #define ROCK_CRUSHER_DECK_ID 0x11u
+/* <<< part ROCK_CRUSHER_DECK_ID */
+/* >>> part WONDERS_OF_SCIENCE_DECK_ID */
 #define WONDERS_OF_SCIENCE_DECK_ID 0x16u
+/* <<< part WONDERS_OF_SCIENCE_DECK_ID */
+/* >>> part EXCAVATION_DECK_ID */
 #define EXCAVATION_DECK_ID 0x1Fu
+/* <<< part EXCAVATION_DECK_ID */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
+/* >>> part DUELVARS_CARD_LOCATIONS */
 #define DUELVARS_CARD_LOCATIONS 0x00u
+/* <<< part DUELVARS_CARD_LOCATIONS */
 
 
 
 
+/* >>> part ETCETERA_DECK_ID */
 #define ETCETERA_DECK_ID 0x28u
+/* <<< part ETCETERA_DECK_ID */
+/* >>> part HARD_POKEMON_DECK_ID */
 #define HARD_POKEMON_DECK_ID 0x21u
+/* <<< part HARD_POKEMON_DECK_ID */
+/* >>> part LOVELY_NIDORAN_DECK_ID */
 #define LOVELY_NIDORAN_DECK_ID 0x2fu
+/* <<< part LOVELY_NIDORAN_DECK_ID */
+/* >>> part PIKACHU_DECK_ID */
 #define PIKACHU_DECK_ID 0x25u
+/* <<< part PIKACHU_DECK_ID */
 
+/* >>> part includes_LEGENDARY_MOLTRES_DECK_ID */
 #include "home/trainer_cards.h"
 #include "home/common.h"
 #include "home/duel.h"
@@ -119,17 +161,39 @@
 #include "home/trainer_cards.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_LEGENDARY_MOLTRES_DECK_ID */
+/* >>> part LEGENDARY_MOLTRES_DECK_ID */
 #define LEGENDARY_MOLTRES_DECK_ID 0x0Cu
+/* <<< part LEGENDARY_MOLTRES_DECK_ID */
+/* >>> part LEGENDARY_ARTICUNO_DECK_ID */
 #define LEGENDARY_ARTICUNO_DECK_ID 0x0Eu
+/* <<< part LEGENDARY_ARTICUNO_DECK_ID */
+/* >>> part LEGENDARY_DRAGONITE_DECK_ID */
 #define LEGENDARY_DRAGONITE_DECK_ID 0x0Fu
+/* <<< part LEGENDARY_DRAGONITE_DECK_ID */
+/* >>> part LEGENDARY_RONALD_DECK_ID */
 #define LEGENDARY_RONALD_DECK_ID 0x1Bu
+/* <<< part LEGENDARY_RONALD_DECK_ID */
+/* >>> part BLISTERING_POKEMON_DECK_ID */
 #define BLISTERING_POKEMON_DECK_ID 0x20u
+/* <<< part BLISTERING_POKEMON_DECK_ID */
+/* >>> part SOUND_OF_THE_WAVES_DECK_ID */
 #define SOUND_OF_THE_WAVES_DECK_ID 0x24u
+/* <<< part SOUND_OF_THE_WAVES_DECK_ID */
+/* >>> part POWER_GENERATOR_DECK_ID */
 #define POWER_GENERATOR_DECK_ID 0x27u
+/* <<< part POWER_GENERATOR_DECK_ID */
+/* >>> part FLOWER_GARDEN_DECK_ID */
 #define FLOWER_GARDEN_DECK_ID 0x29u
+/* <<< part FLOWER_GARDEN_DECK_ID */
+/* >>> part STRANGE_POWER_DECK_ID */
 #define STRANGE_POWER_DECK_ID 0x2Du
+/* <<< part STRANGE_POWER_DECK_ID */
+/* >>> part FLAMETHROWER_DECK_ID */
 #define FLAMETHROWER_DECK_ID 0x32u
+/* <<< part FLAMETHROWER_DECK_ID */
 
+/* >>> part includes_HEATED_BATTLE_DECK_ID */
 #include "home/core.h"
 #include "home/common.h"
 #include "home/duel.h"
@@ -137,8 +201,12 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_HEATED_BATTLE_DECK_ID */
+/* >>> part HEATED_BATTLE_DECK_ID */
 #define HEATED_BATTLE_DECK_ID 0x1Du
+/* <<< part HEATED_BATTLE_DECK_ID */
 
+/* >>> part includes_IMAKUNI_DECK_ID */
 #include "home/core.h"
 #include "home/substatus.h"
 #include "home/common.h"
@@ -231,11 +299,21 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_IMAKUNI_DECK_ID */
+/* >>> part IMAKUNI_DECK_ID */
 #define IMAKUNI_DECK_ID 0x34u
+/* <<< part IMAKUNI_DECK_ID */
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xC2u
+/* <<< part PLAYER_TURN */
+/* >>> part DUELVARS_BENCH */
 #define DUELVARS_BENCH 0xBCu
+/* <<< part DUELVARS_BENCH */
+/* >>> part GHOST_DECK_ID */
 #define GHOST_DECK_ID 0x2Bu
+/* <<< part GHOST_DECK_ID */
 
+/* >>> part includes_tail */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/common.h"
@@ -279,7 +357,7 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/core.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> part cp_flags */
 /* The exit F register of a `cp n` and of an `or a`, for the decisions whose

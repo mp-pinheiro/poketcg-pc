@@ -8,7 +8,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/duel.h"
@@ -27,17 +27,33 @@
 #include "home/time.h"
 #include "home/bg_map.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
+/* >>> part OPPONENT_TURN */
 #define OPPONENT_TURN 0xc3u
+/* <<< part OPPONENT_TURN */
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xc2u
+/* <<< part PLAYER_TURN */
+/* >>> part SYM_0 */
 #define SYM_0 0x20u
+/* <<< part SYM_0 */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
+/* >>> part B_PAD_A */
 #define B_PAD_A 0u
+/* <<< part B_PAD_A */
+/* >>> part B_PAD_RIGHT */
 #define B_PAD_RIGHT 4u
+/* <<< part B_PAD_RIGHT */
+/* >>> part B_PAD_LEFT */
 #define B_PAD_LEFT 5u
+/* <<< part B_PAD_LEFT */
+/* >>> part F_C */
 #define F_C 0x10u
+/* <<< part F_C */
 
-/* <<< factory statics */
 
 /* >>> factory _SetUpAndStartLinkDuel */
 void _SetUpAndStartLinkDuel(void)

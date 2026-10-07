@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
@@ -28,22 +28,36 @@
 #include "home/general_no_retreat.h"
 #include "home/general.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
+/* >>> part BANK_DECK_AI_POINTER_TABLE */
 #define BANK_DECK_AI_POINTER_TABLE 5u
+/* <<< part BANK_DECK_AI_POINTER_TABLE */
+/* >>> part DECK_AI_POINTER_TABLE_ADDR */
 #define DECK_AI_POINTER_TABLE_ADDR DeckAIPointerTable_ADDR
+/* <<< part DECK_AI_POINTER_TABLE_ADDR */
+/* >>> part AI_ACTION_TABLE_SAM_PRACTICE_ADDR */
 #define AI_ACTION_TABLE_SAM_PRACTICE_ADDR AIActionTable_SamPractice_ADDR
+/* <<< part AI_ACTION_TABLE_SAM_PRACTICE_ADDR */
 
 
 
-/* <<< factory statics */
 
 /* >>> part SAMS_PRACTICE_DECK_ID */
 #define SAMS_PRACTICE_DECK_ID 0u
-#define SAMS_NORMAL_DECK_ID 2u
-#define PRACTICE_PLAYER_DECK_ID 1u
-#define PRACTICE_PLAYER_DECK 3u
-#define DUELVARS_DUELIST_TYPE 0xF1u
 /* <<< part SAMS_PRACTICE_DECK_ID */
+/* >>> part SAMS_NORMAL_DECK_ID */
+#define SAMS_NORMAL_DECK_ID 2u
+/* <<< part SAMS_NORMAL_DECK_ID */
+/* >>> part PRACTICE_PLAYER_DECK_ID */
+#define PRACTICE_PLAYER_DECK_ID 1u
+/* <<< part PRACTICE_PLAYER_DECK_ID */
+/* >>> part PRACTICE_PLAYER_DECK */
+#define PRACTICE_PLAYER_DECK 3u
+/* <<< part PRACTICE_PLAYER_DECK */
+/* >>> part DUELVARS_DUELIST_TYPE */
+#define DUELVARS_DUELIST_TYPE 0xF1u
+/* <<< part DUELVARS_DUELIST_TYPE */
 
 /* >>> factory LoadOpponentDeck */
 /* ai.asm:1-46. Sam paths (deck id 0 or 2) force PRACTICE_PLAYER_DECK onto the

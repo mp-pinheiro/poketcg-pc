@@ -7,18 +7,24 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/random.h"
 #include "home/print_text.h"
 #include "home/switch_sram.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "mem.h"
+/* <<< part includes_2 */
+/* >>> part AUTO_DECK_MACHINES_BANK */
 #define AUTO_DECK_MACHINES_BANK 0x06u
+/* <<< part AUTO_DECK_MACHINES_BANK */
+/* >>> part AUTO_DECK_MACHINE_ENTRIES */
 #define AUTO_DECK_MACHINE_ENTRIES AutoDeckMachineEntries_ADDR
+/* <<< part AUTO_DECK_MACHINE_ENTRIES */
 
+/* >>> part includes_tail */
 #include "home/deck_machine.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory ReadAutoDeckConfiguration */
 void ReadAutoDeckConfiguration(void)

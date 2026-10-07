@@ -6,24 +6,36 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/bg_map.h"
 
 #include "home/print_text.h"
 #include "home/process_text.h"
+/* <<< part includes_2 */
 
+/* >>> part SYM_CURSOR_R */
 #define SYM_CURSOR_R 0x0Fu
+/* <<< part SYM_CURSOR_R */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
+/* >>> part EMPTY_MAIL_NAME_TEXT */
 #define EMPTY_MAIL_NAME_TEXT 0x035Cu
+/* <<< part EMPTY_MAIL_NAME_TEXT */
 
+/* >>> part includes_PAD_CTRL_PAD */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/overworld.h"
 #include "home/sound.h"
+/* <<< part includes_PAD_CTRL_PAD */
 
+/* >>> part PAD_CTRL_PAD */
 #define PAD_CTRL_PAD 0xF0u
+/* <<< part PAD_CTRL_PAD */
 
 
+/* >>> part includes_PAD_A */
 #include "home/give_booster_pack.h"
 #include "home/init_menu.h"
 #include "home/lcd.h"
@@ -38,13 +50,19 @@
 #include "home/labels.h"
 #include "home/lcd_enable_frame.h"
 #include "home/text_box.h"
+/* <<< part includes_PAD_A */
 
+/* >>> part PAD_A */
 /* mail.asm:136 (PCMailHandleAInput). PAD_A is 1 << B_PAD_A with B_PAD_A = 0,
  * so $01. MailScreenLabels is the bank-4 label list at 04:47d2 (poketcg.sym),
  * loaded as a plain 16-bit pointer exactly like status.c's StatusScreenLabels. */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part MailScreenLabels */
 #define MailScreenLabels MailScreenLabels_ADDR
+/* <<< part MailScreenLabels */
 
+/* >>> part PAD_B */
 /* PCMailTextPages' text ids (mail.asm:200-261). `tx Label` expands to
  * `dw Label_`, the textpointer index from text_offsets.asm:1029-1052. */
 
@@ -55,7 +73,7 @@
  * home/lcd_enable_frame.h, home/process_text.h, home/sound.h,
  * generated/wram.h, generated/hram.h) is already included above. */
 #define PAD_B 0x02u
-/* <<< factory statics */
+/* <<< part PAD_B */
 
 
 /* >>> part pc_mail_coordinates */

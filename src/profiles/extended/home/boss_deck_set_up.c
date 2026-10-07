@@ -1,18 +1,13 @@
-/* >>> part includes */
-#include "home/boss_deck_set_up.h"
-
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "home/card_id_bus.h"
-#define DUELVARS_DECK_CARDS 0x7Eu
-#define DUELVARS_HAND 0x42u
+/* <<< part includes_2 */
+/* === part DUELVARS_HAND */
+/* >>> part CARD_LIST_TERMINATOR */
 #define CARD_LIST_TERMINATOR 0x00u
+/* <<< part CARD_LIST_TERMINATOR */
+/* >>> part check_id_is_in_list */
 static uint8_t check_id_is_in_list(uint8_t deck_index)
 {
 	uint8_t high = gb_read8((uint16_t)(wAICardListAvoidPrize_ADDR + 1u));
@@ -27,8 +22,7 @@ static uint8_t check_id_is_in_list(uint8_t deck_index)
 			return (uint8_t)(entry == card);
 	}
 }
-/* <<< factory statics */
-
+/* <<< part check_id_is_in_list */
 /* >>> factory SetUpBossStartingHandAndDeck */
 void SetUpBossStartingHandAndDeck(void)
 {

@@ -11,11 +11,19 @@
 
 /* >>> part PAD_B */
 #define PAD_B 0x02u
-#define PAD_RIGHT 0x10u
-#define PAD_LEFT 0x20u
-#define PAD_UP 0x40u
-#define PAD_DOWN 0x80u
 /* <<< part PAD_B */
+/* >>> part PAD_RIGHT */
+#define PAD_RIGHT 0x10u
+/* <<< part PAD_RIGHT */
+/* >>> part PAD_LEFT */
+#define PAD_LEFT 0x20u
+/* <<< part PAD_LEFT */
+/* >>> part PAD_UP */
+#define PAD_UP 0x40u
+/* <<< part PAD_UP */
+/* >>> part PAD_DOWN */
+#define PAD_DOWN 0x80u
+/* <<< part PAD_DOWN */
 /* >>> factory Func_1c865 */
 void Func_1c865(void)
 {

@@ -9,7 +9,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "mem.h"
 #include "generated/wram.h"
 
@@ -20,20 +20,32 @@
 #include "generated/hram.h"
 #include "home/scroll.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
+/* >>> part rSCX */
 #define rSCX 0xFF43u
+/* <<< part rSCX */
+/* >>> part DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR */
 #define DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR DefaultScreenAnimationUpdate_ADDR
+/* <<< part DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR */
+/* >>> part RST00_ADDR */
 #define RST00_ADDR 0x0000u
+/* <<< part RST00_ADDR */
 
+/* >>> part includes_SHAKE_SCREEN_X_UPDATE_FUNC_ADDR */
 #include "generated/wram.h"
 
 #include "home/screen_effects.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_SHAKE_SCREEN_X_UPDATE_FUNC_ADDR */
 
+/* >>> part SHAKE_SCREEN_X_UPDATE_FUNC_ADDR */
 #define SHAKE_SCREEN_X_UPDATE_FUNC_ADDR (ShakeScreenX__UpdateFunc_ADDR)
+/* <<< part SHAKE_SCREEN_X_UPDATE_FUNC_ADDR */
 
+/* >>> part includes_DISTORTSCREEN_UPDATEFUNC_ADDR */
 #include "generated/wram.h"
 #include "home/play_animation.h"
 
@@ -41,26 +53,40 @@
 
 #include "home/scroll.h"
 #include "generated/wram.h"
+/* <<< part includes_DISTORTSCREEN_UPDATEFUNC_ADDR */
+/* >>> part DISTORTSCREEN_UPDATEFUNC_ADDR */
 #define DISTORTSCREEN_UPDATEFUNC_ADDR (DistortScreen__UpdateFunc_ADDR)
+/* <<< part DISTORTSCREEN_UPDATEFUNC_ADDR */
+/* >>> part APPLYBACKGROUNDSCROLL_ADDR */
 #define APPLYBACKGROUNDSCROLL_ADDR ApplyBackgroundScroll_ADDR
+/* <<< part APPLYBACKGROUNDSCROLL_ADDR */
 
+/* >>> part includes_WHITEFLASHSCREEN_UPDATEFUNC_ADDR */
 #include "home/copy.h"
 #include "home/memory.h"
 #include "home/palettes.h"
 #include "home/screen_effects.h"
 #include "generated/wram.h"
+/* <<< part includes_WHITEFLASHSCREEN_UPDATEFUNC_ADDR */
+/* >>> part WHITEFLASHSCREEN_UPDATEFUNC_ADDR */
 #define WHITEFLASHSCREEN_UPDATEFUNC_ADDR (WhiteFlashScreen__UpdateFunc_ADDR)
+/* <<< part WHITEFLASHSCREEN_UPDATEFUNC_ADDR */
 
+/* >>> part includes_SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR */
 #include "home/screen_effects.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR */
+/* >>> part SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR */
 #define SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR (ShakeScreenY__UpdateFunc_ADDR)
+/* <<< part SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR */
 
+/* >>> part includes_tail */
 #include "home/screen_effects.h"
 #include "mem.h"
 
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory DecrementScreenAnimDuration */
 /* screen_effects.asm:183-186

@@ -13,10 +13,10 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 
 from run_mutation import resolve_anchor  # noqa: E402  (shared anchor rule)
+from tools.compose_profile import mutation_source  # noqa: E402
 from tools.profiles import get_profile  # noqa: E402
 
 PROFILE = get_profile(root=ROOT)
-HOME_SOURCES = {path.stem: path for path in PROFILE.home_sources(ROOT)}
 
 
 def load(path: Path):
@@ -50,7 +50,7 @@ def main() -> int:
                 print(f"MUTATION schema {case_path}:{fn}")
                 failures += 1
                 continue
-            default_source = HOME_SOURCES.get(case_path.stem, ROOT / "src" / "home" / f"{case_path.stem}.c")
+            default_source = mutation_source(PROFILE, case_path.stem, mutation["source_symbol"], before)
             source_value = mutation.get("source", default_source.relative_to(ROOT).as_posix())
             if (not isinstance(source_value, str) or not source_value
                     or Path(source_value).is_absolute() or ".." in Path(source_value).parts

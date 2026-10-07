@@ -5,22 +5,30 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "home/duel_animation_core.h"
+/* <<< part includes_2 */
 
+/* >>> part BANK_LOAD_DUEL_ANIM_BUFFER */
 #define BANK_LOAD_DUEL_ANIM_BUFFER 7u
+/* <<< part BANK_LOAD_DUEL_ANIM_BUFFER */
 
+/* >>> part includes_BANK_UPDATE_QUEUED_ANIMATIONS */
 #include "home/load_animation.h"
+/* <<< part includes_BANK_UPDATE_QUEUED_ANIMATIONS */
+/* >>> part BANK_UPDATE_QUEUED_ANIMATIONS */
 #define BANK_UPDATE_QUEUED_ANIMATIONS 7u
+/* <<< part BANK_UPDATE_QUEUED_ANIMATIONS */
 
+/* >>> part includes_tail */
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
 #include "home/switch_rom.h"
 #include "home/load_animation.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> part rQUEUE */
 #define rQUEUE wAnimationQueue_ADDR

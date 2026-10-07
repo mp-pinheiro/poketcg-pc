@@ -11,23 +11,27 @@
 #include "home/switch_rom.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/switch_rom.h"
 #include "mem.h"
 
 #include "home/switch_rom.h"
 #include "home/copy.h"
 #include "generated/hram.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> part BANK_CARD_DATA */
 /* Card data and CardPointers both live in ROM bank 0x0c (data/cards.asm). The asm
  * reaches them through BankpushROM2/BankpopROM, whose net effect is a temporary bank
  * switch -- collapsed here to direct rom_ptr reads. */
 #define BANK_CARD_DATA      CardPointers_BANK
-#define CARD_POINTERS       CardPointers_ADDR
-#define GETCARDPTR_BOUND ((uint16_t)(CARD_POINTERS + 2u + 2u * NUM_CARDS))
 /* <<< part BANK_CARD_DATA */
+/* >>> part CARD_POINTERS */
+#define CARD_POINTERS       CardPointers_ADDR
+/* <<< part CARD_POINTERS */
+/* >>> part GETCARDPTR_BOUND */
+#define GETCARDPTR_BOUND ((uint16_t)(CARD_POINTERS + 2u + 2u * NUM_CARDS))
+/* <<< part GETCARDPTR_BOUND */
 
 /* >>> part get_card_pointer */
 static CardPtrResult get_card_pointer(CardId cardid)

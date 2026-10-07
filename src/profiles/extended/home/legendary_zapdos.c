@@ -1,25 +1,3 @@
-/* >>> part includes */
-#include "home/legendary_zapdos.h"
-
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/attacks.h"
-#include "home/common.h"
-#include "home/core.h"
-#include "home/duel.h"
-#include "home/energy.h"
-#include "home/general.h"
-#include "home/hand_pokemon.h"
-#include "home/init.h"
-#define DUELVARS_ARENA_CARD 0xbbu
-/* <<< factory statics */
-
 /* >>> factory AIDoTurn_LegendaryZapdos */
 AIDoTurn_LegendaryZapdosResult AIDoTurn_LegendaryZapdos(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {

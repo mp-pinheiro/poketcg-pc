@@ -6,46 +6,70 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/switch_rom.h"
 #include "home/duel.h"
 #include "generated/hram.h"
+/* <<< part includes_2 */
+/* >>> part BANK__DrawPlayersPrizeAndBenchCards */
 #define BANK__DrawPlayersPrizeAndBenchCards 0x02u
+/* <<< part BANK__DrawPlayersPrizeAndBenchCards */
 
+/* >>> part includes_DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK */
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "home/duel.h"
+/* <<< part includes_DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK */
+/* >>> part DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK */
 #define DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK 0x02u
+/* <<< part DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK */
 
+/* >>> part includes_BANK__DrawYourOrOppPlayAreaScreen */
 #include "home/switch_rom.h"
 #include "home/menus.h"
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_BANK__DrawYourOrOppPlayAreaScreen */
+/* >>> part BANK__DrawYourOrOppPlayAreaScreen */
 #define BANK__DrawYourOrOppPlayAreaScreen 0x02u
+/* <<< part BANK__DrawYourOrOppPlayAreaScreen */
 
+/* >>> part includes_BANK__DrawAIPeekScreen */
 #include "home/switch_rom.h"
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_BANK__DrawAIPeekScreen */
+/* >>> part BANK__DrawAIPeekScreen */
 #define BANK__DrawAIPeekScreen 0x02u
+/* <<< part BANK__DrawAIPeekScreen */
 
+/* >>> part includes_BANK__SelectPrizeCards */
 #include "home/switch_rom.h"
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_BANK__SelectPrizeCards */
+/* >>> part BANK__SelectPrizeCards */
 #define BANK__SelectPrizeCards 0x02u
+/* <<< part BANK__SelectPrizeCards */
 
+/* >>> part includes_BANK__HandlePeekSelection */
 #include "generated/hram.h"
 #include "home/duel.h"
 #include "home/overworld.h"
 #include "home/switch_rom.h"
+/* <<< part includes_BANK__HandlePeekSelection */
+/* >>> part BANK__HandlePeekSelection */
 #define BANK__HandlePeekSelection 0x02u
+/* <<< part BANK__HandlePeekSelection */
 
+/* >>> part includes_tail */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/overworld.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory DrawPlayersPrizeAndBenchCards */
 void DrawPlayersPrizeAndBenchCards(void)

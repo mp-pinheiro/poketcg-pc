@@ -6,7 +6,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/attacks.h"
 #include "home/common.h"
@@ -15,7 +15,7 @@
 #include "home/hand_pokemon.h"
 #include "home/init.h"
 #include "home/pkmn_powers.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> factory AIDoTurn_GeneralNoRetreat */
 AIDoTurn_GeneralNoRetreatResult AIDoTurn_GeneralNoRetreat(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)

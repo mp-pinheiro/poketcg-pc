@@ -5,17 +5,23 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/debug_player_coordinates.h"
 #include "home/load_animation.h"
 #include "home/lcd.h"
 #include "home/core.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_2 */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_B */
 #define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part WX_OFS */
 #define WX_OFS 0x07u
-/* <<< factory statics */
+/* <<< part WX_OFS */
 
 /* >>> part LCDC_WIN_ON */
 #define LCDC_WIN_ON 0x20u

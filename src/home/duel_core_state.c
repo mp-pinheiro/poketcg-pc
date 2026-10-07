@@ -10,12 +10,22 @@
 
 /* >>> part DUELVARS_PRIZE_CARDS */
 #define DUELVARS_PRIZE_CARDS 0x3cu
-#define DUELVARS_PRIZES 0xecu
-#define DUELVARS_ARENA_CARD 0xbbu
-#define DUELVARS_ARENA_CARD_HP 0xc8u
-#define DUELVARS_ARENA_CARD_FLAGS 0xc2u
-#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
 /* <<< part DUELVARS_PRIZE_CARDS */
+/* >>> part DUELVARS_PRIZES */
+#define DUELVARS_PRIZES 0xecu
+/* <<< part DUELVARS_PRIZES */
+/* >>> part DUELVARS_ARENA_CARD */
+#define DUELVARS_ARENA_CARD 0xbbu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD_HP */
+#define DUELVARS_ARENA_CARD_HP 0xc8u
+/* <<< part DUELVARS_ARENA_CARD_HP */
+/* >>> part DUELVARS_ARENA_CARD_FLAGS */
+#define DUELVARS_ARENA_CARD_FLAGS 0xc2u
+/* <<< part DUELVARS_ARENA_CARD_FLAGS */
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 
 /* >>> part duelvar_addr */
 static uint16_t duelvar_addr(uint8_t offset)

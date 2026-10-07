@@ -8,17 +8,19 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/sound.h"
 #include "home/card_data.h"
 #include "home/print_text.h"
 #include "home/process_text.h"
 #include "home/core.h"
 #include "home/music1.h"
+/* <<< part includes_2 */
 
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xc2u
+/* <<< part PLAYER_TURN */
 
-/* <<< factory statics */
 
 /* >>> factory _ShowPromotionalCardScreen */
 void _ShowPromotionalCardScreen(uint8_t a)

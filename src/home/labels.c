@@ -6,7 +6,7 @@
 #include "home/text_box.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/labels.h"
 #include "home/text_box.h"
 #include "home/overworld.h"
@@ -14,7 +14,7 @@
 #include "home/menus.h"
 #include "generated/wram.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> factory PrintLabels */
 LabelsResult PrintLabels(uint16_t hl, uint8_t d, uint8_t e)

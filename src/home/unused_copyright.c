@@ -6,7 +6,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
 #include "home/color.h"
 #include "home/lcd.h"
@@ -14,9 +14,11 @@
 #include "home/init_menu.h"
 #include "home/load_animation.h"
 #include "home/random.h"
+/* <<< part includes_2 */
 
+/* >>> part PAD_START */
 #define PAD_START 0x08u
-/* <<< factory statics */
+/* <<< part PAD_START */
 
 /* >>> factory UnusedCopyrightScreen */
 void UnusedCopyrightScreen(void)

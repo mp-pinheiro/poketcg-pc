@@ -18,12 +18,22 @@
 
 /* >>> part MINT_PIC */
 #define MINT_PIC 0x2Bu
-#define SYM_CURSOR_R 0x0Fu
-#define SYM_SPACE 0x00u
-#define PAD_A 0x01u
-#define PAD_LEFT 0x20u
-#define PAD_RIGHT 0x10u
 /* <<< part MINT_PIC */
+/* >>> part SYM_CURSOR_R */
+#define SYM_CURSOR_R 0x0Fu
+/* <<< part SYM_CURSOR_R */
+/* >>> part SYM_SPACE */
+#define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
+/* >>> part PAD_A */
+#define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_LEFT */
+#define PAD_LEFT 0x20u
+/* <<< part PAD_LEFT */
+/* >>> part PAD_RIGHT */
+#define PAD_RIGHT 0x10u
+/* <<< part PAD_RIGHT */
 
 /* >>> part print_host_text */
 static void print_host_text(const char *text, uint8_t d, uint8_t e)

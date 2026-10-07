@@ -7,13 +7,15 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/lightning_club.h"
 #include "home/grass_club_entrance.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
+/* >>> part LightningClubAfterDuelTable */
 #define LightningClubAfterDuelTable (LightningClubAfterDuel__after_duel_table_ADDR)
-/* <<< factory statics */
+/* <<< part LightningClubAfterDuelTable */
 
 /* >>> factory LightningClubAfterDuel */
 LightningClubAfterDuelResult LightningClubAfterDuel(void)

@@ -7,7 +7,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/map.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
@@ -26,14 +26,20 @@
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_2 */
+/* >>> part ClubEntranceAfterDuelTable */
 #define ClubEntranceAfterDuelTable (ClubEntranceAfterDuel__after_duel_table_ADDR)
+/* <<< part ClubEntranceAfterDuelTable */
 
+/* >>> part includes_TRUE */
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_TRUE */
 
+/* >>> part TRUE */
 #define TRUE 0x01u
-/* <<< factory statics */
+/* <<< part TRUE */
 
 /* >>> factory TryFirstRonaldEncounter */
 TryFirstRonaldEncounterResult TryFirstRonaldEncounter(uint8_t b, uint8_t c, uint16_t hl)

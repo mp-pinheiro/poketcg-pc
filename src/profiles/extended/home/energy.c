@@ -1,147 +1,10 @@
-/* >>> part includes */
-#include "home/energy.h"
-#include "home/damage_calculation.h"
-
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/duel.h"
 #include "home/card_id_bus.h"
-
-#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
-
-#include "home/duel.h"
-#include "mem.h"
-
-#include "home/duel.h"
-#include "home/core.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-#define DUELVARS_ARENA_CARD 0xbbu
-#define LEGENDARY_DRAGONITE_DECK_ID 0x0fu
-#define FIRE_CHARGE_DECK_ID 0x17u
-#define LEGENDARY_RONALD_DECK_ID 0x1bu
-
-#include "home/energy.h"
-#include "home/duel.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-#include "mem.h"
-#define FALSE 0x00u
-#define TRUE 0x01u
-
-#include "home/core.h"
-#include "home/duel.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-#include "mem.h"
-#define DUELVARS_ARENA_CARD_510 0xBBu
-
-#include "home/core.h"
-#include "home/duel.h"
-#include "home/energy.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-#include "mem.h"
-#define ATTACHED_ENERGY_BOOST_F_600 0x4u
-#define ATTACK_FLAG2_ADDRESS_600 0x8u
-#define DISCARD_ENERGY_F_600 0x3u
-#define DOUBLE_COLORLESS_ENERGY_600 0x07u
-#define FIRST_ATTACK_OR_PKMN_POWER_600 0x00u
-#define SECOND_ATTACK_600 0x01u
+/* <<< part includes_2 */
+/* >>> part OPPACTION_PLAY_ENERGY_600 */
 #define OPPACTION_PLAY_ENERGY_600 OPPACTION_PLAY_ENERGY
-
-
-#include "home/core.h"
-#include "home/duel.h"
-#include "home/substatus.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-#define DUELVARS_ARENA_CARD_HP 0xc8u
-#define DUELVARS_ARENA_CARD_STATUS 0xf0u
-
-#include "home/energy.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-
-#include "home/energy.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< factory statics */
-
-/* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
-/* energy.asm:71-84 */
-Backup1Result RetrievePlayAreaAIScoreFromBackup1(void)
-{
-	uint16_t de = wPlayAreaAIScore_ADDR;
-	uint16_t hl = wTempPlayAreaAIScore_ADDR;
-	for (uint8_t b = MAX_PLAY_AREA_POKEMON; b != 0u; b--) {
-		gb_write8(de, gb_read8(hl));
-		hl = (uint16_t)(hl + 1u);
-		de = (uint16_t)(de + 1u);
-	}
-	wAIScore = gb_read8(hl);
-	return (Backup1Result){de, hl};
-}
-/* <<< factory RetrievePlayAreaAIScoreFromBackup1 */
-
-/* >>> factory FindPlayAreaCardWithHighestAIScore */
-/* energy.asm:596-675 */
-AIScoreResult FindPlayAreaCardWithHighestAIScore(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
-{
-	if (wAIEnergyAttachLogicFlags & AI_ENERGY_FLAG_SKIP_ARENA_CARD) {
-		uint8_t cnt = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-		uint8_t n = (uint8_t)(cnt - 1u);
-		if (n == 0u) {
-			AIScoreResult r = {0u, 0x80u, b, c, d, e, hl};
-			return r;
-		}
-		e = 0u;
-		c = PLAY_AREA_BENCH_1;
-		d = c;
-		hl = (uint16_t)(wPlayAreaAIScore_ADDR + 1u);
-		for (uint8_t i = 0u; i < n; i++) {
-			uint8_t v = gb_read8(hl);
-			hl = (uint16_t)(hl + 1u);
-			if (v > e) {
-				e = v;
-				d = c;
-			}
-			c = (uint8_t)(c + 1u);
-		}
-		hTempPlayAreaLocation_ff9d = d;
-		AIScoreResult r = {d, 0x90u, 0u, c, d, e, hl};
-		return r;
-	}
-
-	uint8_t cnt = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-	uint32_t n = cnt ? (uint32_t)cnt : 0x100u;
-	e = 0u;
-	c = PLAY_AREA_ARENA;
-	d = c;
-	hl = wPlayAreaAIScore_ADDR;
-	for (uint32_t i = 0u; i < n; i++) {
-		uint8_t v = gb_read8(hl);
-		hl = (uint16_t)(hl + 1u);
-		if (v > e) {
-			e = v;
-			d = c;
-		}
-		c = (uint8_t)(c + 1u);
-	}
-	if (e < 0x85u) {
-		AIScoreResult r = {e, (uint8_t)(e == 0u ? 0x80u : 0x00u), 0u, c, d, e, hl};
-		return r;
-	}
-	hTempPlayAreaLocation_ff9d = d;
-	AIScoreResult r = {d, (uint8_t)(0x10u | (e == 0x85u ? 0x80u : 0x00u)), 0u, c, d, e, hl};
-	return r;
-}
-/* <<< factory FindPlayAreaCardWithHighestAIScore */
-
+/* <<< part OPPACTION_PLAY_ENERGY_600 */
 /* >>> factory CheckSpecificDecksToAttachDoubleColorless */
 static CardId CheckSpecificDecksToAttachDoubleColorless_GetID(void)
 {
@@ -196,7 +59,6 @@ CheckSpecificDecksToAttachDoubleColorlessResult CheckSpecificDecksToAttachDouble
 	return (CheckSpecificDecksToAttachDoubleColorlessResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), b, c, d, e, hl};
 }
 /* <<< factory CheckSpecificDecksToAttachDoubleColorless */
-
 /* >>> factory GetEnergyCardForDiscardOrEnergyBoostAttack */
 GetEnergyCardForDiscardOrEnergyBoostAttackResult GetEnergyCardForDiscardOrEnergyBoostAttack(uint8_t c_in)
 {
@@ -263,44 +125,6 @@ GetEnergyCardForDiscardOrEnergyBoostAttackResult GetEnergyCardForDiscardOrEnergy
 	return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, TRUE, FALSE, e, f};
 }
 /* <<< factory GetEnergyCardForDiscardOrEnergyBoostAttack */
-
-/* >>> factory CheckIfEvolutionNeedsEnergyForAttack */
-CheckIfEvolutionNeedsEnergyForAttackResult CheckIfEvolutionNeedsEnergyForAttack(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
-{
-	(void)hl;
-	(void)CreateHandCardList(c);
-	uint8_t loc1 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
-	DuelistVarResult var1 = GetTurnDuelistVariable((uint8_t)(loc1 + DUELVARS_ARENA_CARD_510));
-	CheckCardEvolutionInHandOrDeckResult evo = CheckCardEvolutionInHandOrDeck(var1.a);
-	if ((evo.f & 0x10u) == 0u) {
-		uint8_t f_out = (evo.a == 0u) ? 0x80u : 0x00u;
-		return (CheckIfEvolutionNeedsEnergyForAttackResult){evo.a, f_out, b, c, d, e, var1.hl};
-	}
-
-	uint8_t new_b = evo.a;
-	uint8_t loc2 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
-	DuelistVarResult var2 = GetTurnDuelistVariable((uint8_t)(loc2 + DUELVARS_ARENA_CARD_510));
-	uint8_t saved_a = var2.a;
-	gb_write8(var2.hl, new_b);
-	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
-	/* bc and de leave as CheckEnergyNeededForAttack set them (energy.asm
-	 * :783-801): GetTurnDuelistVariable and `pop af` touch neither. */
-	if (energy.f & 0x10u) {
-		uint8_t loc3 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
-		DuelistVarResult var3 = GetTurnDuelistVariable((uint8_t)(loc3 + DUELVARS_ARENA_CARD_510));
-		gb_write8(var3.hl, saved_a);
-		uint8_t f_out2 = (uint8_t)((evo.f & 0x80u) | 0x10u);
-		return (CheckIfEvolutionNeedsEnergyForAttackResult){saved_a, f_out2, energy.b, energy.c, energy.d, energy.e, var3.hl};
-	}
-
-	uint8_t loc4 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
-	DuelistVarResult var4 = GetTurnDuelistVariable((uint8_t)(loc4 + DUELVARS_ARENA_CARD_510));
-	gb_write8(var4.hl, saved_a);
-	uint8_t f_out3 = (saved_a == 0u) ? 0x80u : 0x00u;
-	return (CheckIfEvolutionNeedsEnergyForAttackResult){saved_a, f_out3, energy.b, energy.c, energy.d, energy.e, var4.hl};
-}
-/* <<< factory CheckIfEvolutionNeedsEnergyForAttack */
-
 /* >>> factory AITryToPlayEnergyCard */
 AITryToPlayEnergyCardResult AITryToPlayEnergyCard(void)
 {
@@ -456,7 +280,6 @@ check_if_done:
 	return (AITryToPlayEnergyCardResult){attack, 0x00u};
 }
 /* <<< factory AITryToPlayEnergyCard */
-
 /* >>> factory DetermineAIScoreOfAttackEnergyRequirement */
 /* energy.asm .asm_166cd: the surplus-energy verdict came back "play more",
  * and an ATTACHED_ENERGY_BOOST attack that one more energy would turn into a
@@ -546,7 +369,6 @@ check_evolution:
 	}
 }
 /* <<< factory DetermineAIScoreOfAttackEnergyRequirement */
-
 /* >>> factory AIProcessEnergyCards */
 AIEnergyResult AIProcessEnergyCards(void)
 {
@@ -676,7 +498,6 @@ AIEnergyResult AIProcessEnergyCards(void)
 	return (AIEnergyResult){logic, 0x00u};
 }
 /* <<< factory AIProcessEnergyCards */
-
 /* >>> factory AIProcessAndTryToPlayEnergy */
 AIEnergyResult AIProcessAndTryToPlayEnergy(void)
 {
@@ -691,37 +512,4 @@ AIEnergyResult AIProcessAndTryToPlayEnergy(void)
 	return (AIEnergyResult){0u, 0x80u};
 }
 /* <<< factory AIProcessAndTryToPlayEnergy */
-
-/* >>> factory AIProcessButDontPlayEnergy_SkipEvolution */
-AIEnergyResult AIProcessButDontPlayEnergy_SkipEvolution(void)
-{
-	wAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | AI_ENERGY_FLAG_SKIP_EVOLUTION;
-	uint16_t de = wTempPlayAreaAIScore_ADDR;
-	uint16_t hl = wPlayAreaAIScore_ADDR;
-	for (uint8_t b = MAX_PLAY_AREA_POKEMON; b != 0u; b--) {
-		gb_write8(de, gb_read8(hl));
-		hl = (uint16_t)(hl + 1u);
-		de = (uint16_t)(de + 1u);
-	}
-	gb_write8(de, wAIScore);
-	return AIProcessEnergyCards();
-}
-/* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */
-
-/* >>> factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
-/* energy.asm:48-70 */
-AIEnergyResult AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)
-{
-	wAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | AI_ENERGY_FLAG_SKIP_EVOLUTION | AI_ENERGY_FLAG_SKIP_ARENA_CARD;
-	uint16_t de = wTempPlayAreaAIScore_ADDR;
-	uint16_t hl = wPlayAreaAIScore_ADDR;
-	for (uint8_t b = MAX_PLAY_AREA_POKEMON; b != 0u; b--) {
-		gb_write8(de, gb_read8(hl));
-		hl = (uint16_t)(hl + 1u);
-		de = (uint16_t)(de + 1u);
-	}
-	gb_write8(de, wAIScore);
-	return AIProcessEnergyCards();
-}
-/* <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
-
+/* --- factory Func_16488 */

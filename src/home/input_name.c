@@ -10,17 +10,21 @@
 #include "home/switch_rom.h"
 #include "home/text_box.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/random.h"
+/* <<< part includes_2 */
 
+/* >>> part DECKNAMING_KEYBOARD_DATA */
 /* DeckNamingScreen_KeyboardData sits immediately after the 25-byte routine in
  * its engine bank: label at $7019 (oracle-confirmed: index 0 returns $7019,
  * and every nonzero case differs from it by exactly 3*index). The routine only
  * computes the address; callers dereference it through the bus under the bank
  * they switched, so no rom_ptr here. */
 #define DECKNAMING_KEYBOARD_DATA DeckNamingScreen_KeyboardData_ADDR
+/* <<< part DECKNAMING_KEYBOARD_DATA */
 
+/* >>> part includes_PLAYER_NAMING_SCREEN_KEYBOARD_DATA */
 #include "home/sound.h"
 
 
@@ -29,9 +33,13 @@
 /* engine/input_name.asm */
 
 #include "home/random.h"
+/* <<< part includes_PLAYER_NAMING_SCREEN_KEYBOARD_DATA */
 
+/* >>> part PLAYER_NAMING_SCREEN_KEYBOARD_DATA */
 #define PLAYER_NAMING_SCREEN_KEYBOARD_DATA PlayerNamingScreen_KeyboardData_ADDR
+/* <<< part PLAYER_NAMING_SCREEN_KEYBOARD_DATA */
 
+/* >>> part includes_B_CURSOR_BLINK_PERIOD_800 */
 #include "home/sound.h"
 
 #include "generated/wram.h"
@@ -54,42 +62,84 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_B_CURSOR_BLINK_PERIOD_800 */
+/* >>> part B_CURSOR_BLINK_PERIOD_800 */
 #define B_CURSOR_BLINK_PERIOD_800 4u
+/* <<< part B_CURSOR_BLINK_PERIOD_800 */
+/* >>> part CURSOR_BLINK_PERIOD_MASK_800 */
 #define CURSOR_BLINK_PERIOD_MASK_800 0x0Fu
+/* <<< part CURSOR_BLINK_PERIOD_MASK_800 */
+/* >>> part MENU_CANCEL_800 */
 #define MENU_CANCEL_800 0xFFu
+/* <<< part MENU_CANCEL_800 */
+/* >>> part SFX_CURSOR_800 */
 #define SFX_CURSOR_800 0x01u
+/* <<< part SFX_CURSOR_800 */
+/* >>> part PADF_DOWN_800 */
 #define PADF_DOWN_800 0x80u
+/* <<< part PADF_DOWN_800 */
+/* >>> part PADF_UP_800 */
 #define PADF_UP_800 0x40u
+/* <<< part PADF_UP_800 */
+/* >>> part PADF_LEFT_800 */
 #define PADF_LEFT_800 0x20u
+/* <<< part PADF_LEFT_800 */
+/* >>> part PADF_RIGHT_800 */
 #define PADF_RIGHT_800 0x10u
+/* <<< part PADF_RIGHT_800 */
+/* >>> part PAD_A_800 */
 #define PAD_A_800 0x01u
+/* <<< part PAD_A_800 */
+/* >>> part PAD_B_800 */
 #define PAD_B_800 0x02u
+/* <<< part PAD_B_800 */
 
+/* >>> part includes_CHAR_UNDERBAR_ADDR */
 #include "home/input_name.h"
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_CHAR_UNDERBAR_ADDR */
+/* >>> part CHAR_UNDERBAR_ADDR */
 #define CHAR_UNDERBAR_ADDR (PrintPlayerNameFromInput__char_underbar_ADDR)
+/* <<< part CHAR_UNDERBAR_ADDR */
 
+/* >>> part includes_DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR */
 #include "home/input_name.h"
 #include "home/lcd.h"
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR */
+/* >>> part DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR */
 #define DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR (DrawPlayerNamingScreenBG__data_ADDR)
+/* <<< part DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR */
 
+/* >>> part includes_PLAYER_NAMING_TRANSITION_TABLE1 */
 #include "home/input_name.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_PLAYER_NAMING_TRANSITION_TABLE1 */
+/* >>> part PLAYER_NAMING_TRANSITION_TABLE1 */
 #define PLAYER_NAMING_TRANSITION_TABLE1 TransitionTable1_ADDR
+/* <<< part PLAYER_NAMING_TRANSITION_TABLE1 */
+/* >>> part PLAYER_NAMING_TRANSITION_TABLE2 */
 #define PLAYER_NAMING_TRANSITION_TABLE2 TransitionTable2_ADDR
+/* <<< part PLAYER_NAMING_TRANSITION_TABLE2 */
 
+/* >>> part includes_TILE_SIZE */
 #include "mem.h"
+/* <<< part includes_TILE_SIZE */
+/* >>> part TILE_SIZE */
 #define TILE_SIZE 16u
+/* <<< part TILE_SIZE */
+/* >>> part V0TILES0_ADDR */
 #define V0TILES0_ADDR 0x8000u
+/* <<< part V0TILES0_ADDR */
 
 
+/* >>> part includes_WHAT_IS_YOUR_NAME_DATA */
 #include "generated/wram.h"
 #include "home/input_name.h"
 
@@ -109,7 +159,9 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_WHAT_IS_YOUR_NAME_DATA */
 
+/* >>> part WHAT_IS_YOUR_NAME_DATA */
 /* poketcg.sym: `06:675e WhatIsYourNameData`, `06:67a3 InputPlayerName`. The
  * label is the first byte of the bank-6 section, $45 bytes ahead of the
  * routine (WhatIsYourNameData $05 + four deck datas $09 each + ClearMemory_Bank6
@@ -117,20 +169,38 @@
  * wNamingScreenQuestionPointer and DrawPlayerNamingScreenBG walks it as a
  * textitem list. */
 #define WHAT_IS_YOUR_NAME_DATA WhatIsYourNameData_ADDR
+/* <<< part WHAT_IS_YOUR_NAME_DATA */
 
+/* >>> part MAX_PLAYER_NAME_LENGTH_IPN */
 /* Suffixed _IPN because this module's statics block already carries MENU_CANCEL,
  * TX_END and a PAD_* set for the sibling fragments; redefining those names with
  * different spellings is what makes an append collide. */
 #define MAX_PLAYER_NAME_LENGTH_IPN 0x0Cu
+/* <<< part MAX_PLAYER_NAME_LENGTH_IPN */
+/* >>> part MENU_CONFIRM_IPN */
 #define MENU_CONFIRM_IPN 0x01u
+/* <<< part MENU_CONFIRM_IPN */
+/* >>> part TRUE_IPN */
 #define TRUE_IPN 0x01u
+/* <<< part TRUE_IPN */
+/* >>> part TX_END_IPN */
 #define TX_END_IPN 0x00u
+/* <<< part TX_END_IPN */
+/* >>> part SYM_CURSOR_R_IPN */
 #define SYM_CURSOR_R_IPN 0x0Fu
+/* <<< part SYM_CURSOR_R_IPN */
+/* >>> part SYM_SPACE_IPN */
 #define SYM_SPACE_IPN 0x00u
+/* <<< part SYM_SPACE_IPN */
+/* >>> part PAD_START_IPN */
 #define PAD_START_IPN 0x08u
+/* <<< part PAD_START_IPN */
+/* >>> part PAD_A_IPN */
 #define PAD_A_IPN 0x01u
+/* <<< part PAD_A_IPN */
+/* >>> part PAD_B_IPN */
 #define PAD_B_IPN 0x02u
-/* <<< factory statics */
+/* <<< part PAD_B_IPN */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
 /* input_name.asm:1434-1452. Index into the 3-byte keyboard datum table from

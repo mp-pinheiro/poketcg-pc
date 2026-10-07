@@ -17,16 +17,34 @@
 
 /* >>> part QUEUE_ADDR */
 #define QUEUE_ADDR wAnimationQueue_ADDR
-#define QUEUE_LENGTH 7u
-#define BUFFER_ADDR wDuelAnim1ID_ADDR
-#define STRUCT_SIZE 8u
-#define BUFFER_MASK 0x7fu
-#define UPDATE_ADDR UpdateQueuedAnimations_ADDR
-#define ANIMATIONS_BANK 7u
-#define ANIMATIONS_ADDR Animations_ADDR
-#define ANIM_ENTRY_SIZE 6u
-#define SPRITE_UNSKIPPABLE 0x80u
 /* <<< part QUEUE_ADDR */
+/* >>> part QUEUE_LENGTH */
+#define QUEUE_LENGTH 7u
+/* <<< part QUEUE_LENGTH */
+/* >>> part BUFFER_ADDR */
+#define BUFFER_ADDR wDuelAnim1ID_ADDR
+/* <<< part BUFFER_ADDR */
+/* >>> part STRUCT_SIZE */
+#define STRUCT_SIZE 8u
+/* <<< part STRUCT_SIZE */
+/* >>> part BUFFER_MASK */
+#define BUFFER_MASK 0x7fu
+/* <<< part BUFFER_MASK */
+/* >>> part UPDATE_ADDR */
+#define UPDATE_ADDR UpdateQueuedAnimations_ADDR
+/* <<< part UPDATE_ADDR */
+/* >>> part ANIMATIONS_BANK */
+#define ANIMATIONS_BANK 7u
+/* <<< part ANIMATIONS_BANK */
+/* >>> part ANIMATIONS_ADDR */
+#define ANIMATIONS_ADDR Animations_ADDR
+/* <<< part ANIMATIONS_ADDR */
+/* >>> part ANIM_ENTRY_SIZE */
+#define ANIM_ENTRY_SIZE 6u
+/* <<< part ANIM_ENTRY_SIZE */
+/* >>> part SPRITE_UNSKIPPABLE */
+#define SPRITE_UNSKIPPABLE 0x80u
+/* <<< part SPRITE_UNSKIPPABLE */
 
 /* >>> part read */
 static uint8_t read(uint16_t addr) { return gb_read8(addr); }

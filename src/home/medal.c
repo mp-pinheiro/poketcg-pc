@@ -9,7 +9,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/init_menu.h"
 #include "home/lcd.h"
@@ -19,13 +19,13 @@
 #include "home/print_text.h"
 #include "home/sound.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
 
-/* MasterMedalNames' eight `tx` entries (medal.asm:52-62) resolved through
- * poketcg/src/text/text_offsets.asm:822-829. */
-/* <<< factory statics */
 
 /* >>> factory ShowMedalReceivedScreen */
+/* MasterMedalNames' eight `tx` entries (medal.asm:52-62) resolved through
+ * poketcg/src/text/text_offsets.asm:822-829. */
 void ShowMedalReceivedScreen(uint8_t a)
 {
 	/* medal.asm:1-51. `sub $8` turns the caller's event id into the medal

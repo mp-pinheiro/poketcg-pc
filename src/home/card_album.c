@@ -8,23 +8,41 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
 
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/bg_map.h"
 #include "home/card_data.h"
 #include "home/deck_configuration.h"
 #include "home/menus.h"
 #include "home/process_text.h"
+/* <<< part includes_2 */
+/* >>> part FALSE */
 #define FALSE 0x00u
+/* <<< part FALSE */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
+/* >>> part SYM_BOX_TOP_R */
 #define SYM_BOX_TOP_R 0x19u
+/* <<< part SYM_BOX_TOP_R */
+/* >>> part SYM_BOX_BTM_R */
 #define SYM_BOX_BTM_R 0x1Bu
+/* <<< part SYM_BOX_BTM_R */
+/* >>> part SYM_CURSOR_U */
 #define SYM_CURSOR_U 0x0Cu
+/* <<< part SYM_CURSOR_U */
+/* >>> part SYM_CURSOR_D */
 #define SYM_CURSOR_D 0x2Fu
+/* <<< part SYM_CURSOR_D */
+/* >>> part SYM_0 */
 #define SYM_0 0x20u
+/* <<< part SYM_0 */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
 
+/* >>> part includes_PAD_A */
 #include "home/deck_configuration.h"
 #include "home/card_data.h"
 #include "mem.h"
@@ -39,16 +57,32 @@
 #include "home/process_text.h"
 #include "home/sound.h"
 #include "mem.h"
+/* <<< part includes_PAD_A */
+/* >>> part PAD_A */
 /* hardware.inc:88-106 -- this game uses the swapped-nybble combined input byte,
  * so the Control Pad lives in the HIGH nybble and PAD_BUTTONS is $0F, not $F0. */
 #define PAD_A       0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_START */
 #define PAD_START   0x08u
+/* <<< part PAD_START */
+/* >>> part PAD_RIGHT */
 #define PAD_RIGHT   0x10u
+/* <<< part PAD_RIGHT */
+/* >>> part PAD_LEFT */
 #define PAD_LEFT    0x20u
+/* <<< part PAD_LEFT */
+/* >>> part PAD_UP */
 #define PAD_UP      0x40u
+/* <<< part PAD_UP */
+/* >>> part PAD_DOWN */
 #define PAD_DOWN    0x80u
+/* <<< part PAD_DOWN */
+/* >>> part PAD_BUTTONS */
 #define PAD_BUTTONS 0x0Fu
+/* <<< part PAD_BUTTONS */
 
+/* >>> part includes_tail */
 #include "home/deck_configuration.h"
 #include "home/card_album.h"
 #include "home/switch_sram.h"
@@ -58,7 +92,7 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory GetFirstOwnedCardIndex */
 /* card_album.asm:612-624. Scans wOwnedCardsCountList for the first entry

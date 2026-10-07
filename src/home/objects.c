@@ -7,8 +7,10 @@
 
 /* >>> part OAM_COUNT */
 #define OAM_COUNT 40u
-#define OAM_SIZE  (OAM_COUNT * 4u)
 /* <<< part OAM_COUNT */
+/* >>> part OAM_SIZE */
+#define OAM_SIZE  (OAM_COUNT * 4u)
+/* <<< part OAM_SIZE */
 
 /* >>> factory SetOneObjectAttributes */
 void SetOneObjectAttributes(uint8_t e, uint8_t d, uint8_t c, uint8_t b)

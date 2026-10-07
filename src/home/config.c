@@ -7,39 +7,65 @@
 
 #include "home/bg_map.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/switch_sram.h"
 #include "home/config.h"
+/* <<< part includes_2 */
 
+/* >>> part SYM_CURSOR_R */
 #define SYM_CURSOR_R 0x0Fu
+/* <<< part SYM_CURSOR_R */
+/* >>> part sTextSpeed_ADDR_L */
 #define sTextSpeed_ADDR_L 0xA006u
+/* <<< part sTextSpeed_ADDR_L */
+/* >>> part sAnimationsDisabled_ADDR_L */
 #define sAnimationsDisabled_ADDR_L 0xA007u
+/* <<< part sAnimationsDisabled_ADDR_L */
+/* >>> part sSkipDelayAllowed_ADDR_L */
 #define sSkipDelayAllowed_ADDR_L 0xA009u
+/* <<< part sSkipDelayAllowed_ADDR_L */
+/* >>> part ConfigScreenLabels */
 #define ConfigScreenLabels ConfigScreenLabels_ADDR
+/* <<< part ConfigScreenLabels */
 
+/* >>> part kTextDelaySettings */
 /* config.asm:158-161 TextDelaySettings (TEXT_SPEED_1..TEXT_SPEED_5) */
 static const uint8_t kTextDelaySettings[5] = { 0x06u, 0x04u, 0x02u, 0x01u, 0x00u };
+/* <<< part kTextDelaySettings */
 
+/* >>> part kDuelAnimationSettingsIndices */
 /* config.asm:99-104 DuelAnimationSettingsIndices */
 static const uint8_t kDuelAnimationSettingsIndices[4] = { 0u, 0u, 1u, 2u };
+/* <<< part kDuelAnimationSettingsIndices */
 
+/* >>> part kDuelAnimationSettings */
 /* config.asm:150-155 DuelAnimationSettings: animations disabled, skip delay allowed */
 static const uint8_t kDuelAnimationSettings[8] = {
 	0x00u, 0x00u, 0x00u, 0x01u, 0x01u, 0x01u, 0x00u, 0x00u
 };
+/* <<< part kDuelAnimationSettings */
 
+/* >>> part includes_SYM_SPACE */
 #include "home/config.h"
+/* <<< part includes_SYM_SPACE */
 
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
 
+/* >>> part includes_PAD_CTRL_PAD */
 #include "home/sound.h"
 
 
 #include "generated/hram.h"
 #include "home/overworld.h"
+/* <<< part includes_PAD_CTRL_PAD */
 
+/* >>> part PAD_CTRL_PAD */
 #define PAD_CTRL_PAD 0xF0u
+/* <<< part PAD_CTRL_PAD */
 
+/* >>> part includes_tail */
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/config.h"
@@ -49,7 +75,7 @@ static const uint8_t kDuelAnimationSettings[8] = {
 #include "home/sound.h"
 #include "home/labels.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory DrawConfigMenuCursor */
 void DrawConfigMenuCursor(uint8_t a, uint8_t c)

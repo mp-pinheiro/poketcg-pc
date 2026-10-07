@@ -6,7 +6,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/attacks.h"
@@ -18,13 +18,19 @@
 #include "home/hand_pokemon.h"
 #include "home/init.h"
 #include "home/substatus.h"
+/* <<< part includes_2 */
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xbbu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
+/* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
-/* rgbasm mixed shift/add: (2 << 0) + (2 << 2) = 0x0a. */
-/* <<< factory statics */
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 
 /* >>> factory AIDoTurn_LegendaryMoltres */
+/* rgbasm mixed shift/add: (2 << 0) + (2 << 2) = 0x0a. */
 AIDoTurn_LegendaryMoltresResult AIDoTurn_LegendaryMoltres(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	InitAITurnVars();

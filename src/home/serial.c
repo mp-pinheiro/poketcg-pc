@@ -8,7 +8,7 @@
 #include "home/printer.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "home/sound.h"
@@ -21,14 +21,28 @@
 
 #include "home/duel.h"
 #include "home/switch_rom.h"
+/* <<< part includes_2 */
 
+/* >>> part DUELVARS_DUELIST_TYPE */
 #define DUELVARS_DUELIST_TYPE  0xf1u
+/* <<< part DUELVARS_DUELIST_TYPE */
+/* >>> part BANK_LINK_OPP_TURN */
 #define BANK_LINK_OPP_TURN     0x01u
+/* <<< part BANK_LINK_OPP_TURN */
+/* >>> part F_Z */
 #define F_Z                    0x80u
+/* <<< part F_Z */
+/* >>> part F_N */
 #define F_N                    0x40u
+/* <<< part F_N */
+/* >>> part F_H */
 #define F_H                    0x20u
+/* <<< part F_H */
+/* >>> part F_C */
 #define F_C                    0x10u
+/* <<< part F_C */
 
+/* >>> part includes_rSB */
 #include "home/switch_rom.h"
 
 #include "generated/hram.h"
@@ -37,18 +51,32 @@
 #include "home/serial.h"
 
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_rSB */
 
 /* >>> part rSB */
 #define rSB 0xFF01u
-#define rSC 0xFF02u
-#define rIF 0xFF0Fu
-#define rIE 0xFFFFu
-#define SC_EXTERNAL 0x00u
-#define SC_INTERNAL 0x01u
-#define SC_START 0x80u
-#define IE_SERIAL 0x08u
 /* <<< part rSB */
+/* >>> part rSC */
+#define rSC 0xFF02u
+/* <<< part rSC */
+/* >>> part rIF */
+#define rIF 0xFF0Fu
+/* <<< part rIF */
+/* >>> part rIE */
+#define rIE 0xFFFFu
+/* <<< part rIE */
+/* >>> part SC_EXTERNAL */
+#define SC_EXTERNAL 0x00u
+/* <<< part SC_EXTERNAL */
+/* >>> part SC_INTERNAL */
+#define SC_INTERNAL 0x01u
+/* <<< part SC_INTERNAL */
+/* >>> part SC_START */
+#define SC_START 0x80u
+/* <<< part SC_START */
+/* >>> part IE_SERIAL */
+#define IE_SERIAL 0x08u
+/* <<< part IE_SERIAL */
 
 /* >>> factory SerialTimerHandler */
 /* serial.asm:2-36. Driven at ~240 Hz by TimerHandler. The two opcode paths are

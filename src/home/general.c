@@ -6,13 +6,17 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/pkmn_powers.h"
 #include "home/retreat.h"
+/* <<< part includes_2 */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part includes_tail */
 #include "generated/wram.h"
 #include "home/attacks.h"
 #include "home/common.h"
@@ -21,7 +25,7 @@
 #include "home/hand_pokemon.h"
 #include "home/init.h"
 #include "home/pkmn_powers.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory AIProcessRetreat */
 AIProcessRetreatResult AIProcessRetreat(void)

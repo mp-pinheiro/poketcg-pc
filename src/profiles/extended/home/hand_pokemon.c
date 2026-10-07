@@ -1,12 +1,4 @@
-/* >>> part includes */
-#include "home/hand_pokemon.h"
-
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
@@ -14,29 +6,11 @@
 #include "home/substatus.h"
 #include "home/duel.h"
 #include "home/card_id_bus.h"
-
-#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
-#define INVINCIBLE_RONALD_DECK_ID 0x1Au
-#define LEGENDARY_DRAGONITE_DECK_ID 0x0Fu
-#define LEGENDARY_RONALD_DECK_ID 0x1Bu
-
-#include "home/retreat.h"
-
-#define LEGENDARY_ARTICUNO_DECK_ID 0x0Eu
-#define LEGENDARY_ZAPDOS_DECK_ID 0x0Du
-#define DUELVARS_ARENA_CARD 0xBBu
+/* <<< part includes_2 */
+/* === part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD_HP */
 #define DUELVARS_ARENA_CARD_HP 0xC8u
-#define DUELVARS_ARENA_CARD_STATUS 0xF0u
-#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
-
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-#include "home/core.h"
-#include "home/duel.h"
-#define PIKACHU_DECK_ID 0x25u
-/* <<< factory statics */
-
+/* <<< part DUELVARS_ARENA_CARD_HP */
 /* >>> factory AIDecideSpecialEvolutions */
 void AIDecideSpecialEvolutions(void)
 {
@@ -124,7 +98,6 @@ void AIDecideSpecialEvolutions(void)
 		(void)AIEncourage(10u);
 }
 /* <<< factory AIDecideSpecialEvolutions */
-
 /* >>> factory AIDecideEvolution */
 /* hand_pokemon.asm:104-391. For every evolution card in hand and every play
  * area card it can evolve, score the evolution against 128 and play it at 133. */
@@ -251,7 +224,6 @@ uint8_t AIDecideEvolution(void)
 	return 0xFFu;
 }
 /* <<< factory AIDecideEvolution */
-
 /* >>> factory AIDecidePlayLegendaryBirds */
 void AIDecidePlayLegendaryBirds(void)
 {
@@ -323,68 +295,3 @@ void AIDecidePlayLegendaryBirds(void)
 		AIDiscourage(100u);
 }
 /* <<< factory AIDecidePlayLegendaryBirds */
-
-/* >>> factory AIDecidePlayPokemonCard */
-AIDecidePlayPokemonCardResult AIDecidePlayPokemonCard(void)
-{
-	(void)CreateHandCardList(0u);
-	(void)SortTempHandByIDList(0u, 0u, 0u, 0u, 0u);
-	uint16_t hl = wDuelTempList_ADDR;
-	uint16_t de = wHandTempList_ADDR;
-	(void)CopyListWithFFTerminatorFromHLToDE_Bank5(&hl, &de);
-	hl = wHandTempList_ADDR;
-	for (;;) {
-		uint8_t card = gb_read8(hl++);
-		if (card == 0xFFu) {
-			/* hand_pokemon.asm:14 `jp z, AIDecideEvolution`: its `.done` is `or a / ret`. */
-			uint8_t last = AIDecideEvolution();
-			return (AIDecidePlayPokemonCardResult){last, (uint8_t)(last == 0u ? 0x80u : 0u)};
-		}
-		wTempAIPokemonCard = card;
-		uint16_t saved_hl = hl;
-		(void)LoadCardDataToBuffer1_FromDeckIndex(card);
-		if (wLoadedCard1Type >= TYPE_ENERGY || wLoadedCard1Stage != 0u) {
-			hl = saved_hl;
-			continue;
-		}
-		wAIScore = 130u;
-		AIDecidePlayLegendaryBirds();
-		DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
-		if (count.a >= 4u)
-			AIDiscourage(20u);
-		else
-			(void)AIEncourage(50u);
-		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
-		CheckIfDefendingPokemonCanKnockOutResult ko =
-			CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
-		if (ko.f & 0x10u)
-			(void)AIEncourage(20u);
-		EnergyCostBitsResult cost = GetAttacksEnergyCostBits(wTempAIPokemonCard);
-		EnergyFlagsResult energy = CheckEnergyFlagsNeededInList(cost.a);
-		if (energy.carry)
-			(void)AIEncourage(20u);
-		CheckForEvolutionInListResult hand_evo =
-			CheckForEvolutionInList(wTempAIPokemonCard, 0u, 0u, 0u);
-		if (hand_evo.f & 0x10u)
-			(void)AIEncourage(20u);
-		CheckForEvolutionInDeckResult deck_evo =
-			CheckForEvolutionInDeck(wTempAIPokemonCard, 0u);
-		if (deck_evo.f & 0x10u)
-			(void)AIEncourage(10u);
-		if (wAIScore < 180u) {
-			hl = saved_hl;
-			continue;
-		}
-		hTemp_ffa0 = wTempAIPokemonCard;
-		CheckIfCardCanBePlayedResult playable = CheckIfCardCanBePlayed(wTempAIPokemonCard, 0u);
-		if (playable.f & 0x10u) {
-			hl = saved_hl;
-			continue;
-		}
-		AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_BASIC_PKMN, 0u, 0u, 0u, 0u);
-		if (decision.f & 0x10u)
-			return (AIDecidePlayPokemonCardResult){decision.a, decision.f}; /* turn ended */
-		hl = saved_hl;
-	}
-}
-/* <<< factory AIDecidePlayPokemonCard */

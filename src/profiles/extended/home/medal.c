@@ -10,7 +10,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/init_menu.h"
 #include "home/lcd.h"
@@ -23,8 +23,8 @@
 #include "home/load_gfx.h"
 #include "home/process_text.h"
 #include "home/text_box.h"
-
-
+/* <<< part includes_2 */
+/* >>> part load_collected_medal_tilemaps */
 /* MasterMedalNames' eight `tx` entries (medal.asm:52-62) resolved through
  * poketcg/src/text/text_offsets.asm:822-829. */
 
@@ -63,9 +63,7 @@ static void load_collected_medal_tilemaps(void)
 	wWhichBGPalIndex = 1u;
 	LoadBGPalette(PALETTE_118);
 }
-
-/* <<< factory statics */
-
+/* <<< part load_collected_medal_tilemaps */
 /* >>> factory ShowMedalReceivedScreen */
 void ShowMedalReceivedScreen(uint8_t a)
 {

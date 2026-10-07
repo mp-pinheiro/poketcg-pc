@@ -6,34 +6,58 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/common.h"
 #include "home/substatus.h"
 #include "home/duel.h"
+/* <<< part includes_2 */
 
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
+/* >>> part INVINCIBLE_RONALD_DECK_ID */
 #define INVINCIBLE_RONALD_DECK_ID 0x1Au
+/* <<< part INVINCIBLE_RONALD_DECK_ID */
+/* >>> part LEGENDARY_DRAGONITE_DECK_ID */
 #define LEGENDARY_DRAGONITE_DECK_ID 0x0Fu
+/* <<< part LEGENDARY_DRAGONITE_DECK_ID */
+/* >>> part LEGENDARY_RONALD_DECK_ID */
 #define LEGENDARY_RONALD_DECK_ID 0x1Bu
+/* <<< part LEGENDARY_RONALD_DECK_ID */
 
+/* >>> part includes_LEGENDARY_ARTICUNO_DECK_ID */
 #include "home/retreat.h"
+/* <<< part includes_LEGENDARY_ARTICUNO_DECK_ID */
 
+/* >>> part LEGENDARY_ARTICUNO_DECK_ID */
 #define LEGENDARY_ARTICUNO_DECK_ID 0x0Eu
+/* <<< part LEGENDARY_ARTICUNO_DECK_ID */
+/* >>> part LEGENDARY_ZAPDOS_DECK_ID */
 #define LEGENDARY_ZAPDOS_DECK_ID 0x0Du
+/* <<< part LEGENDARY_ZAPDOS_DECK_ID */
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xBBu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD_STATUS */
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
+/* <<< part DUELVARS_ARENA_CARD_STATUS */
+/* >>> part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 
+/* >>> part includes_PIKACHU_DECK_ID */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/core.h"
 #include "home/duel.h"
+/* <<< part includes_PIKACHU_DECK_ID */
+/* >>> part PIKACHU_DECK_ID */
 #define PIKACHU_DECK_ID 0x25u
-/* <<< factory statics */
+/* <<< part PIKACHU_DECK_ID */
 
 /* >>> factory AIDecideSpecialEvolutions */
 void AIDecideSpecialEvolutions(void)

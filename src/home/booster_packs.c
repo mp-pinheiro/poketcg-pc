@@ -7,11 +7,13 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
 
+/* >>> part CardTypeTable */
 /* booster_packs.asm:166-184 (CardTypeTable) */
 static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 	BOOSTER_CARD_TYPE_FIRE,
@@ -32,7 +34,9 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 	BOOSTER_CARD_TYPE_TRAINER,
 	BOOSTER_CARD_TYPE_TRAINER,
 };
+/* <<< part CardTypeTable */
 
+/* >>> part includes_BOOSTER_DATA_BASE */
 #include "generated/wram.h"
 
 #include "home/booster_packs.h"
@@ -55,9 +59,13 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "home/booster_packs.h"
 
 #include "generated/wram.h"
+/* <<< part includes_BOOSTER_DATA_BASE */
 
+/* >>> part BOOSTER_DATA_BASE */
 #define BOOSTER_DATA_BASE BoosterPack_ColosseumNeutral_ADDR
+/* <<< part BOOSTER_DATA_BASE */
 
+/* >>> part includes_BOOSTER_PACKS_BANK */
 #include "home/booster_packs.h"
 #include "generated/wram.h"
 
@@ -78,8 +86,10 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "home/booster_packs.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_BOOSTER_PACKS_BANK */
+/* >>> part BOOSTER_PACKS_BANK */
 #define BOOSTER_PACKS_BANK 0x07u
-/* <<< factory statics */
+/* <<< part BOOSTER_PACKS_BANK */
 
 /* >>> factory GetCurrentRarityAmount */
 /* booster_packs.asm:57-65 */

@@ -6,12 +6,14 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/rock_club.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
+/* >>> part RockClubAfterDuelTable */
 #define RockClubAfterDuelTable (RockClubAfterDuel__after_duel_table_ADDR)
-/* <<< factory statics */
+/* <<< part RockClubAfterDuelTable */
 
 /* >>> factory RockClubAfterDuel */
 RockClubAfterDuelResult RockClubAfterDuel(void)

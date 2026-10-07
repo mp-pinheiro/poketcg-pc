@@ -7,26 +7,6 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
-#include "generated/wram.h"
-#include "home/color.h"
-#include "home/init_menu.h"
-#include "home/labels.h"
-#include "home/lcd.h"
-#include "home/lcd_enable_frame.h"
-#include "home/load_animation.h"
-#include "home/menus.h"
-#include "home/play_song.h"
-#include "home/sound.h"
-#include "home/text_box.h"
-
-/* duel_init.asm:57-69, in Duel_Init's own bank 04, so the interpreter reads
- * them through the bank the guard selects on entry. */
-#define OPPONENT_TITLE_AND_NAME_LABEL OpponentTitleAndNameLabel_ADDR
-#define OPPONENT_DECK_NAME_LABEL      OpponentDeckNameLabel_ADDR
-#define OPPONENT_TITLES_AND_DECK_NAMES OpponentTitlesAndDeckNames_ADDR
-/* <<< factory statics */
-
 /* >>> factory Duel_Init */
 DuelInitResult Duel_Init(uint8_t f)
 {

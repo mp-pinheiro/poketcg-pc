@@ -14,22 +14,28 @@
 #include "home/starter_deck.h"
 #include "home/switch_sram.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/common.h"
 #include "home/lcd_enable_frame.h"
 #include "home/overworld.h"
 #include "home/sound.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xC2u
+/* <<< part PLAYER_TURN */
+/* >>> part START_MENU_PC_OPTIONS */
 #define START_MENU_PC_OPTIONS 0xFEu
+/* <<< part START_MENU_PC_OPTIONS */
 
+/* >>> part includes_tail */
 #include "home/scripting.h"
 
 #include "home/objects.h"
 #include "generated/wram.h"
 #include "home/frames.h"
 #include "home/save.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory MainMenu_CardPop */
 uint8_t MainMenu_CardPop(void)

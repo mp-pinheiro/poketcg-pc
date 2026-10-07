@@ -7,11 +7,15 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/duel.h"
+/* <<< part includes_2 */
 
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 
+/* >>> part includes_DUELVARS_ARENA_CARD */
 #include "home/duel.h"
 #include "mem.h"
 
@@ -19,49 +23,91 @@
 #include "home/core.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xbbu
+/* <<< part DUELVARS_ARENA_CARD */
+/* >>> part LEGENDARY_DRAGONITE_DECK_ID */
 #define LEGENDARY_DRAGONITE_DECK_ID 0x0fu
+/* <<< part LEGENDARY_DRAGONITE_DECK_ID */
+/* >>> part FIRE_CHARGE_DECK_ID */
 #define FIRE_CHARGE_DECK_ID 0x17u
+/* <<< part FIRE_CHARGE_DECK_ID */
+/* >>> part LEGENDARY_RONALD_DECK_ID */
 #define LEGENDARY_RONALD_DECK_ID 0x1bu
+/* <<< part LEGENDARY_RONALD_DECK_ID */
 
+/* >>> part includes_FALSE */
 #include "home/energy.h"
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_FALSE */
+/* >>> part FALSE */
 #define FALSE 0x00u
+/* <<< part FALSE */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_510 */
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_510 */
+/* >>> part DUELVARS_ARENA_CARD_510 */
 #define DUELVARS_ARENA_CARD_510 0xBBu
+/* <<< part DUELVARS_ARENA_CARD_510 */
 
+/* >>> part includes_ATTACHED_ENERGY_BOOST_F_600 */
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/energy.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_ATTACHED_ENERGY_BOOST_F_600 */
+/* >>> part ATTACHED_ENERGY_BOOST_F_600 */
 #define ATTACHED_ENERGY_BOOST_F_600 0x4u
+/* <<< part ATTACHED_ENERGY_BOOST_F_600 */
+/* >>> part ATTACK_FLAG2_ADDRESS_600 */
 #define ATTACK_FLAG2_ADDRESS_600 0x8u
+/* <<< part ATTACK_FLAG2_ADDRESS_600 */
+/* >>> part DISCARD_ENERGY_F_600 */
 #define DISCARD_ENERGY_F_600 0x3u
+/* <<< part DISCARD_ENERGY_F_600 */
+/* >>> part DOUBLE_COLORLESS_ENERGY_600 */
 #define DOUBLE_COLORLESS_ENERGY_600 0x07u
+/* <<< part DOUBLE_COLORLESS_ENERGY_600 */
+/* >>> part FIRST_ATTACK_OR_PKMN_POWER_600 */
 #define FIRST_ATTACK_OR_PKMN_POWER_600 0x00u
+/* <<< part FIRST_ATTACK_OR_PKMN_POWER_600 */
+/* >>> part SECOND_ATTACK_600 */
 #define SECOND_ATTACK_600 0x01u
+/* <<< part SECOND_ATTACK_600 */
+/* >>> part OPPACTION_PLAY_ENERGY_600 */
 #define OPPACTION_PLAY_ENERGY_600 0x03u
+/* <<< part OPPACTION_PLAY_ENERGY_600 */
 
 
+/* >>> part includes_DUELVARS_ARENA_CARD_HP */
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/substatus.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_HP */
+/* >>> part DUELVARS_ARENA_CARD_HP */
 #define DUELVARS_ARENA_CARD_HP 0xc8u
+/* <<< part DUELVARS_ARENA_CARD_HP */
+/* >>> part DUELVARS_ARENA_CARD_STATUS */
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
+/* <<< part DUELVARS_ARENA_CARD_STATUS */
 
+/* >>> part includes_tail */
 #include "home/energy.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
@@ -69,7 +115,7 @@
 #include "home/energy.h"
 #include "generated/wram.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
 /* energy.asm:71-84 */

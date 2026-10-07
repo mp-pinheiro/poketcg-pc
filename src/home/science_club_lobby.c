@@ -7,17 +7,25 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part DATA_EBE7 */
 #define DATA_EBE7 Data_ebe7_ADDR
+/* <<< part DATA_EBE7 */
+/* >>> part DATA_EBE7_BANK */
 #define DATA_EBE7_BANK 3u
+/* <<< part DATA_EBE7_BANK */
+/* >>> part includes_ScienceClubLobbyAfterDuelTable */
 #include "home/science_club_lobby.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
+/* <<< part includes_ScienceClubLobbyAfterDuelTable */
+/* >>> part ScienceClubLobbyAfterDuelTable */
 #define ScienceClubLobbyAfterDuelTable (ScienceClubLobbyAfterDuel__after_duel_table_ADDR)
+/* <<< part ScienceClubLobbyAfterDuelTable */
+/* >>> part includes_tail */
 #include "home/scripting.h"
 #include "home/random.h"
 #include "home/card_data.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory ScienceClubLobbyAfterDuel */
 ScienceClubLobbyAfterDuelResult ScienceClubLobbyAfterDuel(void)

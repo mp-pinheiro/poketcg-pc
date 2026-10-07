@@ -6,13 +6,17 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_2 */
+/* >>> part DUELVARS_DECK_CARDS */
 #define DUELVARS_DECK_CARDS 0x7Eu
+/* <<< part DUELVARS_DECK_CARDS */
+/* >>> part DUELVARS_HAND */
 #define DUELVARS_HAND 0x42u
-/* <<< factory statics */
+/* <<< part DUELVARS_HAND */
 
 /* >>> factory SetUpBossStartingHandAndDeck */
 void SetUpBossStartingHandAndDeck(void)

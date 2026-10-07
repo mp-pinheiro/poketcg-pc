@@ -15,21 +15,49 @@
 /* <<< part includes */
 /* >>> part SLOT_COUNT */
 #define SLOT_COUNT 16u
-#define SLOT_SIZE 16u
-#define CACHE_SIZE_BYTES 64u
-#define ANIM_COUNTER 14u
-#define ANIM_ID 5u
-#define ANIM_BANK 6u
-#define ANIM_POINTER 7u
-#define ANIM_FRAME_POINTER 9u
-#define ANIM_COORD_X 2u
-#define ANIM_COORD_Y 3u
-#define ANIM_FLAGS 15u
-#define FLAG_CENTERED 2u
-#define FLAG_X_INVERTED 0u
-#define FLAG_Y_INVERTED 1u
-#define FLAG_UNSKIPPABLE 7u
 /* <<< part SLOT_COUNT */
+/* >>> part SLOT_SIZE */
+#define SLOT_SIZE 16u
+/* <<< part SLOT_SIZE */
+/* >>> part CACHE_SIZE_BYTES */
+#define CACHE_SIZE_BYTES 64u
+/* <<< part CACHE_SIZE_BYTES */
+/* >>> part ANIM_COUNTER */
+#define ANIM_COUNTER 14u
+/* <<< part ANIM_COUNTER */
+/* >>> part ANIM_ID */
+#define ANIM_ID 5u
+/* <<< part ANIM_ID */
+/* >>> part ANIM_BANK */
+#define ANIM_BANK 6u
+/* <<< part ANIM_BANK */
+/* >>> part ANIM_POINTER */
+#define ANIM_POINTER 7u
+/* <<< part ANIM_POINTER */
+/* >>> part ANIM_FRAME_POINTER */
+#define ANIM_FRAME_POINTER 9u
+/* <<< part ANIM_FRAME_POINTER */
+/* >>> part ANIM_COORD_X */
+#define ANIM_COORD_X 2u
+/* <<< part ANIM_COORD_X */
+/* >>> part ANIM_COORD_Y */
+#define ANIM_COORD_Y 3u
+/* <<< part ANIM_COORD_Y */
+/* >>> part ANIM_FLAGS */
+#define ANIM_FLAGS 15u
+/* <<< part ANIM_FLAGS */
+/* >>> part FLAG_CENTERED */
+#define FLAG_CENTERED 2u
+/* <<< part FLAG_CENTERED */
+/* >>> part FLAG_X_INVERTED */
+#define FLAG_X_INVERTED 0u
+/* <<< part FLAG_X_INVERTED */
+/* >>> part FLAG_Y_INVERTED */
+#define FLAG_Y_INVERTED 1u
+/* <<< part FLAG_Y_INVERTED */
+/* >>> part FLAG_UNSKIPPABLE */
+#define FLAG_UNSKIPPABLE 7u
+/* <<< part FLAG_UNSKIPPABLE */
 
 /* >>> part slot_addr */
 static uint16_t slot_addr(uint8_t slot, uint8_t field)

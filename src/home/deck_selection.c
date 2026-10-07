@@ -13,14 +13,18 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/random.h"
+/* <<< part includes_2 */
 
+/* >>> part DECK_CARD_STRIDE */
 #define DECK_CARD_STRIDE 0x54u
+/* <<< part DECK_CARD_STRIDE */
 
 
+/* >>> part includes_SYM_0 */
 #include "generated/wram.h"
 
 #include "mem.h"
@@ -32,14 +36,24 @@
 #include "mem.h"
 
 #include "home/deck_selection.h"
+/* <<< part includes_SYM_0 */
+/* >>> part SYM_0 */
 #define SYM_0 0x20u
+/* <<< part SYM_0 */
 
+/* >>> part HandCardsGfx */
 #define HandCardsGfx HandCardsGfx_ADDR
+/* <<< part HandCardsGfx */
+/* >>> part v0Tiles2_dest */
 #define v0Tiles2_dest 0x9380u
+/* <<< part v0Tiles2_dest */
 
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
 
+/* >>> part includes_PAD_START */
 #include "generated/wram.h"
 
 #include "generated/wram.h"
@@ -49,20 +63,36 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/deck_check.h"
+/* <<< part includes_PAD_START */
 
+/* >>> part PAD_START */
 #define PAD_START 0x08u
+/* <<< part PAD_START */
+/* >>> part MENU_CANCEL */
 #define MENU_CANCEL 0xFFu
+/* <<< part MENU_CANCEL */
 
+/* >>> part includes_INPUT_CUR_DECK_DECK1_DATA */
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/input_name.h"
 #include "home/write_number.h"
 #include "mem.h"
+/* <<< part includes_INPUT_CUR_DECK_DECK1_DATA */
+/* >>> part INPUT_CUR_DECK_DECK1_DATA */
 #define INPUT_CUR_DECK_DECK1_DATA (PrintCardSetListEntries_ADDR + 0x69u)
+/* <<< part INPUT_CUR_DECK_DECK1_DATA */
+/* >>> part INPUT_CUR_DECK_DECK2_DATA */
 #define INPUT_CUR_DECK_DECK2_DATA (PrintCardSetListEntries_ADDR + 0x72u)
+/* <<< part INPUT_CUR_DECK_DECK2_DATA */
+/* >>> part INPUT_CUR_DECK_DECK3_DATA */
 #define INPUT_CUR_DECK_DECK3_DATA (PrintCardSetListEntries_ADDR + 0x7Bu)
+/* <<< part INPUT_CUR_DECK_DECK3_DATA */
+/* >>> part INPUT_CUR_DECK_DECK4_DATA */
 #define INPUT_CUR_DECK_DECK4_DATA (PrintCardSetListEntries_ADDR + 0x84u)
+/* <<< part INPUT_CUR_DECK_DECK4_DATA */
 
+/* >>> part includes_DECK_BUILDING_PARAMS_ADDR */
 #include "home/frames.h"
 #include "home/menus.h"
 #include "home/tiles.h"
@@ -70,10 +100,16 @@
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_DECK_BUILDING_PARAMS_ADDR */
+/* >>> part DECK_BUILDING_PARAMS_ADDR */
 #define DECK_BUILDING_PARAMS_ADDR DeckBuildingParams_ADDR
+/* <<< part DECK_BUILDING_PARAMS_ADDR */
+/* >>> part DECK_SELECTION_MENU_PARAMS_ADDR */
 #define DECK_SELECTION_MENU_PARAMS_ADDR (DeckSelectionMenu__DeckSelectionMenuParameters_ADDR)
+/* <<< part DECK_SELECTION_MENU_PARAMS_ADDR */
+/* >>> part DECK_SELECTION_DATA_ADDR */
 #define DECK_SELECTION_DATA_ADDR DeckSelectionData_ADDR
-/* <<< factory statics */
+/* <<< part DECK_SELECTION_DATA_ADDR */
 
 /* >>> factory GetPointerToDeckCards */
 /* deck_selection.asm:528-545 */

@@ -7,7 +7,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/decompress.h"
 #include "home/empty_screen.h"
 #include "home/load_gfx.h"
@@ -18,46 +18,23 @@
 #include "home/objects.h"
 #include "home/switch_rom.h"
 #include "home/sprite_animations.h"
-
-static const uint8_t booster_logo_oam[] = {
-	0x20u,
-	0x00u, 0x00u, 0x00u, 0x00u,
-	0x00u, 0x08u, 0x01u, 0x00u,
-	0x00u, 0x10u, 0x02u, 0x00u,
-	0x00u, 0x18u, 0x03u, 0x00u,
-	0x00u, 0x20u, 0x04u, 0x00u,
-	0x00u, 0x28u, 0x05u, 0x00u,
-	0x00u, 0x30u, 0x06u, 0x00u,
-	0x00u, 0x38u, 0x07u, 0x00u,
-	0x08u, 0x00u, 0x10u, 0x00u,
-	0x08u, 0x08u, 0x11u, 0x00u,
-	0x08u, 0x10u, 0x12u, 0x00u,
-	0x08u, 0x18u, 0x13u, 0x00u,
-	0x08u, 0x20u, 0x14u, 0x00u,
-	0x08u, 0x28u, 0x15u, 0x00u,
-	0x08u, 0x30u, 0x16u, 0x00u,
-	0x08u, 0x38u, 0x17u, 0x00u,
-	0x10u, 0x00u, 0x08u, 0x00u,
-	0x10u, 0x08u, 0x09u, 0x00u,
-	0x10u, 0x10u, 0x0Au, 0x00u,
-	0x10u, 0x18u, 0x0Bu, 0x00u,
-	0x10u, 0x20u, 0x0Cu, 0x00u,
-	0x10u, 0x28u, 0x0Du, 0x00u,
-	0x10u, 0x30u, 0x0Eu, 0x00u,
-	0x10u, 0x38u, 0x0Fu, 0x00u,
-	0x18u, 0x00u, 0x18u, 0x00u,
-	0x18u, 0x08u, 0x19u, 0x00u,
-	0x18u, 0x10u, 0x1Au, 0x00u,
-	0x18u, 0x18u, 0x1Bu, 0x00u,
-	0x18u, 0x20u, 0x1Cu, 0x00u,
-	0x18u, 0x28u, 0x1Du, 0x00u,
-	0x18u, 0x30u, 0x1Eu, 0x00u,
-	0x18u, 0x38u, 0x1Fu, 0x00u
-};
-
-
-/* <<< factory statics */
-
+/* <<< part includes_2 */
+/* --- part includes_MINT_PIC */
+/* --- part MINT_PIC */
+/* --- part TILESET_MINT */
+/* --- part TILESET_MINT_SINGLE */
+/* --- part PALETTE_MINT */
+/* --- part PALETTE_MINT_SINGLE */
+/* --- part MINT_PALETTE_BASE */
+/* --- part MINT_ATTRIBUTE_OFFSET */
+/* --- part rVBK */
+/* --- part g_mint_single_palette */
+/* --- part SetMintSinglePalette */
+/* --- part write_mint_attributes */
+/* --- part includes_SCENE_POINTERS_BANK */
+/* --- part SCENE_POINTERS_BANK */
+/* --- part SCENE_POINTERS_ADDR */
+/* --- part includes_tail */
 /* >>> factory SetBoosterLogoOAM */
 /* scenes.asm:135-181 */
 void SetBoosterLogoOAM(void)
@@ -83,8 +60,11 @@ void SetBoosterLogoOAM(void)
 	wVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);
 }
 /* <<< factory SetBoosterLogoOAM */
-
-
+/* --- factory _DrawPortrait */
+/* --- factory LoadScene_LoadSGBPacket */
+/* --- factory LoadScene_LoadCompressedSGBPacket */
+/* --- factory LoadScene_SetCardPopAttrBlk */
+/* --- factory LoadScene_SetGameBoyPrinterAttrBlk */
 /* >>> factory _LoadScene */
 void _LoadScene(uint8_t a, uint8_t b, uint8_t c)
 {
@@ -146,15 +126,3 @@ void _LoadScene(uint8_t a, uint8_t b, uint8_t c)
 	wCurTilemap = saved_tilemap;
 }
 /* <<< factory _LoadScene */
-
-/* >>> factory LoadBoosterGfx */
-uint8_t LoadBoosterGfx(uint8_t a, uint8_t b, uint8_t c)
-{
-	uint8_t saved_tilemap = wCurTilemap;
-	_LoadScene(a, b, c);
-	FlushAllPalettes();
-	SetBoosterLogoOAM();
-	wCurTilemap = saved_tilemap;
-	return wCurTilemap;
-}
-/* <<< factory LoadBoosterGfx */

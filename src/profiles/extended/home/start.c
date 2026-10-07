@@ -1,62 +1,4 @@
-/* >>> part includes */
-#include "home/start.h"
-#include <stdio.h>
-
-#include "generated/text_ids.h"
-#include "generated/rom.h"
-#include "generated/constants.h"
-#include "generated/wram.h"
-#include "generated/sram.h"
-#include "home/menus.h"
-#include "home/process_text.h"
-#include "home/print_text.h"
-#include "home/text_box.h"
-#include "home/bg_map.h"
-#include "home/palettes.h"
-/* <<< part includes */
-/* >>> factory statics */
-#include "home/start.h"
-#include "home/save.h"
-#include "home/core.h"
-#include "generated/wram.h"
-#define FALSE 0x00u
-#define TRUE 0x01u
-
-#include "generated/wram.h"
-#include "mem.h"
-#include "home/process_text.h"
-#include "home/print_text.h"
-#include "home/print_stats.h"
-#include "home/text_box.h"
-#define OVERWORLD_MAP_NAMES OverworldMapNames_ADDR /* home/map.asm OverworldMapNames; fixed bank $00 */
-#include "home/lcd.h"
-#include "home/lcd_enable_frame.h"
-#include "home/load_animation.h"
-#include "home/init_menu.h"
-#include "home/print_text.h"
-#include "home/menus.h"
-#include "generated/wram.h"
-
-#include "generated/wram.h"
-#include "generated/hram.h"
-#include "mem.h"
-#include "home/copy.h"
-#include "home/lcd.h"
-#include "home/lcd_enable_frame.h"
-#include "home/load_animation.h"
-#include "home/init_menu.h"
-#include "home/menus.h"
-#include "home/labels.h"
-#include "home/sound.h"
-#include "home/process_text.h"
-#include "home/random.h"
-#define SYM_CURSOR_R 0x0Fu
-#define SYM_SPACE 0x00u
-
-#include "home/color.h"
-#include "home/play_animation.h"
-#define HANDLEALLSPRITEANIMATIONS_ADDR HandleAllSpriteAnimations_ADDR
-
+/* >>> part includes_BANK_GAME_LOOP */
 #include "home/lcd.h"
 #include "home/lcd_enable_frame.h"
 #include "home/load_animation.h"
@@ -87,77 +29,8 @@
 #include "home/time.h"
 #include "mem.h"
 #include "runtime.h"
-#define BANK_GAME_LOOP 0x01u
-#define rIF 0xFF0Fu
-#define rIE 0xFFFFu
-#define PAD_A 0x01u
-#define PAD_START 0x08u
-#define PAD_B 0x02u
-#define PAD_RIGHT 0x10u
-#define PAD_LEFT 0x20u
-#define PAD_UP 0x40u
-#define PAD_DOWN 0x80u
-#define START_MENU_PC_OPTIONS 0xFEu
-#define rVBK 0xFF4Fu
-/* <<< factory statics */
-
-/* >>> part SYM_CURSOR_D */
-#define SYM_CURSOR_D 0x2Fu
-/* <<< part SYM_CURSOR_D */
-/* >>> part print_text_bytes */
-static void print_text_bytes(const uint8_t *text, uint8_t d, uint8_t e)
-{
-	uint16_t ptr = wDefaultText_ADDR;
-	while (*text)
-		gb_write8(ptr++, *text++);
-	gb_write8(ptr, 0u);
-	InitTextPrinting(d, e);
-	ptr = wDefaultText_ADDR;
-	(void)ProcessText(&ptr);
-}
-/* <<< part print_text_bytes */
-
-/* >>> part print_host_text */
-static void print_host_text(const char *text, uint8_t d, uint8_t e)
-{
-	uint8_t bytes[40];
-	size_t length = 0u;
-	bytes[length++] = 0x06u;
-	while (*text && length < sizeof bytes - 1u)
-		bytes[length++] = (uint8_t)*text++;
-	bytes[length] = 0u;
-	print_text_bytes(bytes, d, e);
-}
-/* <<< part print_host_text */
-
-/* >>> part start_menu_pc_index */
-static uint8_t start_menu_pc_index(void)
-{
-	uint8_t index = 1u;
-	if (wHasSaveData != 0u) {
-		index = 3u;
-		if (wHasDuelSaveData != 0u)
-			index++;
-	}
-	return index;
-}
-/* <<< part start_menu_pc_index */
-/* >>> part PC_PAGE_SLOTS */
-#define PC_PAGE_SLOTS 6u
-#define PC_PAGE_ROW_Y 15u
-#define PC_OPTION_SGB 2u
-#define PC_OPTION_BORDER 6u
-#define PC_OPTION_SWITCH_GAME 12u
-#define PC_SFX_CURSOR 0x01u
-#define PC_SFX_CANCEL 0x03u
-/* <<< part PC_PAGE_SLOTS */
-/* >>> part PcOptionPage */
-typedef struct {
-	const char *name;
-	uint8_t count;
-	uint8_t options[PC_PAGE_SLOTS];
-} PcOptionPage;
-/* <<< part PcOptionPage */
+/* <<< part includes_BANK_GAME_LOOP */
+/* --- part DISCLAIMER_TEXT_ID */
 /* >>> part kPcPages */
 static const PcOptionPage kPcPages[] = {
 	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
@@ -165,62 +38,6 @@ static const PcOptionPage kPcPages[] = {
 	{"GAMEPLAY", 2u, {11u, PC_OPTION_SWITCH_GAME}},
 };
 /* <<< part kPcPages */
-/* >>> part PC_PAGE_COUNT */
-#define PC_PAGE_COUNT (sizeof kPcPages / sizeof kPcPages[0])
-/* <<< part PC_PAGE_COUNT */
-/* >>> part kPcFontNames */
-static const char *const kPcFontNames[] = {
-	"ORIGINAL", "PUBLIC PIXEL", "UNSCII-8", "PIX OPER 8"
-};
-/* <<< part kPcFontNames */
-/* >>> part kPcBorderNames */
-static const char *const kPcBorderNames[] = {
-	"PLAIN", "INTRO", "MEDALS", "LEGEND"
-};
-/* <<< part kPcBorderNames */
-/* >>> part kFontSampleUpper */
-static const uint8_t kFontSampleUpper[] = {
-	0x03u, 0x30u, 0x03u, 0x31u, 0x03u, 0x32u, 0x03u, 0x33u, 0u
-};
-/* <<< part kFontSampleUpper */
-/* >>> part kFontSampleLower */
-static const uint8_t kFontSampleLower[] = {
-	0x03u, 0x64u, 0x03u, 0x65u, 0x03u, 0x4Bu, 0x03u, 0x66u, 0u
-};
-/* <<< part kFontSampleLower */
-
-/* >>> part pc_visible_options */
-static uint8_t pc_visible_options(uint8_t page, uint8_t *out)
-{
-	uint8_t count = 0u;
-	for (uint8_t i = 0u; i < kPcPages[page].count; ++i) {
-		uint8_t option = kPcPages[page].options[i];
-		if (option == PC_OPTION_BORDER && !runtime_pc_option_value(PC_OPTION_SGB))
-			continue;
-		if (option == PC_OPTION_SWITCH_GAME && !runtime_game_switch_label())
-			continue;
-		out[count++] = option;
-	}
-	return count;
-}
-/* <<< part pc_visible_options */
-
-/* >>> part pc_row_y */
-static uint8_t pc_row_y(uint8_t row, uint8_t count)
-{
-	return row < count ? (uint8_t)(3u + row * 2u) : PC_PAGE_ROW_Y;
-}
-/* <<< part pc_row_y */
-
-/* >>> part print_pc_row */
-static void print_pc_row(uint8_t y, const char *text)
-{
-	char padded[23];
-	snprintf(padded, sizeof padded, "%-22.22s", text);
-	print_host_text(padded, 2u, y);
-}
-/* <<< part print_pc_row */
-
 /* >>> part print_pc_option_line */
 static void print_pc_option_line(uint8_t y, uint8_t option)
 {
@@ -264,180 +81,8 @@ static void print_pc_option_line(uint8_t y, uint8_t option)
 	print_pc_row(y, text);
 }
 /* <<< part print_pc_option_line */
-
-/* >>> part g_pc_header_palette */
-static uint8_t g_pc_header_palette;
-/* <<< part g_pc_header_palette */
-/* >>> part g_pc_body_palette */
-static uint8_t g_pc_body_palette;
-/* <<< part g_pc_body_palette */
-
-/* >>> part set_pc_row_palette */
-static void set_pc_row_palette(uint8_t y, uint8_t palette)
-{
-	if (wConsole != CONSOLE_CGB)
-		return;
-	gb_write8(rVBK, 1u);
-	for (uint8_t x = 2u; x < 13u; ++x) {
-		uint16_t cell = (uint16_t)(0x9800u + y * 32u + x);
-		gb_write8(cell, (uint8_t)((gb_read8(cell) & 0xF8u) | palette));
-	}
-	gb_write8(rVBK, 0u);
-}
-/* <<< part set_pc_row_palette */
-
-/* >>> part load_pc_header_palette */
-static void load_pc_header_palette(void)
-{
-	uint8_t used = 0u;
-	gb_write8(rVBK, 1u);
-	g_pc_body_palette = (uint8_t)(gb_read8((uint16_t)(0x9800u + 3u * 32u + 2u)) & 7u);
-	for (uint8_t y = 0u; y < 18u; ++y)
-		for (uint8_t x = 0u; x < 20u; ++x)
-			used |= (uint8_t)(1u << (gb_read8((uint16_t)(0x9800u + y * 32u + x)) & 7u));
-	gb_write8(rVBK, 0u);
-	g_pc_header_palette = g_pc_body_palette;
-	for (uint8_t palette = 7u; palette > 0u; --palette) {
-		if (!(used & (1u << palette))) {
-			g_pc_header_palette = palette;
-			break;
-		}
-	}
-	if (g_pc_header_palette == g_pc_body_palette)
-		return;
-	uint8_t *pals = wBackgroundPalettesCGB_PTR;
-	const uint8_t *body = pals + g_pc_body_palette * 8u;
-	uint16_t background = (uint16_t)(body[0] | body[1] << 8);
-	uint16_t text = (uint16_t)(body[6] | body[7] << 8);
-	uint16_t gray = 0u;
-	for (unsigned shift = 0u; shift < 15u; shift += 5u) {
-		unsigned mix = (((background >> shift) & 31u) + ((text >> shift) & 31u)) / 2u;
-		gray = (uint16_t)(gray | mix << shift);
-	}
-	for (unsigned i = 0u; i < 8u; ++i)
-		pals[g_pc_header_palette * 8u + i] = body[i];
-	pals[g_pc_header_palette * 8u + 6u] = (uint8_t)gray;
-	pals[g_pc_header_palette * 8u + 7u] = (uint8_t)(gray >> 8);
-	FlushAllPalettes();
-}
-/* <<< part load_pc_header_palette */
-
-/* >>> part draw_pc_options */
-static uint8_t draw_pc_options(uint8_t page, uint8_t *options)
-{
-	char header[24];
-	uint8_t count = pc_visible_options(page, options);
-	(void)SetupText(0x30u, 0x8Fu);
-	print_host_text("PC OPTIONS", 2u, 1u);
-	set_pc_row_palette(1u, g_pc_header_palette);
-	for (uint8_t slot = 0u; slot < PC_PAGE_SLOTS; ++slot) {
-		uint8_t y = (uint8_t)(3u + slot * 2u);
-		if (slot < count)
-			print_pc_option_line(y, options[slot]);
-		else
-			print_pc_row(y, "");
-		set_pc_row_palette(y, g_pc_body_palette);
-	}
-	int used = snprintf(header, sizeof header, "PAGE %u/%u", (unsigned)page + 1u,
-		(unsigned)PC_PAGE_COUNT);
-	snprintf(header + used, sizeof header - (size_t)used, "%*s", 20 - used,
-		kPcPages[page].name);
-	print_pc_row(PC_PAGE_ROW_Y, header);
-	set_pc_row_palette(PC_PAGE_ROW_Y, g_pc_header_palette);
-	print_text_bytes(kFontSampleUpper, 15u, 9u);
-	print_text_bytes(kFontSampleLower, 15u, 11u);
-	return count;
-}
-/* <<< part draw_pc_options */
-
-/* >>> part pc_option_toggles */
-static int pc_option_toggles(uint8_t option)
-{
-	return option == 2u || option == 5u || option == 6u || option == 7u ||
-		option == 9u || option == 10u || option == 11u;
-}
-/* <<< part pc_option_toggles */
-
-/* >>> part RunPCOptionsMenu */
-static void RunPCOptionsMenu(void)
-{
-	uint16_t box = 0u;
-	uint8_t page = 0u;
-	uint8_t row = 0u;
-	uint8_t options[PC_PAGE_SLOTS];
-	DisableLCD();
-	(void)InitMenuScreen();
-	EnableAndClearSpriteAnimations();
-	wLineSeparation = DOUBLE_SPACED;
-	DrawPlayerPortrait(14u, 1u);
-	DrawRegularTextBox(&box, 0u, 14u, 18u, 0u, 0u);
-	DrawRegularTextBox(&box, 0u, 6u, 6u, 14u, 8u);
-	if (wConsole == CONSOLE_CGB)
-		load_pc_header_palette();
-	uint8_t count = draw_pc_options(page, options);
-	wCursorBlinkCounter = 0u;
-	(void)WriteByteToBGMap0(SYM_CURSOR_R, 1u, pc_row_y(row, count));
-	(void)FlashWhiteScreen();
-	for (;;) {
-		DoFrameIfLCDEnabled();
-		(void)UpdateRNGSources();
-		uint8_t held = hDPadHeld;
-		uint8_t pressed = hKeysPressed;
-		if ((pressed & PAD_B) != 0u) {
-			PlaySFX(PC_SFX_CANCEL);
-			return;
-		}
-		if ((held & (PAD_UP | PAD_DOWN)) != 0u) {
-			(void)WriteByteToBGMap0(SYM_SPACE, 1u, pc_row_y(row, count));
-			if ((held & PAD_UP) != 0u)
-				row = row == 0u ? count : (uint8_t)(row - 1u);
-			else
-				row = row >= count ? 0u : (uint8_t)(row + 1u);
-			wCursorBlinkCounter = 0u;
-			PlaySFX(PC_SFX_CURSOR);
-		}
-		int direction = 0;
-		if ((held & (PAD_LEFT | PAD_RIGHT)) != 0u)
-			direction = (held & PAD_RIGHT) != 0u ? 1 : -1;
-		else if ((pressed & PAD_A) != 0u)
-			direction = 1;
-		if (direction) {
-			if (row == count) {
-				int next = (int)page + direction;
-				if (next < 0)
-					next = (int)PC_PAGE_COUNT - 1;
-				else if (next >= (int)PC_PAGE_COUNT)
-					next = 0;
-				page = (uint8_t)next;
-				count = draw_pc_options(page, options);
-				row = count;
-				PlaySFX(PC_SFX_CURSOR);
-			} else if (options[row] == PC_OPTION_SWITCH_GAME) {
-				if ((pressed & PAD_A) != 0u) {
-					PlaySFX(SFX_CONFIRM);
-					runtime_request_game_switch();
-					return;
-				}
-			} else if ((pressed & PAD_A) == 0u || pc_option_toggles(options[row])) {
-				runtime_pc_option_adjust(options[row], direction);
-				if (options[row] == 10u) {
-					DrawPlayerPortrait(14u, 1u);
-					if (wConsole == CONSOLE_CGB)
-						load_pc_header_palette();
-				}
-				count = draw_pc_options(page, options);
-				if (row > count)
-					row = count;
-				PlaySFX((pressed & PAD_A) != 0u ? SFX_CONFIRM : PC_SFX_CURSOR);
-			}
-		}
-		wCursorBlinkCounter++;
-		(void)WriteByteToBGMap0((wCursorBlinkCounter & 0x10u) != 0u ? SYM_SPACE : SYM_CURSOR_R,
-			1u, pc_row_y(row, count));
-	}
-}
-/* <<< part RunPCOptionsMenu */
-
+/* --- part SYM_BOX_BOTTOM */
+/* --- factory ShowCardPopCGBDisclaimer */
 /* >>> factory CheckIfHasSaveData */
 CheckIfHasSaveDataResult CheckIfHasSaveData(void)
 {
@@ -455,7 +100,6 @@ CheckIfHasSaveDataResult CheckIfHasSaveData(void)
 	return (CheckIfHasSaveDataResult){final.a, final.f};
 }
 /* <<< factory CheckIfHasSaveData */
-
 /* >>> factory PrintStartMenuDescriptionText */
 PrintStartMenuDescriptionTextResult PrintStartMenuDescriptionText(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -534,27 +178,6 @@ PrintStartMenuDescriptionTextResult PrintStartMenuDescriptionText(uint8_t a, uin
 	return (PrintStartMenuDescriptionTextResult){out_a, out_f, saved_b, saved_c, saved_d, saved_e};
 }
 /* <<< factory PrintStartMenuDescriptionText */
-
-/* >>> factory AskToContinueFromDiaryWithDuelData */
-AskToContinueFromDiaryWithDuelDataResult AskToContinueFromDiaryWithDuelData(void)
-{
-	uint8_t a = wHasDuelSaveData;
-	if (a == 0u)
-		return (AskToContinueFromDiaryWithDuelDataResult){a, 0x80u};
-
-	DisableLCD();
-	(void)InitMenuScreen();
-	EnableAndClearSpriteAnimations();
-	(void)FlashWhiteScreen();
-	DoFrameIfLCDEnabled();
-	(void)PrintScrollableText_NoTextBoxLabel(DataExistsWhenPowerWasTurnedOFFDuringDuelText);
-	HandleYesOrNoMenuResult menu = YesOrNoMenuWithText(ContinueFromDiaryText);
-	if ((menu.f & 0x10u) != 0u)
-		return (AskToContinueFromDiaryWithDuelDataResult){menu.a, menu.f};
-	return (AskToContinueFromDiaryWithDuelDataResult){menu.a, menu.a == 0u ? 0x80u : 0u};
-}
-/* <<< factory AskToContinueFromDiaryWithDuelData */
-
 /* >>> factory HandleStartMenu */
 void HandleStartMenu(void)
 {
@@ -648,7 +271,6 @@ void HandleStartMenu(void)
 	}
 }
 /* <<< factory HandleStartMenu */
-
 /* >>> factory DrawPlayerPortraitAndPrintNewGameText */
 void DrawPlayerPortraitAndPrintNewGameText(void)
 {
@@ -663,39 +285,6 @@ void DrawPlayerPortraitAndPrintNewGameText(void)
 	EnableAndClearSpriteAnimations();
 }
 /* <<< factory DrawPlayerPortraitAndPrintNewGameText */
-
-/* >>> factory DeleteSaveDataForNewGame */
-uint8_t DeleteSaveDataForNewGame(void)
-{
-	if (wHasSaveData == 0u)
-		return 0x00u; /* ret z */
-
-	DisableLCD();
-	(void)InitMenuScreen();
-	EnableAndClearSpriteAnimations();
-	(void)FlashWhiteScreen();
-	DoFrameIfLCDEnabled();
-	(void)PrintScrollableText_NoTextBoxLabel(SavedDataAlreadyExistsText);
-	HandleYesOrNoMenuResult result = YesOrNoMenuWithText(OKToDeleteTheDataText);
-	if ((result.f & 0x10u) != 0u)
-		return 0x10u; /* ret c: quit if chose "no" */
-	InvalidateSaveData();
-	(void)PrintScrollableText_NoTextBoxLabel(AllDataWasDeletedText);
-	return 0x00u; /* or a */
-}
-/* <<< factory DeleteSaveDataForNewGame */
-
-/* >>> part LoadEventsFromSRAM */
-static void LoadEventsFromSRAM(void)
-{
-	EnableSRAM();
-	for (uint8_t i = 0u; i < 0x40u; ++i)
-		gb_write8((uint16_t)(wEventVars_ADDR + i),
-			gb_read8((uint16_t)(sEventVars_ADDR + i)));
-	DisableSRAM();
-}
-/* <<< part LoadEventsFromSRAM */
-
 /* >>> factory HandleTitleScreen */
 void HandleTitleScreen(void)
 {
@@ -783,7 +372,6 @@ title_screen:
 	EnableAndClearSpriteAnimations();
 }
 /* <<< factory HandleTitleScreen */
-
 /* >>> factory Start */
 void Start(uint8_t a)
 {

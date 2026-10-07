@@ -8,22 +8,32 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/load_deck.h"
 #include "home/print_text.h"
 #include "home/switch_sram.h"
 
 
 #include "generated/sram.h"
+/* <<< part includes_2 */
 
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xc2u
+/* <<< part PLAYER_TURN */
+/* >>> part CHARMANDER_AND_FRIENDS_DECK */
 #define CHARMANDER_AND_FRIENDS_DECK 0x05u
+/* <<< part CHARMANDER_AND_FRIENDS_DECK */
+/* >>> part SQUIRTLE_AND_FRIENDS_DECK */
 #define SQUIRTLE_AND_FRIENDS_DECK 0x07u
+/* <<< part SQUIRTLE_AND_FRIENDS_DECK */
+/* >>> part BULBASAUR_AND_FRIENDS_DECK */
 #define BULBASAUR_AND_FRIENDS_DECK 0x09u
+/* <<< part BULBASAUR_AND_FRIENDS_DECK */
 
 
+/* >>> part kStarterCardIDs */
 static const uint8_t kStarterCardIDs[6] = {3u, 4u, 5u, 6u, 7u, 8u};
-/* <<< factory statics */
+/* <<< part kStarterCardIDs */
 
 /* >>> factory CopyDeckNameAndCards */
 /* starter_deck.asm:137-173, .CopyDeckName inlined (:175-182). a = deck ID in

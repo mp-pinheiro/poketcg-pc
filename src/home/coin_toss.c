@@ -1,10 +1,10 @@
 /* >>> part includes */
 #include "home/coin_toss.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/core.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> part cp_flags */
 static uint8_t cp_flags(uint8_t a, uint8_t n)

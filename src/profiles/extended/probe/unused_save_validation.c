@@ -1,10 +1,6 @@
-/* >>> part includes */
-#include "home/unused_save_validation.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "probe.h"
-/* <<< part includes */
-
+/* --- factory StubbedUnusedSaveDataValidation */
+/* --- factory UnusedCalculateSaveDataValidationByte */
+/* --- factory UnusedSaveDataValidation */
 /* >>> part probe_entries_unused_save_validation */
 const ProbeEntry probe_entries_unused_save_validation[] = {
 	{ NULL, NULL },

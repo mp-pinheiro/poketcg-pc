@@ -1,15 +1,4 @@
-/* >>> part includes */
-#include "home/game_loop.h"
-#include "home/starter_deck.h"
-
-#include "home/frames.h"
-#include "home/input.h"
-#include "home/duel_core.h"
-#include "home/lcd.h"
-#include "home/process_text.h"
-#include "home/tiles.h"
-/* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/text_ids.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
@@ -19,32 +8,7 @@
 #include "home/menus.h"
 #include "home/switch_sram.h"
 #include "mem.h"
-#define PAD_A 0x01u
-#define PAD_B 0x02u
-#define IE_VBLANK 0x01u
-#define IE_TIMER 0x04u
-#define rIE 0xFFFFu
-/* <<< factory statics */
-
-/* >>> factory SetupResetBackUpRamScreen */
-void SetupResetBackUpRamScreen(void)
-{
-	wTileMapFill = 0;
-	DisableLCD();
-	LoadSymbolsFont();
-	SetDefaultConsolePalettes();
-	SetupText(0x38, 0x7F);
-}
-/* <<< factory SetupResetBackUpRamScreen */
-
-/* >>> factory InitSaveDataAndSetUppercase */
-void InitSaveDataAndSetUppercase(void)
-{
-	InitSaveData();
-	wUppercaseHalfWidthLetters = 1u;
-}
-/* <<< factory InitSaveDataAndSetUppercase */
-
+/* <<< part includes_2 */
 /* >>> factory GameLoop */
 void GameLoop(void)
 {
@@ -73,3 +37,5 @@ void GameLoop(void)
 	(void)Reset(); /* .reset_game: jp Reset (game_loop.asm:35-36) */
 }
 /* <<< factory GameLoop */
+/* === factory CGBDisclaimer */
+/* === factory SetupResetBackUpRamScreen */

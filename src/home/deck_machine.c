@@ -8,7 +8,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/print_text.h"
 #include "home/process_text.h"
 #include "home/switch_sram.h"
@@ -24,13 +24,25 @@
 
 #include "generated/wram.h"
 #include "home/bg_map.h"
+/* <<< part includes_2 */
 
+/* >>> part FALSE */
 #define FALSE 0x00u
+/* <<< part FALSE */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
+/* >>> part SYM_CURSOR_U */
 #define SYM_CURSOR_U 0x0Cu
+/* <<< part SYM_CURSOR_U */
+/* >>> part SYM_BOX_RIGHT */
 #define SYM_BOX_RIGHT 0x1Fu
+/* <<< part SYM_BOX_RIGHT */
+/* >>> part SYM_CURSOR_D */
 #define SYM_CURSOR_D 0x2Fu
+/* <<< part SYM_CURSOR_D */
 
+/* >>> part includes_SYM_SLASH */
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
@@ -43,18 +55,30 @@
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_SYM_SLASH */
+/* >>> part SYM_SLASH */
 #define SYM_SLASH 0x2Eu
+/* <<< part SYM_SLASH */
 
+/* >>> part includes_WMACHINEDECKPTRS_ADDR */
 #include "home/deck_machine.h"
 #include "home/deck_configuration.h"
+/* <<< part includes_WMACHINEDECKPTRS_ADDR */
+/* >>> part WMACHINEDECKPTRS_ADDR */
 #define WMACHINEDECKPTRS_ADDR wMachineDeckPtrs_ADDR
+/* <<< part WMACHINEDECKPTRS_ADDR */
 
+/* >>> part includes_PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR */
 #include "home/deck_machine.h"
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
 #include "home/print_text.h"
+/* <<< part includes_PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR */
+/* >>> part PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR */
 #define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR (PrintDeckMachineEntry__text_ADDR)
+/* <<< part PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR */
 
+/* >>> part includes_FUNC_B088_CARD_LIMIT */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
@@ -66,8 +90,12 @@
 #include "home/deck_configuration.h"
 #include "home/card_data.h"
 #include "generated/wram.h"
+/* <<< part includes_FUNC_B088_CARD_LIMIT */
+/* >>> part FUNC_B088_CARD_LIMIT */
 #define FUNC_B088_CARD_LIMIT 0xe4u
+/* <<< part FUNC_B088_CARD_LIMIT */
 
+/* >>> part includes_MENU_CANCEL */
 #include "home/deck_configuration.h"
 #include "home/menus.h"
 #include "home/switch_sram.h"
@@ -83,23 +111,39 @@
 #include "home/menus.h"
 #include "home/process_text.h"
 #include "mem.h"
+/* <<< part includes_MENU_CANCEL */
 
+/* >>> part MENU_CANCEL */
 #define MENU_CANCEL 0xFFu
+/* <<< part MENU_CANCEL */
+/* >>> part PAD_START */
 #define PAD_START 0x08u
+/* <<< part PAD_START */
+/* >>> part CARRY_FLAG */
 #define CARRY_FLAG 0x10u
+/* <<< part CARRY_FLAG */
+/* >>> part NUM_CONFIRMATION_CURSOR_POSITIONS */
 #define NUM_CONFIRMATION_CURSOR_POSITIONS 0x05u
+/* <<< part NUM_CONFIRMATION_CURSOR_POSITIONS */
+/* >>> part FW_MIDDLE_DOT */
 /* charmaps.asm:319 gives the fullwidth middle dot the value $77 and
  * macros/text.asm:81-89 shows `ldfw` is a plain `ld`, so deck_machine.asm:143
  * assembles to `ld [hl], $77`. */
 #define FW_MIDDLE_DOT 0x77u
+/* <<< part FW_MIDDLE_DOT */
+/* >>> part DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR */
 /* Bank-2 addresses this routine reads as data (poketcg.sym):
  * 02:52a7 DeckNameSuffix,
  * 02:6e91 HandleDeckMissingCardsList.DeckConfirmationCardSelectionParams,
  * 02:6e9a HandleDeckMissingCardsList.CardListUpdateFunction. */
 #define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR (HandleDeckMissingCardsList__DeckConfirmationCardSelectionParams_ADDR)
+/* <<< part DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR */
+/* >>> part CARD_LIST_UPDATE_FUNCTION_ADDR */
 #define CARD_LIST_UPDATE_FUNCTION_ADDR (HandleDeckMissingCardsList__CardListUpdateFunction_ADDR)
+/* <<< part CARD_LIST_UPDATE_FUNCTION_ADDR */
 
 
+/* >>> part includes_PAD_RIGHT */
 #include "home/deck_machine.h"
 #include "generated/wram.h"
 
@@ -127,9 +171,15 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_PAD_RIGHT */
+/* >>> part PAD_RIGHT */
 #define PAD_RIGHT 0x10u
+/* <<< part PAD_RIGHT */
+/* >>> part PAD_LEFT */
 #define PAD_LEFT 0x20u
+/* <<< part PAD_LEFT */
 
+/* >>> part includes_DECK_MACHINE_MENU_PARAMETERS_ADDR */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/deck_configuration.h"
@@ -150,10 +200,14 @@
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_DECK_MACHINE_MENU_PARAMETERS_ADDR */
 
+/* >>> part DECK_MACHINE_MENU_PARAMETERS_ADDR */
 /* poketcg.sym: 02:7609 DeckMachineMenuParameters. */
 #define DECK_MACHINE_MENU_PARAMETERS_ADDR DeckMachineMenuParameters_ADDR
+/* <<< part DECK_MACHINE_MENU_PARAMETERS_ADDR */
 
+/* >>> part includes_HANDLE_AUTO_DECK_MENU_BANK */
 #include "home/auto_deck_machines.h"
 #include "home/credits_sequence_commands.h"
 #include "home/deck_check.h"
@@ -174,7 +228,9 @@
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_HANDLE_AUTO_DECK_MENU_BANK */
 
+/* >>> part HANDLE_AUTO_DECK_MENU_BANK */
 /* poketcg.sym, every one of these in bank 2:
  *   02:7b6e HandleAutoDeckMenu.MenuParameters
  *   02:7b76 HandleAutoDeckMenu.DeckMachineMenuData
@@ -184,29 +240,57 @@
  * read them off the bus, so the case has to map bank 2; the title list is read
  * with an explicit rom_ptr() because it is this routine's own data. */
 #define HANDLE_AUTO_DECK_MENU_BANK 0x02u
+/* <<< part HANDLE_AUTO_DECK_MENU_BANK */
+/* >>> part HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR */
 #define HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR 0x7B6Eu
+/* <<< part HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR */
+/* >>> part HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR */
 #define HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR 0x7B76u
+/* <<< part HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR */
+/* >>> part HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR */
 #define HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR 0x7B83u
+/* <<< part HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR */
+/* >>> part UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR */
 #define UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR UpdateDeckMachineScrollArrowsAndEntries_ADDR
+/* <<< part UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR */
 
+/* >>> part includes_DRAW_DECK_MACHINE_SCREEN_ADDR */
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_DRAW_DECK_MACHINE_SCREEN_ADDR */
+/* >>> part DRAW_DECK_MACHINE_SCREEN_ADDR */
 #define DRAW_DECK_MACHINE_SCREEN_ADDR DrawDeckMachineScreen_ADDR
+/* <<< part DRAW_DECK_MACHINE_SCREEN_ADDR */
 
+/* >>> part PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR */
 #define PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR DeckMachineSelectionParams_ADDR
+/* <<< part PRINTER_MENU_DECK_CONFIGURATION_PARAMS_ADDR */
 
+/* >>> part includes_DECK_MACHINE_SELECTION_PARAMS_ADDR */
 #include "generated/wram.h"
+/* <<< part includes_DECK_MACHINE_SELECTION_PARAMS_ADDR */
+/* >>> part DECK_MACHINE_SELECTION_PARAMS_ADDR */
 #define DECK_MACHINE_SELECTION_PARAMS_ADDR DeckMachineSelectionParams_ADDR
+/* <<< part DECK_MACHINE_SELECTION_PARAMS_ADDR */
+/* >>> part DECK_MACHINE_MENU_DATA_ADDR */
 #define DECK_MACHINE_MENU_DATA_ADDR (HandleDeckSaveMachineMenu__DeckMachineMenuData_ADDR)
+/* <<< part DECK_MACHINE_MENU_DATA_ADDR */
 
+/* >>> part includes_DATA_B04A_ADDR */
 #include "home/common.h"
 #include "home/save.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_DATA_B04A_ADDR */
+/* >>> part DATA_B04A_ADDR */
 #define DATA_B04A_ADDR Data_b04a_ADDR
+/* <<< part DATA_B04A_ADDR */
+/* >>> part SHOW_RECEIVED_CARDS_LIST_ADDR */
 #define SHOW_RECEIVED_CARDS_LIST_ADDR ShowReceivedCardsList_ADDR
+/* <<< part SHOW_RECEIVED_CARDS_LIST_ADDR */
 
+/* >>> part includes_tail */
 #include "home/common.h"
 #include "home/save.h"
 
@@ -228,7 +312,7 @@
 
 #include "generated/wram.h"
 #include "home/deck_machine.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
 /* deck_machine.asm:772-789 */

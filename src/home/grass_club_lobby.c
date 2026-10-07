@@ -7,14 +7,20 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/grass_club_lobby.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
+/* >>> part GrassClubLobbyAfterDuelTable */
 #define GrassClubLobbyAfterDuelTable (GrassClubLobbyAfterDuel__after_duel_table_ADDR)
+/* <<< part GrassClubLobbyAfterDuelTable */
+/* >>> part includes_TRUE */
 #include "home/scripting.h"
+/* <<< part includes_TRUE */
+/* >>> part TRUE */
 #define TRUE 0x01u
-/* <<< factory statics */
+/* <<< part TRUE */
 
 /* >>> factory GrassClubLobbyAfterDuel */
 GrassClubLobbyAfterDuelResult GrassClubLobbyAfterDuel(void)

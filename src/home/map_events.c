@@ -9,9 +9,11 @@
 #include "home/load_gfx.h"
 #include "home/overworld.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part kSetOWMapEventTilemapPointers */
 static const uint8_t kSetOWMapEventTilemapPointers[44] = {
 	0x16u, 0x00u, 0x34u, 0x35u, /* PokemonDomeDoor */
 	0x0eu, 0x00u, 0x38u, 0x39u, /* HallOfHonorDoor */
@@ -25,7 +27,7 @@ static const uint8_t kSetOWMapEventTilemapPointers[44] = {
 	0x12u, 0x12u, 0x08u, 0x09u, /* FireDeckMachine */
 	0x0au, 0x00u, 0x04u, 0x05u, /* ChallengeMachine */
 };
-/* <<< factory statics */
+/* <<< part kSetOWMapEventTilemapPointers */
 
 
 /* >>> factory ClearOWMapEvents */

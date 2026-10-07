@@ -1,16 +1,3 @@
-/* >>> part includes */
-#include "home/default_palettes.h"
-
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/duel_core.h"
-#include "home/lcd.h"
-#include "home/objects.h"
-#include "home/palettes.h"
-#include "home/switch_rom.h"
-#include "mem.h"
-/* <<< part includes */
-
 /* >>> factory SetDefaultPalettes */
 void SetDefaultPalettes(void)
 {
@@ -25,18 +12,3 @@ void SetDefaultPalettes(void)
 	FlushAllPalettes();
 }
 /* <<< factory SetDefaultPalettes */
-
-/* >>> factory Func_12871 */
-void Func_12871(void)
-{
-	ZeroObjectPositions();
-	gb_write8(wVBlankOAMCopyToggle_ADDR, 1);
-	Set_OBJ_8x8();
-	SetDefaultPalettes();
-	gb_write8(hSCX_ADDR, 0);
-	gb_write8(hSCY_ADDR, 0);
-	gb_write8(hWX_ADDR, 0);
-	gb_write8(hWY_ADDR, 0);
-	SetWindowOff();
-}
-/* <<< factory Func_12871 */

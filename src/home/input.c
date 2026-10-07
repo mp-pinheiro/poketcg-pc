@@ -5,22 +5,40 @@
 #include "mem.h"
 #include "generated/hram.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> part JOYP */
 #define JOYP 0xFF00u
-#define JOYP_GET_BUTTONS 0x10u
-#define JOYP_GET_CTRL_PAD 0x20u
-#define JOYP_GET_NONE 0x30u
-#define JOYP_INPUTS 0x0Fu
-#define PAD_A 0x01u
-#define PAD_B 0x02u
-#define PAD_SELECT 0x04u
-#define PAD_START 0x08u
-#define PAD_BUTTONS (PAD_A | PAD_B | PAD_SELECT | PAD_START)
 /* <<< part JOYP */
+/* >>> part JOYP_GET_BUTTONS */
+#define JOYP_GET_BUTTONS 0x10u
+/* <<< part JOYP_GET_BUTTONS */
+/* >>> part JOYP_GET_CTRL_PAD */
+#define JOYP_GET_CTRL_PAD 0x20u
+/* <<< part JOYP_GET_CTRL_PAD */
+/* >>> part JOYP_GET_NONE */
+#define JOYP_GET_NONE 0x30u
+/* <<< part JOYP_GET_NONE */
+/* >>> part JOYP_INPUTS */
+#define JOYP_INPUTS 0x0Fu
+/* <<< part JOYP_INPUTS */
+/* >>> part PAD_A */
+#define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_B */
+#define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part PAD_SELECT */
+#define PAD_SELECT 0x04u
+/* <<< part PAD_SELECT */
+/* >>> part PAD_START */
+#define PAD_START 0x08u
+/* <<< part PAD_START */
+/* >>> part PAD_BUTTONS */
+#define PAD_BUTTONS (PAD_A | PAD_B | PAD_SELECT | PAD_START)
+/* <<< part PAD_BUTTONS */
 
 /* >>> part read_joypad */
 static uint8_t read_joypad(void)

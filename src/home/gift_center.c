@@ -7,21 +7,27 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
 
+/* >>> part includes_2 */
 #include "home/labels.h"
 #include "home/lcd_enable_frame.h"
 #include "home/menus.h"
 #include "home/overworld.h"
+/* <<< part includes_2 */
 
+/* >>> part GIFT_CENTER_BANK */
 /* GiftCenterMenu assembles at 04:4dba (poketcg.sym), so both of its local
  * tables resolve through ROM bank $04: .GiftCenterTextPointers at $4e0f and
  * .GiftCenterMenuParams at $4e17. */
 #define GIFT_CENTER_BANK 0x04u
+/* <<< part GIFT_CENTER_BANK */
+/* >>> part GIFT_CENTER_TEXT_POINTERS */
 #define GIFT_CENTER_TEXT_POINTERS (ScriptCommand_SetChallengeHallNPCCoords_ADDR + 0x1Au)
+/* <<< part GIFT_CENTER_TEXT_POINTERS */
+/* >>> part GIFT_CENTER_MENU_PARAMS */
 #define GIFT_CENTER_MENU_PARAMS (ScriptCommand_SetChallengeHallNPCCoords_ADDR + 0x22u)
+/* <<< part GIFT_CENTER_MENU_PARAMS */
 
-/* <<< factory statics */
 
 /* >>> factory Preload_GiftCenterClerk */
 PreloadGiftCenterClerkResult Preload_GiftCenterClerk(void)

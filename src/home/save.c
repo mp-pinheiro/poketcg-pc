@@ -439,16 +439,34 @@ void _AddCardToCollectionAndUpdateAlbumProgress(uint8_t a)
 /* EventVarMasks and MedalEvents live in ROM bank 3 (scripting.asm:388/355), read
  * via the code bank there -- a farcall target. Both are 2- and 1-byte records. */
 #define EVENT_VAR_MASKS EventVarMasks_ADDR
-#define MEDAL_EVENTS    MedalEvents_ADDR
-#define EV_ISHIHARA_MENT 0x1eu
-#define EV_LEGENDARY     0x22u
-#define EV_MEDAL_COUNT   0x2eu
-#define OWMAP_ISHIHARA   0x02u
-#define OWMAP_MYSTERY    0x0du
-#define OWMAP_MASON      0x01u
-#define MAP_MASON        0x01u
-#define DIR_SOUTH        0x02u
 /* <<< part EVENT_VAR_MASKS */
+/* >>> part MEDAL_EVENTS */
+#define MEDAL_EVENTS    MedalEvents_ADDR
+/* <<< part MEDAL_EVENTS */
+/* >>> part EV_ISHIHARA_MENT */
+#define EV_ISHIHARA_MENT 0x1eu
+/* <<< part EV_ISHIHARA_MENT */
+/* >>> part EV_LEGENDARY */
+#define EV_LEGENDARY     0x22u
+/* <<< part EV_LEGENDARY */
+/* >>> part EV_MEDAL_COUNT */
+#define EV_MEDAL_COUNT   0x2eu
+/* <<< part EV_MEDAL_COUNT */
+/* >>> part OWMAP_ISHIHARA */
+#define OWMAP_ISHIHARA   0x02u
+/* <<< part OWMAP_ISHIHARA */
+/* >>> part OWMAP_MYSTERY */
+#define OWMAP_MYSTERY    0x0du
+/* <<< part OWMAP_MYSTERY */
+/* >>> part OWMAP_MASON */
+#define OWMAP_MASON      0x01u
+/* <<< part OWMAP_MASON */
+/* >>> part MAP_MASON */
+#define MAP_MASON        0x01u
+/* <<< part MAP_MASON */
+/* >>> part DIR_SOUTH */
+#define DIR_SOUTH        0x02u
+/* <<< part DIR_SOUTH */
 
 /* >>> part get_event_var */
 /* GetEventVar:: scripting.asm:366-382. Returns wEventVars+offset and stashes the

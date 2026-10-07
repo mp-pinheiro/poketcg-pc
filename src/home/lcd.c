@@ -9,15 +9,31 @@
 
 /* >>> part rLCDC */
 #define rLCDC 0xFF40u
-#define rIE 0xFFFFu
-#define rBGP 0xFF47u
-#define rOBP0 0xFF48u
-#define rOBP1 0xFF49u
-#define LCDC_ON 0x80u
-#define LCDC_WIN_ON 0x20u
-#define LCDC_OBJ_16 0x04u
-#define IE_VBLANK 0x01u
 /* <<< part rLCDC */
+/* >>> part rIE */
+#define rIE 0xFFFFu
+/* <<< part rIE */
+/* >>> part rBGP */
+#define rBGP 0xFF47u
+/* <<< part rBGP */
+/* >>> part rOBP0 */
+#define rOBP0 0xFF48u
+/* <<< part rOBP0 */
+/* >>> part rOBP1 */
+#define rOBP1 0xFF49u
+/* <<< part rOBP1 */
+/* >>> part LCDC_ON */
+#define LCDC_ON 0x80u
+/* <<< part LCDC_ON */
+/* >>> part LCDC_WIN_ON */
+#define LCDC_WIN_ON 0x20u
+/* <<< part LCDC_WIN_ON */
+/* >>> part LCDC_OBJ_16 */
+#define LCDC_OBJ_16 0x04u
+/* <<< part LCDC_OBJ_16 */
+/* >>> part IE_VBLANK */
+#define IE_VBLANK 0x01u
+/* <<< part IE_VBLANK */
 
 /* >>> factory EnableLCD */
 uint8_t EnableLCD(void)

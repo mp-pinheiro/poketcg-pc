@@ -1,8 +1,5 @@
-/* >>> part includes */
-#include "home/sound.h"
-#include "probe.h"
-/* <<< part includes */
-
+/* --- factory Func_37c5 */
+/* --- factory Func_37a5 */
 /* >>> factory SetupSound */
 static void adapt_SetupSound(ProbeState *s)
 {
@@ -10,28 +7,25 @@ static void adapt_SetupSound(ProbeState *s)
 	SetupSound();
 }
 /* <<< factory SetupSound */
-
+/* --- part StopMusic */
 /* >>> factory PlaySong */
 static void adapt_PlaySong(ProbeState *s)
 {
 	PlaySong(s->a);
 }
 /* <<< factory PlaySong */
-
 /* >>> factory AssertSongFinished */
 static void adapt_AssertSongFinished(ProbeState *s)
 {
 	s->a = AssertSongFinished();
 }
 /* <<< factory AssertSongFinished */
-
 /* >>> factory AssertSFXFinished */
 static void adapt_AssertSFXFinished(ProbeState *s)
 {
 	s->a = AssertSFXFinished();
 }
 /* <<< factory AssertSFXFinished */
-
 /* >>> factory PlaySFX_InvalidChoice */
 static void adapt_PlaySFX_InvalidChoice(ProbeState *s)
 {
@@ -39,14 +33,12 @@ static void adapt_PlaySFX_InvalidChoice(ProbeState *s)
 	PlaySFX_InvalidChoice();
 }
 /* <<< factory PlaySFX_InvalidChoice */
-
 /* >>> factory PlaySFX */
 static void adapt_PlaySFX(ProbeState *s)
 {
 	PlaySFX(s->a);
 }
 /* <<< factory PlaySFX */
-
 /* >>> factory PauseSong */
 static void adapt_PauseSong(ProbeState *s)
 {
@@ -54,7 +46,6 @@ static void adapt_PauseSong(ProbeState *s)
 	PauseSong();
 }
 /* <<< factory PauseSong */
-
 /* >>> factory ResumeSong */
 static void adapt_ResumeSong(ProbeState *s)
 {
@@ -62,7 +53,6 @@ static void adapt_ResumeSong(ProbeState *s)
 	ResumeSong();
 }
 /* <<< factory ResumeSong */
-
 /* >>> part probe_entries_sound */
 const ProbeEntry probe_entries_sound[] = {
 	{ "SetupSound", adapt_SetupSound },

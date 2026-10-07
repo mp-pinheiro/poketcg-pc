@@ -12,10 +12,16 @@
 
 /* >>> part SYM_BOX_TOP_L */
 #define SYM_BOX_TOP_L 0x18
-#define SYM_BOX_TOP_R 0x19
-#define SYM_BOX_TOP 0x1c
-#define FW_SPACE 0x70
 /* <<< part SYM_BOX_TOP_L */
+/* >>> part SYM_BOX_TOP_R */
+#define SYM_BOX_TOP_R 0x19
+/* <<< part SYM_BOX_TOP_R */
+/* >>> part SYM_BOX_TOP */
+#define SYM_BOX_TOP 0x1c
+/* <<< part SYM_BOX_TOP */
+/* >>> part FW_SPACE */
+#define FW_SPACE 0x70
+/* <<< part FW_SPACE */
 
 /* >>> factory SafeCopyDataDEtoHL */
 uint8_t SafeCopyDataDEtoHL(uint16_t *de, uint16_t *hl, uint8_t c)

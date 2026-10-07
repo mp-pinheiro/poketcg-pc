@@ -13,10 +13,16 @@
 /* <<< part includes */
 /* >>> part CHALLENGE_HALL_BANK */
 #define CHALLENGE_HALL_BANK 3u
-#define CHALLENGE_HALL_NPC_COUNT 25u
-#define CHALLENGE_HALL_NPCS_ADDR ChallengeHallNPCs_ADDR
-#define CHALLENGE_HALL_SCRIPT_F433 Script_f433_ADDR
 /* <<< part CHALLENGE_HALL_BANK */
+/* >>> part CHALLENGE_HALL_NPC_COUNT */
+#define CHALLENGE_HALL_NPC_COUNT 25u
+/* <<< part CHALLENGE_HALL_NPC_COUNT */
+/* >>> part CHALLENGE_HALL_NPCS_ADDR */
+#define CHALLENGE_HALL_NPCS_ADDR ChallengeHallNPCs_ADDR
+/* <<< part CHALLENGE_HALL_NPCS_ADDR */
+/* >>> part CHALLENGE_HALL_SCRIPT_F433 */
+#define CHALLENGE_HALL_SCRIPT_F433 Script_f433_ADDR
+/* <<< part CHALLENGE_HALL_SCRIPT_F433 */
 
 /* >>> factory ChallengeHallLoadMap */
 /* challenge_hall.asm:22-30 */

@@ -12,11 +12,11 @@
 #include "mem.h"
 #include "ppu.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/bg_map.h"
 
 #include "home/frames.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> part bg_map0_address */
 static uint16_t bg_map0_address(uint16_t xy)
@@ -73,28 +73,58 @@ void Copy1bppTiles(uint16_t *hl, uint16_t *de)
 
 /* >>> part BANK_FONTS */
 #define BANK_FONTS 0x1du
+/* <<< part BANK_FONTS */
+/* >>> part TILE_SIZE */
 #define TILE_SIZE 16u
+/* <<< part TILE_SIZE */
 
+/* >>> part V0_TILES0 */
 #define V0_TILES0 0x8000u
+/* <<< part V0_TILES0 */
+/* >>> part V0_TILES1 */
 #define V0_TILES1 0x8800u
+/* <<< part V0_TILES1 */
+/* >>> part V0_TILES2 */
 #define V0_TILES2 0x9000u
+/* <<< part V0_TILES2 */
+/* >>> part S_GFX_BUFFER1 */
 #define S_GFX_BUFFER1 0xA400u
+/* <<< part S_GFX_BUFFER1 */
+/* >>> part S_GFX_BUFFER4 */
 #define S_GFX_BUFFER4 0xB000u
+/* <<< part S_GFX_BUFFER4 */
 
+/* >>> part DUEL_OTHER_GFX */
 /* Bank:addr pairs below are taken directly from poketcg.sym; DuelOtherGraphics
  * and DuelBoxMessages live one bank past BANK_FONTS (0x1e), the rest share
  * BANK_FONTS (0x1d) with the far-pointer offset already subtracted, matching
  * how each caller in tiles.asm encodes them (see CopyFontsOrDuelGraphicsTiles). */
 #define DUEL_OTHER_GFX 0x4008u
+/* <<< part DUEL_OTHER_GFX */
+/* >>> part DUEL_BOX_MESSAGES */
 #define DUEL_BOX_MESSAGES DuelBoxMessages_ADDR
+/* <<< part DUEL_BOX_MESSAGES */
+/* >>> part SYMBOLS_FONT_FAR */
 #define SYMBOLS_FONT_FAR 0x2968u
+/* <<< part SYMBOLS_FONT_FAR */
+/* >>> part SYMBOLS_FONT_TILES */
 #define SYMBOLS_FONT_TILES 0x38u
+/* <<< part SYMBOLS_FONT_TILES */
+/* >>> part DUEL_CARD_HEADER_GFX_FAR */
 #define DUEL_CARD_HEADER_GFX_FAR 0x2ce8u
+/* <<< part DUEL_CARD_HEADER_GFX_FAR */
+/* >>> part DUEL_DMG_SGB_SYMBOL_GFX_FAR */
 #define DUEL_DMG_SGB_SYMBOL_GFX_FAR 0x2fe8u
+/* <<< part DUEL_DMG_SGB_SYMBOL_GFX_FAR */
+/* >>> part DUEL_CGB_SYMBOL_GFX_FAR */
 #define DUEL_CGB_SYMBOL_GFX_FAR 0x37f8u
+/* <<< part DUEL_CGB_SYMBOL_GFX_FAR */
+/* >>> part LOAD_CARD_SET2_TILES_TABLE */
 #define LOAD_CARD_SET2_TILES_TABLE 0x2085u
+/* <<< part LOAD_CARD_SET2_TILES_TABLE */
+/* >>> part LOAD_FULL_WIDTH_FONT_TILES_SRC */
 #define LOAD_FULL_WIDTH_FONT_TILES_SRC 0x1e60u
-/* <<< part BANK_FONTS */
+/* <<< part LOAD_FULL_WIDTH_FONT_TILES_SRC */
 
 /* >>> part far_ptr_bank */
 static uint16_t far_ptr_bank(uint16_t hl, uint8_t *bank)

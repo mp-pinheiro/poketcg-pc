@@ -6,15 +6,17 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/core.h"
 
 #include "home/common.h"
 #include "home/duel.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
 
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xbbu
-/* <<< factory statics */
+/* <<< part DUELVARS_ARENA_CARD */
 
 /* >>> factory InitAIDuelVars */
 /* init.asm:1-9 */

@@ -6,7 +6,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "mem.h"
 
@@ -21,26 +21,48 @@
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/sfx.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> part SFX_BANK */
 #define SFX_BANK 0x3Fu
-
-#define SFX_NumberOfSFX_ADDR     NumberOfSFX_ADDR
-#define SFX_HeaderPointers_ADDR  SFXHeaderPointers_ADDR
-
-#define rAUD1LEN   0xFF11u
-#define rAUD1ENV   0xFF12u
-#define rAUD1HIGH  0xFF14u
-#define rAUD4LEN   0xFF20u
-#define rAUD4GO    0xFF23u
-
-#define AUD3WAVERAM   0xFF30u
-#define AUD3ENA_ON    0x80u
-#define AUD3WAVE_SIZE 16u
-
-#define AUD1ENV_UP 0x08u
 /* <<< part SFX_BANK */
+
+/* >>> part SFX_NumberOfSFX_ADDR */
+#define SFX_NumberOfSFX_ADDR     NumberOfSFX_ADDR
+/* <<< part SFX_NumberOfSFX_ADDR */
+/* >>> part SFX_HeaderPointers_ADDR */
+#define SFX_HeaderPointers_ADDR  SFXHeaderPointers_ADDR
+/* <<< part SFX_HeaderPointers_ADDR */
+
+/* >>> part rAUD1LEN */
+#define rAUD1LEN   0xFF11u
+/* <<< part rAUD1LEN */
+/* >>> part rAUD1ENV */
+#define rAUD1ENV   0xFF12u
+/* <<< part rAUD1ENV */
+/* >>> part rAUD1HIGH */
+#define rAUD1HIGH  0xFF14u
+/* <<< part rAUD1HIGH */
+/* >>> part rAUD4LEN */
+#define rAUD4LEN   0xFF20u
+/* <<< part rAUD4LEN */
+/* >>> part rAUD4GO */
+#define rAUD4GO    0xFF23u
+/* <<< part rAUD4GO */
+
+/* >>> part AUD3WAVERAM */
+#define AUD3WAVERAM   0xFF30u
+/* <<< part AUD3WAVERAM */
+/* >>> part AUD3ENA_ON */
+#define AUD3ENA_ON    0x80u
+/* <<< part AUD3ENA_ON */
+/* >>> part AUD3WAVE_SIZE */
+#define AUD3WAVE_SIZE 16u
+/* <<< part AUD3WAVE_SIZE */
+
+/* >>> part AUD1ENV_UP */
+#define AUD1ENV_UP 0x08u
+/* <<< part AUD1ENV_UP */
 
 /* >>> factory Func_fc279 */
 /* sfx.asm:485-497. The asm is a documented ROM bug: it loads $8/$80 into `a`

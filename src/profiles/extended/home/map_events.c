@@ -1,17 +1,4 @@
-/* >>> part includes */
-#include "home/map_events.h"
-
-#include <stdint.h>
-
-#include "generated/constants.h"
-#include "generated/wram.h"
-#include "mem.h"
-#include "home/load_gfx.h"
-#include "home/overworld.h"
-/* <<< part includes */
-/* >>> factory statics */
-#define TRUE 0x01u
-
+/* >>> part kSetOWMapEventTilemapPointers */
 static const uint8_t kSetOWMapEventTilemapPointers[33] = {
 	0x16u, 0x00u, TILEMAP_POKEMON_DOME_DOOR_MAP_EVENT,
 	0x0eu, 0x00u, TILEMAP_HALL_OF_HONOR_DOOR_MAP_EVENT,
@@ -25,21 +12,7 @@ static const uint8_t kSetOWMapEventTilemapPointers[33] = {
 	0x12u, 0x12u, TILEMAP_DECK_MACHINE_MAP_EVENT,
 	0x0au, 0x00u, TILEMAP_CHALLENGE_MACHINE_MAP_EVENT,
 };
-/* <<< factory statics */
-
-
-/* >>> factory ClearOWMapEvents */
-void ClearOWMapEvents(void)
-{
-	uint16_t address = wOWMapEvents_ADDR;
-
-	for (uint8_t i = 0; i < NUM_MAP_EVENTS; i++) {
-		gb_write8(address, 0);
-		address++;
-	}
-}
-/* <<< factory ClearOWMapEvents */
-
+/* <<< part kSetOWMapEventTilemapPointers */
 /* >>> factory SetOWMapEvent_SRAMOrVRAM */
 uint8_t SetOWMapEvent_SRAMOrVRAM(uint8_t a)
 {
@@ -78,21 +51,4 @@ uint8_t SetOWMapEvent_SRAMOrVRAM(uint8_t a)
 	return saved_tilemap;
 }
 /* <<< factory SetOWMapEvent_SRAMOrVRAM */
-
-/* >>> factory ApplyOWMapEventChangeIfEventSet */
-void ApplyOWMapEventChangeIfEventSet(uint8_t a)
-{
-	uint8_t event_index = a;
-	gb_write8(wWriteBGMapToSRAM_ADDR, TRUE);
-	if (gb_read8((uint16_t)(wOWMapEvents_ADDR + event_index)) != 0u)
-		SetOWMapEvent_SRAMOrVRAM(event_index);
-}
-/* <<< factory ApplyOWMapEventChangeIfEventSet */
-
-/* >>> factory SetOWMapEvent */
-uint8_t SetOWMapEvent(uint8_t a)
-{
-	gb_write8(wWriteBGMapToSRAM_ADDR, 0u);
-	return SetOWMapEvent_SRAMOrVRAM(a);
-}
-/* <<< factory SetOWMapEvent */
+/* === factory ApplyOWMapEventChangeIfEventSet */

@@ -3,23 +3,33 @@
 
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/scripting.h"
 #include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 
 #include "home/grass_club_entrance.h"
+/* <<< part includes_2 */
+/* >>> part WaterClubAfterDuelTable */
 #define WaterClubAfterDuelTable (WaterClubAfterDuel__after_duel_table_ADDR)
-/* <<< factory statics */
+/* <<< part WaterClubAfterDuelTable */
 
 /* >>> part W_ACTIVE_GAME_EVENT_ADDR */
 #define W_ACTIVE_GAME_EVENT_ADDR wActiveGameEvent_ADDR
-#define W_PLAYER_X_COORD_ADDR wPlayerXCoord_ADDR
-#define W_PLAYER_Y_COORD_ADDR wPlayerYCoord_ADDR
-#define W_LOAD_NPC_X_POS_ADDR wLoadNPCXPos_ADDR
-#define W_D3D0_ADDR wd3d0_ADDR
 /* <<< part W_ACTIVE_GAME_EVENT_ADDR */
+/* >>> part W_PLAYER_X_COORD_ADDR */
+#define W_PLAYER_X_COORD_ADDR wPlayerXCoord_ADDR
+/* <<< part W_PLAYER_X_COORD_ADDR */
+/* >>> part W_PLAYER_Y_COORD_ADDR */
+#define W_PLAYER_Y_COORD_ADDR wPlayerYCoord_ADDR
+/* <<< part W_PLAYER_Y_COORD_ADDR */
+/* >>> part W_LOAD_NPC_X_POS_ADDR */
+#define W_LOAD_NPC_X_POS_ADDR wLoadNPCXPos_ADDR
+/* <<< part W_LOAD_NPC_X_POS_ADDR */
+/* >>> part W_D3D0_ADDR */
+#define W_D3D0_ADDR wd3d0_ADDR
+/* <<< part W_D3D0_ADDR */
 
 /* >>> factory Preload_Amy */
 PreloadAmyResult Preload_Amy(void)

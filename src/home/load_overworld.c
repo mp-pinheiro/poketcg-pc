@@ -8,7 +8,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/load_gfx.h"
 #include "home/load_map_header.h"
 #include "generated/wram.h"
@@ -17,7 +17,7 @@
 #include "home/scripting.h"
 
 #include "home/overworld_map.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> factory LoadMapTilesAndPals */
 void LoadMapTilesAndPals(void)

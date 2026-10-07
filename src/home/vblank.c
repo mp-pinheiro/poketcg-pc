@@ -16,30 +16,58 @@
 
 /* >>> part rLCDC */
 #define rLCDC 0xFF40u
+/* <<< part rLCDC */
+/* >>> part rSCY */
 #define rSCY  0xFF42u
+/* <<< part rSCY */
+/* >>> part rSCX */
 #define rSCX  0xFF43u
+/* <<< part rSCX */
+/* >>> part rWY */
 #define rWY   0xFF4Au
+/* <<< part rWY */
+/* >>> part rWX */
 #define rWX   0xFF4Bu
+/* <<< part rWX */
 
+/* >>> part TRAMPOLINE_NOOP */
 /* poketcg.sym (bank 0): the two targets the wVBlankFunctionTrampoline `jp`
  * carries — NoOp from SetupRegisters (src/home/setup.c) and
  * HandleAllSpriteAnimations from SetSpriteAnimationsAsVBlankFunction
  * (src/home/sprite_vblank.c). Anything else aborts through DispatchIndirect. */
 #define TRAMPOLINE_NOOP NoOp_ADDR
+/* <<< part TRAMPOLINE_NOOP */
+/* >>> part TRAMPOLINE_ALL_SPRITE_ANIMATIONS */
 #define TRAMPOLINE_ALL_SPRITE_ANIMATIONS HandleAllSpriteAnimations_ADDR
+/* <<< part TRAMPOLINE_ALL_SPRITE_ANIMATIONS */
 
+/* >>> part LCDC_APPLY_BACKGROUND_SCROLL */
 /* poketcg.sym (bank 0): the two targets games park in wLCDCFunctionTrampoline
  * -- ApplyBackgroundScroll from DistortScreen (src/home/screen_effects.c) and
  * Func_3e44 from the credits (src/home/credits.c). */
 #define LCDC_APPLY_BACKGROUND_SCROLL ApplyBackgroundScroll_ADDR
+/* <<< part LCDC_APPLY_BACKGROUND_SCROLL */
+/* >>> part LCDC_FUNC_3E44 */
 #define LCDC_FUNC_3E44 Func_3e44_ADDR
+/* <<< part LCDC_FUNC_3E44 */
+/* >>> part rSTAT */
 #define rSTAT 0xFF41u
+/* <<< part rSTAT */
+/* >>> part rLYC */
 #define rLYC  0xFF45u
+/* <<< part rLYC */
+/* >>> part rIE */
 #define rIE   0xFFFFu
+/* <<< part rIE */
+/* >>> part LCDC_ENABLE */
 #define LCDC_ENABLE 0x80u
+/* <<< part LCDC_ENABLE */
+/* >>> part STAT_LYC */
 #define STAT_LYC  0x40u
+/* <<< part STAT_LYC */
+/* >>> part IE_STAT */
 #define IE_STAT   0x02u
-/* <<< part rLCDC */
+/* <<< part IE_STAT */
 
 /* >>> part RuntimeVBlankHandler */
 /* poketcg/src/home/vblank.asm:2-38: the VBlankHandler body between the

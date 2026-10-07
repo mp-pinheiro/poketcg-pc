@@ -12,16 +12,22 @@
 #include "home/save.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/challenge_machine.h"
 #include "home/random.h"
 #include "home/switch_sram.h"
 #include "generated/sram.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
+/* >>> part CLUB_MASTERS_START */
 #define CLUB_MASTERS_START 0x18u
+/* <<< part CLUB_MASTERS_START */
+/* >>> part GRAND_MASTERS_START */
 #define GRAND_MASTERS_START 0x20u
+/* <<< part GRAND_MASTERS_START */
 
+/* >>> part ChallengeMachine_FinalOpponentProbabilities */
 /* challenge_machine.asm:781-789 ChallengeMachine_FinalOpponentProbabilities.
  * Pairs of (probability weight, opponent id); the last weight is a catch-all. */
 static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
@@ -34,15 +40,25 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 	8u, (uint8_t)(GRAND_MASTERS_START + 6u),
 	255u, (uint8_t)(GRAND_MASTERS_START + 7u),
 };
+/* <<< part ChallengeMachine_FinalOpponentProbabilities */
 
+/* >>> part includes_TRUE_VALUE */
 #include "home/copy.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+/* <<< part includes_TRUE_VALUE */
 
+/* >>> part TRUE_VALUE */
 #define TRUE_VALUE 0x01u
+/* <<< part TRUE_VALUE */
+/* >>> part WIN_CAP_HIGH */
 #define WIN_CAP_HIGH 0x03u
+/* <<< part WIN_CAP_HIGH */
+/* >>> part WIN_CAP_LOW */
 #define WIN_CAP_LOW 0xE7u
+/* <<< part WIN_CAP_LOW */
 
+/* >>> part includes_sPlayerInChallengeMachine_ADDR */
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/switch_sram.h"
@@ -54,11 +70,21 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 
 #include "home/challenge_machine.h"
 #include "home/switch_sram.h"
+/* <<< part includes_sPlayerInChallengeMachine_ADDR */
+/* >>> part sPlayerInChallengeMachine_ADDR */
 #define sPlayerInChallengeMachine_ADDR 0xBA44u
+/* <<< part sPlayerInChallengeMachine_ADDR */
+/* >>> part sTotalChallengeMachineWins_ADDR */
 #define sTotalChallengeMachineWins_ADDR 0xBA45u
+/* <<< part sTotalChallengeMachineWins_ADDR */
+/* >>> part sPresentConsecutiveWins_ADDR */
 #define sPresentConsecutiveWins_ADDR 0xBA47u
+/* <<< part sPresentConsecutiveWins_ADDR */
+/* >>> part sPresentConsecutiveWinsBackup_ADDR */
 #define sPresentConsecutiveWinsBackup_ADDR 0xBA49u
+/* <<< part sPresentConsecutiveWinsBackup_ADDR */
 
+/* >>> part includes_sConsecutiveWinRecordIncreased_ADDR */
 #include "home/challenge_machine.h"
 #include "home/switch_sram.h"
 #include "home/print_text.h"
@@ -72,9 +98,15 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
+/* <<< part includes_sConsecutiveWinRecordIncreased_ADDR */
+/* >>> part sConsecutiveWinRecordIncreased_ADDR */
 #define sConsecutiveWinRecordIncreased_ADDR 0xBA68u
+/* <<< part sConsecutiveWinRecordIncreased_ADDR */
+/* >>> part sMaximumConsecutiveWins_ADDR */
 #define sMaximumConsecutiveWins_ADDR 0xBA56u
+/* <<< part sMaximumConsecutiveWins_ADDR */
 
+/* >>> part includes_CHALLENGE_MACHINE_DATA_BANK_500 */
 #include "home/switch_sram.h"
 #include "home/sound.h"
 #include "home/play_song.h"
@@ -85,9 +117,15 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_CHALLENGE_MACHINE_DATA_BANK_500 */
+/* >>> part CHALLENGE_MACHINE_DATA_BANK_500 */
 #define CHALLENGE_MACHINE_DATA_BANK_500 0x04u
+/* <<< part CHALLENGE_MACHINE_DATA_BANK_500 */
+/* >>> part CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 */
 #define CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 ChallengeMachine_OpponentDeckIDs_ADDR
+/* <<< part CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 */
 
+/* >>> part includes_CHALLENGE_MACHINE_PRIZES_ADDR */
 #include "home/empty_screen.h"
 #include "home/print_stats.h"
 #include "home/switch_sram.h"
@@ -108,8 +146,12 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "mem.h"
+/* <<< part includes_CHALLENGE_MACHINE_PRIZES_ADDR */
+/* >>> part CHALLENGE_MACHINE_PRIZES_ADDR */
 #define CHALLENGE_MACHINE_PRIZES_ADDR ChallengeMachine_Prizes_ADDR
+/* <<< part CHALLENGE_MACHINE_PRIZES_ADDR */
 
+/* >>> part includes_CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR */
 #include "home/challenge_machine.h"
 #include "home/copy.h"
 #include "home/switch_sram.h"
@@ -119,10 +161,18 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR */
+/* >>> part CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR */
 #define CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR 0xBA58u
+/* <<< part CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR */
+/* >>> part CHALLENGE_MACHINE_PLAYER_SCORE_LABELS_ADDR */
 #define CHALLENGE_MACHINE_PLAYER_SCORE_LABELS_ADDR ChallengeMachine_PlayerScoreLabels_ADDR
+/* <<< part CHALLENGE_MACHINE_PLAYER_SCORE_LABELS_ADDR */
+/* >>> part CHALLENGE_MACHINE_PLAYER_SCORE_VALUES_ADDR */
 #define CHALLENGE_MACHINE_PLAYER_SCORE_VALUES_ADDR ChallengeMachine_PlayerScoreValues_ADDR
+/* <<< part CHALLENGE_MACHINE_PLAYER_SCORE_VALUES_ADDR */
 
+/* >>> part includes_CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "home/challenge_machine.h"
@@ -136,15 +186,25 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/print_text.h"
 #include "generated/sram.h"
 #include "mem.h"
+/* <<< part includes_CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
+/* >>> part CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
 #define CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT 0x07F3u
+/* <<< part CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
+/* >>> part CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT */
 #define CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT 0x07F4u
+/* <<< part CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT */
+/* >>> part CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT */
 #define CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT 0x07F5u
+/* <<< part CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT */
+/* >>> part challenge_machine_duel_result_icons */
 static const uint16_t challenge_machine_duel_result_icons[3] = {
 	CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT,
 	CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT,
 	CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT,
 };
+/* <<< part challenge_machine_duel_result_icons */
 
+/* >>> part includes_tail */
 #include "home/challenge_machine.h"
 #include "home/switch_sram.h"
 #include "home/sound.h"
@@ -159,7 +219,7 @@ static const uint16_t challenge_machine_duel_result_icons[3] = {
 #include "home/switch_sram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory ChallengeMachine_CheckIfOpponentAlreadySelected */
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)

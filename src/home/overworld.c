@@ -17,7 +17,7 @@
 #include "home/decompress.h"
 #include "home/memory.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/load_animation.h"
 #include "mem.h"
 
@@ -32,9 +32,13 @@
 #include "home/color.h"
 #include "mem.h"
 #include "runtime.h"
+/* <<< part includes_2 */
 
+/* >>> part FLAG_CARRY */
 #define FLAG_CARRY           0x10u
+/* <<< part FLAG_CARRY */
 
+/* >>> part includes_SCREEN_WIDTH */
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/mail.h"
@@ -79,9 +83,15 @@
 
 #include "generated/wram.h"
 #include "home/overworld.h"
+/* <<< part includes_SCREEN_WIDTH */
+/* >>> part SCREEN_WIDTH */
 #define SCREEN_WIDTH 0x14u
+/* <<< part SCREEN_WIDTH */
+/* >>> part SCREEN_HEIGHT */
 #define SCREEN_HEIGHT 0x12u
+/* <<< part SCREEN_HEIGHT */
 
+/* >>> part includes_B_PAD_B_MASK */
 #include "generated/wram.h"
 #include "home/map.h"
 #include "home/load_animation.h"
@@ -93,14 +103,22 @@
 #include "home/overworld.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_B_PAD_B_MASK */
+/* >>> part B_PAD_B_MASK */
 #define B_PAD_B_MASK 0x02u
+/* <<< part B_PAD_B_MASK */
 
+/* >>> part includes_SPRITE_OW_MINT */
 #include "home/load_gfx.h"
 #include "home/sprite_animations.h"
 #include "home/overworld_map.h"
+/* <<< part includes_SPRITE_OW_MINT */
 
+/* >>> part SPRITE_OW_MINT */
 #define SPRITE_OW_MINT 0x72u
+/* <<< part SPRITE_OW_MINT */
 
+/* >>> part includes_PAUSE_MENU_PARAMS */
 #include "home/scripting.h"
 #include "home/battle_center.h"
 #include "home/gift_center.h"
@@ -132,8 +150,12 @@
 
 #include "generated/wram.h"
 #include "home/labels.h"
+/* <<< part includes_PAUSE_MENU_PARAMS */
+/* >>> part PAUSE_MENU_PARAMS */
 #define PAUSE_MENU_PARAMS PauseMenuParams_ADDR
+/* <<< part PAUSE_MENU_PARAMS */
 
+/* >>> part includes_PC_MENU_PARAMS */
 #include "generated/wram.h"
 #include "home/lcd_enable_frame.h"
 #include "home/menus.h"
@@ -146,7 +168,11 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_PC_MENU_PARAMS */
+/* >>> part PC_MENU_PARAMS */
 #define PC_MENU_PARAMS PCMenuParams_ADDR
+/* <<< part PC_MENU_PARAMS */
+/* >>> part MENUS_BANK */
 /* Bank $04 holds the menu implementations and their data: the params tables
  * PauseMenuParams ($04:4D98) and PCMenuParams ($04:4DA9), InitAndPrintMenu
  * ($04:51E9), and every _PauseMenu_* body ($04:4059-$04:4548) with its labels
@@ -154,10 +180,16 @@
  * which selects the callee's bank and restores the caller's on return
  * (overworld.asm:1151-1155, 1165-1199). */
 #define MENUS_BANK 0x04u
+/* <<< part MENUS_BANK */
 
+/* >>> part PAUSE_MENU_TEXT_LIST_BANK */
 #define PAUSE_MENU_TEXT_LIST_BANK 0x03u
+/* <<< part PAUSE_MENU_TEXT_LIST_BANK */
+/* >>> part PAUSE_MENU_TEXT_LIST_ADDR */
 #define PAUSE_MENU_TEXT_LIST_ADDR PauseMenuTextList_ADDR
+/* <<< part PAUSE_MENU_TEXT_LIST_ADDR */
 
+/* >>> part includes_PLAYER_TURN */
 #include "home/status.h"
 
 #include "home/process_text.h"
@@ -176,9 +208,13 @@
 #include "home/overworld.h"
 #include "home/load_overworld.h"
 #include "home/npc_core.h"
+/* <<< part includes_PLAYER_TURN */
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xC2u
+/* <<< part PLAYER_TURN */
 
 
+/* >>> part includes_PAD_CTRL_PAD */
 #include "generated/wram.h"
 #include "home/map.h"
 #include "home/npc_core.h"
@@ -192,9 +228,15 @@
 #include "home/overworld.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_PAD_CTRL_PAD */
+/* >>> part PAD_CTRL_PAD */
 #define PAD_CTRL_PAD 0xF0u
+/* <<< part PAD_CTRL_PAD */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
 
+/* >>> part includes_DISPLAY_PAUSE_MENU */
 #include "home/pc_glossary.h"
 
 #include "generated/wram.h"
@@ -237,14 +279,24 @@
 #include "home/sound.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_DISPLAY_PAUSE_MENU */
+/* >>> part DISPLAY_PAUSE_MENU */
 #define DISPLAY_PAUSE_MENU DisplayPauseMenu_ADDR
+/* <<< part DISPLAY_PAUSE_MENU */
+/* >>> part DISPLAY_PC_MENU */
 #define DISPLAY_PC_MENU DisplayPCMenu_ADDR
+/* <<< part DISPLAY_PC_MENU */
 
+/* >>> part includes_PAD_START */
 #include "home/overworld.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_PAD_START */
+/* >>> part PAD_START */
 #define PAD_START 0x08u
+/* <<< part PAD_START */
 
+/* >>> part includes_tail */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/animation.h"
@@ -269,7 +321,7 @@
 #include "generated/hram.h"
 #include "home/printer.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory Func_c6cc */
 /* overworld.asm:1027-1033. a += [wPlayerXCoordPixels]; the sum is stored back

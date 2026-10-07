@@ -10,21 +10,33 @@
 #include "mem.h"
 #include "runtime.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/sprite_animations.h"
+/* <<< part includes_2 */
+/* >>> part BANK_SPRITE_ANIMATIONS */
 #define BANK_SPRITE_ANIMATIONS 0x04u
+/* <<< part BANK_SPRITE_ANIMATIONS */
 
+/* >>> part includes_BANK_DRAW_PORTRAIT */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/scenes.h"
 #include "home/switch_rom.h"
+/* <<< part includes_BANK_DRAW_PORTRAIT */
+/* >>> part BANK_DRAW_PORTRAIT */
 #define BANK_DRAW_PORTRAIT 0x04u
+/* <<< part BANK_DRAW_PORTRAIT */
 
+/* >>> part includes_MINT_PIC */
 #include "generated/wram.h"
 
 #include "generated/wram.h"
+/* <<< part includes_MINT_PIC */
+/* >>> part MINT_PIC */
 #define MINT_PIC 0x2bu
+/* <<< part MINT_PIC */
 
+/* >>> part includes_BANK_LOAD_SCENE */
 #include "home/animation.h"
 
 #include "generated/hram.h"
@@ -32,20 +44,34 @@
 #include "home/palettes.h"
 #include "home/scenes.h"
 #include "home/switch_rom.h"
+/* <<< part includes_BANK_LOAD_SCENE */
+/* >>> part BANK_LOAD_SCENE */
 #define BANK_LOAD_SCENE 0x04u
-/* <<< factory statics */
+/* <<< part BANK_LOAD_SCENE */
 
 
 /* >>> part OAM_PRIO */
 #define OAM_PRIO    0x80u
-#define OAM_YFLIP   0x40u
-#define OAM_XFLIP   0x20u
-#define OAM_PAL1    0x10u
-#define OAM_PALETTE 0x07u
-
-#define SPRITE_NULL_ANIMATION_POINTER_ADDR SpriteNullAnimationPointer_ADDR
-#define SPRITE_NULL_ANIMATION_POINTER_BANK 0x20u
 /* <<< part OAM_PRIO */
+/* >>> part OAM_YFLIP */
+#define OAM_YFLIP   0x40u
+/* <<< part OAM_YFLIP */
+/* >>> part OAM_XFLIP */
+#define OAM_XFLIP   0x20u
+/* <<< part OAM_XFLIP */
+/* >>> part OAM_PAL1 */
+#define OAM_PAL1    0x10u
+/* <<< part OAM_PAL1 */
+/* >>> part OAM_PALETTE */
+#define OAM_PALETTE 0x07u
+/* <<< part OAM_PALETTE */
+
+/* >>> part SPRITE_NULL_ANIMATION_POINTER_ADDR */
+#define SPRITE_NULL_ANIMATION_POINTER_ADDR SpriteNullAnimationPointer_ADDR
+/* <<< part SPRITE_NULL_ANIMATION_POINTER_ADDR */
+/* >>> part SPRITE_NULL_ANIMATION_POINTER_BANK */
+#define SPRITE_NULL_ANIMATION_POINTER_BANK 0x20u
+/* <<< part SPRITE_NULL_ANIMATION_POINTER_BANK */
 
 /* >>> part gb_add */
 /* GB ADD/ADC/SUB/SBC, carry out included: load_animation.asm's edge-clipping

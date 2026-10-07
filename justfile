@@ -157,22 +157,11 @@ extended-configure-lane:
 build-extended-incremental:
     ninja {{ninja_jobs}} -C {{build_dir}} poketcg-extended poketcg_extended_probe
 
-# Start an Extended overlay for one pret basename: copy the shared trio, seed the
-# Extended case module from the vanilla one, and list the routines whose asm differs.
-extended-overlay BASENAME:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    mkdir -p src/profiles/extended/home src/profiles/extended/probe tests/profiles/extended/cases
-    for pair in "src/home/{{BASENAME}}.c src/profiles/extended/home/{{BASENAME}}.c" \
-                "src/home/{{BASENAME}}.h src/profiles/extended/home/{{BASENAME}}.h" \
-                "src/probe/{{BASENAME}}.c src/profiles/extended/probe/{{BASENAME}}.c"; do
-        set -- $pair
-        if [ -f "$2" ]; then echo "keep $2"; elif [ -f "$1" ]; then cp "$1" "$2"; echo "copied $2"; fi
-    done
-    if [ -f tests/cases/{{BASENAME}}.py ] && [ ! -f tests/profiles/extended/cases/{{BASENAME}}.py ]; then
-        python3 tools/transpose_cases.py {{BASENAME}}
-    fi
-    python3 tools/profile_audit.py --routines {{BASENAME}}
+# Start a profile override for routines of one basename: copy their shared blocks
+# into the profile's fragments and list the basename's normalized asm differences.
+profile-override PROFILE BASENAME +NAMES:
+    python3 tools/compose_profile.py seed --profile {{PROFILE}} {{BASENAME}} {{NAMES}}
+    python3 tools/profile_audit.py --profile {{PROFILE}} --routines {{BASENAME}}
 
 # Oracle-diff one Extended basename against the Extended ROM through its overlay cases.
 extended-check BASENAME: build-extended-incremental

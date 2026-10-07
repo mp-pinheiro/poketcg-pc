@@ -7,7 +7,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -15,12 +15,18 @@
 #include "home/fire_club_lobby.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_2 */
+/* >>> part SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520 */
 #define SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520 SlowpokePaintingObjectTable_ADDR
+/* <<< part SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520 */
 
+/* >>> part includes_AFTER_DUEL_TABLE_830 */
 #include "home/grass_club_entrance.h"
 #include "mem.h"
+/* <<< part includes_AFTER_DUEL_TABLE_830 */
+/* >>> part AFTER_DUEL_TABLE_830 */
 #define AFTER_DUEL_TABLE_830 (FireClubLobbyAfterDuel__after_duel_table_ADDR)
-/* <<< factory statics */
+/* <<< part AFTER_DUEL_TABLE_830 */
 
 /* >>> factory FindExtraInteractableObjects */
 FindExtraInteractableObjectsResult FindExtraInteractableObjects(uint16_t hl)

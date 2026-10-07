@@ -6,29 +6,41 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/load_animation.h"
 #include "home/map.h"
 #include "home/random.h"
 #include "home/sprite_animations.h"
 #include "mem.h"
+/* <<< part includes_2 */
 
+/* >>> part F_Z */
 /* engine/overworld/npc_core.asm constants */
 
 /* flag byte bits: Z=0x80, N=0x40, H=0x20, C=0x10 */
 #define F_Z                      0x80u
+/* <<< part F_Z */
+/* >>> part F_C */
 #define F_C                      0x10u
+/* <<< part F_C */
 
+/* >>> part includes_MOVEMENT_CMD_SPECIAL */
 #include "home/map.h"
 #include "home/npc_core.h"
 
 
 #include "home/map.h"
+/* <<< part includes_MOVEMENT_CMD_SPECIAL */
 
+/* >>> part MOVEMENT_CMD_SPECIAL */
 /* engine/overworld/npc_core.asm constants */
 #define MOVEMENT_CMD_SPECIAL     0xf0u
+/* <<< part MOVEMENT_CMD_SPECIAL */
+/* >>> part MOVEMENT_CMD_STOP */
 #define MOVEMENT_CMD_STOP        0xffu
+/* <<< part MOVEMENT_CMD_STOP */
 
+/* >>> part player_movement_offset_table_tiles */
 /* home/map.asm:227-231 PlayerMovementOffsetTable_Tiles: NPC and player
  * coordinates count half-tiles, so one step is two units. */
 static const uint8_t player_movement_offset_table_tiles[] = {
@@ -37,9 +49,11 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 	0x00u, 0x02u, /* SOUTH */
 	0xfeu, 0x00u, /* WEST */
 };
+/* <<< part player_movement_offset_table_tiles */
 
 
 
+/* >>> part includes_TRUE */
 #include "generated/wram.h"
 #include "home/map.h"
 #include "mem.h"
@@ -74,9 +88,13 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #include "home/npc_core.h"
 #include "home/sprite_animations.h"
 #include "mem.h"
+/* <<< part includes_TRUE */
 
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part includes_tail */
 #include "generated/wram.h"
 #include "home/map.h"
 #include "home/npc_data.h"
@@ -94,7 +112,7 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #include "home/load_animation.h"
 #include "generated/wram.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory CheckIfNPCIsRonald */
 /* npc_core.asm:123-138. Compares the id in a against the three Ronald ids and

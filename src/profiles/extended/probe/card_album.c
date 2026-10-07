@@ -1,28 +1,3 @@
-/* >>> part includes */
-#include "home/card_album.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "probe.h"
-/* <<< part includes */
-
-/* >>> factory GetFirstOwnedCardIndex */
-static void adapt_GetFirstOwnedCardIndex(ProbeState *s)
-{
-	GetFirstOwnedCardIndexResult r = GetFirstOwnedCardIndex();
-	s->a = r.a;
-	s->b = r.b;
-	s->hl = r.hl;
-}
-/* <<< factory GetFirstOwnedCardIndex */
-
-/* >>> factory PrintCardSetListEntries */
-static void adapt_PrintCardSetListEntries(ProbeState *s)
-{
-	PrintCardSetListEntriesResult r = PrintCardSetListEntries();
-	s->hl = r.hl;
-}
-/* <<< factory PrintCardSetListEntries */
-
 /* >>> factory CreateCardSetList */
 static void adapt_CreateCardSetList(ProbeState *s)
 {
@@ -31,39 +6,3 @@ static void adapt_CreateCardSetList(ProbeState *s)
 	s->f = 0x80u;
 }
 /* <<< factory CreateCardSetList */
-
-/* >>> factory HandleCardAlbumCardPage */
-static void adapt_HandleCardAlbumCardPage(ProbeState *s)
-{
-	HandleCardAlbumCardPageResult r = HandleCardAlbumCardPage(s->d, s->e);
-	s->a = r.a;
-	s->f = r.f;
-}
-/* <<< factory HandleCardAlbumCardPage */
-
-/* >>> factory CreateCardSetListAndInitListCoords */
-static void adapt_CreateCardSetListAndInitListCoords(ProbeState *s)
-{
-	CreateCardSetListAndInitListCoords(s->a);
-}
-/* <<< factory CreateCardSetListAndInitListCoords */
-
-/* >>> factory CardAlbum */
-static void adapt_CardAlbum(ProbeState *s)
-{
-	(void)s;
-	CardAlbum();
-}
-/* <<< factory CardAlbum */
-
-/* >>> part probe_entries_card_album */
-const ProbeEntry probe_entries_card_album[] = {
-	{ "GetFirstOwnedCardIndex", adapt_GetFirstOwnedCardIndex },
-	{ "PrintCardSetListEntries", adapt_PrintCardSetListEntries },
-	{ "CreateCardSetList", adapt_CreateCardSetList },
-	{ "HandleCardAlbumCardPage", adapt_HandleCardAlbumCardPage },
-	{ "CreateCardSetListAndInitListCoords", adapt_CreateCardSetListAndInitListCoords },
-	{ "CardAlbum", adapt_CardAlbum },
-	{ NULL, NULL },
-};
-/* <<< part probe_entries_card_album */

@@ -1,11 +1,4 @@
-/* >>> part includes */
-#include "home/attacks.h"
-
-#include "generated/constants.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/hram.h"
 #include "home/core.h"
 
@@ -17,33 +10,7 @@
 #include "home/special_attacks.h"
 #include "home/damage_calculation.h"
 #include "home/substatus.h"
-#define BOOM_BOOM_SELFDESTRUCT_DECK_ID 0x26u
-#define DUELVARS_ARENA_CARD 0xBBu
-#define DUELVARS_ARENA_CARD_HP 0xC8u
-#define DUELVARS_ARENA_CARD_STATUS 0xF0u
-#define DUELVARS_BENCH 0xBCu
-#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
-#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
-#define POWER_GENERATOR_DECK_ID 0x27u
-#define ROCK_CRUSHER_DECK_ID 0x11u
-#define TRUE 0x01u
-#define ZAPPING_SELFDESTRUCT_DECK_ID 0x13u
-
-#include "generated/wram.h"
-#include "home/attacks.h"
-/* <<< factory statics */
-
-/* >>> factory RetrievePlayAreaAIScoreFromBackup2 */
-/* engine/duel/ai/attacks.asm:26-41 */
-void RetrievePlayAreaAIScoreFromBackup2(void)
-{
-	for (uint8_t i = 0; i < 6; i++)
-		gb_write8((uint16_t)(wPlayAreaAIScore_ADDR + i),
-			  gb_read8((uint16_t)(wTempPlayAreaAIScore_ADDR + i)));
-	gb_write8(wAIScore_ADDR, gb_read8(wTempAIScore_ADDR));
-}
-/* <<< factory RetrievePlayAreaAIScoreFromBackup2 */
-
+/* <<< part includes_2 */
 /* >>> factory GetAIScoreOfAttack */
 /* attacks.asm .check_if_kos_bench: how many of the turn holder's benched
  * Pokemon `bench_damage` knocks out, plus `initial`, reaches the prize count
@@ -285,93 +252,4 @@ handle_special_atks:
 	}
 }
 /* <<< factory GetAIScoreOfAttack */
-
-/* >>> factory AIProcessAttacks */
-AIProcessAttacksResult AIProcessAttacks(void)
-{
-	if ((wPreviousAIFlags & AI_FLAG_USED_PLUSPOWER) != 0u) {
-		wSelectedAttack = wAIPlusPowerAttack;
-		goto attack_chosen;
-	}
-	if (wAIBarrierFlagCounter == AI_MEWTWO_MILL)
-		goto dont_attack;
-
-	GetAIScoreOfAttack(FIRST_ATTACK_OR_PKMN_POWER);
-	wFirstAttackAIScore = wAIScore;
-	GetAIScoreOfAttack(SECOND_ATTACK);
-
-	uint8_t chosen_attack = SECOND_ATTACK;
-	uint8_t chosen_score = wAIScore;
-	if (chosen_score < wFirstAttackAIScore) {
-		chosen_attack = FIRST_ATTACK_OR_PKMN_POWER;
-		chosen_score = wFirstAttackAIScore;
-	}
-	if (chosen_score < 0x50u)
-		goto dont_attack;
-	wSelectedAttack = chosen_attack;
-	if (chosen_attack != FIRST_ATTACK_OR_PKMN_POWER)
-		CheckWhetherToSwitchToFirstAttack();
-
-attack_chosen:
-	uint8_t chosen_execute = wAIExecuteProcessedAttack;
-
-	if (chosen_execute != 0u) {
-		RetrievePlayAreaAIScoreFromBackup2();
-		return (AIProcessAttacksResult){chosen_execute, 0x10u};
-	}
-
-	(void)AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_14);
-	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
-	(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
-	if (wDamage != 0u)
-		goto can_damage;
-	{
-		AttackFlagResult bench = CheckLoadedAttackFlag(ATTACK_FLAG1_ADDRESS | DAMAGE_TO_OPPONENT_BENCH_F);
-		if ((bench.f & 0x10u) != 0u)
-			goto can_damage;
-	}
-	wAIRetreatScore = (uint8_t)(wAIRetreatScore + 1u);
-	goto use_attack;
-
-can_damage:
-	wAIRetreatScore = 0u;
-
-use_attack:
-	wAITriedAttack = TRUE;
-	{
-		AITryUseAttackResult tried = AITryUseAttack(TRUE);
-		return (AIProcessAttacksResult){tried.a,
-			(uint8_t)((tried.f & 0x80u) | 0x10u)};
-	}
-
-dont_attack:
-	uint8_t failed_execute = wAIExecuteProcessedAttack;
-
-	if (failed_execute != 0u) {
-		RetrievePlayAreaAIScoreFromBackup2();
-		return (AIProcessAttacksResult){failed_execute, 0x00u};
-	}
-	wAIRetreatScore = (uint8_t)(wAIRetreatScore + 1u);
-	return (AIProcessAttacksResult){failed_execute, 0x80u};
-}
-/* <<< factory AIProcessAttacks */
-
-/* >>> factory AIProcessAndTryToUseAttack */
-AIProcessAttacksResult AIProcessAndTryToUseAttack(void)
-{
-	wAIExecuteProcessedAttack = 0u;
-	return AIProcessAttacks();
-}
-/* <<< factory AIProcessAndTryToUseAttack */
-
-/* >>> factory AIProcessButDontUseAttack */
-AIProcessAttacksResult AIProcessButDontUseAttack(void)
-{
-	wAIExecuteProcessedAttack = 1u;
-	for (uint8_t i = 0; i < 6; i++)
-		gb_write8((uint16_t)(wTempPlayAreaAIScore_ADDR + i),
-			  gb_read8((uint16_t)(wPlayAreaAIScore_ADDR + i)));
-	gb_write8(wTempAIScore_ADDR, gb_read8(wAIScore_ADDR));
-	return AIProcessAttacks();
-}
-/* <<< factory AIProcessButDontUseAttack */
+/* === factory AIProcessAttacks */

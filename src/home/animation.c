@@ -9,7 +9,7 @@
 #include "home/switch_rom.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/animation.h"
 #include "generated/wram.h"
 
@@ -18,9 +18,13 @@
 #include "mem.h"
 
 #include "home/animation.h"
+/* <<< part includes_2 */
+/* >>> part MAP_OW_FRAMESET_POINTERS_BANK */
 #define MAP_OW_FRAMESET_POINTERS_BANK 0x20u
+/* <<< part MAP_OW_FRAMESET_POINTERS_BANK */
+/* >>> part MAP_OW_FRAMESET_POINTERS_ADDR */
 #define MAP_OW_FRAMESET_POINTERS_ADDR MapOWFramesetPointers_ADDR
-/* <<< factory statics */
+/* <<< part MAP_OW_FRAMESET_POINTERS_ADDR */
 
 /* >>> factory ClearNumLoadedFramesetSubgroups */
 void ClearNumLoadedFramesetSubgroups(void)

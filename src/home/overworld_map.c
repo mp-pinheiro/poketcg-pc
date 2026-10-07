@@ -7,7 +7,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/load_animation.h"
 
 
@@ -21,8 +21,10 @@
 
 #include "home/overworld_map.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
 
 
+/* >>> part overworld_map_warps */
 static const uint8_t overworld_map_warps[13][4] = {
 	{0x00u, 0x00u, 0x00u, 0x00u},
 	{0x01u, 0x0eu, 0x1au, 0x00u},
@@ -38,7 +40,9 @@ static const uint8_t overworld_map_warps[13][4] = {
 	{0x1cu, 0x08u, 0x0eu, 0x00u},
 	{0x1fu, 0x0eu, 0x0eu, 0x00u},
 };
+/* <<< part overworld_map_warps */
 
+/* >>> part includes_OVERWORLD_MAP_BANK */
 #include "home/division.h"
 #include "home/overworld_map.h"
 #include "generated/wram.h"
@@ -74,9 +78,15 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "home/sound.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_OVERWORLD_MAP_BANK */
+/* >>> part OVERWORLD_MAP_BANK */
 #define OVERWORLD_MAP_BANK 0x04u
+/* <<< part OVERWORLD_MAP_BANK */
+/* >>> part OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS */
 #define OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS OverworldMap_PlayerMovementPaths_ADDR
+/* <<< part OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS */
 
+/* >>> part includes_overworld_map_cursor_transitions */
 #include "home/overworld_map.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -84,7 +94,9 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "generated/wram.h"
 #include "home/overworld_map.h"
 #include "home/sound.h"
+/* <<< part includes_overworld_map_cursor_transitions */
 
+/* >>> part overworld_map_cursor_transitions */
 static const uint8_t overworld_map_cursor_transitions[13][4] = {
 	{0x09u, 0x09u, 0x09u, 0x09u},
 	{0x06u, 0x03u, 0x00u, 0x00u},
@@ -100,14 +112,20 @@ static const uint8_t overworld_map_cursor_transitions[13][4] = {
 	{0x00u, 0x08u, 0x0Cu, 0x02u},
 	{0x0Bu, 0x08u, 0x03u, 0x04u},
 };
+/* <<< part overworld_map_cursor_transitions */
 
+/* >>> part includes_PAD_CTRL_PAD */
 #include "home/overworld.h"
 #include "home/sound.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_PAD_CTRL_PAD */
+/* >>> part PAD_CTRL_PAD */
 #define PAD_CTRL_PAD 0xF0u
+/* <<< part PAD_CTRL_PAD */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
-/* <<< factory statics */
+/* <<< part PAD_A */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
 /* overworld_map.asm:540-566 */

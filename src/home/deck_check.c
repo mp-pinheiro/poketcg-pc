@@ -7,22 +7,40 @@
 #include "home/random.h"
 #include "home/sound.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
+/* >>> part SYM_CURSOR_R */
 #define SYM_CURSOR_R 0x0Fu
+/* <<< part SYM_CURSOR_R */
 
+/* >>> part includes_B_PAD_DOWN_MASK */
 #include "home/deck_check.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_B_PAD_DOWN_MASK */
+/* >>> part B_PAD_DOWN_MASK */
 #define B_PAD_DOWN_MASK 0x80u
+/* <<< part B_PAD_DOWN_MASK */
+/* >>> part B_PAD_UP_MASK */
 #define B_PAD_UP_MASK 0x40u
+/* <<< part B_PAD_UP_MASK */
+/* >>> part B_PAD_LEFT_MASK */
 #define B_PAD_LEFT_MASK 0x20u
+/* <<< part B_PAD_LEFT_MASK */
+/* >>> part B_PAD_RIGHT_MASK */
 #define B_PAD_RIGHT_MASK 0x10u
+/* <<< part B_PAD_RIGHT_MASK */
+/* >>> part PAD_A_MASK */
 #define PAD_A_MASK 0x01u
+/* <<< part PAD_A_MASK */
+/* >>> part PAD_B_MASK */
 #define PAD_B_MASK 0x02u
+/* <<< part PAD_B_MASK */
+/* >>> part MENU_CANCEL */
 #define MENU_CANCEL 0xFFu
-/* <<< factory statics */
+/* <<< part MENU_CANCEL */
 
 
 /* >>> factory DrawCheckMenuCursor */

@@ -8,7 +8,7 @@
 #include "mem.h"
 #include "runtime.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/copy.h"
 #include "home/input_name.h"
 #include "home/lcd.h"
@@ -18,16 +18,22 @@
 #include "home/random.h"
 #include "home/switch_sram.h"
 #include "generated/sram.h"
+/* <<< part includes_2 */
 
+/* >>> part MINT_NAME */
 #define MINT_NAME 0xffffu
+/* <<< part MINT_NAME */
 
+/* >>> part NAMING_BANK */
 /* poketcg.sym: 04:68a9 DisplayPlayerNamingScreen, 04:68eb
  * DisplayPlayerNamingScreen.default_name. The routine shares bank 4 with its
  * data; the NAME_BUFFER_LENGTH copy runs past the 12-byte "MARK" fixed-width
  * label into the first four bytes of Unknown_128f7. */
 #define NAMING_BANK 0x04u
+/* <<< part NAMING_BANK */
+/* >>> part DEFAULT_PLAYER_NAME */
 #define DEFAULT_PLAYER_NAME (DisplayPlayerNamingScreen__default_name_ADDR)
-/* <<< factory statics */
+/* <<< part DEFAULT_PLAYER_NAME */
 
 /* >>> factory DisplayPlayerNamingScreen */
 /* naming.asm:1-40 (poketcg.sym 04:68a9, 66 bytes of code). Clears the name

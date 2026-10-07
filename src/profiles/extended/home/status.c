@@ -12,7 +12,7 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/print_stats.h"
 #include "home/text_box.h"
@@ -20,20 +20,25 @@
 #include "home/labels.h"
 #include "home/wait_keys.h"
 #include "home/scripting.h"
-#define StatusScreenLabels StatusScreenLabels_ADDR
-#define PAD_A 0x01u
-#define PAD_B 0x02u
-#define PAD_START 0x08u
+/* <<< part includes_2 */
+/* === part PAD_START */
+/* >>> part OAM_X_OFS */
 #define OAM_X_OFS 0x08u
+/* <<< part OAM_X_OFS */
+/* >>> part OAM_Y_OFS */
 #define OAM_Y_OFS 0x10u
-
+/* <<< part OAM_Y_OFS */
+/* >>> part fire_medal_oam */
 static const uint8_t fire_medal_oam[3] = {
 	(uint8_t)(88u + OAM_X_OFS), 0x86u, 0x04u
 };
+/* <<< part fire_medal_oam */
+/* >>> part water_medal_oam */
 static const uint8_t water_medal_oam[3] = {
 	(uint8_t)(128u + OAM_X_OFS), 0x89u, 0x03u
 };
-
+/* <<< part water_medal_oam */
+/* >>> part show_oam_medal */
 static void show_oam_medal(const uint8_t *data)
 {
 	uint8_t d = data[0];
@@ -51,7 +56,8 @@ static void show_oam_medal(const uint8_t *data)
 		c = (uint8_t)(c + 0x0du);
 	}
 }
-
+/* <<< part show_oam_medal */
+/* >>> part load_collected_medal_tilemaps */
 static void load_collected_medal_tilemaps(void)
 {
 	wd291 = 0u;
@@ -87,8 +93,7 @@ static void load_collected_medal_tilemaps(void)
 	wWhichBGPalIndex = 1u;
 	LoadBGPalette(PALETTE_118);
 }
-/* <<< factory statics */
-
+/* <<< part load_collected_medal_tilemaps */
 /* >>> factory _PauseMenu_Status */
 void _PauseMenu_Status(void)
 {

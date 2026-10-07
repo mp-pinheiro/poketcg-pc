@@ -13,18 +13,26 @@
 #include "home/text_box.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/menus.h"
 #include "home/sound.h"
 #include "generated/wram.h"
+/* <<< part includes_2 */
 
+/* >>> part CARD_LIST_MENU_FUNCTION */
 /* Function pointers the asm installs in RAM: menus.asm:322 CardListMenuFunction
  * into wMenuUpdateFunc; duel/core.asm:5030/5038 PlayAreaScreenMenuFunction
  * ($01:60CE) into wMenuUpdateFunc; core.asm:3395 CardListFunction ($01:5719)
  * into wListFunctionPointer. */
 #define CARD_LIST_MENU_FUNCTION CardListMenuFunction_ADDR
+/* <<< part CARD_LIST_MENU_FUNCTION */
+/* >>> part PLAY_AREA_SCREEN_MENU_FUNCTION */
 #define PLAY_AREA_SCREEN_MENU_FUNCTION PlayAreaScreenMenuFunction_ADDR
+/* <<< part PLAY_AREA_SCREEN_MENU_FUNCTION */
+/* >>> part CARD_LIST_FUNCTION */
 #define CARD_LIST_FUNCTION CardListFunction_ADDR
+/* <<< part CARD_LIST_FUNCTION */
+/* >>> part includes_SYM_CURSOR_R */
 #include "home/core.h"
 #include "home/indirect_dispatch.h"
 
@@ -34,13 +42,25 @@
 #include "home/sound.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_SYM_CURSOR_R */
 
+/* >>> part SYM_CURSOR_R */
 #define SYM_CURSOR_R 0x0Fu
+/* <<< part SYM_CURSOR_R */
+/* >>> part PAD_RIGHT */
 #define PAD_RIGHT 0x10u
+/* <<< part PAD_RIGHT */
+/* >>> part PAD_LEFT */
 #define PAD_LEFT 0x20u
+/* <<< part PAD_LEFT */
 
+/* >>> part SYM_CURSOR_U */
 #define SYM_CURSOR_U 0x0Cu
+/* <<< part SYM_CURSOR_U */
+/* >>> part SYM_CURSOR_D */
 #define SYM_CURSOR_D 0x2Fu
+/* <<< part SYM_CURSOR_D */
+/* >>> part includes_PAD_UP */
 #include "generated/wram.h"
 #include "home/menus.h"
 #include "home/process_text.h"
@@ -58,10 +78,18 @@
 #include "home/bg_map.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes_PAD_UP */
+/* >>> part PAD_UP */
 #define PAD_UP 0x40u
+/* <<< part PAD_UP */
+/* >>> part PAD_DOWN */
 #define PAD_DOWN 0x80u
+/* <<< part PAD_DOWN */
+/* >>> part SYM_SLASH */
 #define SYM_SLASH 0x2Eu
+/* <<< part SYM_SLASH */
 
+/* >>> part includes_CONTINUE_DUEL_BANK */
 #include "home/menus.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -71,15 +99,23 @@
 
 #include "home/overworld.h"
 #include "home/core.h"
+/* <<< part includes_CONTINUE_DUEL_BANK */
+/* >>> part CONTINUE_DUEL_BANK */
 #define CONTINUE_DUEL_BANK 0x01u
-/* <<< factory statics */
+/* <<< part CONTINUE_DUEL_BANK */
 
 /* >>> part SYM_0 */
 #define SYM_0 0x20
-#define SYM_SPACE 0x00
-#define CARD_SYMBOL_TABLE CardSymbolTable_ADDR
-#define YES_OR_NO_TEXT_ID 0x2f
 /* <<< part SYM_0 */
+/* >>> part SYM_SPACE */
+#define SYM_SPACE 0x00
+/* <<< part SYM_SPACE */
+/* >>> part CARD_SYMBOL_TABLE */
+#define CARD_SYMBOL_TABLE CardSymbolTable_ADDR
+/* <<< part CARD_SYMBOL_TABLE */
+/* >>> part YES_OR_NO_TEXT_ID */
+#define YES_OR_NO_TEXT_ID 0x2f
+/* <<< part YES_OR_NO_TEXT_ID */
 
 /* >>> factory InitializeCardListParameters */
 void InitializeCardListParameters(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
@@ -427,10 +463,16 @@ ProcessTextHeaderResult PrintYesOrNoItems(uint8_t d, uint8_t e)
 
 /* >>> part PAD_A */
 #define PAD_A        0x01u
-#define PAD_B        0x02u
-#define NTBM_PARAMS  NarrowTextBoxMenuParameters_ADDR
-#define WTBM_PARAMS  WideTextBoxMenuParameters_ADDR
 /* <<< part PAD_A */
+/* >>> part PAD_B */
+#define PAD_B        0x02u
+/* <<< part PAD_B */
+/* >>> part NTBM_PARAMS */
+#define NTBM_PARAMS  NarrowTextBoxMenuParameters_ADDR
+/* <<< part NTBM_PARAMS */
+/* >>> part WTBM_PARAMS */
+#define WTBM_PARAMS  WideTextBoxMenuParameters_ADDR
+/* <<< part WTBM_PARAMS */
 
 /* >>> part WaitForButtonAorB */
 WaitResult WaitForButtonAorB(void)

@@ -7,11 +7,13 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/load_gfx.h"
 #include "home/objects.h"
+/* <<< part includes_2 */
 
 
+/* >>> part booster_logo_oam */
 static const uint8_t booster_logo_oam[] = {
 	0x20u,
 	0x00u, 0x00u, 0x00u, 0x00u,
@@ -47,7 +49,9 @@ static const uint8_t booster_logo_oam[] = {
 	0x18u, 0x30u, 0x1Eu, 0x00u,
 	0x18u, 0x38u, 0x1Fu, 0x00u
 };
+/* <<< part booster_logo_oam */
 
+/* >>> part includes_MINT_PIC */
 #include "generated/wram.h"
 #include "home/load_gfx.h"
 
@@ -58,22 +62,44 @@ static const uint8_t booster_logo_oam[] = {
 
 #include "home/sgb.h"
 #include "generated/wram.h"
+/* <<< part includes_MINT_PIC */
 
+/* >>> part MINT_PIC */
 #define MINT_PIC 0x2bu
+/* <<< part MINT_PIC */
+/* >>> part TILESET_MINT */
 #define TILESET_MINT 0x57u
+/* <<< part TILESET_MINT */
+/* >>> part TILESET_MINT_SINGLE */
 #define TILESET_MINT_SINGLE 0x58u
+/* <<< part TILESET_MINT_SINGLE */
+/* >>> part PALETTE_MINT */
 #define PALETTE_MINT 0xa1u
+/* <<< part PALETTE_MINT */
+/* >>> part PALETTE_MINT_SINGLE */
 #define PALETTE_MINT_SINGLE 0xa2u
+/* <<< part PALETTE_MINT_SINGLE */
+/* >>> part MINT_PALETTE_BASE */
 #define MINT_PALETTE_BASE 1u
+/* <<< part MINT_PALETTE_BASE */
+/* >>> part MINT_ATTRIBUTE_OFFSET */
 #define MINT_ATTRIBUTE_OFFSET 26u
+/* <<< part MINT_ATTRIBUTE_OFFSET */
+/* >>> part rVBK */
 #define rVBK 0xFF4Fu
+/* <<< part rVBK */
+/* >>> part g_mint_single_palette */
 static uint8_t g_mint_single_palette;
+/* <<< part g_mint_single_palette */
 
+/* >>> part SetMintSinglePalette */
 void SetMintSinglePalette(uint8_t single)
 {
 	g_mint_single_palette = single;
 }
+/* <<< part SetMintSinglePalette */
 
+/* >>> part write_mint_attributes */
 static void write_mint_attributes(uint8_t b, uint8_t c)
 {
 	const uint8_t *attributes = rom_mint_asset(ROM_MINT_PALETTE_BANK);
@@ -87,6 +113,8 @@ static void write_mint_attributes(uint8_t b, uint8_t c)
 				(uint8_t)(MINT_PALETTE_BASE + attributes[row * 6u + column]));
 	gb_write8(rVBK, 0u);
 }
+/* <<< part write_mint_attributes */
+/* >>> part includes_SCENE_POINTERS_BANK */
 #include "mem.h"
 
 #include "generated/wram.h"
@@ -99,13 +127,19 @@ static void write_mint_attributes(uint8_t b, uint8_t c)
 #include "home/scenes.h"
 #include "home/sprite_animations.h"
 #include "mem.h"
+/* <<< part includes_SCENE_POINTERS_BANK */
+/* >>> part SCENE_POINTERS_BANK */
 #define SCENE_POINTERS_BANK 0x04u
+/* <<< part SCENE_POINTERS_BANK */
+/* >>> part SCENE_POINTERS_ADDR */
 #define SCENE_POINTERS_ADDR ScenePointers_ADDR
+/* <<< part SCENE_POINTERS_ADDR */
 
+/* >>> part includes_tail */
 #include "home/palettes.h"
 #include "home/scenes.h"
 #include "generated/wram.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory SetBoosterLogoOAM */
 /* scenes.asm:320-395 */

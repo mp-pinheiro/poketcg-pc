@@ -8,62 +8,13 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/sfx.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/sfx.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "generated/wram.h"
-#include "mem.h"
-#include "home/sfx.h"
-/* <<< factory statics */
-
 /* >>> part SFX_BANK */
 #define SFX_BANK NumberOfSFX_BANK
-
-#define SFX_NumberOfSFX_ADDR     NumberOfSFX_ADDR
-#define SFX_HeaderPointers_ADDR  SFXHeaderPointers_ADDR
-
-#define rAUD1LEN   0xFF11u
-#define rAUD1SWEEP 0xFF10u
-#define rAUD1ENV   0xFF12u
-#define rAUD1HIGH  0xFF14u
-#define rAUD4LEN   0xFF20u
-#define rAUD4GO    0xFF23u
-
-#define AUD3WAVERAM   0xFF30u
-#define AUD3ENA_ON    0x80u
-#define AUD3WAVE_SIZE 16u
-
-#define AUD1ENV_UP 0x08u
 /* <<< part SFX_BANK */
-
-/* >>> factory Func_fc279 */
-/* sfx.asm:485-497. The asm is a documented ROM bug: it loads $8/$80 into `a`
- * and then does `ldh a, [rAUDxENV/HIGH]`, reading the registers instead of
- * writing them, so those loads are dead and the only surviving effect is
- * clearing wdd8c. The reads are kept because they are observable bus traffic. */
-void Func_fc279(void)
-{
-	gb_read8(rAUD1ENV);
-	gb_read8(0xFF17u);
-	gb_read8(0xFF1Cu);
-	gb_read8(0xFF21u);
-	gb_read8(rAUD1HIGH);
-	gb_read8(0xFF19u);
-	gb_read8(rAUD4GO);
-	wdd8c = 0;
-}
-
-/* <<< factory Func_fc279 */
-
+/* === part rAUD1LEN */
+/* >>> part rAUD1SWEEP */
+#define rAUD1SWEEP 0xFF10u
+/* <<< part rAUD1SWEEP */
 /* >>> factory Func_fc26c */
 /* sfx.asm:493-498. */
 void Func_fc26c(void)
@@ -72,133 +23,6 @@ void Func_fc26c(void)
 	wCurSfxID = 0x80;
 }
 /* <<< factory Func_fc26c */
-
-/* >>> part StoreCmdPtr */
-static void StoreCmdPtr(uint8_t c, uint16_t ptr)
-{
-	uint16_t addr = (uint16_t)(wSFXCommandPointers_ADDR + (uint16_t)c * 2u);
-	gb_write8(addr, (uint8_t)ptr);
-	gb_write8((uint16_t)(addr + 1u), (uint8_t)(ptr >> 8));
-}
-/* <<< part StoreCmdPtr */
-
-/* >>> part read_wde2b */
-static uint8_t read_wde2b(uint8_t c)
-{
-	if (c == 3u)
-		return gb_read8(wde2e_ADDR);
-	return gb_read8((uint16_t)(wde2b_ADDR + c));
-}
-/* <<< part read_wde2b */
-
-/* >>> part write_wde2b */
-static void write_wde2b(uint8_t c, uint8_t v)
-{
-	if (c == 3u)
-		gb_write8(wde2e_ADDR, v);
-	else
-		gb_write8((uint16_t)(wde2b_ADDR + c), v);
-}
-/* <<< part write_wde2b */
-
-/* >>> part read_wde37 */
-static uint16_t read_wde37(uint8_t c)
-{
-	if (c == 3u)
-		return (uint16_t)gb_read8(wde3d_ADDR) | (uint16_t)(gb_read8((uint16_t)(wde3d_ADDR + 1u)) << 8);
-	uint16_t addr = (uint16_t)(wde37_ADDR + (uint16_t)c * 2u);
-	return (uint16_t)gb_read8(addr) | (uint16_t)(gb_read8((uint16_t)(addr + 1u)) << 8);
-}
-/* <<< part read_wde37 */
-
-/* >>> part write_wde37 */
-static void write_wde37(uint8_t c, uint16_t freq)
-{
-	if (c == 3u) {
-		gb_write8(wde3d_ADDR, (uint8_t)freq);
-		gb_write8((uint16_t)(wde3d_ADDR + 1u), (uint8_t)(freq >> 8));
-		return;
-	}
-	uint16_t addr = (uint16_t)(wde37_ADDR + (uint16_t)c * 2u);
-	gb_write8(addr, (uint8_t)freq);
-	gb_write8((uint16_t)(addr + 1u), (uint8_t)(freq >> 8));
-}
-/* <<< part write_wde37 */
-
-/* >>> part read_pitch_offset */
-static uint8_t read_pitch_offset(uint8_t c)
-{
-	if (c == 3u)
-		return gb_read8(wde32_ADDR);
-	return gb_read8((uint16_t)(wSFXPitchOffsets_ADDR + c));
-}
-/* <<< part read_pitch_offset */
-
-/* >>> part apu_write_freq */
-static void apu_write_freq(uint8_t c, uint8_t low, uint8_t high)
-{
-	uint16_t reg = (uint16_t)(rAUD1LEN + (uint16_t)c * 5u);
-	uint8_t len = gb_read8(reg);
-	gb_write8(reg, (uint8_t)(len & 0xC0u));
-	gb_write8((uint16_t)(reg + 2u), low);
-	gb_write8((uint16_t)(reg + 3u), high);
-}
-/* <<< part apu_write_freq */
-
-/* >>> factory SFX_ApplyPitchOffset */
-/* sfx.asm:297-350. Indexes wde37 by 2*c and wSFXPitchOffsets/wde2b by c; the
- * helpers' c==3 special cases are address aliasing, not a simplification
- * (0xDE37+6 == wde3d, 0xDE2F+3 == wde32, 0xDE2B+3 == wde2e). */
-void SFX_ApplyPitchOffset(uint8_t c)
-{
-	uint8_t offset = read_pitch_offset(c);
-	if (offset == 0u)
-		return;
-	uint16_t freq = read_wde37(c);
-	uint16_t new_freq;
-	if (offset & 0x80u) {
-		uint8_t d = (uint8_t)((uint8_t)(offset ^ 0xFFu) + 1u);
-		new_freq = (uint16_t)(freq - d);
-	} else {
-		new_freq = (uint16_t)(freq + offset);
-	}
-	write_wde37(c, new_freq);
-	uint8_t env = read_wde2b(c);
-	write_wde2b(c, 0u);
-	apu_write_freq(c, (uint8_t)new_freq, (uint8_t)((new_freq >> 8) | env));
-}
-/* <<< factory SFX_ApplyPitchOffset */
-
-/* >>> factory Func_fc1cd */
-/* sfx.asm:352-392. The noise channel's pitch update: only the low byte is
- * tracked, and bit 3 of the delta is swapped into bit 7 of the high write. */
-void Func_fc1cd(void)
-{
-	uint8_t offset = gb_read8(wde32_ADDR);
-	if (offset == 0u)
-		return;
-	uint16_t freq_addr = wde3d_ADDR;
-	uint8_t old_low = gb_read8(freq_addr);
-	uint8_t new_low;
-	if (offset & 0x80u) {
-		uint8_t d = (uint8_t)((uint8_t)(offset ^ 0xFFu) + 1u);
-		new_low = old_low - d;
-	} else {
-		new_low = old_low + offset;
-	}
-	gb_write8(freq_addr, new_low);
-	uint8_t changed = new_low ^ old_low;
-	uint8_t high = (uint8_t)((changed & 8u) << 4u);
-	uint8_t env = gb_read8(wde2e_ADDR);
-	gb_write8(wde2e_ADDR, 0u);
-	high |= env;
-	uint16_t reg = rAUD4LEN;
-	gb_write8(reg, 0u);
-	gb_write8((uint16_t)(reg + 2u), new_low);
-	gb_write8((uint16_t)(reg + 3u), high);
-}
-/* <<< factory Func_fc1cd */
-
 /* >>> part SFX_Frequency */
 static uint16_t SFX_Frequency(uint16_t cmd_ptr, uint8_t c, uint8_t high_nibble)
 {
@@ -217,7 +41,6 @@ static uint16_t SFX_Frequency(uint16_t cmd_ptr, uint8_t c, uint8_t high_nibble)
 	return cmd_ptr;
 }
 /* <<< part SFX_Frequency */
-
 /* >>> part SFX_Envelope */
 static uint16_t SFX_Envelope(uint16_t cmd_ptr, uint8_t c)
 {
@@ -229,16 +52,6 @@ static uint16_t SFX_Envelope(uint16_t cmd_ptr, uint8_t c)
 	return cmd_ptr;
 }
 /* <<< part SFX_Envelope */
-
-/* >>> part SFX_Duty */
-static void SFX_Duty(uint8_t c, uint8_t param)
-{
-	uint8_t duty = (uint8_t)((param << 4u) | (param >> 4u));
-	uint16_t reg = (uint16_t)(rAUD1LEN + (uint16_t)c * 5u);
-	gb_write8(reg, duty);
-}
-/* <<< part SFX_Duty */
-
 /* >>> part SFX_Loop */
 static uint16_t SFX_Loop(uint16_t cmd_ptr, uint8_t c)
 {
@@ -251,27 +64,6 @@ static uint16_t SFX_Loop(uint16_t cmd_ptr, uint8_t c)
 	return cmd_ptr;
 }
 /* <<< part SFX_Loop */
-
-/* >>> part SFX_EndLoop */
-/* sfx.asm:248-265. Both branches fall through to
- * `jp ExecuteNextSFXCommand`: a finished loop (count reaches zero) resumes
- * forward at the saved post-opcode pointer, it never halts the
- * interpreter. Matches the probe-tested standalone SFX_endloop
- * (sfx.c:590-603), which calls ExecuteNextSFXCommand again in the
- * count==0 case instead of returning. */
-static uint16_t SFX_EndLoop(uint16_t cmd_ptr, uint8_t c)
-{
-	uint8_t count = gb_read8((uint16_t)(wde3f_ADDR + c));
-	count = (uint8_t)(count - 1u);
-	if (count == 0u)
-		return cmd_ptr;
-	gb_write8((uint16_t)(wde3f_ADDR + c), count);
-	uint16_t store_addr = (uint16_t)(wde43_ADDR + (uint16_t)c * 2u);
-	uint16_t loop_addr = (uint16_t)gb_read8(store_addr) | (uint16_t)(gb_read8((uint16_t)(store_addr + 1u)) << 8);
-	return loop_addr;
-}
-/* <<< part SFX_EndLoop */
-
 /* >>> part SFX_PitchOffset */
 static uint16_t SFX_PitchOffset(uint16_t cmd_ptr, uint8_t c)
 {
@@ -284,7 +76,6 @@ static uint16_t SFX_PitchOffset(uint16_t cmd_ptr, uint8_t c)
 	return cmd_ptr;
 }
 /* <<< part SFX_PitchOffset */
-
 /* >>> part SFX_Wait */
 static uint16_t SFX_Wait(uint16_t cmd_ptr, uint8_t c)
 {
@@ -298,26 +89,6 @@ static uint16_t SFX_Wait(uint16_t cmd_ptr, uint8_t c)
 	return cmd_ptr;
 }
 /* <<< part SFX_Wait */
-
-/* >>> part SFX_Wave */
-static void SFX_Wave(uint8_t param)
-{
-	uint16_t table_addr = (uint16_t)(SFX_WaveInstruments_ADDR + (uint16_t)param * 2u);
-	uint16_t wave_ptr = (uint16_t)gb_read8(table_addr) | (uint16_t)(gb_read8((uint16_t)(table_addr + 1u)) << 8);
-	gb_write8(0xFF1Au, 0u);
-	uint8_t b = 0u;
-	uint16_t dst = AUD3WAVERAM;
-	do {
-		gb_write8(dst, gb_read8(wave_ptr));
-		dst = (uint16_t)(dst + 1u);
-		wave_ptr = (uint16_t)(wave_ptr + 1u);
-		b = (uint8_t)(b + 1u);
-	} while (b != AUD3WAVE_SIZE);
-	wMusicWaveChange = 1u;
-	gb_write8(0xFF1Au, AUD3ENA_ON);
-}
-/* <<< part SFX_Wave */
-
 /* >>> part SFX_Pan */
 /* sfx.asm:423-445. `rlca` rotates pan_val (a) and `rlc e` (sfx.asm:434)
  * independently rotates e's own top bit into its bottom bit; e never reads
@@ -339,23 +110,6 @@ static uint16_t SFX_Pan(uint16_t cmd_ptr, uint8_t c)
 	return cmd_ptr;
 }
 /* <<< part SFX_Pan */
-
-/* >>> part SFX_End */
-static void SFX_End(uint8_t c)
-{
-	uint8_t e = (uint8_t)(c + 1u);
-	uint8_t a = 0x7Fu;
-	do {
-		a = (uint8_t)((a << 1u) | (a >> 7u));
-		e = (uint8_t)(e - 1u);
-	} while (e != 0u);
-	wdd8c &= a;
-	uint16_t reg = (uint16_t)(rAUD1ENV + (uint16_t)c * 5u);
-	gb_write8(reg, AUD1ENV_UP);
-	gb_write8((uint16_t)(reg + 2u), 0x80u);
-}
-/* <<< part SFX_End */
-
 /* >>> factory ExecuteNextSFXCommand */
 /* sfx.asm:103-138 */
 void ExecuteNextSFXCommand(uint16_t hl, uint16_t bc)
@@ -409,7 +163,6 @@ void ExecuteNextSFXCommand(uint16_t hl, uint16_t bc)
 	}
 }
 /* <<< factory ExecuteNextSFXCommand */
-
 /* >>> factory SFX_Play */
 void SFX_Play(uint8_t sfx_id)
 {
@@ -458,68 +211,6 @@ void SFX_Play(uint8_t sfx_id)
 	}
 }
 /* <<< factory SFX_Play */
-
-/* >>> factory SFX_Update */
-void SFX_Update(void)
-{
-	g_rom_bank = SFX_BANK;
-	if (wdd8c == 0u) {
-		Func_fc26c();
-		return;
-	}
-	wde54 = wdd8c;
-	uint8_t c = 0u;
-	for (;;) {
-		uint8_t mask = wde54;
-		wde54 = (uint8_t)((mask >> 1) | ((mask << 7) & 0xFFu));
-		if ((mask & 1u) != 0u) {
-			uint8_t wait = gb_read8((uint16_t)(wde33_ADDR + c));
-			wait = (uint8_t)(wait - 1u);
-			if (wait != 0u) {
-				gb_write8((uint16_t)(wde33_ADDR + c), wait);
-				SFX_ApplyPitchOffset(c);
-			} else {
-				uint16_t cmd_addr = (uint16_t)(wSFXCommandPointers_ADDR + (uint16_t)c * 2u);
-				uint16_t cmd = (uint16_t)gb_read8(cmd_addr) | (uint16_t)(gb_read8((uint16_t)(cmd_addr + 1u)) << 8);
-				ExecuteNextSFXCommand(cmd, c);
-			}
-		}
-		c = (uint8_t)(c + 1u);
-		if (c == 4u)
-			break;
-	}
-}
-/* <<< factory SFX_Update */
-
-/* >>> factory Func_fc105 */
-/* sfx.asm:188-196 */
-uint16_t Func_fc105(uint16_t bc, uint16_t de)
-{
-	uint16_t hl = (uint16_t)(wSFXCommandPointers_ADDR + bc + bc);
-	gb_write8(hl, (uint8_t)de);
-	hl = (uint16_t)(hl + 1u);
-	gb_write8(hl, (uint8_t)(de >> 8));
-	return hl;
-}
-/* <<< factory Func_fc105 */
-
-/* >>> factory SFX_end */
-SFX_endResult SFX_end(uint8_t b, uint8_t c, uint16_t caller_hl)
-{
-	uint8_t e = (uint8_t)(c + 1u);
-	uint8_t mask = 0x7Fu;
-	do {
-		mask = (uint8_t)((mask << 1u) | (mask >> 7u));
-		e = (uint8_t)(e - 1u);
-	} while (e != 0u);
-	wdd8c = (uint8_t)(wdd8c & mask);
-	uint8_t rotated = (uint8_t)((c << 2u) | (c >> 6u));
-	e = (uint8_t)(rotated + c);
-	uint8_t d = b;
-	return (SFX_endResult){0x80u, 0x00u, b, c, d, e, caller_hl};
-}
-/* <<< factory SFX_end */
-
 /* >>> factory SFX_frequency */
 void SFX_frequency(uint16_t bc, uint16_t caller_hl, uint8_t high)
 {
@@ -547,7 +238,6 @@ void SFX_frequency(uint16_t bc, uint16_t caller_hl, uint8_t high)
 	Func_fc105(bc, de);
 }
 /* <<< factory SFX_frequency */
-
 /* >>> factory SFX_loop */
 void SFX_loop(uint16_t bc, uint16_t caller_de)
 {
@@ -560,7 +250,6 @@ void SFX_loop(uint16_t bc, uint16_t caller_de)
 	ExecuteNextSFXCommand(caller_de, bc);
 }
 /* <<< factory SFX_loop */
-
 /* >>> factory SFX_pan */
 void SFX_pan(uint16_t bc, uint16_t caller_hl)
 {
@@ -579,14 +268,6 @@ void SFX_pan(uint16_t bc, uint16_t caller_hl)
 	ExecuteNextSFXCommand(caller_hl, bc);
 }
 /* <<< factory SFX_pan */
-
-/* >>> factory SFX_unused */
-void SFX_unused(uint16_t hl, uint16_t bc)
-{
-	ExecuteNextSFXCommand(hl, bc);
-}
-/* <<< factory SFX_unused */
-
 /* >>> factory SFX_pitch_offset */
 void SFX_pitch_offset(uint16_t bc, uint16_t caller_hl)
 {
@@ -595,31 +276,6 @@ void SFX_pitch_offset(uint16_t bc, uint16_t caller_hl)
 	ExecuteNextSFXCommand(caller_hl, bc);
 }
 /* <<< factory SFX_pitch_offset */
-
-/* >>> factory SFX_wave */
-void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl)
-{
-	uint16_t table_addr = (uint16_t)(SFX_WaveInstruments_ADDR + (uint16_t)a * 2u);
-	const uint8_t *table = rom_ptr(SFX_BANK, table_addr);
-	uint16_t wave_addr = (uint16_t)table[0] | (uint16_t)((uint16_t)table[1] << 8u);
-	const uint8_t *wave = rom_ptr(SFX_BANK, wave_addr);
-	gb_write8(0xFF1Au, 0u);
-	for (uint8_t i = 0u; i < AUD3WAVE_SIZE; i++)
-		gb_write8((uint16_t)(AUD3WAVERAM + i), wave[i]);
-	wMusicWaveChange = 1u;
-	gb_write8(0xFF1Au, AUD3ENA_ON);
-	ExecuteNextSFXCommand(caller_hl, bc);
-}
-/* <<< factory SFX_wave */
-
-/* >>> factory SFX_duty */
-void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl)
-{
-	SFX_Duty((uint8_t)bc, a);
-	ExecuteNextSFXCommand(caller_hl, bc);
-}
-/* <<< factory SFX_duty */
-
 /* >>> factory SFX_envelope */
 void SFX_envelope(uint16_t bc, uint16_t caller_hl)
 {
@@ -633,23 +289,6 @@ void SFX_envelope(uint16_t bc, uint16_t caller_hl)
 	ExecuteNextSFXCommand(caller_hl, bc);
 }
 /* <<< factory SFX_envelope */
-
-/* >>> factory SFX_endloop */
-void SFX_endloop(uint16_t bc, uint16_t caller_word)
-{
-	uint8_t count = gb_read8((uint16_t)(wde3f_ADDR + bc));
-	count = (uint8_t)(count - 1u);
-	if (count != 0u) {
-		gb_write8((uint16_t)(wde3f_ADDR + bc), count);
-		uint16_t store_addr = (uint16_t)(wde43_ADDR + bc + bc);
-		uint16_t loop_addr = (uint16_t)gb_read8(store_addr) | (uint16_t)(gb_read8((uint16_t)(store_addr + 1u)) << 8u);
-		ExecuteNextSFXCommand(loop_addr, bc);
-		return;
-	}
-	ExecuteNextSFXCommand(caller_word, bc);
-}
-/* <<< factory SFX_endloop */
-
 /* >>> factory SFX_wait */
 uint16_t SFX_wait(uint16_t bc, uint16_t caller_hl)
 {
@@ -664,3 +303,5 @@ uint16_t SFX_wait(uint16_t bc, uint16_t caller_hl)
 	return Func_fc105(bc, caller_hl);
 }
 /* <<< factory SFX_wait */
+/* === factory GetSFXCommandAndArgs */
+/* === factory SFX_sweep */

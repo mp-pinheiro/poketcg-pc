@@ -12,9 +12,13 @@
 
 /* >>> part BANK_DECK_DATA */
 #define BANK_DECK_DATA 0x0cu
-#define DECK_POINTERS  DeckPointers_ADDR
-#define PLAYER_TURN    ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 /* <<< part BANK_DECK_DATA */
+/* >>> part DECK_POINTERS */
+#define DECK_POINTERS  DeckPointers_ADDR
+/* <<< part DECK_POINTERS */
+/* >>> part PLAYER_TURN */
+#define PLAYER_TURN    ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
+/* <<< part PLAYER_TURN */
 
 /* >>> part copy_deck_data */
 /* load_deck.asm + duel.asm:60-104. CopyDeckData is inlined: it expands the

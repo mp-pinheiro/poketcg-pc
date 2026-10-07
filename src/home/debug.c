@@ -9,19 +9,29 @@
 #include "home/tiles.h"
 #include "home/wait_keys.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/random.h"
 #include "mem.h"
 
 #include "generated/hram.h"
 #include "home/print_text.h"
 #include "home/process_text.h"
+/* <<< part includes_2 */
 
+/* >>> part FUNC_80C64_BANK */
 #define FUNC_80C64_BANK 0x20u
+/* <<< part FUNC_80C64_BANK */
+/* >>> part FUNC_80C64_MENU_PARAMS_ADDR */
 #define FUNC_80C64_MENU_PARAMS_ADDR CopyPalsToSRAMBuffer_ADDR
+/* <<< part FUNC_80C64_MENU_PARAMS_ADDR */
+/* >>> part FUNC_80C64_WIN_LOSE_PRIZES_TEXT */
 #define FUNC_80C64_WIN_LOSE_PRIZES_TEXT 0x0385u
+/* <<< part FUNC_80C64_WIN_LOSE_PRIZES_TEXT */
+/* >>> part FUNC_80C64_USE_DUELISTS_DECK_TEXT */
 #define FUNC_80C64_USE_DUELISTS_DECK_TEXT 0x0386u
+/* <<< part FUNC_80C64_USE_DUELISTS_DECK_TEXT */
 
+/* >>> part includes_DEBUG_CREATE_BOOSTER_BANK */
 #include "home/debug_sprites.h"
 
 #include "generated/hram.h"
@@ -32,12 +42,22 @@
 #include "home/labels.h"
 #include "home/menus.h"
 #include "mem.h"
+/* <<< part includes_DEBUG_CREATE_BOOSTER_BANK */
 
+/* >>> part DEBUG_CREATE_BOOSTER_BANK */
 #define DEBUG_CREATE_BOOSTER_BANK 0x04u
+/* <<< part DEBUG_CREATE_BOOSTER_BANK */
+/* >>> part DEBUG_CREATE_BOOSTER_MENU_PARAMS */
 #define DEBUG_CREATE_BOOSTER_MENU_PARAMS Unknown_12919_ADDR
+/* <<< part DEBUG_CREATE_BOOSTER_MENU_PARAMS */
+/* >>> part DEBUG_CREATE_BOOSTER_MENU_POINTERS */
 #define DEBUG_CREATE_BOOSTER_MENU_POINTERS Unknown_127f1_ADDR
+/* <<< part DEBUG_CREATE_BOOSTER_MENU_POINTERS */
+/* >>> part DEBUG_CREATE_BOOSTER_TYPES */
 #define DEBUG_CREATE_BOOSTER_TYPES Unknown_127fb_ADDR
+/* <<< part DEBUG_CREATE_BOOSTER_TYPES */
 
+/* >>> part includes_DEBUG_DUEL_MENU_PARAMS */
 #include "home/sound.h"
 
 #include "generated/hram.h"
@@ -57,8 +77,10 @@
 
 #include "generated/sram.h"
 #include "home/switch_sram.h"
+/* <<< part includes_DEBUG_DUEL_MENU_PARAMS */
+/* >>> part DEBUG_DUEL_MENU_PARAMS */
 #define DEBUG_DUEL_MENU_PARAMS Unknown_12908_ADDR
-/* <<< factory statics */
+/* <<< part DEBUG_DUEL_MENU_PARAMS */
 
 /* >>> factory DebugSGBFrame */
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,

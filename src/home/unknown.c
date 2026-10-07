@@ -6,26 +6,46 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/bg_map.h"
 #include "home/deck_check.h"
 #include "home/random.h"
 #include "home/sound.h"
+/* <<< part includes_2 */
 
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_B */
 #define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part PAD_RIGHT */
 #define PAD_RIGHT 0x10u
+/* <<< part PAD_RIGHT */
+/* >>> part PAD_LEFT */
 #define PAD_LEFT 0x20u
+/* <<< part PAD_LEFT */
+/* >>> part PAD_UP */
 #define PAD_UP 0x40u
+/* <<< part PAD_UP */
+/* >>> part PAD_DOWN */
 #define PAD_DOWN 0x80u
+/* <<< part PAD_DOWN */
 
+/* >>> part MENU_CANCEL */
 #define MENU_CANCEL 0xffu
+/* <<< part MENU_CANCEL */
 
+/* >>> part SYM_CURSOR_R */
 /* Tile ids verified against the real ROM's BG map writes: the blinking
  * check-menu cursor is tile $0f and the blank it is erased with is $00. */
 #define SYM_CURSOR_R 0x0fu
+/* <<< part SYM_CURSOR_R */
+/* >>> part SYM_SPACE */
 #define SYM_SPACE 0x00u
+/* <<< part SYM_SPACE */
 
+/* >>> part draw_check_menu_cursor_tile */
 /* unknown.asm:126-142 (.draw_tile). Column/row come straight from the
  * stored cursor position, exactly as the asm re-reads it after any move. */
 static void draw_check_menu_cursor_tile(uint8_t tile)
@@ -36,7 +56,7 @@ static void draw_check_menu_cursor_tile(uint8_t tile)
 
 	WriteByteToBGMap0(tile, col, row);
 }
-/* <<< factory statics */
+/* <<< part draw_check_menu_cursor_tile */
 
 /* >>> factory Func_18661 */
 /* unknown.asm:1-150. Unreferenced check-menu cursor handler: reads only

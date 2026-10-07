@@ -7,12 +7,12 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/battle_center.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> factory Func_fc2b */
 void Func_fc2b(void)

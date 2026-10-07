@@ -5,7 +5,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/switch_rom.h"
 #include "home/time.h"
 #include "home/serial.h"
@@ -13,8 +13,10 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "serial_track.h"
+/* <<< part includes_2 */
+/* >>> part BANK_SOUND_TIMER_HANDLER */
 #define BANK_SOUND_TIMER_HANDLER 0x3Du
-/* <<< factory statics */
+/* <<< part BANK_SOUND_TIMER_HANDLER */
 
 
 /* >>> factory IncrementPlayTimeCounter */
@@ -70,12 +72,22 @@ uint8_t CheckForCGB(void)
 
 /* >>> part rIE */
 #define rIE 0xFFFFu
-#define rIF 0xFF0Fu
-#define rJOYP 0xFF00u
-#define rSPD 0xFF4Du
-#define B_SPD_DOUBLE 7u
-#define B_SPD_PREPARE 0u
 /* <<< part rIE */
+/* >>> part rIF */
+#define rIF 0xFF0Fu
+/* <<< part rIF */
+/* >>> part rJOYP */
+#define rJOYP 0xFF00u
+/* <<< part rJOYP */
+/* >>> part rSPD */
+#define rSPD 0xFF4Du
+/* <<< part rSPD */
+/* >>> part B_SPD_DOUBLE */
+#define B_SPD_DOUBLE 7u
+/* <<< part B_SPD_DOUBLE */
+/* >>> part B_SPD_PREPARE */
+#define B_SPD_PREPARE 0u
+/* <<< part B_SPD_PREPARE */
 
 /* >>> part SwitchToCGBNormalSpeed */
 void SwitchToCGBNormalSpeed(void)
@@ -126,8 +138,10 @@ void SwitchToCGBDoubleSpeed(void)
 
 /* >>> part rTMA */
 #define rTMA 0xFF06u
-#define rTAC 0xFF07u
 /* <<< part rTMA */
+/* >>> part rTAC */
+#define rTAC 0xFF07u
+/* <<< part rTAC */
 
 /* >>> factory SetupTimer */
 TimerSetupResult SetupTimer(void)

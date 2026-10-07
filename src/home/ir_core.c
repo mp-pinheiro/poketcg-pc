@@ -6,34 +6,64 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/ir_core.h"
 #include "mem.h"
+/* <<< part includes_2 */
+/* >>> part RP_ADDR */
 #define RP_ADDR 0xFF56u
+/* <<< part RP_ADDR */
+/* >>> part RP_ENABLE */
 #define RP_ENABLE 0xC0u
+/* <<< part RP_ENABLE */
+/* >>> part RP_WRITE_HIGH */
 #define RP_WRITE_HIGH 0x01u
+/* <<< part RP_WRITE_HIGH */
+/* >>> part RP_WRITE_LOW */
 #define RP_WRITE_LOW 0x00u
+/* <<< part RP_WRITE_LOW */
 
+/* >>> part includes_RP_ADDR_470 */
 #include "home/ir_core.h"
 #include "mem.h"
+/* <<< part includes_RP_ADDR_470 */
+/* >>> part RP_ADDR_470 */
 #define RP_ADDR_470 0xFF56u
+/* <<< part RP_ADDR_470 */
+/* >>> part B_RP_DATA_IN_470 */
 #define B_RP_DATA_IN_470 1u
+/* <<< part B_RP_DATA_IN_470 */
 
+/* >>> part includes_RJOYP_ADDR */
 #include "home/ir_core.h"
 #include "mem.h"
 
 #include "home/ir_core.h"
+/* <<< part includes_RJOYP_ADDR */
+/* >>> part RJOYP_ADDR */
 #define RJOYP_ADDR 0xFF00u
+/* <<< part RJOYP_ADDR */
 
+/* >>> part includes_JOYP_GET_NONE */
 #include "home/ir_core.h"
 
 #include "home/time.h"
+/* <<< part includes_JOYP_GET_NONE */
 
+/* >>> part JOYP_GET_NONE */
 #define JOYP_GET_NONE 0x30u
+/* <<< part JOYP_GET_NONE */
+/* >>> part RSTAT_ADDR */
 #define RSTAT_ADDR 0xFF41u
+/* <<< part RSTAT_ADDR */
+/* >>> part STAT_MODE */
 #define STAT_MODE 0x03u
+/* <<< part STAT_MODE */
+/* >>> part STAT_VBLANK */
 #define STAT_VBLANK 0x01u
+/* <<< part STAT_VBLANK */
 
+/* >>> part includes_tail */
 #include "home/ir_core.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -47,7 +77,7 @@
 
 #include "home/ir_core.h"
 #include "mem.h"
-/* <<< factory statics */
+/* <<< part includes_tail */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
 /* ir_core.asm:483-506 */

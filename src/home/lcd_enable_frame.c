@@ -7,8 +7,10 @@
 
 /* >>> part rLCDC */
 #define rLCDC 0xFF40u
-#define LCDC_ON 0x80u
 /* <<< part rLCDC */
+/* >>> part LCDC_ON */
+#define LCDC_ON 0x80u
+/* <<< part LCDC_ON */
 
 /* >>> factory DoFrameIfLCDEnabled */
 void DoFrameIfLCDEnabled(void)

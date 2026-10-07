@@ -7,7 +7,7 @@
 #include "home/objects.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/duel.h"
 #include "home/random.h"
 #include "home/sound.h"
@@ -16,23 +16,45 @@
 #include "home/play_area.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_2 */
 
+/* >>> part B_PAD_UP */
 #define B_PAD_UP 6u
+/* <<< part B_PAD_UP */
+/* >>> part B_PAD_DOWN */
 #define B_PAD_DOWN 7u
+/* <<< part B_PAD_DOWN */
+/* >>> part B_PAD_LEFT */
 #define B_PAD_LEFT 5u
+/* <<< part B_PAD_LEFT */
+/* >>> part B_PAD_RIGHT */
 #define B_PAD_RIGHT 4u
+/* <<< part B_PAD_RIGHT */
+/* >>> part PAD_A */
 #define PAD_A 0x01u
+/* <<< part PAD_A */
+/* >>> part PAD_B */
 #define PAD_B 0x02u
+/* <<< part PAD_B */
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
+/* >>> part MENU_CANCEL */
 #define MENU_CANCEL 0xffu
+/* <<< part MENU_CANCEL */
 
+/* >>> part includes_DUELVARS_ARENA_CARD */
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/card_data.h"
 #include "home/core.h"
+/* <<< part includes_DUELVARS_ARENA_CARD */
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xBBu
+/* <<< part DUELVARS_ARENA_CARD */
 
 
+/* >>> part includes_BANK_OPEN_IN_PLAY_AREA_SCREEN */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
@@ -47,15 +69,31 @@
 #include "home/substatus.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes_BANK_OPEN_IN_PLAY_AREA_SCREEN */
 
+/* >>> part BANK_OPEN_IN_PLAY_AREA_SCREEN */
 #define BANK_OPEN_IN_PLAY_AREA_SCREEN 0x06u
+/* <<< part BANK_OPEN_IN_PLAY_AREA_SCREEN */
+/* >>> part OPEN_IN_PLAY_AREA_TEXT_TABLE */
 #define OPEN_IN_PLAY_AREA_TEXT_TABLE OpenInPlayAreaScreen_TextTable_ADDR
+/* <<< part OPEN_IN_PLAY_AREA_TEXT_TABLE */
+/* >>> part OPEN_IN_PLAY_AREA_TRANSITION_TABLE1 */
 #define OPEN_IN_PLAY_AREA_TRANSITION_TABLE1 OpenInPlayAreaScreen_TransitionTable1_ADDR
+/* <<< part OPEN_IN_PLAY_AREA_TRANSITION_TABLE1 */
+/* >>> part OPEN_IN_PLAY_AREA_TRANSITION_TABLE2 */
 #define OPEN_IN_PLAY_AREA_TRANSITION_TABLE2 OpenInPlayAreaScreen_TransitionTable2_ADDR
+/* <<< part OPEN_IN_PLAY_AREA_TRANSITION_TABLE2 */
+/* >>> part EMPTY_LINE_TEXT */
 #define EMPTY_LINE_TEXT 0x0251u
+/* <<< part EMPTY_LINE_TEXT */
+/* >>> part HAND_TEXT_2 */
 #define HAND_TEXT_2 0x024Eu
+/* <<< part HAND_TEXT_2 */
+/* >>> part TRUE */
 #define TRUE 0x01u
+/* <<< part TRUE */
 
+/* >>> part open_in_play_area_print_associated_text */
 static void open_in_play_area_print_associated_text(uint8_t position)
 {
 	InitTextPrinting(1u, 17u);
@@ -99,7 +137,7 @@ static void open_in_play_area_print_associated_text(uint8_t position)
 	uint16_t default_text = wDefaultText_ADDR;
 	ProcessText(&default_text);
 }
-/* <<< factory statics */
+/* <<< part open_in_play_area_print_associated_text */
 
 /* >>> factory ZeroObjectPositionsAndToggleOAMCopy_Bank6 */
 void ZeroObjectPositionsAndToggleOAMCopy_Bank6(void)

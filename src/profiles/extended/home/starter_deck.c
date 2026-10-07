@@ -1,32 +1,19 @@
-/* >>> part includes */
-#include "home/starter_deck.h"
-#include "home/deck_selection.h"
-#include "home/duel.h"
-
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "generated/sram.h"
 #include "home/load_deck.h"
 #include "home/print_text.h"
 #include "home/switch_sram.h"
-
-#define PLAYER_TURN 0xc2u
-#define CHARMANDER_AND_FRIENDS_DECK 0x05u
-#define SQUIRTLE_AND_FRIENDS_DECK 0x07u
-#define BULBASAUR_AND_FRIENDS_DECK 0x09u
-
-static const uint8_t kStarterCardIDs[6] = {3u, 4u, 5u, 6u, 7u, 8u};
-
+/* <<< part includes_2 */
+/* --- factory CopyDeckNameAndCards */
+/* === part kStarterCardIDs */
+/* >>> part collection_slot */
 static uint16_t collection_slot(CardId id)
 {
 	return (uint16_t)(card_id_index_address(sCardCollection_ADDR,
 		(uint8_t)(id >> 1)) + (id & 1u));
 }
-
+/* <<< part collection_slot */
+/* >>> part store_deck_id_in_sram */
 static void store_deck_id_in_sram(uint8_t deck_id, uint16_t destination)
 {
 	if (LoadDeck(deck_id))
@@ -77,8 +64,7 @@ static void store_deck_id_in_sram(uint8_t deck_id, uint16_t destination)
 	}
 	DisableSRAM();
 }
-
-/* <<< factory statics */
+/* <<< part store_deck_id_in_sram */
 /* >>> factory InitSaveData */
 void InitSaveData(void)
 {
@@ -109,7 +95,6 @@ void InitSaveData(void)
 	DisableSRAM();
 }
 /* <<< factory InitSaveData */
-
 /* >>> factory _AddStarterDeck */
 void _AddStarterDeck(uint8_t a)
 {
@@ -137,3 +122,4 @@ void _AddStarterDeck(uint8_t a)
 	DisableSRAM();
 }
 /* <<< factory _AddStarterDeck */
+/* === factory StoreDeckIDInSRAM */

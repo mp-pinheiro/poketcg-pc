@@ -6,7 +6,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> factory statics */
+/* >>> part includes_2 */
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/legendary_articuno.h"
@@ -19,7 +19,7 @@
 #include "home/general.h"
 #include "home/hand_pokemon.h"
 #include "home/init.h"
-/* <<< factory statics */
+/* <<< part includes_2 */
 
 /* >>> factory ScoreLegendaryArticunoCards */
 void ScoreLegendaryArticunoCards(void)
