@@ -1,0 +1,5 @@
+dismiss
+press UP
+idle
+press A
+idle

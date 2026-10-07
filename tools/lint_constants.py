@@ -193,6 +193,7 @@ def matches(c_value: int, asm_value: int) -> bool:
 
 def normalized(name: str) -> str:
     stripped = re.sub(r"_(\d+|MAIN|ID|ADDR)$", "", name)
+    stripped = re.sub(r"^(EVENT|EV|W|H)_", "", stripped)
     return re.sub(r"[^a-z0-9]", "", stripped.lower())
 
 

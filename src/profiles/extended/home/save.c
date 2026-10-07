@@ -17,14 +17,14 @@
 
 static const uint8_t *mapper_entry(unsigned index)
 {
-	return rom_ptr(0x04, (uint16_t)(WRAM_TO_SRAM_MAPPER + index * 6u));
+	return rom_ptr(WRAMToSRAMMapper_BANK, (uint16_t)(WRAM_TO_SRAM_MAPPER + index * 6u));
 }
 
 /* Mapper sources are WRAM except for the four .EmptySRAMSlot entries ($556C), which
  * live in this file's own ROM bank. The asm reads them via the implicit code bank. */
 static uint8_t save_src_read8(uint16_t addr)
 {
-	return addr < 0x8000 ? *rom_ptr(0x04, addr) : gb_read8(addr);
+	return addr < 0x8000 ? *rom_ptr(WRAMToSRAMMapper_BANK, addr) : gb_read8(addr);
 }
 
 /* CopyGeneralSaveDataToSRAM:: save.asm:93-179 */
@@ -382,9 +382,9 @@ void _LoadGeneralSaveData(void)
  * via the code bank there -- a farcall target. Both are 2- and 1-byte records. */
 #define EVENT_VAR_MASKS EventVarMasks_ADDR
 #define MEDAL_EVENTS    MedalEvents_ADDR
-#define EV_ISHIHARA_MENT 0x1eu
-#define EV_LEGENDARY     0x22u
-#define EV_MEDAL_COUNT   0x2eu
+#define EV_ISHIHARA_MENT EVENT_ISHIHARAS_HOUSE_MENTIONED
+#define EV_LEGENDARY     EVENT_RECEIVED_LEGENDARY_CARDS
+#define EV_MEDAL_COUNT   EVENT_MEDAL_COUNT
 #define OWMAP_ISHIHARA   0x02u
 #define OWMAP_MYSTERY    0x0du
 #define OWMAP_MASON      0x01u
@@ -395,7 +395,7 @@ void _LoadGeneralSaveData(void)
  * mask in wLoadedEventBits, exactly as the asm leaves it for Get/SetEventValue. */
 static uint16_t get_event_var(uint8_t ev)
 {
-	const uint8_t *p = rom_ptr(0x03, (uint16_t)(EVENT_VAR_MASKS + (uint16_t)ev * 2u));
+	const uint8_t *p = rom_ptr(EventVarMasks_BANK, (uint16_t)(EVENT_VAR_MASKS + (uint16_t)ev * 2u));
 
 	gb_write8(wLoadedEventBits_ADDR, p[1]);
 	return (uint16_t)(wEventVars_ADDR + p[0]);
@@ -459,7 +459,7 @@ static void try_give_pc_pack(uint8_t id)
  * medal count, restored from a pushed copy after the grants. */
 static uint8_t try_give_medal_pc_packs(void)
 {
-	const uint8_t *events = rom_ptr(0x03, MEDAL_EVENTS);
+	const uint8_t *events = rom_ptr(MedalEvents_BANK, MEDAL_EVENTS);
 	uint8_t count = 0;
 	int i;
 

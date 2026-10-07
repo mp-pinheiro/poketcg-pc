@@ -31,11 +31,11 @@ static void load_tx_ram2(uint16_t text_id)
 
 
 
-#define TRAINER_TO_PKMN_DATA 0x6db9u /* bank 1 */
+#define TRAINER_TO_PKMN_DATA ConvertSpecialTrainerCardToPokemon__trainer_to_pkmn_data_ADDR
 
 static const uint8_t *trainer_to_pkmn_data(void)
 {
-	return rom_ptr(1u, TRAINER_TO_PKMN_DATA);
+	return rom_ptr(ConvertSpecialTrainerCardToPokemon__trainer_to_pkmn_data_BANK, TRAINER_TO_PKMN_DATA);
 }
 
 /* core.asm:7123-7163. Entry: a = deck index (a duelvar offset), hl = wLoadedCard*

@@ -3,7 +3,7 @@
   "default": "vanilla",
   "profiles": {
     "vanilla": {
-      "title": "Pokémon TCG",
+      "title": "Pok\u00e9mon TCG",
       "source": {
         "repository": "https://github.com/pret/poketcg.git",
         "checkout": "poketcg",
@@ -51,7 +51,7 @@
       }
     },
     "extended": {
-      "title": "Pokémon TCG Extended",
+      "title": "Pok\u00e9mon TCG Extended",
       "source": {
         "repository": "https://github.com/ElectroDeoxys/Pokemon-TCG-Extended.git",
         "checkout": "poketcg-extended",
@@ -70,6 +70,7 @@
         "default_build_dir": "build-extended",
         "overlay_root": "src/profiles/extended",
         "removed_basenames": [
+          "audio_callback",
           "battle_center",
           "card_pop",
           "clear_saved_duel",

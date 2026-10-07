@@ -600,6 +600,7 @@ class Core:
         library.gambatte_newstateload.restype = ctypes.c_int
         if not library.gambatte_newstateload(self.core, blob, len(blob)):
             raise RefstreamError("gambatte_newstateload failed")
+        self._cartridge_started = True
 
     def save_checkpoint(self) -> None:
         assert self.checkpoint_dir is not None

@@ -32,7 +32,7 @@ DuelInitResult Duel_Init(uint8_t f)
 
 	DisableLCD();
 	(void)InitMenuScreen();
-	wTextBoxFrameType = 4u;
+	wTextBoxFrameType = 1u;
 
 	uint16_t box = 0u;
 	DrawRegularTextBox(&box, 0u, 20u, 6u, 0u, 12u);

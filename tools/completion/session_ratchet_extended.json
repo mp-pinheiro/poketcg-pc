@@ -4,5 +4,11 @@
   },
   "new-game": {
     "confirmed_ordinal": 5891
+  },
+  "practice-begin": {
+    "confirmed_ordinal": 8600
+  },
+  "practice-start": {
+    "confirmed_ordinal": 7153
   }
 }

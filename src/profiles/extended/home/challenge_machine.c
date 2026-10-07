@@ -357,7 +357,7 @@ ChallengeMachineInitializeResult ChallengeMachine_Initialize(void)
 			gb_write8(hl++, 0u);
 			c--;
 		}
-		const uint8_t *text = rom_ptr(0x04u, ChallengeMachine_DrMasonText_ADDR);
+		const uint8_t *text = rom_ptr(ChallengeMachine_DrMasonText_BANK, ChallengeMachine_DrMasonText_ADDR);
 		for (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)
 			gb_write8((uint16_t)(sChallengeMachineRecordHolderName_ADDR + i), text[i]);
 		gb_write8(sMaximumConsecutiveWins_ADDR, 1u);

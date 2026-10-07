@@ -1882,16 +1882,27 @@ def deck_cards(deck_id: int) -> list[int]:
     cursor = base + (pointer - 0x4000)
     cards: list[int] = []
     while rom[cursor] != 0:
-        cards.extend([rom[cursor + 1]] * rom[cursor])
-        cursor += 2
+        card = rom[cursor + 1] | (rom[cursor + 2] << 8 if DECK_ENTRY_BYTES == 2 else 0)
+        cards.extend([card] * rom[cursor])
+        cursor += 1 + DECK_ENTRY_BYTES
     # ReshuffleDeck lists 63 cards (data/decks.asm:1823) and CopyDeckData
     # writes every one of them past the 60-card array, so a longer list is
     # written whole; a shorter one is the incomplete deck LoadDeck rejects.
     if len(cards) < DECK_SIZE:
         raise SessionError(f"deck id {deck_id} expands to {len(cards)} cards")
     return cards
-WRAM = {"wDuelTurns": 0x0C06, "wDuelFinished": 0x0C07}
+WRAM = {name: symbol_address(PROFILE, name, ROOT)[1] - 0xC000 for name in ("wDuelTurns", "wDuelFinished")}
+DECK_ENTRY_BYTES = 2 if PROFILE.name == "extended" else 1
 AI_DUEL_MAX_ORDINALS = 80_000
+
+
+def deck_pokes(base: int, cards: list[int]) -> list[tuple[int, int]]:
+    writes = []
+    for index, card in enumerate(cards):
+        writes.append((base + index * DECK_ENTRY_BYTES, card & 0xFF))
+        if DECK_ENTRY_BYTES == 2:
+            writes.append((base + index * 2 + 1, card >> 8))
+    return writes
 
 
 def load_cards(path: Path) -> list[int]:
@@ -1903,7 +1914,7 @@ def load_cards(path: Path) -> list[int]:
 
 
 DRAW_CARD_FROM_DECK = profile_symbol("DrawCardFromDeck", (0, 0x10CF))[1]
-PLAYER_DECK_CARDS = 0x027E
+PLAYER_DECK_CARDS = symbol_address(PROFILE, "wPlayerDeckCards", ROOT)[1] - 0xC000
 PLAYER_TURN = 0xC2
 ARRANGE_WINDOW = 4000
 
@@ -1967,7 +1978,7 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
         for position, index in enumerate(order):
             arranged[index] = cards[position]
         player_cards = arranged
-    pokes[at].extend((AI_DUEL["wPlayerDeck"] + index, card) for index, card in enumerate(player_cards))
+    pokes[at].extend(deck_pokes(AI_DUEL["wPlayerDeck"], player_cards))
     finished_at: int | None = None
     turns = 0
     end = len(masks)
@@ -2044,12 +2055,11 @@ def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goa
     pokes.setdefault(at - 1, []).append((AI_DUEL["wNPCDuelDeckID"], deck))
     pokes.setdefault(at, []).extend([(AI_DUEL["wOpponentDuelistType"], kind), (AI_DUEL["wDuelType"], 0),
                                      (AI_DUEL["wOpponentDeckID"], deck), (AI_DUEL["wIsPracticeDuel"], 0)])
-    pokes[at].extend((AI_DUEL["wPlayerDeck"] + index, card) for index, card in enumerate(cards))
+    pokes[at].extend(deck_pokes(AI_DUEL["wPlayerDeck"], cards))
     if opponent_cards:
         if len(opponent_cards) != DECK_SIZE:
             raise SessionError(f"--opponent-cards needs {DECK_SIZE} card ids")
-        pokes[at].extend((AI_DUEL["wOpponentDeck"] + index, card)
-                         for index, card in enumerate(opponent_cards))
+        pokes[at].extend(deck_pokes(AI_DUEL["wOpponentDeck"], opponent_cards))
     if discard:
         import effects
 
@@ -2124,8 +2134,8 @@ DUEL_BOARD = {"locations": 0x00, "not_in_deck": 0xBA, "arena_card": 0xBB, "arena
               "arena_hp": 0xC8, "arena_stage": 0xCE, "in_play_area": 0xEF, "cards_in_hand": 0xEE,
               "cards_in_discard": 0xED, "arena_status": 0xF0, "bench": 0xBC,
               "bench_hp": 0xC9, "bench_stage": 0xCF}
-PLAYER_DUEL_VARS = 0xC200
-OPPONENT_DUEL_VARS = 0xC300
+PLAYER_DUEL_VARS = symbol_address(PROFILE, "wPlayerDuelVariables", ROOT)[1]
+OPPONENT_DUEL_VARS = symbol_address(PROFILE, "wOpponentDuelVariables", ROOT)[1]
 CARD_LOCATION_ARENA = 0x10
 CARD_LOCATION_BENCH_1 = 0x11
 CARD_LOCATION_HAND = 0x01
