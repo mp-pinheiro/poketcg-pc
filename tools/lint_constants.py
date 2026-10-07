@@ -193,8 +193,13 @@ def matches(c_value: int, asm_value: int) -> bool:
 
 def normalized(name: str) -> str:
     stripped = re.sub(r"_(\d+|MAIN|ID|ADDR)$", "", name)
-    stripped = re.sub(r"^(EVENT|EV|W|H)_", "", stripped)
+    stripped = re.sub(r"^(EVENT|EV|TX|W|H)_", "", stripped)
     return re.sub(r"[^a-z0-9]", "", stripped.lower())
+
+
+def is_subsequence(short: str, long: str) -> bool:
+    remaining = iter(long)
+    return all(character in remaining for character in short)
 
 
 def stale_vanilla_literals(defines: dict[str, list[tuple[Path, int, int]]], constants: dict[str, int],
@@ -223,7 +228,8 @@ def stale_vanilla_literals(defines: dict[str, list[tuple[Path, int, int]]], cons
         for path, number, value in defines[define]:
             for name, kind in by_value.get(value, ()):
                 candidate = normalized(name)
-                if candidate == wanted or candidate in wanted or wanted in candidate:
+                if (candidate == wanted or candidate in wanted or wanted in candidate
+                        or (kind == "text id" and len(wanted) >= 6 and is_subsequence(wanted, candidate))):
                     suspects.append((define, path, number, value, name, kind))
                     break
     profile_values = asm_values(sorted({name for _, _, _, _, name, kind in suspects if kind == "constant"}))

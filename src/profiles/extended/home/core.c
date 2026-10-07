@@ -37,13 +37,13 @@
 #define DUELVARS_ARENA_CARD_LAST_TURN_STATUS 0xF5u
 
 #define FLAG_Z 0x80u
-#define TX_COIN_TOSS 0x0075u
-#define TX_IF_HEADS 0x0074u
-#define TX_NEITHER_BASIC 0x006Bu
-#define TX_PLACING_PRIZES 0x0072u
-#define TX_PLACE_PRIZES 0x0073u
-#define TX_YOU_PLAY_FIRST 0x0053u
-#define TX_YOU_PLAY_SECOND 0x0054u
+#define TX_COIN_TOSS CoinTossToDecideWhoPlaysFirstText
+#define TX_IF_HEADS IfHeadsDuelistPlaysFirstText
+#define TX_NEITHER_BASIC NeitherPlayerHasBasicPkmnText
+#define TX_PLACING_PRIZES PlacingThePrizesText
+#define TX_PLACE_PRIZES PleasePlacePrizesText
+#define TX_YOU_PLAY_FIRST YouPlayFirstText
+#define TX_YOU_PLAY_SECOND YouPlaySecondText
 #define FLAG_C 0x10u
 
 #include "generated/wram.h"
