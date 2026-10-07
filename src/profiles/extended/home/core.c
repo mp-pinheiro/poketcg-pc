@@ -2929,7 +2929,7 @@ void SetCardPalette(uint8_t a)
 	uint16_t src = wCardPalette_ADDR;
 	uint8_t offset = (uint8_t)(a * PAL_SIZE);
 	uint16_t dst = (uint16_t)(wBackgroundPalettesCGB_ADDR + offset);
-	for (uint8_t i = 0u; i < 3u; i++)
+	for (uint8_t i = 0u; i < 3u * PAL_SIZE; i++)
 		gb_write8(dst++, gb_read8(src++));
 	for (uint8_t i = 0u; i < 0x30u; i++) {
 		uint16_t addr = (uint16_t)(wCardAttrMap_ADDR + i);
