@@ -487,7 +487,7 @@ void SetCardListHeaderText(uint16_t de, uint16_t hl);
 /* <<< factory SetCardListHeaderText */
 /* >>> factory AIAttachEnergyInHandToCardInPlayArea */
 typedef struct { uint8_t a; uint8_t f; } AIAttachEnergyInHandToCardInPlayAreaResult;
-AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(uint8_t d, uint8_t e);
+AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(CardId bc, CardId de);
 /* <<< factory AIAttachEnergyInHandToCardInPlayArea */
 /* >>> factory GoToPreviousCardPage */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; } CardPageNavigationResult;

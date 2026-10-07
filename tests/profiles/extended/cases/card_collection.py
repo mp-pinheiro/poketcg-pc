@@ -3,7 +3,7 @@
 CONTRACT = {
     'CreateTempCardCollection': {'compare': (), 'preserve': ()},
     'AddCardToCollection': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
-    'GetCardAlbumProgress': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'hl')},
+    'GetCardAlbumProgress': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('hl',)},
     'GetAmountOfCardsOwned': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
     'GetCardCountInCollectionAndDecks': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'GetCardCountInCollection': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},

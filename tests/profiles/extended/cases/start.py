@@ -231,15 +231,9 @@ CASES = {
             'cycle_budget': 0x5F5E100},
     ],
     'HandleTitleScreen': [
-        {   'oracle': False,
-            'evidence': 'primary',
-            'why': "The bounded opening prefix stops before PlayIntroSequence's frame-driven intro, "
-                   'after stopping music and enabling sprite animations.',
+        {   'completion': {'mode': 'entry', 'pc': 0x51FD, 'bank': 0x07, 'routine': 'PlayIntroSequence'},
             'wram': {0xD614: b'\x01', 0xD7A4: b'\x7f'},
-            'read': {0xD7A4: 0x01},
-            'expect': {0xD7A4: b'\x00'},
-            'instruction_budget': 0x1E8480,
-            'cycle_budget': 0x7A1200},
+            'read': {0xD7A4: 0x01}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -247,25 +241,15 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': False,
-            'evidence': 'primary',
-            'why': 'The opening setup is independent of poisoned entry registers and still stops the '
-                   'current song before the intro call.',
+            'completion': {'mode': 'entry', 'pc': 0x51FD, 'bank': 0x07, 'routine': 'PlayIntroSequence'},
             'wram': {0xD614: b'\x01', 0xD7A4: b'\x7f'},
-            'read': {0xD7A4: 0x01},
-            'expect': {0xD7A4: b'\x00'},
-            'instruction_budget': 0x1E8480,
-            'cycle_budget': 0x7A1200},
+            'read': {0xD7A4: 0x01}},
     ],
     'Start': [
-        {   'oracle': False,
-            'evidence': 'primary',
-            'why': 'The boot prefix reaches the non-returning GameLoop jump after initializing the '
-                   'asserted wInitialA and tile-fill bytes.',
-            'a': 0x01,
+        {   'a': 0x01,
+            'completion': {'mode': 'entry', 'pc': 0x4000, 'bank': 0x01, 'routine': 'GameLoop'},
             'wram': {0xCAB3: b'\xff', 0xCAB6: b'\xff'},
             'read': {0xCAB3: 0x01, 0xCAB6: 0x01},
-            'expect': {0xCAB3: b'\x01', 0xCAB6: b' '},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
         {   'a': 0xAA,
@@ -275,13 +259,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': False,
-            'evidence': 'primary',
-            'why': 'Poisoned entry registers still reach the non-returning GameLoop jump after the '
-                   'asserted boot-prefix writes.',
+            'completion': {'mode': 'entry', 'pc': 0x4000, 'bank': 0x01, 'routine': 'GameLoop'},
             'wram': {0xCAB3: b'\xff', 0xCAB6: b'\xff'},
             'read': {0xCAB3: 0x01, 0xCAB6: 0x01},
-            'expect': {0xCAB3: b'\xaa', 0xCAB6: b' '},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
     ],
@@ -321,8 +301,8 @@ MUTATIONS = {
         'case_ids': ['DeleteSaveDataForNewGame-2'],
         'source': 'src/profiles/extended/home/start.c'},
     'HandleTitleScreen': {   'source_symbol': 'HandleTitleScreen',
-        'before': '\t\tPlaySong(MUSIC_STOP);\n\t\tEnableAndClearSpriteAnimations();\n\t\treturn;',
-        'after': '\t\tPlaySong(0x01u);\n\t\tEnableAndClearSpriteAnimations();\n\t\treturn;',
+        'before': '\t\tPlaySong(MUSIC_STOP);\n\t\tEnableAndClearSpriteAnimations();\n\t\tPlayIntroSequence();\n\t\treturn;',
+        'after': '\t\tPlaySong(0x01u);\n\t\tEnableAndClearSpriteAnimations();\n\t\tPlayIntroSequence();\n\t\treturn;',
         'case_ids': ['HandleTitleScreen-0', 'HandleTitleScreen-1'],
         'source': 'src/profiles/extended/home/start.c'},
     'Start': {   'source_symbol': 'Start',
@@ -334,3 +314,7 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _name, _entries in CASES.items():
+    for _index, _entry in enumerate(_entries):
+        if "completion" in _entry:
+            SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]

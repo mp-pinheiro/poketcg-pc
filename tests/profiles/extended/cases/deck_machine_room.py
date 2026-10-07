@@ -828,5 +828,29 @@ MUTATIONS = {
         'source': 'src/profiles/extended/home/deck_machine_room.c'},
 }
 
+_SCRIPT_VM_ROUTINES = (
+    'Script_da76',
+    'Script_da1c',
+    'Script_d9c2',
+    'Script_d9ef',
+    'Script_BeatAaron',
+    'Script_d93f',
+    'Script_d995',
+    'Script_da49',
+    'Script_daa3',
+)
+for _name in _SCRIPT_VM_ROUTINES:
+    for _index, _record in enumerate(CASES[_name]):
+        if _index == 0:
+            _record.pop('oracle', None)
+            _record.pop('why', None)
+            _record.pop('expect', None)
+            _record['evidence'] = 'primary'
+            _record['completion'] = {'mode': 'entry', 'pc': 0x4A76, 'bank': 3, 'routine': 'RST20'}
+        else:
+            _record['evidence'] = 'native-stress'
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _name in _SCRIPT_VM_ROUTINES:
+    SCHEMA2_CASES[_name][0]['completion'] = {'mode': 'pre-ret', 'pc': 0x4A76, 'bank': 3}

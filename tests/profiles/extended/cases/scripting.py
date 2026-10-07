@@ -16,7 +16,7 @@ CONTRACT = {
     'GetScriptArgs2AfterPointer': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
     'GetScriptArgs3AfterPointer': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
     'SetScriptControlBytePass': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('f', 'b', 'c', 'd', 'e', 'hl')},
-    'ScriptCommand_JumpIfCardInCollection': {'compare': ('a', 'f', 'b', 'c', 'd', 'e'), 'preserve': ('d', 'e')},
+    'ScriptCommand_JumpIfCardInCollection': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
     'ScriptCommand_GiveCard': {'compare': ('a', 'f', 'c'), 'preserve': ()},
     'ScriptCommand_TakeCard': {'compare': ('a', 'f', 'c'), 'preserve': ()},
     'ScriptCommand_PauseSong': {'compare': ('a', 'f', 'c'), 'preserve': ()},
@@ -36,7 +36,7 @@ CONTRACT = {
     'ScriptCommand_LoadCurrentMapNameIntoTxRamSlot': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
     'ScriptCommand_EnterMap': {'compare': ('a', 'f', 'c', 'b', 'd', 'e'), 'preserve': ('b', 'd', 'e')},
     'GetScriptArgs1AfterPointer': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
-    'SetNextScript': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
+    'SetNextScript': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
     'SetEventValue': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'MaxOutEventValue': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'ZeroOutEventValue': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
@@ -48,8 +48,8 @@ CONTRACT = {
     'ScriptCommand_TryGivePCPack': {'compare': ('a', 'f', 'c'), 'preserve': ()},
     'ScriptCommand_SetActiveNPCCoords': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
     'ScriptCommand_JumpIfEnoughCardsOwned': {'compare': ('a', 'f', 'b', 'c', 'd', 'e'), 'preserve': ('d', 'e')},
-    'ScriptCommand_RemoveAllEnergyCardsFromCollection': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'd', 'e', 'hl')},
-    'ScriptCommand_JumpIfAnyEnergyCardsInCollection': {'compare': ('a', 'f', 'b', 'c', 'd', 'e'), 'preserve': ('d', 'e')},
+    'ScriptCommand_RemoveAllEnergyCardsFromCollection': {'compare': ('a', 'f', 'c'), 'preserve': ()},
+    'ScriptCommand_JumpIfAnyEnergyCardsInCollection': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
     'ScriptCommand_JumpBasedOnFightingClubPupilStatus': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'e')},
     'GetEventValue': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'GetEventValueBC': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
@@ -67,7 +67,7 @@ CONTRACT = {
     'wram_out': True},
     'ExecuteNPCMovement': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
     'Func_cdd1': {'compare': ('a', 'f', 'c'), 'preserve': ()},
-    'ScriptCommand_JumpIfCardOwned': {'compare': ('a', 'f', 'b', 'c', 'd', 'e'), 'preserve': ('d', 'e')},
+    'ScriptCommand_JumpIfCardOwned': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
     'ScriptCommand_WaitForSongToFinish': {'compare': ('a', 'f', 'c'), 'preserve': ()},
     'ScriptCommand_SaveGame': {'compare': ('a', 'f', 'c'), 'preserve': ()},
     'ScriptCommand_MoveActiveNPC': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
@@ -149,8 +149,8 @@ CONTRACT = {
     'Func_c9bc': {'compare': ('f',), 'preserve': ()},
     'ScriptCommand_PrintTextForChallengeCup': {'compare': ('a', 'f', 'c'), 'preserve': ()},
     'ScriptCommand_PickNextMan1RequestedCard': {'compare': ('a', 'f', 'c'), 'preserve': (), 'wram_out': True},
-    'ScriptCommand_JumpIfMan1RequestedCardOwned': {'compare': ('a', 'f', 'b', 'c', 'd', 'e'), 'preserve': ('d', 'e')},
-    'ScriptCommand_JumpIfMan1RequestedCardInCollection': {'compare': ('a', 'f', 'b', 'c', 'd', 'e'), 'preserve': ('d', 'e')},
+    'ScriptCommand_JumpIfMan1RequestedCardOwned': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
+    'ScriptCommand_JumpIfMan1RequestedCardInCollection': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
     'ScriptCommand_RemoveMan1RequestedCardFromCollection': {'compare': ('a', 'f', 'c'), 'preserve': ()},
     'ScriptCommand_PickChallengeCupPrizeCard': {'compare': ('a', 'f', 'c'), 'preserve': (), 'wram_out': True},
     'ScriptCommand_PickLegendaryCard': {'compare': ('a', 'f', 'c'), 'preserve': (), 'wram_out': True},
@@ -4988,7 +4988,23 @@ MUTATIONS = {
         'source': 'src/profiles/extended/home/scripting.c'},
 }
 
+_PRIMARY_ENTRY_COMPLETIONS = {
+    'ScriptCommand_GiveOneOfEachTrainerBooster': {'mode': 'entry', 'pc': 0x428A, 'bank': 3, 'routine': 'Func_c2a3'},
+    'ScriptCommand_ShowCardReceivedScreen': {'mode': 'entry', 'pc': 0x428A, 'bank': 3, 'routine': 'Func_c2a3'},
+    'ScriptCommand_ShowMedalReceivedScreen': {'mode': 'entry', 'pc': 0x428A, 'bank': 3, 'routine': 'Func_c2a3'},
+    'ScriptCommand_GiveBoosterPacks': {'mode': 'entry', 'pc': 0x428A, 'bank': 3, 'routine': 'Func_c2a3'},
+}
+for _name, _completion in _PRIMARY_ENTRY_COMPLETIONS.items():
+    _record = CASES[_name][0]
+    _record.pop('oracle', None)
+    _record.pop('why', None)
+    _record.pop('expect', None)
+    _record['evidence'] = 'primary'
+    _record['completion'] = _completion
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _name, _completion in _PRIMARY_ENTRY_COMPLETIONS.items():
+    SCHEMA2_CASES[_name][0]['completion'] = _completion
 for _record in SCHEMA2_CASES["ShowMultichoiceTextbox"][:3]:
     _record["completion"] = {"mode": "entry", "pc": 0x422F, "bank": 3, "routine": "Func_c241"}

@@ -88,14 +88,10 @@ CASES = {
             'sread': {0x00: {0xA100: 0x20}}},
     ],
     'GameLoop': [
-        {   'oracle': False,
-            'evidence': 'primary',
-            'why': "The setup reaches the non-returning _GameLoop dispatch; the live oracle cannot "
-                   'return from this routine under the no-button case.',
-            'wram': {0xFF90: b'\x00', 0xCE0D: b'\xff', 0xCCA0: b'\xff', 0xCCBB: b'\xff'},
+        {   'completion': {'mode': 'entry', 'pc': 0x666C, 'bank': 0x04, 'routine': '_GameLoop'},
+            'wram': {0xCAB4: b'\x02', 0xFF90: b'\x00', 0xCE0D: b'\xff', 0xCCA0: b'\xff', 0xCCBB: b'\xff'},
             'sram': {0x00: {0xA006: b'\x02', 0xA009: b'\x01'}},
             'read': {0xCE0D: 0x01, 0xCCA0: 0x01, 0xCCBB: 0x01},
-            'expect': {0xCE0D: b'\x02', 0xCCA0: b'\x01', 0xCCBB: b'\x01'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
         {   'a': 0xAA,
@@ -105,14 +101,10 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': False,
-            'evidence': 'primary',
-            'why': 'Poisoned entry registers do not change the setup, which reaches the non-returning '
-                   '_GameLoop dispatch before the oracle can return.',
-            'wram': {0xFF90: b'\x00', 0xCE0D: b'\xff', 0xCCA0: b'\xff', 0xCCBB: b'\xff'},
+            'completion': {'mode': 'entry', 'pc': 0x666C, 'bank': 0x04, 'routine': '_GameLoop'},
+            'wram': {0xCAB4: b'\x02', 0xFF90: b'\x00', 0xCE0D: b'\xff', 0xCCA0: b'\xff', 0xCCBB: b'\xff'},
             'sram': {0x00: {0xA006: b'\x06', 0xA009: b'\x00'}},
             'read': {0xCE0D: 0x01, 0xCCA0: 0x01, 0xCCBB: 0x01},
-            'expect': {0xCE0D: b'\x06', 0xCCA0: b'\x00', 0xCCBB: b'\x01'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
     ],
@@ -138,3 +130,7 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _name, _entries in CASES.items():
+    for _index, _entry in enumerate(_entries):
+        if "completion" in _entry:
+            SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]

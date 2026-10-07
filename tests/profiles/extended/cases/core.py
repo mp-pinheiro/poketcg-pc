@@ -14,9 +14,14 @@ def _attack_animation_case(regs):
     case.update(regs)
     case["read"][0xCC00] = 0xBD
     case["read"][0xCCBE] = 0x42
-    case["oracle"] = False
-    case["why"] = "The attack animation's live reference waits for its frame-driven queue and never reaches the isolated return."
     case["expect"] = {0xCB8F: b"\x01"}
+    if regs is _ATTACK_ANIMATION.regs:
+        case["oracle"] = True
+        case["completion"] = {"mode": "entry", "pc": 0x10B7, "bank": 0x00,
+                              "routine": "PlayAttackAnimation_DealAttackDamage"}
+    else:
+        case["oracle"] = False
+        case["why"] = "The attack animation's live reference waits for its frame-driven queue and never reaches the isolated return."
     case["expect_regs"] = {name: case.get(name, 0) for name in ("a", "f", "b", "c", "d", "e", "hl")}
     return case
 
@@ -59,7 +64,7 @@ CONTRACT = {
     'PlayBufferedDuelAnimations': {'compare': ('a', 'f', 'b', 'c', 'hl'), 'preserve': ('b', 'c', 'hl')},
     'ReturnWrongAction': {'compare': ('a', 'b', 'c', 'd', 'e', 'f', 'hl'), 'preserve': ('a', 'b', 'c', 'd', 'e', 'hl')},
     'CopyListWithFFTerminatorFromHLToDE_Bank5': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c')},
-    'CheckEnergyFlagsNeededInList': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ('b', 'c')},
+    'CheckEnergyFlagsNeededInList': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ('b',)},
     'CardPageSwitch_EnergyEnd': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'CardPageSwitch_0c': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'PrintPlayAreaCardAttachedEnergies': {'compare': (), 'preserve': ()},
@@ -166,7 +171,7 @@ CONTRACT = {
     'PrintOpponentNumberOfHandAndDeckCards': {'compare': (), 'preserve': ()},
     'PrintPlayerNumberOfHandAndDeckCards': {'compare': (), 'preserve': ()},
     'PrintDuelResultStats': {'compare': (), 'preserve': ()},
-    'ConvertColorToEnergyCardID': {'compare': ('a', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
+    'ConvertColorToEnergyCardID': {'compare': ('a', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'hl')},
     'PrintPracticeDuelNumberedInstruction': {'compare': ('hl',), 'preserve': ()},
     'PrintNextPracticeDuelInstruction': {'compare': (), 'preserve': (), 'hram_out': True},
     'GoToFirstOrNextCardPage': {'compare': ('a', 'f'), 'preserve': ()},
@@ -6176,7 +6181,9 @@ CASES = {
                         0xCCB3: 0x02,
                         0xCCB6: 0x01,
                         0xCCB8: 0x01},
-            'vread': {0x00: {0x8000: 0x1000, 0x9000: 0x0800, 0x9800: 0x0400}, 0x01: {0x9800: 0x0400}}},
+            'vread': {0x00: {0x8000: 0x1000, 0x9000: 0x0800, 0x9800: 0x0400}, 0x01: {0x9800: 0x0400}},
+            'instruction_budget': 0x1312D00,
+            'cycle_budget': 0x4C4B400},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -6193,7 +6200,9 @@ CASES = {
                         0xCCB3: 0x02,
                         0xCCB6: 0x01,
                         0xCCB8: 0x01},
-            'vread': {0x00: {0x8000: 0x1000, 0x9000: 0x0800, 0x9800: 0x0400}, 0x01: {0x9800: 0x0400}}},
+            'vread': {0x00: {0x8000: 0x1000, 0x9000: 0x0800, 0x9800: 0x0400}, 0x01: {0x9800: 0x0400}},
+            'instruction_budget': 0x1312D00,
+            'cycle_budget': 0x4C4B400},
     ],
     'PrintNextPracticeDuelInstruction': [
         {   'wram': {0xCBAB: b'\x00\xc5', 0xCB78: b'\x00', 0xC4F0: b'\x00'},
@@ -20668,9 +20677,8 @@ CASES = {
     ],
     'StartDuel_VSAIOpp': [
         {   'entry_sp': 0xDCBE,
-            'oracle': False,
-            'why': 'StartDuel_VSAIOpp enters MainDuelLoop and never reaches an isolated return under the live oracle.',
-            'expect': {},
+            'oracle': True,
+            'completion': {'mode': 'entry', 'pc': 0x4AE7, 'bank': 0x01, 'routine': 'HandleDuelSetup'},
             'keys': [0x00, 0x01],
             'wram': {   0xCBC3: b'\x06',
                         0xCBC5: b'\x01',
@@ -27745,7 +27753,9 @@ CASES = {
             'hl': 0x00},
     ],
     'OppAction_PlayAttackAnimationDealAttackDamage': [
-        {   'wram': {   0xC000: b'\x05\x18p\x06Dr. Mason\x07p\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05'
+        {   'oracle': True,
+            'completion': {'mode': 'entry', 'pc': 0x10B7, 'bank': 0x00, 'routine': 'PlayAttackAnimation_DealAttackDamage'},
+            'wram': {   0xC000: b'\x05\x18p\x06Dr. Mason\x07p\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05'
                                 b'\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x19\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -29937,18 +29947,10 @@ MUTATIONS = {
                         'SetCardListHeaderText-2'],
         'source': 'src/profiles/extended/home/core.c'},
     'AIAttachEnergyInHandToCardInPlayArea': {   'source_symbol': 'AIAttachEnergyInHandToCardInPlayArea',
-        'before': '\tLookResult location = LookForCardIDInPlayArea_Bank5(d, PLAY_AREA_ARENA);\n'
-                  '\thTempPlayAreaLocation_ffa1 = location.a;\n'
-                  '\thTemp_ffa0 = energy;\n'
-                  '\tAIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, '
-                  '0u, 0u);\n'
-                  '\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};',
-        'after': '\tLookResult location = LookForCardIDInPlayArea_Bank5(e, PLAY_AREA_ARENA);\n'
-                 '\thTempPlayAreaLocation_ffa1 = location.a;\n'
-                 '\thTemp_ffa0 = energy;\n'
-                 '\tAIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, '
-                 '0u, 0u);\n'
-                 '\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};',
+        'before': '\tif ((hand.f & 0x10u) == 0u)\n'
+                  '\t\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){hand.a, hand.f};',
+        'after': '\tif ((hand.f & 0x10u) != 0u)\n'
+                 '\t\treturn (AIAttachEnergyInHandToCardInPlayAreaResult){hand.a, hand.f};',
         'case_ids': ['AIAttachEnergyInHandToCardInPlayArea-0'],
         'source': 'src/profiles/extended/home/core.c'},
     'GoToPreviousCardPage': {   'source_symbol': 'GoToPreviousCardPage',
@@ -31695,6 +31697,17 @@ _CARD_LIST_RELOAD_CASE["wram"][0xFF91] = b"\x00"
 _CARD_LIST_RELOAD_CASE["wram"][0xFF8E] = b"\x80"
 _CARD_LIST_RELOAD_CASE["vread"] = {0x01: {0x998C + 0x20 * row: 8 for row in range(6)}}
 CASES["CardListFunction"].append(_CARD_LIST_RELOAD_CASE)
+
+for _name, _indices in {
+    "AIAttachEnergyInHandToCardInPlayArea": (0,),
+    "DisplayPlayAreaScreenToUsePkmnPower": (2,),
+    "HandleBetweenTurnsEvents": (1,),
+    "HandleDestinyBondAndBetweenTurnKnockOuts": (1,),
+    "PrintAttackOrPkmnPowerInformation": (0,),
+}.items():
+    for _index in _indices:
+        CASES[_name][_index].get("wram", {}).pop(0x8000, None)
+CASES["PlayDeckShuffleAnimation"][2].get("wram", {}).pop(0xFFA9, None)
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

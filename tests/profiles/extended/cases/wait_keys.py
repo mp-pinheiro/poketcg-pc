@@ -38,7 +38,6 @@ CASES = {
             'wram': {0xFF90: b'\x03', 0xFF91: b'\x01'},
             'read': {0xFF91: 0x01}},
         {   'oracle': False,
-            'evidence': 'primary',
             'why': 'The poisoned scratch-world case overlaps the synthesized oracle call frame.',
             'expect': {},
             'wram': {   0xC000: b'\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0'

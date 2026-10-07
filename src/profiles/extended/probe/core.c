@@ -1018,7 +1018,9 @@ static void adapt_SetCardListHeaderText(ProbeState *s)
 /* >>> factory AIAttachEnergyInHandToCardInPlayArea */
 static void adapt_AIAttachEnergyInHandToCardInPlayArea(ProbeState *s)
 {
-	AIAttachEnergyInHandToCardInPlayAreaResult r = AIAttachEnergyInHandToCardInPlayArea(s->d, s->e);
+	AIAttachEnergyInHandToCardInPlayAreaResult r = AIAttachEnergyInHandToCardInPlayArea(
+		(uint16_t)(((uint16_t)s->b << 8) | s->c),
+		(uint16_t)(((uint16_t)s->d << 8) | s->e));
 	s->a = r.a;
 	s->f = r.f;
 }

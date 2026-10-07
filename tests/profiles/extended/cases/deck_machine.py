@@ -5767,5 +5767,25 @@ MUTATIONS = {
         'source': 'src/profiles/extended/home/deck_machine.c'},
 }
 
+for _index, _record in enumerate(CASES['HandleDeckMissingCardsList']):
+    if _index == 0:
+        _record.pop('oracle', None)
+        _record.pop('why', None)
+        _record.pop('expect', None)
+        _record['entry_sp'] = 0xDFE4
+        _record['compare'] = ()
+        _record['evidence'] = 'primary'
+        _record['completion'] = {'mode': 'entry', 'pc': 0x04CA, 'bank': 0,
+                                 'routine': 'DoFrame'}
+    else:
+        _record['evidence'] = 'native-stress'
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES['HandleDeckMissingCardsList'][0]['completion'] = {
+    'mode': 'entry',
+    'pc': 0x04CA,
+    'bank': 0,
+    'routine': 'DoFrame',
+}
+SCHEMA2_CASES['HandleDeckMissingCardsList'][0]['compare'] = ()

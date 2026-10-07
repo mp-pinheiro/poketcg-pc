@@ -9,14 +9,9 @@ CONTRACT = {
 
 CASES = {
     'MainMenu_NewGame': [
-        {   'oracle': False,
-            'evidence': 'primary',
-            'why': 'The bounded pre-ret contract stops immediately after the setup callee, before the '
-                   'naming and portrait frame-driven screens; Func_c1b1 still establishes the new-game '
-                   'overworld state.',
+        {   'completion': {'mode': 'entry', 'pc': 0x6752, 'bank': 0x04, 'routine': 'DisplayPlayerNamingScreen'},
             'wram': {0xD0A8: b'\xff'},
             'read': {0xD0A8: 0x01},
-            'expect': {0xD0A8: b'\x00'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
         {   'a': 0xAA,
@@ -26,24 +21,16 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': False,
-            'evidence': 'primary',
-            'why': 'The setup prefix must establish the new-game overworld state before the bounded '
-                   'cutpoint even with poisoned entry registers.',
+            'completion': {'mode': 'entry', 'pc': 0x6752, 'bank': 0x04, 'routine': 'DisplayPlayerNamingScreen'},
             'wram': {0xD0A8: b'\xff'},
             'read': {0xD0A8: 0x01},
-            'expect': {0xD0A8: b'\x00'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
     ],
     'MainMenu_ContinueFromDiary': [
-        {   'oracle': False,
-            'evidence': 'primary',
-            'why': 'The bounded prefix ends immediately after the routine stops the current song, '
-                   'before backup validation and the downstream diary transition.',
+        {   'completion': {'mode': 'entry', 'pc': 0x6699, 'bank': 0x04, 'routine': 'MainMenu_NewGame'},
             'wram': {0xD7A4: b'\x80'},
             'read': {0xD7A4: 0x01},
-            'expect': {0xD7A4: b'\x00'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
         {   'a': 0xAA,
@@ -53,13 +40,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': False,
-            'evidence': 'primary',
-            'why': 'The song-stop prefix must write the stopped song ID even with poisoned entry '
-                   'registers.',
+            'completion': {'mode': 'entry', 'pc': 0x6699, 'bank': 0x04, 'routine': 'MainMenu_NewGame'},
             'wram': {0xD7A4: b'\x80'},
             'read': {0xD7A4: 0x01},
-            'expect': {0xD7A4: b'\x00'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
     ],
@@ -90,14 +73,9 @@ CASES = {
             'cycle_budget': 0x4C4B400},
     ],
     '_GameLoop': [
-        {   'oracle': False,
-            'evidence': 'primary',
-            'why': 'The bounded opening prefix clears object positions, advances the OAM-copy toggle, '
-                   'and initializes the previous start-menu item before the non-returning title/menu '
-                   'dispatch.',
+        {   'completion': {'mode': 'entry', 'pc': 0x4F8D, 'bank': 0x07, 'routine': 'HandleTitleScreen'},
             'wram': {0xCAC0: b'\x00', 0xD614: b'\x00'},
             'read': {0xCAC0: 0x01, 0xD614: 0x01},
-            'expect': {0xCAC0: b'\x01', 0xD614: b'\xff'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
         {   'a': 0xAA,
@@ -107,13 +85,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': False,
-            'evidence': 'primary',
-            'why': 'The bounded opening prefix performs the same state initialization with poisoned '
-                   'entry registers before the game-loop dispatch.',
+            'completion': {'mode': 'entry', 'pc': 0x4F8D, 'bank': 0x07, 'routine': 'HandleTitleScreen'},
             'wram': {0xCAC0: b'\xff', 0xD614: b'\x00'},
             'read': {0xCAC0: 0x01, 0xD614: 0x01},
-            'expect': {0xCAC0: b'\x00', 0xD614: b'\xff'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
     ],
@@ -147,3 +121,7 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 for _record in SCHEMA2_CASES["MainMenu_ContinueDuel"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x66FE, "bank": 4}
+for _name, _entries in CASES.items():
+    for _index, _entry in enumerate(_entries):
+        if "completion" in _entry:
+            SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]

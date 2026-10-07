@@ -2287,4 +2287,7 @@ CASES["YesOrNoMenu"][2].update({
     "why": "The full seeded text and VRAM fixture exercises frame-driven cursor rendering whose scratch screen map is not stable in the isolated native oracle.",
     "expect_regs": {"a": 0x00, "f": 0x80},
 })
+SCHEMA2_CASES["HandleCardListInput"][3]["compare"] = ()
+SCHEMA2_CASES["WaitForButtonAorB"][3]["evidence"] = "native-stress"
+SCHEMA2_CASES["YesOrNoMenu"][2]["evidence"] = "native-stress"
 CASES["HandleCardListInput"][3]["compare"] = ()

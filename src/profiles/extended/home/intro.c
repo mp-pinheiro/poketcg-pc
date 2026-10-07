@@ -77,6 +77,7 @@ void PlayIntroSequence(void)
 	wSequenceDelay = 0u;
 	(void)FlashWhiteScreen();
 	if (!frame_boundary_is_installed()) {
+		DoFrameIfLCDEnabled();
 		EnableLCD();
 		return;
 	}

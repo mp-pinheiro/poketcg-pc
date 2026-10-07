@@ -104,7 +104,6 @@ CASES = {
             'expect': {0xD4AD: b'\xff', 0xD410: b'\x01\xff\x02\xff\x03\xff\x04'},
             'expect_regs': {'a': 0xFF}},
         {   'oracle': False,
-            'evidence': 'primary',
             'why': 'The seeded animation callback target does not return in the live oracle.',
             'expect': {},
             'wram': {   0xD417: b'a',
@@ -116,7 +115,6 @@ CASES = {
                         0xD410: b'\xff\xff\xff\xff\xff\xff\xff'},
             'read': {0xD417: 0x01, 0xD4A6: 0x05, 0xFF92: 0x01}},
         {   'oracle': False,
-            'evidence': 'primary',
             'why': 'The poisoned animation frame points into the synthesized call-frame range.',
             'expect': {},
             'wram': {   0xC000: b'\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0'

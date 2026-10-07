@@ -3,7 +3,7 @@
 CONTRACT = {
     'GetCardType': {'compare': ('a', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
     'GetCardName': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'hl')},
-    'GetCardTypeRarityAndSet': {'compare': ('a', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
+    'GetCardTypeRarityAndSet': {'compare': ('a', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'hl')},
     'LoadCardDataToBuffer1_FromCardID': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'LoadCardDataToBuffer2_FromCardID': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'LoadCardDataToBuffer1_FromName': {'compare': (), 'preserve': ()},

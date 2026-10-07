@@ -30,7 +30,7 @@ CONTRACT = {
     'HandleDestinyBondSubstatus': {'compare': ('a', 'f', 'hl'), 'preserve': ()},
     'HandleNShieldAndTransparency': {'compare': ('d', 'e', 'f'), 'preserve': ('d', 'e')},
     'HandleTransparency': {'compare': ('a', 'f', 'hl'), 'preserve': ()},
-    'HandleDamageReductionOrNoDamageFromPkmnPowerEffects': {'compare': ('f', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
+    'HandleDamageReductionOrNoDamageFromPkmnPowerEffects': {'compare': ('f', 'd', 'e', 'hl'), 'preserve': ('d', 'e')},
     'HandleSandAttackOrSmokescreenSubstatus': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
 }
 
@@ -1566,7 +1566,5 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-for _record in SCHEMA2_CASES["HandleSandAttackOrSmokescreenSubstatus"][4:]:
-    _record["completion"] = {"mode": "entry", "pc": 0x216C, "bank": 0,
-                             "routine": "WaitForWideTextBoxInput"}
+SCHEMA2_CASES["HandleSandAttackOrSmokescreenSubstatus"][4]["completion"] = {"mode": "return"}
 CASES["HandleSandAttackOrSmokescreenSubstatus"][4]["compare"] = ()

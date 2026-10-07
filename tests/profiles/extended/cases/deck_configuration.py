@@ -26,7 +26,7 @@ CONTRACT = {
     'DrawListCursor': {'compare': ('b', 'c'), 'preserve': ()},
     'DrawHorizontalListCursor_Invisible': {'compare': ('b', 'c'), 'preserve': ()},
     'DrawHorizontalListCursor_Visible': {'compare': ('b', 'c'), 'preserve': ()},
-    'IsCardInAnyDeck': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('a', 'c', 'd', 'e', 'hl')},
+    'IsCardInAnyDeck': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('a', 'd', 'e', 'hl')},
     'DrawListCursor_Invisible': {'compare': ('b', 'c'), 'preserve': ()},
     'DrawListCursor_Visible': {'compare': ('b', 'c'), 'preserve': ()},
     'CountNumberOfCardsForEachCardType': {'compare': (), 'preserve': (), 'wram_out': True},

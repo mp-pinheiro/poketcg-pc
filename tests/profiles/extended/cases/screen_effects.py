@@ -83,7 +83,9 @@ CASES = {
         {'oracle': False,
          'evidence': 'primary',
          'why': 'The case seeds an unknown screen-animation callback address; the live oracle cannot dispatch it.',
-         'expect': {}},
+         'expect': {},
+         'wram': {0xD4A6: b'\xa5K', 0xD4A8: b'\x00'},
+         'read': {0xD4A6: 0x02, 0xD4A8: 0x01}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -95,8 +97,8 @@ CASES = {
             'evidence': 'primary',
             'why': 'The case seeds an unknown screen-animation callback address; the live oracle cannot dispatch it.',
             'expect': {},
-            'wram': {0xD4A6: b'\xbcL', 0xD4A8: b'\xff'},
-            'read': {0xD4A8: 0x01, 0xD4A6: 0x02}},
+            'wram': {0xD4A6: b'\xa5K', 0xD4A8: b'\xff'},
+            'read': {0xD4A6: 0x02, 0xD4A8: 0x01}},
     ],
     'LoadDefaultScreenAnimationUpdateWhenFinished': [
         {   'wram': {0xD4A8: b'\x00', 0xD417: b'\x00', 0xD4A6: b'\x00\x00'},
@@ -279,34 +281,33 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xD40E: b'\x00', 0xD40F: b'a'},
+            'wram': {0xD40E: b'\x00', 0xD40F: b'\x7e'},
             'read': {0xD417: 0x01, 0xD4A6: 0x02, 0xD4A8: 0x01, 0xD4A9: 0x02}},
         {   'wram': {   0xD40E: b'\x01',
-                        0xD40F: b'a',
-                        0xD417: b'U',
+                        0xD40F: b'\x7e',
                         0xD4A6: b'4\x12',
                         0xD4A8: b'w',
                         0xD4A9: b'\x88\x99'},
             'read': {0xD417: 0x01, 0xD4A6: 0x02, 0xD4A8: 0x01, 0xD4A9: 0x02}},
-        {   'wram': {0xD40E: b'\x00', 0xD40F: b'b'},
+        {   'wram': {0xD40E: b'\x00', 0xD40F: b'\x7f'},
             'oracle': False,
             'evidence': 'primary',
             'why': 'The seeded animation ID is not a live-callable screen-animation target.',
             'expect': {},
             'read': {0xD417: 0x01, 0xD4A6: 0x02, 0xD4A8: 0x01, 0xD4A9: 0x02}},
-        {   'wram': {0xD40E: b'\x00', 0xD40F: b'c'},
+        {   'wram': {0xD40E: b'\x00', 0xD40F: b'\x80'},
             'oracle': False,
             'evidence': 'primary',
             'why': 'The seeded animation ID is not a live-callable screen-animation target.',
             'expect': {},
             'read': {0xD417: 0x01, 0xD4A6: 0x02, 0xD4A8: 0x01, 0xD4A9: 0x02}},
-        {   'wram': {0xD40E: b'\x00', 0xD40F: b'd'},
+        {   'wram': {0xD40E: b'\x00', 0xD40F: b'\x81'},
             'oracle': False,
             'evidence': 'primary',
             'why': 'The seeded animation ID is not a live-callable screen-animation target.',
             'expect': {},
             'read': {0xD417: 0x01, 0xD4A6: 0x02, 0xD4A8: 0x01, 0xD4A9: 0x02}},
-        {   'wram': {0xD40E: b'\x00', 0xD40F: b'e', 0xCABC: b'\x11'},
+        {   'wram': {0xD40E: b'\x00', 0xD40F: b'\x82', 0xCABC: b'\x11'},
             'oracle': False,
             'evidence': 'primary',
             'why': 'The seeded animation ID is not a live-callable screen-animation target.',
@@ -318,7 +319,7 @@ CASES = {
                         0xCAF0: 0x08,
                         0xD284: 0x08,
                         0xCABC: 0x01}},
-        {   'wram': {0xD40E: b'\x00', 0xD40F: b'f'},
+        {   'wram': {0xD40E: b'\x00', 0xD40F: b'\x83'},
             'oracle': False,
             'evidence': 'primary',
             'why': 'The seeded animation ID is not a live-callable screen-animation target.',
@@ -434,6 +435,20 @@ MUTATIONS = {
         'case_ids': ['InitScreenAnimation-0'],
         'source': 'src/profiles/extended/home/screen_effects.c'},
 }
+
+for _index, _record in enumerate(CASES['DoScreenAnimationUpdate']):
+    if _index == 0:
+        _record.pop('oracle', None)
+        _record.pop('why', None)
+        _record.pop('expect', None)
+        _record['evidence'] = 'primary'
+    else:
+        _record['evidence'] = 'native-stress'
+for _index, _record in enumerate(CASES['InitScreenAnimation']):
+    if _index == 1:
+        _record['evidence'] = 'primary'
+    else:
+        _record['evidence'] = 'native-stress'
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

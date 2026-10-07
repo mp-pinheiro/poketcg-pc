@@ -3496,17 +3496,14 @@ void SetCardListHeaderText(uint16_t de, uint16_t hl)
 /* <<< factory SetCardListHeaderText */
 
 /* >>> factory AIAttachEnergyInHandToCardInPlayArea */
-AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(uint8_t d, uint8_t e)
+AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(CardId bc, CardId de)
 {
-	CoreCardListResult hand = LookForCardIDInHandList_Bank5(e);
+	CoreCardListResult hand = LookForCardIDInHandList_Bank5(de);
 	if ((hand.f & 0x10u) == 0u)
 		return (AIAttachEnergyInHandToCardInPlayAreaResult){hand.a, hand.f};
-	/* ai/core.asm:794-803: the Pokemon (d) is looked up in the play area,
-	 * the energy card's deck index goes to hTemp_ffa0. */
-	uint8_t energy = hand.a;
-	LookResult location = LookForCardIDInPlayArea_Bank5(d, PLAY_AREA_ARENA);
+	hTemp_ffa0 = hand.a;
+	LookResult location = LookForCardIDInPlayArea_Bank5(bc, PLAY_AREA_ARENA);
 	hTempPlayAreaLocation_ffa1 = location.a;
-	hTemp_ffa0 = energy;
 	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);
 	return (AIAttachEnergyInHandToCardInPlayAreaResult){decision.a, decision.f};
 }

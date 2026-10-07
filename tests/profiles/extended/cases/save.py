@@ -399,8 +399,9 @@ CASES = {
             'read': {0xFF81: 0x01}},
     ],
     'WriteBackupCardAndDeckSaveData': [
-        {},
-        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234},
+        {'instruction_budget': 0x1E8480, 'cycle_budget': 0x7A1200},
+        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234,
+         'instruction_budget': 0x1E8480, 'cycle_budget': 0x7A1200},
         {   'ramg': True,
             'sram': {   0x00: {   0xA100: b'\x03\x14%6GXiz\x8b\x9c\xad\xbe\xcf\xe0\xf1\x02\x13$5F'
                                           b'Why\x8a\x9b\xac\xbd\xce\xdf\xf0\x01\x12#4EVgx\x89\x9a'
@@ -733,7 +734,9 @@ CASES = {
                                           b"\xe3\xf4\x05\x16'8IZk|\x8d\x9e\xaf\xc0\xd1\xe2\xf3\x04\x15&"
                                           b'7HYj{\x8c\x9d\xae\xbf\xd0\xe1\xf2\x03\x14%6GXi'}},
             'sread': {0x00: {0xA100: 0x0FA0, 0xB300: 0x0667}, 0x02: {0xA100: 0x0FA0, 0xB0A0: 0x0667}},
-            'read': {0xFF81: 0x01}},
+            'read': {0xFF81: 0x01},
+            'instruction_budget': 0x1E8480,
+            'cycle_budget': 0x7A1200},
     ],
     'LoadBackupGeneralSaveData': [
         {},
@@ -758,8 +761,9 @@ CASES = {
             'read': {0xFF81: 0x01}},
     ],
     'LoadBackupCardAndDeckSaveData': [
-        {},
-        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234},
+        {'instruction_budget': 0x1E8480, 'cycle_budget': 0x7A1200},
+        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234,
+         'instruction_budget': 0x1E8480, 'cycle_budget': 0x7A1200},
         {   'wram': {0xFF81: b'\x03'},
             'ramg': True,
             'sram': {   0x02: {   0xA100: b'\x03\x14%6GXiz\x8b\x9c\xad\xbe\xcf\xe0\xf1\x02\x13$5F'
@@ -1093,7 +1097,9 @@ CASES = {
                                           b"\xe3\xf4\x05\x16'8IZk|\x8d\x9e\xaf\xc0\xd1\xe2\xf3\x04\x15&"
                                           b'7HYj{\x8c\x9d\xae\xbf\xd0\xe1\xf2\x03\x14%6GXi'}},
             'sread': {0x02: {0xA100: 0x0FA0, 0xB0A0: 0x0667}, 0x00: {0xA100: 0x0FA0, 0xB300: 0x0667}},
-            'read': {0xFF81: 0x01}},
+            'read': {0xFF81: 0x01},
+            'instruction_budget': 0x1E8480,
+            'cycle_budget': 0x7A1200},
     ],
     'InvalidateSaveData': [
         {'wram': {0xFF80: b'\x04'}},
@@ -1258,7 +1264,8 @@ CASES = {
             'read': {0xD3BA: 0x01, 0xD3BC: 0x01}},
     ],
     'LoadBackupSaveData': [
-        {'wram': {0xFF80: b'\x04'}},
+        {'wram': {0xFF80: b'\x04'},
+         'instruction_budget': 0x1E8480, 'cycle_budget': 0x7A1200},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -1266,7 +1273,8 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xFF80: b'\x04'}},
+            'wram': {0xFF80: b'\x04'},
+            'instruction_budget': 0x1E8480, 'cycle_budget': 0x7A1200},
         {   'wram': {0xFF80: b'\x04'},
             'sram': {   0x02: {   0xB800: b'\x08\x00\xb3\x00\x0b=\x00\x00\x0b\x18%2?LSYfs\x80\x8d'
                                           b'\x9a\xa7\xb4\xc1\xce\xd5\xdc\xe3\xdb\xe2\xe9\xf0'
@@ -1281,7 +1289,9 @@ CASES = {
                                           b'\xac\xb3\xba\xc1\xc8\xcf\xd6\xdd\xe4\xeb\xf2\xf9'
                                           b'\x00\x07\x0e\x15\x1c#*18?FMT[bipw~'}},
             'read': {0xD3B9: 0x01, 0xD3C1: 0x40},
-            'sread': {0x00: {0xB800: 0x0100}}},
+            'sread': {0x00: {0xB800: 0x0100}},
+            'instruction_budget': 0x1E8480,
+            'cycle_budget': 0x7A1200},
     ],
     '_LoadGeneralSaveData': [
         {},
@@ -1663,7 +1673,9 @@ CASES = {
                         0xD4B5: 0x02,
                         0xD3B2: 0x02,
                         0xD4B1: 0x02},
-            'sread': {0x00: {0xB800: 0xBB, 0xB8FC: 0x02}}},
+            'sread': {0x00: {0xB800: 0xBB, 0xB8FC: 0x02}},
+            'instruction_budget': 0x1E8480,
+            'cycle_budget': 0x7A1200},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -1671,7 +1683,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xFF80: b'\x04'}},
+            'wram': {0xFF80: b'\x04'},
+            'instruction_budget': 0x1E8480,
+            'cycle_budget': 0x7A1200},
         {   'wram': {   0xFF80: b'\x04',
                         0xD3B9: b'\r',
                         0xD3B8: b'\x1a',
@@ -2069,7 +2083,9 @@ CASES = {
                         0xD3B2: 0x02,
                         0xD4B1: 0x02},
             'sread': {   0x00: {0xB800: 0xBB, 0xB8FC: 0x02},
-                         0x02: {0xB800: 0xBB, 0xB8FC: 0x02, 0xA100: 0x0FA0, 0xB0A0: 0x0667}}},
+                         0x02: {0xB800: 0xBB, 0xB8FC: 0x02, 0xA100: 0x0FA0, 0xB0A0: 0x0667}},
+            'instruction_budget': 0x1E8480,
+            'cycle_budget': 0x7A1200},
     ],
     '_SaveGame': [
         {   'c': 0x00,
@@ -2478,7 +2494,9 @@ CASES = {
                         0xD3B2: 0x02,
                         0xD4B1: 0x02},
             'sread': {   0x00: {0xB800: 0xBB, 0xB8FC: 0x02},
-                         0x02: {0xB800: 0xBB, 0xB8FC: 0x02, 0xA100: 0x0FA0, 0xB0A0: 0x0667}}},
+                         0x02: {0xB800: 0xBB, 0xB8FC: 0x02, 0xA100: 0x0FA0, 0xB0A0: 0x0667}},
+            'instruction_budget': 0x1E8480,
+            'cycle_budget': 0x7A1200},
         {   'c': 0x01,
             'wram': {   0xFF80: b'\x04',
                         0xD3B9: b'\x10',
@@ -2882,7 +2900,9 @@ CASES = {
                         0xD3B2: 0x02,
                         0xD4B1: 0x02},
             'sread': {   0x00: {0xB800: 0xBB, 0xB8FC: 0x02},
-                         0x02: {0xB800: 0xBB, 0xB8FC: 0x02, 0xA100: 0x0FA0, 0xB0A0: 0x0667}}},
+                         0x02: {0xB800: 0xBB, 0xB8FC: 0x02, 0xA100: 0x0FA0, 0xB0A0: 0x0667}},
+            'instruction_budget': 0x1E8480,
+            'cycle_budget': 0x7A1200},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -2890,7 +2910,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xFF80: b'\x04'}},
+            'wram': {0xFF80: b'\x04'},
+            'instruction_budget': 0x1E8480,
+            'cycle_budget': 0x7A1200},
     ],
     'SaveGeneralSaveData': [
         {   'wram': {0xFF80: b'\x04'},

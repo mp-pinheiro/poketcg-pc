@@ -56,7 +56,6 @@ static void adapt_DeleteSaveDataForNewGame(ProbeState *s)
 }
 /* <<< factory DeleteSaveDataForNewGame */
 
-/* >>> factory HandleTitleScreen */
 static void adapt_HandleTitleScreen(ProbeState *s)
 {
 	(void)s;
@@ -64,7 +63,6 @@ static void adapt_HandleTitleScreen(ProbeState *s)
 }
 /* <<< factory HandleTitleScreen */
 
-/* >>> factory Start */
 static void adapt_Start(ProbeState *s)
 {
 	Start(s->a);

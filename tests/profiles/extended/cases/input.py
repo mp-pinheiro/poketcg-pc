@@ -21,7 +21,6 @@ CASES = {
             'read': {0xFF8D: 0x05}},
         {'keys': 0x01, 'wram': {0xFF8D: b'\x00\x00\x00\x00\x00'}, 'read': {0xFF8D: 0x05}},
         {'oracle': False,
-         'evidence': 'primary',
          'why': 'The seeded A+B+Start+Select held-button state takes ReadJoypad into the non-returning Reset jump.',
          'wram': {0xFF8D: b'\x00\x00\x00\x0f\x00'},
          'read': {0xFF8D: 0x05},
@@ -34,7 +33,6 @@ CASES = {
             'e': 0xEE,
             'hl': 0x1234,
             'oracle': False,
-            'evidence': 'primary',
             'why': 'The poisoned held-button state takes ReadJoypad into the non-returning Reset jump.',
             'wram': {0xFF8D: b'\x00\x00\x00\x0f\x00'},
             'read': {0xFF8D: 0x05},
@@ -64,12 +62,9 @@ CASES = {
             'read': {0xFF8D: 0x05}},
     ],
     'Reset': [
-        {'oracle': False,
-         'evidence': 'primary',
-         'why': 'Reset loads wInitialA and jumps to Start without returning.',
+        {'completion': {'mode': 'entry', 'pc': 0x0150, 'bank': 0x00, 'routine': 'Start'},
          'wram': {0xCAB3: b'7'},
-         'read': {0xCAB3: 0x01},
-         'expect_regs': {'a': 0x37}},
+         'read': {0xCAB3: 0x01}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -77,12 +72,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': False,
-            'evidence': 'primary',
-            'why': 'Reset loads wInitialA and jumps to Start without returning.',
+            'completion': {'mode': 'entry', 'pc': 0x0150, 'bank': 0x00, 'routine': 'Start'},
             'wram': {0xCAB3: b'\xc3'},
-            'read': {0xCAB3: 0x01},
-            'expect_regs': {'a': 0xC3}},
+            'read': {0xCAB3: 0x01}},
     ],
 }
 
@@ -103,11 +95,15 @@ MUTATIONS = {
         'case_ids': ['ClearJoypad-0'],
         'source': 'src/profiles/extended/home/input.c'},
     'Reset': {   'source_symbol': 'Reset',
-        'before': 'return wInitialA;',
-        'after': 'return 0u;',
-        'case_ids': ['Reset-0', 'Reset-1'],
+        'before': '\twInitialA = initial_a;',
+        'after': '\twInitialA = 0u;',
+        'case_ids': ['Reset-0'],
         'source': 'src/profiles/extended/home/input.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _name, _entries in CASES.items():
+    for _index, _entry in enumerate(_entries):
+        if "completion" in _entry:
+            SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]

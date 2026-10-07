@@ -8606,5 +8606,9 @@ def _full_heal_case(status):
 
 CASES["AIDecide_FullHeal"] += [_full_heal_case(0x03), _full_heal_case(0x01)]
 
+for _name in ("AIPlay_Pokeball", "AIPlay_Recycle"):
+    for _entry in CASES[_name]:
+        _entry.setdefault("entry_sp", 0xDFE4)
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

@@ -136,10 +136,9 @@ CASES = {
                         0xFFFF: 0x01}},
     ],
     'PlayCreditsSequence': [
-        {   'oracle': False,
-            'evidence': 'primary',
-            'why': 'The credits sequence loops on ExecuteCreditsSequenceCmd until wSequenceDelay is $ff, then waits for the credits song and PAD_START; the isolated oracle cannot deliver the frame-driven sequence, song completion, and button edge.',
-            'expect': {}},
+        {   'completion': {'mode': 'entry', 'pc': 0x556F, 'bank': 0x07, 'routine': 'Func_1d705'},
+            'instruction_budget': 0x1312D00,
+            'cycle_budget': 0x4C4B400},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -147,10 +146,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': False,
-            'evidence': 'primary',
-            'why': 'The credits sequence loops on ExecuteCreditsSequenceCmd until wSequenceDelay is $ff, then waits for the credits song and PAD_START; the isolated oracle cannot deliver the frame-driven sequence, song completion, and button edge.',
-            'expect': {}},
+            'completion': {'mode': 'entry', 'pc': 0x556F, 'bank': 0x07, 'routine': 'Func_1d705'},
+            'instruction_budget': 0x1312D00,
+            'cycle_budget': 0x4C4B400},
     ],
 }
 
@@ -198,3 +196,7 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _name, _entries in CASES.items():
+    for _index, _entry in enumerate(_entries):
+        if "completion" in _entry:
+            SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]

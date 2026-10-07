@@ -49,25 +49,37 @@ for name in ROUTINES:
              read={0xD7A4: 1, 0xD7A6: 1, 0xD7B0: 4}),
     ]
 STACK_SENSITIVE_MUSIC_COMMANDS = (
-    'Music_note', 'PlayNextNote_pop', 'Music_speed', 'Music_octave', 'Music_inc_octave',
-    'Music_dec_octave', 'Music_tie', 'Music_stereo_panning',
-    'Music_MainLoop', 'Music_EndMainLoop', 'Music_Loop', 'Music_EndLoop',
-    'Music_jp', 'Music_call', 'Music_ret', 'Music_frequency_offset',
-    'Music_duty', 'Music_volume', 'Music_wave', 'Music_cutoff', 'Music_echo',
-    'Music_vibrato_type', 'Music_vibrato_delay', 'Music_pitch_offset',
+    'Music_note', 'PlayNextNote_pop', 'Music_speed', 'Music_octave',
+    'Music_inc_octave', 'Music_dec_octave', 'Music_tie',
+    'Music_stereo_panning', 'Music_MainLoop', 'Music_EndMainLoop',
+    'Music_Loop', 'Music_EndLoop', 'Music_jp', 'Music_call', 'Music_ret',
+    'Music_frequency_offset', 'Music_duty', 'Music_volume', 'Music_wave',
+    'Music_cutoff', 'Music_echo', 'Music_vibrato_type',
+    'Music_vibrato_delay', 'Music_pitch_offset',
     'Music_adjust_pitch_offset', 'Music_end')
+_COMMAND_WRAM = {
+    0xC100: b'\xFF\xFF\xFF',
+    0xC101: b'\xFF\xFF\xFF',
+    0xD7E2: b'\x08\x08\x08\x08',
+    0xD7F2: b'\x01\x01\x01\x01',
+    0xD7C0: b'\x00\xC1\x00\x00\x00\x00\x00\x00',
+    0xD816: b'\x00\xC2\x00\x00\x00\x00\x00\x00',
+    0xD90A: b'\x5A\x00',
+}
 for name in STACK_SENSITIVE_MUSIC_COMMANDS:
-    CASES[name] = [
-        {'oracle': False,
-         'evidence': 'primary',
-         'why': 'The Extended command handler is entered by PlayNextNote with a saved stream and command frame; its asm returns through PlayNextNote_pop, so an isolated direct oracle entry cannot return.',
-         'expect': {}},
-        dict(POISON,
-             oracle=False,
-             evidence='primary',
-             why='The Extended command handler is entered by PlayNextNote with a saved stream and command frame; its asm returns through PlayNextNote_pop, so an isolated direct oracle entry cannot return.',
-             expect={}),
-    ]
+    command_case = {'c': 0x00, 'stack': [0xC100], 'wram': dict(_COMMAND_WRAM)}
+    poison_case = dict(POISON, b=0x00, c=0x00, stack=[0xC100],
+                       wram=dict(_COMMAND_WRAM))
+    if name == 'Music_note':
+        command_case['stack'] = [0xC100, 0x0000]
+        poison_case['stack'] = [0xC100, 0xF0AA]
+    elif name == 'Music_EndLoop':
+        command_case['wram'].update({0xC1FF: b'\x01'})
+        poison_case['wram'].update({0xC1FF: b'\x01'})
+    elif name == 'Music_ret':
+        command_case['wram'].update({0xC1FE: b'\xFE\xC0'})
+        poison_case['wram'].update({0xC1FE: b'\xFE\xC0'})
+    CASES[name] = [command_case, poison_case]
 CASES['Music_f4967'] = [
     {'b': 0x00, 'c': 0x00, 'd': 0x12, 'e': 0x34},
     dict(POISON, b=0x00, c=0x01, d=0x56, e=0x78),

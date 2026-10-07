@@ -1,4 +1,5 @@
 #include "home/input.h"
+#include "generated/wram.h"
 #include "probe.h"
 
 static void adapt_ReadJoypad(ProbeState *s)
@@ -20,7 +21,8 @@ static void adapt_ClearJoypad(ProbeState *s)
 /* >>> factory Reset */
 static void adapt_Reset(ProbeState *s)
 {
-	s->a = Reset();
+	s->a = wInitialA;
+	(void)Reset();
 }
 /* <<< factory Reset */
 

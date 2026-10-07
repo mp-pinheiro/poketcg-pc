@@ -1,0 +1,9 @@
+{
+  "fn": "Reset",
+  "case": "tests/profiles/extended/cases/input.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Reset\", \"registers\": {\"a\": 55, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51891\": \"37\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Reset\", \"mismatches\": {\"bus\": {\"address\": 51891, \"reference\": \"37\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[51891, 1]]}}}\n",
+  "restored": "{\"fn\": \"Reset\", \"registers\": {\"a\": 55, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51891\": \"37\"}}, \"status\": \"PASS\"}\n"
+}

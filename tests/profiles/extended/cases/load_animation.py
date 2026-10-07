@@ -301,7 +301,9 @@ CASES = {
             'e': 0xEE,
             'hl': 0x1234,
             'wram': {0xFF80: b'\x07', 0xD11E: b'\x00'},
-            'read': {0xFF80: 0x01, 0xD11E: 0x01}},
+            'read': {0xFF80: 0x01, 0xD11E: 0x01},
+            'instruction_budget': 0x3D0900,
+            'cycle_budget': 0x1312D00},
     ],
     'DrawOpponentPortrait': [
         {   'a': 0x00,
@@ -315,7 +317,9 @@ CASES = {
             'e': 0xEE,
             'hl': 0x1234,
             'wram': {0xFF80: b'\x07', 0xD60B: b'\x00', 0xD11E: b'\xff'},
-            'read': {0xFF80: 0x01, 0xD60B: 0x01, 0xD11E: 0x01}},
+            'read': {0xFF80: 0x01, 0xD60B: 0x01, 0xD11E: 0x01},
+            'instruction_budget': 0x3D0900,
+            'cycle_budget': 0x1312D00},
     ],
     'DrawPlayerPortrait': [
         {   'wram': {0xFF80: b'\x01', 0xD60B: b'\xff', 0xD11E: b'\x00'},

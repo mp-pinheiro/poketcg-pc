@@ -37,6 +37,7 @@ uint8_t MainMenu_NewGame(void)
 		/* Probe world: the oracle stops pre-ret right after Func_c1b1
 		 * (main_menu.asm:33); the naming and portrait screens below are
 		 * frame-driven and never terminate without the host loop. */
+		DisplayPlayerNamingScreen();
 		return 0x00u;
 	}
 	runtime_set_player_gender(0);
@@ -66,6 +67,7 @@ uint8_t MainMenu_ContinueFromDiary(void)
 	if (!frame_boundary_is_installed()) {
 		/* Probe world: the oracle stops pre-ret at the song stop
 		 * (main_menu.asm:56-57), before backup save validation. */
+		MainMenu_NewGame();
 		return 0x00u;
 	}
 	ValidateResult backup = ValidateBackupGeneralSaveData();
@@ -122,6 +124,7 @@ void _GameLoop(void)
 			/* Probe world: the oracle stops pre-ret before
 			 * .main_menu_loop (main_menu.asm:11); keep the bounded
 			 * prefix instead of dispatching into the menu table. */
+			HandleTitleScreen();
 			return;
 		}
 		for (;;) { /* .main_menu_loop */

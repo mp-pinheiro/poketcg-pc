@@ -179,8 +179,8 @@ CASES = {
             'cycle_budget': 0x7A1200},
     ],
 'CardAlbum': [
-    {'oracle': False,
-     'why': 'CardAlbum enters the interactive indirect menu loop outside isolated oracle return.'},
+    {'completion': {'mode': 'entry', 'pc': 0x04CA, 'bank': 0x00, 'routine': 'DoFrame'},
+     'instruction_budget': 0x1312D00, 'cycle_budget': 0x4C4B400},
     {'oracle': False,
      'why': 'CardAlbum enters the interactive indirect menu loop outside isolated oracle return.',
      'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234},
@@ -235,3 +235,7 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _name, _entries in CASES.items():
+    for _index, _entry in enumerate(_entries):
+        if "completion" in _entry:
+            SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]

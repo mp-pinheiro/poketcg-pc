@@ -66,6 +66,7 @@
 
 #include "home/intro.h"
 #include "home/intro_sequence_commands.h"
+#include "home/game_loop.h"
 #include "home/load_animation.h"
 #include "home/sound.h"
 #include "generated/wram.h"
@@ -643,6 +644,7 @@ void HandleTitleScreen(void)
 			return;
 		PlaySong(MUSIC_STOP);
 		EnableAndClearSpriteAnimations();
+		PlayIntroSequence();
 		return;
 	}
 
@@ -742,5 +744,7 @@ void Start(uint8_t a)
 	CopyDMAFunction();
 	ValidateSRAM();
 	BankswitchROM(BANK_GAME_LOOP);
+	if (!frame_boundary_is_installed())
+		GameLoop();
 }
 /* <<< factory Start */

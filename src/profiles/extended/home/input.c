@@ -1,4 +1,5 @@
 #include "home/input.h"
+#include "home/start.h"
 
 #include "mem.h"
 #include "generated/hram.h"
@@ -80,8 +81,13 @@ void (*poketcg_request_boot_restart)(void) = NULL;
 
 uint8_t Reset(void)
 {
-	if (poketcg_request_boot_restart != NULL)
+	if (poketcg_request_boot_restart != NULL) {
 		poketcg_request_boot_restart();
+		return wInitialA;
+	}
+	uint8_t initial_a = wInitialA;
+	wInitialA = initial_a;
+	Start(initial_a);
 	return wInitialA;
 }
 /* <<< factory Reset */

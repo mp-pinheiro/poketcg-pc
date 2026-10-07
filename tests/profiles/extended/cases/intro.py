@@ -46,14 +46,9 @@ CASES = {
                         0xD521: 0x01}},
     ],
     'PlayIntroSequence': [
-        {   'oracle': False,
-            'evidence': 'primary',
-            'why': 'The bounded intro prefix performs LCD/menu/palette setup, installs the intro '
-                   'command pointer, clears intro state, and stops immediately before the interactive '
-                   'command-frame loop.',
+        {   'completion': {'mode': 'entry', 'pc': 0x336C, 'bank': 0x00, 'routine': 'DoFrameIfLCDEnabled'},
             'wram': {0xD61E: b'\x00\x00', 0xD304: b'\xff', 0xD621: b'\xff', 0xD620: b'\xff'},
             'read': {0xD61E: 0x02, 0xD304: 0x01, 0xD621: 0x01, 0xD620: 0x01},
-            'expect': {0xD61E: b'\x9dU', 0xD304: b'\x00', 0xD621: b'\x00', 0xD620: b'\x00'},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
         {   'a': 0xAA,
@@ -63,13 +58,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': False,
-            'evidence': 'primary',
-            'why': 'The bounded intro prefix writes the same command pointer and cleared state from '
-                   'poisoned entry registers before returning ahead of input handling.',
+            'completion': {'mode': 'entry', 'pc': 0x336C, 'bank': 0x00, 'routine': 'DoFrameIfLCDEnabled'},
             'wram': {0xD61E: b'\x00\x00', 0xD304: b'\xff', 0xD621: b'\xff', 0xD620: b'\xff'},
             'read': {0xD61E: 0x02, 0xD304: 0x01, 0xD621: 0x01, 0xD620: 0x01},
-            'expect': {0xD61E: b'\x9dU', 0xD304: b'\x00', 0xD621: b'\x00', 0xD620: b'\x00'},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
     ],
@@ -90,3 +81,7 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _name, _entries in CASES.items():
+    for _index, _entry in enumerate(_entries):
+        if "completion" in _entry:
+            SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]
