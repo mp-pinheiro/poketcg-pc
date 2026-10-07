@@ -1528,6 +1528,20 @@ static void adapt_PrintPlayAreaCardHeader(ProbeState *s)
 }
 /* <<< factory PrintPlayAreaCardHeader */
 
+/* >>> factory TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1 */
+static void adapt_TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1(ProbeState *s)
+{
+	TwoByteNumberToTxSymbolTrimResult r = TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1 */
+
 /* >>> factory PrintPokemonCardLength */
 static void adapt_PrintPokemonCardLength(ProbeState *s)
 {
@@ -3091,6 +3105,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayCardPageOnLeftOrRightPressed", adapt_DisplayCardPageOnLeftOrRightPressed },
 	{ "PrintPlayAreaCardHeader", adapt_PrintPlayAreaCardHeader },
 	{ "PrintPokemonCardLength", adapt_PrintPokemonCardLength },
+	{ "TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1", adapt_TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1 },
 	{ "PlayDeckShuffleAnimation", adapt_PlayDeckShuffleAnimation },
 	{ "OppAction_6b30", adapt_OppAction_6b30 },
 	{ "PrintPlayAreaCardInformation", adapt_PrintPlayAreaCardInformation },

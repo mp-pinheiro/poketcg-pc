@@ -30880,9 +30880,10 @@ MUTATIONS = {
         'case_ids': ['PrintPlayAreaCardHeader-0', 'PrintPlayAreaCardHeader-1'],
         'source': 'src/profiles/extended/home/core.c'},
     'PrintPokemonCardLength': {   'source_symbol': 'PrintPokemonCardLength',
-        'before': '\tgb_write8((uint16_t)(dst + 1u), SYM_0);',
-        'after': '\tgb_write8((uint16_t)(dst + 1u), 0u);',
-        'case_ids': ['PrintPokemonCardLength-0', 'PrintPokemonCardLength-1'],
+        'before': '\t\tx = (uint8_t)(x + 1u);',
+        'after': '\t\tx = (uint8_t)(x + 2u);',
+        'case_ids': ['PrintPokemonCardLength-0', 'PrintPokemonCardLength-1', 'PrintPokemonCardLength-2',
+                     'PrintPokemonCardLength-3', 'PrintPokemonCardLength-4'],
         'source': 'src/profiles/extended/home/core.c'},
     'PlayDeckShuffleAnimation': {   'source_symbol': 'PlayDeckShuffleAnimation',
         'before': '\te = DUEL_ANIM_PLAYER_SHUFFLE_490;\n'
@@ -31825,7 +31826,10 @@ MUTATIONS = {
         'after': '\tdestination = BCCoordToBGMap0Address(entry_b, entry_c);\n\tout_c = entry_c;',
         'case_ids': [   'PrintPokemonCardWeight-0',
                         'PrintPokemonCardWeight-1',
-                        'PrintPokemonCardWeight-2'],
+                        'PrintPokemonCardWeight-2',
+                        'PrintPokemonCardWeight-3',
+                        'PrintPokemonCardWeight-4',
+                        'PrintPokemonCardWeight-5'],
         'source': 'src/profiles/extended/home/core.c'},
     'DisplayCardPage_PokemonDescription': {   'source_symbol': 'DisplayCardPage_PokemonDescription',
         'before': '\tcard_length = (uint16_t)(((uint16_t)gb_read8(wLoadedCard1Length_ADDR) << 8)\n'
@@ -32221,6 +32225,42 @@ MUTATIONS = {
                      'CheckIfActivePokemonCanUseAnyNonResidualAttack-1'],
         'source': 'src/profiles/extended/home/core.c'},
 }
+
+CONTRACT["TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": (),
+}
+CASES["TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1"] = [
+    {"hl": 0x0000, "wram": {0xCAA0: b"\x00" * 6}, "read": {0xCAA0: 6}},
+    {"hl": 0x0007, "wram": {0xCAA0: b"\x00" * 6}, "read": {0xCAA0: 6}},
+    {"hl": 0x0069, "wram": {0xCAA0: b"\x00" * 6}, "read": {0xCAA0: 6}},
+    {"hl": 0x04B3, "wram": {0xCAA0: b"\x00" * 6}, "read": {0xCAA0: 6}},
+    {"hl": 0xFFFF, "wram": {0xCAA0: b"\x00" * 6}, "read": {0xCAA0: 6}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x2710,
+     "wram": {0xCAA0: b"\xff" * 6}, "read": {0xCAA0: 6}},
+]
+MUTATIONS["TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1"] = {
+    "source_symbol": "TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1",
+    "before": "\t\tgb_write8(out, SYM_SPACE);",
+    "after": "\t\tgb_write8(out, SYM_0);",
+    "case_ids": [f"TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1-{index}" for index in range(6)],
+    "source": "src/profiles/extended/home/core.c",
+}
+CASES["PrintPokemonCardLength"] += [
+    {"hl": hl, "b": 0x04, "c": 0x02,
+     "wram": {0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCAA0: b"\x00" * 6},
+     "read": {0xCBAD: 0x01, 0xCAA0: 0x06},
+     "vread": {0x00: {0x9800: 0x0100}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]}
+    for hl in (0x0A00, 0x0B0A, 0x0007)
+]
+CASES["PrintPokemonCardWeight"] += [
+    {"b": 0x01, "c": 0x02, "hl": hl,
+     "wram": {0xCABB: b"\x00", 0xCAA0: b"\x00" * 8},
+     "read": {0xCAA0: 0x08},
+     "vread": {0x00: {0x9841: 0x06}}}
+    for hl in (1050, 1053, 9)
+]
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

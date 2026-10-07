@@ -4975,34 +4975,46 @@ void PrintPlayAreaCardHeader(void)
 }
 /* <<< factory PrintPlayAreaCardHeader */
 
-static void trim_leading_zero_digits(uint8_t value)
+/* >>> factory TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1 */
+TwoByteNumberToTxSymbolTrimResult TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1(uint16_t hl)
 {
-	uint16_t remaining = value;
-	uint16_t place = 10000u;
-	uint16_t dst = wStringBuffer_ADDR;
-
+	static const uint16_t places[] = {10000u, 1000u, 100u, 10u, 1u};
+	uint16_t value = hl;
 	for (uint8_t i = 0u; i < 5u; i++) {
 		uint8_t digit = SYM_0;
-		while (remaining >= place) {
-			remaining = (uint16_t)(remaining - place);
+		while (value >= places[i]) {
+			value = (uint16_t)(value - places[i]);
 			digit++;
 		}
-		gb_write8(dst++, digit);
-		place = (uint16_t)(place / 10u);
+		gb_write8((uint16_t)(wStringBuffer_ADDR + i), digit);
 	}
-	gb_write8(dst, 0u);
-	for (uint8_t i = 0u; i < 4u; i++) {
-		uint16_t addr = (uint16_t)(wStringBuffer_ADDR + i);
-		if (gb_read8(addr) != SYM_0)
+	gb_write8((uint16_t)(wStringBuffer_ADDR + 5u), 0u);
+	uint8_t a;
+	uint8_t f;
+	uint8_t b = 4u;
+	uint16_t out = wStringBuffer_ADDR;
+	for (;;) {
+		a = gb_read8(out);
+		if (a != SYM_0) {
+			f = 0x40u;
 			break;
-		gb_write8(addr, SYM_SPACE);
+		}
+		gb_write8(out, SYM_SPACE);
+		out++;
+		b--;
+		if (b == 0u) {
+			f = 0xC0u;
+			break;
+		}
 	}
+	return (TwoByteNumberToTxSymbolTrimResult){a, f, b, 0xFFu,
+		(uint8_t)((wStringBuffer_ADDR + 5u) >> 8), (uint8_t)(wStringBuffer_ADDR + 5u), out};
 }
-
+/* <<< factory TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1 */
 /* >>> factory WriteTwoByteNumberInTxSymbolFormat */
 void WriteTwoByteNumberInTxSymbolFormat(uint8_t a, uint8_t b, uint8_t c)
 {
-	trim_leading_zero_digits(a);
+	(void)TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1(a);
 	uint16_t src = (uint16_t)(wStringBuffer_ADDR + 2u);
 	uint16_t dst = BCCoordToBGMap0Address(b, c);
 	for (uint8_t i = 0u; i < 3u; i++) {
@@ -5014,7 +5026,7 @@ void WriteTwoByteNumberInTxSymbolFormat(uint8_t a, uint8_t b, uint8_t c)
 /* >>> factory WriteTwoDigitNumberInTxSymbolFormat */
 void WriteTwoDigitNumberInTxSymbolFormat(uint8_t a, uint8_t b, uint8_t c)
 {
-	trim_leading_zero_digits(a);
+	(void)TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1(a);
 	uint16_t src = (uint16_t)(wStringBuffer_ADDR + 3u);
 	uint16_t dst = BCCoordToBGMap0Address(b, c);
 	for (uint8_t i = 0u; i < 2u; i++) {
@@ -5026,64 +5038,22 @@ void WriteTwoDigitNumberInTxSymbolFormat(uint8_t a, uint8_t b, uint8_t c)
 /* >>> factory PrintPokemonCardLength */
 void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c)
 {
-	static const uint16_t places[] = {10000u, 1000u, 100u, 10u, 1u};
+	uint8_t values[2] = {(uint8_t)(hl >> 8), (uint8_t)hl};
+	uint16_t texts[2] = {FeetText, InchesText};
 	uint8_t x = b;
-	uint8_t number = (uint8_t)(hl >> 8);
-	uint16_t out = wStringBuffer_ADDR;
-	for (uint8_t i = 0u; i < 5u; i++) {
-		uint8_t digit = SYM_0;
-		while (number >= places[i]) {
-			number = (uint8_t)(number - places[i]);
-			digit++;
-		}
-		if (i < 4u && digit == SYM_0)
-			digit = 0u;
-		gb_write8(out++, digit);
+	for (uint8_t part = 0u; part < 2u; part++) {
+		TwoByteNumberToTxSymbolTrimResult digits =
+			TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1(values[part]);
+		uint8_t count = (uint8_t)(digits.b + 1u);
+		wPokemonLengthPrintOffset = count;
+		uint16_t src = digits.hl;
+		uint16_t dst = BCCoordToBGMap0Address(x, c);
+		SafeCopyDataHLtoDE(&src, &dst, count);
+		x = (uint8_t)(x + count);
+		InitTextPrinting(x, c);
+		(void)ProcessTextFromID(texts[part]);
+		x = (uint8_t)(x + 1u);
 	}
-	uint8_t leading = 0u;
-	while (leading < 4u && gb_read8((uint16_t)(wStringBuffer_ADDR + leading)) == 0u)
-		leading++;
-	uint8_t count = (uint8_t)(5u - leading);
-	uint16_t src = (uint16_t)(wStringBuffer_ADDR + leading);
-	uint16_t dst = BCCoordToBGMap0Address(x, c);
-	wPokemonLengthPrintOffset = count;
-	for (uint8_t i = 0u; i < count; i++)
-		gb_write8(dst++, gb_read8(src++));
-	b = (uint8_t)(x + count);
-	InitTextPrinting(b, c);
-	(void)ProcessTextFromID(FeetText);
-
-	number = (uint8_t)hl;
-	out = wStringBuffer_ADDR;
-	for (uint8_t i = 0u; i < 5u; i++) {
-		uint8_t digit = SYM_0;
-		while (number >= places[i]) {
-			number = (uint8_t)(number - places[i]);
-			digit++;
-		}
-		if (i < 4u && digit == SYM_0)
-			digit = 0u;
-		gb_write8(out++, digit);
-	}
-	leading = 0u;
-	while (leading < 4u && gb_read8((uint16_t)(wStringBuffer_ADDR + leading)) == 0u)
-		leading++;
-	count = (uint8_t)(5u - leading);
-	src = (uint16_t)(wStringBuffer_ADDR + leading);
-	b = (uint8_t)(x + 1u);
-	dst = BCCoordToBGMap0Address(b, c);
-	wPokemonLengthPrintOffset = count;
-	for (uint8_t i = 0u; i < count; i++)
-		gb_write8(dst++, gb_read8(src++));
-	b = (uint8_t)(b + count);
-	InitTextPrinting(b, c);
-	(void)ProcessTextFromID(InchesText);
-	dst = BCCoordToBGMap0Address(x, c);
-	uint8_t label_first = gb_read8((uint16_t)(dst + 1u));
-	uint8_t label_second = gb_read8((uint16_t)(dst + 2u));
-	gb_write8((uint16_t)(dst + 1u), SYM_0);
-	gb_write8((uint16_t)(dst + 2u), label_first);
-	gb_write8((uint16_t)(dst + 3u), label_second);
 }
 /* <<< factory PrintPokemonCardLength */
 
@@ -8011,20 +7981,7 @@ PrintPokemonCardWeightResult PrintPokemonCardWeight(uint8_t b, uint8_t c, uint16
 	uint8_t sum;
 	uint8_t f;
 
-	static const uint16_t places[] = {10000u, 1000u, 100u, 10u, 1u};
-	uint16_t number = quotient;
-	uint16_t digit_ptr = wStringBuffer_ADDR;
-	for (uint8_t i = 0u; i < 5u; i++) {
-		uint8_t digit = SYM_0;
-		while (number >= places[i]) {
-			number = (uint16_t)(number - places[i]);
-			digit++;
-		}
-		if (i < 4u && digit == SYM_0)
-			digit = 0u;
-		gb_write8(digit_ptr++, digit);
-	}
-	gb_write8(digit_ptr, 0u);
+	(void)TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1(quotient);
 	cursor = (uint16_t)(wStringBuffer_ADDR + 5u);
 	if (remainder != 0u) {
 		gb_write8(cursor, SYM_DOT);

@@ -699,6 +699,19 @@ void DisplayCardPageOnLeftOrRightPressed(uint8_t a);
 /* >>> factory PrintPlayAreaCardHeader */
 void PrintPlayAreaCardHeader(void);
 /* <<< factory PrintPlayAreaCardHeader */
+/* >>> factory TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1 */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} TwoByteNumberToTxSymbolTrimResult;
+TwoByteNumberToTxSymbolTrimResult TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1(uint16_t hl);
+/* <<< factory TwoByteNumberToTxSymbol_TrimLeadingZeros_Bank1 */
+
 /* >>> factory PrintPokemonCardLength */
 void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c);
 /* <<< factory PrintPokemonCardLength */
