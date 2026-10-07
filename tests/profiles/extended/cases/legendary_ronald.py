@@ -4,7 +4,17 @@ from pathlib import Path
 from tests.cases._fixtures import Fixture
 
 _FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
-_RONALD_AI = Fixture("legendary-ronald-aidoturn-entry", directory=_FIXTURES)
+_HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
+
+
+def _fixture_case(fixture):
+    case = fixture.case(vram=False)
+    case["read"][0xCC00] = 0xBD
+    case["read"][0xCCBE] = 0x42
+    return case
+
+
+_RONALD_AI = Fixture("legendary-ronald-aidoturn-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -14,9 +24,9 @@ CONTRACT = {
 
 CASES = {
     'AIDoTurn_LegendaryRonald': [
-        dict(_RONALD_AI.case(vram=False), **_RONALD_AI.regs),
-        dict(_RONALD_AI.case(vram=False), **POISON),
-        _RONALD_AI.case(vram=False),
+        dict(_fixture_case(_RONALD_AI), **_RONALD_AI.regs),
+        dict(_fixture_case(_RONALD_AI), **POISON),
+        _fixture_case(_RONALD_AI),
     ],
 }
 

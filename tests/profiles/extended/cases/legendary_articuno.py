@@ -4,9 +4,19 @@ from pathlib import Path
 from tests.cases._fixtures import Fixture
 
 _FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
-_ARTICUNO_AI = Fixture("legendary-articuno-aidoturn-entry", directory=_FIXTURES)
-_ARTICUNO_SCORE = Fixture("legendary-articuno-score-entry", directory=_FIXTURES)
-_ARTICUNO_SCORING = Fixture("legendary-articuno-score-2-entry", directory=_FIXTURES)
+_HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
+
+
+def _fixture_case(fixture):
+    case = fixture.case(vram=False)
+    case["read"][0xCC00] = 0xBD
+    case["read"][0xCCBE] = 0x42
+    return case
+
+
+_ARTICUNO_AI = Fixture("legendary-articuno-aidoturn-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
+_ARTICUNO_SCORE = Fixture("legendary-articuno-score-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
+_ARTICUNO_SCORING = Fixture("legendary-articuno-score-2-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -17,26 +27,21 @@ CONTRACT = {
 
 CASES = {
     'ScoreLegendaryArticunoCards': [
-        dict(_ARTICUNO_SCORE.case(vram=False), **_ARTICUNO_SCORE.regs),
-        dict(_ARTICUNO_SCORE.case(vram=False), **POISON),
+        dict(_fixture_case(_ARTICUNO_SCORE), **_ARTICUNO_SCORE.regs),
+        dict(_fixture_case(_ARTICUNO_SCORE), **POISON),
         dict(_ARTICUNO_SCORING.case(vram=False, bank=5), **_ARTICUNO_SCORING.regs),
     ],
     'AIDoTurn_LegendaryArticuno': [
-        dict(_ARTICUNO_AI.case(vram=False), **_ARTICUNO_AI.regs),
-        dict(_ARTICUNO_AI.case(vram=False), **POISON),
-        _ARTICUNO_AI.case(vram=False),
+        dict(_fixture_case(_ARTICUNO_AI), **_ARTICUNO_AI.regs),
+        dict(_fixture_case(_ARTICUNO_AI), **POISON),
+        _fixture_case(_ARTICUNO_AI),
     ],
 }
 
 MUTATIONS = {
     'ScoreLegendaryArticunoCards': {   'source_symbol': 'ScoreLegendaryArticunoCards',
-        'before': '\t\t\tif (energy.a < 3u) {\n'
-                  '\t\t\t\t(void)RaiseAIScoreToAllMatchingIDsInBench(LAPRAS);\n'
-                  '\t\t\t\treturn;\n'
-                  '\t\t\t}',
-        'after': '\t\t\tif (energy.a < 3u)\n'
-                 '\t\t\t\t(void)RaiseAIScoreToAllMatchingIDsInBench(LAPRAS);\n'
-                 '\t\t\treturn;',
+        'before': '\tif (prizes < 3u)\n\t\treturn;',
+        'after': '\tif (prizes < 7u)\n\t\treturn;',
         'case_ids': ['ScoreLegendaryArticunoCards-2'],
         'source': 'src/profiles/extended/home/legendary_articuno.c'},
     'AIDoTurn_LegendaryArticuno': {   'source_symbol': 'AIDoTurn_LegendaryArticuno',
