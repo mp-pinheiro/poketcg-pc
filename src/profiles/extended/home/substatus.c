@@ -497,7 +497,7 @@ RainDanceResult CheckRainDanceScenario(void)
 #define MACHAMP_ID 0x7Fu
 #define MUK_ID     0x27u
 #define DUELVARS_ARENA_CARD_HP 0xc8u
-#define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT 0x0105u
+#define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT ReceivesDamageDueToStrikesBackText
 static uint8_t f_or(uint8_t result) { return (uint8_t)(result ? 0x00u : 0x80u); }
 static uint8_t f_cp(uint8_t a, uint8_t val)
 {

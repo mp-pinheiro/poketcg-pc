@@ -12,7 +12,7 @@
 
 #define SYM_CURSOR_R 0x0Fu
 #define SYM_SPACE 0x00u
-#define EMPTY_MAIL_NAME_TEXT 0x035Cu
+#define EMPTY_MAIL_NAME_TEXT EmptyMailNameText
 
 #include "generated/hram.h"
 #include "generated/wram.h"

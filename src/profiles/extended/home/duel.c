@@ -595,7 +595,7 @@ static const uint8_t kCursorTileData[16] = {
 #define PEEK_MENU_TEXT_ITEMS (_HandlePeekSelection__YourOrOppPlayAreaData_ADDR)
 #define PEEK_YOUR_TRANSITION_TABLE PeekYourPlayAreaTransitionTable_ADDR
 #define PEEK_OPP_TRANSITION_TABLE PeekOppPlayAreaTransitionTable_ADDR
-#define PEEK_WHICH_CARD_TEXT 0x024Cu
+#define PEEK_WHICH_CARD_TEXT WhichCardWouldYouLikeToSeeText
 #define PEEK_MENU_CANCEL 0xFFu
 #define PEEK_PLAYER_TURN 0xC2u
 #define PEEK_OPPONENT_TURN 0xC3u
@@ -821,7 +821,7 @@ CardListResult CreateDiscardPileCardList(uint8_t c)
 }
 
 /* Text ID of the fallback opponent name. */
-#define PLAYER2_TEXT_ID 0x0092u
+#define PLAYER2_TEXT_ID Player2Text
 
 /* CopyPlayerName's `.loop` tail. CopyOpponentName's name-buffer path jumps straight
  * into it, so the DisableSRAM runs on that path too even though it never enabled SRAM. */
@@ -1640,7 +1640,7 @@ uint8_t GetPlayAreaCardRetreatCost(void)
 	return GetLoadedCard1RetreatCost();
 }
 
-#define WAS_KNOCKED_OUT_TEXT 0x0081u
+#define WAS_KNOCKED_OUT_TEXT WasKnockedOutText
 
 uint8_t DrawWideTextBox_WaitForInput_ReturnCarry(uint16_t hl)
 {

@@ -5,6 +5,7 @@
 #define CURSOR_BLINK_PERIOD_MASK 0x0Fu
 #define B_CURSOR_BLINK_PERIOD 4u
 #include "generated/rom.h"
+#include "generated/text_ids.h"
 #include "generated/wram.h"
 #include "home/objects.h"
 #include "mem.h"
@@ -53,8 +54,8 @@
 #define OPEN_IN_PLAY_AREA_TEXT_TABLE OpenInPlayAreaScreen_TextTable_ADDR
 #define OPEN_IN_PLAY_AREA_TRANSITION_TABLE1 OpenInPlayAreaScreen_TransitionTable1_ADDR
 #define OPEN_IN_PLAY_AREA_TRANSITION_TABLE2 OpenInPlayAreaScreen_TransitionTable2_ADDR
-#define EMPTY_LINE_TEXT 0x0251u
-#define HAND_TEXT_2 0x024Eu
+#define EMPTY_LINE_TEXT EmptyLineText
+#define HAND_TEXT_2 HandText_2
 #define TRUE 0x01u
 
 static void open_in_play_area_print_associated_text(uint8_t position)

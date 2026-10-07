@@ -58,7 +58,7 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define DUELVARS_CARD_LOCATIONS 0x00u
-#define OPPACTION_DUEL_MAIN_SCENE_269 0x16u
+#define OPPACTION_DUEL_MAIN_SCENE_269 OPPACTION_DUEL_MAIN_SCENE
 /* wAttachedEnergies ($CC1B) indexed by GRASS ($01). */
 #define GRASS_ENERGY_COUNT_ADDR 0xCC1Cu
 

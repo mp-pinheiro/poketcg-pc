@@ -133,9 +133,9 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/print_text.h"
 #include "generated/sram.h"
 #include "mem.h"
-#define CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT 0x07F3u
-#define CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT 0x07F4u
-#define CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT 0x07F5u
+#define CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT ChallengeMachineNotDuelledIconText
+#define CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT ChallengeMachineDuelWonIconText
+#define CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT ChallengeMachineDuelLostIconText
 static const uint16_t challenge_machine_duel_result_icons[3] = {
 	CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT,
 	CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT,

@@ -2,6 +2,7 @@
 
 #include "generated/constants.h"
 #include "generated/hram.h"
+#include "generated/text_ids.h"
 #include "generated/wram.h"
 #include "generated/rom.h"
 #include "home/palettes.h"
@@ -91,13 +92,13 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 #define DUELVARS_ARENA_CARD_LAST_TURN_STATUS       0xF5u
 
 
-#define THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT         0x014Bu
-#define THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT 0x0183u
-#define THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT        0x0181u
-#define THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT            0x0180u
-#define THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT        0x0182u
-#define THERE_WAS_NO_EFFECT_FROM_POISON_TEXT           0x017Fu
-#define THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT            0x017Eu
+#define THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT         ThereWasNoEffectFromTxRam2Text
+#define THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT ThereWasNoEffectFromPoisonConfusionText
+#define THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT        ThereWasNoEffectFromParalysisText
+#define THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT            ThereWasNoEffectFromSleepText
+#define THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT        ThereWasNoEffectFromConfusionText
+#define THERE_WAS_NO_EFFECT_FROM_POISON_TEXT           ThereWasNoEffectFromPoisonText
+#define THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT            ThereWasNoEffectFromToxicText
 
 /* core.asm:8264-8267 */
 void ResetAttackAnimationIsPlaying(void)
