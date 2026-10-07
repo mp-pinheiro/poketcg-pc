@@ -186,9 +186,13 @@ def edit(path: Path, *, out: Path, cards: list[str], events: list[str], medals: 
             image[offset(CARD_COLLECTION) + card] = all_cards & 0x7F
     for spec in cards:
         card_name, _, count = spec.partition("=")
-        if card_name not in card_ids or not count:
-            raise SaveError(f"--card wants CARD=COUNT with a card constant, got {spec}")
-        image[offset(CARD_COLLECTION) + card_ids[card_name]] = int(count, 0) & 0x7F
+        card = card_ids.get(card_name)
+        if card is None and card_name[:1].isdigit():
+            card = int(card_name, 0)
+        if card is None or not 0 < card < COLLECTION_SIZE or not count:
+            raise SaveError(f"--card wants CARD=COUNT with a card constant or an id below "
+                            f"0x{COLLECTION_SIZE:x}, got {spec}")
+        image[offset(CARD_COLLECTION) + card] = int(count, 0) & 0x7F
     if medals is not None:
         image[offset(MEDAL_COUNT)] = medals & 0xFF
     for spec in packs:
@@ -238,7 +242,7 @@ def main(argv: list[str] | None = None) -> int:
     edit_parser = sub.add_parser("edit", help="edit a save image and reseal it")
     edit_parser.add_argument("save", type=Path)
     edit_parser.add_argument("--out", type=Path, required=True)
-    edit_parser.add_argument("--card", action="append", default=[], help="CARD=COUNT")
+    edit_parser.add_argument("--card", action="append", default=[], help="CARD=COUNT, CARD a constant or an id such as 0x1ff")
     edit_parser.add_argument("--all-cards", type=int, help="every card's count")
     edit_parser.add_argument("--event", action="append", default=[], help="EVENT_X=VALUE")
     edit_parser.add_argument("--medals", type=int)

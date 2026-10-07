@@ -23,3 +23,10 @@ routines = [
     "CountCardIDInLocation",
     "LoadLoaded1CardGfx",
 ]
+
+[variant]
+checkout = "build-extended/completion/boundary/poketcg-extended"
+rom_sha256 = "7cb40e3d359ab502917ceb869e0282f18345ca1e59a31cd76f6cc10ad8a920d2"
+build_dir = "build-extended/completion/boundary/native"
+inventory = "build-extended/completion/boundary/inventory.json"
+session_namespace = "tests/sessions/extended-boundary"

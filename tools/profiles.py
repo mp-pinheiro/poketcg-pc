@@ -5,7 +5,8 @@ from __future__ import annotations
 import argparse
 import json
 import os
-from dataclasses import dataclass
+import tomllib
+from dataclasses import dataclass, replace
 from pathlib import Path
 from collections.abc import Mapping
 
@@ -13,6 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 import re
 
 CATALOG = ROOT / "profiles" / "profiles.json"
+VARIANT_ENV = "POKETCG_PROFILE_VARIANT"
 
 
 class ProfileError(ValueError):
@@ -29,6 +31,7 @@ class Profile:
     evidence: Mapping[str, Any]
     save: Mapping[str, Any]
     features: Mapping[str, bool]
+    variant: str | None = None
 
     @property
     def checkout(self) -> str:
@@ -279,14 +282,41 @@ def symbol_address(
 
 
 
+def apply_variant(profile: Profile, variant: str, root: Path = ROOT) -> Profile:
+    path = root / "profiles" / profile.name / f"{variant}.toml"
+    if not path.is_file():
+        raise ProfileError(f"profile {profile.name} has no variant {variant} ({path.relative_to(root)})")
+    table = tomllib.loads(path.read_text()).get("variant")
+    if not isinstance(table, dict):
+        raise ProfileError(f"{path.relative_to(root)} has no [variant] table")
+    name = f"profile {profile.name} variant {variant}"
+    fields = {key: _require(table, key, name) for key in (
+        "checkout", "rom_sha256", "build_dir", "inventory", "session_namespace")}
+    for key, value in fields.items():
+        if not isinstance(value, str) or not value:
+            raise ProfileError(f"{name}.{key} is invalid")
+    pack = f"{fields['build_dir']}/completion/data-pack.bin"
+    return replace(
+        profile,
+        variant=variant,
+        source={**profile.source, "checkout": fields["checkout"], "rom_sha256": fields["rom_sha256"]},
+        build={**profile.build, "default_build_dir": fields["build_dir"]},
+        artifacts={**profile.artifacts, "inventory": fields["inventory"], "data_pack": pack,
+                   "pack_manifest": pack.removesuffix(".bin") + ".json"},
+        evidence={**profile.evidence, "session_namespace": fields["session_namespace"]},
+    )
+
+
 def get_profile(name: str | None = None, root: Path = ROOT) -> Profile:
     default, profiles = load_catalog(root / "profiles" / "profiles.json")
     selected = name or os.environ.get("POKETCG_PROFILE") or default
     try:
-        return profiles[selected]
+        profile = profiles[selected]
     except KeyError as error:
         choices = ", ".join(sorted(profiles))
         raise ProfileError(f"unknown profile {selected}; choose one of {choices}") from error
+    variant = os.environ.get(VARIANT_ENV)
+    return apply_variant(profile, variant, root) if variant else profile
 
 
 def main() -> int:

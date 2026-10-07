@@ -4,10 +4,14 @@ ratchet = "tools/completion/session_ratchet_extended.json"
 fields = ["wram", "hram", "sram", "vram", "oam", "palette_ram", "framebuffer", "audio"]
 required = [
   "credits-extended",
-  "extended-boundary",
   "three-palette-screens",
   "extended-animations",
   "deck-save-reload",
   "extended-fixes",
   "multi-bank-scripts"
 ]
+
+[[variants]]
+name = "boundary"
+session_namespace = "tests/sessions/extended-boundary"
+required = ["extended-boundary"]

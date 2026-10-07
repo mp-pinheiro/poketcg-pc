@@ -116,6 +116,9 @@ def load_pins() -> dict[str, Any]:
         raise GambatteError(f"cannot load pins: {exc}") from exc
     if pins.get("schema") != 1:
         raise GambatteError("Gambatte pin schema is not 1")
+    if PROFILE.variant:
+        pins["rom"] = {"path": str(PROFILE.rom_path(ROOT).relative_to(ROOT)),
+                       "sha256": str(PROFILE.source["rom_sha256"])}
     return pins
 
 

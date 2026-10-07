@@ -1,0 +1,8 @@
+{
+  "goal": "High card ids on the boundary fixture ROM: boundary-base's save holds two copies each of ids 0x00fe, 0x00ff, 0x0100 and 0x01ff (duplicates of card 1's record). Continue, START > DECK > MODIFY DECK on the saved deck, the Energy filter lists the high-id Grass Energy rows, one Fire Energy out and a high-id card in, its card page (LoadLoaded1CardGfx), SAVE writes the deck through CompressDeckToSRAM with the ninth id bit, then MODIFY again reads it back through DecompressSRAMDeck and opens the same card page",
+  "name": "extended-boundary",
+  "ordinals": 4965,
+  "pokes": {},
+  "recorded": "2026-10-07T05:36:47+00:00",
+  "schema": 1
+}

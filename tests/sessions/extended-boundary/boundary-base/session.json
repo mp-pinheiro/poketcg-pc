@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "boot-menu on the boundary fixture ROM seeded with deck-save's cartridge RAM plus two copies each of card ids 0x00fe, 0x00ff, 0x0100 and 0x01ff in the collection",
+  "name": "boundary-base",
+  "ordinals": 1000,
+  "recorded": "2026-10-07T05:33:57+00:00",
+  "save": "boundary.sav",
+  "save_sha256": "4acb1fa55ec948421856b257c6613ebc6fb3371f77010beebf0fcfb2f9f351d2",
+  "schema": 1,
+  "then": []
+}

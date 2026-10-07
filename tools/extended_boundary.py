@@ -96,10 +96,16 @@ def build_native(root: Path, workdir: Path, source: Path, inventory: Path) -> Pa
          "-DPOKETCG_ENABLE_EXTENDED=ON", f"-DPOKETCG_EXTENDED_DISASM={source}",
          f"-DPOKETCG_EXTENDED_INVENTORY={inventory}", "-DPORT_FILES="])
     jobs = os.environ.get("POKETCG_NINJA_JOBS", "-j2")
-    run(["ninja", jobs, "-C", str(native), "poketcg_extended_probe"])
-    probe = native / get_profile("extended", root).probe
+    run(["ninja", jobs, "-C", str(native), "poketcg_extended_probe", "poketcg-extended"])
+    profile = get_profile("extended", root)
+    probe = native / profile.probe
     if not probe.is_file():
         raise SystemExit(f"boundary native probe missing: {probe}")
+    pack = native / "completion" / "data-pack.bin"
+    run([sys.executable, "tools/gen_data.py", "--profile", "extended",
+         "--rom", str(source / profile.rom_name), "--map", str(source / profile.map_name),
+         "--sym", str(source / profile.sym_name), "--inventory", str(inventory),
+         "--sparse-pack", "--pack", str(pack), "--pack-manifest", str(pack.with_suffix(".json"))])
     return probe
 
 

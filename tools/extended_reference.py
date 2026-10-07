@@ -20,7 +20,10 @@ def main() -> int:
     ratchet = ROOT / contract["ratchet"]
     records = json.loads(ratchet.read_text()) if ratchet.is_file() else {}
     failures = []
-    for name in contract["required"]:
+    required = [(namespace, name) for name in contract["required"]]
+    for variant in contract.get("variants", []):
+        required += [(ROOT / variant["session_namespace"], name) for name in variant["required"]]
+    for namespace, name in required:
         directory = namespace / name
         record = records.get(name, {})
         if not (directory / "session.json").is_file() or not (directory / "input.txt").is_file():
