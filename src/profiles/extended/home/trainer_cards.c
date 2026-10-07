@@ -661,9 +661,36 @@ AIDecideParameterResult AIDecide_ImposterProfessorOak(uint8_t d)
 /* <<< factory AIDecide_ImposterProfessorOak */
 
 /* >>> factory AIDecide_Pokedex */
+static PickPokedexResult pick_pokedex_pokemon_first(void)
+{
+	DuelistVarResult remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint16_t deck = (uint16_t)((remaining.hl & 0xFF00u) |
+				   (uint8_t)(remaining.a + 0x7Eu));
+	uint8_t types[5], indices[5];
+	wAIPokedexCounter = 0;
+	for (uint8_t i = 0; i < 5u; i++) {
+		indices[i] = gb_read8((uint16_t)(deck + i));
+		types[i] = GetCardType(GetCardIDFromDeckIndex(indices[i]));
+		gb_write8((uint16_t)(wce08_ADDR + i), types[i]);
+		gb_write8((uint16_t)(wce0f_ADDR + i), indices[i]);
+	}
+	gb_write8((uint16_t)(wce08_ADDR + 5u), 0xFFu);
+	uint8_t out = 0;
+	for (uint8_t wanted = 0; wanted < 3u; wanted++) {
+		for (uint8_t i = 0; i < 5u; i++) {
+			uint8_t type = types[i];
+			if ((wanted == 0u && type >= TYPE_ENERGY) ||
+			    (wanted == 1u && type != TYPE_TRAINER) ||
+			    (wanted == 2u && !(type & TYPE_ENERGY)))
+				continue;
+			gb_write8((uint16_t)(wce1a_ADDR + out++), indices[i]);
+		}
+	}
+	return (PickPokedexResult){0xFFu, 0x90u, (uint8_t)((wce1a_ADDR + out) >> 8)};
+}
+
 AIDecidePokedexResult AIDecide_Pokedex(uint8_t d)
 {
-	/* Every refusal keeps the entry d; only PickPokedexCards moves it. */
 	uint8_t counter = wAIPokedexCounter;
 	if (counter < 6u)
 		return (AIDecidePokedexResult){counter, (uint8_t)(counter == 0u ? 0x80u : 0u), d};
@@ -673,7 +700,8 @@ AIDecidePokedexResult AIDecide_Pokedex(uint8_t d)
 	uint8_t roll = Random(10u);
 	if (roll >= 3u)
 		return (AIDecidePokedexResult){roll, (uint8_t)(roll == 0u ? 0x80u : 0u), d};
-	PickPokedexResult picked = PickPokedexCards();
+	PickPokedexResult picked = wOpponentDeckID == WONDERS_OF_SCIENCE_DECK_ID
+		? pick_pokedex_pokemon_first() : PickPokedexCards();
 	return (AIDecidePokedexResult){picked.a, picked.f, picked.d};
 }
 /* <<< factory AIDecide_Pokedex */

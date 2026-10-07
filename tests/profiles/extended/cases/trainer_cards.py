@@ -13,6 +13,12 @@ _ENERGY_SEARCH = Fixture(
     "extended-fixes-aidecide-energysearch-entry",
     directory=_FIXTURES,
 )
+_POKEDEX = Fixture(
+    "extended-fixes-aidecide-pokedex-entry",
+    directory=_FIXTURES,
+    holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
+    lcdc=0xCABB,
+)
 CONTRACT = {
     'RemoveCardFromList': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
     'FindDuplicateCards': {'compare': ('a', 'f', 'hl', 'd'), 'preserve': ()},
@@ -7993,9 +7999,9 @@ MUTATIONS = {
         'case_ids': ['AIDecide_ImposterProfessorOak-1'],
         'source': 'src/profiles/extended/home/trainer_cards.c'},
     'AIDecide_Pokedex': {   'source_symbol': 'AIDecide_Pokedex',
-        'before': '\tif (counter < 6u)',
-        'after': '\tif (counter < 5u)',
-        'case_ids': ['AIDecide_Pokedex-0'],
+        'before': '(wanted == 0u && type >= TYPE_ENERGY)',
+        'after': '(wanted == 0u && type < TYPE_ENERGY)',
+        'case_ids': ['AIDecide_Pokedex-5'],
         'source': 'src/profiles/extended/home/trainer_cards.c'},
     'AIDecide_ItemFinder': {   'source_symbol': 'AIDecide_ItemFinder',
         'before': 'return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), d};',
@@ -8551,6 +8557,10 @@ MUTATIONS = {
         'case_ids': ['AIPlay_SuperEnergyRetrieval-0'],
         'source': 'src/profiles/extended/home/trainer_cards.c'},
 }
+
+_POKEDEX_CASE = _POKEDEX.case()
+_POKEDEX_CASE["read"][0xCD8F] = 0x20
+CASES["AIDecide_Pokedex"].append(_POKEDEX_CASE)
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
