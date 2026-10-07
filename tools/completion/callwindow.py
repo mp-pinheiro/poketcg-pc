@@ -19,6 +19,7 @@ import collections
 import re
 import difflib
 import json
+import os
 import struct
 import subprocess
 import sys
@@ -38,13 +39,14 @@ INTERLEAVED = {
     "TimerHandler", "SerialTimerHandler", "SoundTimerHandler", "SerialHandler",
     "IncrementPlayTimeCounter", "VBlankHandler", "LCDCHandler", "Func_fc26c",
     "AssertSongFinished", "_AssertSongFinished", "AssertSFXFinished", "_AssertSFXFinished",
+    "GetAudioCmdAndArgs",
 }
 PLUMBING = ("BankswitchROM", "BankpushROM", "BankpopROM", "Bankswitch3dTo3f")
 
 MAGIC = b"PTCGWND1"
 HEADER = struct.Struct("<8sQQ")
 RECORD = struct.Struct("<II")
-TRACE_BINARY = ROOT / "build-trace" / "poketcg"
+TRACE_BINARY = ROOT / os.environ.get("POKETCG_TRACE_BUILD", "build-trace") / session.PROFILE.binary
 
 
 class WindowError(RuntimeError):
@@ -76,7 +78,7 @@ def native_symbols() -> set[str]:
 
 def native_order(name: str, lo: int, hi: int) -> dict[int, list[str]]:
     if not TRACE_BINARY.is_file():
-        raise WindowError(f"no trace binary at {TRACE_BINARY.relative_to(ROOT)}: run `just build-trace`")
+        raise WindowError(f"no trace binary at {TRACE_BINARY.relative_to(ROOT)}: configure a -DPOKETCG_TRACE=ON build there (`just build-trace` for vanilla) or set POKETCG_TRACE_BUILD")
     masks, meta = session.load_session(name)
     frames = session.reference_frames(masks, meta)
     reference = session.build_reference(name, masks, frames, pokes=meta["pokes"], save=meta["save"])
@@ -92,7 +94,7 @@ def native_order(name: str, lo: int, hi: int) -> dict[int, list[str]]:
         out = tmp / "window.bin"
         command = [
             str(TRACE_BINARY), "--headless",
-            "--data-pack", str(ROOT / "build" / "completion" / "data-pack.bin"),
+            "--data-pack", str(session.PROFILE.data_pack_path(ROOT)),
             "--frames", "0",
             "--stop-ordinal", str(hi + 2),
             "--input-ordinal", str(directory / "input.txt"),
@@ -174,7 +176,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     known = set(refstream.routine_entry_addresses()[1].values())
-    inventory = json.loads((ROOT / "site" / "data" / "inventory.json").read_text())["functions"]
+    inventory = json.loads(session.PROFILE.artifact_path("inventory", ROOT).read_text())["functions"]
     files = {name: info.get("file", "") for name, info in inventory.items()}
     defined = native_symbols()
     known &= defined
