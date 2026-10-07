@@ -10,7 +10,7 @@ _DAMAGE_SWAP_FIRE_FIXTURE = Fixture("ai-duel-fire-charge-handleaidamageswap-entr
 _DAMAGE_SWAP_FIRE = _DAMAGE_SWAP_FIRE_FIXTURE.case(vram=False, C450=b'\x90\x00', C432=b'\x36\x00', C446=b'\x23\x00', C2C8=b'\x3c')
 
 CONTRACT = {
-    'HandleAIShift': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
+    'HandleAIShift': {'compare': ('a', 'f'), 'preserve': ()},
     'HandleAIPeek': {'compare': ('a', 'f'), 'preserve': ()},
     'HandleAIStrangeBehavior': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b',)},
     'HandleAICurse': {'compare': ('a', 'f'), 'preserve': ()},
@@ -29,6 +29,7 @@ CASES = {
         {'c': 0x05},
         {'c': 0xFF},
         {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234},
+        dict(_COWARDICE_FIXTURE.case(vram=False, C476=b'\x7d\x00', C470=b'\x25\x00', C2D4=b'\x83', C2D5=b'\x83', C3D4=b'\x83', C3D5=b'\x83', CBA3=b'\x01'), **dict(_COWARDICE_FIXTURE.regs, c=0)),
     ],
     'HandleAIPeek': [
         {'c': 0x00},
@@ -1986,9 +1987,9 @@ CASES = {
 
 MUTATIONS = {
     'HandleAIShift': {   'source_symbol': 'HandleAIShift',
-        'before': 'return (AIShiftResult){c, 0x00u};',
-        'after': 'return (AIShiftResult){c, 0x80u};',
-        'case_ids': ['HandleAIShift-0', 'HandleAIShift-1', 'HandleAIShift-2', 'HandleAIShift-3'],
+        'before': '\t\tuint8_t wr = TranslateColorToWR(GetPlayAreaCardColor(c));',
+        'after': '\t\tuint8_t wr = TranslateColorToWR(GetCardType(GetCardIDFromDeckIndex(idx)));',
+        'case_ids': ['HandleAIShift-4'],
         'source': 'src/profiles/extended/home/pkmn_powers.c'},
     'HandleAIPeek': {   'source_symbol': 'HandleAIPeek',
         'before': '\thTemp_ffa0 = c;',

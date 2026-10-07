@@ -136,6 +136,13 @@ heading = "AI does not use Shift properly"
 kind = "code"
 routines = ["HandleAIShift"]
 
+[[fixes.reverts]]
+routine = "HandleAIShift"
+source = "src/profiles/extended/home/pkmn_powers.c"
+before = "\t\tuint8_t wr = TranslateColorToWR(GetPlayAreaCardColor(c));"
+after = "\t\tuint8_t wr = TranslateColorToWR(GetCardType(GetCardIDFromDeckIndex(idx)));"
+case = "tests/profiles/extended/cases/pkmn_powers.py"
+index = 4
 [[fixes]]
 heading = "AI does not use Cowardice properly"
 kind = "code"
@@ -215,6 +222,13 @@ heading = "Attack damage is not correctly halved"
 kind = "code"
 routines = ["HandleDamageReductionExceptSubstatus2"]
 
+[[fixes.reverts]]
+routine = "HandleDamageReductionExceptSubstatus2"
+source = "src/profiles/extended/home/substatus.c"
+before = "\t\tif (sub1.a == SUBSTATUS1_HALVE_DAMAGE)\n\t\t\treturn halve_damage(de);"
+after = "\t\tif (sub1.a == SUBSTATUS1_HALVE_DAMAGE) {\n\t\t\tuint8_t d = (uint8_t)(de >> 8);\n\t\t\tuint8_t e = (uint8_t)de;\n\t\t\tuint8_t sla_carry = (uint8_t)(d >> 7);\n\t\t\td = (uint8_t)(d << 1);\n\t\t\te = (uint8_t)((sla_carry << 7) | (e >> 1));\n\t\t\tde = (uint16_t)((uint16_t)d << 8 | e);\n\t\t\tif (e & 1u)\n\t\t\t\tde = reduce_by(de, 5);\n\t\t\treturn de;\n\t\t}"
+case = "tests/profiles/extended/cases/substatus.py"
+index = 17
 [[fixes]]
 heading = "Phantom Venusaur will never be obtained through Card Pop!"
 kind = "removed"
