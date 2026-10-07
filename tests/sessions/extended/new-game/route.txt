@@ -1,0 +1,7 @@
+press UP
+wait 30
+press A
+idle
+dismiss
+shot ext-newgame-1
+peek

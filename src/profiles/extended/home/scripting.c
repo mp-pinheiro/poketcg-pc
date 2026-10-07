@@ -1780,7 +1780,7 @@ CallMapScriptResult CallMapScriptPointerIfExists(uint8_t l)
 	MapScriptResult r = GetMapScriptPointer(l);
 	if ((r.f & 0x10u) == 0u)
 		return (CallMapScriptResult){r.a, r.f, r.hl};
-	ScriptEntryRegs entered = ScriptEntryEnter(r.hl);
+	ScriptEntryRegs entered = ScriptEntryEnterWithBank(r.hl, r.a, r.f, r.a, 0u, 0u, 0u);
 	return (CallMapScriptResult){entered.a, entered.f, entered.hl};
 }
 /* <<< factory CallMapScriptPointerIfExists */
@@ -1795,7 +1795,7 @@ CallMapScriptResult Func_c9bc(void)
 /* >>> factory Func_c9c7 */
 CallMapScriptResult Func_c9c7(void)
 {
-	return CallMapScriptPointerIfExists(0x0eu);
+	return CallMapScriptPointerIfExists(MAP_SCRIPT_CLOSE_TEXTBOX);
 }
 /* <<< factory Func_c9c7 */
 

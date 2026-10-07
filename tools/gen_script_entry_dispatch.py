@@ -46,7 +46,7 @@ from pathlib import Path
 OPCODE_RST_20 = 0xE7
 SYM_LINE = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
 DECL = re.compile(r"^[A-Za-z_][\w ]*\**\s*\b(\w+)\s*\(\s*void\s*\)\s*;", re.MULTILINE)
-MAP_SCRIPT_TARGET = re.compile(r"^\tdw\s+(\w+)\s*$", re.MULTILINE)
+MAP_SCRIPT_TARGET = re.compile(r"^\t(?:dw|dab)\s+(\w+)\s*$", re.MULTILINE)
 GLOBAL_LABEL = re.compile(r"^([A-Za-z_]\w*):")
 NEXT_SCRIPT_TARGET = re.compile(r"^\tset_next_npc_and_script\s+\w+,\s*(\.?\w+(?:\.\w+)?)\s*(?:;.*)?$")
 START_SCRIPT = re.compile(r"^#define\s+(\w+)_START_SCRIPT\s+\(?(?:0x([0-9A-Fa-f]+)u|(\w+)_ADDR \+ (0x[0-9A-Fa-f]+|\d+)u?)\)?", re.MULTILINE)
