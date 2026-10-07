@@ -11,6 +11,7 @@
 #include "home/common.h"
 #include "home/substatus.h"
 #include "home/duel.h"
+#include "home/card_id_bus.h"
 
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 #define INVINCIBLE_RONALD_DECK_ID 0x1Au
@@ -39,7 +40,7 @@ void AIDecideSpecialEvolutions(void)
 {
 	uint8_t deck = wOpponentDeckID;
 	if (deck == LEGENDARY_DRAGONITE_DECK_ID) {
-		uint8_t card = wLoadedCard2ID;
+		CardId card = card_id_read_at(wLoadedCard2ID_ADDR);
 		if (card == CHARMELEON) {
 			uint8_t location = hTempPlayAreaLocation_ff9d;
 			CountNumberOfEnergyCardsAttachedResult attached =
@@ -68,13 +69,14 @@ void AIDecideSpecialEvolutions(void)
 		if (card != DRAGONAIR)
 			return;
 	} else if (deck == INVINCIBLE_RONALD_DECK_ID) {
-		if (wLoadedCard2ID != GRIMER)
+		if (card_id_read_at(wLoadedCard2ID_ADDR) != GRIMER)
 			return;
 		if (hTempPlayAreaLocation_ff9d == 0u)
 			return;
 		(void)AIEncourage(10u);
 		return;
-	} else if (deck != LEGENDARY_RONALD_DECK_ID || wLoadedCard2ID != DRAGONAIR) {
+	} else if (deck != LEGENDARY_RONALD_DECK_ID
+		|| card_id_read_at(wLoadedCard2ID_ADDR) != DRAGONAIR) {
 		return;
 	}
 
@@ -152,8 +154,6 @@ uint8_t AIDecideEvolution(void)
 			wEvolutionHPDifference = (uint8_t)(wLoadedCard1HP - wLoadedCard2HP);
 			wAIScore = 0x80u;
 			AIDecideSpecialEvolutions();
-			/* Whether the card as it stands can attack, and KO. wCurCardCanKO
-			 * is only cleared on the cannot-attack path, as in the asm. */
 			wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
 			uint8_t can_attack = (CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u;
 			if (!can_attack) {
@@ -169,7 +169,6 @@ uint8_t AIDecideEvolution(void)
 				wCurCardCanAttack = 0u;
 				wCurCardCanKO = 0u;
 			}
-			/* .check_evolution_attacks: the evolution stands in for the card. */
 			DuelistVarResult slot = GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD));
 			uint8_t original = slot.a;
 			gb_write8(slot.hl, card);
@@ -188,7 +187,6 @@ uint8_t AIDecideEvolution(void)
 				if (wAlreadyPlayedEnergy == 0u && (LookForEnergyNeededInHand() & 0x10u) != 0u)
 					(void)AIEncourage(7u);
 			}
-			/* .check_evolution_ko */
 			if (wCurCardCanAttack != 0u && wTempAI == 0u) {
 				if ((CheckIfAnyAttackKnocksOutDefendingCard().f & 0x10u) != 0u
 				    && (CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u)
@@ -196,7 +194,6 @@ uint8_t AIDecideEvolution(void)
 				else if (wCurCardCanKO != 0u)
 					AIDiscourage(20u);
 			}
-			/* .check_defending_can_ko_evolution */
 			if (wTempAI == 0u) {
 				hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
 				DuelistVarResult hp =
@@ -208,10 +205,8 @@ uint8_t AIDecideEvolution(void)
 					AIDiscourage(5u);
 				gb_write8(hp.hl, old_hp);
 			}
-			/* .check_mr_mime */
 			if ((CheckDamageToMrMime(wTempAI, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u) == 0u)
 				AIDiscourage(20u);
-			/* .check_defending_can_ko: the card itself is back. */
 			slot = GetTurnDuelistVariable((uint8_t)(wTempAI + DUELVARS_ARENA_CARD));
 			gb_write8(slot.hl, original);
 			if (wTempAI == 0u) {
@@ -221,38 +216,36 @@ uint8_t AIDecideEvolution(void)
 				if (GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a != 0u)
 					(void)AIEncourage(4u);
 			}
-			/* .check_2nd_stage_hand / .check_2nd_stage_deck */
 			if (CheckForEvolutionInList(card, 0u, 0u, 0u).f & 0x10u)
 				(void)AIEncourage(2u);
 			else if (CheckForEvolutionInDeck(card, 0u).f & 0x10u)
 				(void)AIEncourage(1u);
-			/* .check_damage: minus floor(damage / 40) */
 			CardDamageResult damage = GetCardDamageAndMaxHP(wTempAI);
 			if (damage.a != 0u)
 				AIDiscourage(ConvertHPToDamageCounters_Bank5((uint8_t)(damage.a >> 2)).a);
-			/* .check_mysterious_fossil */
 			slot = GetTurnDuelistVariable((uint8_t)(wTempAI + DUELVARS_ARENA_CARD));
 			(void)LoadCardDataToBuffer1_FromDeckIndex(slot.a);
-			if (wLoadedCard1ID == MYSTERIOUS_FOSSIL)
+			CardId loaded_id = card_id_read_at(wLoadedCard1ID_ADDR);
+			if (loaded_id == MYSTERIOUS_FOSSIL)
 				(void)AIEncourage(5u);
 			else if ((wLoadedCard1AIInfo & 0x0Fu) == AI_INFO_ENCOURAGE_EVO)
 				(void)AIEncourage(2u);
-			/* .pikachu_deck */
 			if (wOpponentDeckID == PIKACHU_DECK_ID) {
-				uint8_t id = wLoadedCard1ID;
-				if (id == PIKACHU_LV12 || id == PIKACHU_LV14 || id == PIKACHU_LV16 || id == PIKACHU_ALT_LV16)
+				if (loaded_id == PIKACHU_LV12 || loaded_id == PIKACHU_LV14
+				    || loaded_id == PIKACHU_LV16 || loaded_id == PIKACHU_ALT_LV16)
 					AIDiscourage(3u);
 			}
-			/* .check_score */
 			if (wAIScore >= 133u) {
 				hTempPlayAreaLocation_ffa1 = wTempAI;
 				hTemp_ffa0 = wTempAIPokemonCard;
 				(void)AIMakeDecision(OPPACTION_EVOLVE_PKMN, 0u, 0u, 0u, 0u);
+				if (wTempAI == 0u)
+					wPreviousAIFlags = (uint8_t)(wPreviousAIFlags
+						& (uint8_t)~AI_FLAG_USED_PLUSPOWER);
 				break;
 			}
 		}
 	}
-	/* .done: a is the list terminator, `or a` clears the carry. */
 	return 0xFFu;
 }
 /* <<< factory AIDecideEvolution */
@@ -266,7 +259,7 @@ void AIDecidePlayLegendaryBirds(void)
 		deck != LEGENDARY_RONALD_DECK_ID)
 		return;
 
-	uint8_t card = wLoadedCard1ID;
+	CardId card = card_id_read_at(wLoadedCard1ID_ADDR);
 	if (card == ARTICUNO_LV37) {
 		if (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a < 2u)
 			return;
@@ -309,7 +302,7 @@ void AIDecidePlayLegendaryBirds(void)
 		uint8_t opponent_arena =
 			GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 		SwapTurn();
-		uint8_t opponent_card = GetCardIDFromDeckIndex(opponent_arena);
+		CardId opponent_card = GetCardIDFromDeckIndex(opponent_arena);
 		SwapTurn();
 		if (opponent_card == SNORLAX) {
 			AIDiscourage(100u);

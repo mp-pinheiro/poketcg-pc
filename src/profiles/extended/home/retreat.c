@@ -71,7 +71,7 @@ AITryToRetreatResult AITryToRetreat(uint8_t entry_a, uint8_t entry_f)
 {
 	RetreatEffectResult unable = CheckUnableToRetreatDueToEffect();
 	if (unable.f & FLAG_C)
-		return (AITryToRetreatResult){0u, unable.f};
+		return (AITryToRetreatResult){SUBSTATUS2_ACID, unable.f};
 	CheckIfActiveStatusResult active_status = CheckIfActiveCardParalyzedOrAsleep();
 	if (active_status.f & FLAG_C)
 		return (AITryToRetreatResult){active_status.a, active_status.f};
@@ -317,8 +317,10 @@ AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(uint8_t d)
 		CardId card = card_id_read_at(wLoadedCard1ID_ADDR);
 		uint8_t raise = card == MR_MIME;
 		if (card == MEW_LV8) {
-			(void)LoadCardDataToBuffer2_FromDeckIndex(
-				GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+			SwapTurn();
+			uint8_t defending_arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+			(void)LoadCardDataToBuffer2_FromDeckIndex(defending_arena);
+			SwapTurn();
 			raise = wLoadedCard2Stage != 0u;
 		}
 		if (raise)

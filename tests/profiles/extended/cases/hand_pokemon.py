@@ -45,6 +45,7 @@ CASES = {
             'hl': 0x1234,
             'wram': {0xCBB8: b'\x00', 0xCD44: b' '}},
         {'wram': {0xCBB8: b'\x00', 0xCC17: b'\xc0'}, 'hram': {0xFF9D: b'\x01'}},
+        {'wram': {0xCBB8: b'\x0f', 0xCC17: b'\x31\x01', 0xCD44: b' '}},
     ],
     'AIDecideEvolution': [
         {'expect_regs': {'a': 0xFF, 'f': 0x00}},
@@ -946,6 +947,8 @@ CASES = {
             'e': 0xEE,
             'hl': 0x1234,
             'wram': {0xCBB8: b'\x00', 0xCBD6: b'\x00', 0xCD44: b' '}},
+        {'wram': {0xCBB8: b'\x0c', 0xCBD6: b'\x40\x01', 0xFF97: b'\xc2',
+                  0xC2BA: b'8', 0xCD44: b' '}},
     ],
     'AIDecidePlayPokemonCard': [
         {   'wram': {0xFF97: b'\xc2', 0xC2EE: b'\x00'},
@@ -1854,7 +1857,8 @@ MUTATIONS = {
         'case_ids': [   'AIDecideSpecialEvolutions-1',
                         'AIDecideSpecialEvolutions-2',
                         'AIDecideSpecialEvolutions-3',
-                        'AIDecideSpecialEvolutions-4'],
+                        'AIDecideSpecialEvolutions-4',
+                        'AIDecideSpecialEvolutions-6'],
         'source': 'src/profiles/extended/home/hand_pokemon.c'},
     'AIDecideEvolution': {   'source_symbol': 'AIDecideEvolution',
         'before': '\t\t\telse if ((wLoadedCard1AIInfo & 0x0Fu) == AI_INFO_ENCOURAGE_EVO)',
@@ -1866,7 +1870,8 @@ MUTATIONS = {
         'after': 'void AIDecidePlayLegendaryBirds(void)\n'
                  '{\n'
                  '\tuint8_t deck = LEGENDARY_ZAPDOS_DECK_ID;',
-        'case_ids': ['AIDecidePlayLegendaryBirds-0'],
+        'case_ids': ['AIDecidePlayLegendaryBirds-0',
+                     'AIDecidePlayLegendaryBirds-5'],
         'source': 'src/profiles/extended/home/hand_pokemon.c'},
     'AIDecidePlayPokemonCard': {   'source_symbol': 'AIDecidePlayPokemonCard',
         'before': '\t\t\treturn (AIDecidePlayPokemonCardResult){last, (uint8_t)(last == 0u ? 0x80u '

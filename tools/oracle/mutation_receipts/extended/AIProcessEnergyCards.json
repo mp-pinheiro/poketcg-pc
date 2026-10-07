@@ -1,0 +1,9 @@
+{
+  "fn": "AIProcessEnergyCards",
+  "case": "tests/profiles/extended/cases/energy.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIProcessEnergyCards\", \"registers\": {\"a\": 2, \"b\": 115, \"c\": 0, \"d\": 12, \"e\": 109, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 55090, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49864\": \"00\", \"49903\": \"01\", \"50432\": \"ff\", \"51899\": \"00\", \"52575\": \"02\", \"52587\": \"80808080808000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIProcessEnergyCards\", \"mismatches\": {\"bus\": {\"address\": 52587, \"reference\": \"01ff00028080808080\", \"native\": \"01ff00028181818181\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[49864, 1], [49903, 1], [50432, 1], [51899, 1], [52575, 1], [52587, 7], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIProcessEnergyCards\", \"registers\": {\"a\": 2, \"b\": 115, \"c\": 0, \"d\": 12, \"e\": 109, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 55090, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49864\": \"00\", \"49903\": \"01\", \"50432\": \"ff\", \"51899\": \"00\", \"52575\": \"02\", \"52587\": \"80808080808000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

@@ -7,6 +7,8 @@ _FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
 _AI_MAIN = Fixture("ai-duel-fire-charge-aimainturnlogic-entry",
                    directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
+_RETREAT = Fixture("ai-duel-fire-charge-aiprocessretreat-entry",
+                   directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 
 
 def _fixture_case(fixture):
@@ -38,6 +40,7 @@ CASES = {
             'hl': 0x1234,
             'wram': {0xCD8A: b'\x00', 0xCBB6: b'\x01'},
             'expect_regs': {'a': 0x01, 'f': 0x00}},
+        dict(_fixture_case(_RETREAT), **_RETREAT.regs),
     ],
     'AIMainTurnLogic': [
         dict(_fixture_case(_AI_MAIN), **_AI_MAIN.regs),
@@ -47,12 +50,10 @@ CASES = {
 
 MUTATIONS = {
     'AIProcessRetreat': {   'source_symbol': 'AIProcessRetreat',
-        'before': 'AIProcessRetreatResult AIProcessRetreat(void)\n'
-                  '{\n'
-                  '\tuint8_t already_retreated = wAIRetreatedThisTurn;',
-        'after': 'AIProcessRetreatResult AIProcessRetreat(void)\n'
-                 '{\n'
-                 '\tuint8_t already_retreated = 0u;',
+        'before': '\tif (already_retreated != 0u)\n'
+                  '\t\treturn (AIProcessRetreatResult){already_retreated, 0x00u};',
+        'after': '\tif (already_retreated != 0u)\n'
+                 '\t\treturn (AIProcessRetreatResult){0u, 0x00u};',
         'case_ids': ['AIProcessRetreat-0'],
         'source': 'src/profiles/extended/home/general.c'},
     'AIMainTurnLogic': {   'source_symbol': 'AIMainTurnLogic',

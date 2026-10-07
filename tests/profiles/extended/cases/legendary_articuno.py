@@ -17,6 +17,11 @@ def _fixture_case(fixture):
 _ARTICUNO_AI = Fixture("legendary-articuno-aidoturn-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 _ARTICUNO_SCORE = Fixture("legendary-articuno-score-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 _ARTICUNO_SCORING = Fixture("legendary-articuno-score-2-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
+_ARTICUNO_SCORING_THREE = _ARTICUNO_SCORING.case(vram=False, bank=5)
+_ARTICUNO_SCORING_THREE["read"][0xCC00] = 0xBD
+_ARTICUNO_SCORING_THREE["read"][0xCCBE] = 0x42
+_ARTICUNO_SCORING_THREE["snapshot"] = True
+_ARTICUNO_SCORING_THREE["wram"][0xC3EC] = b"\x07"
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -29,7 +34,8 @@ CASES = {
     'ScoreLegendaryArticunoCards': [
         dict(_fixture_case(_ARTICUNO_SCORE), **_ARTICUNO_SCORE.regs),
         dict(_fixture_case(_ARTICUNO_SCORE), **POISON),
-        dict(_ARTICUNO_SCORING.case(vram=False, bank=5), **_ARTICUNO_SCORING.regs),
+        dict(_ARTICUNO_SCORING_THREE, **_ARTICUNO_SCORING.regs),
+        dict(_ARTICUNO_SCORING_THREE, **_ARTICUNO_SCORING.regs),
     ],
     'AIDoTurn_LegendaryArticuno': [
         dict(_fixture_case(_ARTICUNO_AI), **_ARTICUNO_AI.regs),
@@ -42,7 +48,8 @@ MUTATIONS = {
     'ScoreLegendaryArticunoCards': {   'source_symbol': 'ScoreLegendaryArticunoCards',
         'before': '\tif (prizes < 3u)\n\t\treturn;',
         'after': '\tif (prizes < 7u)\n\t\treturn;',
-        'case_ids': ['ScoreLegendaryArticunoCards-2'],
+        'case_ids': ['ScoreLegendaryArticunoCards-2',
+                     'ScoreLegendaryArticunoCards-3'],
         'source': 'src/profiles/extended/home/legendary_articuno.c'},
     'AIDoTurn_LegendaryArticuno': {   'source_symbol': 'AIDoTurn_LegendaryArticuno',
         'before': '\t\t(void)AIProcessRetreat();\n'

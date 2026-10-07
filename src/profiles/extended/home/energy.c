@@ -156,16 +156,25 @@ CheckSpecificDecksToAttachDoubleColorlessResult CheckSpecificDecksToAttachDouble
 	uint8_t check_colorless = 0u;
 
 	if (deck_id == LEGENDARY_DRAGONITE_DECK_ID) {
-		a = CheckSpecificDecksToAttachDoubleColorless_GetID();
-		if (a == CHARMANDER || a == DRATINI)
+		CardId card_id = CheckSpecificDecksToAttachDoubleColorless_GetID();
+		a = (uint8_t)(card_id >> 8);
+		if (a == 0u)
+			a = (uint8_t)card_id;
+		if (card_id == CHARMANDER || card_id == DRATINI)
 			check_colorless = 1u;
 	} else if (deck_id == FIRE_CHARGE_DECK_ID) {
-		a = CheckSpecificDecksToAttachDoubleColorless_GetID();
-		if (a == GROWLITHE)
+		CardId card_id = CheckSpecificDecksToAttachDoubleColorless_GetID();
+		a = (uint8_t)(card_id >> 8);
+		if (a == 0u)
+			a = (uint8_t)card_id;
+		if (card_id == GROWLITHE)
 			check_colorless = 1u;
 	} else if (deck_id == LEGENDARY_RONALD_DECK_ID) {
-		a = CheckSpecificDecksToAttachDoubleColorless_GetID();
-		if (a == DRATINI)
+		CardId card_id = CheckSpecificDecksToAttachDoubleColorless_GetID();
+		a = (uint8_t)(card_id >> 8);
+		if (a == 0u)
+			a = (uint8_t)card_id;
+		if (card_id == DRATINI)
 			check_colorless = 1u;
 	}
 
@@ -295,9 +304,6 @@ AITryToPlayEnergyCardResult AITryToPlayEnergyCard(void)
 {
 	uint8_t pending;
 	uint8_t attack;
-	/* b = basic energy still needed, c = colorless still needed, e = the
-	 * basic energy's card ID: CheckEnergyNeededForAttack's registers, which
-	 * every path into .check_deck carries there (energy.asm:849-910). */
 	uint8_t need_b;
 	uint8_t need_c;
 	uint8_t need_e;
@@ -350,7 +356,6 @@ second_attack:
 			CheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);
 		if ((evo.f & 0x10u) == 0u)
 			return (AITryToPlayEnergyCardResult){evo.a, evo.f};
-		/* CreateEnergyCardListFromHand preserves bc and de (core.asm:622-654). */
 		(void)CreateEnergyCardListFromHand(evo.a);
 		need_b = evo.b;
 		need_c = evo.c;
@@ -383,7 +388,6 @@ check_deck:
 				goto play_energy_card;
 		}
 
-		/* .colorless_energy */
 		if (gb_read8(hTempPlayAreaLocation_ff9d_ADDR) != 0u)
 			goto look_for_any_energy;
 		if (need_c == 0u)
@@ -399,9 +403,8 @@ check_deck:
 				if (v == 0xFFu)
 					goto look_for_any_energy;
 				gb_write8(hTemp_ffa0_ADDR, v);
-				uint16_t id16 = GetCardIDFromDeckIndex(v);
-				uint8_t id_e = (uint8_t)id16;
-				if (id_e == DOUBLE_COLORLESS_ENERGY_600)
+				CardId id = GetCardIDFromDeckIndex(v);
+				if (id == DOUBLE_COLORLESS_ENERGY_600)
 					goto play_energy_card;
 			}
 		}
@@ -420,9 +423,8 @@ check_deck:
 				if (boss.carry == 0u) {
 					load = v;
 				} else {
-					uint16_t id16b = GetCardIDFromDeckIndex(v);
-					uint8_t id_e2 = (uint8_t)id16b;
-					if (id_e2 == DOUBLE_COLORLESS_ENERGY_600)
+					CardId id = GetCardIDFromDeckIndex(v);
+					if (id == DOUBLE_COLORLESS_ENERGY_600)
 						continue;
 					load = boss.a;
 				}
@@ -480,7 +482,6 @@ void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)
 	wSelectedAttack = a;
 	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
 	if (energy.f & 0x10u) {
-		/* .not_enough_energy */
 		if (CheckLoadedAttackFlag(ATTACK_FLAG2_ADDRESS | IGNORE_THIS_ATTACK_F).f & 0x10u)
 			AIDiscourage(5u);
 		uint8_t color_in_hand = energy.b != 0u
@@ -492,7 +493,6 @@ void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)
 				goto check_evolution;
 			(void)AIEncourage(3u);
 		}
-		/* .check_total_needed */
 		if ((uint8_t)(energy.b + energy.c - 1u) != 0u)
 			goto check_evolution;
 		(void)AIEncourage(3u);
@@ -504,7 +504,6 @@ void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)
 			goto check_evolution;
 		(void)AIEncourage(10u);
 	} else if (CheckLoadedAttackFlag(ATTACK_FLAG2_ADDRESS | ATTACHED_ENERGY_BOOST_F).f & 0x10u) {
-		/* .attached_energy_boost: a holds the effect parameter. */
 		uint8_t param = wLoadedAttackEffectParam;
 		if (param != MAX_ENERGY_BOOST_IS_LIMITED) {
 			(void)AIEncourage(param);
@@ -516,8 +515,7 @@ void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)
 				AIDiscourage(5u);
 		}
 	} else if (CheckLoadedAttackFlag(ATTACK_FLAG2_ADDRESS | DISCARD_ENERGY_F).f & 0x10u) {
-		/* .discard_energy */
-		if (wLoadedCard1ID != ZAPDOS_LV64) {
+		if (card_id_read_at(wLoadedCard1ID_ADDR) != ZAPDOS_LV64) {
 			if (CheckIfNoSurplusEnergyForAttack().f & 0x10u)
 				encourage_energy_boost_knockout();
 			else

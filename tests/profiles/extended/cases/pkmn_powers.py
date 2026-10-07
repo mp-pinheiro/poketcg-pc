@@ -1,4 +1,13 @@
 """Extended oracle-diff cases for pkmn_powers, seeded from tests/cases/pkmn_powers.py."""
+from pathlib import Path
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_COWARDICE_FIXTURE = Fixture("ai-duel-grass-carriers-handlesaicowardice-entry", directory=_FIXTURES)
+_DAMAGE_SWAP_FIXTURE = Fixture("ai-duel-grass-carriers-handleaidamageswap-entry", directory=_FIXTURES)
+_ENERGY_TRANS_FIXTURE = Fixture("ai-duel-grass-carriers-handleaienergytrans-entry", directory=_FIXTURES)
+_DAMAGE_SWAP_FIRE_FIXTURE = Fixture("ai-duel-fire-charge-handleaidamageswap-entry", directory=_FIXTURES)
+_DAMAGE_SWAP_FIRE = _DAMAGE_SWAP_FIRE_FIXTURE.case(vram=False, C450=b'\x90\x00', C432=b'\x36\x00', C446=b'\x23\x00', C2C8=b'\x3c')
 
 CONTRACT = {
     'HandleAIShift': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
@@ -158,6 +167,8 @@ CASES = {
             'expect': {0xCD8D: b'\x05', 0xCD8F: b'\x00'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
+        dict(_DAMAGE_SWAP_FIXTURE.case(vram=False), **_DAMAGE_SWAP_FIXTURE.regs),
+        dict(_DAMAGE_SWAP_FIRE, **_DAMAGE_SWAP_FIRE_FIXTURE.regs, read={0xCD8D: 0x01}),
     ],
     'HandleAIHeal': [
         {   'c': 0x00,
@@ -1684,6 +1695,7 @@ CASES = {
             'e': 0x64,
             'f': 0xC0,
             'hl': 0xCC6B},
+        dict(_COWARDICE_FIXTURE.case(vram=False, C470=b'\x23\x00', C476=b'\x49\x00', C2C2=b'\x00', C2C8=b'\x14'), **_COWARDICE_FIXTURE.regs),
     ],
     'AIEnergyTransTransferEnergyToBench': [
         {   'wram': {   0xFF97: b'\xc2',
@@ -1968,6 +1980,7 @@ CASES = {
             'e': 0x64,
             'f': 0x40,
             'hl': 0xCC6B},
+        dict(_ENERGY_TRANS_FIXTURE.case(vram=False), **_ENERGY_TRANS_FIXTURE.regs),
     ],
 }
 
@@ -2001,7 +2014,7 @@ MUTATIONS = {
         'before': '\tgb_write8(WCE06_ADDR, ConvertHPToDamageCounters_Bank8(arena.a));',
         'after': '\tgb_write8(WCE06_ADDR, (uint8_t)(ConvertHPToDamageCounters_Bank8(arena.a) + '
                  '1u));',
-        'case_ids': ['HandleAIDamageSwap-4', 'HandleAIDamageSwap-5'],
+        'case_ids': ['HandleAIDamageSwap-7', 'HandleAIDamageSwap-4', 'HandleAIDamageSwap-5'],
         'source': 'src/profiles/extended/home/pkmn_powers.c'},
     'HandleAIHeal': {   'source_symbol': 'HandleAIHeal',
         'before': '\t\t\tgoto heal_arena;',
@@ -2022,9 +2035,9 @@ MUTATIONS = {
                         'HandleAIGoGoRainDanceEnergy-3'],
         'source': 'src/profiles/extended/home/pkmn_powers.c'},
     'HandleAICowardice': {   'source_symbol': 'HandleAICowardice',
-        'before': '\t\tuint8_t used = card_id < TENTACOOL;',
-        'after': '\t\tuint8_t used = 0u;',
-        'case_ids': ['HandleAICowardice-3'],
+        'before': '\t\t\tif ((flags & CAN_EVOLVE_THIS_TURN) == 0u) {',
+        'after': '\t\t\tif (flags & 0u) {',
+        'case_ids': ['HandleAICowardice-4'],
         'source': 'src/profiles/extended/home/pkmn_powers.c'},
     'AIEnergyTransTransferEnergyToBench': {   'source_symbol': 'AIEnergyTransTransferEnergyToBench',
         'before': 'AIEnergyTransTransferEnergyToBenchResult '
@@ -2043,7 +2056,7 @@ MUTATIONS = {
                   'CountTurnDuelistPokemonWithActivePkmnPower(VENUSAUR_LV67);',
         'after': '\tPkmnPowerCountResult venusaur = '
                  'CountTurnDuelistPokemonWithActivePkmnPower(MUK);',
-        'case_ids': ['HandleAIEnergyTrans-2'],
+        'case_ids': ['HandleAIEnergyTrans-3', 'HandleAIEnergyTrans-2'],
         'source': 'src/profiles/extended/home/pkmn_powers.c'},
 }
 

@@ -3434,10 +3434,6 @@ check_attached_energy:
 /* >>> factory AIDecide_FullHeal */
 AIDecideFullHealResult AIDecide_FullHeal(uint8_t d)
 {
-	/* trainer_cards.asm AIDecide_FullHeal. d follows the callees: the status
-	 * checks and the play-area lookups keep it, the hand-list lookup leaves
-	 * wDuelTempList's page, then Scoop Up, the damage check and the retreat
-	 * decision each report their own. */
 	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
 	if (status == 0u)
 		return (AIDecideFullHealResult){0u, 0x80u, d};
@@ -3445,17 +3441,23 @@ AIDecideFullHealResult AIDecide_FullHeal(uint8_t d)
 	if (status != PARALYZED && status != ASLEEP && status != CONFUSED)
 		return (AIDecideFullHealResult){status, 0x10u, d};
 	if (status == ASLEEP) {
-		LookForCardIDInPlayAreaResult ghost = LookForCardIDInPlayArea_Bank8(GASTLY_LV8, PLAY_AREA_ARENA);
+		LookForCardIDInPlayAreaResult ghost;
+		SwapTurn();
+		ghost = LookForCardIDInPlayArea_Bank8(GASTLY_LV8, PLAY_AREA_ARENA);
+		SwapTurn();
 		if (ghost.f & 0x10u)
 			return (AIDecideFullHealResult){ghost.a, (uint8_t)((ghost.f & 0x80u) | 0x10u), d};
+		SwapTurn();
 		ghost = LookForCardIDInPlayArea_Bank8(GASTLY_LV17, PLAY_AREA_ARENA);
+		SwapTurn();
 		if (ghost.f & 0x10u)
 			return (AIDecideFullHealResult){ghost.a, (uint8_t)((ghost.f & 0x80u) | 0x10u), d};
+		SwapTurn();
 		ghost = LookForCardIDInPlayArea_Bank8(HAUNTER_LV22, PLAY_AREA_ARENA);
+		SwapTurn();
 		if (ghost.f & 0x10u)
 			return (AIDecideFullHealResult){ghost.a, (uint8_t)((ghost.f & 0x80u) | 0x10u), d};
 	}
-	/* .paralyzed / .confused share the Scoop Up and damage checks. */
 	LookForCardIDInHandListResult hand = LookForCardIDInHandList_Bank8(SCOOP_UP);
 	d = hand.d;
 	if (hand.f & 0x10u) {

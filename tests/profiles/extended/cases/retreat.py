@@ -7,6 +7,12 @@ _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
 _BENCH = Fixture("ai-duel-fire-charge-aidecidebenchpokemontoswitchto-entry", directory=_FIXTURES)
 _DECIDE = Fixture("ai-duel-fire-charge-aidecidewhethertoretreat-entry", directory=_FIXTURES)
 _TRY = Fixture("ai-duel-grass-carriers-aitrytoretreat-entry", directory=_FIXTURES, holes=_HOLES)
+_ACID = _TRY.case(vram=False, C2E8=b'\x09')
+_BENCH_MEW = _BENCH.case(vram=False, C4AE=b'\xa0\x00', C450=b'\x31\x00')
+_BENCH_INFO = _BENCH.case(vram=False, C4AE=b'\xbc\x00')
+_BENCH_MEW["read"][0xCD45] = 0x04
+_BENCH_INFO["read"][0xCD45] = 0x04
+_ACID["read"].pop(0xCC00)
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
     case["read"][0xCC00] = 0xBD
@@ -6155,13 +6161,17 @@ CASES = {
 }
 
 CASES['AIDecideBenchPokemonToSwitchTo'] = [
-    dict(_BENCH.case(vram=False), **_BENCH.regs)
+    dict(_BENCH.case(vram=False), **_BENCH.regs),
+    dict(_BENCH_MEW, **_BENCH.regs),
+    dict(_BENCH_INFO, **_BENCH.regs),
 ]
 CASES['AIDecideWhetherToRetreat'] = [
     dict(_DECIDE.case(vram=False), **_DECIDE.regs)
 ]
 CASES['AITryToRetreat'] = [
-    dict(_fixture_case(_TRY), **_TRY.regs)
+    dict(_fixture_case(_TRY), **_TRY.regs),
+    dict(_ACID, **_TRY.regs),
+    {'a': 0x01, 'f': 0xA0, 'wram': {0xC2E8: b'\x09'}, 'hram': {0xFF97: b'\xc2'}, 'read': {0xC2E8: 0x01}},
 ]
 
 MUTATIONS = {
@@ -6177,20 +6187,22 @@ MUTATIONS = {
                         'SetAIRetreatFlags-6'],
         'source': 'src/profiles/extended/home/retreat.c'},
     'AITryToRetreat': {   'source_symbol': 'AITryToRetreat',
-        'before': '\thTempPlayAreaLocation_ffa1 = entry_a;',
-        'after': '\thTempPlayAreaLocation_ffa1 = 0u;',
-        'case_ids': [   'AITryToRetreat-0',
-                        'AITryToRetreat-1',
-                        'AITryToRetreat-2',
-                        'AITryToRetreat-5'],
+        'before': '\tif (unable.f & FLAG_C)\n'
+                  '\t\treturn (AITryToRetreatResult){SUBSTATUS2_ACID, unable.f};',
+        'after': '\tif (unable.f & FLAG_C)\n'
+                 '\t\treturn (AITryToRetreatResult){0u, unable.f};',
+        'case_ids': ['AITryToRetreat-2'],
         'source': 'src/profiles/extended/home/retreat.c'},
     'AIDecideBenchPokemonToSwitchTo': {   'source_symbol': 'AIDecideBenchPokemonToSwitchTo',
-        'before': '\tuint8_t count = '
-                  'GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;',
-        'after': '\tuint8_t count = 0u;',
-        'case_ids': ['AIDecideBenchPokemonToSwitchTo-0',
-                     'AIDecideBenchPokemonToSwitchTo-1',
-                     'AIDecideBenchPokemonToSwitchTo-2'],
+        'before': '\t\t\tSwapTurn();\n'
+                  '\t\t\tuint8_t defending_arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;\n'
+                  '\t\t\t(void)LoadCardDataToBuffer2_FromDeckIndex(defending_arena);\n'
+                  '\t\t\tSwapTurn();\n'
+                  '\t\t\traise = wLoadedCard2Stage != 0u;',
+        'after': '\t\t\t(void)LoadCardDataToBuffer2_FromDeckIndex(\n'
+                 '\t\t\t\tGetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a);\n'
+                 '\t\t\traise = wLoadedCard2Stage != 0u;',
+        'case_ids': ['AIDecideBenchPokemonToSwitchTo-1'],
         'source': 'src/profiles/extended/home/retreat.c'},
     'AIDecideWhetherToRetreat': {   'source_symbol': 'AIDecideWhetherToRetreat',
         'before': '\tif (a >= 131u)\n'

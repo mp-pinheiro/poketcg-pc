@@ -151,16 +151,17 @@ SamsPracticeResult AIPerformScriptedTurn(uint8_t a, uint8_t f, uint8_t b,
 		d = MACHOP;
 		e = FIGHTING_ENERGY;
 		DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+		CardId arena_card = GetCardIDFromDeckIndex(arena.a);
 		uint8_t retreat_a = PLAY_AREA_BENCH_1;
 		uint8_t retreat_f;
-		if (arena.a == MACHOP) {
+		if (arena_card == MACHOP) {
 			retreat_a = PLAY_AREA_BENCH_2;
 			retreat_f = 0u;
 		} else {
 			retreat_f = 0x40u;
-			if ((arena.a & 0x0Fu) < (MACHOP & 0x0Fu))
+			if ((arena_card & 0x0Fu) < (MACHOP & 0x0Fu))
 				retreat_f = (uint8_t)(retreat_f | 0x20u);
-			if (arena.a < MACHOP)
+			if (arena_card < MACHOP)
 				retreat_f = (uint8_t)(retreat_f | 0x10u);
 		}
 		AITryToRetreatResult retreat = AITryToRetreat(retreat_a, retreat_f);
