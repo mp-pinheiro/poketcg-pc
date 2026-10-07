@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/energy.h"
 #include "home/damage_calculation.h"
 
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/duel.h"
 

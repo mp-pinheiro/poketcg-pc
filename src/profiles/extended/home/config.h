@@ -1,9 +1,13 @@
 #ifndef POKETCG_HOME_CONFIG_H
 #define POKETCG_HOME_CONFIG_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> factory DrawConfigMenuCursor */
 void DrawConfigMenuCursor(uint8_t a, uint8_t c);
+/* <<< factory DrawConfigMenuCursor */
 
 /* >>> factory GetConfigCursorPositions */
 void GetConfigCursorPositions(void);

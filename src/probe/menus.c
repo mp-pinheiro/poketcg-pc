@@ -1,48 +1,65 @@
+/* >>> part includes */
 #include "home/menus.h"
 #include "probe.h"
 #include "generated/wram.h"
+/* <<< part includes */
 
+/* >>> factory InitializeCardListParameters */
 static void adapt_InitializeCardListParameters(ProbeState *s)
 {
 	InitializeCardListParameters(s->a, s->d, s->e, &s->hl);
 }
+/* <<< factory InitializeCardListParameters */
 
+/* >>> factory InitializeMenuParameters */
 static void adapt_InitializeMenuParameters(ProbeState *s)
 {
 	InitializeMenuParameters(s->a, &s->hl);
 }
+/* <<< factory InitializeMenuParameters */
 
+/* >>> factory SetMenuItem */
 static void adapt_SetMenuItem(ProbeState *s)
 {
 	SetMenuItem(s->a);
 }
+/* <<< factory SetMenuItem */
 
+/* >>> factory OneByteNumberToTxSymbol */
 static void adapt_OneByteNumberToTxSymbol(ProbeState *s)
 {
 	TxSymbolResult result = OneByteNumberToTxSymbol(s->a);
 	s->a = result.a;
 	s->hl = result.hl;
 }
+/* <<< factory OneByteNumberToTxSymbol */
 
+/* >>> factory OneByteNumberToTxSymbol_PadSpace */
 static void adapt_OneByteNumberToTxSymbol_PadSpace(ProbeState *s)
 {
 	TxSymbolResult result = OneByteNumberToTxSymbol_PadSpace(s->a);
 	s->a = result.a;
 	s->hl = result.hl;
 }
+/* <<< factory OneByteNumberToTxSymbol_PadSpace */
 
+/* >>> factory OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign */
 static void adapt_OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign(ProbeState *s)
 {
 	TxSymbolResult result = OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign(s->a);
 	s->a = result.a;
 	s->hl = result.hl;
 }
+/* <<< factory OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign */
 
+/* >>> factory CardTypeToSymbolID */
 static void adapt_CardTypeToSymbolID(ProbeState *s)
 {
 	s->a = CardTypeToSymbolID();
 }
+/* <<< factory CardTypeToSymbolID */
 
+/* >>> factory GetCardSymbolData */
 static void adapt_GetCardSymbolData(ProbeState *s)
 {
 	uint8_t id = CardTypeToSymbolID();
@@ -51,7 +68,9 @@ static void adapt_GetCardSymbolData(ProbeState *s)
 	s->c = (uint8_t)(id * 2);
 	s->hl = (uint16_t)(0x29dd + id * 2);
 }
+/* <<< factory GetCardSymbolData */
 
+/* >>> factory SetCursorParametersForTextBox */
 static void adapt_SetCursorParametersForTextBox(ProbeState *s)
 {
 	CursorTileResult result = SetCursorParametersForTextBox(s->d, s->e, s->b, s->c);
@@ -59,7 +78,9 @@ static void adapt_SetCursorParametersForTextBox(ProbeState *s)
 	s->c = result.c;
 	s->hl = result.hl;
 }
+/* <<< factory SetCursorParametersForTextBox */
 
+/* >>> factory SetCursorParametersForTextBox_Default */
 static void adapt_SetCursorParametersForTextBox_Default(ProbeState *s)
 {
 	CursorTileResult result = SetCursorParametersForTextBox_Default(s->d, s->e);
@@ -68,49 +89,66 @@ static void adapt_SetCursorParametersForTextBox_Default(ProbeState *s)
 	s->hl = result.hl;
 	s->f = result.f;
 }
+/* <<< factory SetCursorParametersForTextBox_Default */
 
+/* >>> part DrawCursor */
 static void adapt_DrawCursor(ProbeState *s)
 {
 	DrawCursor(s->a);
 }
+/* <<< part DrawCursor */
 
+/* >>> part EraseCursor */
 static void adapt_EraseCursor(ProbeState *s)
 {
 	(void)s;
 	EraseCursor();
 }
+/* <<< part EraseCursor */
 
+/* >>> part DrawCursor2 */
 static void adapt_DrawCursor2(ProbeState *s)
 {
 	(void)s;
 	DrawCursor2();
 }
+/* <<< part DrawCursor2 */
 
+/* >>> part RefreshMenuCursor */
 static void adapt_RefreshMenuCursor(ProbeState *s)
 {
 	(void)s;
 	RefreshMenuCursor();
 }
+/* <<< part RefreshMenuCursor */
 
+/* >>> part DrawCardSymbol */
 static void adapt_DrawCardSymbol(ProbeState *s)
 {
 	DrawCardSymbol(s->d, s->e);
 }
+/* <<< part DrawCardSymbol */
 
+/* >>> part DrawNarrowTextBox */
 static void adapt_DrawNarrowTextBox(ProbeState *s)
 {
 	s->hl = DrawNarrowTextBox();
 }
+/* <<< part DrawNarrowTextBox */
 
+/* >>> part DrawWideTextBox */
 static void adapt_DrawWideTextBox(ProbeState *s)
 {
 	s->hl = DrawWideTextBox();
 }
+/* <<< part DrawWideTextBox */
 
+/* >>> part DrawNarrowTextBox_PrintTextNoDelay */
 static void adapt_DrawNarrowTextBox_PrintTextNoDelay(ProbeState *s)
 {
 	s->hl = DrawNarrowTextBox_PrintTextNoDelay(s->hl).hl;
 }
+/* <<< part DrawNarrowTextBox_PrintTextNoDelay */
 
 /* >>> factory DrawTextBox_PrintTextNoDelay */
 /* `a` is the box width the callers load; the caller-pushed hl is the case's
@@ -121,16 +159,21 @@ static void adapt_DrawTextBox_PrintTextNoDelay(ProbeState *s)
 }
 /* <<< factory DrawTextBox_PrintTextNoDelay */
 
+/* >>> part DrawWideTextBox_PrintTextNoDelay */
 static void adapt_DrawWideTextBox_PrintTextNoDelay(ProbeState *s)
 {
 	s->hl = DrawWideTextBox_PrintTextNoDelay(s->hl).hl;
 }
+/* <<< part DrawWideTextBox_PrintTextNoDelay */
 
+/* >>> part DrawWideTextBox_PrintText */
 static void adapt_DrawWideTextBox_PrintText(ProbeState *s)
 {
 	s->hl = DrawWideTextBox_PrintText(s->hl).hl;
 }
+/* <<< part DrawWideTextBox_PrintText */
 
+/* >>> part PrintYesOrNoItems */
 static void adapt_PrintYesOrNoItems(ProbeState *s)
 {
 	ProcessTextHeaderResult r = PrintYesOrNoItems(s->d, s->e);
@@ -140,32 +183,43 @@ static void adapt_PrintYesOrNoItems(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< part PrintYesOrNoItems */
 
+/* >>> part WaitForButtonAorB */
 static void adapt_WaitForButtonAorB(ProbeState *s)
 {
 	s->f = WaitForButtonAorB().f;
 }
+/* <<< part WaitForButtonAorB */
 
+/* >>> part DrawWideTextBox_PrintTextNoDelay_Wait */
 static void adapt_DrawWideTextBox_PrintTextNoDelay_Wait(ProbeState *s)
 {
 	DrawWideTextBox_PrintTextNoDelay_Wait(s->hl);
 }
+/* <<< part DrawWideTextBox_PrintTextNoDelay_Wait */
 
+/* >>> part DrawNarrowTextBox_WaitForInput */
 static void adapt_DrawNarrowTextBox_WaitForInput(ProbeState *s)
 {
 	DrawNarrowTextBox_WaitForInput(s->hl);
 }
+/* <<< part DrawNarrowTextBox_WaitForInput */
 
+/* >>> part DrawWideTextBox_WaitForInput */
 static void adapt_DrawWideTextBox_WaitForInput(ProbeState *s)
 {
 	DrawWideTextBox_WaitForInput(s->hl);
 }
+/* <<< part DrawWideTextBox_WaitForInput */
 
+/* >>> part WaitForWideTextBoxInput */
 static void adapt_WaitForWideTextBoxInput(ProbeState *s)
 {
 	(void)s;
 	WaitForWideTextBoxInput();
 }
+/* <<< part WaitForWideTextBoxInput */
 
 /* >>> factory RefreshMenuCursor_CheckPlaySFX */
 static void adapt_RefreshMenuCursor_CheckPlaySFX(ProbeState *s)
@@ -335,6 +389,7 @@ static void adapt_ContinueDuel(ProbeState *s)
 }
 /* <<< factory ContinueDuel */
 
+/* >>> part probe_entries_menus */
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -382,3 +437,4 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "ContinueDuel", adapt_ContinueDuel },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_menus */

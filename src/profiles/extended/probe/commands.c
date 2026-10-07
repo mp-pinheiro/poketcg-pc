@@ -1,5 +1,7 @@
+/* >>> part includes */
 #include "home/commands.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory AnimationCommand_AnimEnd2 */
 static void adapt_AnimationCommand_AnimEnd2(ProbeState *s)
@@ -181,6 +183,7 @@ static void adapt_PlayAttackAnimationCommands(ProbeState *s)
 }
 /* <<< factory PlayAttackAnimationCommands */
 
+/* >>> part probe_entries_commands */
 const ProbeEntry probe_entries_commands[] = {
 	{ "UpdateDuelAnimationScreen", adapt_UpdateDuelAnimationScreen },
 	{ "DuelAnim153", adapt_DuelAnim153 },
@@ -203,3 +206,4 @@ const ProbeEntry probe_entries_commands[] = {
 	{ "PlayAttackAnimationCommands", adapt_PlayAttackAnimationCommands },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_commands */

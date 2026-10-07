@@ -1,10 +1,16 @@
 #ifndef POKETCG_HOME_CARD_POP_H
 #define POKETCG_HOME_CARD_POP_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> factory CreateCardPopCandidateList */
 uint8_t CreateCardPopCandidateList(uint8_t a);
+/* <<< factory CreateCardPopCandidateList */
+/* >>> factory CalculateNameHash */
 void CalculateNameHash(uint16_t *hl, uint16_t *de);
+/* <<< factory CalculateNameHash */
 
 /* >>> factory LookUpNameInCardPopNameList */
 void LookUpNameInCardPopNameList(void);

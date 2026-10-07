@@ -1,5 +1,7 @@
+/* >>> part includes */
 #include "home/pokemon_dome.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Preload_Courtney */
 static void adapt_Preload_Courtney(ProbeState *s)
@@ -46,26 +48,32 @@ static void adapt_Preload_Ronald1InPokemonDome(ProbeState *s)
 }
 /* <<< factory Preload_Ronald1InPokemonDome */
 
+/* >>> factory Func_f762 */
 static void adapt_Func_f762(ProbeState *s)
 {
 	PokemonDomeResult result = Func_f762();
 	s->a = result.a;
 	s->f = result.f;
 }
+/* <<< factory Func_f762 */
 
+/* >>> factory Func_f782 */
 static void adapt_Func_f782(ProbeState *s)
 {
 	PokemonDomeResult result = Func_f782(s->b, s->c, s->f);
 	s->a = result.a;
 	s->f = result.f;
 }
+/* <<< factory Func_f782 */
 
+/* >>> factory PlacePokemonDomeOpponentAtDuelTable */
 static void adapt_PlacePokemonDomeOpponentAtDuelTable(ProbeState *s)
 {
 	PokemonDomeResult result = PlacePokemonDomeOpponentAtDuelTable(s->f);
 	s->a = result.a;
 	s->f = result.f;
 }
+/* <<< factory PlacePokemonDomeOpponentAtDuelTable */
 
 /* >>> factory Func_f77d */
 static void adapt_Func_f77d(ProbeState *s)
@@ -114,6 +122,7 @@ static void adapt_PokemonDomeAfterDuel(ProbeState *s)
 }
 /* <<< factory PokemonDomeAfterDuel */
 
+/* >>> part probe_entries_pokemon_dome */
 const ProbeEntry probe_entries_pokemon_dome[] = {
 	{"Func_f762", adapt_Func_f762},
 	{"Func_f782", adapt_Func_f782},
@@ -130,3 +139,4 @@ const ProbeEntry probe_entries_pokemon_dome[] = {
 	{"Preload_Ronald1InPokemonDome", adapt_Preload_Ronald1InPokemonDome},
 	{NULL, NULL},
 };
+/* <<< part probe_entries_pokemon_dome */

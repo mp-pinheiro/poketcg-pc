@@ -1,6 +1,9 @@
+/* >>> part includes */
 #include "home/division.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory DivideBCbyDE */
 static void adapt_DivideBCbyDE(ProbeState *s)
 {
 	DivResult r = DivideBCbyDE((uint16_t)(s->b << 8 | s->c), (uint16_t)(s->d << 8 | s->e));
@@ -8,8 +11,11 @@ static void adapt_DivideBCbyDE(ProbeState *s)
 	s->c = (uint8_t)r.quotient;
 	s->hl = r.remainder;
 }
+/* <<< factory DivideBCbyDE */
 
+/* >>> part probe_entries_division */
 const ProbeEntry probe_entries_division[] = {
 	{ "DivideBCbyDE", adapt_DivideBCbyDE },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_division */

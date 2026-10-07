@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_INPUT_NAME_H
 #define POKETCG_HOME_INPUT_NAME_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
 /* poketcg/src/engine/input_name.asm */

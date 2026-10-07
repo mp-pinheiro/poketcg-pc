@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/card_collection.h"
 
 #include "generated/sram.h"
@@ -6,9 +7,13 @@
 #include "home/card_id_bus.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part CARD_SLOT */
 #define CARD_SLOT(table, id) ((uint16_t)(((table) & 0xFF00u) | (uint16_t)(id)))
+/* <<< part CARD_SLOT */
 
+/* >>> part add_deck_cards */
 /* card_collection.asm:129-146 .AddDeckCards. */
 static void add_deck_cards(uint16_t de)
 {
@@ -21,7 +26,9 @@ static void add_deck_cards(uint16_t de)
 		gb_write8(hl, (uint8_t)(gb_read8(hl) + 1));
 	}
 }
+/* <<< part add_deck_cards */
 
+/* >>> factory CreateTempCardCollection */
 void CreateTempCardCollection(void)
 {
 	EnableSRAM();
@@ -34,7 +41,9 @@ void CreateTempCardCollection(void)
 	add_deck_cards(sDeck4Name_ADDR);
 	DisableSRAM();
 }
+/* <<< factory CreateTempCardCollection */
 
+/* >>> factory AddCardToCollection */
 void AddCardToCollection(CardId a)
 {
 	CreateTempCardCollection();
@@ -48,7 +57,9 @@ void AddCardToCollection(CardId a)
 	}
 	DisableSRAM();
 }
+/* <<< factory AddCardToCollection */
 
+/* >>> factory GetCardAlbumProgress */
 AlbumProgress GetCardAlbumProgress(void)
 {
 	EnableSRAM();
@@ -68,7 +79,9 @@ AlbumProgress GetCardAlbumProgress(void)
 	DisableSRAM();
 	return (AlbumProgress){ .d = d, .e = e };
 }
+/* <<< factory GetCardAlbumProgress */
 
+/* >>> factory GetAmountOfCardsOwned */
 /* card_collection.asm:2-41. Sums DECK_SIZE for every deck whose first card slot
  * (not its name byte, unlike .AddDeckCards) is non-zero, plus every owned card's
  * raw count byte in sCardCollection (CARD_NOT_OWNED_F clear). */
@@ -90,7 +103,9 @@ uint16_t GetAmountOfCardsOwned(void)
 	DisableSRAM();
 	return hl;
 }
+/* <<< factory GetAmountOfCardsOwned */
 
+/* >>> factory GetCardCountInCollectionAndDecks */
 /* card_collection.asm:46-93. id = card ID in (consumed). Counts matches of id
  * across all four decks' Cards arrays, each walked from its Cards-array base --
  * the inner `ld a,[hli]` walk advances a copy of hl that gets discarded by the
@@ -122,7 +137,9 @@ CardCountResult GetCardCountInCollectionAndDecks(CardId id)
 	 * unlike GetCardCountInCollection's 0x20 below. */
 	return (CardCountResult){ .a = a, .f = (uint8_t)(a == 0 ? 0x90u : 0x00u) };
 }
+/* <<< factory GetCardCountInCollectionAndDecks */
 
+/* >>> factory GetCardCountInCollection */
 /* card_collection.asm:97-108. id = card ID in (consumed), hl preserved. Real
  * outputs: a (masked owned count) and carry (set iff a==0). Returns straight
  * after `and CARD_COUNT_MASK` with no intervening `or a`, so H stays set by the
@@ -134,7 +151,9 @@ CardCountResult GetCardCountInCollection(CardId id)
 	DisableSRAM();
 	return (CardCountResult){ .a = a, .f = (uint8_t)(a == 0 ? 0x90u : 0x20u) };
 }
+/* <<< factory GetCardCountInCollection */
 
+/* >>> factory RemoveCardFromCollection */
 /* card_collection.asm:177-190. id = card ID in, hl preserved via push/pop.
  * Decrements the masked count in place unless it is already 0. Exit a/f are
  * whatever DisableSRAM leaves behind -- no caller reads either (grep:
@@ -149,3 +168,4 @@ void RemoveCardFromCollection(CardId id)
 		gb_write8(hl, (uint8_t)(count - 1));
 	DisableSRAM();
 }
+/* <<< factory RemoveCardFromCollection */

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/credits.h"
 #include "home/map.h"
 
@@ -10,6 +11,7 @@
 #include "mem.h"
 #include "runtime.h"
 #include "home/frames.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/warp.h"
 #define BANK_HANDLE_MAP_WARP 7u
@@ -68,31 +70,42 @@
 #include "generated/wram.h"
 /* <<< factory statics */
 
+/* >>> part BANK_EXECUTE_NPC_MOVEMENT */
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
+/* <<< part BANK_EXECUTE_NPC_MOVEMENT */
 
+/* >>> part permission_address */
 static uint16_t permission_address(uint8_t b, uint8_t c)
 {
 	uint8_t x = (uint8_t)(b >> 1);
 	uint8_t y = (uint8_t)(c >> 1);
 	return (uint16_t)(wPermissionMap_ADDR + (uint16_t)((uint8_t)(y << 4) | x));
 }
+/* <<< part permission_address */
 
+/* >>> factory GetPermissionByteOfMapPosition */
 PermissionResult GetPermissionByteOfMapPosition(uint8_t b, uint8_t c)
 {
 	uint16_t hl = permission_address(b, c);
 	return (PermissionResult){(uint8_t)(hl - wPermissionMap_ADDR), hl};
 }
+/* <<< factory GetPermissionByteOfMapPosition */
 
+/* >>> factory GetPermissionOfMapPosition */
 uint8_t GetPermissionOfMapPosition(uint8_t b, uint8_t c)
 {
 	return gb_read8(permission_address(b, c));
 }
+/* <<< factory GetPermissionOfMapPosition */
 
+/* >>> factory SetPermissionOfMapPosition */
 void SetPermissionOfMapPosition(uint8_t a, uint8_t b, uint8_t c)
 {
 	gb_write8(permission_address(b, c), a);
 }
+/* <<< factory SetPermissionOfMapPosition */
 
+/* >>> factory UpdatePermissionOfMapPosition */
 uint8_t UpdatePermissionOfMapPosition(uint8_t a, uint8_t b, uint8_t c)
 {
 	uint16_t address = permission_address(b, c);
@@ -100,7 +113,9 @@ uint8_t UpdatePermissionOfMapPosition(uint8_t a, uint8_t b, uint8_t c)
 	gb_write8(address, result);
 	return result;
 }
+/* <<< factory UpdatePermissionOfMapPosition */
 
+/* >>> factory GetItemInLoadedNPCIndex */
 PermissionResult GetItemInLoadedNPCIndex(uint8_t a, uint8_t l)
 {
 	if (a >= 8u)
@@ -108,19 +123,25 @@ PermissionResult GetItemInLoadedNPCIndex(uint8_t a, uint8_t l)
 	uint8_t offset = (uint8_t)(a * 12u + l);
 	return (PermissionResult){offset, (uint16_t)(wLoadedNPCs_ADDR + offset)};
 }
+/* <<< factory GetItemInLoadedNPCIndex */
 
+/* >>> factory GetLoadedNPCID */
 PermissionResult GetLoadedNPCID(uint8_t a)
 {
 	return GetItemInLoadedNPCIndex(a, 0);
 }
+/* <<< factory GetLoadedNPCID */
 
+/* >>> factory GameEvent_Overworld */
 /* GameEvent_Overworld:: poketcg/src/home/map.asm:61-63. `scf` sets C, clears
  * N/H, and leaves Z exactly as the caller left it. */
 uint8_t GameEvent_Overworld(uint8_t f)
 {
 	return (uint8_t)((f & 0x80u) | 0x10u);
 }
+/* <<< factory GameEvent_Overworld */
 
+/* >>> factory CopyGfxDataFromTempBank */
 void CopyGfxDataFromTempBank(uint16_t *hl, uint16_t *de, uint8_t b, uint8_t c)
 {
 	uint8_t saved = hBankROM;
@@ -129,7 +150,9 @@ void CopyGfxDataFromTempBank(uint16_t *hl, uint16_t *de, uint8_t b, uint8_t c)
 	CopyGfxData(hl, de, b, c);
 	BankswitchROM(saved);
 }
+/* <<< factory CopyGfxDataFromTempBank */
 
+/* >>> factory FindLoadedNPC */
 /* FindLoadedNPC:: poketcg/src/home/map.asm:291-319. hl/bc/de are saved and
  * restored around the whole search, so only a, f and wLoadedNPCTempIndex are
  * real outputs. */
@@ -148,7 +171,9 @@ NPCSearchResult FindLoadedNPC(void)
 	}
 	return (NPCSearchResult){target, 0x90u};
 }
+/* <<< factory FindLoadedNPC */
 
+/* >>> factory GetNextNPCMovementByte */
 /* GetNextNPCMovementByte:: poketcg/src/home/map.asm:321-333. The final `pop bc`
  * restores entry b/c despite the mid-routine `ld c, a`; only a is a real output. */
 uint8_t GetNextNPCMovementByte(uint16_t bc)
@@ -161,7 +186,9 @@ uint8_t GetNextNPCMovementByte(uint16_t bc)
 	BankswitchROM(saved);
 	return value;
 }
+/* <<< factory GetNextNPCMovementByte */
 
+/* >>> part compare_flags */
 static uint8_t compare_flags(uint8_t lhs, uint8_t rhs)
 {
 	uint8_t result = (uint8_t)(lhs - rhs);
@@ -175,7 +202,9 @@ static uint8_t compare_flags(uint8_t lhs, uint8_t rhs)
 		flags |= 0x10u;
 	return flags;
 }
+/* <<< part compare_flags */
 
+/* >>> factory PlayDefaultSong */
 SongResult PlayDefaultSong(void)
 {
 	uint8_t assert_result = AssertSongFinished();
@@ -195,7 +224,9 @@ SongResult PlayDefaultSong(void)
 	}
 	return (SongResult){song, flags};
 }
+/* <<< factory PlayDefaultSong */
 
+/* >>> factory GetDefaultSong */
 uint8_t GetDefaultSong(void)
 {
 	if (!wRonaldIsInMap)
@@ -206,6 +237,7 @@ uint8_t GetDefaultSong(void)
 		return wDefaultSong;
 	return MUSIC_RONALD;
 }
+/* <<< factory GetDefaultSong */
 
 /* >>> factory HandleMapWarp */
 

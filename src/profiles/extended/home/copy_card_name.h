@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_COPY_CARD_NAME_H
 #define POKETCG_HOME_COPY_CARD_NAME_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory _CopyCardNameAndLevel_HalfwidthText */
 /* copy_card_name.asm:93. Reached only by `jp z` from inside _CopyCardNameAndLevel

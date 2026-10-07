@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/input_name.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
 static void adapt_DeckNamingScreen_GetCharInfoFromPos(ProbeState *s)
@@ -286,6 +288,7 @@ static void adapt_InputDeckName(ProbeState *s)
 }
 /* <<< factory InputDeckName */
 
+/* >>> part probe_entries_input_name */
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -317,3 +320,4 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "InputDeckName", adapt_InputDeckName },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_input_name */

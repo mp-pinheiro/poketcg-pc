@@ -1,10 +1,16 @@
 #ifndef POKETCG_HOME_SFX_H
 #define POKETCG_HOME_SFX_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> factory SFX_Play */
 void SFX_Play(uint8_t sfx_id);
+/* <<< factory SFX_Play */
+/* >>> factory SFX_Update */
 void SFX_Update(void);
+/* <<< factory SFX_Update */
 
 /* >>> factory Func_fc105 */
 uint16_t Func_fc105(uint16_t bc, uint16_t de);

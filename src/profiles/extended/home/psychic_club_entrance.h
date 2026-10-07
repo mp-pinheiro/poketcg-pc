@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_PSYCHIC_CLUB_ENTRANCE_H
 #define POKETCG_HOME_PSYCHIC_CLUB_ENTRANCE_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory TryFirstRonaldDuel */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } TryFirstRonaldDuelResult;

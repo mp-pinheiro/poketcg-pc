@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/challenge_hall_entrance.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Preload_Clerk9 */
 static void adapt_Preload_Clerk9(ProbeState *s)
@@ -17,7 +19,9 @@ static void adapt_Preload_Clerk9(ProbeState *s)
 }
 /* <<< factory Preload_Clerk9 */
 
+/* >>> part probe_entries_challenge_hall_entrance */
 const ProbeEntry probe_entries_challenge_hall_entrance[] = {
 	{ "Preload_Clerk9", adapt_Preload_Clerk9 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_challenge_hall_entrance */

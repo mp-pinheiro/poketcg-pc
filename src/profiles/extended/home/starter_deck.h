@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_STARTER_DECK_H
 #define POKETCG_HOME_STARTER_DECK_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory InitSaveData */
 void InitSaveData(void);

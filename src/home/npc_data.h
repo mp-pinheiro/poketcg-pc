@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_NPC_DATA_H
 #define POKETCG_HOME_NPC_DATA_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory GetNPCHeaderPointer */
 typedef struct {

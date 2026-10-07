@@ -1,13 +1,19 @@
 #ifndef POKETCG_HOME_EFFECT_COMMANDS_H
 #define POKETCG_HOME_EFFECT_COMMANDS_H
 
+/* >>> part includes */
 #include <stdint.h>
 #include "home/effect_dispatch.h"
+/* <<< part includes */
 
+/* >>> part EffectCmdLookup */
 /* poketcg/src/engine/duel/effect_commands.asm */
 
 typedef struct { uint16_t hl; uint8_t carry; } EffectCmdLookup;
+/* <<< part EffectCmdLookup */
+/* >>> factory CheckMatchingCommand */
 EffectCmdLookup CheckMatchingCommand(uint8_t a, uint16_t hl);
+/* <<< factory CheckMatchingCommand */
 
 /* >>> factory TryExecuteEffectCommandFunction */
 typedef EffectDispatchState TryExecuteEffectCommandFunctionResult;

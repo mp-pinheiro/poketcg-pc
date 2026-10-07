@@ -1,10 +1,13 @@
+/* >>> part includes */
 #include "home/write_number.h"
 
 #include "generated/wram.h"
 #include "home/bg_map.h"
 #include "home/empty_screen.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part get_digit */
 /* TwoByteNumberToText.get_digit:: poketcg/src/home/write_number.asm:144-158 */
 static void get_digit(uint16_t *hl, uint16_t bc, uint16_t *de)
 {
@@ -22,7 +25,9 @@ static void get_digit(uint16_t *hl, uint16_t bc, uint16_t *de)
 	*de = (uint16_t)(*de + 1);
 	*hl = (uint16_t)(h - bc); /* undo the final overshooting add */
 }
+/* <<< part get_digit */
 
+/* >>> factory TwoByteNumberToText */
 /* TwoByteNumberToText:: poketcg/src/home/write_number.asm:128-143 */
 void TwoByteNumberToText(uint16_t hl, uint16_t *de)
 {
@@ -35,7 +40,9 @@ void TwoByteNumberToText(uint16_t hl, uint16_t *de)
 
 	gb_write8(*de, 0x00); /* TX_END, written without an inc de: six bytes out, de advanced by five */
 }
+/* <<< factory TwoByteNumberToText */
 
+/* >>> factory WriteBCDDigitInTextFormat */
 /* WriteBCDDigitInTextFormat:: poketcg/src/home/write_number.asm:78-86 */
 uint8_t WriteBCDDigitInTextFormat(uint8_t a, uint16_t *hl)
 {
@@ -47,7 +54,9 @@ uint8_t WriteBCDDigitInTextFormat(uint8_t a, uint16_t *hl)
 	*hl = (uint16_t)(*hl + 1u);
 	return c;
 }
+/* <<< factory WriteBCDDigitInTextFormat */
 
+/* >>> factory WriteBCDNumberInTextFormat */
 /* WriteBCDNumberInTextFormat:: poketcg/src/home/write_number.asm:69-74 */
 uint8_t WriteBCDNumberInTextFormat(uint8_t a, uint16_t *hl)
 {
@@ -56,7 +65,9 @@ uint8_t WriteBCDNumberInTextFormat(uint8_t a, uint16_t *hl)
 	WriteBCDDigitInTextFormat(swapped, hl);
 	return WriteBCDDigitInTextFormat(a, hl);
 }
+/* <<< factory WriteBCDNumberInTextFormat */
 
+/* >>> factory WriteTwoDigitBCDNumber */
 /* WriteTwoDigitBCDNumber:: poketcg/src/home/write_number.asm:3-19 */
 void WriteTwoDigitBCDNumber(uint8_t a, uint8_t b, uint8_t c)
 {
@@ -68,7 +79,9 @@ void WriteTwoDigitBCDNumber(uint8_t a, uint8_t b, uint8_t c)
 	src = wStringBuffer_ADDR;
 	SafeCopyDataHLtoDE(&src, &dst, 2u);
 }
+/* <<< factory WriteTwoDigitBCDNumber */
 
+/* >>> factory WriteFourDigitBCDNumber */
 /* WriteFourDigitBCDNumber:: poketcg/src/home/write_number.asm:43-64 */
 void WriteFourDigitBCDNumber(uint16_t hl, uint8_t b, uint8_t c)
 {
@@ -81,7 +94,9 @@ void WriteFourDigitBCDNumber(uint16_t hl, uint8_t b, uint8_t c)
 	src = wStringBuffer_ADDR;
 	SafeCopyDataHLtoDE(&src, &dst, 4u);
 }
+/* <<< factory WriteFourDigitBCDNumber */
 
+/* >>> factory WriteOneDigitBCDNumber */
 /* WriteOneDigitBCDNumber:: poketcg/src/home/write_number.asm:23-39 */
 void WriteOneDigitBCDNumber(uint8_t a, uint8_t b, uint8_t c)
 {
@@ -93,7 +108,9 @@ void WriteOneDigitBCDNumber(uint8_t a, uint8_t b, uint8_t c)
 	src = wStringBuffer_ADDR;
 	SafeCopyDataHLtoDE(&src, &dst, 1u);
 }
+/* <<< factory WriteOneDigitBCDNumber */
 
+/* >>> factory WriteOneByteNumber */
 /* WriteOneByteNumber:: poketcg/src/home/write_number.asm:90-111 */
 void WriteOneByteNumber(uint8_t a, uint8_t b, uint8_t c)
 {
@@ -109,7 +126,9 @@ void WriteOneByteNumber(uint8_t a, uint8_t b, uint8_t c)
 	src = wStringBuffer_ADDR;
 	SafeCopyDataHLtoDE(&src, &dst, 3u);
 }
+/* <<< factory WriteOneByteNumber */
 
+/* >>> factory WriteTwoByteNumber */
 /* WriteTwoByteNumber:: poketcg/src/home/write_number.asm:115-125 */
 void WriteTwoByteNumber(uint16_t hl, uint8_t b, uint8_t c)
 {
@@ -121,3 +140,4 @@ void WriteTwoByteNumber(uint16_t hl, uint8_t b, uint8_t c)
 	src = wStringBuffer_ADDR;
 	SafeCopyDataHLtoDE(&src, &dst, 5u);
 }
+/* <<< factory WriteTwoByteNumber */

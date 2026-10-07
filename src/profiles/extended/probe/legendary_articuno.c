@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/legendary_articuno.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory ScoreLegendaryArticunoCards */
 static void adapt_ScoreLegendaryArticunoCards(ProbeState *s)
@@ -19,8 +21,10 @@ static void adapt_AIDoTurn_LegendaryArticuno(ProbeState *s)
 }
 /* <<< factory AIDoTurn_LegendaryArticuno */
 
+/* >>> part probe_entries_legendary_articuno */
 const ProbeEntry probe_entries_legendary_articuno[] = {
 	{ "ScoreLegendaryArticunoCards", adapt_ScoreLegendaryArticunoCards },
 	{ "AIDoTurn_LegendaryArticuno", adapt_AIDoTurn_LegendaryArticuno },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_legendary_articuno */

@@ -1,8 +1,10 @@
+/* >>> part includes */
 #include "home/pc_glossary.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "home/init_menu.h"

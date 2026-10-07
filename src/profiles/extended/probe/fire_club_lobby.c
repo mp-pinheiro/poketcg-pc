@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/fire_club_lobby.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory FindExtraInteractableObjects */
 static void adapt_FindExtraInteractableObjects(ProbeState *s)
@@ -61,6 +63,7 @@ static void adapt_Preload_JessicaInFireClubLobby(ProbeState *s)
 }
 /* <<< factory Preload_JessicaInFireClubLobby */
 
+/* >>> part probe_entries_fire_club_lobby */
 const ProbeEntry probe_entries_fire_club_lobby[] = {
 	{ "FindExtraInteractableObjects", adapt_FindExtraInteractableObjects },
 	{ "FireClubPressedA", adapt_FireClubPressedA },
@@ -69,3 +72,4 @@ const ProbeEntry probe_entries_fire_club_lobby[] = {
 	{ "Preload_JessicaInFireClubLobby", adapt_Preload_JessicaInFireClubLobby },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_fire_club_lobby */

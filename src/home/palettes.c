@@ -1,9 +1,12 @@
+/* >>> part includes */
 #include "home/palettes.h"
 
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part rSTAT */
 #define rSTAT   0xFF41u
 #define rBGP    0xFF47u
 #define rOBP0   0xFF48u
@@ -15,7 +18,9 @@
  * bit routed every CGB single-palette flush through FlushAllCGBPalettes. */
 #define PAL_SIZE                8u
 #define STAT_BUSY               0x02u
+/* <<< part rSTAT */
 
+/* >>> factory CopyCGBPalettes */
 CopyCGBPalettesResult CopyCGBPalettes(uint8_t a, uint8_t b)
 {
 	uint8_t off = (uint8_t)(a * 8u);
@@ -42,7 +47,9 @@ CopyCGBPalettesResult CopyCGBPalettes(uint8_t a, uint8_t b)
 
 	return (CopyCGBPalettesResult){data, b, c, d, e, hl};
 }
+/* <<< factory CopyCGBPalettes */
 
+/* >>> factory FlushAllCGBPalettes */
 /* Falls into FlushPalettesIfRequested.done in the asm, so clearing
  * wFlushPaletteFlags is this routine's own effect too, not just a caller's. */
 FlushAllCGBPalettesResult FlushAllCGBPalettes(void)
@@ -53,7 +60,9 @@ FlushAllCGBPalettesResult FlushAllCGBPalettes(void)
 	gb_write8(wFlushPaletteFlags_ADDR, 0);
 	return (FlushAllCGBPalettesResult){r.b, r.c, r.d, r.e, r.hl};
 }
+/* <<< factory FlushAllCGBPalettes */
 
+/* >>> part FlushPalettesIfRequested_Registers */
 /* Register-observable core of FlushPalettesIfRequested. palettes.asm:67-78's
  * CGB dispatch leaves whatever CopyCGBPalettes/FlushAllCGBPalettes clobbered
  * in b/c/d/e live on return; neither real caller reads it back
@@ -90,12 +99,16 @@ FlushPalettesIfRequestedResult FlushPalettesIfRequested_Registers(uint8_t b, uin
 	gb_write8(wFlushPaletteFlags_ADDR, 0);
 	return (FlushPalettesIfRequestedResult){b, c, d, e};
 }
+/* <<< part FlushPalettesIfRequested_Registers */
 
+/* >>> factory FlushPalettesIfRequested */
 void FlushPalettesIfRequested(void)
 {
 	(void)FlushPalettesIfRequested_Registers(0, 0, 0, 0);
 }
+/* <<< factory FlushPalettesIfRequested */
 
+/* >>> factory FlushPalettes */
 void FlushPalettes(uint8_t a)
 {
 	gb_write8(wFlushPaletteFlags_ADDR, a);
@@ -103,36 +116,49 @@ void FlushPalettes(uint8_t a)
 		return;
 	FlushPalettesIfRequested();
 }
+/* <<< factory FlushPalettes */
 
+/* >>> factory FlushPalette0 */
 void FlushPalette0(void)
 {
 	FlushPalettes(FLUSH_ONE_PAL);
 }
+/* <<< factory FlushPalette0 */
 
+/* >>> factory FlushAllPalettes */
 void FlushAllPalettes(void)
 {
 	FlushPalettes(FLUSH_ALL_PALS);
 }
+/* <<< factory FlushAllPalettes */
 
+/* >>> factory FlushPalette */
 void FlushPalette(uint8_t a)
 {
 	FlushPalettes((uint8_t)(a | FLUSH_ONE_PAL));
 }
+/* <<< factory FlushPalette */
 
+/* >>> factory SetBGP */
 void SetBGP(uint8_t a)
 {
 	gb_write8(wBGP_ADDR, a);
 	FlushPalette0();
 }
+/* <<< factory SetBGP */
 
+/* >>> factory SetOBP0 */
 void SetOBP0(uint8_t a)
 {
 	gb_write8(wOBP0_ADDR, a);
 	FlushPalette0();
 }
+/* <<< factory SetOBP0 */
 
+/* >>> factory SetOBP1 */
 void SetOBP1(uint8_t a)
 {
 	gb_write8(wOBP1_ADDR, a);
 	FlushPalette0();
 }
+/* <<< factory SetOBP1 */

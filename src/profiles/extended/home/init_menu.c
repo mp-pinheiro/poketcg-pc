@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/init_menu.h"
 
 #include "generated/rom.h"
@@ -14,11 +15,15 @@
 #include "home/tiles.h"
 #include "mem.h"
 #include "home/objects.h"
+/* <<< part includes */
 
+/* >>> part rSCX */
 #define rSCX 0xFF43u
 #define rSCY 0xFF42u
 #define LCDC_ON 0x80u
+/* <<< part rSCX */
 
+/* >>> factory InitMenuScreen */
 InitMenuRegs InitMenuScreen(void)
 {
 	TileCopyResult symbols;
@@ -42,10 +47,12 @@ InitMenuRegs InitMenuScreen(void)
 	result.c = 0x10;
 	result.d = (uint8_t)(symbols.de >> 8);
 	result.e = (uint8_t)symbols.de;
-	result.hl = 0x6CE8u;
+	result.hl = DuelGraphics_ADDR;
 	return result;
 }
+/* <<< factory InitMenuScreen */
 
+/* >>> factory FlashWhiteScreen */
 InitMenuRegs FlashWhiteScreen(void)
 {
 	InitMenuRegs result;
@@ -66,7 +73,8 @@ InitMenuRegs FlashWhiteScreen(void)
 	result.c = 0x10;
 	result.d = 0x93;
 	result.e = 0x80;
-	result.hl = 0x6CE8u;
+	result.hl = DuelGraphics_ADDR;
 	return result;
 }
+/* <<< factory FlashWhiteScreen */
 

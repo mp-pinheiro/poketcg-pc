@@ -1,8 +1,11 @@
+/* >>> part includes */
 #include "home/card_id_bus.h"
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part card_id_read */
 CardId card_id_read(uint16_t *address)
 {
 	CardId id = gb_read8(*address);
@@ -13,12 +16,16 @@ CardId card_id_read(uint16_t *address)
 #endif
 	return id;
 }
+/* <<< part card_id_read */
 
+/* >>> part card_id_read_at */
 CardId card_id_read_at(uint16_t address)
 {
 	return card_id_read(&address);
 }
+/* <<< part card_id_read_at */
 
+/* >>> part card_id_write */
 void card_id_write(uint16_t *address, CardId id)
 {
 	gb_write8(*address, (uint8_t)id);
@@ -28,7 +35,9 @@ void card_id_write(uint16_t *address, CardId id)
 	*address = (uint16_t)(*address + 1u);
 #endif
 }
+/* <<< part card_id_write */
 
+/* >>> part card_id_index_address */
 uint16_t card_id_index_address(uint16_t base, uint8_t index)
 {
 #ifdef POKETCG_PROFILE_EXTENDED
@@ -37,7 +46,9 @@ uint16_t card_id_index_address(uint16_t base, uint8_t index)
 	return (uint16_t)(base + index);
 #endif
 }
+/* <<< part card_id_index_address */
 
+/* >>> part card_id_deck_bytes */
 uint16_t card_id_deck_bytes(uint8_t count)
 {
 #ifdef POKETCG_PROFILE_EXTENDED
@@ -46,7 +57,9 @@ uint16_t card_id_deck_bytes(uint8_t count)
 	return count;
 #endif
 }
+/* <<< part card_id_deck_bytes */
 
+/* >>> part card_id_collection_bytes */
 uint16_t card_id_collection_bytes(void)
 {
 #ifdef POKETCG_PROFILE_EXTENDED
@@ -55,6 +68,8 @@ uint16_t card_id_collection_bytes(void)
 	return 0x0100u;
 #endif
 }
+/* <<< part card_id_collection_bytes */
+/* >>> part card_gfx_prepare */
 uint16_t card_gfx_prepare(uint16_t source)
 {
 #ifdef POKETCG_PROFILE_EXTENDED
@@ -68,7 +83,9 @@ uint16_t card_gfx_prepare(uint16_t source)
 	return source;
 #endif
 }
+/* <<< part card_gfx_prepare */
 
+/* >>> part card_gfx_finish */
 void card_gfx_finish(uint16_t source)
 {
 #ifndef POKETCG_PROFILE_EXTENDED
@@ -79,6 +96,8 @@ void card_gfx_finish(uint16_t source)
 	(void)source;
 #endif
 }
+/* <<< part card_gfx_finish */
+/* >>> part script_pointer_read */
 uint16_t script_pointer_read(uint8_t *bank)
 {
 	*bank = 0u;
@@ -87,7 +106,9 @@ uint16_t script_pointer_read(uint8_t *bank)
 #endif
 	return (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8));
 }
+/* <<< part script_pointer_read */
 
+/* >>> part script_pointer_write */
 void script_pointer_write(uint16_t address, uint8_t bank)
 {
 	wNextScript = (uint8_t)address;
@@ -98,3 +119,4 @@ void script_pointer_write(uint16_t address, uint8_t bank)
 	(void)bank;
 #endif
 }
+/* <<< part script_pointer_write */

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/starter_deck.h"
 #include "home/deck_selection.h"
 #include "home/duel.h"
@@ -6,6 +7,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/sram.h"
 #include "home/load_deck.h"

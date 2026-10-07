@@ -1,11 +1,15 @@
+/* >>> part includes */
 #include "home/map_events.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory ClearOWMapEvents */
 static void adapt_ClearOWMapEvents(ProbeState *s)
 {
 	(void)s;
 	ClearOWMapEvents();
 }
+/* <<< factory ClearOWMapEvents */
 
 /* >>> factory SetOWMapEvent_SRAMOrVRAM */
 static void adapt_SetOWMapEvent_SRAMOrVRAM(ProbeState *s)
@@ -28,6 +32,7 @@ static void adapt_SetOWMapEvent(ProbeState *s)
 }
 /* <<< factory SetOWMapEvent */
 
+/* >>> part probe_entries_map_events */
 const ProbeEntry probe_entries_map_events[] = {
 	{ "ClearOWMapEvents", adapt_ClearOWMapEvents },
 	{ "SetOWMapEvent_SRAMOrVRAM", adapt_SetOWMapEvent_SRAMOrVRAM },
@@ -35,3 +40,4 @@ const ProbeEntry probe_entries_map_events[] = {
 	{ "SetOWMapEvent", adapt_SetOWMapEvent },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_map_events */

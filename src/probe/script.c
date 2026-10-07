@@ -1,6 +1,9 @@
+/* >>> part includes */
 #include "home/script.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory GetMapScriptPointer */
 static void adapt_GetMapScriptPointer(ProbeState *s)
 {
 	MapScriptResult r = GetMapScriptPointer((uint8_t)s->hl);
@@ -8,6 +11,7 @@ static void adapt_GetMapScriptPointer(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory GetMapScriptPointer */
 
 /* >>> factory ResetAnimationQueue */
 static void adapt_ResetAnimationQueue(ProbeState *s)
@@ -77,6 +81,7 @@ static void adapt_RunOverworldScript(ProbeState *s)
 /* <<< factory RunOverworldScript */
 
 
+/* >>> part probe_entries_script */
 const ProbeEntry probe_entries_script[] = {
 	{ "GetMapScriptPointer", adapt_GetMapScriptPointer },
 	{ "ResetAnimationQueue", adapt_ResetAnimationQueue },
@@ -87,3 +92,4 @@ const ProbeEntry probe_entries_script[] = {
 	{ "RunOverworldScript", adapt_RunOverworldScript },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_script */

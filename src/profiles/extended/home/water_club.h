@@ -1,14 +1,20 @@
 #ifndef HOME_WATER_CLUB_H
 #define HOME_WATER_CLUB_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part PreloadAmyResult */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
 } PreloadAmyResult;
+/* <<< part PreloadAmyResult */
 
+/* >>> factory Preload_Amy */
 PreloadAmyResult Preload_Amy(void);
+/* <<< factory Preload_Amy */
 
 /* >>> factory WaterClubMovePlayer */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } WaterClubMovePlayerResult;

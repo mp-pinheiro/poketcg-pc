@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/grass_club_entrance.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory FindEndOfDuelScript */
 static void adapt_FindEndOfDuelScript(ProbeState *s)
@@ -40,9 +42,11 @@ static void adapt_Preload_MichaelInGrassClubEntrance(ProbeState *s)
 }
 /* <<< factory Preload_MichaelInGrassClubEntrance */
 
+/* >>> part probe_entries_grass_club_entrance */
 const ProbeEntry probe_entries_grass_club_entrance[] = {
 	{ "FindEndOfDuelScript", adapt_FindEndOfDuelScript },
 	{ "GrassClubEntranceAfterDuel", adapt_GrassClubEntranceAfterDuel },
 	{ "Preload_MichaelInGrassClubEntrance", adapt_Preload_MichaelInGrassClubEntrance },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_grass_club_entrance */

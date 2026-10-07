@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/pkmn_powers.h"
 
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/card_color.h"
 #include "home/card_data.h"

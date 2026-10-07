@@ -1,10 +1,14 @@
+/* >>> part includes */
 #include "home/coin_toss.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory CompareDEtoBC */
 static void adapt_CompareDEtoBC(ProbeState *s)
 {
 	s->f = CompareDEtoBC(s->d, s->e, s->b, s->c);
 }
+/* <<< factory CompareDEtoBC */
 
 /* >>> factory TossCoinATimes */
 static void adapt_TossCoinATimes(ProbeState *s)
@@ -26,9 +30,11 @@ static void adapt_TossCoin(ProbeState *s)
 }
 /* <<< factory TossCoin */
 
+/* >>> part probe_entries_coin_toss */
 const ProbeEntry probe_entries_coin_toss[] = {
 	{ "CompareDEtoBC", adapt_CompareDEtoBC },
 	{ "TossCoinATimes", adapt_TossCoinATimes },
 	{ "TossCoin", adapt_TossCoin },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_coin_toss */

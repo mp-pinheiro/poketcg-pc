@@ -1,11 +1,16 @@
+/* >>> part includes */
 #include "home/duel.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> part pair */
 static uint16_t pair(uint8_t hi, uint8_t lo)
 {
 	return (uint16_t)((uint16_t)hi << 8 | lo);
 }
+/* <<< part pair */
 
+/* >>> factory CopyPlayerName */
 static void adapt_CopyPlayerName(ProbeState *s)
 {
 	CopyTextResult r = CopyPlayerName(pair(s->d, s->e));
@@ -14,7 +19,9 @@ static void adapt_CopyPlayerName(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
+/* <<< factory CopyPlayerName */
 
+/* >>> factory CopyOpponentName */
 static void adapt_CopyOpponentName(ProbeState *s)
 {
 	CopyTextResult r = CopyOpponentName(pair(s->d, s->e));
@@ -23,41 +30,53 @@ static void adapt_CopyOpponentName(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
+/* <<< factory CopyOpponentName */
 
+/* >>> factory GetTurnDuelistVariable */
 static void adapt_GetTurnDuelistVariable(ProbeState *s)
 {
 	DuelistVarResult r = GetTurnDuelistVariable(s->a);
 	s->a = r.a;
 	s->hl = r.hl;
 }
+/* <<< factory GetTurnDuelistVariable */
 
+/* >>> factory GetNonTurnDuelistVariable */
 static void adapt_GetNonTurnDuelistVariable(ProbeState *s)
 {
 	DuelistVarResult r = GetNonTurnDuelistVariable(s->a);
 	s->a = r.a;
 	s->hl = r.hl;
 }
+/* <<< factory GetNonTurnDuelistVariable */
 
+/* >>> factory SwapTurn */
 static void adapt_SwapTurn(ProbeState *s)
 {
 	(void)s;
 	SwapTurn();
 }
+/* <<< factory SwapTurn */
 
+/* >>> factory _GetCardIDFromDeckIndex */
 static void adapt__GetCardIDFromDeckIndex(ProbeState *s)
 {
 	DeckCardResult r = _GetCardIDFromDeckIndex(s->a);
 	s->a = r.a;
 	s->hl = r.hl;
 }
+/* <<< factory _GetCardIDFromDeckIndex */
 
+/* >>> factory GetCardIDFromDeckIndex */
 static void adapt_GetCardIDFromDeckIndex(ProbeState *s)
 {
 	uint16_t id = GetCardIDFromDeckIndex(s->a);
 	s->d = (uint8_t)(id >> 8);
 	s->e = (uint8_t)id;
 }
+/* <<< factory GetCardIDFromDeckIndex */
 
+/* >>> factory GetCardIDFromDeckIndex_bc */
 static void adapt_GetCardIDFromDeckIndex_bc(ProbeState *s)
 {
 	DeckCardResult r = GetCardIDFromDeckIndex_bc(s->a, s->hl);
@@ -66,14 +85,18 @@ static void adapt_GetCardIDFromDeckIndex_bc(ProbeState *s)
 	s->c = r.a;
 	s->hl = r.hl;
 }
+/* <<< factory GetCardIDFromDeckIndex_bc */
 
+/* >>> factory GetCardInDuelTempList_OnlyDeckIndex */
 static void adapt_GetCardInDuelTempList_OnlyDeckIndex(ProbeState *s)
 {
 	DeckCardResult r = GetCardInDuelTempList_OnlyDeckIndex(s->a, s->hl);
 	s->a = r.a;
 	s->hl = r.hl;
 }
+/* <<< factory GetCardInDuelTempList_OnlyDeckIndex */
 
+/* >>> factory GetCardInDuelTempList */
 static void adapt_GetCardInDuelTempList(ProbeState *s)
 {
 	DeckEntryResult r = GetCardInDuelTempList(s->a, s->hl);
@@ -82,24 +105,32 @@ static void adapt_GetCardInDuelTempList(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
+/* <<< factory GetCardInDuelTempList */
 
+/* >>> factory LoadCardDataToBuffer1_FromDeckIndex */
 static void adapt_LoadCardDataToBuffer1_FromDeckIndex(ProbeState *s)
 {
 	s->a = LoadCardDataToBuffer1_FromDeckIndex(s->a);
 }
+/* <<< factory LoadCardDataToBuffer1_FromDeckIndex */
 
+/* >>> factory LoadCardDataToBuffer2_FromDeckIndex */
 static void adapt_LoadCardDataToBuffer2_FromDeckIndex(ProbeState *s)
 {
 	s->a = LoadCardDataToBuffer2_FromDeckIndex(s->a);
 }
+/* <<< factory LoadCardDataToBuffer2_FromDeckIndex */
 
+/* >>> factory SubtractHP */
 static void adapt_SubtractHP(ProbeState *s)
 {
 	SubtractHPResult r = SubtractHP(s->hl, pair(s->d, s->e));
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory SubtractHP */
 
+/* >>> factory CreateDeckCardList */
 static void adapt_CreateDeckCardList(ProbeState *s)
 {
 	CardListResult r = CreateDeckCardList(s->c, pair(s->d, s->e));
@@ -111,7 +142,9 @@ static void adapt_CreateDeckCardList(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory CreateDeckCardList */
 
+/* >>> factory CreateDiscardPileCardList */
 static void adapt_CreateDiscardPileCardList(ProbeState *s)
 {
 	CardListResult r = CreateDiscardPileCardList(s->c);
@@ -123,21 +156,27 @@ static void adapt_CreateDiscardPileCardList(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory CreateDiscardPileCardList */
 
+/* >>> factory RemoveCardFromDuelTempList */
 static void adapt_RemoveCardFromDuelTempList(ProbeState *s)
 {
 	TempListResult r = RemoveCardFromDuelTempList(s->a);
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory RemoveCardFromDuelTempList */
 
+/* >>> factory CountCardsInDuelTempList */
 static void adapt_CountCardsInDuelTempList(ProbeState *s)
 {
 	TempListResult r = CountCardsInDuelTempList();
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory CountCardsInDuelTempList */
 
+/* >>> factory FindLastCardInHand */
 static void adapt_FindLastCardInHand(ProbeState *s)
 {
 	HandListResult r = FindLastCardInHand(s->c);
@@ -149,7 +188,9 @@ static void adapt_FindLastCardInHand(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory FindLastCardInHand */
 
+/* >>> factory CreateHandCardList */
 static void adapt_CreateHandCardList(ProbeState *s)
 {
 	HandListResult r = CreateHandCardList(s->c);
@@ -161,7 +202,9 @@ static void adapt_CreateHandCardList(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory CreateHandCardList */
 
+/* >>> factory CreateArenaOrBenchEnergyCardList */
 static void adapt_CreateArenaOrBenchEnergyCardList(ProbeState *s)
 {
 	HandListResult r = CreateArenaOrBenchEnergyCardList(s->a);
@@ -173,14 +216,18 @@ static void adapt_CreateArenaOrBenchEnergyCardList(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory CreateArenaOrBenchEnergyCardList */
 
+/* >>> factory ShuffleCards */
 static void adapt_ShuffleCards(ProbeState *s)
 {
 	ShuffleCardsResult r = ShuffleCards(s->a, s->hl);
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory ShuffleCards */
 
+/* >>> factory SortCardsInListByID */
 static void adapt_SortCardsInListByID(ProbeState *s)
 {
 	SortResult r = SortCardsInListByID(s->b, s->c, pair(s->d, s->e));
@@ -192,7 +239,9 @@ static void adapt_SortCardsInListByID(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory SortCardsInListByID */
 
+/* >>> factory SortCardsInDuelTempListByID */
 static void adapt_SortCardsInDuelTempListByID(ProbeState *s)
 {
 	SortResult r = SortCardsInDuelTempListByID(s->b, s->c, pair(s->d, s->e));
@@ -204,7 +253,9 @@ static void adapt_SortCardsInDuelTempListByID(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory SortCardsInDuelTempListByID */
 
+/* >>> factory SortHandCardsByID */
 static void adapt_SortHandCardsByID(ProbeState *s)
 {
 	HandSortResult r = SortHandCardsByID();
@@ -216,26 +267,34 @@ static void adapt_SortHandCardsByID(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory SortHandCardsByID */
 
+/* >>> factory TranslateColorToWR */
 static void adapt_TranslateColorToWR(ProbeState *s)
 {
 	s->a = TranslateColorToWR(s->a);
 }
+/* <<< factory TranslateColorToWR */
 
+/* >>> factory CountCardIDInLocation */
 static void adapt_CountCardIDInLocation(ProbeState *s)
 {
 	CardLocationCountResult r = CountCardIDInLocation(s->b, s->e, s->hl);
 	s->a = r.a;
 	s->hl = r.hl;
 }
+/* <<< factory CountCardIDInLocation */
 
+/* >>> factory CheckLoadedAttackFlag */
 static void adapt_CheckLoadedAttackFlag(ProbeState *s)
 {
 	AttackFlagResult r = CheckLoadedAttackFlag(s->a);
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory CheckLoadedAttackFlag */
 
+/* >>> factory GetCardDamageAndMaxHP */
 static void adapt_GetCardDamageAndMaxHP(ProbeState *s)
 {
 	CardDamageResult r = GetCardDamageAndMaxHP(s->e);
@@ -243,7 +302,9 @@ static void adapt_GetCardDamageAndMaxHP(ProbeState *s)
 	s->c = r.c;
 	s->f = r.f;
 }
+/* <<< factory GetCardDamageAndMaxHP */
 
+/* >>> factory CopyDeckData */
 static void adapt_CopyDeckData(ProbeState *s)
 {
 	CardListResult r = CopyDeckData(pair(s->d, s->e));
@@ -255,12 +316,16 @@ static void adapt_CopyDeckData(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory CopyDeckData */
 
+/* >>> factory CountPrizes */
 static void adapt_CountPrizes(ProbeState *s)
 {
 	s->a = CountPrizes();
 }
+/* <<< factory CountPrizes */
 
+/* >>> factory ShuffleDeck */
 static void adapt_ShuffleDeck(ProbeState *s)
 {
 	ShuffleDeckResult r = ShuffleDeck(s->c, s->e);
@@ -272,34 +337,46 @@ static void adapt_ShuffleDeck(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory ShuffleDeck */
 
+/* >>> factory DrawCardFromDeck */
 static void adapt_DrawCardFromDeck(ProbeState *s)
 {
 	DrawCardResult r = DrawCardFromDeck();
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory DrawCardFromDeck */
 
+/* >>> factory ReturnCardToDeck */
 static void adapt_ReturnCardToDeck(ProbeState *s)
 {
 	ReturnCardToDeck(s->a);
 }
+/* <<< factory ReturnCardToDeck */
 
+/* >>> factory SearchCardInDeckAndAddToHand */
 static void adapt_SearchCardInDeckAndAddToHand(ProbeState *s)
 {
 	SearchCardInDeckAndAddToHand(s->a);
 }
+/* <<< factory SearchCardInDeckAndAddToHand */
 
+/* >>> factory AddCardToHand */
 static void adapt_AddCardToHand(ProbeState *s)
 {
 	AddCardToHand(s->a);
 }
+/* <<< factory AddCardToHand */
 
+/* >>> factory RemoveCardFromHand */
 static void adapt_RemoveCardFromHand(ProbeState *s)
 {
 	RemoveCardFromHand(s->a);
 }
+/* <<< factory RemoveCardFromHand */
 
+/* >>> factory MoveHandCardToDiscardPile */
 static void adapt_MoveHandCardToDiscardPile(ProbeState *s)
 {
 	MoveCardResult r = MoveHandCardToDiscardPile(s->a);
@@ -307,19 +384,25 @@ static void adapt_MoveHandCardToDiscardPile(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory MoveHandCardToDiscardPile */
 
+/* >>> factory PutCardInDiscardPile */
 static void adapt_PutCardInDiscardPile(ProbeState *s)
 {
 	PutCardInDiscardPile(s->a);
 }
+/* <<< factory PutCardInDiscardPile */
 
+/* >>> factory MoveDiscardPileCardToHand */
 static void adapt_MoveDiscardPileCardToHand(ProbeState *s)
 {
 	MoveDiscardResult r = MoveDiscardPileCardToHand(s->a);
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory MoveDiscardPileCardToHand */
 
+/* >>> factory CheckPrizeTaken */
 static void adapt_CheckPrizeTaken(ProbeState *s)
 {
 	CheckPrizeResult r = CheckPrizeTaken(s->a);
@@ -329,7 +412,9 @@ static void adapt_CheckPrizeTaken(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory CheckPrizeTaken */
 
+/* >>> factory SortCardsInListByID_CheckForListTerminator */
 static void adapt_SortCardsInListByID_CheckForListTerminator(ProbeState *s)
 {
 	SortResult r = SortCardsInListByID_CheckForListTerminator(s->b, s->c, pair(s->d, s->e));
@@ -341,7 +426,9 @@ static void adapt_SortCardsInListByID_CheckForListTerminator(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory SortCardsInListByID_CheckForListTerminator */
 
+/* >>> factory CheckIfCanEvolveInto */
 static void adapt_CheckIfCanEvolveInto(ProbeState *s)
 {
 	EvolveResult r = CheckIfCanEvolveInto(s->d, s->e);
@@ -351,7 +438,9 @@ static void adapt_CheckIfCanEvolveInto(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory CheckIfCanEvolveInto */
 
+/* >>> factory CheckIfCanEvolveInto_BasicToStage2 */
 static void adapt_CheckIfCanEvolveInto_BasicToStage2(ProbeState *s)
 {
 	EvolveResult r = CheckIfCanEvolveInto_BasicToStage2(s->d, s->e);
@@ -359,7 +448,9 @@ static void adapt_CheckIfCanEvolveInto_BasicToStage2(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory CheckIfCanEvolveInto_BasicToStage2 */
 
+/* >>> factory EvolvePokemonCardIfPossible */
 static void adapt_EvolvePokemonCardIfPossible(ProbeState *s)
 {
 	EvolveResult r = EvolvePokemonCardIfPossible(s->c);
@@ -370,7 +461,9 @@ static void adapt_EvolvePokemonCardIfPossible(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory EvolvePokemonCardIfPossible */
 
+/* >>> factory EvolvePokemonCard */
 static void adapt_EvolvePokemonCard(ProbeState *s)
 {
 	EvolveResult r = EvolvePokemonCard();
@@ -380,20 +473,26 @@ static void adapt_EvolvePokemonCard(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory EvolvePokemonCard */
 
+/* >>> factory ClearAllStatusConditions */
 static void adapt_ClearAllStatusConditions(ProbeState *s)
 {
 	(void)s;
 	ClearAllStatusConditions();
 }
+/* <<< factory ClearAllStatusConditions */
 
+/* >>> factory PutHandCardInPlayArea */
 static void adapt_PutHandCardInPlayArea(ProbeState *s)
 {
 	PutHandResult r = PutHandCardInPlayArea(s->a, s->e);
 	s->a = r.a;
 	s->hl = r.hl;
 }
+/* <<< factory PutHandCardInPlayArea */
 
+/* >>> factory PutHandPokemonCardInPlayArea */
 static void adapt_PutHandPokemonCardInPlayArea(ProbeState *s)
 {
 	PutHandPokemonResult r = PutHandPokemonCardInPlayArea(s->a, s->f);
@@ -401,7 +500,9 @@ static void adapt_PutHandPokemonCardInPlayArea(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory PutHandPokemonCardInPlayArea */
 
+/* >>> factory EmptyPlayAreaSlot_init_duelvar */
 static void adapt_EmptyPlayAreaSlot_init_duelvar(ProbeState *s)
 {
 	InitDuelvarResult r = EmptyPlayAreaSlot_init_duelvar(s->a, s->d, s->e, s->hl);
@@ -409,7 +510,9 @@ static void adapt_EmptyPlayAreaSlot_init_duelvar(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory EmptyPlayAreaSlot_init_duelvar */
 
+/* >>> factory SwapPlayAreaPokemon_swap_duelvar */
 static void adapt_SwapPlayAreaPokemon_swap_duelvar(ProbeState *s)
 {
 	SwapDuelvarResult r = SwapPlayAreaPokemon_swap_duelvar(s->a, s->b, s->d, s->e, s->hl);
@@ -418,7 +521,9 @@ static void adapt_SwapPlayAreaPokemon_swap_duelvar(ProbeState *s)
 	s->c = r.c;
 	s->hl = r.hl;
 }
+/* <<< factory SwapPlayAreaPokemon_swap_duelvar */
 
+/* >>> factory EmptyPlayAreaSlot */
 static void adapt_EmptyPlayAreaSlot(ProbeState *s)
 {
 	EmptySlotResult r = EmptyPlayAreaSlot(s->e);
@@ -427,7 +532,9 @@ static void adapt_EmptyPlayAreaSlot(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory EmptyPlayAreaSlot */
 
+/* >>> factory MovePlayAreaCardToDiscardPile */
 static void adapt_MovePlayAreaCardToDiscardPile(ProbeState *s)
 {
 	MoveAreaResult r = MovePlayAreaCardToDiscardPile(s->e);
@@ -436,14 +543,18 @@ static void adapt_MovePlayAreaCardToDiscardPile(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory MovePlayAreaCardToDiscardPile */
 
+/* >>> factory SwapPlayAreaPokemon */
 static void adapt_SwapPlayAreaPokemon(ProbeState *s)
 {
 	SwapAreaResult r = SwapPlayAreaPokemon(s->d, s->e);
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory SwapPlayAreaPokemon */
 
+/* >>> factory SwapArenaWithBenchPokemon */
 static void adapt_SwapArenaWithBenchPokemon(ProbeState *s)
 {
 	SwapAreaResult r = SwapArenaWithBenchPokemon(s->e);
@@ -451,7 +562,9 @@ static void adapt_SwapArenaWithBenchPokemon(ProbeState *s)
 	s->d = r.d;
 	s->f = r.f;
 }
+/* <<< factory SwapArenaWithBenchPokemon */
 
+/* >>> factory ShiftTurnPokemonToFirstPlayAreaSlots */
 static void adapt_ShiftTurnPokemonToFirstPlayAreaSlots(ProbeState *s)
 {
 	ShiftResult r = ShiftTurnPokemonToFirstPlayAreaSlots();
@@ -461,7 +574,9 @@ static void adapt_ShiftTurnPokemonToFirstPlayAreaSlots(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory ShiftTurnPokemonToFirstPlayAreaSlots */
 
+/* >>> factory ShiftAllPokemonToFirstPlayAreaSlots */
 static void adapt_ShiftAllPokemonToFirstPlayAreaSlots(ProbeState *s)
 {
 	ShiftResult r = ShiftAllPokemonToFirstPlayAreaSlots();
@@ -471,14 +586,18 @@ static void adapt_ShiftAllPokemonToFirstPlayAreaSlots(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory ShiftAllPokemonToFirstPlayAreaSlots */
 
+/* >>> factory GetPlayAreaCardAttachedEnergies */
 static void adapt_GetPlayAreaCardAttachedEnergies(ProbeState *s)
 {
 	EnergiesResult r = GetPlayAreaCardAttachedEnergies(s->e);
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory GetPlayAreaCardAttachedEnergies */
 
+/* >>> factory CopyAttackDataAndDamage */
 static void adapt_CopyAttackDataAndDamage(ProbeState *s)
 {
 	AttackCopyResult r = CopyAttackDataAndDamage(s->e);
@@ -489,7 +608,9 @@ static void adapt_CopyAttackDataAndDamage(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory CopyAttackDataAndDamage */
 
+/* >>> factory CopyAttackDataAndDamage_FromDeckIndex */
 static void adapt_CopyAttackDataAndDamage_FromDeckIndex(ProbeState *s)
 {
 	AttackCopyResult r = CopyAttackDataAndDamage_FromDeckIndex(s->d, s->e);
@@ -500,7 +621,9 @@ static void adapt_CopyAttackDataAndDamage_FromDeckIndex(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory CopyAttackDataAndDamage_FromDeckIndex */
 
+/* >>> factory CopyAttackDataAndDamage_FromCardID */
 static void adapt_CopyAttackDataAndDamage_FromCardID(ProbeState *s)
 {
 	AttackCopyResult r = CopyAttackDataAndDamage_FromCardID(s->a, s->d, s->e);
@@ -511,12 +634,16 @@ static void adapt_CopyAttackDataAndDamage_FromCardID(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory CopyAttackDataAndDamage_FromCardID */
 
+/* >>> factory ReturnCarry */
 static void adapt_ReturnCarry(ProbeState *s)
 {
 	s->f = ReturnCarry(s->f);
 }
+/* <<< factory ReturnCarry */
 
+/* >>> factory LoadNonPokemonCardEffectCommands */
 static void adapt_LoadNonPokemonCardEffectCommands(ProbeState *s)
 {
 	LoadEffectResult r = LoadNonPokemonCardEffectCommands();
@@ -525,7 +652,9 @@ static void adapt_LoadNonPokemonCardEffectCommands(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadNonPokemonCardEffectCommands */
 
+/* >>> factory ApplyAttachedPlusPower */
 static void adapt_ApplyAttachedPlusPower(ProbeState *s)
 {
 	PowerModifierResult r = ApplyAttachedPlusPower(s->b, pair(s->d, s->e));
@@ -533,7 +662,9 @@ static void adapt_ApplyAttachedPlusPower(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory ApplyAttachedPlusPower */
 
+/* >>> factory ApplyAttachedDefender */
 static void adapt_ApplyAttachedDefender(ProbeState *s)
 {
 	PowerModifierResult r = ApplyAttachedDefender(s->b, pair(s->d, s->e));
@@ -541,7 +672,9 @@ static void adapt_ApplyAttachedDefender(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory ApplyAttachedDefender */
 
+/* >>> factory MoveCardToDiscardPileIfInPlayArea */
 static void adapt_MoveCardToDiscardPileIfInPlayArea(ProbeState *s)
 {
 	DiscardIfInPlayResult r = MoveCardToDiscardPileIfInPlayArea(pair(s->d, s->e),
@@ -552,39 +685,53 @@ static void adapt_MoveCardToDiscardPileIfInPlayArea(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory MoveCardToDiscardPileIfInPlayArea */
+/* >>> factory ApplyDamageModifiers_DamageToTarget */
 static void adapt_ApplyDamageModifiers_DamageToTarget(ProbeState *s)
 {
 	uint16_t de = ApplyDamageModifiers_DamageToTarget();
 	s->d = (uint8_t)(de >> 8);
 	s->e = (uint8_t)de;
 }
+/* <<< factory ApplyDamageModifiers_DamageToTarget */
+/* >>> factory ApplyDamageModifiers_DamageToSelf */
 static void adapt_ApplyDamageModifiers_DamageToSelf(ProbeState *s)
 {
 	uint16_t de = ApplyDamageModifiers_DamageToSelf();
 	s->d = (uint8_t)(de >> 8);
 	s->e = (uint8_t)de;
 }
+/* <<< factory ApplyDamageModifiers_DamageToSelf */
+/* >>> factory GetPlayAreaCardRetreatCost */
 static void adapt_GetPlayAreaCardRetreatCost(ProbeState *s)
 {
 	s->a = GetPlayAreaCardRetreatCost();
 }
+/* <<< factory GetPlayAreaCardRetreatCost */
 
+/* >>> factory DrawWideTextBox_WaitForInput_ReturnCarry */
 static void adapt_DrawWideTextBox_WaitForInput_ReturnCarry(ProbeState *s)
 {
 	s->f = DrawWideTextBox_WaitForInput_ReturnCarry(s->hl);
 }
+/* <<< factory DrawWideTextBox_WaitForInput_ReturnCarry */
 
+/* >>> factory PrintKnockedOut */
 static void adapt_PrintKnockedOut(ProbeState *s)
 {
 	s->f = PrintKnockedOut();
 }
+/* <<< factory PrintKnockedOut */
+/* >>> factory PrintPlayAreaCardKnockedOutIfNoHP */
 static void adapt_PrintPlayAreaCardKnockedOutIfNoHP(ProbeState *s)
 {
 	KnockoutCheckResult r = PrintPlayAreaCardKnockedOutIfNoHP(s->a);
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory PrintPlayAreaCardKnockedOutIfNoHP */
 
+/* >>> factory UpdateArenaCardIDsAndClearTwoTurnDuelVars */
 static void adapt_UpdateArenaCardIDsAndClearTwoTurnDuelVars(ProbeState *s)
 {
 	DuelRoutineResult r = UpdateArenaCardIDsAndClearTwoTurnDuelVars(
@@ -597,7 +744,9 @@ static void adapt_UpdateArenaCardIDsAndClearTwoTurnDuelVars(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
+/* <<< factory UpdateArenaCardIDsAndClearTwoTurnDuelVars */
 
+/* >>> factory ClearNonTurnTemporaryDuelvars_ResetCarry */
 static void adapt_ClearNonTurnTemporaryDuelvars_ResetCarry(ProbeState *s)
 {
 	DuelRoutineResult r = ClearNonTurnTemporaryDuelvars_ResetCarry(
@@ -610,11 +759,14 @@ static void adapt_ClearNonTurnTemporaryDuelvars_ResetCarry(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
+/* <<< factory ClearNonTurnTemporaryDuelvars_ResetCarry */
 
+/* >>> factory PrintKnockedOutIfHLZero */
 static void adapt_PrintKnockedOutIfHLZero(ProbeState *s)
 {
 	s->f = PrintKnockedOutIfHLZero(s->hl);
 }
+/* <<< factory PrintKnockedOutIfHLZero */
 
 /* >>> factory GetFirstSetPrizeCard */
 static void adapt_GetFirstSetPrizeCard(ProbeState *s)
@@ -1143,6 +1295,7 @@ static void adapt_UseAttackOrPokemonPower(ProbeState *s)
 }
 /* <<< factory UseAttackOrPokemonPower */
 
+/* >>> part probe_entries_duel */
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1282,3 +1435,4 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "UseAttackOrPokemonPower", adapt_UseAttackOrPokemonPower },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_duel */

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/intro_sequence_commands.h"
 
 #include "generated/rom.h"
@@ -13,6 +14,7 @@
 #include "home/play_animation.h"
 #include "home/switch_rom.h"
 #include "home/sound.h"
+/* <<< part includes */
 
 /* >>> factory statics */
 #include "home/load_animation.h"
@@ -340,6 +342,7 @@ IntroSequenceCmdLoadSceneResult IntroSequenceCmd_LoadCharizardScene(void)
 	return (IntroSequenceCmdLoadSceneResult){0u, 0x20u, 0x7Fu, 0xFFu};
 }
 /* <<< factory IntroSequenceCmd_LoadCharizardScene */
+/* >>> factory IntroSequenceCmd_LoadTitleScreenScene */
 IntroSequenceCmdLoadTitleScreenSceneResult IntroSequenceCmd_LoadTitleScreenScene(void)
 {
 	LoadOpeningScene(SCENE_TITLE_SCREEN, 0u, 0u);

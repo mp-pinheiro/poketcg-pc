@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_AUTO_DECK_MACHINES_H
 #define POKETCG_HOME_AUTO_DECK_MACHINES_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory ReadAutoDeckConfiguration */
 void ReadAutoDeckConfiguration(void);

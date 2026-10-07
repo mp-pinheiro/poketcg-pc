@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/player_gender.h"
 
 #include "generated/constants.h"
@@ -13,14 +14,18 @@
 #include "home/sound.h"
 #include "home/text_box.h"
 #include "runtime.h"
+/* <<< part includes */
 
+/* >>> part MINT_PIC */
 #define MINT_PIC 0x2Bu
 #define SYM_CURSOR_R 0x0Fu
 #define SYM_SPACE 0x00u
 #define PAD_A 0x01u
 #define PAD_LEFT 0x20u
 #define PAD_RIGHT 0x10u
+/* <<< part MINT_PIC */
 
+/* >>> part print_host_text */
 static void print_host_text(const char *text, uint8_t d, uint8_t e)
 {
 	uint16_t ptr = wDefaultText_ADDR;
@@ -32,12 +37,16 @@ static void print_host_text(const char *text, uint8_t d, uint8_t e)
 	ptr = wDefaultText_ADDR;
 	(void)ProcessText(&ptr);
 }
+/* <<< part print_host_text */
 
+/* >>> part draw_cursor */
 static void draw_cursor(uint8_t x)
 {
 	(void)WriteByteToBGMap0(SYM_CURSOR_R, x, 3u);
 }
+/* <<< part draw_cursor */
 
+/* >>> part PlayerGenderSelection */
 void PlayerGenderSelection(void)
 {
 	uint16_t box = 0u;
@@ -73,3 +82,4 @@ void PlayerGenderSelection(void)
 		PlaySFX(SFX_CURSOR);
 	}
 }
+/* <<< part PlayerGenderSelection */

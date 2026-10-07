@@ -1,5 +1,7 @@
+/* >>> part includes */
 #include "home/copy_card_name.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory _CopyCardNameAndLevel_HalfwidthText */
 static void adapt__CopyCardNameAndLevel_HalfwidthText(ProbeState *s)
@@ -33,8 +35,10 @@ static void adapt__CopyCardNameAndLevel(ProbeState *s)
 }
 /* <<< factory _CopyCardNameAndLevel */
 
+/* >>> part probe_entries_copy_card_name */
 const ProbeEntry probe_entries_copy_card_name[] = {
 	{ "_CopyCardNameAndLevel_HalfwidthText", adapt__CopyCardNameAndLevel_HalfwidthText },
 	{ "_CopyCardNameAndLevel", adapt__CopyCardNameAndLevel },
 	{NULL, NULL},
 };
+/* <<< part probe_entries_copy_card_name */

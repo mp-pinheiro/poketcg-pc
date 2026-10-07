@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/load_overworld.h"
 
 #include "home/script_entry_dispatch.h"
@@ -6,6 +7,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/load_gfx.h"
 #include "home/load_map_header.h"
@@ -38,10 +40,12 @@ void LoadMapTilesAndPals(void)
 }
 /* <<< factory LoadMapTilesAndPals */
 
+/* >>> part enter_close_text_box_script */
 static void enter_close_text_box_script(void)
 {
 	(void)Func_c9c7();
 }
+/* <<< part enter_close_text_box_script */
 
 /* >>> factory ReloadMapAfterTextClose */
 void ReloadMapAfterTextClose(void)

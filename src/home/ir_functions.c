@@ -1,4 +1,6 @@
+/* >>> part includes */
 #include "home/ir_functions.h"
+/* <<< part includes */
 
 /* >>> factory statics */
 #include "generated/text_ids.h"
@@ -42,10 +44,12 @@
 /* <<< factory statics */
 
 
+/* >>> factory PlayCardPopSong */
 void PlayCardPopSong(void)
 {
 	PlaySong(MUSIC_CARD_POP);
 }
+/* <<< factory PlayCardPopSong */
 
 
 /* >>> factory InitIRCommunications */

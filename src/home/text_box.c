@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/text_box.h"
 
 #include "generated/constants.h"
@@ -7,12 +8,16 @@
 #include "home/process_text.h"
 #include "mem.h"
 #include "ppu.h"
+/* <<< part includes */
 
+/* >>> part SYM_BOX_TOP_L */
 #define SYM_BOX_TOP_L 0x18
 #define SYM_BOX_TOP_R 0x19
 #define SYM_BOX_TOP 0x1c
 #define FW_SPACE 0x70
+/* <<< part SYM_BOX_TOP_L */
 
+/* >>> factory SafeCopyDataDEtoHL */
 uint8_t SafeCopyDataDEtoHL(uint16_t *de, uint16_t *hl, uint8_t c)
 {
 	uint32_t count = c ? c : 0x100;
@@ -34,14 +39,18 @@ uint8_t SafeCopyDataDEtoHL(uint16_t *de, uint16_t *hl, uint8_t c)
 		return 0u;
 	return gb_read8((uint16_t)(source - 1u));
 }
+/* <<< factory SafeCopyDataDEtoHL */
 
+/* >>> factory DECoordToBGMap0Address */
 uint16_t DECoordToBGMap0Address(uint8_t d, uint8_t e)
 {
 	uint16_t offset = (uint16_t)((uint16_t)e * TILEMAP_W + d);
 
 	return (uint16_t)(0x9800u + offset);
 }
+/* <<< factory DECoordToBGMap0Address */
 
+/* >>> factory AdjustCoordinatesForBGScroll */
 void AdjustCoordinatesForBGScroll(uint8_t *d, uint8_t *e)
 {
 	uint8_t x = (uint8_t)((hSCX >> 3) & 0x1f);
@@ -50,7 +59,9 @@ void AdjustCoordinatesForBGScroll(uint8_t *d, uint8_t *e)
 	*d = (uint8_t)(*d + x);
 	*e = (uint8_t)(*e + y);
 }
+/* <<< factory AdjustCoordinatesForBGScroll */
 
+/* >>> factory CopyLine */
 void CopyLine(uint16_t *hl, uint8_t a, uint8_t b, uint8_t d, uint8_t e)
 {
 	uint16_t destination = *hl;
@@ -65,13 +76,17 @@ void CopyLine(uint16_t *hl, uint8_t a, uint8_t b, uint8_t d, uint8_t e)
 
 	*hl = (uint16_t)(*hl + TILEMAP_W);
 }
+/* <<< factory CopyLine */
 
+/* >>> part draw_line */
 static void draw_line(uint16_t *hl, uint8_t middle, uint8_t left, uint8_t right,
 	uint8_t width)
 {
 	CopyLine(hl, middle, width, left, right);
 }
+/* <<< part draw_line */
 
+/* >>> factory ContinueDrawingTextBoxDMGorSGB */
 void ContinueDrawingTextBoxDMGorSGB(uint16_t *hl, uint8_t a, uint8_t b,
 	uint8_t c, uint8_t d, uint8_t e)
 {
@@ -85,7 +100,9 @@ void ContinueDrawingTextBoxDMGorSGB(uint16_t *hl, uint8_t a, uint8_t b,
 	} while (--count);
 	draw_line(hl, 0x1d, 0x1a, 0x1b, b);
 }
+/* <<< factory ContinueDrawingTextBoxDMGorSGB */
 
+/* >>> factory DrawRegularTextBoxDMG */
 void DrawRegularTextBoxDMG(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	uint8_t d, uint8_t e)
 {
@@ -93,7 +110,9 @@ void DrawRegularTextBoxDMG(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	draw_line(hl, 0x1c, 0x18, 0x19, b);
 	ContinueDrawingTextBoxDMGorSGB(hl, a, b, c, d, e);
 }
+/* <<< factory DrawRegularTextBoxDMG */
 
+/* >>> factory DrawRegularTextBox */
 void DrawRegularTextBox(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	uint8_t d, uint8_t e)
 {
@@ -102,7 +121,9 @@ void DrawRegularTextBox(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	else
 		DrawRegularTextBoxDMG(hl, a, b, c, d, e);
 }
+/* <<< factory DrawRegularTextBox */
 
+/* >>> factory ContinueDrawingTextBoxCGB */
 void ContinueDrawingTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	uint8_t d, uint8_t e)
 {
@@ -128,7 +149,9 @@ void ContinueDrawingTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	 * whole bottom row's attributes are the frame type, not just its two borders. */
 	CopyCurrentLineTilesAndAttrCGB(hl, 0x1d, b, 0x1a, 0x1b);
 }
+/* <<< factory ContinueDrawingTextBoxCGB */
 
+/* >>> factory DrawRegularTextBoxCGB */
 void DrawRegularTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	uint8_t d, uint8_t e)
 {
@@ -136,7 +159,9 @@ void DrawRegularTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	CopyCurrentLineTilesAndAttrCGB(hl, 0x1c, b, 0x18, 0x19);
 	ContinueDrawingTextBoxCGB(hl, a, b, c, d, e);
 }
+/* <<< factory DrawRegularTextBoxCGB */
 
+/* >>> factory CopyCurrentLineTilesAndAttrCGB */
 void CopyCurrentLineTilesAndAttrCGB(uint16_t *hl, uint8_t a, uint8_t b,
 	uint8_t d, uint8_t e)
 {
@@ -145,7 +170,9 @@ void CopyCurrentLineTilesAndAttrCGB(uint16_t *hl, uint8_t a, uint8_t b,
 	*hl = row;
 	CopyCurrentLineAttrCGB(hl, a, b, d, e);
 }
+/* <<< factory CopyCurrentLineTilesAndAttrCGB */
 
+/* >>> factory CopyCurrentLineAttrCGB */
 void CopyCurrentLineAttrCGB(uint16_t *hl, uint8_t a, uint8_t b,
 	uint8_t d, uint8_t e)
 {
@@ -158,7 +185,9 @@ void CopyCurrentLineAttrCGB(uint16_t *hl, uint8_t a, uint8_t b,
 	hBankVRAM = 0;
 	gb_write8(0xff4f, 0);
 }
+/* <<< factory CopyCurrentLineAttrCGB */
 
+/* >>> factory DrawLabeledTextBox */
 /* Draws a b x c box at de whose top border carries the text labelled by hl.
  * The SGB colorisation tail (ColorizeTextBoxSGB) is dropped along with the rest of
  * the SGB path, as DrawRegularTextBoxSGB and AttrBlkPacket_TextBox already are. */
@@ -210,3 +239,4 @@ void DrawLabeledTextBox(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c, uint8_t d
 	*hl = DECoordToBGMap0Address(d, e);
 	ContinueDrawingTextBoxDMGorSGB(hl, a, b, c, d, e);
 }
+/* <<< factory DrawLabeledTextBox */

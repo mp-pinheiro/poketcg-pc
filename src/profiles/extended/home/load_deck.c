@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/load_deck.h"
 
 #include "generated/constants.h"
@@ -7,11 +8,15 @@
 #include "home/switch_rom.h"
 #include "home/card_id_bus.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part BANK_DECK_DATA */
 #define BANK_DECK_DATA 0x0cu
 #define DECK_POINTERS  DeckPointers_ADDR
 #define PLAYER_TURN    ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
+/* <<< part BANK_DECK_DATA */
 
+/* >>> part copy_deck_data */
 /* load_deck.asm + duel.asm:60-104. CopyDeckData is inlined: it expands the
  * (quantity, card-id) pair stream from banked ROM into the turn holder's deck and
  * appends the 2 name bytes to wDeckName. */
@@ -33,7 +38,9 @@ static void copy_deck_data(uint16_t src)
 	gb_write8(wDeckName_ADDR, gb_read8(d++));
 	gb_write8((uint16_t)(wDeckName_ADDR + 1u), gb_read8(d));
 }
+/* <<< part copy_deck_data */
 
+/* >>> factory LoadDeck */
 /* load_deck.asm:4-32. Returns the carry flag (set if DeckPointers[id] is NULL). */
 uint8_t LoadDeck(uint8_t a)
 {
@@ -49,6 +56,7 @@ uint8_t LoadDeck(uint8_t a)
 	BankswitchROM(saved);
 	return carry;
 }
+/* <<< factory LoadDeck */
 
 /* >>> factory CompressDeckToSRAM */
 void CompressDeckToSRAM(uint16_t de, uint16_t hl)

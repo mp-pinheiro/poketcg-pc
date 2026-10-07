@@ -1,8 +1,10 @@
+/* >>> part includes */
 #include "home/debug_main.h"
 
 #include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "home/credits_sequence_commands.h"
@@ -20,6 +22,7 @@
 #define UNKNOWN_128F7 Unknown_128f7_ADDR
 /* <<< factory statics */
 
+/* >>> factory Func_126b3 */
 /* debug_main.asm:38-54. Menu item 10 dispatches to DebugQuit. The jump-table
  * helper leaves the DebugQuit pointer in HL/A before DebugQuit executes OR A.
  */
@@ -30,6 +33,7 @@ Func126b3Result Func_126b3(void)
 		return (Func126b3Result){0x61u, 0x00u, DebugQuit_ADDR};
 	return (Func126b3Result){0x00u, 0x80u, 0x0000u};
 }
+/* <<< factory Func_126b3 */
 
 /* >>> factory Func_12661 */
 /* debug_main.asm:2-36, the unreferenced debug menu. Rebuild the screen, run

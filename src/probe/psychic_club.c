@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/psychic_club.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory PsychicClubAfterDuel */
 static void adapt_PsychicClubAfterDuel(ProbeState *s)
@@ -35,9 +37,11 @@ static void adapt_Preload_Murray1(ProbeState *s)
 }
 /* <<< factory Preload_Murray1 */
 
+/* >>> part probe_entries_psychic_club */
 const ProbeEntry probe_entries_psychic_club[] = {
 	{ "PsychicClubAfterDuel", adapt_PsychicClubAfterDuel },
 	{ "Preload_Murray2", adapt_Preload_Murray2 },
 	{ "Preload_Murray1", adapt_Preload_Murray1 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_psychic_club */

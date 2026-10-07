@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/energy.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
 static void adapt_RetrievePlayAreaAIScoreFromBackup1(ProbeState *s)
@@ -121,6 +123,7 @@ static void adapt_Func_16488(ProbeState *s)
 }
 /* <<< factory Func_16488 */
 
+/* >>> part probe_entries_energy */
 const ProbeEntry probe_entries_energy[] = {
 	{ "RetrievePlayAreaAIScoreFromBackup1", adapt_RetrievePlayAreaAIScoreFromBackup1 },
 	{ "FindPlayAreaCardWithHighestAIScore", adapt_FindPlayAreaCardWithHighestAIScore },
@@ -136,3 +139,4 @@ const ProbeEntry probe_entries_energy[] = {
 	{ "Func_16488", adapt_Func_16488 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_energy */

@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_DECK_SELECTION_H
 #define POKETCG_HOME_DECK_SELECTION_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory GetPointerToDeckCards */
 uint16_t GetPointerToDeckCards(void);

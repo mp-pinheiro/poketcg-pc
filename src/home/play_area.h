@@ -1,9 +1,13 @@
 #ifndef POKETCG_HOME_PLAY_AREA_H
 #define POKETCG_HOME_PLAY_AREA_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> factory ZeroObjectPositionsAndToggleOAMCopy_Bank6 */
 void ZeroObjectPositionsAndToggleOAMCopy_Bank6(void);
+/* <<< factory ZeroObjectPositionsAndToggleOAMCopy_Bank6 */
 
 /* >>> factory OpenInPlayAreaScreen_HandleInput */
 typedef struct { uint8_t a; uint8_t f; } OpenInPlayAreaScreenHandleInputResult;

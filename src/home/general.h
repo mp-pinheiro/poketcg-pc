@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_GENERAL_H
 #define POKETCG_HOME_GENERAL_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory AIProcessRetreat */
 typedef struct { uint8_t a; uint8_t f; } AIProcessRetreatResult;

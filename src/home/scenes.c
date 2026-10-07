@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/scenes.h"
 
 #include "generated/constants.h"
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/load_gfx.h"
 #include "home/objects.h"

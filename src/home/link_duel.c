@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/link_duel.h"
 #include "runtime.h"
 
@@ -6,6 +7,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "generated/hram.h"

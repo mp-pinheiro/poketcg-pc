@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/card_album.h"
 
 #include "generated/text_ids.h"
@@ -6,6 +7,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 
 #include "generated/wram.h"
@@ -428,6 +430,7 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 }
 /* <<< factory CreateCardSetListAndInitListCoords */
 
+/* >>> part includes_PRINT_CARD_SET_LIST_ENTRIES */
 #include "home/credits_sequence_commands.h"
 #include "home/deck_check.h"
 #include "home/duel.h"
@@ -440,10 +443,13 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 #include "home/switch_sram.h"
 #include "home/text_box.h"
 #include "home/tiles.h"
+/* <<< part includes_PRINT_CARD_SET_LIST_ENTRIES */
+/* >>> part PRINT_CARD_SET_LIST_ENTRIES */
 /* card_album.asm:685-688 parks PrintCardSetListEntries (02:66fa) in
  * wCardListUpdateFunction; deck_configuration.c's CallIndirect registry
  * dispatches it. */
 #define PRINT_CARD_SET_LIST_ENTRIES PrintCardSetListEntries_ADDR
+/* <<< part PRINT_CARD_SET_LIST_ENTRIES */
 /* >>> factory CardAlbum */
 #define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS (CardAlbum__BoosterPackMenuParams_ADDR)
 #define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum__BoosterPackCardsMenuParams_ADDR)

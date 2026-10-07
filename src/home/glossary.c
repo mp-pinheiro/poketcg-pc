@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/glossary.h"
 
 #include "generated/text_ids.h"
@@ -6,6 +7,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "generated/hram.h"

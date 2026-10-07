@@ -1,45 +1,61 @@
+/* >>> part includes */
 #include "home/load_animation.h"
 #include "probe.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+/* <<< part includes */
 
+/* >>> factory GetFirstSpriteAnimBufferProperty */
 static void adapt_GetFirstSpriteAnimBufferProperty(ProbeState *s)
 {
 	s->hl = GetFirstSpriteAnimBufferProperty();
 }
+/* <<< factory GetFirstSpriteAnimBufferProperty */
 
+/* >>> factory GetSpriteAnimBufferProperty */
 static void adapt_GetSpriteAnimBufferProperty(ProbeState *s)
 {
 	s->hl = GetSpriteAnimBufferProperty(s->c);
 }
+/* <<< factory GetSpriteAnimBufferProperty */
 
+/* >>> factory GetSpriteAnimBufferProperty_SpriteInA */
 static void adapt_GetSpriteAnimBufferProperty_SpriteInA(ProbeState *s)
 {
 	s->hl = GetSpriteAnimBufferProperty_SpriteInA(s->a, s->c);
 }
+/* <<< factory GetSpriteAnimBufferProperty_SpriteInA */
 
+/* >>> factory Func_3ddb */
 static void adapt_Func_3ddb(ProbeState *s)
 {
 	Func_3ddb(s->a);
 }
+/* <<< factory Func_3ddb */
 
+/* >>> factory Func_3de7 */
 static void adapt_Func_3de7(ProbeState *s)
 {
 	Func_3de7(s->a);
 }
+/* <<< factory Func_3de7 */
 
+/* >>> factory DrawSpriteAnimationFrame */
 static void adapt_DrawSpriteAnimationFrame(ProbeState *s)
 {
 	DrawSpriteAnimationFrame(&s->hl);
 	s->a = hBankROM;
 }
+/* <<< factory DrawSpriteAnimationFrame */
 
+/* >>> factory GetAnimationFramePointer */
 static void adapt_GetAnimationFramePointer(ProbeState *s)
 {
 	GetAnimationFramePointer(s->hl);
 	s->a = hBankROM;
 }
+/* <<< factory GetAnimationFramePointer */
 
 /* >>> factory ClearSpriteAnimations */
 static void adapt_ClearSpriteAnimations(ProbeState *s)
@@ -111,6 +127,7 @@ static void adapt_LoadScene(ProbeState *s)
 }
 /* <<< factory LoadScene */
 
+/* >>> part probe_entries_load_animation */
 const ProbeEntry probe_entries_load_animation[] = {
 	{ "GetFirstSpriteAnimBufferProperty", adapt_GetFirstSpriteAnimBufferProperty },
 	{ "GetSpriteAnimBufferProperty", adapt_GetSpriteAnimBufferProperty },
@@ -129,3 +146,4 @@ const ProbeEntry probe_entries_load_animation[] = {
 	{ "LoadScene", adapt_LoadScene },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_load_animation */

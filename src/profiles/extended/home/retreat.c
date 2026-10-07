@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/retreat.h"
 #include "home/damage_calculation.h"
 
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/card_data.h"
 #include "home/core.h"
@@ -28,8 +30,11 @@
 #define TRUE 0x01u
 /* <<< factory statics */
 
+/* >>> part OPPONENT_TURN */
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
+/* <<< part OPPONENT_TURN */
 
+/* >>> part flag_cp */
 static uint8_t flag_cp(uint8_t a, uint8_t value)
 {
 	uint8_t f = 0x40u;
@@ -41,7 +46,9 @@ static uint8_t flag_cp(uint8_t a, uint8_t value)
 		f |= 0x10u;
 	return f;
 }
+/* <<< part flag_cp */
 
+/* >>> factory SetAIRetreatFlags */
 SetAIRetreatFlagsResult SetAIRetreatFlags(void)
 {
 	gb_write8(wAIRetreatFlags_ADDR, 0);
@@ -62,6 +69,7 @@ SetAIRetreatFlagsResult SetAIRetreatFlags(void)
 	gb_write8(wAIRetreatFlags_ADDR, 0x80u);
 	return (SetAIRetreatFlagsResult){0x80u, f};
 }
+/* <<< factory SetAIRetreatFlags */
 
 /* >>> factory AITryToRetreat */
 /* engine/duel/ai/retreat.asm:775-1012. The entry `push af` is popped exactly

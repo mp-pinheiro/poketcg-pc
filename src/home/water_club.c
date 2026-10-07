@@ -1,6 +1,8 @@
+/* >>> part includes */
 #include "home/water_club.h"
 
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/scripting.h"
 #include "generated/constants.h"
@@ -11,12 +13,15 @@
 #define WaterClubAfterDuelTable (WaterClubAfterDuel__after_duel_table_ADDR)
 /* <<< factory statics */
 
+/* >>> part W_ACTIVE_GAME_EVENT_ADDR */
 #define W_ACTIVE_GAME_EVENT_ADDR wActiveGameEvent_ADDR
 #define W_PLAYER_X_COORD_ADDR wPlayerXCoord_ADDR
 #define W_PLAYER_Y_COORD_ADDR wPlayerYCoord_ADDR
 #define W_LOAD_NPC_X_POS_ADDR wLoadNPCXPos_ADDR
 #define W_D3D0_ADDR wd3d0_ADDR
+/* <<< part W_ACTIVE_GAME_EVENT_ADDR */
 
+/* >>> factory Preload_Amy */
 PreloadAmyResult Preload_Amy(void)
 {
 	uint8_t event = gb_read8(W_ACTIVE_GAME_EVENT_ADDR);
@@ -43,6 +48,7 @@ PreloadAmyResult Preload_Amy(void)
 	}
 	return (PreloadAmyResult){a, f};
 }
+/* <<< factory Preload_Amy */
 
 /* >>> factory WaterClubMovePlayer */
 WaterClubMovePlayerResult WaterClubMovePlayer(uint8_t b, uint8_t c, uint16_t hl)

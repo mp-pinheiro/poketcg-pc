@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/challenge_hall.h"
 
 #include "generated/constants.h"
@@ -9,11 +10,13 @@
 #include "home/random.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
+/* >>> part CHALLENGE_HALL_BANK */
 #define CHALLENGE_HALL_BANK 3u
 #define CHALLENGE_HALL_NPC_COUNT 25u
 #define CHALLENGE_HALL_NPCS_ADDR ChallengeHallNPCs_ADDR
 #define CHALLENGE_HALL_SCRIPT_F433 Script_f433_ADDR
-/* <<< factory statics */
+/* <<< part CHALLENGE_HALL_BANK */
 
 /* >>> factory ChallengeHallLoadMap */
 /* challenge_hall.asm:22-30 */
@@ -78,6 +81,7 @@ PreloadChallengeHallOpponentResult Preload_ChallengeHallOpponent(void)
 }
 /* <<< factory Preload_ChallengeHallOpponent */
 
+/* >>> factory Func_f5db */
 ChallengeHallClearResult Func_f5db(void)
 {
 	gb_write8(wd698_ADDR + 0u, 0);
@@ -86,17 +90,22 @@ ChallengeHallClearResult Func_f5db(void)
 	gb_write8(wd698_ADDR + 3u, 0);
 	return (ChallengeHallClearResult){0, 0x80u};
 }
+/* <<< factory Func_f5db */
 
+/* >>> factory Func_f5e9 */
 ChallengeHallBitResult Func_f5e9(uint8_t c)
 {
 	uint16_t hl = (uint16_t)(wd698_ADDR + (uint16_t)(c / 8u));
 	uint8_t b = (uint8_t)(0x80u >> (c & 7u));
 	return (ChallengeHallBitResult){b, hl};
 }
+/* <<< factory Func_f5e9 */
 
+/* >>> factory Script_Host */
 void Script_Host(void)
 {
 }
+/* <<< factory Script_Host */
 
 /* >>> factory Func_f5cc */
 /* challenge_hall.asm:517-523 */

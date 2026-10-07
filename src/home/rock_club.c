@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/rock_club.h"
 
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/rock_club.h"
 #include "home/grass_club_entrance.h"

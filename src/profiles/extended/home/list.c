@@ -1,15 +1,20 @@
+/* >>> part includes */
 #include "home/list.h"
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> factory SetListPointer */
 /* poketcg/src/home/list.asm:2 */
 void SetListPointer(uint16_t de)
 {
 	gb_write8(wListPointer_ADDR, (uint8_t)de);
 	gb_write8((uint16_t)(wListPointer_ADDR + 1), (uint8_t)(de >> 8));
 }
+/* <<< factory SetListPointer */
 
+/* >>> factory SetNextElementOfList */
 /* poketcg/src/home/list.asm:34, falling through into SetListToNextPosition
  * (list.asm:24) whose writeback is inlined here — that label pops the hl/de its
  * fallthrough callers pushed, so it is not a routine of its own. */
@@ -24,3 +29,4 @@ void SetNextElementOfList(uint8_t a)
 	gb_write8((uint16_t)(wListPointer_ADDR + 1), (uint8_t)(de >> 8));
 	gb_write8(wListPointer_ADDR, (uint8_t)de);
 }
+/* <<< factory SetNextElementOfList */

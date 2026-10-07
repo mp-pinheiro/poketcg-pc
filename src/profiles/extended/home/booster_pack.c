@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/booster_pack.h"
 
 #include "generated/text_ids.h"
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/core.h"
 #include "home/process_text.h"

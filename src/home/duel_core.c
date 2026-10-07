@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/duel_core.h"
 
 #include "generated/constants.h"
@@ -12,31 +13,43 @@
 #include "home/substatus.h"
 #include "home/duel.h"
 #include "home/sgb.h"
+/* <<< part includes */
 
+/* >>> part PLAYER_TURN */
 #define PLAYER_TURN  ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
+/* <<< part PLAYER_TURN */
 
+/* >>> part get_non_turn_duelvar_addr */
 static uint16_t get_non_turn_duelvar_addr(uint8_t offset)
 {
 	uint8_t turn = hWhoseTurn == PLAYER_TURN ? OPPONENT_TURN : PLAYER_TURN;
 	return (uint16_t)(((uint16_t)turn << 8) | offset);
 }
+/* <<< part get_non_turn_duelvar_addr */
 
+/* >>> part load_tx_ram2 */
 static void load_tx_ram2(uint16_t text_id)
 {
 	gb_write8(wTxRam2_ADDR, (uint8_t)text_id);
 	gb_write8((uint16_t)(wTxRam2_ADDR + 1), (uint8_t)(text_id >> 8));
 }
+/* <<< part load_tx_ram2 */
 
 
 
+/* >>> part TRAINER_TO_PKMN_DATA */
 #define TRAINER_TO_PKMN_DATA (ConvertSpecialTrainerCardToPokemon__trainer_to_pkmn_data_ADDR) /* bank 1 */
+/* <<< part TRAINER_TO_PKMN_DATA */
 
+/* >>> part trainer_to_pkmn_data */
 static const uint8_t *trainer_to_pkmn_data(void)
 {
 	return rom_ptr(1u, TRAINER_TO_PKMN_DATA);
 }
+/* <<< part trainer_to_pkmn_data */
 
+/* >>> factory ConvertSpecialTrainerCardToPokemon */
 /* core.asm:7123-7163. Entry: a = deck index (a duelvar offset), hl = wLoadedCard*
  * buffer, de = the card id. Overwrites a trainer card in the play area with a
  * generic colorless Pokemon (56 bytes from .trainer_to_pkmn_data). Exit contracts:
@@ -80,7 +93,9 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 	return (TrainerConvertResult){table[CARD_DATA_AI_INFO - CARD_DATA_HP - 1u],
 				      0, (uint16_t)(hl + CARD_DATA_AI_INFO)};
 }
+/* <<< factory ConvertSpecialTrainerCardToPokemon */
 
+/* >>> part DUELVARS_CARD_LOCATIONS */
 #define DUELVARS_CARD_LOCATIONS 0x00u
 #define DUELVARS_ARENA_CARD 0xBBu
 #define DUELVARS_ARENA_CARD_STAGE 0xCEu
@@ -98,13 +113,17 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 #define THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT        0x0182u
 #define THERE_WAS_NO_EFFECT_FROM_POISON_TEXT           0x017Fu
 #define THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT            0x017Eu
+/* <<< part DUELVARS_CARD_LOCATIONS */
 
+/* >>> factory ResetAttackAnimationIsPlaying */
 /* core.asm:8264-8267 */
 void ResetAttackAnimationIsPlaying(void)
 {
 	wAttackAnimationIsPlaying = 0;
 }
+/* <<< factory ResetAttackAnimationIsPlaying */
 
+/* >>> factory WaitAttackAnimation */
 /* core.asm:8343-8350 */
 void WaitAttackAnimation(void)
 {
@@ -115,7 +134,9 @@ void WaitAttackAnimation(void)
 		DoFrame();
 	} while (CheckAnyAnimationPlaying().f & 0x10u);
 }
+/* <<< factory WaitAttackAnimation */
 
+/* >>> factory ApplyStatusConditionToArenaPokemon */
 static void ApplyStatusConditionToArenaPokemon(uint8_t side, uint16_t *hl_addr)
 {
 	uint16_t arena_addr = (uint16_t)((uint16_t)side << 8 | DUELVARS_ARENA_CARD_STATUS);
@@ -128,7 +149,9 @@ static void ApplyStatusConditionToArenaPokemon(uint8_t side, uint16_t *hl_addr)
 		  (uint8_t)((gb_read8(lt_addr) & remove_mask) | add_mask));
 	*hl_addr = (uint16_t)(*hl_addr + 2u);
 }
+/* <<< factory ApplyStatusConditionToArenaPokemon */
 
+/* >>> factory ApplyStatusConditionQueue */
 /* core.asm:7181-7252 */
 uint8_t ApplyStatusConditionQueue(void)
 {
@@ -168,8 +191,10 @@ uint8_t ApplyStatusConditionQueue(void)
 	}
 	return 0x90u;
 }
+/* <<< factory ApplyStatusConditionQueue */
 
 
+/* >>> factory GetCardOneStageBelow */
 CardOneStageBelowResult GetCardOneStageBelow(uint8_t d, uint8_t e)
 {
 	uint8_t slot = hTempPlayAreaLocation_ff9d;
@@ -212,7 +237,9 @@ CardOneStageBelowResult GetCardOneStageBelow(uint8_t d, uint8_t e)
 
 	return (CardOneStageBelowResult){a_result, d_result, a_result, arena2.hl, f_result};
 }
+/* <<< factory GetCardOneStageBelow */
 
+/* >>> factory ClearNonTurnTemporaryDuelvars */
 /* core.asm:7804-7816 */
 void ClearNonTurnTemporaryDuelvars(void)
 {
@@ -226,7 +253,9 @@ void ClearNonTurnTemporaryDuelvars(void)
 	gb_write8(hl++, 0);
 	gb_write8(hl, 0);
 }
+/* <<< factory ClearNonTurnTemporaryDuelvars */
 
+/* >>> factory ClearNonTurnTemporaryDuelvars_CopyStatus */
 /* core.asm:7820-7825 */
 void ClearNonTurnTemporaryDuelvars_CopyStatus(void)
 {
@@ -234,7 +263,9 @@ void ClearNonTurnTemporaryDuelvars_CopyStatus(void)
 	wUnused_DefendingPkmnStatus = gb_read8(addr);
 	ClearNonTurnTemporaryDuelvars();
 }
+/* <<< factory ClearNonTurnTemporaryDuelvars_CopyStatus */
 
+/* >>> factory UpdateArenaCardLastTurnDamage */
 /* core.asm:7830-7845 */
 void UpdateArenaCardLastTurnDamage(void)
 {
@@ -247,7 +278,9 @@ void UpdateArenaCardLastTurnDamage(void)
 		gb_write8((uint16_t)(hl + 1), gb_read8((uint16_t)(wDealtDamage_ADDR + 1)));
 	}
 }
+/* <<< factory UpdateArenaCardLastTurnDamage */
 
+/* >>> factory PrintThereWasNoEffectFromStatusText */
 /* core.asm:7533-7566 */
 uint16_t PrintThereWasNoEffectFromStatusText(void)
 {
@@ -272,7 +305,9 @@ uint16_t PrintThereWasNoEffectFromStatusText(void)
 		return THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT;
 	return THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT;
 }
+/* <<< factory PrintThereWasNoEffectFromStatusText */
 
+/* >>> factory SetDefaultConsolePalettes */
 void SetDefaultConsolePalettes(void)
 {
 	uint8_t console = gb_read8(wConsole_ADDR);
@@ -309,4 +344,5 @@ void SetDefaultConsolePalettes(void)
 	gb_write8(wBGP_ADDR, palette);
 	gb_write8(wFlushPaletteFlags_ADDR, 0x01u);
 }
+/* <<< factory SetDefaultConsolePalettes */
 

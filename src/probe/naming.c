@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/naming.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory DisplayPlayerNamingScreen */
 static void adapt_DisplayPlayerNamingScreen(ProbeState *s)
@@ -17,7 +19,9 @@ static void adapt_DisplayPlayerNamingScreen(ProbeState *s)
 }
 /* <<< factory DisplayPlayerNamingScreen */
 
+/* >>> part probe_entries_naming */
 const ProbeEntry probe_entries_naming[] = {
 	{ "DisplayPlayerNamingScreen", adapt_DisplayPlayerNamingScreen },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_naming */

@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/card_album.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory GetFirstOwnedCardIndex */
 static void adapt_GetFirstOwnedCardIndex(ProbeState *s)
@@ -54,6 +56,7 @@ static void adapt_CardAlbum(ProbeState *s)
 }
 /* <<< factory CardAlbum */
 
+/* >>> part probe_entries_card_album */
 const ProbeEntry probe_entries_card_album[] = {
 	{ "GetFirstOwnedCardIndex", adapt_GetFirstOwnedCardIndex },
 	{ "PrintCardSetListEntries", adapt_PrintCardSetListEntries },
@@ -63,3 +66,4 @@ const ProbeEntry probe_entries_card_album[] = {
 	{ "CardAlbum", adapt_CardAlbum },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_card_album */

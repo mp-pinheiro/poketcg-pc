@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/ir_core.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
 static void adapt_StoreRegistersInIRDataBuffer(ProbeState *s)
@@ -223,6 +225,7 @@ static void adapt_RequestDataReceivalThroughIR(ProbeState *s)
 }
 /* <<< factory RequestDataReceivalThroughIR */
 
+/* >>> part probe_entries_ir_core */
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -251,3 +254,4 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "RequestDataReceivalThroughIR", adapt_RequestDataReceivalThroughIR },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_ir_core */

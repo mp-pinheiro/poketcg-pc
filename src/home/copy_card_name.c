@@ -1,6 +1,8 @@
+/* >>> part includes */
 #include "home/copy_card_name.h"
 
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/constants.h"
 #include "generated/wram.h"

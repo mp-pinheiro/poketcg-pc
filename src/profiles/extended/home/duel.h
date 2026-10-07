@@ -1,16 +1,23 @@
 #ifndef POKETCG_HOME_DUEL_H
 #define POKETCG_HOME_DUEL_H
 
+/* >>> part includes */
 #include <stdint.h>
 #include "home/card_id.h"
 
 #include "home/process_text.h"
+/* <<< part includes */
 
+/* >>> factory CopyPlayerName */
 /* Both return the asm's three live exit registers: a, de (the destination, backed
  * up onto the terminator) and hl (the source, advanced past it). */
 CopyTextResult CopyPlayerName(uint16_t de);
+/* <<< factory CopyPlayerName */
+/* >>> factory CopyOpponentName */
 CopyTextResult CopyOpponentName(uint16_t de);
+/* <<< factory CopyOpponentName */
 
+/* >>> part DuelistVarResult */
 /* Duelist-variable layer (duel.asm:1316-1337): reads duelvar `a` of the current
  * turn holder / the other player. Every duel-engine routine builds on these.
  * Exit a is the byte read; exit hl is the address it was read from. */
@@ -18,10 +25,18 @@ typedef struct {
 	uint8_t a;
 	uint16_t hl;
 } DuelistVarResult;
+/* <<< part DuelistVarResult */
+/* >>> factory GetTurnDuelistVariable */
 DuelistVarResult GetTurnDuelistVariable(uint8_t a);
+/* <<< factory GetTurnDuelistVariable */
+/* >>> factory GetNonTurnDuelistVariable */
 DuelistVarResult GetNonTurnDuelistVariable(uint8_t a);
+/* <<< factory GetNonTurnDuelistVariable */
+/* >>> factory SwapTurn */
 void SwapTurn(void);
+/* <<< factory SwapTurn */
 
+/* >>> part DeckCardResult */
 /* Deck-index lookup family (duel.asm:661-712, 762-777). Exit contracts derived
  * from each member's asm tail, not guessed:
  *  - _GetCardIDFromDeckIndex: a = id, hl = deck base + a
@@ -34,24 +49,42 @@ typedef struct {
 	CardId id;
 	uint16_t hl;
 } DeckCardResult;
+/* <<< part DeckCardResult */
+/* >>> part DeckEntryResult */
 typedef struct {
 	uint8_t a;
 	uint8_t d;
 	uint8_t e;
 	uint16_t hl;
 } DeckEntryResult;
+/* <<< part DeckEntryResult */
+/* >>> factory _GetCardIDFromDeckIndex */
 DeckCardResult _GetCardIDFromDeckIndex(uint8_t a);
+/* <<< factory _GetCardIDFromDeckIndex */
+/* >>> factory GetCardIDFromDeckIndex */
 CardId GetCardIDFromDeckIndex(uint8_t a);
+/* <<< factory GetCardIDFromDeckIndex */
+/* >>> factory GetCardIDFromDeckIndex_bc */
 DeckCardResult GetCardIDFromDeckIndex_bc(uint8_t a, uint16_t hl);
+/* <<< factory GetCardIDFromDeckIndex_bc */
+/* >>> factory GetCardInDuelTempList_OnlyDeckIndex */
 DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl);
+/* <<< factory GetCardInDuelTempList_OnlyDeckIndex */
+/* >>> factory GetCardInDuelTempList */
 DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl);
+/* <<< factory GetCardInDuelTempList */
 
+/* >>> factory LoadCardDataToBuffer1_FromDeckIndex */
 /* Load deck card `a` (0-59) into wLoadedCard1/2, applying the trainer-to-Pokemon
  * conversion. Exit a is the card id's low byte (captured as `ld a, e` before the
  * register pops); every other register is restored. */
 uint8_t LoadCardDataToBuffer1_FromDeckIndex(uint8_t a);
+/* <<< factory LoadCardDataToBuffer1_FromDeckIndex */
+/* >>> factory LoadCardDataToBuffer2_FromDeckIndex */
 uint8_t LoadCardDataToBuffer2_FromDeckIndex(uint8_t a);
+/* <<< factory LoadCardDataToBuffer2_FromDeckIndex */
 
+/* >>> part SubtractHPResult */
 /* Subtract the 16-bit damage in de from the HP byte at hl, clamping at zero
  * (duel.asm:2011-2030). Exit a is the remaining HP; exit carry is set iff it is
  * non-zero, which is what callers branch on (knocked out when clear). */
@@ -59,8 +92,12 @@ typedef struct {
 	uint8_t a;
 	uint8_t f;
 } SubtractHPResult;
+/* <<< part SubtractHPResult */
+/* >>> factory SubtractHP */
 SubtractHPResult SubtractHP(uint16_t hl, uint16_t de);
+/* <<< factory SubtractHP */
 
+/* >>> part CardListResult */
 /* Card-list builders (duel.asm:369-431). Fill wDuelTempList (FF-terminated) with
  * the turn holder's remaining deck cards or their discard pile, read backwards.
  * Exit a is the count; carry is set iff the list is empty. de exits past the
@@ -74,9 +111,15 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } CardListResult;
+/* <<< part CardListResult */
+/* >>> factory CreateDeckCardList */
 CardListResult CreateDeckCardList(uint8_t c, uint16_t de);
+/* <<< factory CreateDeckCardList */
+/* >>> factory CreateDiscardPileCardList */
 CardListResult CreateDiscardPileCardList(uint8_t c);
+/* <<< factory CreateDiscardPileCardList */
 
+/* >>> part TempListResult */
 /* wDuelTempList helpers. RemoveCardFromDuelTempList (duel.asm:713-746) compacts
  * the FF-terminated list around the card id in a; all registers are pushed and
  * popped, so exit a is the remaining count and carry is set iff it is zero.
@@ -85,9 +128,15 @@ typedef struct {
 	uint8_t a;
 	uint8_t f;
 } TempListResult;
+/* <<< part TempListResult */
+/* >>> factory RemoveCardFromDuelTempList */
 TempListResult RemoveCardFromDuelTempList(uint8_t a);
+/* <<< factory RemoveCardFromDuelTempList */
+/* >>> factory CountCardsInDuelTempList */
 TempListResult CountCardsInDuelTempList(void);
+/* <<< factory CountCardsInDuelTempList */
 
+/* >>> part HandListResult */
 /* Hand/energy list builders. FindLastCardInHand (duel.asm:526-533) returns the
  * hand's last card pointer: b = count, hl = page + $41 + count, de = wDuelTempList.
  * CreateHandCardList (473-500) fills wDuelTempList with non-just-drawn hand cards.
@@ -102,10 +151,18 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } HandListResult;
+/* <<< part HandListResult */
+/* >>> factory FindLastCardInHand */
 HandListResult FindLastCardInHand(uint8_t c);
+/* <<< factory FindLastCardInHand */
+/* >>> factory CreateHandCardList */
 HandListResult CreateHandCardList(uint8_t c);
+/* <<< factory CreateHandCardList */
+/* >>> factory CreateArenaOrBenchEnergyCardList */
 HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a);
+/* <<< factory CreateArenaOrBenchEnergyCardList */
 
+/* >>> part ShuffleCardsResult */
 /* ShuffleCards (duel.asm:541-563): swap a cards of the deck region at hl with
  * positions chosen by Random. Exit a is the last swapped byte; all other
  * registers are pushed and popped. */
@@ -113,8 +170,12 @@ typedef struct {
 	uint8_t a;
 	uint8_t f;
 } ShuffleCardsResult;
+/* <<< part ShuffleCardsResult */
+/* >>> factory ShuffleCards */
 ShuffleCardsResult ShuffleCards(uint8_t a, uint16_t hl);
+/* <<< factory ShuffleCards */
 
+/* >>> part SortResult */
 /* SortCardsInListByID (duel.asm:589-648): selection-sort the FF-terminated deck-
  * index list at hTempListPtr_ff99 ascending by card id. SortCardsInDuelTempListByID
  * (578-587) first points that pointer at wDuelTempList. Exit a is the terminator
@@ -128,9 +189,15 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } SortResult;
+/* <<< part SortResult */
+/* >>> factory SortCardsInListByID */
 SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de);
+/* <<< factory SortCardsInListByID */
+/* >>> factory SortCardsInDuelTempListByID */
 SortResult SortCardsInDuelTempListByID(uint8_t b, uint8_t c, uint16_t de);
+/* <<< factory SortCardsInDuelTempListByID */
 
+/* >>> part HandSortResult */
 /* SortHandCardsByID (duel.asm:502-525): copy the hand to wDuelTempList, sort by
  * id, write back with the lowest id at the newest hand position. Exit a = the
  * last copied card value, b = 0, hl = page + $40, de past the list terminator. */
@@ -143,12 +210,18 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } HandSortResult;
+/* <<< part HandSortResult */
+/* >>> factory SortHandCardsByID */
 HandSortResult SortHandCardsByID(void);
+/* <<< factory SortHandCardsByID */
 
+/* >>> factory TranslateColorToWR */
 /* TranslateColorToWR (duel.asm:1915-1922): color index in a -> InvertedPowersOf2[a]
  * ($80 >> a). Pure ROM table read; hl/b/c/d/e preserved. */
 uint8_t TranslateColorToWR(uint8_t a);
+/* <<< factory TranslateColorToWR */
 
+/* >>> part CardLocationCountResult */
 /* CountCardIDInLocation (duel.asm:1290-1315): count deck cards in location b with
  * card id e. Entry hl = the card-locations page. Exit a = count, hl = page + 60.
  * CheckLoadedAttackFlag (2331-2357): test attack-flag group (a >> 3) bit (a & 7)
@@ -158,13 +231,21 @@ typedef struct {
 	uint8_t a;
 	uint16_t hl;
 } CardLocationCountResult;
+/* <<< part CardLocationCountResult */
+/* >>> factory CountCardIDInLocation */
 CardLocationCountResult CountCardIDInLocation(uint8_t b, CardId de, uint16_t hl);
+/* <<< factory CountCardIDInLocation */
+/* >>> part AttackFlagResult */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
 } AttackFlagResult;
+/* <<< part AttackFlagResult */
+/* >>> factory CheckLoadedAttackFlag */
 AttackFlagResult CheckLoadedAttackFlag(uint8_t a);
+/* <<< factory CheckLoadedAttackFlag */
 
+/* >>> part CardDamageResult */
 /* GetCardDamageAndMaxHP (duel.asm:2306-2320): arena/bench slot e. Exit a = the
  * loaded card's max HP minus its damage, c = max HP, carry = damage exceeded HP.
  * All other registers restored. */
@@ -173,8 +254,12 @@ typedef struct {
 	uint8_t c;
 	uint8_t f;
 } CardDamageResult;
+/* <<< part CardDamageResult */
+/* >>> factory GetCardDamageAndMaxHP */
 CardDamageResult GetCardDamageAndMaxHP(uint8_t e);
+/* <<< factory GetCardDamageAndMaxHP */
 
+/* >>> factory CopyDeckData */
 /* ---- W1-B additions ---- */
 
 /* CopyDeckData (duel.asm:60-104): de = deck description (count,id pairs, $00-
@@ -186,14 +271,18 @@ CardDamageResult GetCardDamageAndMaxHP(uint8_t e);
  * loop residue -- entry c is never read at all. Carry set iff deckBase+59 is
  * still $00 (under 60 cards). */
 CardListResult CopyDeckData(uint16_t de);
+/* <<< factory CopyDeckData */
 
+/* >>> factory CountPrizes */
 /* CountPrizes (duel.asm:107-120): population count of the turn holder's
  * DUELVARS_PRIZES bitmask (verified exhaustively against the `rr l / adc 0`
  * carry-ring against all 256 byte values; the real game only ever stores runs of
  * low bits via PrizeBitmasks, for which this is also exactly popcount). hl/b/c/d/e
  * preserved (wrapped in push/pop). */
 uint8_t CountPrizes(void);
+/* <<< factory CountPrizes */
 
+/* >>> part ShuffleDeckResult */
 /* ShuffleDeck (duel.asm:124-137): shuffles DECK_SIZE - [not-in-deck] cards of the
  * turn holder's deck via ShuffleCards, tail-calling it with no push/pop of its
  * own. Exit a/f are ShuffleCards' own exit; b = the computed card count; d =
@@ -208,8 +297,12 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } ShuffleDeckResult;
+/* <<< part ShuffleDeckResult */
+/* >>> factory ShuffleDeck */
 ShuffleDeckResult ShuffleDeck(uint8_t c, uint8_t e);
+/* <<< factory ShuffleDeck */
 
+/* >>> part DrawCardResult */
 /* DrawCardFromDeck (duel.asm:142-161): draws the turn holder's top deck card,
  * marking its location CARD_LOCATION_JUST_DRAWN. Entry hl/b/c/d/e are pushed and
  * popped (fully preserved). Exit a = the drawn card's deck index on success, or
@@ -218,38 +311,52 @@ typedef struct {
 	uint8_t a;
 	uint8_t f;
 } DrawCardResult;
+/* <<< part DrawCardResult */
+/* >>> factory DrawCardFromDeck */
 DrawCardResult DrawCardFromDeck(void);
+/* <<< factory DrawCardFromDeck */
 
+/* >>> factory ReturnCardToDeck */
 /* ReturnCardToDeck (duel.asm:165-180): entry a = deck index to place back on top
  * of the turn holder's deck. Every register (a,f,hl,b,c,d,e) is preserved -- the
  * routine's only effect is the WRAM write of the deck-cards slot and the card's
  * location (CARD_LOCATION_DECK). */
 void ReturnCardToDeck(uint8_t a);
+/* <<< factory ReturnCardToDeck */
 
+/* >>> factory SearchCardInDeckAndAddToHand */
 /* SearchCardInDeckAndAddToHand (duel.asm:185-217): entry a = deck index. Wrapped
  * in push af/hl/de/bc ... pop bc/de/hl/af, so every register is preserved; the
  * routine extracts the card from the deck array (compacting the remainder) and
  * marks its location CARD_LOCATION_JUST_DRAWN. AddCardToHand is the intended
  * follow-up call. */
 void SearchCardInDeckAndAddToHand(uint8_t a);
+/* <<< factory SearchCardInDeckAndAddToHand */
 
+/* >>> factory AddCardToHand */
 /* AddCardToHand (duel.asm:221-242): entry a = deck index. Wrapped in
  * push af/hl/de ... pop de/hl/af (b/c untouched too), so every register is
  * preserved. Marks the card CARD_LOCATION_HAND, increments the hand count, and
  * appends the card to the end of the hand array. */
 void AddCardToHand(uint8_t a);
+/* <<< factory AddCardToHand */
 
+/* >>> factory RemoveCardFromHand */
 /* RemoveCardFromHand (duel.asm:246-280): entry a = deck index to remove (every
  * matching hand entry is removed, decrementing the hand count once per match).
  * Wrapped in push af/hl/bc/de ... pop de/bc/hl/af: every register preserved. */
 void RemoveCardFromHand(uint8_t a);
+/* <<< factory RemoveCardFromHand */
 
+/* >>> factory PutCardInDiscardPile */
 /* PutCardInDiscardPile (duel.asm:294-311): entry a = deck index. Wrapped in
  * push af/hl/de ... pop de/hl/af (b/c untouched), so every register preserved.
  * Marks the card CARD_LOCATION_DISCARD_PILE, increments the discard count, and
  * appends the card to the discard-pile array. */
 void PutCardInDiscardPile(uint8_t a);
+/* <<< factory PutCardInDiscardPile */
 
+/* >>> part MoveCardResult */
 /* MoveHandCardToDiscardPile (duel.asm:284-292): entry a = deck index. If the
  * card's (JUST_DRAWN-masked) location isn't CARD_LOCATION_HAND, returns early
  * with a = the masked location byte, f = the `cp CARD_LOCATION_HAND` flags, hl =
@@ -261,8 +368,12 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } MoveCardResult;
+/* <<< part MoveCardResult */
+/* >>> factory MoveHandCardToDiscardPile */
 MoveCardResult MoveHandCardToDiscardPile(uint8_t a);
+/* <<< factory MoveHandCardToDiscardPile */
 
+/* >>> part MoveDiscardResult */
 /* MoveDiscardPileCardToHand (duel.asm:316-346): entry a = deck index to pull
  * from the turn holder's discard pile (marks it CARD_LOCATION_JUST_DRAWN and
  * compacts the discard array). Wrapped in push hl/de/bc ... pop bc/de/hl, so
@@ -273,15 +384,21 @@ typedef struct {
 	uint8_t a;
 	uint8_t f;
 } MoveDiscardResult;
+/* <<< part MoveDiscardResult */
+/* >>> factory MoveDiscardPileCardToHand */
 MoveDiscardResult MoveDiscardPileCardToHand(uint8_t a);
+/* <<< factory MoveDiscardPileCardToHand */
 
 
+/* >>> factory SortCardsInListByID_CheckForListTerminator */
 /* SortCardsInListByID_CheckForListTerminator (duel.asm:650-657): the loop head
  * SortCardsInListByID jumps back to after every pass -- entering here is
  * identical to entering the top of SortCardsInListByID's own loop, so the two
  * share one C implementation and the same exit contract. */
 SortResult SortCardsInListByID_CheckForListTerminator(uint8_t b, uint8_t c, uint16_t de);
+/* <<< factory SortCardsInListByID_CheckForListTerminator */
 
+/* >>> part EvolveResult */
 /* CheckIfCanEvolveInto (duel.asm:879-915): d = the deck index of the candidate
  * evolution target, e = the play area slot (PLAY_AREA_*) of the card trying to
  * evolve. Compares loaded-card name fields to decide eligibility; entry de is
@@ -302,9 +419,15 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } EvolveResult;
+/* <<< part EvolveResult */
+/* >>> factory CheckIfCanEvolveInto */
 EvolveResult CheckIfCanEvolveInto(uint8_t d, uint8_t e);
+/* <<< factory CheckIfCanEvolveInto */
+/* >>> factory CheckIfCanEvolveInto_BasicToStage2 */
 EvolveResult CheckIfCanEvolveInto_BasicToStage2(uint8_t d, uint8_t e);
+/* <<< factory CheckIfCanEvolveInto_BasicToStage2 */
 
+/* >>> factory EvolvePokemonCardIfPossible */
 /* EvolvePokemonCardIfPossible (duel.asm:814-822) / EvolvePokemonCard (824-869):
  * read hTempCardIndex_ff98 (the evolution card's deck index) and
  * hTempPlayAreaLocation_ff9d (the target slot) directly; no register inputs
@@ -317,8 +440,12 @@ EvolveResult CheckIfCanEvolveInto_BasicToStage2(uint8_t d, uint8_t e);
  * `ld c, a` before the HP-delta subtraction, never touched again); on its own
  * (no d input) entry d is untouched -- only c/e/a/f/hl are real outputs there. */
 EvolveResult EvolvePokemonCardIfPossible(uint8_t c);
+/* <<< factory EvolvePokemonCardIfPossible */
+/* >>> factory EvolvePokemonCard */
 EvolveResult EvolvePokemonCard(void);
+/* <<< factory EvolvePokemonCard */
 
+/* >>> factory ClearAllStatusConditions */
 /* ClearAllStatusConditions (duel.asm:962-989): zeroes the turn holder's arena
  * card's status/substatus1/substatus2/changed-weakness/changed-resistance,
  * clears substatus3 bit 0 only, and zeroes 8 bytes starting at
@@ -326,7 +453,9 @@ EvolveResult EvolvePokemonCard(void);
  * always 0/$80 (the `xor a` at entry, untouched after) and omitted from CONTRACT
  * to match SwapTurn's precedent for pure-WRAM-effect routines. */
 void ClearAllStatusConditions(void);
+/* <<< factory ClearAllStatusConditions */
 
+/* >>> part PutHandResult */
 /* PutHandCardInPlayArea (duel.asm:1058-1064): entry a = deck index (removed from
  * hand via RemoveCardFromHand, which preserves every register), e = play area
  * location offset. Writes card_locations[a] = e | CARD_LOCATION_PLAY_AREA. Exit
@@ -336,8 +465,12 @@ typedef struct {
 	uint8_t a;
 	uint16_t hl;
 } PutHandResult;
+/* <<< part PutHandResult */
+/* >>> factory PutHandCardInPlayArea */
 PutHandResult PutHandCardInPlayArea(uint8_t a, uint8_t e);
+/* <<< factory PutHandCardInPlayArea */
 
+/* >>> part PutHandPokemonResult */
 /* PutHandPokemonCardInPlayArea (duel.asm:996-1049): entry a = deck index, f =
  * entry flags (the "already max" branch's `pop af` restores these before
  * `scf` forces C, so Z there is the caller's, not derived from the `cp`). If
@@ -352,8 +485,12 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } PutHandPokemonResult;
+/* <<< part PutHandPokemonResult */
+/* >>> factory PutHandPokemonCardInPlayArea */
 PutHandPokemonResult PutHandPokemonCardInPlayArea(uint8_t a, uint8_t f);
+/* <<< factory PutHandPokemonCardInPlayArea */
 
+/* >>> part EmptySlotResult */
 /* EmptyPlayAreaSlot (duel.asm:1091-1111): entry e = play area location offset.
  * Resets that slot's arena-card/hp/stage/changed-type/attached-defender/attached-
  * pluspower fields ($FF for the card, 0 for the rest). Exit a/hl = the last
@@ -365,12 +502,24 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } EmptySlotResult;
+/* <<< part EmptySlotResult */
+/* >>> part InitDuelvarResult */
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } InitDuelvarResult;
+/* <<< part InitDuelvarResult */
+/* >>> factory EmptyPlayAreaSlot_init_duelvar */
 InitDuelvarResult EmptyPlayAreaSlot_init_duelvar(uint8_t a, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory EmptyPlayAreaSlot_init_duelvar */
+/* >>> part SwapDuelvarResult */
 typedef struct { uint8_t a; uint8_t f; uint8_t c; uint16_t hl; } SwapDuelvarResult;
+/* <<< part SwapDuelvarResult */
+/* >>> factory SwapPlayAreaPokemon_swap_duelvar */
 SwapDuelvarResult SwapPlayAreaPokemon_swap_duelvar(uint8_t a, uint8_t b, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory SwapPlayAreaPokemon_swap_duelvar */
+/* >>> factory EmptyPlayAreaSlot */
 EmptySlotResult EmptyPlayAreaSlot(uint8_t e);
+/* <<< factory EmptyPlayAreaSlot */
 
+/* >>> part MoveAreaResult */
 /* MovePlayAreaCardToDiscardPile (duel.asm:1068-1087): entry e = play area
  * location offset. Empties that slot (EmptyPlayAreaSlot), decrements the
  * play-area pokemon count, then discards every card whose location equals
@@ -383,8 +532,12 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } MoveAreaResult;
+/* <<< part MoveAreaResult */
+/* >>> factory MovePlayAreaCardToDiscardPile */
 MoveAreaResult MovePlayAreaCardToDiscardPile(uint8_t e);
+/* <<< factory MovePlayAreaCardToDiscardPile */
 
+/* >>> part SwapAreaResult */
 /* SwapPlayAreaPokemon (duel.asm:1148-1215): swaps the turn holder's play-area
  * cards at offsets d and e (all seven per-card duelvar fields, plus relabeling
  * every card_locations entry that pointed at either slot). Wrapped in
@@ -397,9 +550,15 @@ typedef struct {
 	uint8_t d;
 	uint8_t f;
 } SwapAreaResult;
+/* <<< part SwapAreaResult */
+/* >>> factory SwapPlayAreaPokemon */
 SwapAreaResult SwapPlayAreaPokemon(uint8_t d, uint8_t e);
+/* <<< factory SwapPlayAreaPokemon */
+/* >>> factory SwapArenaWithBenchPokemon */
 SwapAreaResult SwapArenaWithBenchPokemon(uint8_t e);
+/* <<< factory SwapArenaWithBenchPokemon */
 
+/* >>> part ShiftResult */
 /* ShiftTurnPokemonToFirstPlayAreaSlots (duel.asm:1122-1137): compacts the turn
  * holder's occupied play-area slots toward the front via repeated
  * SwapPlayAreaPokemon calls. Exit a/d = MAX_PLAY_AREA_POKEMON (the scan cursor's
@@ -414,9 +573,15 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } ShiftResult;
+/* <<< part ShiftResult */
+/* >>> factory ShiftTurnPokemonToFirstPlayAreaSlots */
 ShiftResult ShiftTurnPokemonToFirstPlayAreaSlots(void);
+/* <<< factory ShiftTurnPokemonToFirstPlayAreaSlots */
+/* >>> factory ShiftAllPokemonToFirstPlayAreaSlots */
 ShiftResult ShiftAllPokemonToFirstPlayAreaSlots(void);
+/* <<< factory ShiftAllPokemonToFirstPlayAreaSlots */
 
+/* >>> part EnergiesResult */
 /* GetPlayAreaCardAttachedEnergies (duel.asm:1221-1284): entry e = play area
  * location offset (0 = arena, nonzero = that bench slot). Zeroes
  * wAttachedEnergies[8], scans all 60 card-location slots for cards at that
@@ -430,8 +595,12 @@ typedef struct {
 	uint8_t a;
 	uint8_t f;
 } EnergiesResult;
+/* <<< part EnergiesResult */
+/* >>> factory GetPlayAreaCardAttachedEnergies */
 EnergiesResult GetPlayAreaCardAttachedEnergies(uint8_t e);
+/* <<< factory GetPlayAreaCardAttachedEnergies */
 
+/* >>> part AttackCopyResult */
 /* CopyAttackDataAndDamage (duel.asm:1442-1467) copies attack 1 (e==0) or attack
  * 2 (e==1) from wLoadedCard1 into wLoadedAttack (19 bytes), then wDamage/
  * wDealtDamage/wNoDamageOrEffect are (re)initialized from it. Exit a/c = 0, f =
@@ -448,14 +617,24 @@ typedef struct {
 	uint16_t hl;
 	uint16_t de;
 } AttackCopyResult;
+/* <<< part AttackCopyResult */
+/* >>> factory CopyAttackDataAndDamage */
 AttackCopyResult CopyAttackDataAndDamage(uint8_t e);
+/* <<< factory CopyAttackDataAndDamage */
+/* >>> factory CopyAttackDataAndDamage_FromDeckIndex */
 AttackCopyResult CopyAttackDataAndDamage_FromDeckIndex(uint8_t d, uint8_t e);
+/* <<< factory CopyAttackDataAndDamage_FromDeckIndex */
+/* >>> factory CopyAttackDataAndDamage_FromCardID */
 AttackCopyResult CopyAttackDataAndDamage_FromCardID(uint8_t b, uint8_t c, uint16_t de);
+/* <<< factory CopyAttackDataAndDamage_FromCardID */
 
+/* >>> factory ReturnCarry */
 /* ReturnCarry (duel.asm:1621-1623): `scf` -- sets carry, clears N/H, leaves Z
  * (and every other register) untouched. */
 uint8_t ReturnCarry(uint8_t f);
+/* <<< factory ReturnCarry */
 
+/* >>> part LoadEffectResult */
 /* LoadNonPokemonCardEffectCommands (duel.asm:1793-1803): reads
  * hTempCardIndex_ff9f, loads that deck card into wLoadedCard1, then copies its
  * 2-byte EffectCommands pointer into wLoadedAttackEffectCommands. Exit a = the
@@ -467,8 +646,12 @@ typedef struct {
 	uint16_t hl;
 	uint16_t de;
 } LoadEffectResult;
+/* <<< part LoadEffectResult */
+/* >>> factory LoadNonPokemonCardEffectCommands */
 LoadEffectResult LoadNonPokemonCardEffectCommands(void);
+/* <<< factory LoadNonPokemonCardEffectCommands */
 
+/* >>> part PowerModifierResult */
 /* ApplyAttachedPlusPower / ApplyAttachedDefender (duel.asm:1976-2006): entry b =
  * a CARD_LOCATION_* to search (the routines call GetTurnDuelistVariable only to
  * get h = hWhoseTurn cheaply; entry `a` is otherwise irrelevant and CountCardIDInLocation
@@ -484,9 +667,15 @@ typedef struct {
 	uint16_t hl;
 	uint16_t de;
 } PowerModifierResult;
+/* <<< part PowerModifierResult */
+/* >>> factory ApplyAttachedPlusPower */
 PowerModifierResult ApplyAttachedPlusPower(uint8_t b, uint16_t de);
+/* <<< factory ApplyAttachedPlusPower */
+/* >>> factory ApplyAttachedDefender */
 PowerModifierResult ApplyAttachedDefender(uint8_t b, uint16_t de);
+/* <<< factory ApplyAttachedDefender */
 
+/* >>> part DiscardIfInPlayResult */
 /* MoveCardToDiscardPileIfInPlayArea (duel.asm:2273-2298): entry de = the card ID
  * to discard everywhere it appears in the play area; entry `page` is the high
  * byte the caller's hl already held (hWhoseTurn in every real caller) -- the
@@ -503,30 +692,55 @@ typedef struct {
 	uint8_t f;
 	uint16_t hl;
 } DiscardIfInPlayResult;
+/* <<< part DiscardIfInPlayResult */
+/* >>> factory MoveCardToDiscardPileIfInPlayArea */
 DiscardIfInPlayResult MoveCardToDiscardPileIfInPlayArea(uint16_t de, uint8_t page);
+/* <<< factory MoveCardToDiscardPileIfInPlayArea */
 
+/* >>> factory ApplyDamageModifiers_DamageToTarget */
 uint16_t ApplyDamageModifiers_DamageToTarget(void);
+/* <<< factory ApplyDamageModifiers_DamageToTarget */
+/* >>> factory ApplyDamageModifiers_DamageToSelf */
 uint16_t ApplyDamageModifiers_DamageToSelf(void);
+/* <<< factory ApplyDamageModifiers_DamageToSelf */
+/* >>> factory GetPlayAreaCardRetreatCost */
 uint8_t GetPlayAreaCardRetreatCost(void);
+/* <<< factory GetPlayAreaCardRetreatCost */
 
 
+/* >>> part KnockoutCheckResult */
 typedef struct { uint8_t a, f; } KnockoutCheckResult;
+/* <<< part KnockoutCheckResult */
 
+/* >>> factory DrawWideTextBox_WaitForInput_ReturnCarry */
 /* Wave 3 */
 uint8_t DrawWideTextBox_WaitForInput_ReturnCarry(uint16_t hl);
+/* <<< factory DrawWideTextBox_WaitForInput_ReturnCarry */
+/* >>> factory PrintKnockedOut */
 uint8_t PrintKnockedOut(void);
+/* <<< factory PrintKnockedOut */
+/* >>> factory PrintPlayAreaCardKnockedOutIfNoHP */
 KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a);
+/* <<< factory PrintPlayAreaCardKnockedOutIfNoHP */
 
+/* >>> part DuelRoutineResult */
 typedef struct {
 	uint8_t a, f, b, c, d, e;
 	uint16_t hl;
 } DuelRoutineResult;
+/* <<< part DuelRoutineResult */
 
+/* >>> factory UpdateArenaCardIDsAndClearTwoTurnDuelVars */
 DuelRoutineResult UpdateArenaCardIDsAndClearTwoTurnDuelVars(
 	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory UpdateArenaCardIDsAndClearTwoTurnDuelVars */
+/* >>> factory ClearNonTurnTemporaryDuelvars_ResetCarry */
 DuelRoutineResult ClearNonTurnTemporaryDuelvars_ResetCarry(
 	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory ClearNonTurnTemporaryDuelvars_ResetCarry */
+/* >>> factory PrintKnockedOutIfHLZero */
 uint8_t PrintKnockedOutIfHLZero(uint16_t hl);
+/* <<< factory PrintKnockedOutIfHLZero */
 
 
 /* >>> factory GetFirstSetPrizeCard */

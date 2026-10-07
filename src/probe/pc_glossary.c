@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/pc_glossary.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory _PCMenu_Glossary */
 static void adapt__PCMenu_Glossary(ProbeState *s)
@@ -11,7 +13,9 @@ static void adapt__PCMenu_Glossary(ProbeState *s)
 }
 /* <<< factory _PCMenu_Glossary */
 
+/* >>> part probe_entries_pc_glossary */
 const ProbeEntry probe_entries_pc_glossary[] = {
 	{ "_PCMenu_Glossary", adapt__PCMenu_Glossary },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_pc_glossary */

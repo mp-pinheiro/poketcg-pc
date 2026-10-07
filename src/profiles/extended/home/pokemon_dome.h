@@ -1,13 +1,23 @@
 #ifndef POKETCG_HOME_POKEMON_DOME_H
 #define POKETCG_HOME_POKEMON_DOME_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part PokemonDomeResult */
 typedef struct { uint8_t a, f; } PokemonDomeResult;
+/* <<< part PokemonDomeResult */
 
+/* >>> factory Func_f762 */
 PokemonDomeResult Func_f762(void);
+/* <<< factory Func_f762 */
+/* >>> factory Func_f782 */
 PokemonDomeResult Func_f782(uint8_t b, uint8_t c, uint8_t f);
+/* <<< factory Func_f782 */
+/* >>> factory PlacePokemonDomeOpponentAtDuelTable */
 PokemonDomeResult PlacePokemonDomeOpponentAtDuelTable(uint8_t f);
+/* <<< factory PlacePokemonDomeOpponentAtDuelTable */
 
 /* >>> factory Func_f77d */
 PokemonDomeResult Func_f77d(uint8_t b, uint8_t c, uint8_t f);

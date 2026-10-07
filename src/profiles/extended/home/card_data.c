@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/card_data.h"
 
 #include "generated/constants.h"
@@ -9,6 +10,7 @@
 #include "home/frames.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/switch_rom.h"
 #include "mem.h"
@@ -18,13 +20,16 @@
 #include "generated/hram.h"
 /* <<< factory statics */
 
+/* >>> part BANK_CARD_DATA */
 /* Card data and CardPointers both live in ROM bank 0x0c (data/cards.asm). The asm
  * reaches them through BankpushROM2/BankpopROM, whose net effect is a temporary bank
  * switch -- collapsed here to direct rom_ptr reads. */
 #define BANK_CARD_DATA      CardPointers_BANK
 #define CARD_POINTERS       CardPointers_ADDR
 #define GETCARDPTR_BOUND ((uint16_t)(CARD_POINTERS + 3u * (NUM_CARDS + 1u)))
+/* <<< part BANK_CARD_DATA */
 
+/* >>> part get_card_pointer */
 static CardPtrResult get_card_pointer(CardId cardid)
 {
 	uint16_t entry = (uint16_t)(CARD_POINTERS + (uint16_t)cardid * 3u);
@@ -33,13 +38,17 @@ static CardPtrResult get_card_pointer(CardId cardid)
 	const uint8_t *p = rom_ptr(BANK_CARD_DATA, entry);
 	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0u, p[2]};
 }
+/* <<< part get_card_pointer */
 
+/* >>> part card_data */
 static const uint8_t *card_data(CardId cardid)
 {
 	CardPtrResult pointer = get_card_pointer(cardid);
 	return rom_ptr(pointer.bank, pointer.hl);
 }
+/* <<< part card_data */
 
+/* >>> factory GetCardType */
 /* card_data.asm:84-96 */
 uint8_t GetCardType(CardId e)
 {
@@ -48,7 +57,9 @@ uint8_t GetCardType(CardId e)
 		return hBankROM;
 	return rom_ptr(pointer.bank, pointer.hl)[CARD_DATA_TYPE];
 }
+/* <<< factory GetCardType */
 
+/* >>> factory GetCardName */
 uint16_t GetCardName(CardId e)
 {
 	CardPtrResult pointer = get_card_pointer(e);
@@ -57,7 +68,9 @@ uint16_t GetCardName(CardId e)
 	const uint8_t *p = rom_ptr(pointer.bank, pointer.hl) + CARD_DATA_NAME;
 	return (uint16_t)(p[0] | (uint16_t)p[1] << 8);
 }
+/* <<< factory GetCardName */
 
+/* >>> factory GetCardTypeRarityAndSet */
 CardTRS GetCardTypeRarityAndSet(CardId a)
 {
 	CardPtrResult pointer = get_card_pointer(a);
@@ -66,12 +79,16 @@ CardTRS GetCardTypeRarityAndSet(CardId a)
 	const uint8_t *p = rom_ptr(pointer.bank, pointer.hl);
 	return (CardTRS){p[CARD_DATA_TYPE], p[CARD_DATA_RARITY], p[CARD_DATA_SET], 0u};
 }
+/* <<< factory GetCardTypeRarityAndSet */
 
+/* >>> part load_card_data */
 static void load_card_data(CardId cardid, uint16_t dest)
 {
 	LoadCardDataToHL_FromCardID(cardid, &dest, dest);
 }
+/* <<< part load_card_data */
 
+/* >>> factory LoadCardDataToBuffer1_FromName */
 /* card_data.asm:1-45. Scans CardPointers[1..] (skipping the leading NULL) for the
  * first card whose CARD_DATA_NAME matches de; on a hit copies it to wLoadedCard1.
  * CardPointers[229] is the NULL terminator. */
@@ -89,19 +106,27 @@ void LoadCardDataToBuffer1_FromName(uint16_t de)
 		}
 	}
 }
+/* <<< factory LoadCardDataToBuffer1_FromName */
 
+/* >>> factory LoadCardDataToBuffer1_FromCardID */
 void LoadCardDataToBuffer1_FromCardID(CardId e)
 {
 	load_card_data(e, wLoadedCard1_ADDR);
 }
+/* <<< factory LoadCardDataToBuffer1_FromCardID */
 
+/* >>> factory LoadCardDataToBuffer2_FromCardID */
 void LoadCardDataToBuffer2_FromCardID(CardId e)
 {
 	load_card_data(e, wLoadedCard2_ADDR);
 }
+/* <<< factory LoadCardDataToBuffer2_FromCardID */
 
+/* >>> part BANK_CARD_GFX */
 #define BANK_CARD_GFX  CardGraphics_BANK
+/* <<< part BANK_CARD_GFX */
 
+/* >>> part LoadCardGfx */
 /* card_data.asm:176-205. The gfx index encodes its bank offset in bits 15-11
  * (bank = BANK(CardGraphics) + idx>>11) and the tile address in the rest (*8,
  * normalized into $4000-$7fff). */
@@ -116,9 +141,11 @@ void LoadCardGfx(uint16_t hl, uint16_t de, uint8_t b, uint8_t c)
 	card_gfx_finish(src);
 	BankswitchROM(saved);
 }
+/* <<< part LoadCardGfx */
 
 
 
+/* >>> factory GetCardPointer */
 /* card_data.asm:140-168. e indexes CardPointers (2 bytes/entry, skipping neither
  * the leading NULL nor the trailing terminator here -- e > NUM_CARDS is out of
  * bounds). bound_zero mirrors the asm's own `cp`-pair Z bit at the boundary
@@ -127,6 +154,7 @@ CardPtrResult GetCardPointer(CardId e)
 {
 	return get_card_pointer(e);
 }
+/* <<< factory GetCardPointer */
 
 /* >>> factory LoadCardDataToHL_FromCardID */
 void LoadCardDataToHL_FromCardID(CardId e, uint16_t *hl, uint16_t saved_hl)

@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_LEGENDARY_DRAGONITE_H
 #define POKETCG_HOME_LEGENDARY_DRAGONITE_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory AIDoTurn_LegendaryDragonite */
 typedef struct { uint8_t f; } AIDoTurn_LegendaryDragoniteResult;

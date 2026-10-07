@@ -1,9 +1,12 @@
+/* >>> part includes */
 #include "home/wait_keys.h"
 
 #include "generated/hram.h"
 #include "home/lcd_enable_frame.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> factory WaitUntilKeysArePressed */
 WaitKeysResult WaitUntilKeysArePressed(uint8_t keys)
 {
 	uint8_t pressed;
@@ -15,3 +18,4 @@ WaitKeysResult WaitUntilKeysArePressed(uint8_t keys)
 			return (WaitKeysResult){pressed, 0x20u};
 	}
 }
+/* <<< factory WaitUntilKeysArePressed */

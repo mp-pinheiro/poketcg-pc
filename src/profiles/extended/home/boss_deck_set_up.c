@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/boss_deck_set_up.h"
 
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/duel.h"
 #include "generated/wram.h"
@@ -25,6 +27,7 @@ static uint8_t check_id_is_in_list(uint8_t deck_index)
 			return (uint8_t)(entry == card);
 	}
 }
+/* <<< factory statics */
 
 /* >>> factory SetUpBossStartingHandAndDeck */
 void SetUpBossStartingHandAndDeck(void)

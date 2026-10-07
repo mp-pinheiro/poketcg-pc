@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/credits_sequence_commands.h"
 #include "home/indirect_dispatch.h"
 #include "home/overworld_map.h"
@@ -6,6 +7,7 @@
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/credits_sequence_commands.h"
 #include "home/color.h"
@@ -65,8 +67,11 @@
 #include "generated/wram.h"
 /* <<< factory statics */
 
+/* >>> part CREDITS_SEQUENCE_ADDR */
 #define CREDITS_SEQUENCE_ADDR CreditsSequence_ADDR
+/* <<< part CREDITS_SEQUENCE_ADDR */
 
+/* >>> factory SetCreditsSequenceCmdPtr */
 void SetCreditsSequenceCmdPtr(void)
 {
 	gb_write8(wSequenceCmdPtr_ADDR, (uint8_t)CREDITS_SEQUENCE_ADDR);
@@ -74,7 +79,9 @@ void SetCreditsSequenceCmdPtr(void)
 	          (uint8_t)(CREDITS_SEQUENCE_ADDR >> 8));
 	gb_write8(wSequenceDelay_ADDR, 0);
 }
+/* <<< factory SetCreditsSequenceCmdPtr */
 
+/* >>> factory ExecuteCreditsSequenceCmd */
 void ExecuteCreditsSequenceCmd(void)
 {
 	static const struct {
@@ -157,7 +164,9 @@ void ExecuteCreditsSequenceCmd(void)
 		}
 	}
 }
+/* <<< factory ExecuteCreditsSequenceCmd */
 
+/* >>> factory AdvanceCreditsSequenceCmdPtr */
 void AdvanceCreditsSequenceCmdPtr(uint8_t a)
 {
 	uint16_t ptr = (uint16_t)(gb_read8(wSequenceCmdPtr_ADDR) |
@@ -166,6 +175,7 @@ void AdvanceCreditsSequenceCmdPtr(uint8_t a)
 	gb_write8(wSequenceCmdPtr_ADDR, (uint8_t)ptr);
 	gb_write8((uint16_t)(wSequenceCmdPtr_ADDR + 1u), (uint8_t)(ptr >> 8));
 }
+/* <<< factory AdvanceCreditsSequenceCmdPtr */
 
 /* >>> factory AdvanceCreditsSequenceCmdPtrBy2 */
 /* credits_sequence_commands.asm:45-47 */

@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/fighting_club.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory FightingClubAfterDuel */
 static void adapt_FightingClubAfterDuel(ProbeState *s)
@@ -44,6 +46,7 @@ static void adapt_Preload_JessicaInFightingClub(ProbeState *s)
 }
 /* <<< factory Preload_JessicaInFightingClub */
 
+/* >>> part probe_entries_fighting_club */
 const ProbeEntry probe_entries_fighting_club[] = {
 	{ "FightingClubAfterDuel", adapt_FightingClubAfterDuel },
 	{ "Preload_ChrisInFightingClub", adapt_Preload_ChrisInFightingClub },
@@ -51,3 +54,4 @@ const ProbeEntry probe_entries_fighting_club[] = {
 	{ "Preload_JessicaInFightingClub", adapt_Preload_JessicaInFightingClub },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_fighting_club */

@@ -1,12 +1,18 @@
+/* >>> part includes */
 #include "home/deck_machine.h"
 
 #include "generated/text_ids.h"
 #include "generated/constants.h"
 #include "generated/rom.h"
+/* <<< part includes */
+/* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
+/* <<< part MENU_CONFIRM */
+/* >>> part includes_tail */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_tail */
 /* >>> factory statics */
 #include "home/print_text.h"
 #include "home/process_text.h"
@@ -689,7 +695,7 @@ HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_
 }
 /* <<< factory HandleDeckMissingCardsList */
 
-/* >>> factory HandleDeckMissingCardsList.CardListUpdateFunction */
+/* >>> part HandleDeckMissingCardsList_CardListUpdateFunction */
 /* deck_machine.asm:100-113. Armed into wCardListUpdateFunction by
  * HandleDeckMissingCardsList's .loop and fired by the card-list input
  * handlers after a scroll (deck_configuration.asm:1823-1824, 2483-2484):
@@ -705,7 +711,7 @@ void HandleDeckMissingCardsList_CardListUpdateFunction(void)
 	hffb0 = 0x00u;
 	PrintConfirmationCardList(0u, 3u, 3u, (uint16_t *)0);
 }
-/* <<< factory HandleDeckMissingCardsList.CardListUpdateFunction */
+/* <<< part HandleDeckMissingCardsList_CardListUpdateFunction */
 
 /* >>> factory HandleDismantleDeckToMakeSpace */
 HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void)

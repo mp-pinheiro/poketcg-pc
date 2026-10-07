@@ -1,32 +1,44 @@
+/* >>> part includes */
 #include "home/animation.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory ClearNumLoadedFramesetSubgroups */
 static void adapt_ClearNumLoadedFramesetSubgroups(ProbeState *s)
 {
 	(void)s;
 	ClearNumLoadedFramesetSubgroups();
 }
+/* <<< factory ClearNumLoadedFramesetSubgroups */
 
+/* >>> factory ClearOWFramesetSubgroups */
 static void adapt_ClearOWFramesetSubgroups(ProbeState *s)
 {
 	(void)s;
 	ClearOWFramesetSubgroups();
 }
+/* <<< factory ClearOWFramesetSubgroups */
 
+/* >>> factory GetOWFramesetSubgroupData */
 static void adapt_GetOWFramesetSubgroupData(ProbeState *s)
 {
 	GetOWFramesetSubgroupData(s->hl, s->c);
 }
+/* <<< factory GetOWFramesetSubgroupData */
 
+/* >>> factory LoadOWFramesetSubgroup */
 static void adapt_LoadOWFramesetSubgroup(ProbeState *s)
 {
 	s->a = LoadOWFramesetSubgroup(s->c);
 }
+/* <<< factory LoadOWFramesetSubgroup */
 
+/* >>> factory StoreOWFramesetSubgroup */
 static void adapt_StoreOWFramesetSubgroup(ProbeState *s)
 {
 	StoreOWFramesetSubgroup(s->c);
 }
+/* <<< factory StoreOWFramesetSubgroup */
 
 /* >>> factory LoadOWFrameTiles */
 static void adapt_LoadOWFrameTiles(ProbeState *s)
@@ -60,6 +72,7 @@ static void adapt_DoMapOWFrame(ProbeState *s)
 }
 /* <<< factory DoMapOWFrame */
 
+/* >>> part probe_entries_animation */
 const ProbeEntry probe_entries_animation[] = {
 	{ "ClearNumLoadedFramesetSubgroups", adapt_ClearNumLoadedFramesetSubgroups },
 	{ "ClearOWFramesetSubgroups", adapt_ClearOWFramesetSubgroups },
@@ -72,3 +85,4 @@ const ProbeEntry probe_entries_animation[] = {
 	{ "DoMapOWFrame", adapt_DoMapOWFrame },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_animation */

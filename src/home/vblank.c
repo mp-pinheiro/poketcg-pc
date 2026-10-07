@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include <stdio.h>
 #include "home/vblank.h"
 
@@ -11,7 +12,9 @@
 #include "home/scroll.h"
 #include "home/setup.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part rLCDC */
 #define rLCDC 0xFF40u
 #define rSCY  0xFF42u
 #define rSCX  0xFF43u
@@ -36,7 +39,9 @@
 #define LCDC_ENABLE 0x80u
 #define STAT_LYC  0x40u
 #define IE_STAT   0x02u
+/* <<< part rLCDC */
 
+/* >>> part RuntimeVBlankHandler */
 /* poketcg/src/home/vblank.asm:2-38: the VBlankHandler body between the
  * register save/restore. The native host calls it once per frame from the
  * runtime loop (src/runtime.c) after DoFrame returns, so its work is visible
@@ -87,7 +92,9 @@ void RuntimeVBlankHandler(void)
 	 * runs even when the trampoline is NoOp. */
 	FlushPalettesIfRequested();
 }
+/* <<< part RuntimeVBlankHandler */
 
+/* >>> part RuntimeLCDCHandlerOnce */
 /* One STAT ISR (the LYC coincidence vector): returns the line it fired on, or
  * -1 when the interrupt is not armed. */
 int RuntimeLCDCHandlerOnce(void)
@@ -115,7 +122,9 @@ int RuntimeLCDCHandlerOnce(void)
 	}
 	return line;
 }
+/* <<< part RuntimeLCDCHandlerOnce */
 
+/* >>> part RuntimeLCDCHandler */
 /* A frame's STAT ISRs when the track does not count them: the chain the
  * handler arms by raising rLYC, until it is rearmed at or below the line it
  * fired on (the next coincidence is next frame's). */
@@ -127,3 +136,4 @@ void RuntimeLCDCHandler(void)
 			return;
 	}
 }
+/* <<< part RuntimeLCDCHandler */

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/sound.h"
 
 #include "home/frames.h"
@@ -6,10 +7,14 @@
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part BANK_CARD_GRAPHICS */
 #define BANK_CARD_GRAPHICS 0x31u
 #define MUSIC_BANK 0x42u
+/* <<< part BANK_CARD_GRAPHICS */
 
+/* >>> part enter_music_bank */
 static uint8_t enter_music_bank(void)
 {
 	uint8_t saved_bank = hBankROM;
@@ -17,6 +22,7 @@ static uint8_t enter_music_bank(void)
 	BankswitchROM(MUSIC_BANK);
 	return saved_bank;
 }
+/* <<< part enter_music_bank */
 
 /* >>> factory SetupSound */
 /* sound.asm:1-3 */

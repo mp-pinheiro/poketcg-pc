@@ -1,5 +1,7 @@
+/* >>> part includes */
 #include "home/sfx.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory SFX_ApplyPitchOffset */
 static void adapt_SFX_ApplyPitchOffset(ProbeState *s)
@@ -16,16 +18,20 @@ static void adapt_Func_fc1cd(ProbeState *s)
 }
 /* <<< factory Func_fc1cd */
 
+/* >>> factory SFX_PlaySFX */
 static void adapt_SFX_PlaySFX(ProbeState *s)
 {
 	SFX_Play(s->a);
 }
+/* <<< factory SFX_PlaySFX */
 
+/* >>> factory SFX_UpdateSFX */
 static void adapt_SFX_UpdateSFX(ProbeState *s)
 {
 	(void)s;
 	SFX_Update();
 }
+/* <<< factory SFX_UpdateSFX */
 
 /* >>> factory SFX_Play */
 /* SFX_PlaySFX is `jp SFX_Play`, so the body is entered identically. */
@@ -163,6 +169,7 @@ static void adapt_SFX_wait(ProbeState *s)
 }
 /* <<< factory SFX_wait */
 
+/* >>> part probe_entries_sfx */
 const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_PlaySFX", adapt_SFX_PlaySFX },
 	{ "SFX_UpdateSFX", adapt_SFX_UpdateSFX },
@@ -187,3 +194,4 @@ const ProbeEntry probe_entries_sfx[] = {
 	{ "Func_fc1cd", adapt_Func_fc1cd },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_sfx */

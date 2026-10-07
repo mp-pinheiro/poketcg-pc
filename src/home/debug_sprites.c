@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/debug_sprites.h"
 
 #include "generated/constants.h"
@@ -6,16 +7,22 @@
 #include "home/load_animation.h"
 #include "home/random.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part PAD_B */
 #define PAD_B 0x02u
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
 #define PAD_UP 0x40u
 #define PAD_DOWN 0x80u
+/* <<< part PAD_B */
+/* >>> factory Func_1c865 */
 void Func_1c865(void)
 {
 }
+/* <<< factory Func_1c865 */
 
+/* >>> part adjust_scroll */
 static void adjust_scroll(uint8_t keys)
 {
 	uint8_t b = gb_read8(hSCX_ADDR);
@@ -31,7 +38,9 @@ static void adjust_scroll(uint8_t keys)
 	gb_write8(hSCX_ADDR, b);
 	gb_write8(hSCY_ADDR, c);
 }
+/* <<< part adjust_scroll */
 
+/* >>> factory Func_1c866 */
 void Func_1c866(void)
 {
 	uint8_t keys = gb_read8(hKeysHeld_ADDR);
@@ -39,7 +48,9 @@ void Func_1c866(void)
 	if (keys & PAD_B)
 		adjust_scroll(keys);
 }
+/* <<< factory Func_1c866 */
 
+/* >>> factory Func_1c890 */
 uint8_t Func_1c890(uint8_t *c_io, uint16_t *hl_io)
 {
 	uint8_t a = (uint8_t)(gb_read8(wVBlankCounter_ADDR) & 0x3fu);
@@ -61,3 +72,4 @@ uint8_t Func_1c890(uint8_t *c_io, uint16_t *hl_io)
 	gb_write8(*hl_io, flags);
 	return a;
 }
+/* <<< factory Func_1c890 */

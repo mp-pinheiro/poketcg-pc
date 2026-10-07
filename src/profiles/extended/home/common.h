@@ -1,8 +1,10 @@
 #ifndef POKETCG_HOME_COMMON_H
 #define POKETCG_HOME_COMMON_H
 
+/* >>> part includes */
 #include <stdint.h>
 #include "home/card_id.h"
+/* <<< part includes */
 
 /* >>> factory CountOppEnergyCardsInHand */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; } CountOppEnergyResult;

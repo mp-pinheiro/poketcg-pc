@@ -1,9 +1,13 @@
 #ifndef POKETCG_HOME_GIVE_BOOSTER_PACK_H
 #define POKETCG_HOME_GIVE_BOOSTER_PACK_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> factory _PauseMenu_Exit */
 void _PauseMenu_Exit(void);
+/* <<< factory _PauseMenu_Exit */
 
 /* >>> factory GiveBoosterPack */
 /* poketcg/src/engine/menus/give_booster_pack.asm:1. The tail is

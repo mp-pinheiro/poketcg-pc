@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/credits.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Func_1d758 */
 static void adapt_Func_1d758(ProbeState *s)
@@ -43,6 +45,7 @@ static void adapt_PlayCreditsSequence(ProbeState *s)
 }
 /* <<< factory PlayCreditsSequence */
 
+/* >>> part probe_entries_credits */
 const ProbeEntry probe_entries_credits[] = {
 	{ "Func_1d758", adapt_Func_1d758 },
 	{ "Func_1d765", adapt_Func_1d765 },
@@ -51,3 +54,4 @@ const ProbeEntry probe_entries_credits[] = {
 	{ "PlayCreditsSequence", adapt_PlayCreditsSequence },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_credits */

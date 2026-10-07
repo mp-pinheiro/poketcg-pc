@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/credits.h"
 #include "home/frames.h"
 
@@ -13,6 +14,7 @@
 #include "home/wait_keys.h"
 #include "home/lcd_enable_frame.h"
 #include "home/sound.h"
+/* <<< part includes */
 
 
 /* >>> factory statics */

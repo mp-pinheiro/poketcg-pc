@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/labels.h"
 
 #include "generated/hram.h"
 #include "home/print_text.h"
 #include "home/text_box.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/labels.h"
 #include "home/text_box.h"
@@ -14,6 +16,7 @@
 #include "mem.h"
 /* <<< factory statics */
 
+/* >>> factory PrintLabels */
 LabelsResult PrintLabels(uint16_t hl, uint8_t d, uint8_t e)
 {
 	uint8_t saved_hffb0 = hffb0;
@@ -55,6 +58,7 @@ LabelsResult PrintLabels(uint16_t hl, uint8_t d, uint8_t e)
 		hl = (uint16_t)(hl + 1u);
 	}
 }
+/* <<< factory PrintLabels */
 
 /* >>> factory InitAndPrintMenu */
 void InitAndPrintMenu(uint16_t hl, uint8_t a)

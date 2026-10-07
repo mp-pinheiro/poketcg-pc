@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/setup.h"
 #include "home/time.h"
 
@@ -7,7 +8,9 @@
 #include "generated/wram.h"
 #include "home/palettes.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part rSCY */
 #define rSCY 0xFF42u
 #define rSCX 0xFF43u
 #define rWY  0xFF4Au
@@ -32,11 +35,15 @@
  * asm bakes into its self-modifying trampoline/copy code. */
 #define NOOP_ADDR NoOp_ADDR
 #define INITIAL_PALETTE_ADDR InitialPalette_ADDR
+/* <<< part rSCY */
 
+/* >>> factory NoOp */
 void NoOp(void)
 {
 }
+/* <<< factory NoOp */
 
+/* >>> factory DetectConsole */
 DetectConsoleResult DetectConsole(uint8_t a)
 {
 	uint8_t console = (a == BOOTUP_A_CGB) ? CONSOLE_CGB : CONSOLE_DMG;
@@ -94,7 +101,9 @@ DetectConsoleResult DetectConsole(uint8_t a)
 	SwitchToCGBDoubleSpeed();
 	return (DetectConsoleResult){0x01u, console};
 }
+/* <<< factory DetectConsole */
 
+/* >>> factory SetupPalettes */
 SetupPalettesResult SetupPalettes(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	uint8_t a = 0xE4u; /* ldgbpal a, SHADE_WHITE, SHADE_LIGHT, SHADE_DARK, SHADE_BLACK */
@@ -118,7 +127,9 @@ SetupPalettesResult SetupPalettes(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	FlushAllCGBPalettesResult r = FlushAllCGBPalettes();
 	return (SetupPalettesResult){r.b, r.c, r.d, r.e, r.hl};
 }
+/* <<< factory SetupPalettes */
 
+/* >>> factory FillTileMap */
 uint16_t FillTileMap(void)
 {
 	uint16_t hl = V0BGMAP0;
@@ -144,7 +155,9 @@ uint16_t FillTileMap(void)
 	gb_write8(0xFF4Fu, 0);
 	return hl;
 }
+/* <<< factory FillTileMap */
 
+/* >>> part clear_tiles */
 static uint16_t clear_tiles(void)
 {
 	uint16_t hl = V0TILES0;
@@ -155,7 +168,9 @@ static uint16_t clear_tiles(void)
 	} while (--bc);
 	return hl;
 }
+/* <<< part clear_tiles */
 
+/* >>> factory SetupVRAM */
 uint16_t SetupVRAM(void)
 {
 	FillTileMap();
@@ -169,7 +184,9 @@ uint16_t SetupVRAM(void)
 	}
 	return clear_tiles();
 }
+/* <<< factory SetupVRAM */
 
+/* >>> factory SetupRegisters */
 uint16_t SetupRegisters(void)
 {
 	gb_write8(rSCY, 0);
@@ -197,7 +214,9 @@ uint16_t SetupRegisters(void)
 	gb_write8(0x0000u, 0x0Au); /* RAMG_SRAM_ENABLE */
 	return hl;
 }
+/* <<< factory SetupRegisters */
 
+/* >>> factory ZeroRAM */
 ZeroRAMResult ZeroRAM(void)
 {
 	uint16_t hl = 0xC000u;
@@ -218,3 +237,4 @@ ZeroRAMResult ZeroRAM(void)
 
 	return (ZeroRAMResult){a, b, c, hl};
 }
+/* <<< factory ZeroRAM */

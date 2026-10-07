@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_ENERGY_H
 #define POKETCG_HOME_ENERGY_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
 typedef struct { uint16_t de, hl; } Backup1Result;

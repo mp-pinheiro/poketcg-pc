@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/grass_club_lobby.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory GrassClubLobbyAfterDuel */
 static void adapt_GrassClubLobbyAfterDuel(ProbeState *s)
@@ -26,8 +28,10 @@ static void adapt_Preload_Gal2(ProbeState *s)
 }
 /* <<< factory Preload_Gal2 */
 
+/* >>> part probe_entries_grass_club_lobby */
 const ProbeEntry probe_entries_grass_club_lobby[] = {
 	{ "GrassClubLobbyAfterDuel", adapt_GrassClubLobbyAfterDuel },
 	{ "Preload_Gal2", adapt_Preload_Gal2 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_grass_club_lobby */

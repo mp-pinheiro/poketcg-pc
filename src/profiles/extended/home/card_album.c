@@ -1,12 +1,18 @@
+/* >>> part includes */
 #include "home/card_album.h"
 
 #include "generated/text_ids.h"
 #include "generated/constants.h"
+/* <<< part includes */
+/* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
+/* <<< part MENU_CONFIRM */
+/* >>> part includes_tail */
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_tail */
 /* >>> factory statics */
 #include "home/card_id_bus.h"
 
@@ -183,6 +189,7 @@ PrintCardSetListEntriesResult PrintCardSetListEntries(void)
 		y = (uint8_t)(y + 2u);
 	}
 }
+/* <<< factory PrintCardSetListEntries */
 
 /* >>> factory CreateCardSetList */
 void CreateCardSetList(uint8_t a)
@@ -433,6 +440,7 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 }
 /* <<< factory CreateCardSetListAndInitListCoords */
 
+/* >>> part includes_PRINT_CARD_SET_LIST_ENTRIES */
 #include "home/credits_sequence_commands.h"
 #include "home/deck_check.h"
 #include "home/duel.h"
@@ -445,10 +453,13 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 #include "home/switch_sram.h"
 #include "home/text_box.h"
 #include "home/tiles.h"
+/* <<< part includes_PRINT_CARD_SET_LIST_ENTRIES */
+/* >>> part PRINT_CARD_SET_LIST_ENTRIES */
 /* card_album.asm:685-688 parks PrintCardSetListEntries (02:66fa) in
  * wCardListUpdateFunction; deck_configuration.c's CallIndirect registry
  * dispatches it. */
 #define PRINT_CARD_SET_LIST_ENTRIES PrintCardSetListEntries_ADDR
+/* <<< part PRINT_CARD_SET_LIST_ENTRIES */
 /* >>> factory CardAlbum */
 #define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS (CardAlbum_ADDR + 0xEDu)
 #define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum_ADDR + 0xF5u)

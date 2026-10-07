@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/pokemon_dome.h"
 
 #include "home/map_events.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 
 #include "home/pokemon_dome.h"
@@ -29,29 +31,38 @@ static PokemonDomeResult preload_grand_master(uint8_t event, uint8_t x, uint8_t 
 }
 /* <<< factory statics */
 
+/* >>> part W_LOAD_NPC_X_POS_ADDR */
 #define W_LOAD_NPC_X_POS_ADDR wLoadNPCXPos_ADDR
 #define W_LOAD_NPC_Y_POS_ADDR wLoadNPCYPos_ADDR
 #define W_LOAD_NPC_DIRECTION_ADDR wLoadNPCDirection_ADDR
+/* <<< part W_LOAD_NPC_X_POS_ADDR */
 
+/* >>> part carry_flags */
 static uint8_t carry_flags(uint8_t f)
 {
 	return (uint8_t)((f & 0x80u) | 0x10u);
 }
+/* <<< part carry_flags */
 
+/* >>> factory Func_f762 */
 PokemonDomeResult Func_f762(void)
 {
 	uint8_t y = (uint8_t)(gb_read8(W_LOAD_NPC_Y_POS_ADDR) + 2u);
 	gb_write8(W_LOAD_NPC_Y_POS_ADDR, y);
 	return (PokemonDomeResult){y, (uint8_t)((y == 0 ? 0x80u : 0x00u) | 0x10u)};
 }
+/* <<< factory Func_f762 */
 
+/* >>> factory Func_f782 */
 PokemonDomeResult Func_f782(uint8_t b, uint8_t c, uint8_t f)
 {
 	gb_write8(W_LOAD_NPC_X_POS_ADDR, b);
 	gb_write8(W_LOAD_NPC_Y_POS_ADDR, c);
 	return (PokemonDomeResult){c, carry_flags(f)};
 }
+/* <<< factory Func_f782 */
 
+/* >>> factory PlacePokemonDomeOpponentAtDuelTable */
 PokemonDomeResult PlacePokemonDomeOpponentAtDuelTable(uint8_t f)
 {
 	gb_write8(W_LOAD_NPC_X_POS_ADDR, 0x12u);
@@ -59,6 +70,7 @@ PokemonDomeResult PlacePokemonDomeOpponentAtDuelTable(uint8_t f)
 	gb_write8(W_LOAD_NPC_DIRECTION_ADDR, WEST);
 	return (PokemonDomeResult){WEST, carry_flags(f)};
 }
+/* <<< factory PlacePokemonDomeOpponentAtDuelTable */
 
 /* >>> factory Func_f77d */
 /* pokemon_dome.asm:114-116 (falls through into Func_f782) */

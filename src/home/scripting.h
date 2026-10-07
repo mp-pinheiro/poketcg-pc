@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_SCRIPTING_H
 #define POKETCG_HOME_SCRIPTING_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory IncreaseScriptPointer */
 typedef struct {

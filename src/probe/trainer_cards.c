@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/trainer_cards.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory RemoveCardFromList */
 static void adapt_RemoveCardFromList(ProbeState *s)
@@ -809,6 +811,7 @@ static void adapt_AIPlay_SuperEnergyRetrieval(ProbeState *s)
 }
 /* <<< factory AIPlay_SuperEnergyRetrieval */
 
+/* >>> part probe_entries_trainer_cards */
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -900,3 +903,4 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_SuperEnergyRetrieval", adapt_AIPlay_SuperEnergyRetrieval },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_trainer_cards */

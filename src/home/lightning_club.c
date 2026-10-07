@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/lightning_club.h"
 
 #include "generated/constants.h"
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/lightning_club.h"
 #include "home/grass_club_entrance.h"
@@ -38,3 +40,4 @@ PreloadIsaacResult Preload_Isaac(void)
 	wLoadNPCDirection = a;
 	return (PreloadIsaacResult){a, 0x10u};
 }
+/* <<< factory Preload_Isaac */

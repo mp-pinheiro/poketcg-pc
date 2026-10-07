@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/start.h"
 #include <stdio.h>
 
@@ -12,6 +13,7 @@
 #include "home/text_box.h"
 #include "home/bg_map.h"
 #include "home/palettes.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/start.h"
 #include "home/save.h"
@@ -99,7 +101,10 @@
 #define rVBK 0xFF4Fu
 /* <<< factory statics */
 
+/* >>> part SYM_CURSOR_D */
 #define SYM_CURSOR_D 0x2Fu
+/* <<< part SYM_CURSOR_D */
+/* >>> part print_text_bytes */
 static void print_text_bytes(const uint8_t *text, uint8_t d, uint8_t e)
 {
 	uint16_t ptr = wDefaultText_ADDR;
@@ -110,7 +115,9 @@ static void print_text_bytes(const uint8_t *text, uint8_t d, uint8_t e)
 	ptr = wDefaultText_ADDR;
 	(void)ProcessText(&ptr);
 }
+/* <<< part print_text_bytes */
 
+/* >>> part print_host_text */
 static void print_host_text(const char *text, uint8_t d, uint8_t e)
 {
 	uint8_t bytes[40];
@@ -121,7 +128,9 @@ static void print_host_text(const char *text, uint8_t d, uint8_t e)
 	bytes[length] = 0u;
 	print_text_bytes(bytes, d, e);
 }
+/* <<< part print_host_text */
 
+/* >>> part start_menu_pc_index */
 static uint8_t start_menu_pc_index(void)
 {
 	uint8_t index = 1u;
@@ -132,6 +141,8 @@ static uint8_t start_menu_pc_index(void)
 	}
 	return index;
 }
+/* <<< part start_menu_pc_index */
+/* >>> part PC_PAGE_SLOTS */
 #define PC_PAGE_SLOTS 6u
 #define PC_PAGE_ROW_Y 15u
 #define PC_OPTION_SGB 2u
@@ -139,30 +150,46 @@ static uint8_t start_menu_pc_index(void)
 #define PC_OPTION_SWITCH_GAME 12u
 #define PC_SFX_CURSOR 0x01u
 #define PC_SFX_CANCEL 0x03u
+/* <<< part PC_PAGE_SLOTS */
+/* >>> part PcOptionPage */
 typedef struct {
 	const char *name;
 	uint8_t count;
 	uint8_t options[PC_PAGE_SLOTS];
 } PcOptionPage;
+/* <<< part PcOptionPage */
+/* >>> part kPcPages */
 static const PcOptionPage kPcPages[] = {
 	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
 	{"SOUND", 3u, {3u, 4u, 8u}},
 	{"GAMEPLAY", 2u, {11u, PC_OPTION_SWITCH_GAME}},
 };
+/* <<< part kPcPages */
+/* >>> part PC_PAGE_COUNT */
 #define PC_PAGE_COUNT (sizeof kPcPages / sizeof kPcPages[0])
+/* <<< part PC_PAGE_COUNT */
+/* >>> part kPcFontNames */
 static const char *const kPcFontNames[] = {
 	"ORIGINAL", "PUBLIC PIXEL", "UNSCII-8", "PIX OPER 8"
 };
+/* <<< part kPcFontNames */
+/* >>> part kPcBorderNames */
 static const char *const kPcBorderNames[] = {
 	"PLAIN", "INTRO", "MEDALS", "LEGEND"
 };
+/* <<< part kPcBorderNames */
+/* >>> part kFontSampleUpper */
 static const uint8_t kFontSampleUpper[] = {
 	0x03u, 0x30u, 0x03u, 0x31u, 0x03u, 0x32u, 0x03u, 0x33u, 0u
 };
+/* <<< part kFontSampleUpper */
+/* >>> part kFontSampleLower */
 static const uint8_t kFontSampleLower[] = {
 	0x03u, 0x64u, 0x03u, 0x65u, 0x03u, 0x4Bu, 0x03u, 0x66u, 0u
 };
+/* <<< part kFontSampleLower */
 
+/* >>> part pc_visible_options */
 static uint8_t pc_visible_options(uint8_t page, uint8_t *out)
 {
 	uint8_t count = 0u;
@@ -176,19 +203,25 @@ static uint8_t pc_visible_options(uint8_t page, uint8_t *out)
 	}
 	return count;
 }
+/* <<< part pc_visible_options */
 
+/* >>> part pc_row_y */
 static uint8_t pc_row_y(uint8_t row, uint8_t count)
 {
 	return row < count ? (uint8_t)(3u + row * 2u) : PC_PAGE_ROW_Y;
 }
+/* <<< part pc_row_y */
 
+/* >>> part print_pc_row */
 static void print_pc_row(uint8_t y, const char *text)
 {
 	char padded[23];
 	snprintf(padded, sizeof padded, "%-22.22s", text);
 	print_host_text(padded, 2u, y);
 }
+/* <<< part print_pc_row */
 
+/* >>> part print_pc_option_line */
 static void print_pc_option_line(uint8_t y, uint8_t option)
 {
 	char text[24];
@@ -230,10 +263,16 @@ static void print_pc_option_line(uint8_t y, uint8_t option)
 	}
 	print_pc_row(y, text);
 }
+/* <<< part print_pc_option_line */
 
+/* >>> part g_pc_header_palette */
 static uint8_t g_pc_header_palette;
+/* <<< part g_pc_header_palette */
+/* >>> part g_pc_body_palette */
 static uint8_t g_pc_body_palette;
+/* <<< part g_pc_body_palette */
 
+/* >>> part set_pc_row_palette */
 static void set_pc_row_palette(uint8_t y, uint8_t palette)
 {
 	if (wConsole != CONSOLE_CGB)
@@ -245,7 +284,9 @@ static void set_pc_row_palette(uint8_t y, uint8_t palette)
 	}
 	gb_write8(rVBK, 0u);
 }
+/* <<< part set_pc_row_palette */
 
+/* >>> part load_pc_header_palette */
 static void load_pc_header_palette(void)
 {
 	uint8_t used = 0u;
@@ -279,7 +320,9 @@ static void load_pc_header_palette(void)
 	pals[g_pc_header_palette * 8u + 7u] = (uint8_t)(gray >> 8);
 	FlushAllPalettes();
 }
+/* <<< part load_pc_header_palette */
 
+/* >>> part draw_pc_options */
 static uint8_t draw_pc_options(uint8_t page, uint8_t *options)
 {
 	char header[24];
@@ -305,13 +348,17 @@ static uint8_t draw_pc_options(uint8_t page, uint8_t *options)
 	print_text_bytes(kFontSampleLower, 15u, 11u);
 	return count;
 }
+/* <<< part draw_pc_options */
 
+/* >>> part pc_option_toggles */
 static int pc_option_toggles(uint8_t option)
 {
 	return option == 2u || option == 5u || option == 6u || option == 7u ||
 		option == 9u || option == 10u || option == 11u;
 }
+/* <<< part pc_option_toggles */
 
+/* >>> part RunPCOptionsMenu */
 static void RunPCOptionsMenu(void)
 {
 	uint16_t box = 0u;
@@ -389,6 +436,7 @@ static void RunPCOptionsMenu(void)
 			1u, pc_row_y(row, count));
 	}
 }
+/* <<< part RunPCOptionsMenu */
 
 /* >>> factory CheckIfHasSaveData */
 CheckIfHasSaveDataResult CheckIfHasSaveData(void)
@@ -637,6 +685,7 @@ uint8_t DeleteSaveDataForNewGame(void)
 }
 /* <<< factory DeleteSaveDataForNewGame */
 
+/* >>> part LoadEventsFromSRAM */
 static void LoadEventsFromSRAM(void)
 {
 	EnableSRAM();
@@ -645,6 +694,7 @@ static void LoadEventsFromSRAM(void)
 			gb_read8((uint16_t)(sEventVars_ADDR + i)));
 	DisableSRAM();
 }
+/* <<< part LoadEventsFromSRAM */
 
 /* >>> factory HandleTitleScreen */
 void HandleTitleScreen(void)

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/load_animation.h"
 
 #include "generated/constants.h"
@@ -8,6 +9,7 @@
 #include "home/switch_rom.h"
 #include "mem.h"
 #include "runtime.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/sprite_animations.h"
 #define BANK_SPRITE_ANIMATIONS 0x04u
@@ -34,6 +36,7 @@
 /* <<< factory statics */
 
 
+/* >>> part OAM_PRIO */
 #define OAM_PRIO    0x80u
 #define OAM_YFLIP   0x40u
 #define OAM_XFLIP   0x20u
@@ -42,7 +45,9 @@
 
 #define SPRITE_NULL_ANIMATION_POINTER_ADDR SpriteNullAnimationPointer_ADDR
 #define SPRITE_NULL_ANIMATION_POINTER_BANK 0x20u
+/* <<< part OAM_PRIO */
 
+/* >>> part gb_add */
 /* GB ADD/ADC/SUB/SBC, carry out included: load_animation.asm's edge-clipping
  * math depends on the exact 8-bit carry chain, not the mathematical result. */
 static uint8_t gb_add(uint8_t a, uint8_t n, uint8_t *carry_out)
@@ -51,56 +56,74 @@ static uint8_t gb_add(uint8_t a, uint8_t n, uint8_t *carry_out)
 	*carry_out = (uint8_t)(r >> 8);
 	return (uint8_t)r;
 }
+/* <<< part gb_add */
 
+/* >>> part gb_adc */
 static uint8_t gb_adc(uint8_t a, uint8_t n, uint8_t carry_in, uint8_t *carry_out)
 {
 	unsigned r = (unsigned)a + n + carry_in;
 	*carry_out = (uint8_t)(r >> 8);
 	return (uint8_t)r;
 }
+/* <<< part gb_adc */
 
+/* >>> part gb_sub */
 static uint8_t gb_sub(uint8_t a, uint8_t n, uint8_t *carry_out)
 {
 	*carry_out = (uint8_t)(a < n);
 	return (uint8_t)(a - n);
 }
+/* <<< part gb_sub */
 
+/* >>> part gb_sbc */
 static uint8_t gb_sbc(uint8_t a, uint8_t n, uint8_t carry_in, uint8_t *carry_out)
 {
 	unsigned nn = (unsigned)n + carry_in;
 	*carry_out = (uint8_t)(a < nn);
 	return (uint8_t)((unsigned)a - nn);
 }
+/* <<< part gb_sbc */
 
+/* >>> factory GetSpriteAnimBufferProperty_SpriteInA */
 uint16_t GetSpriteAnimBufferProperty_SpriteInA(uint8_t a, uint8_t c)
 {
 	if (a >= SPRITE_ANIM_BUFFER_CAPACITY)
 		a = SPRITE_ANIM_BUFFER_CAPACITY - 1u;
 	return (uint16_t)(wSpriteAnimBuffer_ADDR + (uint16_t)a * SPRITE_ANIM_LENGTH + c);
 }
+/* <<< factory GetSpriteAnimBufferProperty_SpriteInA */
 
+/* >>> factory GetSpriteAnimBufferProperty */
 uint16_t GetSpriteAnimBufferProperty(uint8_t c)
 {
 	return GetSpriteAnimBufferProperty_SpriteInA(gb_read8(wWhichSprite_ADDR), c);
 }
+/* <<< factory GetSpriteAnimBufferProperty */
 
+/* >>> factory GetFirstSpriteAnimBufferProperty */
 uint16_t GetFirstSpriteAnimBufferProperty(void)
 {
 	return GetSpriteAnimBufferProperty(SPRITE_ANIM_ENABLED);
 }
+/* <<< factory GetFirstSpriteAnimBufferProperty */
 
+/* >>> factory Func_3ddb */
 void Func_3ddb(uint8_t a)
 {
 	uint16_t address = GetSpriteAnimBufferProperty_SpriteInA(a, SPRITE_ANIM_FLAGS);
 	gb_write8(address, (uint8_t)(gb_read8(address) & (uint8_t)~(1u << SPRITE_ANIM_FLAG_CENTERED_F)));
 }
+/* <<< factory Func_3ddb */
 
+/* >>> factory Func_3de7 */
 void Func_3de7(uint8_t a)
 {
 	uint16_t address = GetSpriteAnimBufferProperty_SpriteInA(a, SPRITE_ANIM_FLAGS);
 	gb_write8(address, (uint8_t)(gb_read8(address) | (uint8_t)(1u << SPRITE_ANIM_FLAG_CENTERED_F)));
 }
+/* <<< factory Func_3de7 */
 
+/* >>> factory DrawSpriteAnimationFrame */
 void DrawSpriteAnimationFrame(uint16_t *hl_io)
 {
 	uint8_t saved = hBankROM;
@@ -164,7 +187,9 @@ void DrawSpriteAnimationFrame(uint16_t *hl_io)
 	*hl_io = hl;
 	BankswitchROM(saved);
 }
+/* <<< factory DrawSpriteAnimationFrame */
 
+/* >>> factory GetAnimationFramePointer */
 /* GetAnimationFramePointer:: poketcg/src/home/load_animation.asm:144-191. hl
  * is only ever a write base (`+SPRITE_ANIM_FRAME_BANK`); it is popped back
  * unchanged, never advanced. bc always ends up clobbered to the constant
@@ -204,6 +229,7 @@ void GetAnimationFramePointer(uint16_t hl)
 
 	BankswitchROM(saved);
 }
+/* <<< factory GetAnimationFramePointer */
 
 /* >>> factory ClearSpriteAnimations */
 /* ClearSpriteAnimations:: poketcg/src/home/load_animation.asm:5-13. Bankswitch

@@ -1,9 +1,17 @@
+/* >>> part includes */
 #include "generated/rom.h"
+/* <<< part includes */
 #ifndef POKETCG_HOME_DECK_MACHINE_ROOM_H
 #define POKETCG_HOME_DECK_MACHINE_ROOM_H
+/* >>> part includes_FuncD96cResult */
 #include <stdint.h>
+/* <<< part includes_FuncD96cResult */
+/* >>> part FuncD96cResult */
 typedef struct {uint8_t a;uint8_t b;uint8_t c;uint16_t hl;} FuncD96cResult;
+/* <<< part FuncD96cResult */
+/* >>> factory Func_d96c */
 FuncD96cResult Func_d96c(uint8_t a);
+/* <<< factory Func_d96c */
 /* >>> factory Script_BeatAaron */
 typedef struct { uint8_t a; uint8_t c; } ScriptBeatAaronResult;
 ScriptBeatAaronResult Script_BeatAaron(void);
@@ -39,6 +47,7 @@ FuncD96cResult Script_d9c2(void);
 /* >>> factory Script_d9ef */
 FuncD96cResult Script_d9ef(void);
 /* <<< factory Script_d9ef */
+/* >>> part Script_BeatAaron_START_SCRIPT */
 #define Script_BeatAaron_START_SCRIPT (Script_BeatAaron_ADDR + 0x08u)
 #define Script_d93f_START_SCRIPT (Script_d93f_ADDR + 0x05u)
 #define Script_d995_START_SCRIPT (Script_d995_ADDR + 0x05u)
@@ -48,4 +57,5 @@ FuncD96cResult Script_d9ef(void);
 #define Script_da49_START_SCRIPT (Script_da49_ADDR + 0x05u)
 #define Script_da76_START_SCRIPT (Script_da76_ADDR + 0x05u)
 #define Script_daa3_START_SCRIPT (Script_daa3_ADDR + 0x05u)
+/* <<< part Script_BeatAaron_START_SCRIPT */
 #endif

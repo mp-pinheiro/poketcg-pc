@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/promotional_card.h"
 #include "home/frames.h"
 
@@ -6,6 +7,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/sound.h"
 #include "home/card_data.h"

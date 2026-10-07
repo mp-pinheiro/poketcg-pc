@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/status.h"
 
 #include "generated/text_ids.h"
@@ -10,6 +11,7 @@
 #include "home/objects.h"
 #include "home/process_text.h"
 #include "home/print_text.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "home/print_stats.h"

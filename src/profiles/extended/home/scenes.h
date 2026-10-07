@@ -1,9 +1,13 @@
 #ifndef POKETCG_HOME_SCENES_H
 #define POKETCG_HOME_SCENES_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part SetMintSinglePalette */
 void SetMintSinglePalette(uint8_t single);
+/* <<< part SetMintSinglePalette */
 /* >>> factory SetBoosterLogoOAM */
 void SetBoosterLogoOAM(void);
 /* <<< factory SetBoosterLogoOAM */

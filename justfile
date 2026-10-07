@@ -271,7 +271,7 @@ oracle-diff-group GROUP: build
 oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
     python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath {{profile_rom}})" --symbols "$(realpath {{profile_sym}})" --probe "$(realpath {{profile_probe}})" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 
-oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
+oracle-fn-all: oracle-build-gbref build-barrier lint-adapters lint-blocks
     python3 tools/oracle/fn_all.py --rom "$(realpath {{profile_rom}})" --symbols "$(realpath {{profile_sym}})" --probe "$(realpath {{profile_probe}})" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 
 oracle-fn-gate: oracle-health-gbref oracle-fn-all
@@ -337,6 +337,10 @@ oracle-diff-all: build lint-adapters lint-constants
 # Reject probe adapters that reimplement the routine they marshal (issue #19).
 lint-adapters:
     python3 tools/lint_adapters.py
+
+# Reject C outside named factory or part blocks and malformed block markers.
+lint-blocks:
+    python3 tools/factory_blocks.py lint
 
 # Reject hand-typed constants, text ids and data addresses that disagree with the disassembly.
 lint-constants:

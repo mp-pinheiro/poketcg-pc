@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/color.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
@@ -8,10 +9,14 @@
 #include "home/palettes.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+/* <<< part includes */
+/* >>> part wConsolePaletteData_ADDR */
 #ifndef wConsolePaletteData_ADDR
 #define wConsolePaletteData_ADDR wBGP_ADDR
 #endif
+/* <<< part wConsolePaletteData_ADDR */
 
+/* >>> part fill_words */
 static void fill_words(uint16_t address, uint16_t count, uint8_t lo, uint8_t hi)
 {
     for (uint16_t i = 0; i < count; i++) {
@@ -19,7 +24,9 @@ static void fill_words(uint16_t address, uint16_t count, uint8_t lo, uint8_t hi)
         gb_write8((uint16_t)(address + i * 2 + 1), hi);
     }
 }
+/* <<< part fill_words */
 
+/* >>> part fade_component */
 static uint8_t fade_component(uint8_t value, uint8_t target)
 {
     if (value < target) {
@@ -32,7 +39,9 @@ static uint8_t fade_component(uint8_t value, uint8_t target)
     }
     return value;
 }
+/* <<< part fade_component */
 
+/* >>> part fade_palette_bytes */
 static void fade_palette_bytes(uint16_t current, uint16_t target, uint8_t raw_count)
 {
     uint16_t count = raw_count ? raw_count : 256;
@@ -46,19 +55,25 @@ static void fade_palette_bytes(uint16_t current, uint16_t target, uint8_t raw_co
         gb_write8((uint16_t)(current + i * 2 + 1), result.a);
     }
 }
+/* <<< part fade_palette_bytes */
 
+/* >>> part white_cgb */
 static void white_cgb(uint16_t address, uint16_t bytes)
 {
     fill_words(address, (uint16_t)(bytes / 2), 0xff, 0x7f);
 }
+/* <<< part white_cgb */
 
+/* >>> factory LoadConsolePaletteData */
 void LoadConsolePaletteData(void)
 {
     (void)gb_read8(wConsole_ADDR);
     gb_write8(wConsolePaletteData_ADDR, 0);
     gb_write8(wd317_ADDR, 0);
 }
+/* <<< factory LoadConsolePaletteData */
 
+/* >>> factory SetWhitePalettes */
 void SetWhitePalettes(void)
 {
     uint8_t value = gb_read8(wConsolePaletteData_ADDR);
@@ -67,7 +82,9 @@ void SetWhitePalettes(void)
     gb_write8(wOBP1_ADDR, value);
     white_cgb(wBackgroundPalettesCGB_ADDR, 128);
 }
+/* <<< factory SetWhitePalettes */
 
+/* >>> factory FadeScreenFromWhite_BackupPalsAndSetWhite */
 void FadeScreenFromWhite_BackupPalsAndSetWhite(void)
 {
     gb_write8(wTempBGP_ADDR, gb_read8(wBGP_ADDR));
@@ -77,7 +94,9 @@ void FadeScreenFromWhite_BackupPalsAndSetWhite(void)
         gb_write8((uint16_t)(wTempBackgroundPalettesCGB_ADDR + i), gb_read8((uint16_t)(wBackgroundPalettesCGB_ADDR + i)));
     SetWhitePalettes();
 }
+/* <<< factory FadeScreenFromWhite_BackupPalsAndSetWhite */
 
+/* >>> factory RestoreFirstColorInOBPals */
 void RestoreFirstColorInOBPals(void)
 {
     for (uint8_t palette = 0; palette < 8; palette++) {
@@ -87,12 +106,16 @@ void RestoreFirstColorInOBPals(void)
         gb_write8((uint16_t)(destination + 1), gb_read8((uint16_t)(source + 1)));
     }
 }
+/* <<< factory RestoreFirstColorInOBPals */
 
+/* >>> factory FadePalIntoAnother_FadeColor */
 uint8_t FadePalIntoAnother_FadeColor(uint8_t a, uint16_t hl)
 {
     return fade_component(a, (uint8_t)hl);
 }
+/* <<< factory FadePalIntoAnother_FadeColor */
 
+/* >>> factory FadePalIntoAnother_GetFadedColor */
 FadeColorResult FadePalIntoAnother_GetFadedColor(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
     uint8_t red = fade_component((uint8_t)(c & 0x1f), (uint8_t)(e & 0x1f));
@@ -110,34 +133,48 @@ FadeColorResult FadePalIntoAnother_GetFadedColor(uint8_t b, uint8_t c, uint8_t d
     result.c = (uint8_t)(red | ((green & 7) << 5));
     return result;
 }
+/* <<< factory FadePalIntoAnother_GetFadedColor */
 
+/* >>> factory FadeOBPalIntoTemp */
 void FadeOBPalIntoTemp(void)
 {
     fade_palette_bytes(wObjectPalettesCGB_ADDR, wTempObjectPalettesCGB_ADDR, 32);
 }
+/* <<< factory FadeOBPalIntoTemp */
 
+/* >>> factory FadeBGPalIntoTemp1 */
 void FadeBGPalIntoTemp1(void)
 {
     fade_palette_bytes(wBackgroundPalettesCGB_ADDR, wTempBackgroundPalettesCGB_ADDR, 16);
 }
+/* <<< factory FadeBGPalIntoTemp1 */
 
+/* >>> factory FadeBGPalIntoTemp2 */
 void FadeBGPalIntoTemp2(void)
 {
     fade_palette_bytes((uint16_t)(wBackgroundPalettesCGB_ADDR + 32), (uint16_t)(wTempBackgroundPalettesCGB_ADDR + 32), 16);
 }
+/* <<< factory FadeBGPalIntoTemp2 */
 
+/* >>> factory FadeBGPalIntoTemp3 */
 void FadeBGPalIntoTemp3(void)
 {
     fade_palette_bytes(wBackgroundPalettesCGB_ADDR, wTempBackgroundPalettesCGB_ADDR, 32);
 }
+/* <<< factory FadeBGPalIntoTemp3 */
 
+/* >>> part mix_shades */
 static const uint8_t mix_shades[16] = { 0, 1, 1, 1, 0, 1, 2, 2, 1, 1, 2, 3, 2, 2, 2, 3 };
+/* <<< part mix_shades */
 
+/* >>> factory FadeDMGPalettes_GetMixShadeValue */
 uint8_t FadeDMGPalettes_GetMixShadeValue(uint8_t b, uint8_t c)
 {
     return mix_shades[((b & 3) << 2) | (c & 3)];
 }
+/* <<< factory FadeDMGPalettes_GetMixShadeValue */
 
+/* >>> factory FadeDMGPalettes_CalculateMixPalette */
 uint8_t FadeDMGPalettes_CalculateMixPalette(uint8_t b, uint8_t c)
 {
     uint8_t output = 0;
@@ -150,7 +187,9 @@ uint8_t FadeDMGPalettes_CalculateMixPalette(uint8_t b, uint8_t c)
     }
     return output;
 }
+/* <<< factory FadeDMGPalettes_CalculateMixPalette */
 
+/* >>> factory FadeDMGPalettes */
 void FadeDMGPalettes(void)
 {
     uint16_t current = wBGP_ADDR;
@@ -161,7 +200,9 @@ void FadeDMGPalettes(void)
         target++;
     }
 }
+/* <<< factory FadeDMGPalettes */
 
+/* >>> factory FadeScreenToTempPals */
 uint8_t FadeScreenToTempPals(void)
 {
     uint8_t start = gb_read8(wVBlankCounter_ADDR);
@@ -175,7 +216,9 @@ uint8_t FadeScreenToTempPals(void)
     }
     return (uint8_t)(gb_read8(wVBlankCounter_ADDR) - start);
 }
+/* <<< factory FadeScreenToTempPals */
 
+/* >>> factory FadeScreenToWhite */
 void FadeScreenToWhite(void)
 {
     uint8_t value = gb_read8(wConsolePaletteData_ADDR);
@@ -195,7 +238,9 @@ void FadeScreenToWhite(void)
     white_cgb(wBackgroundPalettesCGB_ADDR, 128);
     FlushAllPalettes();
 }
+/* <<< factory FadeScreenToWhite */
 
+/* >>> factory FadeScreenFromWhite */
 uint8_t FadeScreenFromWhite(void)
 {
     FadeScreenFromWhite_BackupPalsAndSetWhite();
@@ -204,7 +249,9 @@ uint8_t FadeScreenFromWhite(void)
     EnableLCD();
     return FadeScreenToTempPals();
 }
+/* <<< factory FadeScreenFromWhite */
 
+/* >>> factory CopyPalsToSRAMBuffer */
 void CopyPalsToSRAMBuffer(void)
 {
     uint8_t prior = hBankSRAM;
@@ -219,7 +266,9 @@ void CopyPalsToSRAMBuffer(void)
     BankswitchSRAM(prior);
     DisableSRAM();
 }
+/* <<< factory CopyPalsToSRAMBuffer */
 
+/* >>> factory LoadPalsFromSRAMBuffer */
 void LoadPalsFromSRAMBuffer(void)
 {
     uint8_t prior = hBankSRAM;
@@ -234,7 +283,9 @@ void LoadPalsFromSRAMBuffer(void)
     BankswitchSRAM(prior);
     DisableSRAM();
 }
+/* <<< factory LoadPalsFromSRAMBuffer */
 
+/* >>> factory FlashScreenToWhite */
 void FlashScreenToWhite(uint8_t c)
 {
     uint8_t prior = hBankSRAM;
@@ -249,7 +300,9 @@ void FlashScreenToWhite(uint8_t c)
     BankswitchSRAM(prior);
     DisableSRAM();
 }
+/* <<< factory FlashScreenToWhite */
 
+/* >>> factory Func_10d17 */
 void Func_10d17(void)
 {
     gb_write8(wTempBGP_ADDR, gb_read8(wBGP_ADDR));
@@ -262,7 +315,9 @@ void Func_10d17(void)
     FlushAllPalettes();
     gb_write8(wd317_ADDR, 0x10);
 }
+/* <<< factory Func_10d17 */
 
+/* >>> factory Func_10d50 */
 void Func_10d50(void)
 {
     uint8_t value = gb_read8(wConsolePaletteData_ADDR);
@@ -272,7 +327,9 @@ void Func_10d50(void)
     white_cgb(wTempBackgroundPalettesCGB_ADDR, 64);
     gb_write8(wd317_ADDR, 0x10);
 }
+/* <<< factory Func_10d50 */
 
+/* >>> factory Func_10d74 */
 void Func_10d74(void)
 {
     uint8_t value = gb_read8(wd317_ADDR);
@@ -289,3 +346,4 @@ void Func_10d74(void)
     }
     gb_write8(wd317_ADDR, (uint8_t)(value - 1));
 }
+/* <<< factory Func_10d74 */

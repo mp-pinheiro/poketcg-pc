@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/mason_laboratory.h"
 
 #include "generated/constants.h"
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/card_collection.h"
 #define ENERGY_CARD_LIST EnergyCardList_ADDR
@@ -21,6 +23,7 @@
 #include "home/map_events.h"
 #define SCRIPT_ENTER_LAB_FIRST_TIME Script_EnterLabFirstTime_ADDR
 #define CHALLENGE_MACHINE_OBJECT_TABLE ChallengeMachineObjectTable_ADDR
+/* <<< factory statics */
 
 /* >>> factory Func_d703 */
 FuncD703Result Func_d703(void)

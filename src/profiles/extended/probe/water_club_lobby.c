@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/water_club_lobby.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory WaterClubLobbyAfterDuel */
 static void adapt_WaterClubLobbyAfterDuel(ProbeState *s)
@@ -35,9 +37,11 @@ static void adapt_Preload_ImakuniInWaterClubLobby(ProbeState *s)
 }
 /* <<< factory Preload_ImakuniInWaterClubLobby */
 
+/* >>> part probe_entries_water_club_lobby */
 const ProbeEntry probe_entries_water_club_lobby[] = {
 	{ "WaterClubLobbyAfterDuel", adapt_WaterClubLobbyAfterDuel },
 	{ "Preload_Man2", adapt_Preload_Man2 },
 	{ "Preload_ImakuniInWaterClubLobby", adapt_Preload_ImakuniInWaterClubLobby },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_water_club_lobby */

@@ -1,11 +1,15 @@
+/* >>> part includes */
 #include "home/ir_functions.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory PlayCardPopSong */
 static void adapt_PlayCardPopSong(ProbeState *s)
 {
 	PlayCardPopSong();
 	(void)s;
 }
+/* <<< factory PlayCardPopSong */
 
 /* >>> factory InitIRCommunications */
 static void adapt_InitIRCommunications(ProbeState *s)
@@ -121,6 +125,7 @@ static void adapt__SendDeckConfiguration(ProbeState *s)
 }
 /* <<< factory _SendDeckConfiguration */
 
+/* >>> part probe_entries_ir_functions */
 const ProbeEntry probe_entries_ir_functions[] = {
 	{ "PlayCardPopSong", adapt_PlayCardPopSong },
 	{ "InitIRCommunications", adapt_InitIRCommunications },
@@ -138,3 +143,4 @@ const ProbeEntry probe_entries_ir_functions[] = {
 	{ "_SendDeckConfiguration", adapt__SendDeckConfiguration },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_ir_functions */

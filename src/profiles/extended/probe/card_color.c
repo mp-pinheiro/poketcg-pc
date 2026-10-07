@@ -1,16 +1,37 @@
+/* >>> part includes */
 #include "home/card_color.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory GetCardWeakness */
 static void adapt_GetCardWeakness(ProbeState *s) { s->a = GetCardWeakness(s->a); }
+/* <<< factory GetCardWeakness */
+/* >>> factory GetArenaCardWeakness */
 static void adapt_GetArenaCardWeakness(ProbeState *s) { s->a = GetArenaCardWeakness(); }
+/* <<< factory GetArenaCardWeakness */
+/* >>> factory GetPlayAreaCardWeakness */
 static void adapt_GetPlayAreaCardWeakness(ProbeState *s) { s->a = GetPlayAreaCardWeakness(s->a); }
+/* <<< factory GetPlayAreaCardWeakness */
+/* >>> factory GetCardResistance */
 static void adapt_GetCardResistance(ProbeState *s) { s->a = GetCardResistance(s->a); }
+/* <<< factory GetCardResistance */
+/* >>> factory GetArenaCardResistance */
 static void adapt_GetArenaCardResistance(ProbeState *s) { s->a = GetArenaCardResistance(); }
+/* <<< factory GetArenaCardResistance */
+/* >>> factory GetPlayAreaCardResistance */
 static void adapt_GetPlayAreaCardResistance(ProbeState *s) { s->a = GetPlayAreaCardResistance(s->a); }
+/* <<< factory GetPlayAreaCardResistance */
+/* >>> factory GetArenaCardColor */
 static void adapt_GetArenaCardColor(ProbeState *s) { s->a = GetArenaCardColor(); }
+/* <<< factory GetArenaCardColor */
+/* >>> factory GetPlayAreaCardColor */
 static void adapt_GetPlayAreaCardColor(ProbeState *s) { s->a = GetPlayAreaCardColor(s->a); }
+/* <<< factory GetPlayAreaCardColor */
+/* >>> factory HandleEnergyBurn */
 static void adapt_HandleEnergyBurn(ProbeState *s) { (void)s; HandleEnergyBurn(); }
+/* <<< factory HandleEnergyBurn */
 
+/* >>> part probe_entries_card_color */
 const ProbeEntry probe_entries_card_color[] = {
 	{ "GetCardWeakness", adapt_GetCardWeakness },
 	{ "GetArenaCardWeakness", adapt_GetArenaCardWeakness },
@@ -23,3 +44,4 @@ const ProbeEntry probe_entries_card_color[] = {
 	{ "HandleEnergyBurn", adapt_HandleEnergyBurn },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_card_color */

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/scripting.h"
 
 #include "home/script_entry_dispatch.h"
@@ -10,6 +11,7 @@
 
 #include "home/color.h"
 #include "home/map_events.h"
+/* <<< part includes */
 /* >>> factory statics */
 #define EVENT_VAR_MASKS_BANK 3u
 #define EVENT_VAR_MASKS EventVarMasks_ADDR
@@ -1195,8 +1197,10 @@ ScriptCommand_JumpIfEventTrueResult ScriptCommand_JumpIfEventFalse(uint8_t b, ui
 }
 /* <<< factory ScriptCommand_JumpIfEventFalse */
 
+/* >>> part includes_tail */
 #include "home/lcd_enable_frame.h"
 #include "home/overworld_map.h"
+/* <<< part includes_tail */
 
 /* >>> factory ScriptCommand_WalkPlayerToMasonLaboratory */
 

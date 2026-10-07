@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_DECK_CONFIGURATION_H
 #define POKETCG_HOME_DECK_CONFIGURATION_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory DecrementDeckCardsInCollection */
 uint16_t DecrementDeckCardsInCollection(uint16_t hl);

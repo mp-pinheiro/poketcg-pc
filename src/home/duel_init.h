@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_DUEL_INIT_H
 #define POKETCG_HOME_DUEL_INIT_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory Duel_Init */
 typedef struct { uint8_t a; uint8_t f; } DuelInitResult;

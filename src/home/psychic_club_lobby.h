@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_PSYCHIC_CLUB_LOBBY_H
 #define POKETCG_HOME_PSYCHIC_CLUB_LOBBY_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory PsychicClubLobbyLoadMap */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } PsychicClubLobbyLoadMapResult;

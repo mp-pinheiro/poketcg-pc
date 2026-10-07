@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/sams_practice.h"
 
 #include "generated/constants.h"
@@ -5,6 +6,7 @@
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/core.h"
 
@@ -16,6 +18,7 @@
 #define DUELVARS_ARENA_CARD 0xBBu
 /* <<< factory statics */
 
+/* >>> factory IsAIPracticeScriptedTurn */
 SamsPracticeResult IsAIPracticeScriptedTurn(uint8_t a, uint8_t f, uint8_t b,
 						uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -25,7 +28,9 @@ SamsPracticeResult IsAIPracticeScriptedTurn(uint8_t a, uint8_t f, uint8_t b,
 					 (shifted >= 7 ? 0x10u : 0u));
 	return (SamsPracticeResult){shifted, flags, b, c, d, e, hl};
 }
+/* <<< factory IsAIPracticeScriptedTurn */
 
+/* >>> factory SetSamsStartingPlayArea */
 SamsPracticeResult SetSamsStartingPlayArea(uint8_t a, uint8_t f, uint8_t b,
 						uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -53,6 +58,7 @@ SamsPracticeResult SetSamsStartingPlayArea(uint8_t a, uint8_t f, uint8_t b,
 	gb_write8(wDuelInitialPrizes_ADDR, 2);
 	return (SamsPracticeResult){2, placed.f, b, c, d, e, placed.hl};
 }
+/* <<< factory SetSamsStartingPlayArea */
 
 /* >>> factory GetPlayAreaLocationOfRaticateOrRattata */
 /* sams_practice.asm:79-93 */

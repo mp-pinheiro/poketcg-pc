@@ -1,10 +1,14 @@
 #ifndef POKETCG_HOME_SWITCH_ROM_H
 #define POKETCG_HOME_SWITCH_ROM_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> factory BankswitchROM */
 /* poketcg/src/home/switch_rom.asm:90 */
 void BankswitchROM(uint8_t bank);
+/* <<< factory BankswitchROM */
 
 /* >>> factory BankpushROM */
 typedef struct {

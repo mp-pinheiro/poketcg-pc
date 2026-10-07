@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_CREDITS_H
 #define POKETCG_HOME_CREDITS_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory Func_1d758 */
 void Func_1d758(void);

@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/deck_selection.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory GetPointerToDeckCards */
 static void adapt_GetPointerToDeckCards(ProbeState *s)
@@ -188,6 +190,7 @@ static void adapt_DeckSelectionSubMenu_SelectOrCancel(ProbeState *s)
 }
 /* <<< factory DeckSelectionSubMenu_SelectOrCancel */
 
+/* >>> part probe_entries_deck_selection */
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -211,3 +214,4 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "DeckSelectionSubMenu_SelectOrCancel", adapt_DeckSelectionSubMenu_SelectOrCancel },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_deck_selection */

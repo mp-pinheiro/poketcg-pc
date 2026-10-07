@@ -1,11 +1,15 @@
 #ifndef POKETCG_HOME_IR_FUNCTIONS_H
 #define POKETCG_HOME_IR_FUNCTIONS_H
 
+/* >>> part includes */
 #include <stdint.h>
 
 #include "home/print_text.h"
+/* <<< part includes */
 
+/* >>> factory PlayCardPopSong */
 void PlayCardPopSong(void);
+/* <<< factory PlayCardPopSong */
 
 /* >>> factory InitIRCommunications */
 void InitIRCommunications(uint8_t a);

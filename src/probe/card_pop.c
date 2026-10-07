@@ -1,13 +1,18 @@
+/* >>> part includes */
 #include "home/card_pop.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory CreateCardPopCandidateList */
 static void adapt_CreateCardPopCandidateList(ProbeState *s)
 {
 	s->a = CreateCardPopCandidateList(s->a);
 	s->hl = wCardPopCardCandidates_ADDR;
 }
+/* <<< factory CreateCardPopCandidateList */
 
+/* >>> factory CalculateNameHash */
 static void adapt_CalculateNameHash(ProbeState *s)
 {
 	uint16_t de = (uint16_t)(s->d << 8 | s->e);
@@ -15,6 +20,7 @@ static void adapt_CalculateNameHash(ProbeState *s)
 	s->d = (uint8_t)(de >> 8);
 	s->e = (uint8_t)de;
 }
+/* <<< factory CalculateNameHash */
 
 /* >>> factory LookUpNameInCardPopNameList */
 static void adapt_LookUpNameInCardPopNameList(ProbeState *s)
@@ -49,6 +55,7 @@ static void adapt__DoCardPop(ProbeState *s)
 }
 /* <<< factory _DoCardPop */
 
+/* >>> part probe_entries_card_pop */
 const ProbeEntry probe_entries_card_pop[] = {
 	{ "CreateCardPopCandidateList", adapt_CreateCardPopCandidateList },
 	{ "CalculateNameHash", adapt_CalculateNameHash },
@@ -58,3 +65,4 @@ const ProbeEntry probe_entries_card_pop[] = {
 	{ "_DoCardPop", adapt__DoCardPop },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_card_pop */

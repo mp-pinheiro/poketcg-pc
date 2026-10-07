@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/print_text.h"
 
 #include "generated/constants.h"
@@ -14,14 +15,20 @@
 #include "home/menus.h"
 #include "home/lcd.h"
 #include "home/text_box.h"
+/* <<< part includes */
 
+/* >>> part OPPONENT_TURN */
 /* HIGH(wOpponentDuelVariables), the value hWhoseTurn carries on the opponent's turn. */
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
+/* <<< part OPPONENT_TURN */
 
+/* >>> part text_header */
 static uint16_t text_header(void)
 {
 	return (uint16_t)(wTextHeader1_ADDR + (uint8_t)(wWhichTextHeader * 5u));
 }
+/* <<< part text_header */
+/* >>> factory GetTextOffsetFromTextID */
 uint16_t GetTextOffsetFromTextID(uint16_t text_id)
 {
 	if (runtime_player_gender()) {
@@ -46,12 +53,16 @@ uint16_t GetTextOffsetFromTextID(uint16_t text_id)
 	BankswitchROM((uint8_t)(TextOffsets_BANK + (bank_bits << 2) + (hi >> 6)));
 	return (uint16_t)(0x4000u | ((uint16_t)(hi & 0x3fu) << 8) | lo);
 }
+/* <<< factory GetTextOffsetFromTextID */
 
+/* >>> factory GetPointerToTextHeader */
 uint16_t GetPointerToTextHeader(void)
 {
 	return text_header();
 }
+/* <<< factory GetPointerToTextHeader */
 
+/* >>> factory ReadTextHeader */
 uint16_t ReadTextHeader(void)
 {
 	uint16_t header = text_header();
@@ -66,7 +77,9 @@ uint16_t ReadTextHeader(void)
 	text |= (uint16_t)gb_read8(header) << 8;
 	return text;
 }
+/* <<< factory ReadTextHeader */
 
+/* >>> part write_text_header */
 /* print_text.asm:179-192. `push hl / call GetPointerToTextHeader / pop bc` puts the
  * entry pointer's halves in b/c, and the final `ld [hl], b` has no inc after it, so
  * exit hl is header+4. */
@@ -81,12 +94,16 @@ static TextHeaderWrite write_text_header(uint16_t text)
 	gb_write8(header, (uint8_t)(text >> 8));
 	return (TextHeaderWrite){(uint8_t)(text >> 8), (uint8_t)text, header};
 }
+/* <<< part write_text_header */
 
+/* >>> factory WriteToTextHeader */
 TextHeaderWrite WriteToTextHeader(uint16_t text)
 {
 	return write_text_header(text);
 }
+/* <<< factory WriteToTextHeader */
 
+/* >>> factory WriteToTextHeader_MoveToNext */
 /* print_text.asm:197-201. The tail is `ld hl, wWhichTextHeader / inc [hl]`, so the
  * exit pointer is that address, not the header the write advanced through. */
 TextHeaderWrite WriteToTextHeader_MoveToNext(uint16_t text)
@@ -97,7 +114,9 @@ TextHeaderWrite WriteToTextHeader_MoveToNext(uint16_t text)
 	out.hl = wWhichTextHeader_ADDR;
 	return out;
 }
+/* <<< factory WriteToTextHeader_MoveToNext */
 
+/* >>> factory ResetTxRam_WriteToTextHeader */
 TextHeaderWrite ResetTxRam_WriteToTextHeader(uint16_t text)
 {
 	wWhichTextHeader = 0;
@@ -106,7 +125,9 @@ TextHeaderWrite ResetTxRam_WriteToTextHeader(uint16_t text)
 	hJapaneseSyllabary = 0x0f;
 	return write_text_header(text);
 }
+/* <<< factory ResetTxRam_WriteToTextHeader */
 
+/* >>> factory TwoByteNumberToText_CountLeadingZeros */
 /* Contract fields are b, c, d, e, hl. b is preserved on both paths; c and de are
  * preserved on the full-width path only, so they come in to be echoed back out. */
 LeadingZerosResult TwoByteNumberToText_CountLeadingZeros(uint16_t value, uint8_t c, uint16_t de)
@@ -128,7 +149,9 @@ LeadingZerosResult TwoByteNumberToText_CountLeadingZeros(uint16_t value, uint8_t
 	}
 	return (LeadingZerosResult){c, de, hl};
 }
+/* <<< factory TwoByteNumberToText_CountLeadingZeros */
 
+/* >>> factory CopyText */
 /* Returns the asm's three live exit registers: a (the restored bank on the text-ID
  * path, 0 on the name paths), de backed up onto the terminator, and hl past it. */
 CopyTextResult CopyText(uint16_t text_id, uint16_t de)
@@ -152,7 +175,9 @@ CopyTextResult CopyText(uint16_t text_id, uint16_t de)
 	/* `pop af` restores the saved bank into a, and BankswitchROM preserves it. */
 	return (CopyTextResult){saved, (uint8_t)(de >> 8), (uint8_t)de, hl};
 }
+/* <<< factory CopyText */
 
+/* >>> factory CountLinesOfTextFromID */
 uint8_t CountLinesOfTextFromID(uint16_t text_id)
 {
 	uint8_t saved = hBankROM;
@@ -176,7 +201,9 @@ uint8_t CountLinesOfTextFromID(uint16_t text_id)
 	BankswitchROM(saved);
 	return (uint8_t)(lines + 1);
 }
+/* <<< factory CountLinesOfTextFromID */
 
+/* >>> factory LoadTxRam2 */
 /* The asm stores to wTxRam2 and wTxRam2 + 1. wTxRam2_b is a separate symbol two bytes
  * along ($CE41), not the high half of this pair, so writing it would miss $CE40. */
 void LoadTxRam2(uint16_t text_id)
@@ -184,19 +211,25 @@ void LoadTxRam2(uint16_t text_id)
 	gb_write8(wTxRam2_ADDR, (uint8_t)text_id);
 	gb_write8((uint16_t)(wTxRam2_ADDR + 1), (uint8_t)(text_id >> 8));
 }
+/* <<< factory LoadTxRam2 */
 
+/* >>> factory LoadTxRam3 */
 void LoadTxRam3(uint16_t value)
 {
 	gb_write8(wTxRam3_ADDR, (uint8_t)value);
 	gb_write8((uint16_t)(wTxRam3_ADDR + 1), (uint8_t)(value >> 8));
 }
+/* <<< factory LoadTxRam3 */
 
+/* >>> part header_result */
 static ProcessTextHeaderResult header_result(uint8_t a, uint8_t d, uint8_t e,
 	uint8_t f, uint16_t hl)
 {
 	return (ProcessTextHeaderResult){a, d, e, f, hl};
 }
+/* <<< part header_result */
 
+/* >>> factory HandleTxRam2Or3 */
 /* Returns the 16-bit value held in the slot, not the slot address. Exit a is the
  * slot's low byte, and the index doubling is an 8-bit `add a` that leaves d = 0 and
  * e = the resulting byte offset, so the caller's d/e do not survive. */
@@ -213,7 +246,9 @@ TxRamSlot HandleTxRam2Or3(uint16_t de, uint16_t hl)
 
 	return (TxRamSlot){lo, 0, offset, value};
 }
+/* <<< factory HandleTxRam2Or3 */
 
+/* >>> factory CopyPlayerNameOrTurnDuelistName */
 /* a and de fall out of the callee; hl is the buffer address the asm pushed and popped. */
 CopyTextResult CopyPlayerNameOrTurnDuelistName(void)
 {
@@ -224,6 +259,8 @@ CopyTextResult CopyPlayerNameOrTurnDuelistName(void)
 	result.hl = de;
 	return result;
 }
+/* <<< factory CopyPlayerNameOrTurnDuelistName */
+/* >>> factory CopyTextData_FromTextID */
 CopyTextResult CopyTextData_FromTextID(uint8_t a, uint16_t hl, uint16_t de)
 {
 	uint8_t saved = hBankROM;
@@ -237,7 +274,9 @@ CopyTextResult CopyTextData_FromTextID(uint8_t a, uint16_t hl, uint16_t de)
 	result.a = saved;
 	return result;
 }
+/* <<< factory CopyTextData_FromTextID */
 
+/* >>> factory ProcessTextHeader */
 /* ReadTextHeader -> GetPointerToTextHeader sets e = wWhichTextHeader * 5 and d = 0
  * (print_text.asm:220-230), so the caller's d/e do NOT survive the read. The TX_END
  * tail is `call TerminateHalfWidthText / scf / ret`, so the exit flags are that
@@ -305,7 +344,9 @@ ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e)
 	return header_result(hBankROM, printed.d, printed.e,
 			     (uint8_t)(hBankROM == 0u ? 0x80u : 0x00u), done.hl);
 }
+/* <<< factory ProcessTextHeader */
 
+/* >>> factory ProcessTextFromID */
 /* print_text.asm:43-50: `push af` at entry, `pop af / call BankswitchROM` at
  * exit -- a is the bank restored and f the caller's flags; only the wrappers
  * below know theirs (InitTextPrinting ends in `xor a`). */
@@ -317,7 +358,9 @@ ProcessTextHeaderResult ProcessTextFromID(uint16_t hl)
 	BankswitchROM(saved);
 	return header_result(saved, 0, 0, 0, text);
 }
+/* <<< factory ProcessTextFromID */
 
+/* >>> factory ProcessTextFromPointerToID */
 ProcessTextHeaderResult ProcessTextFromPointerToID(uint16_t hl)
 {
 	uint8_t lo = gb_read8(hl++);
@@ -326,7 +369,9 @@ ProcessTextHeaderResult ProcessTextFromPointerToID(uint16_t hl)
 		return header_result(0, 0, 0, 0, hl);
 	return ProcessTextFromID((uint16_t)(lo | (uint16_t)hi << 8));
 }
+/* <<< factory ProcessTextFromPointerToID */
 
+/* >>> factory InitTextPrinting_ProcessTextFromID */
 /* ProcessText pushes and pops de, so both return the coordinates they were
  * given; callers that continue printing rely on that. */
 ProcessTextHeaderResult InitTextPrinting_ProcessTextFromID(uint8_t d, uint8_t e, uint16_t hl)
@@ -338,7 +383,9 @@ ProcessTextHeaderResult InitTextPrinting_ProcessTextFromID(uint8_t d, uint8_t e,
 	r.f = 0x80u;
 	return r;
 }
+/* <<< factory InitTextPrinting_ProcessTextFromID */
 
+/* >>> factory InitTextPrinting_ProcessTextFromPointerToID */
 ProcessTextHeaderResult InitTextPrinting_ProcessTextFromPointerToID(uint8_t d, uint8_t e, uint16_t hl)
 {
 	InitTextPrinting(d, e);
@@ -347,9 +394,13 @@ ProcessTextHeaderResult InitTextPrinting_ProcessTextFromPointerToID(uint8_t d, u
 	r.e = e;
 	return r;
 }
+/* <<< factory InitTextPrinting_ProcessTextFromPointerToID */
 
+/* >>> part PAD_B */
 #define PAD_B        0x02u
+/* <<< part PAD_B */
 
+/* >>> factory PlaceTextItems */
 TextResult PlaceTextItems(uint16_t hl)
 {
 	uint8_t d;
@@ -366,7 +417,9 @@ TextResult PlaceTextItems(uint16_t hl)
 		hl = (uint16_t)(hl + 2u);
 	}
 }
+/* <<< factory PlaceTextItems */
 
+/* >>> part print_text_body */
 static TextResult print_text_body(uint16_t text, uint8_t d, uint8_t e)
 {
 	uint8_t b = 0;
@@ -394,7 +447,9 @@ static TextResult print_text_body(uint16_t text, uint8_t d, uint8_t e)
 	}
 	return (TextResult){a, b, 0, d, e, hl};
 }
+/* <<< part print_text_body */
 
+/* >>> factory PrintText */
 TextResult PrintText(uint16_t hl, uint8_t d, uint8_t e)
 {
 	if (hl == 0) {
@@ -407,7 +462,9 @@ TextResult PrintText(uint16_t hl, uint8_t d, uint8_t e)
 	r.a = saved;
 	return r;
 }
+/* <<< factory PrintText */
 
+/* >>> factory PrintTextNoDelay */
 TextResult PrintTextNoDelay(uint16_t hl, uint8_t d, uint8_t e)
 {
 	uint8_t saved = hBankROM;
@@ -426,7 +483,9 @@ TextResult PrintTextNoDelay(uint16_t hl, uint8_t d, uint8_t e)
 	BankswitchROM(saved);
 	return (TextResult){saved, 0, 0, d, e, hout};
 }
+/* <<< factory PrintTextNoDelay */
 
+/* >>> factory DrawTextReadyLabeledOrRegularTextBox */
 TextResult DrawTextReadyLabeledOrRegularTextBox(uint16_t hl)
 {
 	uint8_t b = 20;
@@ -450,16 +509,22 @@ TextResult DrawTextReadyLabeledOrRegularTextBox(uint16_t hl)
 	InitTextPrintingInTextbox(19, d, e);
 	return (TextResult){19, 0, 0, d, e, hl};
 }
+/* <<< factory DrawTextReadyLabeledOrRegularTextBox */
 
+/* >>> part SYM_CURSOR_D */
 #define SYM_CURSOR_D 0x2Fu
 #define SYM_BOX_BOTTOM 0x1Du
+/* <<< part SYM_CURSOR_D */
 
+/* >>> factory WaitForPlayerToAdvanceText */
 WaitResult WaitForPlayerToAdvanceText(void)
 {
 	SetCursorParametersForTextBox(18, 17, SYM_CURSOR_D, SYM_BOX_BOTTOM);
 	return WaitForButtonAorB();
 }
+/* <<< factory WaitForPlayerToAdvanceText */
 
+/* >>> factory PrintScrollableText */
 TextResult PrintScrollableText(uint8_t a, uint16_t hl)
 {
 	wIsTextBoxLabeled = a;
@@ -496,22 +561,29 @@ TextResult PrintScrollableText(uint8_t a, uint16_t hl)
 	BankswitchROM(saved_bank);
 	return (TextResult){saved_bank, 0, 0, d, e, hl_out};
 }
+/* <<< factory PrintScrollableText */
 
+/* >>> factory PrintScrollableText_NoTextBoxLabel */
 WaitResult PrintScrollableText_NoTextBoxLabel(uint16_t hl)
 {
 	(void)PrintScrollableText(0, hl);
 	return WaitForPlayerToAdvanceText();
 }
+/* <<< factory PrintScrollableText_NoTextBoxLabel */
 
+/* >>> factory PrintScrollableText_WithTextBoxLabel_NoWait */
 TextResult PrintScrollableText_WithTextBoxLabel_NoWait(uint16_t hl, uint16_t de)
 {
 	gb_write8(wTextBoxLabel_ADDR, (uint8_t)de);
 	gb_write8((uint16_t)(wTextBoxLabel_ADDR + 1u), (uint8_t)(de >> 8));
 	return PrintScrollableText(1, hl);
 }
+/* <<< factory PrintScrollableText_WithTextBoxLabel_NoWait */
 
+/* >>> factory PrintScrollableText_WithTextBoxLabel */
 WaitResult PrintScrollableText_WithTextBoxLabel(uint16_t hl, uint16_t de)
 {
 	(void)PrintScrollableText_WithTextBoxLabel_NoWait(hl, de);
 	return WaitForPlayerToAdvanceText();
 }
+/* <<< factory PrintScrollableText_WithTextBoxLabel */

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/sprite_animations.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
@@ -11,6 +12,8 @@
 #include "home/switch_sram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes */
+/* >>> part SLOT_COUNT */
 #define SLOT_COUNT 16u
 #define SLOT_SIZE 16u
 #define CACHE_SIZE_BYTES 64u
@@ -26,25 +29,33 @@
 #define FLAG_X_INVERTED 0u
 #define FLAG_Y_INVERTED 1u
 #define FLAG_UNSKIPPABLE 7u
+/* <<< part SLOT_COUNT */
 
+/* >>> part slot_addr */
 static uint16_t slot_addr(uint8_t slot, uint8_t field)
 {
 	if (slot >= SLOT_COUNT)
 		slot = SLOT_COUNT - 1u;
 	return (uint16_t)(wSpriteAnimBuffer_ADDR + (uint16_t)slot * SLOT_SIZE + field);
 }
+/* <<< part slot_addr */
 
+/* >>> part state16 */
 static uint16_t state16(uint16_t addr)
 {
 	return (uint16_t)(gb_read8(addr) | ((uint16_t)gb_read8((uint16_t)(addr + 1u)) << 8));
 }
+/* <<< part state16 */
 
+/* >>> part put16 */
 static void put16(uint16_t addr, uint16_t value)
 {
 	gb_write8(addr, (uint8_t)value);
 	gb_write8((uint16_t)(addr + 1u), (uint8_t)(value >> 8));
 }
+/* <<< part put16 */
 
+/* >>> factory _ClearSpriteAnimations */
 void _ClearSpriteAnimations(void)
 {
 	if (wAllSpriteAnimationsDisabled)
@@ -58,7 +69,9 @@ void _ClearSpriteAnimations(void)
 	ZeroObjectPositions();
 	wVBlankOAMCopyToggle++;
 }
+/* <<< factory _ClearSpriteAnimations */
 
+/* >>> factory CreateSpriteAndAnimBufferEntry */
 uint8_t CreateSpriteAndAnimBufferEntry(uint8_t a, uint8_t f)
 {
 	if (wAllSpriteAnimationsDisabled)
@@ -76,7 +89,9 @@ uint8_t CreateSpriteAndAnimBufferEntry(uint8_t a, uint8_t f)
 	}
 	return 0x90;
 }
+/* <<< factory CreateSpriteAndAnimBufferEntry */
 
+/* >>> factory FillNewSpriteAnimBufferEntry */
 void FillNewSpriteAnimBufferEntry(uint16_t hl)
 {
 	for (uint8_t i = 1; i < SLOT_SIZE; i++)
@@ -85,23 +100,31 @@ void FillNewSpriteAnimBufferEntry(uint16_t hl)
 	gb_write8((uint16_t)(hl + 5u), 0xff);
 	gb_write8((uint16_t)(hl + 14u), 0xff);
 }
+/* <<< factory FillNewSpriteAnimBufferEntry */
 
+/* >>> factory DisableCurSpriteAnim */
 void DisableCurSpriteAnim(void)
 {
 	DisableSpriteAnim(wWhichSprite);
 }
+/* <<< factory DisableCurSpriteAnim */
 
+/* >>> factory DisableSpriteAnim */
 void DisableSpriteAnim(uint8_t a)
 {
 	if (!wAllSpriteAnimationsDisabled)
 		gb_write8(slot_addr(a, 0), 0);
 }
+/* <<< factory DisableSpriteAnim */
 
+/* >>> factory GetSpriteAnimCounter */
 uint8_t GetSpriteAnimCounter(void)
 {
 	return gb_read8(slot_addr(wWhichSprite, ANIM_COUNTER));
 }
+/* <<< factory GetSpriteAnimCounter */
 
+/* >>> factory _HandleAllSpriteAnimations */
 void _HandleAllSpriteAnimations(void)
 {
 	if (wAllSpriteAnimationsDisabled)
@@ -119,7 +142,9 @@ void _HandleAllSpriteAnimations(void)
 	wWhichSprite = SLOT_COUNT;
 	wVBlankOAMCopyToggle++;
 }
+/* <<< factory _HandleAllSpriteAnimations */
 
+/* >>> factory LoadSpriteDataForAnimationFrame */
 void LoadSpriteDataForAnimationFrame(uint16_t hl)
 {
 	wCurrSpriteAttributes = gb_read8((uint16_t)(hl + 1u));
@@ -134,7 +159,9 @@ void LoadSpriteDataForAnimationFrame(uint16_t hl)
 	uint16_t frame = state16((uint16_t)(hl + 12u));
 	DrawSpriteAnimationFrame(&frame);
 }
+/* <<< factory LoadSpriteDataForAnimationFrame */
 
+/* >>> factory TryHandleSpriteAnimationFrame */
 void TryHandleSpriteAnimationFrame(uint16_t hl)
 {
 	uint8_t flags = gb_read8((uint16_t)(hl + ANIM_FLAGS));
@@ -147,7 +174,9 @@ void TryHandleSpriteAnimationFrame(uint16_t hl)
 	if (counter == 0 || counter > (uint8_t)(0xffu - decrement))
 		(void)HandleAnimationFrame(hl);
 }
+/* <<< factory TryHandleSpriteAnimationFrame */
 
+/* >>> factory StartNewSpriteAnimation */
 void StartNewSpriteAnimation(uint8_t a)
 {
 	uint16_t id = GetSpriteAnimBufferProperty(ANIM_ID);
@@ -155,13 +184,17 @@ void StartNewSpriteAnimation(uint8_t a)
 		return;
 	StartSpriteAnimation(a);
 }
+/* <<< factory StartNewSpriteAnimation */
 
+/* >>> factory StartSpriteAnimation */
 uint8_t StartSpriteAnimation(uint8_t a)
 {
 	uint16_t slot = LoadSpriteAnimPointers(a);
 	return HandleAnimationFrame(slot);
 }
+/* <<< factory StartSpriteAnimation */
 
+/* >>> factory Func_12ac9 */
 void Func_12ac9(uint8_t a, uint8_t c)
 {
 	if (c == 0) {
@@ -172,7 +205,9 @@ void Func_12ac9(uint8_t a, uint8_t c)
 	GetAnimFramePointerFromOffset(0xff, slot);
 	SetAnimationCounterAndLoop(c, slot);
 }
+/* <<< factory Func_12ac9 */
 
+/* >>> factory LoadSpriteAnimPointers */
 uint16_t LoadSpriteAnimPointers(uint8_t a)
 {
 	uint16_t slot = GetFirstSpriteAnimBufferProperty();
@@ -186,7 +221,9 @@ uint16_t LoadSpriteAnimPointers(uint8_t a)
 	put16((uint16_t)(slot + ANIM_FRAME_POINTER), (uint16_t)(pointer + 3u));
 	return slot;
 }
+/* <<< factory LoadSpriteAnimPointers */
 
+/* >>> factory HandleAnimationFrame */
 uint8_t HandleAnimationFrame(uint16_t hl)
 {
 	for (;;) {
@@ -217,7 +254,9 @@ uint8_t HandleAnimationFrame(uint16_t hl)
 		return out;
 	}
 }
+/* <<< factory HandleAnimationFrame */
 
+/* >>> factory GetAnimFramePointerFromOffset */
 void GetAnimFramePointerFromOffset(uint8_t a, uint16_t hl)
 {
 	wWhichAnimationFrame = a;
@@ -227,7 +266,9 @@ void GetAnimFramePointerFromOffset(uint8_t a, uint16_t hl)
 	          gb_read8((uint16_t)(hl + ANIM_POINTER + 1u)));
 	GetAnimationFramePointer(hl);
 }
+/* <<< factory GetAnimFramePointerFromOffset */
 
+/* >>> factory SetAnimationCounterAndLoop */
 uint8_t SetAnimationCounterAndLoop(uint8_t a, uint16_t hl)
 {
 	gb_write8((uint16_t)(hl + ANIM_COUNTER), a);
@@ -238,7 +279,9 @@ uint8_t SetAnimationCounterAndLoop(uint8_t a, uint16_t hl)
 	put16((uint16_t)(hl + ANIM_FRAME_POINTER), pointer);
 	return (uint8_t)((pointer >> 8) == 0 ? 0x90u : 0x10u);
 }
+/* <<< factory SetAnimationCounterAndLoop */
 
+/* >>> factory Func_12ba7 */
 void Func_12ba7(void)
 {
 	uint16_t src = wSpriteAnimBuffer_ADDR;
@@ -250,7 +293,9 @@ void Func_12ba7(void)
 	gb_write8(dst, wSpriteVRAMBufferSize);
 	DisableSRAM();
 }
+/* <<< factory Func_12ba7 */
 
+/* >>> factory Func_12bcd */
 void Func_12bcd(void)
 {
 	uint16_t src = sGeneralSaveDataEnd_ADDR;
@@ -263,14 +308,18 @@ void Func_12bcd(void)
 	wSpriteVRAMBufferSize = gb_read8(src);
 	DisableSRAM();
 }
+/* <<< factory Func_12bcd */
 
+/* >>> factory ClearSpriteVRAMBuffer */
 void ClearSpriteVRAMBuffer(void)
 {
 	wSpriteVRAMBufferSize = 0;
 	for (uint8_t i = 0; i < CACHE_SIZE_BYTES; i++)
 		gb_write8((uint16_t)(wSpriteVRAMBuffer_ADDR + i), 0);
 }
+/* <<< factory ClearSpriteVRAMBuffer */
 
+/* >>> factory Func_12c05 */
 SpriteAnimLookupResult Func_12c05(uint8_t a)
 {
 	SpriteAnimLookupResult result = {0, 0x90};
@@ -306,7 +355,9 @@ SpriteAnimLookupResult Func_12c05(uint8_t a)
 	result.f = offset ? 0 : 0x80;
 	return result;
 }
+/* <<< factory Func_12c05 */
 
+/* >>> factory Func_12c4f */
 uint8_t Func_12c4f(uint8_t a, uint8_t d)
 {
 	wWhichVRAMBank = 0;
@@ -317,7 +368,9 @@ uint8_t Func_12c4f(uint8_t a, uint8_t d)
 	BankswitchROM(saved);
 	return result;
 }
+/* <<< factory Func_12c4f */
 
+/* >>> factory Func_12c5e */
 void Func_12c5e(void)
 {
 	for (uint8_t i = 0; i < SLOT_COUNT; i++) {
@@ -326,3 +379,4 @@ void Func_12c5e(void)
 			Func_12c4f(gb_read8((uint16_t)(entry + 1u)), gb_read8((uint16_t)(entry + 2u)));
 	}
 }
+/* <<< factory Func_12c5e */

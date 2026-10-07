@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/mail.h"
 #include "generated/text_ids.h"
 #include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/bg_map.h"
 
@@ -56,6 +58,7 @@
 /* <<< factory statics */
 
 
+/* >>> part pc_mail_coordinates */
 static const uint8_t pc_mail_coordinates[NUM_PC_PACKS][2] = {
 	{1, 2}, {7, 2}, {13, 2},
 	{1, 4}, {7, 4}, {13, 4},
@@ -63,7 +66,9 @@ static const uint8_t pc_mail_coordinates[NUM_PC_PACKS][2] = {
 	{1, 8}, {7, 8}, {13, 8},
 	{1, 10}, {7, 10}, {13, 10},
 };
+/* <<< part pc_mail_coordinates */
 
+/* >>> factory GePCPackSelectionCoordinates */
 PCPackCoordinates GePCPackSelectionCoordinates(void)
 {
 	uint8_t selection = gb_read8(wPCPackSelection_ADDR);
@@ -72,7 +77,9 @@ PCPackCoordinates GePCPackSelectionCoordinates(void)
 		pc_mail_coordinates[selection][1],
 	};
 }
+/* <<< factory GePCPackSelectionCoordinates */
 
+/* >>> factory TryGivePCPack */
 void TryGivePCPack(uint8_t id)
 {
 	uint16_t slot = wPCPacks_ADDR;
@@ -94,6 +101,7 @@ void TryGivePCPack(uint8_t id)
 		slot++;
 	} while (--count);
 }
+/* <<< factory TryGivePCPack */
 
 /* >>> factory InitPCPacks */
 

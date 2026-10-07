@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/duel_animation_core.h"
 #include "generated/constants.h"
 #include "generated/rom.h"
@@ -12,7 +13,9 @@
 #include "mem.h"
 
 #include "home/lcd.h"
+/* <<< part includes */
 
+/* >>> part QUEUE_ADDR */
 #define QUEUE_ADDR wAnimationQueue_ADDR
 #define QUEUE_LENGTH 7u
 #define BUFFER_ADDR wDuelAnim1ID_ADDR
@@ -23,10 +26,16 @@
 #define ANIMATIONS_ADDR Animations_ADDR
 #define ANIM_ENTRY_SIZE 6u
 #define SPRITE_UNSKIPPABLE 0x80u
+/* <<< part QUEUE_ADDR */
 
+/* >>> part read */
 static uint8_t read(uint16_t addr) { return gb_read8(addr); }
+/* <<< part read */
+/* >>> part write */
 static void write(uint16_t addr, uint8_t value) { gb_write8(addr, value); }
+/* <<< part write */
 
+/* >>> factory _ResetAnimationQueue */
 void _ResetAnimationQueue(void)
 {
     Set_OBJ_8x8();
@@ -44,7 +53,9 @@ void _ResetAnimationQueue(void)
     EnableAndClearSpriteAnimations();
     return;
 }
+/* <<< factory _ResetAnimationQueue */
 
+/* >>> factory PlayLoadedDuelAnimation */
 void PlayLoadedDuelAnimation(void)
 {
     uint8_t lo = read(wDoFrameFunction_ADDR);
@@ -79,7 +90,9 @@ void PlayLoadedDuelAnimation(void)
     LoadAnimCoordsAndFlags();
     StartNewSpriteAnimation(anim_id);
 }
+/* <<< factory PlayLoadedDuelAnimation */
 
+/* >>> factory LoadDuelAnimationToBuffer */
 uint8_t LoadDuelAnimationToBuffer(void)
 {
     uint8_t cur = read(wDuelAnimBufferCurPos_ADDR);
@@ -99,6 +112,8 @@ uint8_t LoadDuelAnimationToBuffer(void)
     }
     return read(wDuelAnimReturnBank_ADDR);
 }
+/* <<< factory LoadDuelAnimationToBuffer */
+/* >>> part play_buffered_duel_animations */
 static uint8_t play_buffered_duel_animations(void)
 {
     for (;;) {
@@ -120,7 +135,9 @@ static uint8_t play_buffered_duel_animations(void)
     }
     return read(wDuelAnimBufferCurPos_ADDR);
 }
+/* <<< part play_buffered_duel_animations */
 
+/* >>> factory _UpdateQueuedAnimations */
 DuelAnimationUpdateResult _UpdateQueuedAnimations(uint8_t entry_c, uint16_t entry_hl)
 {
     uint8_t active = read(wActiveScreenAnim_ADDR);
@@ -157,7 +174,9 @@ DuelAnimationUpdateResult _UpdateQueuedAnimations(uint8_t entry_c, uint16_t entr
         accumulator = play_buffered_duel_animations();
     return (DuelAnimationUpdateResult){accumulator, 0u, (uint16_t)(QUEUE_ADDR + QUEUE_LENGTH)};
 }
+/* <<< factory _UpdateQueuedAnimations */
 
+/* >>> factory ClearAndDisableQueuedAnimations */
 DuelAnimationResult ClearAndDisableQueuedAnimations(void)
 {
     uint8_t lo = read(wDoFrameFunction_ADDR);
@@ -180,3 +199,4 @@ DuelAnimationResult ClearAndDisableQueuedAnimations(void)
     write(wDuelAnimBufferSize_ADDR, 0);
     return (DuelAnimationResult){0, 0};
 }
+/* <<< factory ClearAndDisableQueuedAnimations */

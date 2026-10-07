@@ -1,11 +1,15 @@
+/* >>> part includes */
 #include "home/attacks.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory RetrievePlayAreaAIScoreFromBackup2 */
 static void adapt_RetrievePlayAreaAIScoreFromBackup2(ProbeState *s)
 {
 	(void)s;
 	RetrievePlayAreaAIScoreFromBackup2();
 }
+/* <<< factory RetrievePlayAreaAIScoreFromBackup2 */
 
 /* >>> factory GetAIScoreOfAttack */
 static void adapt_GetAIScoreOfAttack(ProbeState *s)
@@ -41,6 +45,7 @@ static void adapt_AIProcessButDontUseAttack(ProbeState *s)
 }
 /* <<< factory AIProcessButDontUseAttack */
 
+/* >>> part probe_entries_attacks */
 const ProbeEntry probe_entries_attacks[] = {
 	{ "RetrievePlayAreaAIScoreFromBackup2", adapt_RetrievePlayAreaAIScoreFromBackup2 },
 	{ "GetAIScoreOfAttack", adapt_GetAIScoreOfAttack },
@@ -49,3 +54,4 @@ const ProbeEntry probe_entries_attacks[] = {
 	{ "AIProcessButDontUseAttack", adapt_AIProcessButDontUseAttack },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_attacks */

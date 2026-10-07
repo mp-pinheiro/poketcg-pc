@@ -1,8 +1,12 @@
+/* >>> part includes */
 #include "generated/rom.h"
+/* <<< part includes */
 #ifndef POKETCG_HOME_GIFT_CENTER_H
 #define POKETCG_HOME_GIFT_CENTER_H
 
+/* >>> part includes_tail */
 #include <stdint.h>
+/* <<< part includes_tail */
 
 /* >>> factory Preload_GiftCenterClerk */
 typedef struct { uint8_t a, f; } PreloadGiftCenterClerkResult;
@@ -26,6 +30,8 @@ Func_fcadResult Func_fcad(void);
 typedef struct { uint8_t a; uint8_t f; } GiftCenterMenuResult;
 GiftCenterMenuResult GiftCenterMenu(void);
 /* <<< factory GiftCenterMenu */
+/* >>> part Func_fc7a_START_SCRIPT */
 #define Func_fc7a_START_SCRIPT (Func_fc7a_ADDR + 0x08u)
 #define Func_fcad_START_SCRIPT 0x7cb5u
+/* <<< part Func_fc7a_START_SCRIPT */
 #endif /* POKETCG_HOME_GIFT_CENTER_H */

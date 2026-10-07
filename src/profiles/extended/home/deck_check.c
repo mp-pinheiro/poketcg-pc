@@ -1,13 +1,19 @@
+/* >>> part includes */
 #include "home/deck_check.h"
 
 #include "generated/constants.h"
+/* <<< part includes */
+/* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 #define CURSOR_BLINK_PERIOD_MASK 0x0Fu
 #define B_CURSOR_BLINK_PERIOD 4u
+/* <<< part MENU_CONFIRM */
+/* >>> part includes_tail */
 #include "generated/wram.h"
 #include "home/bg_map.h"
 #include "home/random.h"
 #include "home/sound.h"
+/* <<< part includes_tail */
 /* >>> factory statics */
 #define SYM_SPACE 0x00u
 #define SYM_CURSOR_R 0x0Fu
@@ -26,6 +32,7 @@
 /* <<< factory statics */
 
 
+/* >>> factory DrawCheckMenuCursor */
 DrawCheckMenuCursorResult DrawCheckMenuCursor(uint8_t a)
 {
 	uint16_t product = HtimesL((uint16_t)((uint16_t)wCheckMenuCursorXPosition << 8 | 10u));
@@ -35,12 +42,15 @@ DrawCheckMenuCursorResult DrawCheckMenuCursor(uint8_t a)
 	uint8_t out = WriteByteToBGMap0(a, b, c);
 	return (DrawCheckMenuCursorResult){out, a, out == 0 ? 0x80u : 0};
 }
+/* <<< factory DrawCheckMenuCursor */
 
+/* >>> factory PlaySFXConfirmOrCancel */
 void PlaySFXConfirmOrCancel(uint8_t a)
 {
 	uint8_t sfx_id = (uint8_t)(a + 1u) == 0 ? SFX_CANCEL : SFX_CONFIRM;
 	PlaySFX(sfx_id);
 }
+/* <<< factory PlaySFXConfirmOrCancel */
 
 /* >>> factory EraseCheckMenuCursor */
 /* deck_check.asm:95-97 */

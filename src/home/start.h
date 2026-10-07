@@ -1,9 +1,13 @@
 #ifndef POKETCG_HOME_START_H
 #define POKETCG_HOME_START_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> factory ShowCardPopCGBDisclaimer */
 uint8_t ShowCardPopCGBDisclaimer(void);
+/* <<< factory ShowCardPopCGBDisclaimer */
 
 /* >>> factory CheckIfHasSaveData */
 typedef struct { uint8_t a; uint8_t f; } CheckIfHasSaveDataResult;

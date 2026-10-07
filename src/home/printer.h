@@ -1,8 +1,11 @@
 #ifndef POKETCG_HOME_PRINTER_H
 #define POKETCG_HOME_PRINTER_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part SendNextPrinterPacketByteResult */
 /* poketcg/src/home/printer.asm */
 
 /* SendNextPrinterPacketByte:: printer.asm:184-203, falls through into
@@ -16,13 +19,19 @@
 typedef struct {
 	uint8_t d, e;
 } SendNextPrinterPacketByteResult;
+/* <<< part SendNextPrinterPacketByteResult */
+/* >>> factory SendNextPrinterPacketByte */
 SendNextPrinterPacketByteResult SendNextPrinterPacketByte(void);
+/* <<< factory SendNextPrinterPacketByte */
 
+/* >>> factory SendByteThroughSerialData */
 /* SendByteThroughSerialData:: printer.asm:206-212. Exit a is always
  * SC_START|SC_INTERNAL regardless of entry (residue, omitted); b/c/d/e/hl
  * are never touched. */
 void SendByteThroughSerialData(uint8_t a);
+/* <<< factory SendByteThroughSerialData */
 
+/* >>> part ExecutePrinterPacketSequenceResult */
 /* ExecutePrinterPacketSequence:: printer.asm:80-179. One state-machine step;
  * entry a selects one of 12 local handlers via JumpToFunctionInTable (all 12
  * targets are local labels of this same routine, not unported engine code,
@@ -38,7 +47,10 @@ void SendByteThroughSerialData(uint8_t a);
 typedef struct {
 	uint8_t a, d, e;
 } ExecutePrinterPacketSequenceResult;
+/* <<< part ExecutePrinterPacketSequenceResult */
+/* >>> factory ExecutePrinterPacketSequence */
 ExecutePrinterPacketSequenceResult ExecutePrinterPacketSequence(uint8_t a, uint8_t d, uint8_t e);
+/* <<< factory ExecutePrinterPacketSequence */
 
 /* >>> factory Func_1a14b */
 typedef struct {

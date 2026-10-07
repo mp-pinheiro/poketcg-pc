@@ -1,14 +1,19 @@
+/* >>> part includes */
 #include "home/load_map_header.h"
 
 #include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part MAP_HEADERS_BANK */
 #define MAP_HEADERS_BANK 7u
 #define MAP_HEADERS MapHeaders_ADDR
 #define MAP_HEADER_SIZE 6u
+/* <<< part MAP_HEADERS_BANK */
 
+/* >>> factory LoadMapHeader */
 void LoadMapHeader(void)
 {
 	uint16_t entry = (uint16_t)(MAP_HEADERS + (uint16_t)gb_read8(wCurMap_ADDR) * MAP_HEADER_SIZE);
@@ -23,3 +28,4 @@ void LoadMapHeader(void)
 	if (gb_read8(wConsole_ADDR) == CONSOLE_CGB && cgb_tilemap != 0)
 		gb_write8(wCurTilemap_ADDR, cgb_tilemap);
 }
+/* <<< factory LoadMapHeader */

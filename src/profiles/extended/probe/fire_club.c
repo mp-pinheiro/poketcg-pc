@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/fire_club.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory FireClubAfterDuel */
 static void adapt_FireClubAfterDuel(ProbeState *s)
@@ -17,7 +19,9 @@ static void adapt_FireClubAfterDuel(ProbeState *s)
 }
 /* <<< factory FireClubAfterDuel */
 
+/* >>> part probe_entries_fire_club */
 const ProbeEntry probe_entries_fire_club[] = {
 	{ "FireClubAfterDuel", adapt_FireClubAfterDuel },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_fire_club */

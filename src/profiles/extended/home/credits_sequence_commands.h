@@ -1,11 +1,19 @@
 #ifndef HOME_CREDITS_SEQUENCE_COMMANDS_H
 #define HOME_CREDITS_SEQUENCE_COMMANDS_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> factory SetCreditsSequenceCmdPtr */
 void SetCreditsSequenceCmdPtr(void);
+/* <<< factory SetCreditsSequenceCmdPtr */
+/* >>> factory ExecuteCreditsSequenceCmd */
 void ExecuteCreditsSequenceCmd(void);
+/* <<< factory ExecuteCreditsSequenceCmd */
+/* >>> factory AdvanceCreditsSequenceCmdPtr */
 void AdvanceCreditsSequenceCmdPtr(uint8_t a);
+/* <<< factory AdvanceCreditsSequenceCmdPtr */
 
 /* >>> factory AdvanceCreditsSequenceCmdPtrBy2 */
 void AdvanceCreditsSequenceCmdPtrBy2(void);

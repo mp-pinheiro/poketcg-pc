@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/trainer_cards.h"
 
 #include "generated/text_ids.h"
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "home/card_data.h"
@@ -279,6 +281,7 @@
 #include "home/core.h"
 /* <<< factory statics */
 
+/* >>> part cp_flags */
 /* The exit F register of a `cp n` and of an `or a`, for the decisions whose
  * carry is the verdict and whose a register becomes the card parameter. */
 static uint8_t cp_flags(uint8_t a, uint8_t n)
@@ -288,11 +291,14 @@ static uint8_t cp_flags(uint8_t a, uint8_t n)
 		| (((a & 0x0Fu) < (n & 0x0Fu)) ? 0x20u : 0u)
 		| ((a < n) ? 0x10u : 0u));
 }
+/* <<< part cp_flags */
 
+/* >>> part or_a_flags */
 static uint8_t or_a_flags(uint8_t a)
 {
 	return a == 0u ? 0x80u : 0x00u;
 }
+/* <<< part or_a_flags */
 
 
 /* >>> factory RemoveCardFromList */

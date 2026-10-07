@@ -1,18 +1,25 @@
+/* >>> part includes */
 #include "home/printer.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory SendNextPrinterPacketByte */
 static void adapt_SendNextPrinterPacketByte(ProbeState *s)
 {
 	SendNextPrinterPacketByteResult r = SendNextPrinterPacketByte();
 	s->d = r.d;
 	s->e = r.e;
 }
+/* <<< factory SendNextPrinterPacketByte */
 
+/* >>> factory SendByteThroughSerialData */
 static void adapt_SendByteThroughSerialData(ProbeState *s)
 {
 	SendByteThroughSerialData(s->a);
 }
+/* <<< factory SendByteThroughSerialData */
 
+/* >>> factory ExecutePrinterPacketSequence */
 static void adapt_ExecutePrinterPacketSequence(ProbeState *s)
 {
 	ExecutePrinterPacketSequenceResult r = ExecutePrinterPacketSequence(s->a, s->d, s->e);
@@ -20,6 +27,7 @@ static void adapt_ExecutePrinterPacketSequence(ProbeState *s)
 	s->d = r.d;
 	s->e = r.e;
 }
+/* <<< factory ExecutePrinterPacketSequence */
 
 /* >>> factory Func_1a14b */
 static void adapt_Func_1a14b(ProbeState *s)
@@ -360,6 +368,7 @@ static void adapt_PrinterMenu_PrintQuality(ProbeState *s)
 }
 /* <<< factory PrinterMenu_PrintQuality */
 
+/* >>> part probe_entries_printer */
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -402,3 +411,4 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "PrinterMenu_PrintQuality", adapt_PrinterMenu_PrintQuality },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_printer */

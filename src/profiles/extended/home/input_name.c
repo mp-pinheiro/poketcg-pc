@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/input_name.h"
 
 #include "generated/text_ids.h"
@@ -8,6 +9,7 @@
 #include "mem.h"
 #include "home/switch_rom.h"
 #include "home/text_box.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "home/random.h"

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/intro.h"
 #include "generated/constants.h"
 #include "generated/rom.h"
@@ -13,6 +14,7 @@
 #include "home/lcd_enable_frame.h"
 #include "home/random.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/color.h"
 #include "home/init_menu.h"
@@ -26,6 +28,7 @@
 /* <<< factory statics */
 
 
+/* >>> factory LoadTitleScreenSprites */
 void LoadTitleScreenSprites(void)
 {
     static const uint8_t sprites[] = {0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71};
@@ -44,7 +47,9 @@ void LoadTitleScreenSprites(void)
         gb_write8(property, (uint8_t)(gb_read8(property) | index));
     }
 }
+/* <<< factory LoadTitleScreenSprites */
 
+/* >>> part ShowPressStart */
 /* intro.asm:55-73 .ShowPressStart */
 static void ShowPressStart(void)
 {
@@ -57,6 +62,7 @@ static void ShowPressStart(void)
 		anim = SPRITE_ANIM_191;
 	Func_12ac9(anim, 60u); /* bc = 60 */
 }
+/* <<< part ShowPressStart */
 
 
 /* >>> factory PlayIntroSequence */

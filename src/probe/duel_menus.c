@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/duel_menus.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory DrawPlayersPrizeAndBenchCards */
 static void adapt_DrawPlayersPrizeAndBenchCards(ProbeState *s)
@@ -66,6 +68,7 @@ static void adapt_OpenInPlayAreaScreen_FromSelectButton(ProbeState *s)
 }
 /* <<< factory OpenInPlayAreaScreen_FromSelectButton */
 
+/* >>> part probe_entries_duel_menus */
 const ProbeEntry probe_entries_duel_menus[] = {
 	{ "DrawPlayersPrizeAndBenchCards", adapt_DrawPlayersPrizeAndBenchCards },
 	{ "DrawPlayAreaToPlacePrizeCards", adapt_DrawPlayAreaToPlacePrizeCards },
@@ -77,3 +80,4 @@ const ProbeEntry probe_entries_duel_menus[] = {
 	{ "OpenInPlayAreaScreen_FromSelectButton", adapt_OpenInPlayAreaScreen_FromSelectButton },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_duel_menus */

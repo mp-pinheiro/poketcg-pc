@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/deck_configuration.h"
 
 #include <stdio.h>
@@ -9,6 +10,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #define SCARDCOLLECTION_ADDR 0xA100u
 #include "home/card_data.h"
@@ -1175,6 +1177,7 @@ HandleCardSelectionInputResult HandleCardSelectionInput(void)
 }
 /* <<< factory HandleCardSelectionInput */
 
+/* >>> part DispatchCardListUpdateFunction */
 /* CallIndirect(wCardListUpdateFunction), deck_configuration.asm:1823-1824,
  * 1849-1850, 2483-2484, 2532-2533: the card-list input handlers fire the
  * redraw routine armed by whichever card-list screen is active. Every bank-2
@@ -1225,6 +1228,7 @@ static void DispatchCardListUpdateFunction(void)
 		return;
 	}
 }
+/* <<< part DispatchCardListUpdateFunction */
 
 /* >>> factory HandleLeftRightInCardList */
 HandleLeftRightInCardListResult HandleLeftRightInCardList(void)

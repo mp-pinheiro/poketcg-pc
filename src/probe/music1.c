@@ -1,55 +1,88 @@
+/* >>> part includes */
 #include "home/music1.h"
 #include "probe.h"
 #include "mem.h"
 #include "generated/wram.h"
+/* <<< part includes */
 
+/* >>> factory Music1_EmptyFunc */
 /* ── Leaf adapters ───────────────────────────────────────────────────── */
 
 static void adapt_Music1_EmptyFunc(ProbeState *s)
 { (void)s; Music1_EmptyFunc(); }
+/* <<< factory Music1_EmptyFunc */
 
+/* >>> factory Music1_f404e */
 static void adapt_Music1_f404e(ProbeState *s)
 { Music1_f404e(s->a); }
+/* <<< factory Music1_f404e */
 
+/* >>> factory Music1_f4066 */
 static void adapt_Music1_f4066(ProbeState *s)
 { (void)s; Music1_f4066(); }
+/* <<< factory Music1_f4066 */
 
+/* >>> factory Music1_f406f */
 static void adapt_Music1_f406f(ProbeState *s)
 { Music1_f406f(s->a); }
+/* <<< factory Music1_f406f */
 
+/* >>> factory Music1_PlaySong */
 static void adapt_Music1_PlaySong(ProbeState *s)
 { Music1_PlaySong(s->a); }
+/* <<< factory Music1_PlaySong */
 
+/* >>> factory Music1_PlaySFX */
 static void adapt_Music1_PlaySFX(ProbeState *s)
 { Music1_PlaySFX(s->a); }
+/* <<< factory Music1_PlaySFX */
 
+/* >>> factory Music1_AssertSongFinished */
 static void adapt_Music1_AssertSongFinished(ProbeState *s)
 { s->a = Music1_AssertSongFinished(); }
+/* <<< factory Music1_AssertSongFinished */
 
+/* >>> factory Music1_AssertSFXFinished */
 static void adapt_Music1_AssertSFXFinished(ProbeState *s)
 { s->a = Music1_AssertSFXFinished(); }
+/* <<< factory Music1_AssertSFXFinished */
 
+/* >>> factory Music1_CheckForEndOfSong */
 static void adapt_Music1_CheckForEndOfSong(ProbeState *s)
 { (void)s; Music1_CheckForEndOfSong(); }
+/* <<< factory Music1_CheckForEndOfSong */
 
+/* >>> factory Music1_CheckForNewSound */
 static void adapt_Music1_CheckForNewSound(ProbeState *s)
 { (void)s; Music1_CheckForNewSound(); }
+/* <<< factory Music1_CheckForNewSound */
 
+/* >>> factory Music1_Init */
 static void adapt_Music1_Init(ProbeState *s)
 { (void)s; Music1_Init(); }
+/* <<< factory Music1_Init */
 
+/* >>> factory Music1_Update */
 static void adapt_Music1_Update(ProbeState *s)
 { (void)s; Music1_Update(); }
+/* <<< factory Music1_Update */
 
+/* >>> factory Music1_StopAllChannels */
 static void adapt_Music1_StopAllChannels(ProbeState *s)
 { (void)s; Music1_StopAllChannels(); }
+/* <<< factory Music1_StopAllChannels */
 
+/* >>> factory Music1_f4980 */
 static void adapt_Music1_f4980(ProbeState *s)
 { (void)s; Music1_f4980(); }
+/* <<< factory Music1_f4980 */
 
+/* >>> factory Music1_BeginSong */
 static void adapt_Music1_BeginSong(ProbeState *s)
 { Music1_BeginSong(s->a); }
+/* <<< factory Music1_BeginSong */
 
+/* >>> factory Music1_CopyData */
 static void adapt_Music1_CopyData(ProbeState *s)
 {
 	uint16_t de = (uint16_t)s->d << 8 | s->e;
@@ -57,131 +90,209 @@ static void adapt_Music1_CopyData(ProbeState *s)
 	s->d = (uint8_t)(de >> 8);
 	s->e = (uint8_t)de;
 }
+/* <<< factory Music1_CopyData */
 
+/* >>> factory Music1_UpdateChannel1 */
 /* ── Channel updaters ────────────────────────────────────────────────── */
 
 static void adapt_Music1_UpdateChannel1(ProbeState *s)
 { (void)s; Music1_UpdateChannel1(); }
+/* <<< factory Music1_UpdateChannel1 */
 
+/* >>> factory Music1_UpdateChannel2 */
 static void adapt_Music1_UpdateChannel2(ProbeState *s)
 { (void)s; Music1_UpdateChannel2(); }
+/* <<< factory Music1_UpdateChannel2 */
 
+/* >>> factory Music1_UpdateChannel3 */
 static void adapt_Music1_UpdateChannel3(ProbeState *s)
 { (void)s; Music1_UpdateChannel3(); }
+/* <<< factory Music1_UpdateChannel3 */
 
+/* >>> factory Music1_UpdateChannel4 */
 static void adapt_Music1_UpdateChannel4(ProbeState *s)
 { (void)s; Music1_UpdateChannel4(); }
+/* <<< factory Music1_UpdateChannel4 */
 
+/* >>> factory Music1_PlayNextNote */
 /* ── PlayNextNote ────────────────────────────────────────────────────── */
 
 /* music1.asm:578 `ld a,[hli]` overwrites a immediately; the channel arrives in
  * c, which every handler indexes with `add hl, bc`. */
 static void adapt_Music1_PlayNextNote(ProbeState *s)
 { Music1_PlayNextNote(&s->hl, s->c); }
+/* <<< factory Music1_PlayNextNote */
 
+/* >>> factory Music1_speed */
 /* ── Command handlers ────────────────────────────────────────────────── */
 
 static void adapt_Music1_speed(ProbeState *s)
 { Music1_speed(s->stack[0], s->c); }
+/* <<< factory Music1_speed */
 
+/* >>> factory Music1_octave */
 static void adapt_Music1_octave(ProbeState *s)
 { Music1_octave(s->stack[0], s->c, s->a); }
+/* <<< factory Music1_octave */
 
+/* >>> factory Music1_inc_octave */
 static void adapt_Music1_inc_octave(ProbeState *s)
 { Music1_inc_octave(s->stack[0], s->c); }
+/* <<< factory Music1_inc_octave */
 
+/* >>> factory Music1_dec_octave */
 static void adapt_Music1_dec_octave(ProbeState *s)
 { Music1_dec_octave(s->stack[0], s->c); }
+/* <<< factory Music1_dec_octave */
 
+/* >>> factory Music1_tie */
 static void adapt_Music1_tie(ProbeState *s)
 { Music1_tie(s->stack[0], s->c); }
+/* <<< factory Music1_tie */
 
+/* >>> factory Music1_stereo_panning */
 static void adapt_Music1_stereo_panning(ProbeState *s)
 { Music1_stereo_panning(s->stack[0], s->c); }
+/* <<< factory Music1_stereo_panning */
 
+/* >>> factory Music1_MainLoop */
 static void adapt_Music1_MainLoop(ProbeState *s)
 { Music1_MainLoop(s->stack[0], s->c); }
+/* <<< factory Music1_MainLoop */
 
+/* >>> factory Music1_EndMainLoop */
 static void adapt_Music1_EndMainLoop(ProbeState *s)
 { Music1_EndMainLoop(s->stack[0], s->c); }
+/* <<< factory Music1_EndMainLoop */
 
+/* >>> factory Music1_Loop */
 static void adapt_Music1_Loop(ProbeState *s)
 { Music1_Loop(s->stack[0], s->c); }
+/* <<< factory Music1_Loop */
 
+/* >>> factory Music1_EndLoop */
 static void adapt_Music1_EndLoop(ProbeState *s)
 { Music1_EndLoop(s->stack[0], s->c); }
+/* <<< factory Music1_EndLoop */
 
+/* >>> factory Music1_jp */
 static void adapt_Music1_jp(ProbeState *s)
 { Music1_jp(s->stack[0], s->c); }
+/* <<< factory Music1_jp */
 
+/* >>> factory Music1_call */
 static void adapt_Music1_call(ProbeState *s)
 { Music1_call(s->stack[0], s->c); }
+/* <<< factory Music1_call */
 
+/* >>> factory Music1_ret */
 static void adapt_Music1_ret(ProbeState *s)
 { Music1_ret(s->stack[0], s->c); }
+/* <<< factory Music1_ret */
 
+/* >>> factory Music1_frequency_offset */
 static void adapt_Music1_frequency_offset(ProbeState *s)
 { Music1_frequency_offset(s->stack[0], s->c); }
+/* <<< factory Music1_frequency_offset */
 
+/* >>> factory Music1_duty */
 static void adapt_Music1_duty(ProbeState *s)
 { Music1_duty(s->stack[0], s->c); }
+/* <<< factory Music1_duty */
 
+/* >>> factory Music1_volume */
 static void adapt_Music1_volume(ProbeState *s)
 { Music1_volume(s->stack[0], s->c); }
+/* <<< factory Music1_volume */
 
+/* >>> factory Music1_wave */
 static void adapt_Music1_wave(ProbeState *s)
 { Music1_wave(s->stack[0], s->c); }
+/* <<< factory Music1_wave */
 
+/* >>> factory Music1_cutoff */
 static void adapt_Music1_cutoff(ProbeState *s)
 { Music1_cutoff(s->stack[0], s->c); }
+/* <<< factory Music1_cutoff */
 
+/* >>> factory Music1_echo */
 static void adapt_Music1_echo(ProbeState *s)
 { Music1_echo(s->stack[0], s->c); }
+/* <<< factory Music1_echo */
 
+/* >>> factory Music1_vibrato_type */
 static void adapt_Music1_vibrato_type(ProbeState *s)
 { Music1_vibrato_type(s->stack[0], s->c); }
+/* <<< factory Music1_vibrato_type */
 
+/* >>> factory Music1_vibrato_delay */
 static void adapt_Music1_vibrato_delay(ProbeState *s)
 { Music1_vibrato_delay(s->stack[0], s->c); }
+/* <<< factory Music1_vibrato_delay */
 
+/* >>> factory Music1_pitch_offset */
 static void adapt_Music1_pitch_offset(ProbeState *s)
 { Music1_pitch_offset(s->stack[0], s->c); }
+/* <<< factory Music1_pitch_offset */
 
+/* >>> factory Music1_adjust_pitch_offset */
 static void adapt_Music1_adjust_pitch_offset(ProbeState *s)
 { Music1_adjust_pitch_offset(s->stack[0], s->c); }
+/* <<< factory Music1_adjust_pitch_offset */
 
+/* >>> factory Music1_end */
 static void adapt_Music1_end(ProbeState *s)
 { Music1_end(s->stack[0], s->c); }
+/* <<< factory Music1_end */
 
+/* >>> factory Music1_note */
 static void adapt_Music1_note(ProbeState *s)
 { Music1_note(&s->hl, s->a, s->b, s->c); }
+/* <<< factory Music1_note */
 
+/* >>> factory Music1_f4714 */
 /* ── Channel output ──────────────────────────────────────────────────── */
 
 static void adapt_Music1_f4714(ProbeState *s)
 { (void)s; Music1_f4714(); }
+/* <<< factory Music1_f4714 */
 
+/* >>> factory Music1_f475a */
 static void adapt_Music1_f475a(ProbeState *s)
 { (void)s; Music1_f475a(); }
+/* <<< factory Music1_f475a */
 
+/* >>> factory Music1_f479c */
 static void adapt_Music1_f479c(ProbeState *s)
 { (void)s; Music1_f479c(); }
+/* <<< factory Music1_f479c */
 
+/* >>> factory Music1_f480a */
 static void adapt_Music1_f480a(ProbeState *s)
 { (void)s; Music1_f480a(); }
+/* <<< factory Music1_f480a */
 
+/* >>> factory Music1_f4839 */
 static void adapt_Music1_f4839(ProbeState *s)
 { (void)s; Music1_f4839(); }
+/* <<< factory Music1_f4839 */
 
+/* >>> factory Music1_f485a */
 static void adapt_Music1_f485a(ProbeState *s)
 { Music1_f485a(s->a); }
+/* <<< factory Music1_f485a */
 
+/* >>> factory Music1_f4866 */
 static void adapt_Music1_f4866(ProbeState *s)
 { (void)s; Music1_f4866(); }
+/* <<< factory Music1_f4866 */
 
+/* >>> factory Music1_LoadWaveInstrument */
 static void adapt_Music1_LoadWaveInstrument(ProbeState *s)
 { (void)s; Music1_LoadWaveInstrument(); }
+/* <<< factory Music1_LoadWaveInstrument */
 
+/* >>> factory Music1_UpdateVibrato */
 /* ── Vibrato ─────────────────────────────────────────────────────────── */
 
 static void adapt_Music1_UpdateVibrato(ProbeState *s)
@@ -191,10 +302,14 @@ static void adapt_Music1_UpdateVibrato(ProbeState *s)
 	s->e = (uint8_t)de;
 	s->d = (uint8_t)(de >> 8);
 }
+/* <<< factory Music1_UpdateVibrato */
 
+/* >>> factory Music1_f490b */
 static void adapt_Music1_f490b(ProbeState *s)
 { Music1_f490b(s->a, (uint16_t)((uint16_t)s->d << 8 | s->e)); }
+/* <<< factory Music1_f490b */
 
+/* >>> factory Music1_f4967 */
 static void adapt_Music1_f4967(ProbeState *s)
 {
 	uint16_t addr;
@@ -206,31 +321,44 @@ static void adapt_Music1_f4967(ProbeState *s)
 	s->e = gb_read8(addr);
 	s->d = gb_read8(addr + 1);
 }
+/* <<< factory Music1_f4967 */
 
+/* >>> factory Music1_GetChannelStackPointer */
 static void adapt_Music1_GetChannelStackPointer(ProbeState *s)
 {
 	uint16_t sp = Music1_GetChannelStackPointer(s->c);
 	s->hl = sp;
 }
+/* <<< factory Music1_GetChannelStackPointer */
 
+/* >>> factory Music1_SetChannelStackPointer */
 static void adapt_Music1_SetChannelStackPointer(ProbeState *s)
 {
 	Music1_SetChannelStackPointer(s->c, s->hl);
 }
+/* <<< factory Music1_SetChannelStackPointer */
 
+/* >>> factory Music1_PauseSong */
 /* ── Pause / resume ──────────────────────────────────────────────────── */
 
 static void adapt_Music1_PauseSong(ProbeState *s)
 { (void)s; Music1_PauseSong(); }
+/* <<< factory Music1_PauseSong */
 
+/* >>> factory Music1_ResumeSong */
 static void adapt_Music1_ResumeSong(ProbeState *s)
 { (void)s; Music1_ResumeSong(); }
+/* <<< factory Music1_ResumeSong */
 
+/* >>> factory Music1_BackupSong */
 static void adapt_Music1_BackupSong(ProbeState *s)
 { (void)s; Music1_BackupSong(); }
+/* <<< factory Music1_BackupSong */
 
+/* >>> factory Music1_LoadBackup */
 static void adapt_Music1_LoadBackup(ProbeState *s)
 { (void)s; Music1_LoadBackup(); }
+/* <<< factory Music1_LoadBackup */
 
 /* >>> factory _PauseSong */
 static void adapt__PauseSong(ProbeState *s)
@@ -321,6 +449,7 @@ static void adapt_Music1_PlayNextNote_pop(ProbeState *s)
 }
 /* <<< factory Music1_PlayNextNote_pop */
 
+/* >>> part probe_entries_music1 */
 const ProbeEntry probe_entries_music1[] = {
 	{ "Music1_EmptyFunc",         adapt_Music1_EmptyFunc },
 	{ "Music1_f404e",             adapt_Music1_f404e },
@@ -399,3 +528,4 @@ const ProbeEntry probe_entries_music1[] = {
 	{ "Music1_PlayNextNote_pop", adapt_Music1_PlayNextNote_pop },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_music1 */

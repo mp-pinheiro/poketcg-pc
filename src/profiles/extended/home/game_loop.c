@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/game_loop.h"
 #include "home/starter_deck.h"
 
@@ -7,6 +8,7 @@
 #include "home/lcd.h"
 #include "home/process_text.h"
 #include "home/tiles.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/text_ids.h"
 #include "generated/hram.h"
@@ -24,6 +26,7 @@
 #define rIE 0xFFFFu
 /* <<< factory statics */
 
+/* >>> factory SetupResetBackUpRamScreen */
 void SetupResetBackUpRamScreen(void)
 {
 	wTileMapFill = 0;
@@ -32,6 +35,7 @@ void SetupResetBackUpRamScreen(void)
 	SetDefaultConsolePalettes();
 	SetupText(0x38, 0x7F);
 }
+/* <<< factory SetupResetBackUpRamScreen */
 
 /* >>> factory InitSaveDataAndSetUppercase */
 void InitSaveDataAndSetUppercase(void)

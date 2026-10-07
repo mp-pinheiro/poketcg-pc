@@ -1,20 +1,27 @@
+/* >>> part includes */
 #include "home/decompress.h"
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part source_pos */
 static uint16_t source_pos(void)
 {
 	return (uint16_t)(gb_read8(wDecompSourcePosPtr_ADDR + 1) << 8
 			  | gb_read8(wDecompSourcePosPtr_ADDR));
 }
+/* <<< part source_pos */
 
+/* >>> part set_source_pos */
 static void set_source_pos(uint16_t pos)
 {
 	gb_write8(wDecompSourcePosPtr_ADDR, (uint8_t)pos);
 	gb_write8(wDecompSourcePosPtr_ADDR + 1, (uint8_t)(pos >> 8));
 }
+/* <<< part set_source_pos */
 
+/* >>> part repeat_byte */
 /* decompress.asm:81-91. Both accesses keep b at wDecompSecondaryBufferPtrHigh, so only
  * the low bytes move: they wrap inside the $100-byte page instead of spilling into the
  * next one, and the read precedes the write when the two low bytes are equal. */
@@ -32,7 +39,9 @@ static uint8_t repeat_byte(void)
 	gb_write8((uint16_t)(page << 8 | to), a);
 	return a;
 }
+/* <<< part repeat_byte */
 
+/* >>> factory InitDataDecompression */
 /* decompress.asm:5-31 */
 void InitDataDecompression(uint16_t de, uint8_t b)
 {
@@ -50,7 +59,9 @@ void InitDataDecompression(uint16_t de, uint8_t b)
 	for (unsigned low = 0; low < 0x100; low++)
 		gb_write8((uint16_t)(b << 8 | low), 0);
 }
+/* <<< factory InitDataDecompression */
 
+/* >>> factory DecompressData */
 /* decompress.asm:39-54. Nothing is reset here: the state is the caller's, carried
  * across calls. bc and a end at 0 as loop residue, not as outputs. */
 void DecompressData(uint16_t bc, uint16_t de)
@@ -62,7 +73,9 @@ void DecompressData(uint16_t bc, uint16_t de)
 		de = (uint16_t)(de + 1);
 	} while (--n);
 }
+/* <<< factory DecompressData */
 
+/* >>> factory DecompressData_Decompress */
 /* decompress.asm:72-159. A repeat command emits nybble + 2 bytes in total: one here,
  * plus the nybble + 1 that wDecompNumBytesToRepeat owes later calls. */
 uint8_t DecompressData_Decompress(void)
@@ -120,3 +133,4 @@ uint8_t DecompressData_Decompress(void)
 	set_source_pos(src);
 	return repeat_byte();
 }
+/* <<< factory DecompressData_Decompress */

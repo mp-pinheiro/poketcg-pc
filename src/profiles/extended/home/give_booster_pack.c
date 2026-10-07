@@ -1,5 +1,7 @@
+/* >>> part includes */
 #include "home/give_booster_pack.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/text_ids.h"
 #include "generated/constants.h"
@@ -26,10 +28,12 @@
  * resolved through poketcg/src/text/text_offsets.asm:940-943. */
 /* <<< factory statics */
 
+/* >>> factory _PauseMenu_Exit */
 /* engine/menus/give_booster_pack.asm:113. _PauseMenu_Exit is a bare ret. */
 void _PauseMenu_Exit(void)
 {
 }
+/* <<< factory _PauseMenu_Exit */
 
 /* >>> factory GiveBoosterPack */
 /* engine/menus/give_booster_pack.asm:1-38, the prefix that ends immediately

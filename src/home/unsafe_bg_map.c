@@ -1,8 +1,11 @@
+/* >>> part includes */
 #include "home/unsafe_bg_map.h"
 
 #include "home/empty_screen.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> factory UnsafeWriteDataBlockToBGMap0 */
 void UnsafeWriteDataBlockToBGMap0(uint16_t *hl, uint16_t *de)
 {
 	uint8_t x = gb_read8((*hl)++);
@@ -19,3 +22,4 @@ void UnsafeWriteDataBlockToBGMap0(uint16_t *hl, uint16_t *de)
 			gb_write8((*de)++, a);
 	} while (a);
 }
+/* <<< factory UnsafeWriteDataBlockToBGMap0 */

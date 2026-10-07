@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/deck_machine.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
 static void adapt_CheckIfSelectedDeckMachineEntryIsEmpty(ProbeState *s)
@@ -246,6 +248,7 @@ static void adapt_HandleDeckSaveMachineMenu(ProbeState *s)
 }
 /* <<< factory HandleDeckSaveMachineMenu */
 
+/* >>> part probe_entries_deck_machine */
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -276,3 +279,4 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "HandleDeckSaveMachineMenu", adapt_HandleDeckSaveMachineMenu },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_deck_machine */

@@ -1,17 +1,23 @@
+/* >>> part includes */
 #include "home/mail.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory GePCPackSelectionCoordinates */
 static void adapt_GePCPackSelectionCoordinates(ProbeState *s)
 {
 	PCPackCoordinates result = GePCPackSelectionCoordinates();
 	s->b = result.b;
 	s->c = result.c;
 }
+/* <<< factory GePCPackSelectionCoordinates */
 
+/* >>> factory TryGivePCPack */
 static void adapt_TryGivePCPack(ProbeState *s)
 {
 	TryGivePCPack(s->a);
 }
+/* <<< factory TryGivePCPack */
 
 /* >>> factory InitPCPacks */
 
@@ -145,6 +151,7 @@ static void adapt__PCMenu_ReadMail(ProbeState *s)
 }
 /* <<< factory _PCMenu_ReadMail */
 
+/* >>> part probe_entries_mail */
 const ProbeEntry probe_entries_mail[] = {
 	{ "TryGivePCPack", adapt_TryGivePCPack },
 	{ "GePCPackSelectionCoordinates", adapt_GePCPackSelectionCoordinates },
@@ -165,3 +172,4 @@ const ProbeEntry probe_entries_mail[] = {
 	{ "_PCMenu_ReadMail", adapt__PCMenu_ReadMail },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_mail */

@@ -1,10 +1,14 @@
+/* >>> part includes */
 #include "home/config.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory DrawConfigMenuCursor */
 static void adapt_DrawConfigMenuCursor(ProbeState *s)
 {
 	DrawConfigMenuCursor(s->a, s->c);
 }
+/* <<< factory DrawConfigMenuCursor */
 
 /* >>> factory GetConfigCursorPositions */
 static void adapt_GetConfigCursorPositions(ProbeState *s)
@@ -99,6 +103,7 @@ static void adapt__PauseMenu_Config(ProbeState *s)
 }
 /* <<< factory _PauseMenu_Config */
 
+/* >>> part probe_entries_config */
 const ProbeEntry probe_entries_config[] = {
 	{ "DrawConfigMenuCursor", adapt_DrawConfigMenuCursor },
 	{ "GetConfigCursorPositions", adapt_GetConfigCursorPositions },
@@ -114,3 +119,4 @@ const ProbeEntry probe_entries_config[] = {
 	{ "_PauseMenu_Config", adapt__PauseMenu_Config },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_config */

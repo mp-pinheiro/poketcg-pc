@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/starter_deck.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory CopyDeckNameAndCards */
 static void adapt_CopyDeckNameAndCards(ProbeState *s)
@@ -25,9 +27,11 @@ static void adapt__AddStarterDeck(ProbeState *s)
 }
 /* <<< factory _AddStarterDeck */
 
+/* >>> part probe_entries_starter_deck */
 const ProbeEntry probe_entries_starter_deck[] = {
 	{ "CopyDeckNameAndCards", adapt_CopyDeckNameAndCards },
 	{ "InitSaveData", adapt_InitSaveData },
 	{ "_AddStarterDeck", adapt__AddStarterDeck },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_starter_deck */

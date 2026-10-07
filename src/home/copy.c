@@ -1,7 +1,10 @@
+/* >>> part includes */
 #include "home/copy.h"
 
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> factory CopyGfxData */
 /* The wLCDC bit-7 path (copy.asm:6-23) matches .next_tile for every c != 0, but at
  * c == 0 it adds bc = $0000 (copy.asm:13,19) and never advances hl/de. This port always
  * takes .next_tile. */
@@ -21,7 +24,9 @@ void CopyGfxData(uint16_t *hl, uint16_t *de, uint8_t b, uint8_t c)
 	*hl = src;
 	*de = dst;
 }
+/* <<< factory CopyGfxData */
 
+/* >>> factory CopyDataHLtoDE */
 /* copy.asm:49-57. `dec bc / ld a, c / or b / jr nz` tests after the store, so
  * bc == 0 copies 65536 bytes rather than none. */
 void CopyDataHLtoDE(uint16_t *hl, uint16_t *de, uint16_t bc)
@@ -36,9 +41,12 @@ void CopyDataHLtoDE(uint16_t *hl, uint16_t *de, uint16_t bc)
 	*hl = src;
 	*de = dst;
 }
+/* <<< factory CopyDataHLtoDE */
 
+/* >>> factory CopyDataHLtoDE_SaveRegisters */
 /* copy.asm:38-46 */
 void CopyDataHLtoDE_SaveRegisters(uint16_t hl, uint16_t de, uint16_t bc)
 {
 	CopyDataHLtoDE(&hl, &de, bc);
 }
+/* <<< factory CopyDataHLtoDE_SaveRegisters */

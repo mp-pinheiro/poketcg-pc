@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/duel_menus.h"
 #include "home/play_area.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/switch_rom.h"
 #include "home/duel.h"

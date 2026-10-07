@@ -1,8 +1,11 @@
+/* >>> part includes */
 #include "home/indirect_dispatch.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+/* <<< part includes */
 
+/* >>> part DispatchIndirect */
 void DispatchIndirect(const char *site, uint16_t target)
 {
 	if (target == 0u)
@@ -11,3 +14,4 @@ void DispatchIndirect(const char *site, uint16_t target)
 	        site, (unsigned)target);
 	abort();
 }
+/* <<< part DispatchIndirect */

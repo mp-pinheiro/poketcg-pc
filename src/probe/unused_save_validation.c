@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/unused_save_validation.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory StubbedUnusedSaveDataValidation */
 static void adapt_StubbedUnusedSaveDataValidation(ProbeState *s)
@@ -28,9 +30,11 @@ static void adapt_UnusedSaveDataValidation(ProbeState *s)
 }
 /* <<< factory UnusedSaveDataValidation */
 
+/* >>> part probe_entries_unused_save_validation */
 const ProbeEntry probe_entries_unused_save_validation[] = {
 	{ "StubbedUnusedSaveDataValidation", adapt_StubbedUnusedSaveDataValidation },
 	{ "UnusedCalculateSaveDataValidationByte", adapt_UnusedCalculateSaveDataValidationByte },
 	{ "UnusedSaveDataValidation", adapt_UnusedSaveDataValidation },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_unused_save_validation */

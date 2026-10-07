@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/overworld_map.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
 static void adapt_OverworldMap_ContinuePlayerWalkingAnimation(ProbeState *s)
@@ -154,6 +156,7 @@ static void adapt_OverworldMap_Update(ProbeState *s)
 }
 /* <<< factory OverworldMap_Update */
 
+/* >>> part probe_entries_overworld_map */
 const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_ContinuePlayerWalkingAnimation", adapt_OverworldMap_ContinuePlayerWalkingAnimation },
 	{ "OverworldMap_NegateBC", adapt_OverworldMap_NegateBC },
@@ -176,3 +179,4 @@ const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_Update", adapt_OverworldMap_Update },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_overworld_map */

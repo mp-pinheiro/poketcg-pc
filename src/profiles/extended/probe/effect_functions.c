@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/effect_functions.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 
 
@@ -1546,6 +1548,7 @@ static void adapt_Barrier_DiscardEffect(ProbeState *s)
 /* >>> factory DestinyBond_DiscardEffect */
 static void adapt_DestinyBond_DiscardEffect(ProbeState *s) { (void)s; DestinyBond_DiscardEffect(); }
 /* <<< factory DestinyBond_DiscardEffect */
+/* >>> factory Ember_DiscardEffect */
 static void adapt_Ember_DiscardEffect(ProbeState *s) { (void)s; Ember_DiscardEffect(); }
 /* <<< factory Ember_DiscardEffect */
 /* >>> factory FireBlast_DiscardEffect */
@@ -4817,6 +4820,7 @@ static void adapt_HyperBeam_DiscardEffect(ProbeState *s)
 }
 /* <<< factory HyperBeam_DiscardEffect */
 
+/* >>> part probe_entries_effect_functions */
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5390,3 +5394,4 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HyperBeam_DiscardEffect", adapt_HyperBeam_DiscardEffect },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_effect_functions */

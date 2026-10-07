@@ -1,12 +1,15 @@
+/* >>> part includes */
 #include "home/switch_rom.h"
 
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/switch_rom.h"
 #include "generated/hram.h"
 /* <<< factory statics */
 
+/* >>> factory BankswitchROM */
 /* BankswitchROM:: ldh [hBankROM], a / ld [rROMB], a / ret
  * rROMB is the MBC5 low bank latch; g_rom_bank stands in for it. */
 void BankswitchROM(uint8_t bank)
@@ -14,6 +17,7 @@ void BankswitchROM(uint8_t bank)
 	hBankROM = bank;
 	mbc5_write(0x2000, bank);
 }
+/* <<< factory BankswitchROM */
 
 /* >>> factory BankpushROM */
 BankpushROMResult BankpushROM(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)

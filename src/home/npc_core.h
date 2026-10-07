@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_NPC_CORE_H
 #define POKETCG_HOME_NPC_CORE_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory CheckIfNPCIsRonald */
 uint8_t CheckIfNPCIsRonald(uint8_t a); /* returns the exit flag byte: $90 if Ronald, $80 if a==0, else $00 */

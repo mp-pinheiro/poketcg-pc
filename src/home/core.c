@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/core.h"
 #include <setjmp.h>
 #include <stdio.h>
@@ -16,6 +17,7 @@
 #include "debug_cheats.h"
 #endif
 #include "home/serial.h"
+/* <<< part includes */
 /* >>> factory statics */
 #define SYM_HP_OK 0x16u
 #define SYM_HP_NOK 0x17u
@@ -159,6 +161,7 @@ static uint32_t duel_save_total_size(void)
 #include "home/duel.h"
 #define SYM_0 0x20u
 #include "generated/hram.h"
+/* <<< factory statics */
 
 
 /* >>> factory CardPageSwitch_08 */
@@ -169,18 +172,23 @@ CardPageResult CardPageSwitch_08(void)
 }
 /* <<< factory CardPageSwitch_08 */
 
+/* >>> part includes_is_duelist_type */
 #include "home/core.h"
 
 
 #include "home/switch_sram.h"
+/* <<< part includes_is_duelist_type */
 
 
+/* >>> part is_duelist_type */
 static uint8_t is_duelist_type(uint8_t a)
 {
 	return (uint8_t)((a == DUELIST_TYPE_LINK_OPP) ||
 		((a & DUELIST_TYPE_AI_OPP) != 0u));
 }
+/* <<< part is_duelist_type */
 
+/* >>> part includes_DUELVARS_PRIZE_CARDS */
 #include "home/card_color.h"
 #include "home/duel.h"
 
@@ -190,13 +198,16 @@ static uint8_t is_duelist_type(uint8_t a)
 #include "home/card_color.h"
 #include "home/duel.h"
 #include "home/duel_core.h"
+/* <<< part includes_DUELVARS_PRIZE_CARDS */
+/* >>> part DUELVARS_PRIZE_CARDS */
 #define DUELVARS_PRIZE_CARDS 0x3Cu
 
 #define ANIMATIONS_ADDR Animations_ADDR
+/* <<< part DUELVARS_PRIZE_CARDS */
 
-/* SwitchCardPage dispatches the page-zero and overview handlers ported here. */
 
 /* >>> factory CardPageSwitch_PokemonOverviewOrDescription */
+/* SwitchCardPage dispatches the page-zero and overview handlers ported here. */
 /* core.asm:3797-3800 */
 CardPageResult CardPageSwitch_PokemonOverviewOrDescription(void)
 {
@@ -204,6 +215,7 @@ CardPageResult CardPageSwitch_PokemonOverviewOrDescription(void)
 }
 /* <<< factory CardPageSwitch_PokemonOverviewOrDescription */
 
+/* >>> part page_exists */
 /* Every handler in the table exits through `or`, never `scf`, except the four
  * that return an explicit page, so a carry of zero is the whole conversion.
  * GoToFirstOrNextCardPage recomputes Z from `a` with its own `or a`
@@ -212,6 +224,7 @@ static CardPageResult page_exists(CardPageExistsResult r)
 {
 	return (CardPageResult){r.a, 0u};
 }
+/* <<< part page_exists */
 
 /* >>> factory SwitchCardPage */
 /* core.asm:3769-3790. All sixteen table entries dispatch; the port answered
@@ -267,6 +280,7 @@ CardPageResult CardPageSwitch_00(void)
 }
 /* <<< factory CardPageSwitch_00 */
 
+/* >>> part includes_MUSCLES_FOR_BRAINS_DECK_ID */
 /* SwitchCardPage dispatches the page-zero and overview handlers ported here. */
 
 #include "home/duel_core.h"
@@ -296,7 +310,9 @@ CardPageResult CardPageSwitch_00(void)
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/random.h"
+/* <<< part includes_MUSCLES_FOR_BRAINS_DECK_ID */
 
+/* >>> part MUSCLES_FOR_BRAINS_DECK_ID */
 /* Opponent deck IDs (deck_constants.asm). These six non-boss decks are the ones
  * whose AI skips a pending Trainer-card action half the time instead of a
  * quarter of the time. */
@@ -306,12 +322,18 @@ CardPageResult CardPageSwitch_00(void)
 #define BOOM_BOOM_SELFDESTRUCT_DECK_ID  0x26u
 #define KALEIDOSCOPE_DECK_ID            0x2au
 #define RESHUFFLE_DECK_ID               0x33u
+/* <<< part MUSCLES_FOR_BRAINS_DECK_ID */
 
+/* >>> part includes_PlayInOrderResult */
 #include "home/duel.h"
 #include "mem.h"
+/* <<< part includes_PlayInOrderResult */
 
+/* >>> part PlayInOrderResult */
 typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; } PlayInOrderResult;
+/* <<< part PlayInOrderResult */
 
+/* >>> part play_pokemon_card_in_order */
 /* core.asm:1201-1228 (.PlayPokemonCardInOrder). de enters pointing at the two-byte AI
  * priority-list pointer field; the field's first two bytes ARE the list pointer
  * (ld c,[de] / inc de / ld d,[de] / ld e,c recombine de = field[1]<<8|field[0]).
@@ -339,17 +361,23 @@ static PlayInOrderResult play_pokemon_card_in_order(uint16_t *hl, uint16_t de)
 		return (PlayInOrderResult){placed.a, (uint8_t)((placed.a == 0x00u) ? 0x80u : 0x00u), de, *hl};
 	}
 }
+/* <<< part play_pokemon_card_in_order */
 
+/* >>> part CardPageEnergyResult */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
 } CardPageEnergyResult;
+/* <<< part CardPageEnergyResult */
 
+/* >>> part includes_kPlayAreaLocationTileNumbers */
 #include "home/save.h"
 #include "home/script.h"
 #include "home/switch_sram.h"
+/* <<< part includes_kPlayAreaLocationTileNumbers */
 
 
+/* >>> part kPlayAreaLocationTileNumbers */
 static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 	0xe0u, 0xe1u, 0xe2u, 0x00u,
 	0xe3u, 0xe4u, 0xe5u, 0x00u,
@@ -358,7 +386,9 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 	0xe3u, 0xe4u, 0xe8u, 0x00u,
 	0xe3u, 0xe4u, 0xe9u, 0x00u,
 };
+/* <<< part kPlayAreaLocationTileNumbers */
 
+/* >>> part includes_DUELVARS_HAND */
 #include "home/empty_screen.h"
 #include "home/tiles.h"
 
@@ -421,9 +451,13 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/duel_core_state.h"
+/* <<< part includes_DUELVARS_HAND */
 
+/* >>> part DUELVARS_HAND */
 #define DUELVARS_HAND 0x42u
+/* <<< part DUELVARS_HAND */
 
+/* >>> part includes_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #include "home/empty_screen.h"
 #include "home/bg_map.h"
 #include "home/core.h"
@@ -436,10 +470,14 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/duel.h"
 #include "home/print_text.h"
 #include "mem.h"
+/* <<< part includes_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 
+/* >>> part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 
+/* >>> part includes_DUEL_OTHER_GFX */
 #include "home/core.h"
 #include "home/empty_screen.h"
 #include "home/bg_map.h"
@@ -486,8 +524,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "home/tiles.h"
 #include "generated/wram.h"
+/* <<< part includes_DUEL_OTHER_GFX */
+/* >>> part DUEL_OTHER_GFX */
 #define DUEL_OTHER_GFX DuelOtherGraphics_ADDR
+/* <<< part DUEL_OTHER_GFX */
 
+/* >>> part includes_DUELVARS_PRIZES */
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/wram.h"
@@ -495,27 +537,39 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/duel.h"
 #include "home/random.h"
 #include "generated/wram.h"
+/* <<< part includes_DUELVARS_PRIZES */
+/* >>> part DUELVARS_PRIZES */
 #define DUELVARS_PRIZES 0xecu
+/* <<< part DUELVARS_PRIZES */
 
+/* >>> part includes_DUELVARS_BENCH */
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+/* <<< part includes_DUELVARS_BENCH */
 
+/* >>> part DUELVARS_BENCH */
 #define DUELVARS_BENCH 0xbcu
 
 #define SYM_ASLEEP 0x09u
 #define SYM_CONFUSED 0x0au
 #define SYM_PARALYZED 0x0bu
+/* <<< part DUELVARS_BENCH */
 
+/* >>> part includes_SPRITE_ANIM_FLAG_X_INVERTED_MASK */
 #include "home/core.h"
 #include "home/load_animation.h"
 #include "mem.h"
+/* <<< part includes_SPRITE_ANIM_FLAG_X_INVERTED_MASK */
+/* >>> part SPRITE_ANIM_FLAG_X_INVERTED_MASK */
 #define SPRITE_ANIM_FLAG_X_INVERTED_MASK 0x01u
 #define SPRITE_ANIM_FLAG_Y_INVERTED_MASK 0x02u
 #define SPRITE_ANIM_FLAG_X_FLIP_MASK 0x20u
 #define SPRITE_ANIM_FLAG_Y_FLIP_MASK 0x40u
+/* <<< part SPRITE_ANIM_FLAG_X_INVERTED_MASK */
 
+/* >>> part includes_PracticeDuelText_SamTurn4 */
 #include "home/core.h"
 #include "home/menus.h"
 #include "home/empty_screen.h"
@@ -541,8 +595,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/lcd.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_PracticeDuelText_SamTurn4 */
+/* >>> part PracticeDuelText_SamTurn4 */
 #define PracticeDuelText_SamTurn4 PracticeDuelText_SamTurn4_ADDR
+/* <<< part PracticeDuelText_SamTurn4 */
 
+/* >>> part includes_SCREEN_WIDTH */
 #include "home/core.h"
 #include "home/tiles.h"
 #include "home/menus.h"
@@ -556,8 +614,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/process_text.h"
 #include "home/tiles.h"
 #include "generated/wram.h"
+/* <<< part includes_SCREEN_WIDTH */
+/* >>> part SCREEN_WIDTH */
 #define SCREEN_WIDTH 20u
+/* <<< part SCREEN_WIDTH */
 
+/* >>> part includes_SPRITE_ANIM_FLAG_UNSKIPPABLE */
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/card_color.h"
@@ -570,8 +632,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/load_animation.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_SPRITE_ANIM_FLAG_UNSKIPPABLE */
+/* >>> part SPRITE_ANIM_FLAG_UNSKIPPABLE */
 #define SPRITE_ANIM_FLAG_UNSKIPPABLE (1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)
+/* <<< part SPRITE_ANIM_FLAG_UNSKIPPABLE */
 
+/* >>> part includes_SELECT_COMPUTER_OPPONENT_DATA_ADDR_580 */
 #include "home/core.h"
 #include "mem.h"
 
@@ -580,18 +646,30 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_SELECT_COMPUTER_OPPONENT_DATA_ADDR_580 */
+/* >>> part SELECT_COMPUTER_OPPONENT_DATA_ADDR_580 */
 #define SELECT_COMPUTER_OPPONENT_DATA_ADDR_580 SelectComputerOpponentData_ADDR
+/* <<< part SELECT_COMPUTER_OPPONENT_DATA_ADDR_580 */
 
+/* >>> part includes_PLAY_AREA_BENCH_1_730 */
 #include "home/core.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_PLAY_AREA_BENCH_1_730 */
+/* >>> part PLAY_AREA_BENCH_1_730 */
 #define PLAY_AREA_BENCH_1_730 0x01u
+/* <<< part PLAY_AREA_BENCH_1_730 */
 
+/* >>> part includes_SPRITE_ANIM_89_850 */
 #include "home/core.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_SPRITE_ANIM_89_850 */
+/* >>> part SPRITE_ANIM_89_850 */
 #define SPRITE_ANIM_89_850 0x59u
+/* <<< part SPRITE_ANIM_89_850 */
 
+/* >>> part includes_B_PAD_B */
 #include "home/core.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -634,12 +712,16 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_B_PAD_B */
+/* >>> part B_PAD_B */
 #define B_PAD_B 1u
 #define B_PAD_RIGHT 4u
 #define B_PAD_LEFT 5u
 #define B_PAD_UP 6u
 #define B_PAD_DOWN 7u
+/* <<< part B_PAD_B */
 
+/* >>> part includes_SYM_ATK_DESCR */
 #include "home/core.h"
 #include "home/common.h"
 #include "home/duel.h"
@@ -657,26 +739,36 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/bg_map.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes_SYM_ATK_DESCR */
+/* >>> part SYM_ATK_DESCR */
 #define SYM_ATK_DESCR 0x0Eu
 #define SYM_PLUS_OFFSET 0x2Au
+/* <<< part SYM_ATK_DESCR */
 
+/* >>> part includes_DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
 #include "home/core.h"
+/* <<< part includes_DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
 
+/* >>> part DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
 #define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xdau
 #define DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER 0xe0u
 #define DUELVARS_ARENA_CARD_STAGE 0xceu
 #define SYM_Lv 0x11u
 #define SYM_PLUSPOWER 0x14u
 #define SYM_DEFENDER 0x15u
+/* <<< part DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
 
+/* >>> part kFaceDownCardTileNumbers */
 static const uint8_t kFaceDownCardTileNumbers[8] = {
 	0xd0u, 0x02u, /* basic */
 	0xd4u, 0x02u, /* stage 1 */
 	0xd8u, 0x01u, /* stage 2 */
 	0xdcu, 0x01u, /* stage 2 special */
 };
+/* <<< part kFaceDownCardTileNumbers */
 
 
+/* >>> part includes_DECK_SIZE_490 */
 #include "home/core.h"
 #include "home/play_animation.h"
 #include "home/frames.h"
@@ -689,6 +781,8 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_DECK_SIZE_490 */
+/* >>> part DECK_SIZE_490 */
 #define DECK_SIZE_490 0x3Cu
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK_490 0xBAu
 #define DUEL_ANIM_OPP_SHUFFLE_490 0x52u
@@ -696,16 +790,22 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define PLAYER_TURN_490 0xC2u
 #define SHUFFLE_DECK_490 0x09u
 #define FLAG_C_490 0x10u
+/* <<< part DECK_SIZE_490 */
 
+/* >>> part includes_SYM_E */
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/print_text.h"
 #include "home/bg_map.h"
 #include "home/empty_screen.h"
 #include "generated/wram.h"
+/* <<< part includes_SYM_E */
+/* >>> part SYM_E */
 #define SYM_E 0x12u
 #define SYM_HP 0x10u
+/* <<< part SYM_E */
 
+/* >>> part includes_V0_TILES1 */
 #include "home/duel.h"
 #include "home/core.h"
 #include "generated/wram.h"
@@ -772,15 +872,23 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 #include "home/card_data.h"
 #include "generated/hram.h"
+/* <<< part includes_V0_TILES1 */
+/* >>> part V0_TILES1 */
 #define V0_TILES1 0x8800u
+/* <<< part V0_TILES1 */
 
+/* >>> part includes_PAD_SELECT */
 #include "home/trainer_cards.h"
 
 #include "generated/hram.h"
 #include "home/core.h"
+/* <<< part includes_PAD_SELECT */
+/* >>> part PAD_SELECT */
 #define PAD_SELECT 0x04u
 #define PAD_CTRL_PAD 0xF0u
+/* <<< part PAD_SELECT */
 
+/* >>> part includes_LARGE_CARD_TILE_DATA */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/core.h"
@@ -814,8 +922,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/credits_sequence_commands.h"
 #include "home/duel_core.h"
 #include "home/tiles.h"
+/* <<< part includes_LARGE_CARD_TILE_DATA */
+/* >>> part LARGE_CARD_TILE_DATA */
 #define LARGE_CARD_TILE_DATA LargeCardTileData_ADDR
+/* <<< part LARGE_CARD_TILE_DATA */
 
+/* >>> part includes_SYM_POKEMON */
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/text_box.h"
@@ -833,16 +945,24 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes_SYM_POKEMON */
+/* >>> part SYM_POKEMON */
 #define SYM_POKEMON 0x0Du
 #define SYM_PRIZE 0x30u
 #define TILEMAP_WIDTH 32u
+/* <<< part SYM_POKEMON */
 
+/* >>> part includes_DUELVARS_DUELIST_TYPE */
 #include "mem.h"
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
+/* <<< part includes_DUELVARS_DUELIST_TYPE */
+/* >>> part DUELVARS_DUELIST_TYPE */
 #define DUELVARS_DUELIST_TYPE 0xF1u
+/* <<< part DUELVARS_DUELIST_TYPE */
 
+/* >>> part includes_CARD_LIST_PARAMETERS */
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/text_box.h"
@@ -859,13 +979,17 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 #include "home/menus.h"
 #include "home/print_text.h"
+/* <<< part includes_CARD_LIST_PARAMETERS */
+/* >>> part CARD_LIST_PARAMETERS */
 #define CARD_LIST_PARAMETERS CardListParameters_ADDR
 /* duel/core.asm:3380, the eight menu parameter bytes CardListItemSelectionMenu
  * passes to InitializeMenuParameters. The port held 0x0E01, which is that
  * table's own first two bytes read as a little-endian word rather than its
  * address (01:5708), so the read landed in SerialHandleSend's code. */
 #define ITEM_SELECTION_MENU_PARAMETERS ItemSelectionMenuParameters_ADDR
+/* <<< part CARD_LIST_PARAMETERS */
 
+/* >>> part includes_NoBasicPokemonCardListParameters */
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/menus.h"
@@ -913,8 +1037,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 #include "home/menus.h"
 #include "home/print_text.h"
+/* <<< part includes_NoBasicPokemonCardListParameters */
+/* >>> part NoBasicPokemonCardListParameters */
 #define NoBasicPokemonCardListParameters NoBasicPokemonCardListParameters_ADDR
+/* <<< part NoBasicPokemonCardListParameters */
 
+/* >>> part includes_EnergyDiscardCardListParameters */
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/menus.h"
@@ -932,14 +1060,22 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/text_box.h"
 #include "home/lcd.h"
 #include "home/duel.h"
+/* <<< part includes_EnergyDiscardCardListParameters */
+/* >>> part EnergyDiscardCardListParameters */
 #define EnergyDiscardCardListParameters EnergyDiscardCardListParameters_ADDR
+/* <<< part EnergyDiscardCardListParameters */
 
+/* >>> part includes_PAD_RIGHT */
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/core.h"
+/* <<< part includes_PAD_RIGHT */
+/* >>> part PAD_RIGHT */
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
+/* <<< part PAD_RIGHT */
 
+/* >>> part includes_SYM_SLASH */
 #include "mem.h"
 #include "generated/wram.h"
 #include "home/frames.h"
@@ -947,8 +1083,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/menus.h"
 #include "home/bg_map.h"
 #include "home/core.h"
+/* <<< part includes_SYM_SLASH */
+/* >>> part SYM_SLASH */
 #define SYM_SLASH 0x2Eu
+/* <<< part SYM_SLASH */
 
+/* >>> part includes_PAD_UP */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -982,9 +1122,13 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 
 #include "home/core.h"
 #include "home/menus.h"
+/* <<< part includes_PAD_UP */
 
+/* >>> part PAD_UP */
 #define PAD_UP 0x40u
 #define PAD_DOWN 0x80u
+/* <<< part PAD_UP */
+/* >>> part includes_SYM_COLORLESS */
 #include "generated/wram.h"
 
 #include "home/core.h"
@@ -1013,17 +1157,23 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 #include "home/bg_map.h"
 #include "mem.h"
+/* <<< part includes_SYM_COLORLESS */
+/* >>> part SYM_COLORLESS */
 #define SYM_COLORLESS 0x07u
 #define CARD_PAGE_RETREAT_WR_TEXT_DATA CardPageRetreatWRTextData_ADDR
 #define CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA CardPageLvHPNoTextTileData_ADDR
 #define CARD_PAGE_NO_TEXT_TILE_DATA CardPageNoTextTileData_ADDR
+/* <<< part SYM_COLORLESS */
 
+/* >>> part includes_PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK */
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/text_box.h"
 #include "home/tiles.h"
 #include "home/print_text.h"
+/* <<< part includes_PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK */
 
+/* >>> part PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK */
 /* HEADER_ENERGY is defined in the existing core statics. */
 
 /* 01:52c5 PracticeDuelTextPointerTable (poketcg/poketcg.sym). `ld hl,
@@ -1031,8 +1181,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
  * bank $01 for every callsite, so the pointer pair is read from there. */
 #define PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK 0x01u
 #define PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR PracticeDuelTextPointerTable_ADDR
+/* <<< part PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK */
 
 
+/* >>> part includes_COIN_TOSS_7847 */
 #include "home/core.h"
 #include "home/sgb.h"
 #include "generated/wram.h"
@@ -1055,7 +1207,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/sound.h"
 #include "home/text_box.h"
 #include "home/tiles.h"
+/* <<< part includes_COIN_TOSS_7847 */
 
+/* >>> part COIN_TOSS_7847 */
 #define COIN_TOSS_7847 0x06u
 #define DUELIST_TYPE_PLAYER_7847 0x00u
 #define DUELTYPE_LINK_7847 0x01u
@@ -1074,7 +1228,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define TILE_CIRCLE_7847 0x30u
 #define FLAG_C_7847 0x10u
 #define FLAG_Z_7847 0x80u
+/* <<< part COIN_TOSS_7847 */
 
+/* >>> part TossCoin_CheckTransmissionError */
 /* core.asm:8046-8054 (_TossCoin.CheckTransmissionError). The ROM's error
  * branch never pops the `push af` it entered with: DuelTransmissionError
  * reloads sp from wDuelReturnAddress and returns into the outer duel loop, so
@@ -1086,7 +1242,9 @@ static void TossCoin_CheckTransmissionError(void)
 	FinishQueuedAnimations();
 	DuelTransmissionError();
 }
+/* <<< part TossCoin_CheckTransmissionError */
 
+/* >>> part TossCoin_WaitSerialByteRecv */
 /* core.asm:8041-8045 (_TossCoin.wait_serial_byte_recv): one frame at a time
  * until the link partner's byte has arrived; returns that byte. */
 static uint8_t TossCoin_WaitSerialByteRecv(void)
@@ -1099,7 +1257,9 @@ static uint8_t TossCoin_WaitSerialByteRecv(void)
 	TossCoin_CheckTransmissionError();
 	return recv.a;
 }
+/* <<< part TossCoin_WaitSerialByteRecv */
 
+/* >>> part TossCoin_SendSerialByte */
 /* core.asm:7999-8006 (_TossCoin.SendSerialByte): stash the byte in hff96 and,
  * in a link duel only, hand it to the serial ring. */
 static void TossCoin_SendSerialByte(uint8_t a)
@@ -1110,7 +1270,9 @@ static void TossCoin_SendSerialByte(uint8_t a)
 	(void)SerialSendByte(hff96);
 	TossCoin_CheckTransmissionError();
 }
+/* <<< part TossCoin_SendSerialByte */
 
+/* >>> part TossCoin_GetOpponentCoinResult */
 /* core.asm:8008-8022 (_TossCoin.GetOpponentCoinResult): an AI opponent waits
  * out the toss animation and keeps the result generated beforehand, a link
  * opponent sends its own result over serial. */
@@ -1124,7 +1286,9 @@ static uint8_t TossCoin_GetOpponentCoinResult(uint8_t a)
 	} while (CheckAnyAnimationPlaying().f & FLAG_C_7847);
 	return hff96;
 }
+/* <<< part TossCoin_GetOpponentCoinResult */
 
+/* >>> part TossCoin_WaitForOpponent */
 /* core.asm:8027-8039 (_TossCoin.WaitForOpponent): the AI delays 30 frames, a
  * link opponent announces itself with a serial byte. Both callsites drop the
  * returned hff96, so this reports nothing. */
@@ -1142,7 +1306,9 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 		frames = (uint8_t)(frames - 1u);
 	} while (frames != 0u);
 }
+/* <<< part TossCoin_WaitForOpponent */
 
+/* >>> part includes_OPP_EFFECTCMDTYPE_BEFORE_DAMAGE */
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/duel.h"
@@ -1225,15 +1391,23 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 
 #include "home/effect_commands.h"
 #include "home/serial.h"
+/* <<< part includes_OPP_EFFECTCMDTYPE_BEFORE_DAMAGE */
+/* >>> part OPP_EFFECTCMDTYPE_BEFORE_DAMAGE */
 #define OPP_EFFECTCMDTYPE_BEFORE_DAMAGE 0x03u
 #define OPP_EFFECTCMDTYPE_DISCARD_ENERGY 0x06u
+/* <<< part OPP_EFFECTCMDTYPE_BEFORE_DAMAGE */
 
+/* >>> part includes_OPP_METRONOME_CNF_SLP_PRZ */
 #include "home/menus.h"
 #include "home/serial.h"
+/* <<< part includes_OPP_METRONOME_CNF_SLP_PRZ */
+/* >>> part OPP_METRONOME_CNF_SLP_PRZ */
 #define OPP_METRONOME_CNF_SLP_PRZ 0x0Fu
 #define OPP_METRONOME_CONFUSED 0x01u
 #define OPP_METRONOME_ARENA_STATUS 0xF0u
+/* <<< part OPP_METRONOME_CNF_SLP_PRZ */
 
+/* >>> part includes_SYM_DOT */
 #include "home/core.h"
 #include "home/play_animation.h"
 #include "home/frames.h"
@@ -1268,8 +1442,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "mem.h"
 #include "home/core.h"
 #include "home/duel.h"
+/* <<< part includes_SYM_DOT */
 
+/* >>> part SYM_DOT */
 #define SYM_DOT 0x2Au
+/* <<< part SYM_DOT */
+/* >>> part includes_CARD_PAGE_LENGTH_WEIGHT_TEXT_DATA */
 #include "generated/wram.h"
 #include "home/bg_map.h"
 #include "home/core.h"
@@ -1284,7 +1462,9 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/process_text.h"
 #include "home/tiles.h"
 #include "mem.h"
+/* <<< part includes_CARD_PAGE_LENGTH_WEIGHT_TEXT_DATA */
 
+/* >>> part CARD_PAGE_LENGTH_WEIGHT_TEXT_DATA */
 /* engine/duel/core.asm:4645 and 4650, both in bank 1. CardRarityTextIDs is
  * $5E14 (already measured for DrawCardPageSet2AndRarityIcons, whose contract
  * compares the hl it returns). CardPageLvHPTextTileData is the 9 bytes ahead of
@@ -1295,7 +1475,9 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define CARD_PAGE_LV_HP_TEXT_TILE_DATA CardPageLvHPTextTileData_ADDR
 
 #define CARD_PAGE_DESCRIPTION_LINE_LENGTH 19u
+/* <<< part CARD_PAGE_LENGTH_WEIGHT_TEXT_DATA */
 
+/* >>> part includes_DUEL_ANIM_SLEEP_7027 */
 #include "home/frames.h"
 #include "home/credits_sequence_commands.h"
 #include "home/lcd.h"
@@ -1323,14 +1505,18 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/card_data.h"
 #include "home/coin_toss.h"
 #include "home/menus.h"
+/* <<< part includes_DUEL_ANIM_SLEEP_7027 */
 
+/* >>> part DUEL_ANIM_SLEEP_7027 */
 /* HandleSleepCheck (core.asm:7027). ASLEEP, CNF_SLP_PRZ, DOUBLE_POISONED, TX_END
  * and FLAG_C are already defined earlier in this statics block, so only the two
  * animation indices and the three text ids are missing. The indices are suffixed
  * because DUEL_ANIM_* names are added per routine in this module. */
 #define DUEL_ANIM_SLEEP_7027 0x03u
 #define DUEL_ANIM_HEAL_7027  0x3Eu
+/* <<< part DUEL_ANIM_SLEEP_7027 */
 
+/* >>> part includes_SET_LINK_OPPONENT_TURN_FRAME_FUNCTION */
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/menus.h"
@@ -1389,8 +1575,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/wram.h"
 #include "home/script.h"
 #include "mem.h"
+/* <<< part includes_SET_LINK_OPPONENT_TURN_FRAME_FUNCTION */
+/* >>> part SET_LINK_OPPONENT_TURN_FRAME_FUNCTION */
 #define SET_LINK_OPPONENT_TURN_FRAME_FUNCTION LinkOpponentTurnFrameFunction_ADDR
+/* <<< part SET_LINK_OPPONENT_TURN_FRAME_FUNCTION */
 
+/* >>> part includes_PLAY_POKEMON_CARD_BASIC */
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/duel_menus.h"
@@ -1471,7 +1661,9 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/serial.h"
 #include "home/substatus.h"
 #include "mem.h"
+/* <<< part includes_PLAY_POKEMON_CARD_BASIC */
 
+/* >>> part PLAY_POKEMON_CARD_BASIC */
 #define PLAY_POKEMON_CARD_BASIC 0x00u
 #define PLAY_POKEMON_CARD_ARENA_STAGE 0xCEu
 #define PLAY_POKEMON_CARD_NUM_POKEMON 0xEFu
@@ -1483,7 +1675,7 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT 0x00B3u
 #define PLAY_POKEMON_CARD_NO_SPACE_TEXT 0x00B2u
 #define PLAY_POKEMON_CARD_PLACED_TEXT 0x0061u
-/* <<< factory statics */
+/* <<< part PLAY_POKEMON_CARD_BASIC */
 
 /* >>> factory DrawHPBar */
 void DrawHPBar(uint8_t d, uint8_t e)
@@ -1747,6 +1939,7 @@ CheckSkipDelayAllowedResult CheckSkipDelayAllowed(uint8_t f, uint8_t b, uint8_t 
 }
 /* <<< factory CheckSkipDelayAllowed */
 
+/* >>> part DispatchOppAction */
 /* core.asm:6246-6247: JumpToFunctionInTable(OppActionTable), core.asm:6487.
  * $08 skips OppAction_BeginUseAttack's own HRAM preamble in C, so the
  * dispatch supplies d/e from hTempCardIndex_ff9f/hTemp_ffa0 itself. */
@@ -1785,6 +1978,7 @@ static void DispatchOppAction(uint8_t action, uint8_t b, uint8_t c, uint8_t d, u
 		abort();
 	}
 }
+/* <<< part DispatchOppAction */
 
 /* >>> factory AIMakeDecision */
 /* core.asm:6229-6263 */
@@ -2671,7 +2865,7 @@ uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a)
 }
 /* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
 
-/* >>> factory GetDamageNumberChars.ConvertDigitToCharTile */
+/* >>> factory GetDamageNumberChars_ConvertDigitToCharTile */
 DamageDigitResult GetDamageNumberChars_ConvertDigitToCharTile(uint16_t bc, uint16_t de, uint16_t hl)
 {
 	uint8_t chr = SPRITE_ANIM_79 - 1u;
@@ -2699,7 +2893,7 @@ DamageDigitResult GetDamageNumberChars_ConvertDigitToCharTile(uint16_t bc, uint1
 		| (((uint16_t)hi < (uint16_t)b + borrow) ? 0x10u : 0u));
 	return (DamageDigitResult){new_hi, f, de, (uint16_t)(((uint16_t)new_hi << 8) | new_lo)};
 }
-/* <<< factory GetDamageNumberChars.ConvertDigitToCharTile */
+/* <<< factory GetDamageNumberChars_ConvertDigitToCharTile */
 
 /* >>> factory GetDamageNumberChars */
 void GetDamageNumberChars(void)
@@ -3298,6 +3492,7 @@ ApplyCardCGBAttributesResult ApplyCardCGBAttributes(uint8_t a, uint16_t de)
 	gb_write8(0xFF4Fu, 0u);
 	return (ApplyCardCGBAttributesResult){8u, 0u, hl};
 }
+/* <<< factory ApplyCardCGBAttributes */
 
 
 /* >>> factory ApplyStatusConditionToArenaPokemon */
@@ -3378,6 +3573,7 @@ void DisplayAttackPage(void)
 		break;
 	}
 }
+/* <<< factory DisplayAttackPage */
 /* >>> factory DisplayCardPage */
 /* core.asm:3665-3701: CardPageDisplayPointerTable indexed by wCardPageNumber.
  * The page routines read wLoadedCard1 and the page number; their register
@@ -4101,6 +4297,7 @@ ShuffleDeckAndDrawSevenCardsResult ShuffleDeckAndDrawSevenCards(void)
 	                : (ShuffleDeckAndDrawSevenCardsResult){0u, 0x90u};
 }
 /* <<< factory ShuffleDeckAndDrawSevenCards */
+/* >>> factory HandleDuelSetup */
 HandleDuelSetupResult HandleDuelSetup(void)
 {
 retry:
@@ -4220,6 +4417,7 @@ retry:
 	ExchangeRNGResult rng = ExchangeRNG(0u, 0u, 0u, 0u);
 	return (HandleDuelSetupResult){(rng.a == 0u) ? FLAG_Z : 0u};
 }
+/* <<< factory HandleDuelSetup */
 
 /* >>> factory WriteTwoDigitNumberInTxSymbol_PadSpace */
 void WriteTwoDigitNumberInTxSymbol_PadSpace(
@@ -6334,7 +6532,9 @@ void DisplayPracticeDuelPlayerHandScreen(void)
 }
 /* <<< factory DisplayPracticeDuelPlayerHandScreen */
 
+/* >>> part DUEL_E_AND_HP_TILE_DATA */
 #define DUEL_E_AND_HP_TILE_DATA DuelEAndHPTileData_ADDR
+/* <<< part DUEL_E_AND_HP_TILE_DATA */
 /* >>> factory DrawDuelMainScene */
 void DrawDuelMainScene(void)
 {
@@ -6855,6 +7055,7 @@ void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t
 }
 /* <<< factory OpenCardPage */
 
+/* >>> factory OpenCardPage_input_loop */
 void OpenCardPage_input_loop(uint8_t b)
 {
 	for (;;) {
@@ -6876,6 +7077,7 @@ void OpenCardPage_input_loop(uint8_t b)
 			DisplayCardPageOnLeftOrRightPressed(pressed);
 	}
 }
+/* <<< factory OpenCardPage_input_loop */
 
 /* >>> factory DisplayCardDetailScreen */
 WaitResult DisplayCardDetailScreen(uint8_t a, uint16_t hl)
@@ -7002,8 +7204,10 @@ void OpenActivePokemonScreen(void)
 }
 /* <<< factory OpenActivePokemonScreen */
 
+/* >>> part PLAY_AREA_PARAMS_INCLUDED */
 #define PLAY_AREA_PARAMS_INCLUDED PlayAreaScreenMenuParameters_ActivePokemonIncluded_ADDR
 #define PLAY_AREA_PARAMS_EXCLUDED PlayAreaScreenMenuParameters_ActivePokemonExcluded_ADDR
+/* <<< part PLAY_AREA_PARAMS_INCLUDED */
 /* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
 /* core.asm:5618-5675. Carry (f bit 4) is the B press that leaves without a
  * power; a chosen power returns with it clear and hTemp_ffa0 holding the
@@ -8209,7 +8413,7 @@ void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_
 }
 /* <<< factory DisplayDrawOneCardScreen */
 
- /* >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+/* >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
  void PlayShuffleAndDrawCardsAnimation_TurnDuelist(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
  {
  	uint8_t shuffle = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_SHUFFLE_490 : DUEL_ANIM_OPP_SHUFFLE_490;
@@ -8223,7 +8427,7 @@ void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_
  	(void)hl;
  	PlayShuffleAndDrawCardsAnimation(shuffle, draw, (uint8_t)(Drew7CardsText >> 8), (uint8_t)Drew7CardsText, ShufflesTheDeckText);
  }
- /* <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+/* <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
 
 /* >>> factory OppAction_ExecuteTrainerCardEffectCommands */
 void OppAction_ExecuteTrainerCardEffectCommands(uint8_t b, uint8_t d, uint8_t e)
@@ -9213,11 +9417,17 @@ void StartDuel_VSLinkOpp(void)
 }
 /* <<< factory StartDuel_VSLinkOpp */
 
+/* >>> part LINK_OPP_TURN_CHECK_PLAY_AREA */
 #define LINK_OPP_TURN_CHECK_PLAY_AREA 0x0Au
 #define LINK_OPP_TURN_NUM_OPP_ACTIONS 0x17u
+/* <<< part LINK_OPP_TURN_CHECK_PLAY_AREA */
 
+/* >>> part g_link_opponent_turn_return */
 jmp_buf g_link_opponent_turn_return;
+/* <<< part g_link_opponent_turn_return */
+/* >>> part g_link_opponent_turn_armed */
 int g_link_opponent_turn_armed;
+/* <<< part g_link_opponent_turn_armed */
 
 /* >>> factory SetLinkDuelTransmissionFrameFunction */
 void SetLinkDuelTransmissionFrameFunction(void)
@@ -9710,8 +9920,12 @@ void DuelMainInterface(void)
 }
 /* <<< factory DuelMainInterface */
 
+/* >>> part DUEL_MENU_DATA */
 #define DUEL_MENU_DATA DuelMenuData_ADDR
+/* <<< part DUEL_MENU_DATA */
+/* >>> part duel_menu_items_printed_decl */
 static void duel_menu_items_printed(void);
+/* <<< part duel_menu_items_printed_decl */
 /* >>> factory PrintDuelMenuAndHandleInput */
 /* core.asm:301-349. Prints the duel menu, then loops on input. Holding B turns
  * the d-pad and Start into the five shortcut views; Start alone and Select are
@@ -10338,7 +10552,9 @@ void HandleWaitingLinkOpponentMenu(void)
 }
 /* <<< factory HandleWaitingLinkOpponentMenu */
 
+/* >>> part includes_tail */
 #include "home/duel_core_status.h"
+/* <<< part includes_tail */
 /* >>> factory HandleBetweenTurnsEvents */
 /* core.asm:6827-6897. Nothing to show when neither arena card carries a
  * status condition: PlusPowers and Defenders are discarded and that is all.
@@ -10411,6 +10627,7 @@ void OppAction_PlayAttackAnimationDealAttackDamage(void)
 }
 /* <<< factory OppAction_PlayAttackAnimationDealAttackDamage */
 
+/* >>> part BOXMSG_DECISION_MAIN */
 /* core.asm:73-217 constants. BOXMSG_DECISION is index 3 of the box-message
  * const_def; DUEL_WIN/DUEL_LOSS are 0/1; OPPONENT_TURN is
  * HIGH(wOpponentDuelVariables). */
@@ -10429,6 +10646,7 @@ void OppAction_PlayAttackAnimationDealAttackDamage(void)
 #define WON_DUEL_TEXT_MAIN 0x0078u
 #define LOST_DUEL_TEXT_MAIN 0x0079u
 #define SUDDEN_DEATH_TEXT_MAIN 0x007Au
+/* <<< part BOXMSG_DECISION_MAIN */
 
 /* >>> factory MainDuelLoop */
 /* core.asm:73-217. One turn per iteration: start-of-turn substatus, the turn

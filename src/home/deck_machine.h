@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_DECK_MACHINE_H
 #define POKETCG_HOME_DECK_MACHINE_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
 uint8_t CheckIfSelectedDeckMachineEntryIsEmpty(void);
@@ -80,11 +82,11 @@ TryDeleteSavedDeckResult TryDeleteSavedDeck(void);
 typedef struct { uint8_t a; uint8_t f; } HandleDeckMissingCardsListResult;
 HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_t de);
 /* <<< factory HandleDeckMissingCardsList */
-/* >>> factory HandleDeckMissingCardsList.CardListUpdateFunction */
+/* >>> part HandleDeckMissingCardsList_CardListUpdateFunction */
 /* Armed into wCardListUpdateFunction by HandleDeckMissingCardsList and fired
  * through the card-list input handlers' dispatch (deck_configuration.c). */
 void HandleDeckMissingCardsList_CardListUpdateFunction(void);
-/* <<< factory HandleDeckMissingCardsList.CardListUpdateFunction */
+/* <<< part HandleDeckMissingCardsList_CardListUpdateFunction */
 /* >>> factory HandleDismantleDeckToMakeSpace */
 typedef struct { uint8_t a; uint8_t f; } HandleDismantleDeckToMakeSpaceResult;
 HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void);

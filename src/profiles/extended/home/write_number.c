@@ -1,7 +1,10 @@
+/* >>> part includes */
 #include "home/write_number.h"
 
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part get_digit */
 /* TwoByteNumberToText.get_digit:: poketcg/src/home/write_number.asm:144-158 */
 static void get_digit(uint16_t *hl, uint16_t bc, uint16_t *de)
 {
@@ -19,7 +22,9 @@ static void get_digit(uint16_t *hl, uint16_t bc, uint16_t *de)
 	*de = (uint16_t)(*de + 1);
 	*hl = (uint16_t)(h - bc); /* undo the final overshooting add */
 }
+/* <<< part get_digit */
 
+/* >>> factory TwoByteNumberToText */
 /* TwoByteNumberToText:: poketcg/src/home/write_number.asm:128-143 */
 void TwoByteNumberToText(uint16_t hl, uint16_t *de)
 {
@@ -32,4 +37,5 @@ void TwoByteNumberToText(uint16_t hl, uint16_t *de)
 
 	gb_write8(*de, 0x00); /* TX_END, written without an inc de: six bytes out, de advanced by five */
 }
+/* <<< factory TwoByteNumberToText */
 

@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_COMMANDS_H
 #define POKETCG_HOME_COMMANDS_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory AnimationCommand_AnimEnd2 */
 uint8_t AnimationCommand_AnimEnd2(uint8_t a);

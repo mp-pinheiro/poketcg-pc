@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/damage_calculation.h"
 
 #include "generated/constants.h"
@@ -9,15 +10,19 @@
 #include "home/substatus.h"
 
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xBBu
 #define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS 0xE9u
 #define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xEAu
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
 #define DUELVARS_ARENA_CARD_SUBSTATUS1 0xE7u
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xE8u
+/* <<< part DUELVARS_ARENA_CARD */
 
 
+/* >>> part finish_damage */
 static DamageCalculationResult finish_damage(uint16_t out, uint16_t value)
 {
     uint8_t a;
@@ -34,7 +39,9 @@ static DamageCalculationResult finish_damage(uint16_t out, uint16_t value)
     }
     return (DamageCalculationResult){a, f, (uint8_t)(value >> 8), (uint8_t)value, out};
 }
+/* <<< part finish_damage */
 
+/* >>> part load_attacker_and_defender */
 static void load_attacker_and_defender(uint8_t location)
 {
     uint8_t index;
@@ -49,7 +56,9 @@ static void load_attacker_and_defender(uint8_t location)
     wTempNonTurnDuelistCardID = id;
     SwapTurn();
 }
+/* <<< part load_attacker_and_defender */
 
+/* >>> part calculate_versus_one */
 static uint16_t calculate_versus_one(uint16_t damage)
 {
     NoDamageOrEffectResult blocked;
@@ -100,6 +109,8 @@ static uint16_t calculate_versus_one(uint16_t damage)
     }
     return damage;
 }
+/* <<< part calculate_versus_one */
+/* >>> part calculate_from_one */
 static uint16_t calculate_from_one(uint16_t damage)
 {
     uint8_t location = hTempPlayAreaLocation_ff9d;
@@ -167,7 +178,9 @@ static uint16_t calculate_from_one(uint16_t damage)
     }
     return damage;
 }
+/* <<< part calculate_from_one */
 
+/* >>> factory CalculateDamage_VersusDefendingPokemon */
 DamageCalculationResult CalculateDamage_VersusDefendingPokemon(void)
 {
     DamageCalculationResult result;
@@ -176,7 +189,9 @@ DamageCalculationResult CalculateDamage_VersusDefendingPokemon(void)
     result = finish_damage(wDamage_ADDR, calculate_versus_one(wDamage));
     return result;
 }
+/* <<< factory CalculateDamage_VersusDefendingPokemon */
 
+/* >>> factory CalculateDamage_FromDefendingPokemon */
 DamageCalculationResult CalculateDamage_FromDefendingPokemon(void)
 {
     DamageCalculationResult result;
@@ -185,6 +200,7 @@ DamageCalculationResult CalculateDamage_FromDefendingPokemon(void)
     result = finish_damage(wDamage_ADDR, calculate_from_one(wDamage));
     return result;
 }
+/* <<< factory CalculateDamage_FromDefendingPokemon */
 
 /* >>> factory EstimateDamage_VersusDefendingCard */
 /* damage_calculation.asm:6-84. Stores the estimated damage against the defending

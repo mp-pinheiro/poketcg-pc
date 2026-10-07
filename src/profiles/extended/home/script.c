@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/script.h"
 
 #include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/hram.h"
 #include "home/switch_rom.h"
@@ -23,15 +25,20 @@
 #define BANK_GAME_LOOP 0x04u
 /* <<< factory statics */
 
+/* >>> part includes_MAP_SCRIPTS_BANK */
 #include "home/script_dispatch.h"
 #include <stdio.h>
 #include <stdlib.h>
+/* <<< part includes_MAP_SCRIPTS_BANK */
 
+/* >>> part MAP_SCRIPTS_BANK */
 #define MAP_SCRIPTS_BANK MapScripts_BANK
 #define MAP_SCRIPTS MapScripts_ADDR
 #define OVERWORLD_SCRIPT_TABLE_BANK OverworldScriptTable_BANK
 #define OVERWORLD_SCRIPT_TABLE_ADDR OverworldScriptTable_ADDR
+/* <<< part MAP_SCRIPTS_BANK */
 
+/* >>> factory GetMapScriptPointer */
 /* script.asm:62-95. Entry l = script selector; the entry is
  * MapScripts + wCurMap * 16 + l in bank 4. The pointer is read there and the
  * routine's bank is restored, so the returned value is a plain address.
@@ -46,6 +53,7 @@ MapScriptResult GetMapScriptPointer(uint8_t l)
 	uint8_t f = found == 0u ? 0x80u : 0x10u;
 	return (MapScriptResult){p[2], f, ptr};
 }
+/* <<< factory GetMapScriptPointer */
 
 /* >>> factory ResetAnimationQueue */
 /* script.asm:145-153. Wraps _ResetAnimationQueue (duel_animation_core.asm,
@@ -82,6 +90,7 @@ void FinishQueuedAnimations(void)
 }
 /* <<< factory FinishQueuedAnimations */
 
+/* >>> part script_operand */
 static uint8_t script_operand(uint16_t addr)
 {
 	if (addr >= 0x4000u && addr < 0x8000u
@@ -89,6 +98,7 @@ static uint8_t script_operand(uint16_t addr)
 		return 0u;
 	return gb_read8(addr);
 }
+/* <<< part script_operand */
 
 
 /* >>> factory HandleMoveModeAPress */

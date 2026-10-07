@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/unknown.h"
 
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/bg_map.h"
 #include "home/deck_check.h"

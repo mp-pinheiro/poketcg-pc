@@ -1,49 +1,66 @@
+/* >>> part includes */
 #include "home/map.h"
 #include "probe.h"
 
 #include "generated/hram.h"
+/* <<< part includes */
 
+/* >>> factory GetPermissionByteOfMapPosition */
 static void adapt_GetPermissionByteOfMapPosition(ProbeState *s)
 {
 	PermissionResult result = GetPermissionByteOfMapPosition(s->b, s->c);
 	s->a = result.a;
 	s->hl = result.hl;
 }
+/* <<< factory GetPermissionByteOfMapPosition */
 
+/* >>> factory GetPermissionOfMapPosition */
 static void adapt_GetPermissionOfMapPosition(ProbeState *s)
 {
 	s->a = GetPermissionOfMapPosition(s->b, s->c);
 }
+/* <<< factory GetPermissionOfMapPosition */
 
+/* >>> factory SetPermissionOfMapPosition */
 static void adapt_SetPermissionOfMapPosition(ProbeState *s)
 {
 	SetPermissionOfMapPosition(s->a, s->b, s->c);
 }
+/* <<< factory SetPermissionOfMapPosition */
 
+/* >>> factory UpdatePermissionOfMapPosition */
 static void adapt_UpdatePermissionOfMapPosition(ProbeState *s)
 {
 	s->a = UpdatePermissionOfMapPosition(s->a, s->b, s->c);
 }
+/* <<< factory UpdatePermissionOfMapPosition */
 
+/* >>> factory GetLoadedNPCID */
 static void adapt_GetLoadedNPCID(ProbeState *s)
 {
 	PermissionResult result = GetLoadedNPCID(s->a);
 	s->a = result.a;
 	s->hl = result.hl;
 }
+/* <<< factory GetLoadedNPCID */
 
+/* >>> factory GetItemInLoadedNPCIndex */
 static void adapt_GetItemInLoadedNPCIndex(ProbeState *s)
 {
 	PermissionResult result = GetItemInLoadedNPCIndex(s->a, (uint8_t)s->hl);
 	s->a = result.a;
 	s->hl = result.hl;
 }
+/* <<< factory GetItemInLoadedNPCIndex */
 
+/* >>> factory GameEvent_Overworld */
 static void adapt_GameEvent_Overworld(ProbeState *s)
 {
 	s->f = GameEvent_Overworld(s->f);
 }
+/* <<< factory GameEvent_Overworld */
 
+/* >>> factory CopyGfxDataFromTempBank */
 static void adapt_CopyGfxDataFromTempBank(ProbeState *s)
 {
 	uint16_t de = (uint16_t)(s->d << 8 | s->e);
@@ -54,30 +71,39 @@ static void adapt_CopyGfxDataFromTempBank(ProbeState *s)
 	s->e = (uint8_t)de;
 	s->a = hBankROM;
 }
+/* <<< factory CopyGfxDataFromTempBank */
 
+/* >>> factory FindLoadedNPC */
 static void adapt_FindLoadedNPC(ProbeState *s)
 {
 	NPCSearchResult result = FindLoadedNPC();
 	s->a = result.a;
 	s->f = result.f;
 }
+/* <<< factory FindLoadedNPC */
 
+/* >>> factory GetNextNPCMovementByte */
 static void adapt_GetNextNPCMovementByte(ProbeState *s)
 {
 	s->a = GetNextNPCMovementByte((uint16_t)(s->b << 8 | s->c));
 }
+/* <<< factory GetNextNPCMovementByte */
 
+/* >>> factory GetDefaultSong */
 static void adapt_GetDefaultSong(ProbeState *s)
 {
 	s->a = GetDefaultSong();
 }
+/* <<< factory GetDefaultSong */
 
+/* >>> factory PlayDefaultSong */
 static void adapt_PlayDefaultSong(ProbeState *s)
 {
 	SongResult result = PlayDefaultSong();
 	s->a = result.a;
 	s->f = result.f;
 }
+/* <<< factory PlayDefaultSong */
 
 
 /* >>> factory HandleMapWarp */
@@ -167,6 +193,7 @@ static void adapt_ExecuteGameEvent(ProbeState *s)
 }
 /* <<< factory ExecuteGameEvent */
 
+/* >>> part probe_entries_map */
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -193,3 +220,4 @@ const ProbeEntry probe_entries_map[] = {
 	{ "ExecuteGameEvent", adapt_ExecuteGameEvent },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_map */

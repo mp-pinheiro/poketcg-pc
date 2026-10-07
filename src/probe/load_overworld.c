@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/load_overworld.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory LoadMapTilesAndPals */
 static void adapt_LoadMapTilesAndPals(ProbeState *s)
@@ -27,9 +29,11 @@ static void adapt_LoadMapGfxAndPermissions(ProbeState *s)
 }
 /* <<< factory LoadMapGfxAndPermissions */
 
+/* >>> part probe_entries_load_overworld */
 const ProbeEntry probe_entries_load_overworld[] = {
 	{ "LoadMapTilesAndPals", adapt_LoadMapTilesAndPals },
 	{ "ReloadMapAfterTextClose", adapt_ReloadMapAfterTextClose },
 	{ "LoadMapGfxAndPermissions", adapt_LoadMapGfxAndPermissions },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_load_overworld */

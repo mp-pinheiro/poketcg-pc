@@ -54,6 +54,7 @@ LABEL = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)::?\s*(;.*)?$")
 FACTORY = re.compile(r"^/\* >>> factory (\w+) \*/\n(.*?)\n/\* <<< factory \1 \*/", re.DOTALL | re.MULTILINE)
 CALL = re.compile(r"\b([A-Za-z_]\w*)\s*\(")
 NOT_CALLS = {"void", "return", "if", "while", "for", "switch", "sizeof", "uint8_t", "uint16_t", "uint32_t", "int"}
+RAM_LVALUE = re.compile(r"\b[whs][A-Z]\w*\b")
 TRIVIAL_ASM = 3  # `ld a, X / scf / ret` and shorter are real empty bodies
 
 
@@ -106,7 +107,7 @@ def hollow_bodies() -> dict[str, str]:
             if name == "statics":
                 continue
             calls = [c for c in CALL.findall(body) if c not in NOT_CALLS and c != name]
-            if calls or "gb_write" in body or "gb_read" in body or "=" in body.replace("==", "").replace("!=", "").replace("<=", "").replace(">=", ""):
+            if calls or "gb_write" in body or "gb_read" in body or RAM_LVALUE.search(body) or "=" in body.replace("==", "").replace("!=", "").replace("<=", "").replace(">=", ""):
                 continue
             hollow[name] = Path(path).name
     return hollow

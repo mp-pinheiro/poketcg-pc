@@ -1,10 +1,16 @@
 #ifndef POKETCG_HOME_CHALLENGE_HALL_LOBBY_H
 #define POKETCG_HOME_CHALLENGE_HALL_LOBBY_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part ChallengeHallLobbyResult */
 typedef struct { uint8_t a, f; } ChallengeHallLobbyResult;
+/* <<< part ChallengeHallLobbyResult */
+/* >>> factory Preload_ChallengeHallNPCs2 */
 ChallengeHallLobbyResult Preload_ChallengeHallNPCs2(void);
+/* <<< factory Preload_ChallengeHallNPCs2 */
 
 /* >>> factory Preload_ChallengeHallNPCs1 */
 typedef struct { uint8_t a, f; } PreloadChallengeHallNPCs1Result;

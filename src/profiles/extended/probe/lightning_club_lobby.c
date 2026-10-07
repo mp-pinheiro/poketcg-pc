@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/lightning_club_lobby.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory LightningClubLobbyAfterDuel */
 static void adapt_LightningClubLobbyAfterDuel(ProbeState *s)
@@ -26,8 +28,10 @@ static void adapt_Preload_ImakuniInLightningClubLobby(ProbeState *s)
 }
 /* <<< factory Preload_ImakuniInLightningClubLobby */
 
+/* >>> part probe_entries_lightning_club_lobby */
 const ProbeEntry probe_entries_lightning_club_lobby[] = {
 	{ "LightningClubLobbyAfterDuel", adapt_LightningClubLobbyAfterDuel },
 	{ "Preload_ImakuniInLightningClubLobby", adapt_Preload_ImakuniInLightningClubLobby },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_lightning_club_lobby */

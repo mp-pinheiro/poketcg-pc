@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/psychic_club_lobby.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory PsychicClubLobbyLoadMap */
 static void adapt_PsychicClubLobbyLoadMap(ProbeState *s)
@@ -46,6 +48,7 @@ static void adapt_Preload_Ronald1InPsychicClubLobby(ProbeState *s)
 }
 /* <<< factory Preload_Ronald1InPsychicClubLobby */
 
+/* >>> part probe_entries_psychic_club_lobby */
 const ProbeEntry probe_entries_psychic_club_lobby[] = {
 	{ "PsychicClubLobbyLoadMap", adapt_PsychicClubLobbyLoadMap },
 	{ "PsychicClubLobbyAfterDuel", adapt_PsychicClubLobbyAfterDuel },
@@ -53,3 +56,4 @@ const ProbeEntry probe_entries_psychic_club_lobby[] = {
 	{ "Preload_Ronald1InPsychicClubLobby", adapt_Preload_Ronald1InPsychicClubLobby },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_psychic_club_lobby */

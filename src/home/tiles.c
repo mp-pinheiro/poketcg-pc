@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/tiles.h"
 
 #include "generated/constants.h"
@@ -10,19 +11,23 @@
 #include "home/switch_rom.h"
 #include "mem.h"
 #include "ppu.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/bg_map.h"
 
 #include "home/frames.h"
 /* <<< factory statics */
 
+/* >>> part bg_map0_address */
 static uint16_t bg_map0_address(uint16_t xy)
 {
 	uint8_t x = (uint8_t)(xy >> 8);
 	uint8_t y = (uint8_t)xy;
 	return (uint16_t)(0x9800u + (uint16_t)y * TILEMAP_W + x);
 }
+/* <<< part bg_map0_address */
 
+/* >>> factory FillRectangle */
 uint16_t FillRectangle(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
 {
 	uint16_t dst = bg_map0_address(de);
@@ -46,7 +51,9 @@ uint16_t FillRectangle(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl
 	} while (--rows);
 	return dst;
 }
+/* <<< factory FillRectangle */
 
+/* >>> factory Copy1bppTiles */
 void Copy1bppTiles(uint16_t *hl, uint16_t *de)
 {
 	uint16_t src = *de;
@@ -62,7 +69,9 @@ void Copy1bppTiles(uint16_t *hl, uint16_t *de)
 	*de = src;
 	*hl = dst;
 }
+/* <<< factory Copy1bppTiles */
 
+/* >>> part BANK_FONTS */
 #define BANK_FONTS 0x1du
 #define TILE_SIZE 16u
 
@@ -85,13 +94,17 @@ void Copy1bppTiles(uint16_t *hl, uint16_t *de)
 #define DUEL_CGB_SYMBOL_GFX_FAR 0x37f8u
 #define LOAD_CARD_SET2_TILES_TABLE 0x2085u
 #define LOAD_FULL_WIDTH_FONT_TILES_SRC 0x1e60u
+/* <<< part BANK_FONTS */
 
+/* >>> part far_ptr_bank */
 static uint16_t far_ptr_bank(uint16_t hl, uint8_t *bank)
 {
 	*bank = (uint8_t)(BANK_FONTS + ((hl >> 14) & 3u));
 	return (uint16_t)((hl & 0x3FFFu) | 0x4000u);
 }
+/* <<< part far_ptr_bank */
 
+/* >>> factory CopyFontsOrDuelGraphicsTiles */
 void CopyFontsOrDuelGraphicsTiles(uint16_t *hl, uint16_t *de, uint8_t b)
 {
 	uint8_t bank;
@@ -103,7 +116,9 @@ void CopyFontsOrDuelGraphicsTiles(uint16_t *hl, uint16_t *de, uint8_t b)
 	BankswitchROM(saved);
 	*hl = src;
 }
+/* <<< factory CopyFontsOrDuelGraphicsTiles */
 
+/* >>> factory LoadSymbolsFont */
 TileCopyResult LoadSymbolsFont(void)
 {
 	uint16_t hl = SYMBOLS_FONT_FAR;
@@ -112,11 +127,15 @@ TileCopyResult LoadSymbolsFont(void)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, SYMBOLS_FONT_TILES);
 	return (TileCopyResult){hl, de};
 }
+/* <<< factory LoadSymbolsFont */
 
+/* >>> part kCardSet2TileOffsets */
 static const uint8_t kCardSet2TileOffsets[8] = {
 	0xFFu, 0x00u, 0x40u, 0xFFu, 0xFFu, 0xFFu, 0xFFu, 0x80u
 };
+/* <<< part kCardSet2TileOffsets */
 
+/* >>> factory LoadCardSet2Tiles */
 TileCopyResult LoadCardSet2Tiles(uint8_t a)
 {
 	uint8_t idx = (uint8_t)(a & 7u);
@@ -131,7 +150,9 @@ TileCopyResult LoadCardSet2Tiles(uint8_t a)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 4u);
 	return (TileCopyResult){hl, de};
 }
+/* <<< factory LoadCardSet2Tiles */
 
+/* >>> factory LoadDuelDrawCardsScreenTiles */
 TileCopyResult LoadDuelDrawCardsScreenTiles(void)
 {
 	uint16_t hl = (uint16_t)(DUEL_OTHER_GFX + 0x290u);
@@ -140,7 +161,9 @@ TileCopyResult LoadDuelDrawCardsScreenTiles(void)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 8u);
 	return (TileCopyResult){hl, de};
 }
+/* <<< factory LoadDuelDrawCardsScreenTiles */
 
+/* >>> factory LoadCardOrDuelMenuBorderTiles */
 TileCopyResult LoadCardOrDuelMenuBorderTiles(void)
 {
 	uint16_t hl = (uint16_t)(DUEL_OTHER_GFX + 0x150u);
@@ -149,7 +172,9 @@ TileCopyResult LoadCardOrDuelMenuBorderTiles(void)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 8u);
 	return (TileCopyResult){hl, de};
 }
+/* <<< factory LoadCardOrDuelMenuBorderTiles */
 
+/* >>> factory LoadCardTypeHeaderTiles */
 TileCopyResult LoadCardTypeHeaderTiles(uint8_t a)
 {
 	uint16_t hl = (uint16_t)(DUEL_CARD_HEADER_GFX_FAR + ((uint16_t)a << 8));
@@ -158,7 +183,9 @@ TileCopyResult LoadCardTypeHeaderTiles(uint8_t a)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 0x10u);
 	return (TileCopyResult){hl, de};
 }
+/* <<< factory LoadCardTypeHeaderTiles */
 
+/* >>> factory LoadDuelCardSymbolTiles */
 TileCopyResult LoadDuelCardSymbolTiles(void)
 {
 	uint16_t hl = (uint16_t)(wConsole == CONSOLE_CGB
@@ -168,7 +195,9 @@ TileCopyResult LoadDuelCardSymbolTiles(void)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 0x30u);
 	return (TileCopyResult){hl, de};
 }
+/* <<< factory LoadDuelCardSymbolTiles */
 
+/* >>> factory LoadDuelCardSymbolTiles2 */
 TileCopyResult LoadDuelCardSymbolTiles2(void)
 {
 	uint16_t hl = (uint16_t)((wConsole == CONSOLE_CGB
@@ -178,7 +207,9 @@ TileCopyResult LoadDuelCardSymbolTiles2(void)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 0x0Cu);
 	return (TileCopyResult){hl, de};
 }
+/* <<< factory LoadDuelCardSymbolTiles2 */
 
+/* >>> part load_duel_check_pokemon_tiles */
 static TileCopyResult load_duel_check_pokemon_tiles(uint8_t b)
 {
 	uint16_t hl = (uint16_t)((wConsole == CONSOLE_CGB
@@ -188,17 +219,23 @@ static TileCopyResult load_duel_check_pokemon_tiles(uint8_t b)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, b);
 	return (TileCopyResult){hl, de};
 }
+/* <<< part load_duel_check_pokemon_tiles */
 
+/* >>> factory LoadDuelFaceDownCardTiles */
 TileCopyResult LoadDuelFaceDownCardTiles(void)
 {
 	return load_duel_check_pokemon_tiles(0x10u);
 }
+/* <<< factory LoadDuelFaceDownCardTiles */
 
+/* >>> factory LoadDuelCheckPokemonScreenTiles */
 TileCopyResult LoadDuelCheckPokemonScreenTiles(void)
 {
 	return load_duel_check_pokemon_tiles(0x24u);
 }
+/* <<< factory LoadDuelCheckPokemonScreenTiles */
 
+/* >>> part load_deck_and_discard_pile_icons */
 static TileCopyResult load_deck_and_discard_pile_icons(void)
 {
 	uint16_t hl = (uint16_t)((wConsole == CONSOLE_CGB
@@ -208,12 +245,16 @@ static TileCopyResult load_deck_and_discard_pile_icons(void)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 0x30u);
 	return (TileCopyResult){hl, de};
 }
+/* <<< part load_deck_and_discard_pile_icons */
 
+/* >>> factory LoadDeckAndDiscardPileIcons */
 TileCopyResult LoadDeckAndDiscardPileIcons(void)
 {
 	return load_deck_and_discard_pile_icons();
 }
+/* <<< factory LoadDeckAndDiscardPileIcons */
 
+/* >>> factory LoadPlacingThePrizesScreenTiles */
 TileCopyResult LoadPlacingThePrizesScreenTiles(void)
 {
 	uint16_t hl = DUEL_OTHER_GFX;
@@ -222,7 +263,9 @@ TileCopyResult LoadPlacingThePrizesScreenTiles(void)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 0x0Du);
 	return load_deck_and_discard_pile_icons();
 }
+/* <<< factory LoadPlacingThePrizesScreenTiles */
 
+/* >>> factory LoadDuelCoinTossResultTiles */
 TileCopyResult LoadDuelCoinTossResultTiles(void)
 {
 	uint16_t hl = (uint16_t)(DUEL_OTHER_GFX + 0xD0u);
@@ -231,7 +274,9 @@ TileCopyResult LoadDuelCoinTossResultTiles(void)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 8u);
 	return (TileCopyResult){hl, de};
 }
+/* <<< factory LoadDuelCoinTossResultTiles */
 
+/* >>> factory Func_212f */
 TileCopyResult Func_212f(void)
 {
 	uint16_t hl = SYMBOLS_FONT_FAR;
@@ -256,7 +301,9 @@ TileCopyResult Func_212f(void)
 
 	return (TileCopyResult){hl, de};
 }
+/* <<< factory Func_212f */
 
+/* >>> factory DrawDuelBoxMessage */
 void DrawDuelBoxMessage(uint8_t a)
 {
 	uint16_t hl = HtimesL((uint16_t)((0xA0u << 8) | a));
@@ -266,7 +313,9 @@ void DrawDuelBoxMessage(uint8_t a)
 	CopyFontsOrDuelGraphicsTiles(&hl, &de, 40u);
 	FillRectangle(0xA0u, 10u, 4u, 0x0504u, 0x010Au);
 }
+/* <<< factory DrawDuelBoxMessage */
 
+/* >>> factory LoadFullWidthFontTiles */
 void LoadFullWidthFontTiles(void)
 {
 	uint8_t bank;
@@ -289,6 +338,7 @@ void LoadFullWidthFontTiles(void)
 
 	BankswitchROM(saved);
 }
+/* <<< factory LoadFullWidthFontTiles */
 
 /* >>> factory Func_2057 */
 /* tiles.asm:200-211. Only reached by `jr` from Func_2051 (hl = sp+9) or

@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_SCREEN_EFFECTS_H
 #define POKETCG_HOME_SCREEN_EFFECTS_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory DecrementScreenAnimDuration */
 typedef struct { uint16_t hl; uint8_t f; } DecrementDurResult;
@@ -57,5 +59,7 @@ void ShakeScreenY_Small(void);
 void InitScreenAnimation(void);
 /* <<< factory InitScreenAnimation */
 
+/* >>> part CallScreenAnimationUpdate */
 uint16_t CallScreenAnimationUpdate(void);
+/* <<< part CallScreenAnimationUpdate */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

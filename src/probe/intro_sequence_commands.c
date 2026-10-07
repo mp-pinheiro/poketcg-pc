@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/intro_sequence_commands.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
 static void adapt_AnimateRandomTitleScreenOrb(ProbeState *s)
@@ -222,6 +224,7 @@ static void adapt_ExecuteIntroSequenceCmd(ProbeState *s)
 }
 /* <<< factory ExecuteIntroSequenceCmd */
 
+/* >>> part probe_entries_intro_sequence_commands */
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
@@ -247,3 +250,4 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "ExecuteIntroSequenceCmd", adapt_ExecuteIntroSequenceCmd },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_intro_sequence_commands */

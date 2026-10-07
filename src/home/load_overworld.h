@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_LOAD_OVERWORLD_H
 #define POKETCG_HOME_LOAD_OVERWORLD_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory LoadMapTilesAndPals */
 void LoadMapTilesAndPals(void);

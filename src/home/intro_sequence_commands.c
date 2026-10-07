@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/intro_sequence_commands.h"
 
 #include "generated/constants.h"
@@ -13,6 +14,7 @@
 #include "home/play_animation.h"
 #include "home/switch_rom.h"
 #include "home/sound.h"
+/* <<< part includes */
 
 /* >>> factory statics */
 #include "home/load_animation.h"

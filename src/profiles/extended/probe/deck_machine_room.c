@@ -1,5 +1,7 @@
+/* >>> part includes */
 #include "home/deck_machine_room.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Func_d96c */
 static void adapt_Func_d96c(ProbeState *s)
@@ -131,6 +133,7 @@ static void adapt_Script_d9ef(ProbeState *s)
 }
 /* <<< factory Script_d9ef */
 
+/* >>> part probe_entries_deck_machine_room */
 const ProbeEntry probe_entries_deck_machine_room[] = {
 	{ "Func_d96c", adapt_Func_d96c },
 	{ "Script_BeatAaron", adapt_Script_BeatAaron },
@@ -146,3 +149,4 @@ const ProbeEntry probe_entries_deck_machine_room[] = {
 	{ "Script_d9ef", adapt_Script_d9ef },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_deck_machine_room */

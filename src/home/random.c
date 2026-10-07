@@ -1,8 +1,11 @@
+/* >>> part includes */
 #include "home/random.h"
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> factory UpdateRNGSources */
 /* UpdateRNGSources:: poketcg/src/home/random.asm:34-66
  *
  *   ld a, d / rlca / rlca / xor e / rra   -> carry = bit0 of (rotl(r2,2) ^ r1)
@@ -26,7 +29,9 @@ uint8_t UpdateRNGSources(void)
 	wRNG1 = new_r1;
 	return (uint8_t)(new_r2 ^ new_r1);
 }
+/* <<< factory UpdateRNGSources */
 
+/* >>> factory HtimesL */
 /* HtimesL:: poketcg/src/home/random.asm:2-20
  *
  * a = h (multiplier), de = l (multiplicand, shifted left each round), hl = 0.
@@ -59,7 +64,9 @@ uint16_t HtimesL(uint16_t hl)
 		de = (uint16_t)(de << 1);
 	}
 }
+/* <<< factory HtimesL */
 
+/* >>> factory Random */
 /* Random:: poketcg/src/home/random.asm:23-31
  *
  * h = a, l = UpdateRNGSources(), then the high byte of h * l — i.e. the RNG
@@ -71,3 +78,4 @@ uint8_t Random(uint8_t a)
 
 	return (uint8_t)(HtimesL((uint16_t)(a << 8 | l)) >> 8);
 }
+/* <<< factory Random */

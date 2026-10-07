@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/map_events.h"
 
 #include <stdint.h>
@@ -7,6 +8,7 @@
 #include "mem.h"
 #include "home/load_gfx.h"
 #include "home/overworld.h"
+/* <<< part includes */
 /* >>> factory statics */
 #define TRUE 0x01u
 
@@ -26,6 +28,7 @@ static const uint8_t kSetOWMapEventTilemapPointers[33] = {
 /* <<< factory statics */
 
 
+/* >>> factory ClearOWMapEvents */
 void ClearOWMapEvents(void)
 {
 	uint16_t address = wOWMapEvents_ADDR;
@@ -35,6 +38,7 @@ void ClearOWMapEvents(void)
 		address++;
 	}
 }
+/* <<< factory ClearOWMapEvents */
 
 /* >>> factory SetOWMapEvent_SRAMOrVRAM */
 uint8_t SetOWMapEvent_SRAMOrVRAM(uint8_t a)

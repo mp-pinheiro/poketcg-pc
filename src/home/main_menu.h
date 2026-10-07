@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_MAIN_MENU_H
 #define POKETCG_HOME_MAIN_MENU_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory MainMenu_CardPop */
 uint8_t MainMenu_CardPop(void);

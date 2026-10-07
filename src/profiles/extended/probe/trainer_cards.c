@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/trainer_cards.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory RemoveCardFromList */
 static void adapt_RemoveCardFromList(ProbeState *s)
@@ -407,6 +409,7 @@ static void adapt_AIPlay_Bill(ProbeState *s)
 }
 /* <<< factory AIPlay_Bill */
 
+/* >>> part AIDecide_Defender1 */
 static void adapt_AIDecide_Defender1(ProbeState *s)
 {
 	AIDecideParameterResult result = AIDecide_Defender1(s->d);
@@ -414,7 +417,9 @@ static void adapt_AIDecide_Defender1(ProbeState *s)
 	s->f = result.f;
 	s->d = result.d;
 }
+/* <<< part AIDecide_Defender1 */
 
+/* >>> part AIDecide_Defender2 */
 static void adapt_AIDecide_Defender2(ProbeState *s)
 {
 	AIDecideParameterResult result = AIDecide_Defender2(s->d);
@@ -422,7 +427,9 @@ static void adapt_AIDecide_Defender2(ProbeState *s)
 	s->f = result.f;
 	s->d = result.d;
 }
+/* <<< part AIDecide_Defender2 */
 
+/* >>> part AIDecide_PlusPower1 */
 static void adapt_AIDecide_PlusPower1(ProbeState *s)
 {
 	AIDecideParameterResult result = AIDecide_PlusPower1(s->d);
@@ -430,7 +437,9 @@ static void adapt_AIDecide_PlusPower1(ProbeState *s)
 	s->f = result.f;
 	s->d = result.d;
 }
+/* <<< part AIDecide_PlusPower1 */
 
+/* >>> part AIDecide_PlusPower2 */
 static void adapt_AIDecide_PlusPower2(ProbeState *s)
 {
 	AIDecideParameterResult result = AIDecide_PlusPower2(s->d);
@@ -438,7 +447,9 @@ static void adapt_AIDecide_PlusPower2(ProbeState *s)
 	s->f = result.f;
 	s->d = result.d;
 }
+/* <<< part AIDecide_PlusPower2 */
 
+/* >>> part AIDecide_SuperPotion1 */
 static void adapt_AIDecide_SuperPotion1(ProbeState *s)
 {
 	AIDecideParameterResult result = AIDecide_SuperPotion1(s->d);
@@ -446,7 +457,9 @@ static void adapt_AIDecide_SuperPotion1(ProbeState *s)
 	s->f = result.f;
 	s->d = result.d;
 }
+/* <<< part AIDecide_SuperPotion1 */
 
+/* >>> part AIDecide_SuperPotion2 */
 static void adapt_AIDecide_SuperPotion2(ProbeState *s)
 {
 	AIDecideParameterResult result = AIDecide_SuperPotion2(s->d);
@@ -454,6 +467,7 @@ static void adapt_AIDecide_SuperPotion2(ProbeState *s)
 	s->f = result.f;
 	s->d = result.d;
 }
+/* <<< part AIDecide_SuperPotion2 */
 /* >>> factory AIPlay_Defender */
 static void adapt_AIPlay_Defender(ProbeState *s)
 {
@@ -787,6 +801,7 @@ static void adapt_AIPlay_SuperEnergyRetrieval(ProbeState *s)
 }
 /* <<< factory AIPlay_SuperEnergyRetrieval */
 
+/* >>> part probe_entries_trainer_cards */
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -877,3 +892,4 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIPlay_SuperEnergyRetrieval", adapt_AIPlay_SuperEnergyRetrieval },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_trainer_cards */

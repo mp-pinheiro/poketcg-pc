@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/save.h"
 
 #include "generated/constants.h"
@@ -10,23 +11,31 @@
 #include "home/switch_sram.h"
 #include "mem.h"
 #include "home/frames.h"
+/* <<< part includes */
 
+/* >>> part WRAM_TO_SRAM_MAPPER */
 /* WRAMToSRAMMapper:: save.asm:461-497, ROM bank 4. 6 bytes/entry: dw addr, dw count,
  * db min, db max; terminated by a zero address word. */
 #define WRAM_TO_SRAM_MAPPER WRAMToSRAMMapper_ADDR
+/* <<< part WRAM_TO_SRAM_MAPPER */
 
+/* >>> part mapper_entry */
 static const uint8_t *mapper_entry(unsigned index)
 {
 	return rom_ptr(0x04, (uint16_t)(WRAM_TO_SRAM_MAPPER + index * 6u));
 }
+/* <<< part mapper_entry */
 
+/* >>> part save_src_read8 */
 /* Mapper sources are WRAM except for the four .EmptySRAMSlot entries ($556C), which
  * live in this file's own ROM bank. The asm reads them via the implicit code bank. */
 static uint8_t save_src_read8(uint16_t addr)
 {
 	return addr < 0x8000 ? *rom_ptr(0x04, addr) : gb_read8(addr);
 }
+/* <<< part save_src_read8 */
 
+/* >>> factory CopyGeneralSaveDataToSRAM */
 /* CopyGeneralSaveDataToSRAM:: save.asm:93-179 */
 void CopyGeneralSaveDataToSRAM(uint16_t de)
 {
@@ -86,7 +95,9 @@ void CopyGeneralSaveDataToSRAM(uint16_t de)
 	gb_write8(header++, (uint8_t)checksum);
 	gb_write8(header, (uint8_t)(checksum >> 8));
 }
+/* <<< factory CopyGeneralSaveDataToSRAM */
 
+/* >>> factory ValidateGeneralSaveDataFromDE */
 /* ValidateGeneralSaveDataFromDE:: save.asm:218-344 */
 void ValidateGeneralSaveDataFromDE(uint16_t de)
 {
@@ -162,7 +173,9 @@ void ValidateGeneralSaveDataFromDE(uint16_t de)
 	gb_write8(wCurOverworldMap_ADDR,
 		  gb_read8((uint16_t)(de + (sGeneralSaveDataHeaderEnd_ADDR - sGeneralSaveData_ADDR) + 1)));
 }
+/* <<< factory ValidateGeneralSaveDataFromDE */
 
+/* >>> factory LoadGeneralSaveDataFromDE */
 /* LoadGeneralSaveDataFromDE:: save.asm:380-448 */
 void LoadGeneralSaveDataFromDE(uint16_t de)
 {
@@ -205,7 +218,9 @@ void LoadGeneralSaveDataFromDE(uint16_t de)
 	gb_write8(wTextSpeed_ADDR, gb_read8(sTextSpeed_ADDR));
 	DisableSRAM();
 }
+/* <<< factory LoadGeneralSaveDataFromDE */
 
+/* >>> factory WriteDataToBackup */
 /* WriteDataToBackup:: save.asm:569-588. Per-byte bank flip, not hoisted: hBankSRAM
  * is observable mid-loop and the flip itself is the behaviour under test. */
 void WriteDataToBackup(uint16_t hl, uint16_t bc)
@@ -226,7 +241,9 @@ void WriteDataToBackup(uint16_t hl, uint16_t bc)
 	BankswitchSRAM(saved);
 	DisableSRAM();
 }
+/* <<< factory WriteDataToBackup */
 
+/* >>> factory LoadDataFromBackup */
 /* LoadDataFromBackup:: save.asm:602-622. Mirror of WriteDataToBackup with the bank
  * order swapped: read backup (bank 2) first, then write the main bank (bank 0). */
 void LoadDataFromBackup(uint16_t hl, uint16_t bc)
@@ -247,33 +264,43 @@ void LoadDataFromBackup(uint16_t hl, uint16_t bc)
 	BankswitchSRAM(saved);
 	DisableSRAM();
 }
+/* <<< factory LoadDataFromBackup */
 
+/* >>> factory WriteBackupGeneralSaveData */
 /* WriteBackupGeneralSaveData:: save.asm:562-565 */
 void WriteBackupGeneralSaveData(void)
 {
 	WriteDataToBackup(sGeneralSaveData_ADDR, (uint16_t)(sGeneralSaveDataEnd_ADDR - sGeneralSaveData_ADDR));
 }
+/* <<< factory WriteBackupGeneralSaveData */
 
+/* >>> factory WriteBackupCardAndDeckSaveData */
 /* WriteBackupCardAndDeckSaveData:: save.asm:557-560 */
 void WriteBackupCardAndDeckSaveData(void)
 {
 	WriteDataToBackup(sCardCollection_ADDR,
 			   (uint16_t)(sCardAndDeckSaveDataEnd_ADDR - sCardAndDeckSaveData_ADDR));
 }
+/* <<< factory WriteBackupCardAndDeckSaveData */
 
+/* >>> factory LoadBackupGeneralSaveData */
 /* LoadBackupGeneralSaveData:: save.asm:595-598 */
 void LoadBackupGeneralSaveData(void)
 {
 	LoadDataFromBackup(sGeneralSaveData_ADDR, (uint16_t)(sGeneralSaveDataEnd_ADDR - sGeneralSaveData_ADDR));
 }
+/* <<< factory LoadBackupGeneralSaveData */
 
+/* >>> factory LoadBackupCardAndDeckSaveData */
 /* LoadBackupCardAndDeckSaveData:: save.asm:590-593 */
 void LoadBackupCardAndDeckSaveData(void)
 {
 	LoadDataFromBackup(sCardCollection_ADDR,
 			    (uint16_t)(sCardAndDeckSaveDataEnd_ADDR - sCardAndDeckSaveData_ADDR));
 }
+/* <<< factory LoadBackupCardAndDeckSaveData */
 
+/* >>> part cp1_flags */
 /* CP 1 on wNumSRAMValidationErrors: Z if n==1, N always, H if the low nibble
  * borrows, C if n<1. Both validators branch on the resulting carry. */
 static uint8_t cp1_flags(uint8_t n)
@@ -281,7 +308,9 @@ static uint8_t cp1_flags(uint8_t n)
 	return (uint8_t)((n == 1 ? 0x80 : 0) | 0x40 | ((n & 0x0F) == 0 ? 0x20 : 0)
 			  | (n == 0 ? 0x10 : 0));
 }
+/* <<< part cp1_flags */
 
+/* >>> factory InvalidateSaveData */
 /* InvalidateSaveData:: save.asm:4-25 */
 void InvalidateSaveData(void)
 {
@@ -297,7 +326,9 @@ void InvalidateSaveData(void)
 	ClearSavedDuel();
 	DisableSRAM();
 }
+/* <<< factory InvalidateSaveData */
 
+/* >>> factory UpdateAlbumProgress */
 /* UpdateAlbumProgress:: save.asm:73-89. No bank switch: writes into whichever
  * SRAM bank is already selected, not sAlbumProgress's declared bank. */
 void UpdateAlbumProgress(uint16_t de)
@@ -311,14 +342,18 @@ void UpdateAlbumProgress(uint16_t de)
 	gb_write8((uint16_t)(de + 1), ap.e);
 	DisableSRAM();
 }
+/* <<< factory UpdateAlbumProgress */
 
+/* >>> factory LoadAlbumProgressFromSRAM */
 /* LoadAlbumProgressFromSRAM:: save.asm:346-354 */
 void LoadAlbumProgressFromSRAM(uint16_t de)
 {
 	gb_write8(wTotalNumCardsCollected_ADDR, gb_read8(de));
 	gb_write8(wTotalNumCardsToCollect_ADDR, gb_read8((uint16_t)(de + 1)));
 }
+/* <<< factory LoadAlbumProgressFromSRAM */
 
+/* >>> factory ValidateBackupGeneralSaveData */
 /* ValidateBackupGeneralSaveData:: save.asm:183-199 */
 ValidateResult ValidateBackupGeneralSaveData(void)
 {
@@ -334,7 +369,9 @@ ValidateResult ValidateBackupGeneralSaveData(void)
 	n = gb_read8(wNumSRAMValidationErrors_ADDR);
 	return (ValidateResult){ .a = n, .f = cp1_flags(n) };
 }
+/* <<< factory ValidateBackupGeneralSaveData */
 
+/* >>> factory _ValidateGeneralSaveData */
 /* _ValidateGeneralSaveData:: save.asm:203-214. Unlike ValidateBackupGeneralSaveData,
  * this never bank-switches, so LoadAlbumProgressFromSRAM reads sAlbumProgress's
  * address out of whichever bank is already selected - bank 0 padding on the normal
@@ -351,7 +388,9 @@ ValidateResult _ValidateGeneralSaveData(void)
 	n = gb_read8(wNumSRAMValidationErrors_ADDR);
 	return (ValidateResult){ .a = n, .f = cp1_flags(n) };
 }
+/* <<< factory _ValidateGeneralSaveData */
 
+/* >>> factory LoadBackupSaveData */
 /* LoadBackupSaveData:: save.asm:358-370 */
 void LoadBackupSaveData(void)
 {
@@ -362,13 +401,17 @@ void LoadBackupSaveData(void)
 	LoadBackupCardAndDeckSaveData();
 	LoadGeneralSaveDataFromDE(sGeneralSaveData_ADDR);
 }
+/* <<< factory LoadBackupSaveData */
 
+/* >>> factory _LoadGeneralSaveData */
 /* _LoadGeneralSaveData:: save.asm:372-377 */
 void _LoadGeneralSaveData(void)
 {
 	LoadGeneralSaveDataFromDE(sGeneralSaveData_ADDR);
 }
+/* <<< factory _LoadGeneralSaveData */
 
+/* >>> factory _AddCardToCollectionAndUpdateAlbumProgress */
 /* _AddCardToCollectionAndUpdateAlbumProgress:: save.asm:529-555. The second pass
  * (marked unintentional in the disassembly) repeats under the restored bank with
  * sAlbumProgress written as the bare literal $b8fe; CreateTempCardCollection reads
@@ -390,7 +433,9 @@ void _AddCardToCollectionAndUpdateAlbumProgress(uint8_t a)
 	AddCardToCollection(gb_read8(wCardToAddToCollection_ADDR));
 	UpdateAlbumProgress(0xB8FE);
 }
+/* <<< factory _AddCardToCollectionAndUpdateAlbumProgress */
 
+/* >>> part EVENT_VAR_MASKS */
 /* EventVarMasks and MedalEvents live in ROM bank 3 (scripting.asm:388/355), read
  * via the code bank there -- a farcall target. Both are 2- and 1-byte records. */
 #define EVENT_VAR_MASKS EventVarMasks_ADDR
@@ -403,7 +448,9 @@ void _AddCardToCollectionAndUpdateAlbumProgress(uint8_t a)
 #define OWMAP_MASON      0x01u
 #define MAP_MASON        0x01u
 #define DIR_SOUTH        0x02u
+/* <<< part EVENT_VAR_MASKS */
 
+/* >>> part get_event_var */
 /* GetEventVar:: scripting.asm:366-382. Returns wEventVars+offset and stashes the
  * mask in wLoadedEventBits, exactly as the asm leaves it for Get/SetEventValue. */
 static uint16_t get_event_var(uint8_t ev)
@@ -413,7 +460,9 @@ static uint16_t get_event_var(uint8_t ev)
 	gb_write8(wLoadedEventBits_ADDR, p[1]);
 	return (uint16_t)(wEventVars_ADDR + p[0]);
 }
+/* <<< part get_event_var */
 
+/* >>> part get_event_value */
 /* GetEventValue:: scripting.asm:213-230. */
 static uint8_t get_event_value(uint8_t ev)
 {
@@ -427,7 +476,9 @@ static uint8_t get_event_value(uint8_t ev)
 	}
 	return (uint8_t)(mask & c);
 }
+/* <<< part get_event_value */
 
+/* >>> part set_event_value */
 /* SetEventValue:: scripting.asm:248-270. The shift loop uses a copy; the merge
  * re-reads the original field mask from wLoadedEventBits, as the asm does. */
 static void set_event_value(uint8_t ev, uint8_t value)
@@ -443,7 +494,9 @@ static void set_event_value(uint8_t ev, uint8_t value)
 	}
 	gb_write8(addr, (uint8_t)((gb_read8(addr) & (uint8_t)~mask) | (uint8_t)(c & mask)));
 }
+/* <<< part set_event_value */
 
+/* >>> part try_give_pc_pack */
 /* TryGivePCPack:: mail.asm:509-544. */
 static void try_give_pc_pack(uint8_t id)
 {
@@ -466,7 +519,9 @@ static void try_give_pc_pack(uint8_t id)
 		hl++;
 	} while (--c);
 }
+/* <<< part try_give_pc_pack */
 
+/* >>> part try_give_medal_pc_packs */
 /* TryGiveMedalPCPacks:: scripting.asm:311-353. The three grants are fall-through
  * (not else-if): >=8 gives $c/$b/$a, >=7 gives $b/$a, >=3 gives $a. Returns the
  * medal count, restored from a pushed copy after the grants. */
@@ -489,7 +544,9 @@ static uint8_t try_give_medal_pc_packs(void)
 		try_give_pc_pack(0x0a);
 	return count;
 }
+/* <<< part try_give_medal_pc_packs */
 
+/* >>> part overworld_map_get_owmap_id */
 /* OverworldMap_GetOWMapID:: overworld_map.asm:165-179. */
 static uint8_t overworld_map_get_owmap_id(void)
 {
@@ -501,7 +558,9 @@ static uint8_t overworld_map_get_owmap_id(void)
 		return sel;
 	return OWMAP_MYSTERY;
 }
+/* <<< part overworld_map_get_owmap_id */
 
+/* >>> part get_received_legendary_cards */
 /* GetReceivedLegendaryCards:: map.asm:148-154. */
 static void get_received_legendary_cards(void)
 {
@@ -511,7 +570,9 @@ static void get_received_legendary_cards(void)
 	gb_write8(sReceivedLegendaryCards_ADDR, a);
 	DisableSRAM();
 }
+/* <<< part get_received_legendary_cards */
 
+/* >>> part backup_player_position */
 /* BackupPlayerPosition:: overworld.asm:279-288. */
 static void backup_player_position(void)
 {
@@ -520,7 +581,9 @@ static void backup_player_position(void)
 	gb_write8(wTempPlayerYCoord_ADDR, gb_read8(wPlayerYCoord_ADDR));
 	gb_write8(wTempPlayerDirection_ADDR, gb_read8(wPlayerDirection_ADDR));
 }
+/* <<< part backup_player_position */
 
+/* >>> factory SaveGeneralSaveDataFromDE */
 /* SaveGeneralSaveDataFromDE:: save.asm:52-68. */
 void SaveGeneralSaveDataFromDE(uint16_t de)
 {
@@ -530,7 +593,9 @@ void SaveGeneralSaveDataFromDE(uint16_t de)
 	CopyGeneralSaveDataToSRAM(de);
 	DisableSRAM();
 }
+/* <<< factory SaveGeneralSaveDataFromDE */
 
+/* >>> factory _SaveGeneralSaveData */
 /* _SaveGeneralSaveData:: save.asm:41-49. */
 void _SaveGeneralSaveData(void)
 {
@@ -538,7 +603,9 @@ void _SaveGeneralSaveData(void)
 	SaveGeneralSaveDataFromDE(sGeneralSaveData_ADDR);
 	UpdateAlbumProgress(sAlbumProgress_ADDR);
 }
+/* <<< factory _SaveGeneralSaveData */
 
+/* >>> factory SaveAndBackupData */
 /* SaveAndBackupData:: save.asm:30-39. */
 void SaveAndBackupData(void)
 {
@@ -547,7 +614,9 @@ void SaveAndBackupData(void)
 	WriteBackupGeneralSaveData();
 	WriteBackupCardAndDeckSaveData();
 }
+/* <<< factory SaveAndBackupData */
 
+/* >>> factory _SaveGame */
 /* _SaveGame:: save.asm:506-527. The farcall to BackupPlayerPosition becomes a
  * plain call under the Phase 1 transform. */
 void _SaveGame(uint8_t c)
@@ -563,33 +632,43 @@ void _SaveGame(uint8_t c)
 	}
 	SaveAndBackupData();
 }
+/* <<< factory _SaveGame */
 
+/* >>> factory SaveGeneralSaveData */
 /* SaveGeneralSaveData:: save.asm:1-3. farcall trampoline, no push/pop around it,
  * so it is register-transparent to _SaveGeneralSaveData. */
 void SaveGeneralSaveData(void)
 {
 	_SaveGeneralSaveData();
 }
+/* <<< factory SaveGeneralSaveData */
 
+/* >>> factory LoadGeneralSaveData */
 /* LoadGeneralSaveData:: save.asm:5-7. Same trampoline shape as SaveGeneralSaveData. */
 void LoadGeneralSaveData(void)
 {
 	_LoadGeneralSaveData();
 }
+/* <<< factory LoadGeneralSaveData */
 
+/* >>> factory ValidateGeneralSaveData */
 /* ValidateGeneralSaveData:: save.asm:9-11. Same trampoline shape. */
 ValidateResult ValidateGeneralSaveData(void)
 {
 	return _ValidateGeneralSaveData();
 }
+/* <<< factory ValidateGeneralSaveData */
 
+/* >>> factory AddCardToCollectionAndUpdateAlbumProgress */
 /* AddCardToCollectionAndUpdateAlbumProgress:: save.asm:15-17. Same trampoline
  * shape; a is the consumed card ID, passed straight through. */
 void AddCardToCollectionAndUpdateAlbumProgress(uint8_t a)
 {
 	_AddCardToCollectionAndUpdateAlbumProgress(a);
 }
+/* <<< factory AddCardToCollectionAndUpdateAlbumProgress */
 
+/* >>> factory SaveGame */
 /* SaveGame:: save.asm:19-30. Unlike its four siblings above, this pushes af/bc/de/hl
  * before the farcall and pops them back after, so every entry register survives
  * regardless of what _SaveGame does -- and c is hardcoded to 0 (the "save at current
@@ -599,3 +678,4 @@ void SaveGame(void)
 {
 	_SaveGame(0);
 }
+/* <<< factory SaveGame */

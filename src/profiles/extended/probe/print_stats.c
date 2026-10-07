@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/print_stats.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory DrawPauseMenuPlayerPortrait */
 static void adapt_DrawPauseMenuPlayerPortrait(ProbeState *s)
@@ -61,6 +63,7 @@ static void adapt_PrintMedalCount(ProbeState *s)
 }
 /* <<< factory PrintMedalCount */
 
+/* >>> part probe_entries_print_stats */
 const ProbeEntry probe_entries_print_stats[] = {
 	{ "DrawPauseMenuPlayerPortrait", adapt_DrawPauseMenuPlayerPortrait },
 	{ "FlashReceivedMedal", adapt_FlashReceivedMedal },
@@ -72,3 +75,4 @@ const ProbeEntry probe_entries_print_stats[] = {
 	{ "PrintMedalCount", adapt_PrintMedalCount },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_print_stats */

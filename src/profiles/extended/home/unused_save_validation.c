@@ -1,8 +1,10 @@
+/* >>> part includes */
 #include "home/unused_save_validation.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/sram.h"
 

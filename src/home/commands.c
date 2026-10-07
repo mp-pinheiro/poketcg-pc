@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/commands.h"
 
 #include "generated/text_ids.h"
@@ -9,6 +10,7 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
 /* >>> factory statics */
 #define PLAYER_TURN ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))

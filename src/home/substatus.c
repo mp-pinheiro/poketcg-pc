@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/substatus.h"
 
 #include "generated/text_ids.h"
@@ -13,6 +14,7 @@
 #include "home/frames.h"
 #include "home/print_text.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "home/card_data.h"
@@ -51,6 +53,7 @@
 #include "home/substatus.h"
 /* <<< factory statics */
 
+/* >>> part DUELVARS_ARENA_CARD_SUBSTATUS2 */
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
 #define SAND_ATTACK_CHECK_TEXT 0x00deu
 #define SMOKESCREEN_CHECK_TEXT 0x00dfu
@@ -58,7 +61,9 @@
 #define DUELVARS_BENCH 0xbcu
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
 #define wTempPokemonID_ADDR wTempPokemonID_ce7c_ADDR
+/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS2 */
 
+/* >>> factory CountTurnDuelistPokemonWithActivePkmnPower */
 /* substatus.asm:544-590. Counts arena (if not status-incapable) plus bench
  * slots matching the target id. The bench walk ends at its $FF terminator. */
 PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(uint8_t a)
@@ -84,7 +89,9 @@ PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(uint8_t a)
 	/* `or a / scf / jr nz / or a`: found = Z clear + C set. */
 	return (PkmnPowerCountResult){count, count ? 0x10u : 0x80u};
 }
+/* <<< factory CountTurnDuelistPokemonWithActivePkmnPower */
 
+/* >>> factory CountPokemonWithActivePkmnPowerInBothPlayAreas */
 /* substatus.asm:522-543: both duelists' play areas. */
 PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(uint8_t a)
 {
@@ -95,7 +102,9 @@ PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(uint8_t a)
 	SwapTurn();
 	return (PkmnPowerCountResult){count, count ? 0x10u : 0x80u};
 }
+/* <<< factory CountPokemonWithActivePkmnPowerInBothPlayAreas */
 
+/* >>> factory CheckSandAttackOrSmokescreenSubstatus */
 /* substatus.asm:346-366. Returns carry iff the turn holder's arena card has the
  * sand-attack or smokescreen substatus active AND the coin toss came up tails.
  *
@@ -123,7 +132,9 @@ SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de)
 	/* `or a` set Z, then `scf` keeps it: the tails exit is Z+C. */
 	return (SandAttackCheckResult){0, 0x90u, de, status.hl};
 }
+/* <<< factory CheckSandAttackOrSmokescreenSubstatus */
 
+/* >>> part DUELVARS_ARENA_CARD_SUBSTATUS1 */
 #define DUELVARS_ARENA_CARD_SUBSTATUS1 0xe7u
 #define DUELVARS_ARENA_CARD_SUBSTATUS3 0xebu
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xf2u
@@ -153,7 +164,9 @@ SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de)
 
 /* substatus.asm:476-481, ROM0 fixed bank (00:34d8 per poketcg.sym). */
 #define NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR NoDamageOrEffectTextIDTable_ADDR
+/* <<< part DUELVARS_ARENA_CARD_SUBSTATUS1 */
 
+/* >>> factory CheckIsIncapableOfUsingPkmnPower */
 PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower(uint8_t a)
 {
 	if (a == PLAY_AREA_ARENA) {
@@ -164,12 +177,16 @@ PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower(uint8_t a)
 	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 	return (PkmnPowerIncapableResult){muk.a, muk.f, UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID};
 }
+/* <<< factory CheckIsIncapableOfUsingPkmnPower */
 
+/* >>> factory CheckIsIncapableOfUsingPkmnPower_ArenaCard */
 PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower_ArenaCard(void)
 {
 	return CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_ARENA);
 }
+/* <<< factory CheckIsIncapableOfUsingPkmnPower_ArenaCard */
 
+/* >>> factory HandleDoubleDamageSubstatus */
 uint16_t HandleDoubleDamageSubstatus(uint16_t de)
 {
 	DuelistVarResult sub3 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS3);
@@ -177,12 +194,16 @@ uint16_t HandleDoubleDamageSubstatus(uint16_t de)
 		de = (uint16_t)(de << 1);
 	return de;
 }
+/* <<< factory HandleDoubleDamageSubstatus */
 
+/* >>> part reduce_by */
 static uint16_t reduce_by(uint16_t de, uint16_t amount)
 {
 	return (uint16_t)(de + (uint16_t)(0u - amount));
 }
+/* <<< part reduce_by */
 
+/* >>> part buggy_halve_damage */
 static uint16_t buggy_halve_damage(uint16_t de)
 {
 	uint8_t d = (uint8_t)(de >> 8);
@@ -195,7 +216,9 @@ static uint16_t buggy_halve_damage(uint16_t de)
 		return de;
 	return reduce_by(de, 5);
 }
+/* <<< part buggy_halve_damage */
 
+/* >>> factory HandleDamageReductionExceptSubstatus2 */
 uint16_t HandleDamageReductionExceptSubstatus2(uint16_t de)
 {
 	if (gb_read8(wNoDamageOrEffect_ADDR) != 0)
@@ -223,7 +246,9 @@ uint16_t HandleDamageReductionExceptSubstatus2(uint16_t de)
 		return de;
 	return HandleDamageReductionExceptSubstatus2_PkmnPower(de);
 }
+/* <<< factory HandleDamageReductionExceptSubstatus2 */
 
+/* >>> part HandleDamageReductionExceptSubstatus2_PkmnPower */
 uint16_t HandleDamageReductionExceptSubstatus2_PkmnPower(uint16_t de)
 {
 	if (gb_read8(wLoadedAttackCategory_ADDR) == POKEMON_POWER)
@@ -238,7 +263,9 @@ uint16_t HandleDamageReductionExceptSubstatus2_PkmnPower(uint16_t de)
 		return buggy_halve_damage(de);
 	return de;
 }
+/* <<< part HandleDamageReductionExceptSubstatus2_PkmnPower */
 
+/* >>> factory HandleDamageReduction */
 uint16_t HandleDamageReduction(uint16_t de)
 {
 	de = HandleDamageReductionExceptSubstatus2(de);
@@ -251,7 +278,9 @@ uint16_t HandleDamageReduction(uint16_t de)
 		return reduce_by(de, 10);
 	return de;
 }
+/* <<< factory HandleDamageReduction */
 
+/* >>> factory HandleCantAttackSubstatus */
 CantAttackResult HandleCantAttackSubstatus(void)
 {
 	DuelistVarResult sub2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS2);
@@ -265,7 +294,9 @@ CantAttackResult HandleCantAttackSubstatus(void)
 		return (CantAttackResult){0x90u, UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID};
 	return (CantAttackResult){0x00u, UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID};
 }
+/* <<< factory HandleCantAttackSubstatus */
 
+/* >>> factory HandleAmnesiaSubstatus */
 AmnesiaResult HandleAmnesiaSubstatus(void)
 {
 	DuelistVarResult sub2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS2);
@@ -279,7 +310,9 @@ AmnesiaResult HandleAmnesiaSubstatus(void)
 		return (AmnesiaResult){selected == 0 ? 0x80u : 0x00u, disabled.hl};
 	return (AmnesiaResult){0x90u, UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID};
 }
+/* <<< factory HandleAmnesiaSubstatus */
 
+/* >>> factory HandleNoDamageOrEffectSubstatus */
 NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t d, uint8_t e, uint16_t hl)
 {
 	gb_write8(wNoDamageOrEffect_ADDR, 0);
@@ -315,7 +348,9 @@ NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t d, uint8_t e, uin
 		return (NoDamageOrEffectResult){0x00u, d, e, hl};
 	return HandleNoDamageOrEffectSubstatus_PkmnPower(d, e, hl);
 }
+/* <<< factory HandleNoDamageOrEffectSubstatus */
 
+/* >>> part HandleNoDamageOrEffectSubstatus_PkmnPower */
 NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t d, uint8_t e, uint16_t hl)
 {
 	uint8_t defender = gb_read8(wTempNonTurnDuelistCardID_ADDR);
@@ -337,7 +372,9 @@ NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t d, uint
 	gb_write8(wNoDamageOrEffect_ADDR, e);
 	return (NoDamageOrEffectResult){0x10u, d, e, hl};
 }
+/* <<< part HandleNoDamageOrEffectSubstatus_PkmnPower */
 
+/* >>> factory CheckNoDamageOrEffect */
 NoDamageOrEffectCheckResult CheckNoDamageOrEffect(uint16_t hl)
 {
 	uint8_t val = gb_read8(wNoDamageOrEffect_ADDR);
@@ -352,7 +389,9 @@ NoDamageOrEffectCheckResult CheckNoDamageOrEffect(uint16_t hl)
 	uint16_t id = (uint16_t)(entry[0] | (uint16_t)entry[1] << 8);
 	return (NoDamageOrEffectCheckResult){offset == 0 ? 0x90u : 0x10u, id};
 }
+/* <<< factory CheckNoDamageOrEffect */
 
+/* >>> factory IsClairvoyanceActive */
 PkmnPowerCountResult IsClairvoyanceActive(void)
 {
 	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
@@ -360,7 +399,9 @@ PkmnPowerCountResult IsClairvoyanceActive(void)
 		return (PkmnPowerCountResult){muk.a, 0x00u};
 	return CountTurnDuelistPokemonWithActivePkmnPower(OMANYTE);
 }
+/* <<< factory IsClairvoyanceActive */
 
+/* >>> factory GetLoadedCard1RetreatCost */
 uint8_t GetLoadedCard1RetreatCost(void)
 {
 	uint8_t dodrio_count = 0;
@@ -384,7 +425,9 @@ uint8_t GetLoadedCard1RetreatCost(void)
 		return (uint8_t)(regular_cost - dodrio_count);
 	return 0;
 }
+/* <<< factory GetLoadedCard1RetreatCost */
 
+/* >>> factory CheckUnableToRetreatDueToEffect */
 RetreatEffectResult CheckUnableToRetreatDueToEffect(void)
 {
 	DuelistVarResult sub2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS2);
@@ -394,7 +437,9 @@ RetreatEffectResult CheckUnableToRetreatDueToEffect(void)
 		return (RetreatEffectResult){0x00u, sub2.hl};
 	return (RetreatEffectResult){0x90u, UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID};
 }
+/* <<< factory CheckUnableToRetreatDueToEffect */
 
+/* >>> factory CheckCantUseTrainerDueToEffect */
 TrainerEffectResult CheckCantUseTrainerDueToEffect(void)
 {
 	DuelistVarResult sub3 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS3);
@@ -402,7 +447,9 @@ TrainerEffectResult CheckCantUseTrainerDueToEffect(void)
 		return (TrainerEffectResult){0xA0u, sub3.hl};
 	return (TrainerEffectResult){0x10u, UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID};
 }
+/* <<< factory CheckCantUseTrainerDueToEffect */
 
+/* >>> factory IsPrehistoricPowerActive */
 PrehistoricPowerResult IsPrehistoricPowerActive(uint16_t hl)
 {
 	PkmnPowerCountResult aero = CountPokemonWithActivePkmnPowerInBothPlayAreas(AERODACTYL);
@@ -412,7 +459,9 @@ PrehistoricPowerResult IsPrehistoricPowerActive(uint16_t hl)
 	uint8_t f = (muk.f & 0x10u) ? 0x00u : 0x90u;
 	return (PrehistoricPowerResult){muk.a, f, UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID};
 }
+/* <<< factory IsPrehistoricPowerActive */
 
+/* >>> factory ClearDamageReductionSubstatus2 */
 void ClearDamageReductionSubstatus2(void)
 {
 	DuelistVarResult sub2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS2);
@@ -423,7 +472,9 @@ void ClearDamageReductionSubstatus2(void)
 	    sub2.a == SUBSTATUS2_LEER)
 		gb_write8(sub2.hl, 0);
 }
+/* <<< factory ClearDamageReductionSubstatus2 */
 
+/* >>> factory UpdateSubstatusConditions_StartOfTurn */
 void UpdateSubstatusConditions_StartOfTurn(void)
 {
 	DuelistVarResult sub1 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS1);
@@ -433,7 +484,9 @@ void UpdateSubstatusConditions_StartOfTurn(void)
 	DuelistVarResult sub3 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS3);
 	gb_write8(sub3.hl, (uint8_t)(sub3.a | (1u << SUBSTATUS3_THIS_TURN_DOUBLE_DAMAGE_F)));
 }
+/* <<< factory UpdateSubstatusConditions_StartOfTurn */
 
+/* >>> factory UpdateSubstatusConditions_EndOfTurn */
 void UpdateSubstatusConditions_EndOfTurn(void)
 {
 	DuelistVarResult sub3 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS3);
@@ -449,7 +502,9 @@ void UpdateSubstatusConditions_EndOfTurn(void)
 	uint8_t sub3_now = gb_read8(sub3.hl);
 	gb_write8(sub3.hl, (uint8_t)(sub3_now & (uint8_t)~(1u << SUBSTATUS3_THIS_TURN_DOUBLE_DAMAGE_F)));
 }
+/* <<< factory UpdateSubstatusConditions_EndOfTurn */
 
+/* >>> factory IsRainDanceActive */
 PkmnPowerCountResult IsRainDanceActive(void)
 {
 	PkmnPowerCountResult blastoise = CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE);
@@ -459,14 +514,18 @@ PkmnPowerCountResult IsRainDanceActive(void)
 	uint8_t f = (muk.f & 0x10u) ? 0x00u : 0x90u;
 	return (PkmnPowerCountResult){muk.a, f};
 }
+/* <<< factory IsRainDanceActive */
 
+/* >>> part zero_changed_type_run */
 static void zero_changed_type_run(void)
 {
 	uint16_t addr = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_TYPE).hl;
 	for (uint8_t i = 0; i < MAX_PLAY_AREA_POKEMON; i++)
 		gb_write8(addr++, 0);
 }
+/* <<< part zero_changed_type_run */
 
+/* >>> factory ClearChangedTypesIfMuk */
 void ClearChangedTypesIfMuk(uint8_t a)
 {
 	uint16_t id = GetCardIDFromDeckIndex(a);
@@ -477,9 +536,11 @@ void ClearChangedTypesIfMuk(uint8_t a)
 	SwapTurn();
 	zero_changed_type_run();
 }
+/* <<< factory ClearChangedTypesIfMuk */
 
 
 
+/* >>> factory CheckRainDanceScenario */
 RainDanceResult CheckRainDanceScenario(void)
 {
 	uint8_t card_idx = hTempCardIndex_ff98;
@@ -492,12 +553,18 @@ RainDanceResult CheckRainDanceScenario(void)
 		return (RainDanceResult){color, 0x00u};
 	return (RainDanceResult){TYPE_PKMN_WATER, 0x90u};
 }
+/* <<< factory CheckRainDanceScenario */
 
+/* >>> part MACHAMP_ID */
 #define MACHAMP_ID 0x7Fu
 #define MUK_ID     0x27u
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT 0x0105u
+/* <<< part MACHAMP_ID */
+/* >>> part f_or */
 static uint8_t f_or(uint8_t result) { return (uint8_t)(result ? 0x00u : 0x80u); }
+/* <<< part f_or */
+/* >>> part f_cp */
 static uint8_t f_cp(uint8_t a, uint8_t val)
 {
 	uint8_t f = 0x40u;
@@ -506,7 +573,9 @@ static uint8_t f_cp(uint8_t a, uint8_t val)
 	if (a < val) f |= 0x10u;
 	return f;
 }
+/* <<< part f_cp */
 
+/* >>> factory HandleStrikesBack_AgainstDamagingAttack */
 StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de)
 {
 	uint8_t a;
@@ -548,6 +617,7 @@ StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de)
 	SwapTurn();
 	return (StrikesBackResult){0, 0x10u};
 }
+/* <<< factory HandleStrikesBack_AgainstDamagingAttack */
 /* >>> factory ApplyStrikesBack_AgainstResidualAttack */
 ApplyStrikesBackResult ApplyStrikesBack_AgainstResidualAttack(uint16_t hl)
 {

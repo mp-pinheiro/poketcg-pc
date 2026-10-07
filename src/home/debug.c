@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/debug.h"
 
 #include "generated/text_ids.h"
@@ -7,6 +8,7 @@
 #include "home/lcd.h"
 #include "home/tiles.h"
 #include "home/wait_keys.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/random.h"
 #include "mem.h"
@@ -58,6 +60,7 @@
 #define DEBUG_DUEL_MENU_PARAMS Unknown_12908_ADDR
 /* <<< factory statics */
 
+/* >>> factory DebugSGBFrame */
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
 	uint8_t e, uint16_t hl)
 {
@@ -74,7 +77,9 @@ DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
 	wDebugSGBBorder = next;
 	return (DebugSGBFrameResult){next, f, b, c, d, e, hl};
 }
+/* <<< factory DebugSGBFrame */
 
+/* >>> factory DebugStandardBGCharacter */
 DebugStandardBGCharacterResult DebugStandardBGCharacter(uint8_t b, uint8_t c,
 	uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -87,12 +92,15 @@ DebugStandardBGCharacterResult DebugStandardBGCharacter(uint8_t b, uint8_t c,
 	WaitKeysResult result = WaitUntilKeysArePressed(0xFFu);
 	return (DebugStandardBGCharacterResult){result.a, 0x10u, 0, 0};
 }
+/* <<< factory DebugStandardBGCharacter */
 
+/* >>> factory DebugQuit */
 DebugQuitResult DebugQuit(uint8_t a, uint8_t f)
 {
 	(void)f;
 	return (DebugQuitResult){a, (uint8_t)(a == 0 ? 0x80u : 0)};
 }
+/* <<< factory DebugQuit */
 
 /* >>> factory UnreferencedFillVRAMWithRandomData */
 /* engine/gfx/debug.asm:53-62. Unreferenced. Fills v0Tiles0 ($8000-$87FF,

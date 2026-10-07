@@ -1,7 +1,10 @@
+/* >>> part includes */
 #include "generated/wram.h"
 #include "home/play_area.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory ZeroObjectPositionsAndToggleOAMCopy_Bank6 */
 static void adapt_ZeroObjectPositionsAndToggleOAMCopy_Bank6(ProbeState *s)
 {
 	ZeroObjectPositionsAndToggleOAMCopy_Bank6();
@@ -10,6 +13,7 @@ static void adapt_ZeroObjectPositionsAndToggleOAMCopy_Bank6(ProbeState *s)
 	s->c = 0;
 	s->hl = (uint16_t)(wOAM_ADDR + 160u);
 }
+/* <<< factory ZeroObjectPositionsAndToggleOAMCopy_Bank6 */
 
 /* >>> factory OpenInPlayAreaScreen_HandleInput */
 static void adapt_OpenInPlayAreaScreen_HandleInput(ProbeState *s)
@@ -72,6 +76,7 @@ static void adapt_OpenInPlayAreaScreen(ProbeState *s)
 }
 /* <<< factory OpenInPlayAreaScreen */
 
+/* >>> part probe_entries_play_area */
 const ProbeEntry probe_entries_play_area[] = {
 	{ "ZeroObjectPositionsAndToggleOAMCopy_Bank6", adapt_ZeroObjectPositionsAndToggleOAMCopy_Bank6 },
 	{ "OpenInPlayAreaScreen_HandleInput", adapt_OpenInPlayAreaScreen_HandleInput },
@@ -84,3 +89,4 @@ const ProbeEntry probe_entries_play_area[] = {
 	{ "OpenInPlayAreaScreen", adapt_OpenInPlayAreaScreen },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_play_area */

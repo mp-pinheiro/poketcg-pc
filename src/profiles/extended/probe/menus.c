@@ -1,40 +1,55 @@
+/* >>> part includes */
 #include "home/menus.h"
 #include "probe.h"
 #include "generated/wram.h"
+/* <<< part includes */
 
+/* >>> factory InitializeCardListParameters */
 static void adapt_InitializeCardListParameters(ProbeState *s)
 {
 	InitializeCardListParameters(s->a, s->d, s->e, &s->hl);
 }
+/* <<< factory InitializeCardListParameters */
 
+/* >>> factory InitializeMenuParameters */
 static void adapt_InitializeMenuParameters(ProbeState *s)
 {
 	InitializeMenuParameters(s->a, &s->hl);
 }
+/* <<< factory InitializeMenuParameters */
 
+/* >>> factory SetMenuItem */
 static void adapt_SetMenuItem(ProbeState *s)
 {
 	SetMenuItem(s->a);
 }
+/* <<< factory SetMenuItem */
 
+/* >>> factory OneByteNumberToTxSymbol */
 static void adapt_OneByteNumberToTxSymbol(ProbeState *s)
 {
 	TxSymbolResult result = OneByteNumberToTxSymbol(s->a);
 	s->a = result.a;
 	s->hl = result.hl;
 }
+/* <<< factory OneByteNumberToTxSymbol */
+/* >>> factory OneByteNumberToTxSymbol_TrimLeadingZeros */
 static void adapt_OneByteNumberToTxSymbol_TrimLeadingZeros(ProbeState *s)
 {
 	TxSymbolResult result = OneByteNumberToTxSymbol_TrimLeadingZeros(s->a);
 	s->a = result.a;
 	s->hl = result.hl;
 }
+/* <<< factory OneByteNumberToTxSymbol_TrimLeadingZeros */
 
+/* >>> factory CardTypeToSymbolID */
 static void adapt_CardTypeToSymbolID(ProbeState *s)
 {
 	s->a = CardTypeToSymbolID();
 }
+/* <<< factory CardTypeToSymbolID */
 
+/* >>> factory GetCardSymbolData */
 static void adapt_GetCardSymbolData(ProbeState *s)
 {
 	uint8_t id = CardTypeToSymbolID();
@@ -43,7 +58,9 @@ static void adapt_GetCardSymbolData(ProbeState *s)
 	s->c = (uint8_t)(id * 2);
 	s->hl = (uint16_t)(0x20C5u + id * 2u);
 }
+/* <<< factory GetCardSymbolData */
 
+/* >>> factory SetCursorParametersForTextBox */
 static void adapt_SetCursorParametersForTextBox(ProbeState *s)
 {
 	CursorTileResult result = SetCursorParametersForTextBox(s->d, s->e, s->b, s->c);
@@ -51,7 +68,9 @@ static void adapt_SetCursorParametersForTextBox(ProbeState *s)
 	s->c = result.c;
 	s->hl = result.hl;
 }
+/* <<< factory SetCursorParametersForTextBox */
 
+/* >>> factory SetCursorParametersForTextBox_Default */
 static void adapt_SetCursorParametersForTextBox_Default(ProbeState *s)
 {
 	CursorTileResult result = SetCursorParametersForTextBox_Default(s->d, s->e);
@@ -60,49 +79,66 @@ static void adapt_SetCursorParametersForTextBox_Default(ProbeState *s)
 	s->hl = result.hl;
 	s->f = result.f;
 }
+/* <<< factory SetCursorParametersForTextBox_Default */
 
+/* >>> factory DrawCursor */
 static void adapt_DrawCursor(ProbeState *s)
 {
 	DrawCursor(s->a);
 }
+/* <<< factory DrawCursor */
 
+/* >>> factory EraseCursor */
 static void adapt_EraseCursor(ProbeState *s)
 {
 	(void)s;
 	EraseCursor();
 }
+/* <<< factory EraseCursor */
 
+/* >>> factory DrawCursor2 */
 static void adapt_DrawCursor2(ProbeState *s)
 {
 	(void)s;
 	DrawCursor2();
 }
+/* <<< factory DrawCursor2 */
 
+/* >>> factory RefreshMenuCursor */
 static void adapt_RefreshMenuCursor(ProbeState *s)
 {
 	(void)s;
 	RefreshMenuCursor();
 }
+/* <<< factory RefreshMenuCursor */
 
+/* >>> factory DrawCardSymbol */
 static void adapt_DrawCardSymbol(ProbeState *s)
 {
 	DrawCardSymbol(s->d, s->e);
 }
+/* <<< factory DrawCardSymbol */
 
+/* >>> factory DrawNarrowTextBox */
 static void adapt_DrawNarrowTextBox(ProbeState *s)
 {
 	s->hl = DrawNarrowTextBox();
 }
+/* <<< factory DrawNarrowTextBox */
 
+/* >>> factory DrawWideTextBox */
 static void adapt_DrawWideTextBox(ProbeState *s)
 {
 	s->hl = DrawWideTextBox();
 }
+/* <<< factory DrawWideTextBox */
 
+/* >>> factory DrawNarrowTextBox_PrintTextNoDelay */
 static void adapt_DrawNarrowTextBox_PrintTextNoDelay(ProbeState *s)
 {
 	s->hl = DrawNarrowTextBox_PrintTextNoDelay(s->hl).hl;
 }
+/* <<< factory DrawNarrowTextBox_PrintTextNoDelay */
 
 /* >>> factory DrawTextBox_PrintTextNoDelay */
 /* `a` is the box width the callers load; the caller-pushed hl is the case's
@@ -113,16 +149,21 @@ static void adapt_DrawTextBox_PrintTextNoDelay(ProbeState *s)
 }
 /* <<< factory DrawTextBox_PrintTextNoDelay */
 
+/* >>> factory DrawWideTextBox_PrintTextNoDelay */
 static void adapt_DrawWideTextBox_PrintTextNoDelay(ProbeState *s)
 {
 	s->hl = DrawWideTextBox_PrintTextNoDelay(s->hl).hl;
 }
+/* <<< factory DrawWideTextBox_PrintTextNoDelay */
 
+/* >>> factory DrawWideTextBox_PrintText */
 static void adapt_DrawWideTextBox_PrintText(ProbeState *s)
 {
 	s->hl = DrawWideTextBox_PrintText(s->hl).hl;
 }
+/* <<< factory DrawWideTextBox_PrintText */
 
+/* >>> factory PrintYesOrNoItems */
 static void adapt_PrintYesOrNoItems(ProbeState *s)
 {
 	ProcessTextHeaderResult r = PrintYesOrNoItems(s->d, s->e);
@@ -132,22 +173,29 @@ static void adapt_PrintYesOrNoItems(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory PrintYesOrNoItems */
 
+/* >>> factory WaitForButtonAorB */
 static void adapt_WaitForButtonAorB(ProbeState *s)
 {
 	s->f = WaitForButtonAorB().f;
 }
+/* <<< factory WaitForButtonAorB */
 
+/* >>> factory DrawWideTextBox_WaitForInput */
 static void adapt_DrawWideTextBox_WaitForInput(ProbeState *s)
 {
 	DrawWideTextBox_WaitForInput(s->hl);
 }
+/* <<< factory DrawWideTextBox_WaitForInput */
 
+/* >>> factory WaitForWideTextBoxInput */
 static void adapt_WaitForWideTextBoxInput(ProbeState *s)
 {
 	(void)s;
 	WaitForWideTextBoxInput();
 }
+/* <<< factory WaitForWideTextBoxInput */
 
 /* >>> factory RefreshMenuCursor_CheckPlaySFX */
 static void adapt_RefreshMenuCursor_CheckPlaySFX(ProbeState *s)
@@ -301,6 +349,7 @@ static void adapt_YesOrNoMenuWithText_SetCursorToYes(ProbeState *s)
 }
 /* <<< factory YesOrNoMenuWithText_SetCursorToYes */
 
+/* >>> part probe_entries_menus */
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -343,3 +392,4 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "YesOrNoMenuWithText_LeftAligned", adapt_YesOrNoMenuWithText_LeftAligned },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_menus */

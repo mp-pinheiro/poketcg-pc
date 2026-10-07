@@ -1,8 +1,12 @@
+/* >>> part includes */
 #include "generated/rom.h"
+/* <<< part includes */
 #ifndef POKETCG_HOME_MASON_LABORATORY_H
 #define POKETCG_HOME_MASON_LABORATORY_H
 
+/* >>> part includes_tail */
 #include <stdint.h>
+/* <<< part includes_tail */
 
 /* >>> factory Func_d703 */
 typedef struct { uint8_t a; uint8_t f; } FuncD703Result;
@@ -38,5 +42,7 @@ MasonLabPressedAResult MasonLabPressedA(uint8_t b, uint8_t c, uint8_t d, uint8_t
 typedef struct { uint8_t a; uint8_t b; uint8_t c; uint16_t hl; } ScriptTech1Result;
 ScriptTech1Result Script_Tech1(void);
 /* <<< factory Script_Tech1 */
+/* >>> part Script_Tech1_START_SCRIPT */
 #define Script_Tech1_START_SCRIPT AttackAnimation_FriendshipSong_ADDR
+/* <<< part Script_Tech1_START_SCRIPT */
 #endif /* POKETCG_HOME_MASON_LABORATORY_H */

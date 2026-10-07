@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/effect_commands.h"
 
 #include "generated/hram.h"
@@ -6,6 +7,7 @@
 #include "mem.h"
 #include <stdio.h>
 #include <stdlib.h>
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/effect_commands.h"
 #include "home/switch_rom.h"
@@ -14,9 +16,12 @@
 #include "mem.h"
 /* <<< factory statics */
 
+/* >>> part BANK_EFFECT_COMMANDS */
 #define BANK_EFFECT_COMMANDS 0x06u
 #define BANK_EFFECT_FUNCTIONS 0x0Bu
+/* <<< part BANK_EFFECT_COMMANDS */
 
+/* >>> factory CheckMatchingCommand */
 /* engine/duel/effect_commands.asm:37-85. hl walks a command list (2 bytes/entry:
  * type, function pointer; 0 terminates) under BANK_EFFECT_COMMANDS. NULL hl
  * short-circuits before any bank switch or wEffectFunctionsBank write. The
@@ -46,6 +51,7 @@ EffectCmdLookup CheckMatchingCommand(uint8_t a, uint16_t hl)
 		hl = (uint16_t)(hl + 2u);
 	}
 }
+/* <<< factory CheckMatchingCommand */
 
 /* >>> factory TryExecuteEffectCommandFunction */
 TryExecuteEffectCommandFunctionResult TryExecuteEffectCommandFunction(

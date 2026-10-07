@@ -1,5 +1,7 @@
+/* >>> part includes */
 #include "home/start.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory CheckIfHasSaveData */
 static void adapt_CheckIfHasSaveData(ProbeState *s)
@@ -56,6 +58,7 @@ static void adapt_DeleteSaveDataForNewGame(ProbeState *s)
 }
 /* <<< factory DeleteSaveDataForNewGame */
 
+/* >>> factory HandleTitleScreen */
 static void adapt_HandleTitleScreen(ProbeState *s)
 {
 	(void)s;
@@ -63,12 +66,14 @@ static void adapt_HandleTitleScreen(ProbeState *s)
 }
 /* <<< factory HandleTitleScreen */
 
+/* >>> factory Start */
 static void adapt_Start(ProbeState *s)
 {
 	Start(s->a);
 }
 /* <<< factory Start */
 
+/* >>> part probe_entries_start */
 const ProbeEntry probe_entries_start[] = {
 	{ "CheckIfHasSaveData", adapt_CheckIfHasSaveData },
 	{ "PrintStartMenuDescriptionText", adapt_PrintStartMenuDescriptionText },
@@ -80,3 +85,4 @@ const ProbeEntry probe_entries_start[] = {
 	{ "Start", adapt_Start },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_start */

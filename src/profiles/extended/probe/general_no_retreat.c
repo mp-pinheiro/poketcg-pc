@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/general_no_retreat.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory AIDoTurn_GeneralNoRetreat */
 static void adapt_AIDoTurn_GeneralNoRetreat(ProbeState *s)
@@ -11,7 +13,9 @@ static void adapt_AIDoTurn_GeneralNoRetreat(ProbeState *s)
 }
 /* <<< factory AIDoTurn_GeneralNoRetreat */
 
+/* >>> part probe_entries_general_no_retreat */
 const ProbeEntry probe_entries_general_no_retreat[] = {
 	{ "AIDoTurn_GeneralNoRetreat", adapt_AIDoTurn_GeneralNoRetreat },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_general_no_retreat */

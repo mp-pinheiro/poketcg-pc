@@ -1,11 +1,14 @@
 #ifndef POKETCG_HOME_VBLANK_H
 #define POKETCG_HOME_VBLANK_H
 
+/* >>> part RuntimeVBlankHandler */
 /* Host counterpart of the ROM's VBlankHandler (poketcg/src/home/vblank.asm):
  * the runtime loop calls it once per frame, after DoFrame returns and before
  * the PPU samples the IO image. */
 void RuntimeVBlankHandler(void);
+/* <<< part RuntimeVBlankHandler */
 
+/* >>> part RuntimeLCDCHandler */
 /* The LCDC (STAT) interrupt: home.asm:34-36 `call wLCDCFunctionTrampoline`
  * whenever LY reaches rLYC with the coincidence interrupt armed
  * (EnableInt_LYCoincidence). The runtime loop calls it once per VBlank
@@ -15,6 +18,9 @@ void RuntimeVBlankHandler(void);
  * line until the table wraps. Every rearm forward within the frame is
  * followed, so the per-frame handler count matches the ROM's. */
 void RuntimeLCDCHandler(void);
+/* <<< part RuntimeLCDCHandler */
+/* >>> part RuntimeLCDCHandlerOnce */
 int RuntimeLCDCHandlerOnce(void);
+/* <<< part RuntimeLCDCHandlerOnce */
 
 #endif

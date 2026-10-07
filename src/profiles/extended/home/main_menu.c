@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/main_menu.h"
 #include "home/start.h"
 
@@ -11,6 +12,7 @@
 #include "home/naming.h"
 #include "home/starter_deck.h"
 #include "home/switch_sram.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/common.h"
 #include "home/lcd_enable_frame.h"

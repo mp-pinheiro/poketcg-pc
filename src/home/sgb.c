@@ -1,6 +1,8 @@
+/* >>> part includes */
 #include "generated/rom.h"
 #include "generated/constants.h"
 #include "home/sgb.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/sgb.h"
 #include "mem.h"
@@ -15,6 +17,7 @@
 #include "home/sgb.h"
 /* <<< factory statics */
 
+/* >>> factory Wait */
 /* sgb.asm:258-274. The delay loop has no observable effects beyond its
  * register residue: DE and A end at zero, and the final OR leaves Z set. */
 SGBWaitResult Wait(uint16_t bc)
@@ -30,6 +33,7 @@ SGBWaitResult Wait(uint16_t bc)
 
 	return (SGBWaitResult){0, 0x80u, 0, 0, 0, 0};
 }
+/* <<< factory Wait */
 
 /* >>> factory SendSGB */
 SendSGBResult SendSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)

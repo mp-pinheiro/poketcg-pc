@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/science_club.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Preload_Joseph */
 static void adapt_Preload_Joseph(ProbeState *s)
@@ -26,8 +28,10 @@ static void adapt_ScienceClubAfterDuel(ProbeState *s)
 }
 /* <<< factory ScienceClubAfterDuel */
 
+/* >>> part probe_entries_science_club */
 const ProbeEntry probe_entries_science_club[] = {
 	{ "Preload_Joseph", adapt_Preload_Joseph },
 	{ "ScienceClubAfterDuel", adapt_ScienceClubAfterDuel },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_science_club */

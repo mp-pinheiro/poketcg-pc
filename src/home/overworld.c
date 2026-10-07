@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/overworld.h"
 
 #include <stdio.h>
@@ -15,6 +16,7 @@
 #include "home/frames.h"
 #include "home/decompress.h"
 #include "home/memory.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/load_animation.h"
 #include "mem.h"
@@ -1586,7 +1588,9 @@ void LoadMap(void)
 }
 /* <<< factory LoadMap */
 
+/* >>> part PCMENU_PRINT_ADDR */
 #define PCMENU_PRINT_ADDR PCMenu_Print_ADDR
+/* <<< part PCMENU_PRINT_ADDR */
 
 /* >>> factory PCMenu_Print */
 void PCMenu_Print(void)

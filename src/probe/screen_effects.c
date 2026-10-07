@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/screen_effects.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory DecrementScreenAnimDuration */
 static void adapt_DecrementScreenAnimDuration(ProbeState *s)
@@ -125,6 +127,7 @@ static void adapt_InitScreenAnimation(ProbeState *s)
 }
 /* <<< factory InitScreenAnimation */
 
+/* >>> part probe_entries_screen_effects */
 const ProbeEntry probe_entries_screen_effects[] = {
 	{ "DecrementScreenAnimDuration", adapt_DecrementScreenAnimDuration },
 	{ "UpdateShakeOffset", adapt_UpdateShakeOffset },
@@ -143,3 +146,4 @@ const ProbeEntry probe_entries_screen_effects[] = {
 	{ "InitScreenAnimation", adapt_InitScreenAnimation },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_screen_effects */

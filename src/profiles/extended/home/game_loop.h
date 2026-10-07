@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_GAME_LOOP_H
 #define POKETCG_HOME_GAME_LOOP_H
 
+/* >>> factory SetupResetBackUpRamScreen */
 void SetupResetBackUpRamScreen(void);
+/* <<< factory SetupResetBackUpRamScreen */
 
 /* >>> factory InitSaveDataAndSetUppercase */
 void InitSaveDataAndSetUppercase(void);

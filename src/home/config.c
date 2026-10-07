@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/config.h"
 
 #include "generated/constants.h"
@@ -5,6 +6,7 @@
 #include "generated/wram.h"
 
 #include "home/bg_map.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/switch_sram.h"
 #include "home/config.h"
@@ -49,6 +51,7 @@ static const uint8_t kDuelAnimationSettings[8] = {
 #include "mem.h"
 /* <<< factory statics */
 
+/* >>> factory DrawConfigMenuCursor */
 void DrawConfigMenuCursor(uint8_t a, uint8_t c)
 {
 	uint8_t cursor;
@@ -79,6 +82,7 @@ void DrawConfigMenuCursor(uint8_t a, uint8_t c)
 	}
 	WriteByteToBGMap0(a, x, y);
 }
+/* <<< factory DrawConfigMenuCursor */
 
 /* >>> factory GetConfigCursorPositions */
 /* config.asm:71-97 */

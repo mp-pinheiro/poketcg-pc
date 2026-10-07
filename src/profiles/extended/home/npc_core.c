@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/npc_core.h"
 
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/load_animation.h"
 #include "home/map.h"

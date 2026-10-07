@@ -1,17 +1,24 @@
+/* >>> part includes */
 #include "home/unsafe_bg_map.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> part pair */
 static uint16_t pair(uint8_t hi, uint8_t lo)
 {
 	return (uint16_t)(hi << 8 | lo);
 }
+/* <<< part pair */
 
+/* >>> part split */
 static void split(uint16_t value, uint8_t *hi, uint8_t *lo)
 {
 	*hi = (uint8_t)(value >> 8);
 	*lo = (uint8_t)value;
 }
+/* <<< part split */
 
+/* >>> factory UnsafeWriteDataBlockToBGMap0 */
 static void adapt_UnsafeWriteDataBlockToBGMap0(ProbeState *s)
 {
 	uint16_t de = pair(s->d, s->e);
@@ -19,8 +26,11 @@ static void adapt_UnsafeWriteDataBlockToBGMap0(ProbeState *s)
 	UnsafeWriteDataBlockToBGMap0(&s->hl, &de);
 	split(de, &s->d, &s->e);
 }
+/* <<< factory UnsafeWriteDataBlockToBGMap0 */
 
+/* >>> part probe_entries_unsafe_bg_map */
 const ProbeEntry probe_entries_unsafe_bg_map[] = {
 	{ "UnsafeWriteDataBlockToBGMap0", adapt_UnsafeWriteDataBlockToBGMap0 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_unsafe_bg_map */

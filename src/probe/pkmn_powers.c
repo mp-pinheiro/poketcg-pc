@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/pkmn_powers.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory HandleAIShift */
 static void adapt_HandleAIShift(ProbeState *s)
@@ -106,6 +108,7 @@ static void adapt_HandleAIEnergyTrans(ProbeState *s)
 }
 /* <<< factory HandleAIEnergyTrans */
 
+/* >>> part probe_entries_pkmn_powers */
 const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIShift", adapt_HandleAIShift },
 	{ "HandleAIPeek", adapt_HandleAIPeek },
@@ -120,3 +123,4 @@ const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIEnergyTrans", adapt_HandleAIEnergyTrans },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_pkmn_powers */

@@ -1,12 +1,16 @@
+/* >>> part includes */
 #include "home/challenge_hall_lobby.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory Preload_ChallengeHallNPCs2 */
 static void adapt_PreloaderChallengeHallNPCs2(ProbeState *s)
 {
 	ChallengeHallLobbyResult result = Preload_ChallengeHallNPCs2();
 	s->a = result.a;
 	s->f = result.f;
 }
+/* <<< factory Preload_ChallengeHallNPCs2 */
 
 /* >>> factory ChallengeHallLobbyLoadMap */
 static void adapt_ChallengeHallLobbyLoadMap(ProbeState *s)
@@ -41,6 +45,7 @@ static void adapt_SetRonaldChallengeHallLobbyState(ProbeState *s)
 }
 /* <<< factory SetRonaldChallengeHallLobbyState */
 
+/* >>> part probe_entries_challenge_hall_lobby */
 const ProbeEntry probe_entries_challenge_hall_lobby[] = {
 	{ "Preload_ChallengeHallNPCs2", adapt_PreloaderChallengeHallNPCs2 },
 	{ "ChallengeHallLobbyLoadMap", adapt_ChallengeHallLobbyLoadMap },
@@ -49,3 +54,4 @@ const ProbeEntry probe_entries_challenge_hall_lobby[] = {
 	{ "SetRonaldChallengeHallLobbyState", adapt_SetRonaldChallengeHallLobbyState },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_challenge_hall_lobby */

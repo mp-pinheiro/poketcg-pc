@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/psychic_club_entrance.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory TryFirstRonaldDuel */
 static void adapt_TryFirstRonaldDuel(ProbeState *s)
@@ -79,6 +81,7 @@ static void adapt_Preload_Ronald3InClubEntrance(ProbeState *s)
 }
 /* <<< factory Preload_Ronald3InClubEntrance */
 
+/* >>> part probe_entries_psychic_club_entrance */
 const ProbeEntry probe_entries_psychic_club_entrance[] = {
 	{ "TryFirstRonaldDuel", adapt_TryFirstRonaldDuel },
 	{ "TrySecondRonaldDuel", adapt_TrySecondRonaldDuel },
@@ -90,3 +93,4 @@ const ProbeEntry probe_entries_psychic_club_entrance[] = {
 	{ "Preload_Ronald3InClubEntrance", adapt_Preload_Ronald3InClubEntrance },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_psychic_club_entrance */

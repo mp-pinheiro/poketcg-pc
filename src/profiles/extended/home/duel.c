@@ -1,13 +1,18 @@
+/* >>> part includes */
 #include "home/duel.h"
 #include <stdio.h>
 
 #include "generated/text_ids.h"
 #include "generated/rom.h"
 #include "generated/constants.h"
+/* <<< part includes */
+/* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 #define CURSOR_BLINK_PERIOD_MASK 0x0Fu
 #define B_CURSOR_BLINK_PERIOD 4u
 #define PAL_SIZE 8u
+/* <<< part MENU_CONFIRM */
+/* >>> part includes_OPPONENT_TURN */
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
@@ -26,17 +31,23 @@
 #include "home/play_area.h"
 #include "home/script.h"
 #include "home/switch_rom.h"
+/* <<< part includes_OPPONENT_TURN */
+/* >>> part OPPONENT_TURN */
 /* HIGH(wOpponentDuelVariables), the value hWhoseTurn carries on the opponent's turn. */
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
 #define PLAYER_TURN ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
+/* <<< part OPPONENT_TURN */
 
+/* >>> factory GetTurnDuelistVariable */
 /* duel.asm:1316-1323: [hWhoseTurn << 8 | a], the current turn holder's duelvar a. */
 DuelistVarResult GetTurnDuelistVariable(uint8_t a)
 {
 	uint16_t address = (uint16_t)(((uint16_t)hWhoseTurn << 8) | a);
 	return (DuelistVarResult){gb_read8(address), address};
 }
+/* <<< factory GetTurnDuelistVariable */
 
+/* >>> factory GetNonTurnDuelistVariable */
 /* duel.asm:1325-1337: the other player's duelvar a. */
 DuelistVarResult GetNonTurnDuelistVariable(uint8_t a)
 {
@@ -44,13 +55,17 @@ DuelistVarResult GetNonTurnDuelistVariable(uint8_t a)
 	uint16_t address = (uint16_t)(((uint16_t)turn << 8) | a);
 	return (DuelistVarResult){gb_read8(address), address};
 }
+/* <<< factory GetNonTurnDuelistVariable */
 
+/* >>> factory SwapTurn */
 /* duel.asm:2364-2371: the other player becomes the turn holder. */
 void SwapTurn(void)
 {
 	hWhoseTurn = hWhoseTurn == PLAYER_TURN ? OPPONENT_TURN : PLAYER_TURN;
 }
+/* <<< factory SwapTurn */
 
+/* >>> factory _GetCardIDFromDeckIndex */
 /* duel.asm:762-777: deck index -> card id, from the turn holder's deck.
  * `ld hl, wPlayerDeck / add hl, de / ld a, [hl]` leaves hl = deck + a. */
 DeckCardResult _GetCardIDFromDeckIndex(uint8_t a)
@@ -60,21 +75,27 @@ DeckCardResult _GetCardIDFromDeckIndex(uint8_t a)
 	CardId id = card_id_read_at(slot);
 	return (DeckCardResult){hWhoseTurn, id, (uint16_t)(slot + 1u)};
 }
+/* <<< factory _GetCardIDFromDeckIndex */
 
+/* >>> factory GetCardIDFromDeckIndex */
 /* duel.asm:701-711: id in de, af and hl preserved (both pushed and popped). */
 CardId GetCardIDFromDeckIndex(uint8_t a)
 {
 	uint16_t deck = hWhoseTurn == PLAYER_TURN ? wPlayerDeck_ADDR : wOpponentDeck_ADDR;
 	return card_id_read_at(card_id_index_address(deck, a));
 }
+/* <<< factory GetCardIDFromDeckIndex */
 
+/* >>> factory GetCardIDFromDeckIndex_bc */
 /* duel.asm:661-668: id in a and c, b = 0, hl preserved. */
 DeckCardResult GetCardIDFromDeckIndex_bc(uint8_t a, uint16_t hl)
 {
 	CardId id = GetCardIDFromDeckIndex(a);
 	return (DeckCardResult){hWhoseTurn, id, hl};
 }
+/* <<< factory GetCardIDFromDeckIndex_bc */
 
+/* >>> factory GetCardInDuelTempList_OnlyDeckIndex */
 /* duel.asm:670-684: the temp-list entry in a, shadowed in hTempCardIndex_ff98,
  * hl and de preserved. */
 DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl)
@@ -83,7 +104,9 @@ DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl)
 	hTempCardIndex_ff98 = entry;
 	return (DeckCardResult){entry, 0u, hl};
 }
+/* <<< factory GetCardInDuelTempList_OnlyDeckIndex */
 
+/* >>> factory GetCardInDuelTempList */
 /* duel.asm:686-699: entry in a (reloaded after the call), id in de, hl preserved. */
 DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl)
 {
@@ -92,7 +115,9 @@ DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl)
 	uint16_t id = GetCardIDFromDeckIndex(entry);
 	return (DeckEntryResult){entry, (uint8_t)(id >> 8), (uint8_t)id, hl};
 }
+/* <<< factory GetCardInDuelTempList */
 
+/* >>> part load_card_data_from_deck_index */
 /* duel.asm:778-812. `push af` keeps the deck index for the trainer conversion;
  * de carries the card id through both calls, so the final `ld a, e` is the id's
  * low byte. Every other register is restored by the pops. */
@@ -103,19 +128,25 @@ static uint8_t load_card_data_from_deck_index(uint8_t a, uint16_t buffer, void (
 	(void)ConvertSpecialTrainerCardToPokemon(a, buffer, id);
 	return (uint8_t)id;
 }
+/* <<< part load_card_data_from_deck_index */
 
+/* >>> factory LoadCardDataToBuffer1_FromDeckIndex */
 uint8_t LoadCardDataToBuffer1_FromDeckIndex(uint8_t a)
 {
 	return load_card_data_from_deck_index(a, wLoadedCard1_ADDR,
 					      LoadCardDataToBuffer1_FromCardID);
 }
+/* <<< factory LoadCardDataToBuffer1_FromDeckIndex */
 
+/* >>> factory LoadCardDataToBuffer2_FromDeckIndex */
 uint8_t LoadCardDataToBuffer2_FromDeckIndex(uint8_t a)
 {
 	return load_card_data_from_deck_index(a, wLoadedCard2_ADDR,
 					      LoadCardDataToBuffer2_FromCardID);
 }
+/* <<< factory LoadCardDataToBuffer2_FromDeckIndex */
 
+/* >>> factory SubtractHP */
 /* duel.asm:2011-2030. `sub e` then `sbc d` borrows the high byte; `and $80` on the
  * 8-bit result is the sign of the 16-bit subtraction, so a set sign means the
  * damage exceeded the HP and it clamps to zero. The tail is `or a / jr z / scf`,
@@ -135,10 +166,14 @@ SubtractHPResult SubtractHP(uint16_t hl, uint16_t de)
 	uint8_t f = remaining ? 0x10u : 0x80u;
 	return (SubtractHPResult){remaining, f};
 }
+/* <<< factory SubtractHP */
 
+/* >>> part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
 #define DUELVARS_DECK_CARDS 0x7eu
+/* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 
+/* >>> factory CreateDeckCardList */
 /* duel.asm:398-431. Copies DECK_SIZE - n remaining deck ids into wDuelTempList.
  * The `or a; ret` tail leaves carry clear on the non-empty path, so the exit is
  * Z-only; the empty path is `scf`. Exit hl is page + $BA on both paths (the
@@ -165,7 +200,9 @@ CardListResult CreateDeckCardList(uint8_t c, uint16_t de)
 	return (CardListResult){count, 0, count, (uint8_t)((dst + count) >> 8),
 				(uint8_t)(dst + count), 0x00u, not_in_deck.hl};
 }
+/* <<< factory CreateDeckCardList */
 
+/* >>> factory RemoveCardFromDuelTempList */
 /* duel.asm:713-746. `ld a, b / or a / jr nz / scf` sets carry iff the compacted
  * list is empty; every other register is pushed and popped, so a is the only
  * remaining output besides the flag. */
@@ -187,7 +224,9 @@ TempListResult RemoveCardFromDuelTempList(uint8_t a)
 	/* `or a` set Z on the empty exit, then `scf` keeps it: Z+C. */
 	return (TempListResult){count, count ? 0x00u : 0x90u};
 }
+/* <<< factory RemoveCardFromDuelTempList */
 
+/* >>> factory CountCardsInDuelTempList */
 /* duel.asm:747-761. The terminator `cp $ff` on the $FF byte leaves Z+N ($C0);
  * only a carries the count. */
 TempListResult CountCardsInDuelTempList(void)
@@ -197,14 +236,18 @@ TempListResult CountCardsInDuelTempList(void)
 		count++;
 	return (TempListResult){count, 0xC0u};
 }
+/* <<< factory CountCardsInDuelTempList */
 
+/* >>> part DUELVARS_HAND */
 #define DUELVARS_HAND 0x42u
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
 #define DUELVARS_CARD_LOCATIONS 0x00u
 #define DUELVARS_ARENA_CARD 0xbbu
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define PLAY_AREA_MASK 0x10u
+/* <<< part DUELVARS_HAND */
 
+/* >>> factory GetCardDamageAndMaxHP */
 /* duel.asm:2306-2320. The final `sub [hl]` borrows when the damage exceeds the
  * max HP; c keeps the HP, a the difference, and the borrow is the exit carry. */
 CardDamageResult GetCardDamageAndMaxHP(uint8_t e)
@@ -225,7 +268,9 @@ CardDamageResult GetCardDamageAndMaxHP(uint8_t e)
 		f |= 0x80u;
 	return (CardDamageResult){difference, max_hp, f};
 }
+/* <<< factory GetCardDamageAndMaxHP */
 
+/* >>> factory FindLastCardInHand */
 /* duel.asm:526-533: b = hand count, hl = page + $41 + count, de = wDuelTempList. */
 HandListResult FindLastCardInHand(uint8_t c)
 {
@@ -235,7 +280,9 @@ HandListResult FindLastCardInHand(uint8_t c)
 				0x00u, (uint16_t)(((uint16_t)hWhoseTurn << 8) |
 						  (DUELVARS_HAND - 1u + count))};
 }
+/* <<< factory FindLastCardInHand */
 
+/* >>> factory CreateHandCardList */
 /* duel.asm:473-500. Walks the hand backward from the last card, skipping
  * just-drawn cards. Exit a = hand count, carry iff the hand is empty. */
 HandListResult CreateHandCardList(uint8_t c)
@@ -258,7 +305,9 @@ HandListResult CreateHandCardList(uint8_t c)
 				(uint16_t)(((uint16_t)hWhoseTurn << 8) |
 					   DUELVARS_NUMBER_OF_CARDS_IN_HAND)};
 }
+/* <<< factory CreateHandCardList */
 
+/* >>> factory CreateArenaOrBenchEnergyCardList */
 /* duel.asm:435-470. Location-masked scan of the 60 card locations; energies of the
  * requested play-area location go into wDuelTempList. Exit a = the first entry,
  * carry iff the list is empty. */
@@ -286,8 +335,11 @@ HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a)
 	return (HandListResult){first, 0, location_mask, (uint8_t)(dst >> 8), (uint8_t)dst,
 				f, (uint16_t)(((uint16_t)hWhoseTurn << 8) + DECK_SIZE)};
 }
+/* <<< factory CreateArenaOrBenchEnergyCardList */
 
+/* >>> part includes_tail */
 #include "home/random.h"
+/* <<< part includes_tail */
 /* >>> factory statics */
 
 #include "home/bg_map.h"
@@ -646,6 +698,7 @@ static const uint8_t kCursorTileData[16] = {
 
 /* <<< factory statics */
 
+/* >>> factory ShuffleCards */
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
  * deck bytes with [de + Random(c)], where de starts at hl. Exit a is the byte
  * swapped into the last position; the tail pops restore every other register. */
@@ -667,21 +720,29 @@ ShuffleCardsResult ShuffleCards(uint8_t a, uint16_t hl)
 	/* The final `dec b` from 1 leaves Z+N on the way out. */
 	return (ShuffleCardsResult){last, 0xC0u};
 }
+/* <<< factory ShuffleCards */
 
+/* >>> part HTEMP_LIST_PTR */
 #define HTEMP_LIST_PTR 0xFF99u
+/* <<< part HTEMP_LIST_PTR */
 
+/* >>> part list_ptr */
 static uint16_t list_ptr(void)
 {
 	return (uint16_t)(gb_read8(HTEMP_LIST_PTR) |
 			  (uint16_t)gb_read8((uint16_t)(HTEMP_LIST_PTR + 1u)) << 8);
 }
+/* <<< part list_ptr */
 
+/* >>> part list_set_ptr */
 static void list_set_ptr(uint16_t ptr)
 {
 	gb_write8(HTEMP_LIST_PTR, (uint8_t)ptr);
 	gb_write8((uint16_t)(HTEMP_LIST_PTR + 1u), (uint8_t)(ptr >> 8));
 }
+/* <<< part list_set_ptr */
 
+/* >>> factory SortCardsInListByID */
 /* duel.asm:589-648. The terminator is $FF, whose bit 7 is the loop-exit test. Each
  * pass finds the lowest-ID card in the remaining span and swaps it to the front,
  * then advances the pointer; the final `bit 7, [hl]` on the terminator leaves
@@ -730,7 +791,9 @@ SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de)
 		list_set_ptr((uint16_t)(ptr + 1u));
 	}
 }
+/* <<< factory SortCardsInListByID */
 
+/* >>> factory SortCardsInDuelTempListByID */
 /* duel.asm:578-587. Point the list pointer at wDuelTempList and sort it. On an
  * empty list the first terminator check returns with the entry registers intact. */
 SortResult SortCardsInDuelTempListByID(uint8_t b, uint8_t c, uint16_t de)
@@ -738,7 +801,9 @@ SortResult SortCardsInDuelTempListByID(uint8_t b, uint8_t c, uint16_t de)
 	list_set_ptr(wDuelTempList_ADDR);
 	return SortCardsInListByID(b, c, de);
 }
+/* <<< factory SortCardsInDuelTempListByID */
 
+/* >>> factory SortHandCardsByID */
 /* duel.asm:502-525. Copies the hand (newest last) into wDuelTempList, sorts it,
  * then writes it back from the last hand position down, so the lowest id lands at
  * the newest slot. The trailing `dec b` leaves Z+N and a = the last copied value;
@@ -764,7 +829,9 @@ HandSortResult SortHandCardsByID(void)
 	return (HandSortResult){last_card, 0, sorted.c, (uint8_t)(dst >> 8), (uint8_t)dst,
 				0xC0u, (uint16_t)(((uint16_t)hWhoseTurn << 8) + DUELVARS_HAND - 1u)};
 }
+/* <<< factory SortHandCardsByID */
 
+/* >>> factory TranslateColorToWR */
 /* duel.asm:1915-1922. The table is `db $80, $40, $20, $10, $08, $04, $02, $01`
  * (InvertedPowersOf2, 00:1A1A). Entry a is a color index; all other registers
  * are preserved. */
@@ -772,7 +839,9 @@ uint8_t TranslateColorToWR(uint8_t a)
 {
 	return rom_ptr(InvertedPowersOf2_BANK, InvertedPowersOf2_ADDR)[a];
 }
+/* <<< factory TranslateColorToWR */
 
+/* >>> factory CountCardIDInLocation */
 /* duel.asm:1290-1315. Entry hl supplies the page only: `ld l,
  * DUELVARS_CARD_LOCATIONS` overwrites the low byte before the walk, so only h
  * selects the duelist and the exit is page + 60 whatever l held. `ld a, c /
@@ -791,7 +860,9 @@ CardLocationCountResult CountCardIDInLocation(uint8_t b, CardId de, uint16_t hl)
 	}
 	return (CardLocationCountResult){count, (uint16_t)(base + DECK_SIZE)};
 }
+/* <<< factory CountCardIDInLocation */
 
+/* >>> factory CheckLoadedAttackFlag */
 /* duel.asm:2331-2357. PowersOf2 (00:11B7) is `db $01..$80`. The rra x3 folds a's
  * top five bits into the group index. */
 AttackFlagResult CheckLoadedAttackFlag(uint8_t a)
@@ -804,7 +875,9 @@ AttackFlagResult CheckLoadedAttackFlag(uint8_t a)
 	uint8_t f = value ? 0x10u : 0xA0u;
 	return (AttackFlagResult){value, f};
 }
+/* <<< factory CheckLoadedAttackFlag */
 
+/* >>> factory CreateDiscardPileCardList */
 /* duel.asm:369-397. Reads the discard pile backward into wDuelTempList; carry is
  * set iff the pile is empty (`or a / ret nz / scf`, so the empty exit is Z+C).
  * `inc b / dec b` leaves b = 0 on both paths; c is never touched. */
@@ -822,10 +895,14 @@ CardListResult CreateDiscardPileCardList(uint8_t c)
 				(uint16_t)(((uint16_t)hWhoseTurn << 8) |
 					      DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE)};
 }
+/* <<< factory CreateDiscardPileCardList */
 
+/* >>> part PLAYER2_TEXT_ID */
 /* Text ID of the fallback opponent name. */
 #define PLAYER2_TEXT_ID Player2Text
+/* <<< part PLAYER2_TEXT_ID */
 
+/* >>> part copy_name_loop */
 /* CopyPlayerName's `.loop` tail. CopyOpponentName's name-buffer path jumps straight
  * into it, so the DisableSRAM runs on that path too even though it never enabled SRAM. */
 static CopyTextResult copy_name_loop(uint16_t hl, uint16_t de)
@@ -840,13 +917,17 @@ static CopyTextResult copy_name_loop(uint16_t hl, uint16_t de)
 	DisableSRAM();
 	return (CopyTextResult){a, (uint8_t)(de >> 8), (uint8_t)de, hl};
 }
+/* <<< part copy_name_loop */
 
+/* >>> factory CopyPlayerName */
 CopyTextResult CopyPlayerName(uint16_t de)
 {
 	EnableSRAM();
 	return copy_name_loop(sPlayerName_ADDR, de);
 }
+/* <<< factory CopyPlayerName */
 
+/* >>> factory CopyOpponentName */
 CopyTextResult CopyOpponentName(uint16_t de)
 {
 	uint16_t name = (uint16_t)(gb_read8(wOpponentName_ADDR) |
@@ -858,7 +939,9 @@ CopyTextResult CopyOpponentName(uint16_t de)
 		return copy_name_loop(wNameBuffer_ADDR, de);
 	return CopyText(PLAYER2_TEXT_ID, de);
 }
+/* <<< factory CopyOpponentName */
 
+/* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
 #define DUELVARS_PRIZES 0xecu
 #define DUELVARS_ARENA_CARD_FLAGS 0xc2u
@@ -874,7 +957,9 @@ CopyTextResult CopyOpponentName(uint16_t de)
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xf2u
 #define ATTACK_DATA_LEN 0x13u
+/* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 
+/* >>> factory CopyDeckData */
 /* duel.asm:60-104. */
 CardListResult CopyDeckData(uint16_t de)
 {
@@ -916,7 +1001,9 @@ CardListResult CopyDeckData(uint16_t de)
 	return (CardListResult){a, 0u, (uint8_t)(DECK_SIZE_BYTES - 2u),
 		(uint8_t)(de >> 8), (uint8_t)de, f, check};
 }
+/* <<< factory CopyDeckData */
 
+/* >>> factory CountPrizes */
 /* duel.asm:107-120. Verified exhaustively (all 256 byte values) against the
  * `rr l / adc 0` carry-ring: it computes popcount. */
 uint8_t CountPrizes(void)
@@ -930,7 +1017,9 @@ uint8_t CountPrizes(void)
 	}
 	return count;
 }
+/* <<< factory CountPrizes */
 
+/* >>> factory ShuffleDeck */
 /* duel.asm:124-137. */
 ShuffleDeckResult ShuffleDeck(uint8_t c, uint8_t e)
 {
@@ -943,7 +1032,9 @@ ShuffleDeckResult ShuffleDeck(uint8_t c, uint8_t e)
 
 	return (ShuffleDeckResult){r.a, count, c, turn, e, r.f, deck_offset};
 }
+/* <<< factory ShuffleDeck */
 
+/* >>> factory DrawCardFromDeck */
 /* duel.asm:142-161. */
 DrawCardResult DrawCardFromDeck(void)
 {
@@ -961,7 +1052,9 @@ DrawCardResult DrawCardFromDeck(void)
 	gb_write8((uint16_t)(page | card), CARD_LOCATION_JUST_DRAWN);
 	return (DrawCardResult){card, card ? 0x00u : 0x80u};
 }
+/* <<< factory DrawCardFromDeck */
 
+/* >>> factory ReturnCardToDeck */
 /* duel.asm:165-180. */
 void ReturnCardToDeck(uint8_t a)
 {
@@ -973,7 +1066,9 @@ void ReturnCardToDeck(uint8_t a)
 	gb_write8((uint16_t)(page | (uint8_t)(DUELVARS_DECK_CARDS + not_in_deck)), a);
 	gb_write8((uint16_t)(page | a), CARD_LOCATION_DECK);
 }
+/* <<< factory ReturnCardToDeck */
 
+/* >>> factory SearchCardInDeckAndAddToHand */
 /* duel.asm:185-217. */
 void SearchCardInDeckAndAddToHand(uint8_t a)
 {
@@ -995,7 +1090,9 @@ void SearchCardInDeckAndAddToHand(uint8_t a)
 		gb_write8(de--, card);
 	}
 }
+/* <<< factory SearchCardInDeckAndAddToHand */
 
+/* >>> factory AddCardToHand */
 /* duel.asm:221-242. */
 void AddCardToHand(uint8_t a)
 {
@@ -1007,7 +1104,9 @@ void AddCardToHand(uint8_t a)
 	gb_write8(count_addr, count);
 	gb_write8((uint16_t)(page | (uint8_t)(DUELVARS_HAND - 1u + count)), a);
 }
+/* <<< factory AddCardToHand */
 
+/* >>> factory RemoveCardFromHand */
 /* duel.asm:246-280. */
 void RemoveCardFromHand(uint8_t a)
 {
@@ -1029,7 +1128,9 @@ void RemoveCardFromHand(uint8_t a)
 		gb_write8(dst++, card);
 	}
 }
+/* <<< factory RemoveCardFromHand */
 
+/* >>> factory PutCardInDiscardPile */
 /* duel.asm:294-311. */
 void PutCardInDiscardPile(uint8_t a)
 {
@@ -1041,7 +1142,9 @@ void PutCardInDiscardPile(uint8_t a)
 	gb_write8(count_addr, count);
 	gb_write8((uint16_t)(page | (uint8_t)(DUELVARS_DECK_CARDS - 1u + count)), a);
 }
+/* <<< factory PutCardInDiscardPile */
 
+/* >>> factory MoveHandCardToDiscardPile */
 /* duel.asm:284-311. */
 MoveCardResult MoveHandCardToDiscardPile(uint8_t a)
 {
@@ -1062,7 +1165,9 @@ MoveCardResult MoveHandCardToDiscardPile(uint8_t a)
 	PutCardInDiscardPile(a);
 	return (MoveCardResult){a, 0xC0u, hl};
 }
+/* <<< factory MoveHandCardToDiscardPile */
 
+/* >>> factory MoveDiscardPileCardToHand */
 /* duel.asm:316-346. */
 MoveDiscardResult MoveDiscardPileCardToHand(uint8_t a)
 {
@@ -1092,15 +1197,19 @@ MoveDiscardResult MoveDiscardPileCardToHand(uint8_t a)
 	f = (uint8_t)(0xC0u | (last_carry ? 0x10u : 0x00u));
 	return (MoveDiscardResult){a, f};
 }
+/* <<< factory MoveDiscardPileCardToHand */
 
 
+/* >>> factory SortCardsInListByID_CheckForListTerminator */
 /* duel.asm:650-657. Identical to entering the top of SortCardsInListByID's own
  * loop. */
 SortResult SortCardsInListByID_CheckForListTerminator(uint8_t b, uint8_t c, uint16_t de)
 {
 	return SortCardsInListByID(b, c, de);
 }
+/* <<< factory SortCardsInListByID_CheckForListTerminator */
 
+/* >>> factory CheckIfCanEvolveInto */
 /* duel.asm:879-915. */
 EvolveResult CheckIfCanEvolveInto(uint8_t d, uint8_t e)
 {
@@ -1123,7 +1232,9 @@ EvolveResult CheckIfCanEvolveInto(uint8_t d, uint8_t e)
 		return (EvolveResult){flags, 0, d, e, 0x00u, flags_addr};
 	return (EvolveResult){0x01u, 0, d, e, 0x10u, flags_addr};
 }
+/* <<< factory CheckIfCanEvolveInto */
 
+/* >>> factory CheckIfCanEvolveInto_BasicToStage2 */
 /* duel.asm:922-957. */
 EvolveResult CheckIfCanEvolveInto_BasicToStage2(uint8_t d, uint8_t e)
 {
@@ -1152,7 +1263,9 @@ EvolveResult CheckIfCanEvolveInto_BasicToStage2(uint8_t d, uint8_t e)
 	return (EvolveResult){byte1, 0, d, e, byte1 ? 0x00u : 0x80u,
 				(uint16_t)(wLoadedCard2Name_ADDR + 1u)};
 }
+/* <<< factory CheckIfCanEvolveInto_BasicToStage2 */
 
+/* >>> factory EvolvePokemonCardIfPossible */
 /* duel.asm:814-822. */
 EvolveResult EvolvePokemonCardIfPossible(uint8_t c)
 {
@@ -1166,7 +1279,9 @@ EvolveResult EvolvePokemonCardIfPossible(uint8_t c)
 	evolved = EvolvePokemonCard();
 	return (EvolveResult){evolved.a, evolved.c, card_idx, evolved.e, evolved.f, evolved.hl};
 }
+/* <<< factory EvolvePokemonCardIfPossible */
 
+/* >>> factory EvolvePokemonCard */
 /* duel.asm:824-869. */
 EvolveResult EvolvePokemonCard(void)
 {
@@ -1203,7 +1318,9 @@ EvolveResult EvolvePokemonCard(void)
 	gb_write8(stage_addr, stage);
 	return (EvolveResult){stage, old_hp2, 0, slot, stage ? 0x00u : 0x80u, stage_addr};
 }
+/* <<< factory EvolvePokemonCard */
 
+/* >>> factory ClearAllStatusConditions */
 /* duel.asm:962-989. a/f are always 0/$80 (the entry `xor a`, untouched
  * afterward) and omitted from CONTRACT, matching SwapTurn's precedent. */
 void ClearAllStatusConditions(void)
@@ -1222,7 +1339,9 @@ void ClearAllStatusConditions(void)
 	for (int i = 0; i < 8; i++)
 		gb_write8((uint16_t)(addr + i), 0);
 }
+/* <<< factory ClearAllStatusConditions */
 
+/* >>> factory PutHandCardInPlayArea */
 /* duel.asm:1058-1064. */
 PutHandResult PutHandCardInPlayArea(uint8_t a, uint8_t e)
 {
@@ -1233,7 +1352,9 @@ PutHandResult PutHandCardInPlayArea(uint8_t a, uint8_t e)
 	gb_write8(hl, result);
 	return (PutHandResult){result, hl};
 }
+/* <<< factory PutHandCardInPlayArea */
 
+/* >>> factory PutHandPokemonCardInPlayArea */
 /* duel.asm:996-1049. */
 PutHandPokemonResult PutHandPokemonCardInPlayArea(uint8_t a, uint8_t f)
 {
@@ -1268,7 +1389,9 @@ PutHandPokemonResult PutHandPokemonCardInPlayArea(uint8_t a, uint8_t f)
 		ClearAllStatusConditions();
 	return (PutHandPokemonResult){slot, slot ? 0x00u : 0x80u, stage_addr};
 }
+/* <<< factory PutHandPokemonCardInPlayArea */
 
+/* >>> factory EmptyPlayAreaSlot_init_duelvar */
 /* duel.asm:1106-1111: `add e / ld l, a / ld [hl], d`, so exit a and the flags
  * are the offset addition's and hl is the duelvar written. */
 InitDuelvarResult EmptyPlayAreaSlot_init_duelvar(uint8_t a, uint8_t d, uint8_t e, uint16_t hl)
@@ -1282,7 +1405,9 @@ InitDuelvarResult EmptyPlayAreaSlot_init_duelvar(uint8_t a, uint8_t d, uint8_t e
 	gb_write8(addr, d);
 	return (InitDuelvarResult){offset, f, addr};
 }
+/* <<< factory EmptyPlayAreaSlot_init_duelvar */
 
+/* >>> factory EmptyPlayAreaSlot */
 /* duel.asm:1091-1111. */
 EmptySlotResult EmptyPlayAreaSlot(uint8_t e)
 {
@@ -1298,7 +1423,9 @@ EmptySlotResult EmptyPlayAreaSlot(uint8_t e)
 
 	return (EmptySlotResult){last.a, 0, last.f, last.hl};
 }
+/* <<< factory EmptyPlayAreaSlot */
 
+/* >>> factory MovePlayAreaCardToDiscardPile */
 /* duel.asm:1068-1087. */
 MoveAreaResult MovePlayAreaCardToDiscardPile(uint8_t e)
 {
@@ -1318,7 +1445,9 @@ MoveAreaResult MovePlayAreaCardToDiscardPile(uint8_t e)
 	 * unmodified to this exit. */
 	return (MoveAreaResult){DECK_SIZE, 0, 0xC0u, (uint16_t)(page | DECK_SIZE)};
 }
+/* <<< factory MovePlayAreaCardToDiscardPile */
 
+/* >>> factory SwapPlayAreaPokemon_swap_duelvar */
 /* duel.asm:1201-1215: c ends as the second card's duelvar offset and hl as the
  * first card's address; the swap itself goes through both. */
 SwapDuelvarResult SwapPlayAreaPokemon_swap_duelvar(uint8_t a, uint8_t b, uint8_t d, uint8_t e, uint16_t hl)
@@ -1333,7 +1462,9 @@ SwapDuelvarResult SwapPlayAreaPokemon_swap_duelvar(uint8_t a, uint8_t b, uint8_t
 	gb_write8(addr_first, held);
 	return (SwapDuelvarResult){held, 0x00u, second, addr_first};
 }
+/* <<< factory SwapPlayAreaPokemon_swap_duelvar */
 
+/* >>> factory SwapPlayAreaPokemon */
 /* duel.asm:1148-1215 / 1143-1146. */
 SwapAreaResult SwapPlayAreaPokemon(uint8_t d, uint8_t e)
 {
@@ -1363,13 +1494,17 @@ SwapAreaResult SwapPlayAreaPokemon(uint8_t d, uint8_t e)
 	}
 	return (SwapAreaResult){DECK_SIZE, d, 0xC0u};
 }
+/* <<< factory SwapPlayAreaPokemon */
 
+/* >>> factory SwapArenaWithBenchPokemon */
 SwapAreaResult SwapArenaWithBenchPokemon(uint8_t e)
 {
 	ClearAllStatusConditions();
 	return SwapPlayAreaPokemon(PLAY_AREA_ARENA, e);
 }
+/* <<< factory SwapArenaWithBenchPokemon */
 
+/* >>> factory ShiftTurnPokemonToFirstPlayAreaSlots */
 /* duel.asm:1122-1137. */
 ShiftResult ShiftTurnPokemonToFirstPlayAreaSlots(void)
 {
@@ -1388,7 +1523,9 @@ ShiftResult ShiftTurnPokemonToFirstPlayAreaSlots(void)
 	hl = (uint16_t)(page | (uint8_t)(DUELVARS_ARENA_CARD + MAX_PLAY_AREA_POKEMON));
 	return (ShiftResult){MAX_PLAY_AREA_POKEMON, MAX_PLAY_AREA_POKEMON, write_slot, 0xC0u, hl};
 }
+/* <<< factory ShiftTurnPokemonToFirstPlayAreaSlots */
 
+/* >>> factory ShiftAllPokemonToFirstPlayAreaSlots */
 /* duel.asm:1114-1119. */
 ShiftResult ShiftAllPokemonToFirstPlayAreaSlots(void)
 {
@@ -1400,7 +1537,9 @@ ShiftResult ShiftAllPokemonToFirstPlayAreaSlots(void)
 	SwapTurn();
 	return r;
 }
+/* <<< factory ShiftAllPokemonToFirstPlayAreaSlots */
 
+/* >>> factory GetPlayAreaCardAttachedEnergies */
 /* duel.asm:1221-1284. */
 EnergiesResult GetPlayAreaCardAttachedEnergies(uint8_t e)
 {
@@ -1432,7 +1571,9 @@ EnergiesResult GetPlayAreaCardAttachedEnergies(uint8_t e)
 	gb_write8(wTotalAttachedEnergies_ADDR, sum);
 	return (EnergiesResult){sum, 0xC0u};
 }
+/* <<< factory GetPlayAreaCardAttachedEnergies */
 
+/* >>> factory CopyAttackDataAndDamage */
 /* duel.asm:1442-1467. */
 AttackCopyResult CopyAttackDataAndDamage(uint8_t e)
 {
@@ -1453,7 +1594,9 @@ AttackCopyResult CopyAttackDataAndDamage(uint8_t e)
 	gb_write8((uint16_t)(wDealtDamage_ADDR + 1u), 0);
 	return (AttackCopyResult){0, 0, 0x80u, (uint16_t)(wDealtDamage_ADDR + 1u), dst};
 }
+/* <<< factory CopyAttackDataAndDamage */
 
+/* >>> factory CopyAttackDataAndDamage_FromDeckIndex */
 /* duel.asm:1434-1440. */
 AttackCopyResult CopyAttackDataAndDamage_FromDeckIndex(uint8_t d, uint8_t e)
 {
@@ -1462,7 +1605,9 @@ AttackCopyResult CopyAttackDataAndDamage_FromDeckIndex(uint8_t d, uint8_t e)
 	(void)LoadCardDataToBuffer1_FromDeckIndex(d);
 	return CopyAttackDataAndDamage(e);
 }
+/* <<< factory CopyAttackDataAndDamage_FromDeckIndex */
 
+/* >>> factory CopyAttackDataAndDamage_FromCardID */
 /* duel.asm:1415-1427. */
 AttackCopyResult CopyAttackDataAndDamage_FromCardID(uint8_t b, uint8_t c, uint16_t de)
 {
@@ -1471,13 +1616,17 @@ AttackCopyResult CopyAttackDataAndDamage_FromCardID(uint8_t b, uint8_t c, uint16
 	LoadCardDataToBuffer1_FromCardID((CardId)de);
 	return CopyAttackDataAndDamage(c);
 }
+/* <<< factory CopyAttackDataAndDamage_FromCardID */
 
+/* >>> factory ReturnCarry */
 /* duel.asm:1621-1623. `scf` sets C, clears N/H, leaves Z untouched. */
 uint8_t ReturnCarry(uint8_t f)
 {
 	return (uint8_t)((f & 0x80u) | 0x10u);
 }
+/* <<< factory ReturnCarry */
 
+/* >>> factory LoadNonPokemonCardEffectCommands */
 /* duel.asm:1793-1803. f omitted: its last flag-setting instruction is inside
  * the opaque LoadCardDataToBuffer1_FromDeckIndex call. */
 LoadEffectResult LoadNonPokemonCardEffectCommands(void)
@@ -1493,7 +1642,9 @@ LoadEffectResult LoadNonPokemonCardEffectCommands(void)
 	return (LoadEffectResult){b1, (uint16_t)(wLoadedCard1EffectCommands_ADDR + 1u),
 				  (uint16_t)(wLoadedAttackEffectCommands_ADDR + 1u)};
 }
+/* <<< factory LoadNonPokemonCardEffectCommands */
 
+/* >>> factory ApplyAttachedPlusPower */
 /* duel.asm:1976-1988 / 1991-2006. a/f flow through the opaque HtimesL leaf and
  * are omitted. */
 PowerModifierResult ApplyAttachedPlusPower(uint8_t b, uint16_t de)
@@ -1504,7 +1655,9 @@ PowerModifierResult ApplyAttachedPlusPower(uint8_t b, uint16_t de)
 
 	return (PowerModifierResult){product, (uint16_t)(de + product)};
 }
+/* <<< factory ApplyAttachedPlusPower */
 
+/* >>> factory ApplyAttachedDefender */
 PowerModifierResult ApplyAttachedDefender(uint8_t b, uint16_t de)
 {
 	uint16_t page = (uint16_t)((uint16_t)hWhoseTurn << 8);
@@ -1513,7 +1666,9 @@ PowerModifierResult ApplyAttachedDefender(uint8_t b, uint16_t de)
 
 	return (PowerModifierResult){product, (uint16_t)(de - product)};
 }
+/* <<< factory ApplyAttachedDefender */
 
+/* >>> factory MoveCardToDiscardPileIfInPlayArea */
 /* duel.asm:2273-2298. Exit d/e are genuine unpredictable loop residue
  * (clobbered by GetCardIDFromDeckIndex on every match) and omitted. */
 DiscardIfInPlayResult MoveCardToDiscardPileIfInPlayArea(uint16_t de, uint8_t page)
@@ -1537,8 +1692,10 @@ DiscardIfInPlayResult MoveCardToDiscardPileIfInPlayArea(uint16_t de, uint8_t pag
 	return (DiscardIfInPlayResult){DECK_SIZE, b, c, 0xC0u,
 				       (uint16_t)(((uint16_t)page << 8) | DECK_SIZE)};
 }
+/* <<< factory MoveCardToDiscardPileIfInPlayArea */
 
 
+/* >>> factory ApplyDamageModifiers_DamageToTarget */
 uint16_t ApplyDamageModifiers_DamageToTarget(void)
 {
 	gb_write8(wDamageEffectiveness_ADDR, 0);
@@ -1595,7 +1752,9 @@ uint16_t ApplyDamageModifiers_DamageToTarget(void)
 	SwapTurn();
 	return de;
 }
+/* <<< factory ApplyDamageModifiers_DamageToTarget */
 
+/* >>> factory ApplyDamageModifiers_DamageToSelf */
 uint16_t ApplyDamageModifiers_DamageToSelf(void)
 {
 	gb_write8(wDamageEffectiveness_ADDR, 0);
@@ -1635,6 +1794,8 @@ uint16_t ApplyDamageModifiers_DamageToSelf(void)
 		return 0;
 	return de;
 }
+/* <<< factory ApplyDamageModifiers_DamageToSelf */
+/* >>> factory GetPlayAreaCardRetreatCost */
 uint8_t GetPlayAreaCardRetreatCost(void)
 {
 	uint8_t slot = hTempPlayAreaLocation_ff9d;
@@ -1642,14 +1803,20 @@ uint8_t GetPlayAreaCardRetreatCost(void)
 	LoadCardDataToBuffer1_FromDeckIndex(deck_idx);
 	return GetLoadedCard1RetreatCost();
 }
+/* <<< factory GetPlayAreaCardRetreatCost */
 
+/* >>> part WAS_KNOCKED_OUT_TEXT */
 #define WAS_KNOCKED_OUT_TEXT WasKnockedOutText
+/* <<< part WAS_KNOCKED_OUT_TEXT */
 
+/* >>> factory DrawWideTextBox_WaitForInput_ReturnCarry */
 uint8_t DrawWideTextBox_WaitForInput_ReturnCarry(uint16_t hl)
 {
 	return (uint8_t)(DrawWideTextBox_WaitForInput(hl).f | 0x10u);
 }
+/* <<< factory DrawWideTextBox_WaitForInput_ReturnCarry */
 
+/* >>> factory PrintKnockedOut */
 uint8_t PrintKnockedOut(void)
 {
 	uint16_t card_id = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);
@@ -1664,6 +1831,8 @@ uint8_t PrintKnockedOut(void)
 	} while (--wait_frames);
 	return 0x90u;
 }
+/* <<< factory PrintKnockedOut */
+/* >>> factory PrintPlayAreaCardKnockedOutIfNoHP */
 KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a)
 {
 	uint8_t e_val = a;
@@ -1680,8 +1849,10 @@ KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a)
 	card_id_write(&temp_card_id, saved);
 	return (KnockoutCheckResult){(uint8_t)(saved >> 8), 0x90u};
 }
+/* <<< factory PrintPlayAreaCardKnockedOutIfNoHP */
 
 
+/* >>> factory UpdateArenaCardIDsAndClearTwoTurnDuelVars */
 DuelRoutineResult UpdateArenaCardIDsAndClearTwoTurnDuelVars(
 	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -1714,7 +1885,9 @@ DuelRoutineResult UpdateArenaCardIDsAndClearTwoTurnDuelVars(
 		(uint8_t)(card_id >> 8), (uint8_t)card_id,
 		(uint16_t)(clear_start.hl + 7u)};
 }
+/* <<< factory UpdateArenaCardIDsAndClearTwoTurnDuelVars */
 
+/* >>> factory ClearNonTurnTemporaryDuelvars_ResetCarry */
 DuelRoutineResult ClearNonTurnTemporaryDuelvars_ResetCarry(
 	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -1725,7 +1898,9 @@ DuelRoutineResult ClearNonTurnTemporaryDuelvars_ResetCarry(
 	return (DuelRoutineResult){0, 0x80u, b, c, d, e,
 		(uint16_t)(GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX).hl + 7u)};
 }
+/* <<< factory ClearNonTurnTemporaryDuelvars_ResetCarry */
 
+/* >>> factory PrintKnockedOutIfHLZero */
 uint8_t PrintKnockedOutIfHLZero(uint16_t hl)
 {
 	if (gb_read8(hl) != 0)
@@ -1733,6 +1908,7 @@ uint8_t PrintKnockedOutIfHLZero(uint16_t hl)
 	(void)PrintKnockedOut();
 	return 0x90u;
 }
+/* <<< factory PrintKnockedOutIfHLZero */
 
 /* >>> factory GetFirstSetPrizeCard */
 /* duel.asm:2134-2188 */
@@ -2101,6 +2277,7 @@ void DrawPlayArea_PrizeCards(uint16_t hl)
 }
 /* <<< factory DrawPlayArea_PrizeCards */
 
+/* >>> part PRIZE_COORDS_YOUR_OR_OPP_PLAYER */
 /* duel.asm:796-849, ROM bank 2 (this file's bank): x, y pairs read by
  * DrawPlayArea_PrizeCards through hl. Passed by ROM address, never copied
  * into WRAM -- the asm writes nothing while pointing at them. */
@@ -2108,6 +2285,7 @@ void DrawPlayArea_PrizeCards(uint16_t hl)
 #define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT (PrizeCardsCoordinateData_YourOrOppPlayArea__opponent_ADDR)
 #define PRIZE_COORDS_2_PLAYER PrizeCardsCoordinateData_2_ADDR
 #define PRIZE_COORDS_2_OPPONENT 0x44D8u
+/* <<< part PRIZE_COORDS_YOUR_OR_OPP_PLAYER */
 
 /* >>> factory DrawPlayArea_HandText */
 DrawPlayArea_HandTextResult DrawPlayArea_HandText(uint8_t b, uint8_t c, uint16_t hl)

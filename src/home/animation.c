@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/animation.h"
 
 #include "generated/constants.h"
@@ -7,6 +8,7 @@
 #include "home/map.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/animation.h"
 #include "generated/wram.h"
@@ -20,17 +22,22 @@
 #define MAP_OW_FRAMESET_POINTERS_ADDR MapOWFramesetPointers_ADDR
 /* <<< factory statics */
 
+/* >>> factory ClearNumLoadedFramesetSubgroups */
 void ClearNumLoadedFramesetSubgroups(void)
 {
 	wNumLoadedFramesetSubgroups = 0;
 }
+/* <<< factory ClearNumLoadedFramesetSubgroups */
 
+/* >>> factory ClearOWFramesetSubgroups */
 void ClearOWFramesetSubgroups(void)
 {
 	for (uint8_t i = 0; i < NUM_OW_FRAMESET_SUBGROUPS * 2u; i++)
 		gb_write8((uint16_t)(wOWFramesetSubgroups_ADDR + i), 0xff);
 }
+/* <<< factory ClearOWFramesetSubgroups */
 
+/* >>> factory GetOWFramesetSubgroupData */
 void GetOWFramesetSubgroupData(uint16_t hl, uint8_t c)
 {
 	uint8_t offset = gb_read8((uint16_t)(hl + c));
@@ -40,7 +47,9 @@ void GetOWFramesetSubgroupData(uint16_t hl, uint8_t c)
 		wCurOWFrameDuration = 0;
 	}
 }
+/* <<< factory GetOWFramesetSubgroupData */
 
+/* >>> factory LoadOWFramesetSubgroup */
 uint8_t LoadOWFramesetSubgroup(uint8_t c)
 {
 	uint16_t address = (uint16_t)(wOWFramesetSubgroups_ADDR + (uint16_t)c * 2u);
@@ -48,13 +57,16 @@ uint8_t LoadOWFramesetSubgroup(uint8_t c)
 	wCurOWFrameDuration = gb_read8((uint16_t)(address + 1u));
 	return wCurOWFrameDataOffset;
 }
+/* <<< factory LoadOWFramesetSubgroup */
 
+/* >>> factory StoreOWFramesetSubgroup */
 void StoreOWFramesetSubgroup(uint8_t c)
 {
 	uint16_t address = (uint16_t)(wOWFramesetSubgroups_ADDR + (uint16_t)c * 2u);
 	gb_write8(address, wCurOWFrameDataOffset);
 	gb_write8((uint16_t)(address + 1u), wCurOWFrameDuration);
 }
+/* <<< factory StoreOWFramesetSubgroup */
  
 
 /* >>> factory LoadOWFrameTiles */
@@ -114,8 +126,6 @@ void LoadOWFrameTiles(void)
 }
 /* <<< factory LoadOWFrameTiles */
 
-/* >>> factory-mutation LoadOWFrameTiles */
-/* <<< factory-mutation LoadOWFrameTiles */
 
 /* >>> factory DoLoadedFramesetSubgroupsFrame */
 void DoLoadedFramesetSubgroupsFrame(void)

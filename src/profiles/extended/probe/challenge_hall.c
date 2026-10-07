@@ -1,25 +1,33 @@
+/* >>> part includes */
 #include "home/challenge_hall.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory Func_f5db */
 static void adapt_Func_f5db(ProbeState *s)
 {
 	ChallengeHallClearResult out = Func_f5db();
 	s->a = out.a;
 	s->f = out.f;
 }
+/* <<< factory Func_f5db */
 
+/* >>> factory Func_f5e9 */
 static void adapt_Func_f5e9(ProbeState *s)
 {
 	ChallengeHallBitResult out = Func_f5e9(s->c);
 	s->b = out.b;
 	s->hl = out.hl;
 }
+/* <<< factory Func_f5e9 */
 
+/* >>> factory Script_Host */
 static void adapt_Script_Host(ProbeState *s)
 {
 	(void)s;
 	Script_Host();
 }
+/* <<< factory Script_Host */
 
 /* >>> factory Func_f5cc */
 static void adapt_Func_f5cc(ProbeState *s)
@@ -90,6 +98,7 @@ static void adapt_Func_f602(ProbeState *s)
 }
 /* <<< factory Func_f602 */
 
+/* >>> part probe_entries_challenge_hall */
 const ProbeEntry probe_entries_challenge_hall[] = {
 	{ "Func_f5db", adapt_Func_f5db },
 	{ "Func_f5e9", adapt_Func_f5e9 },
@@ -104,3 +113,4 @@ const ProbeEntry probe_entries_challenge_hall[] = {
 	{ "Func_f602", adapt_Func_f602 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_challenge_hall */

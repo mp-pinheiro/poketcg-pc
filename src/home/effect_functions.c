@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/effect_functions.h"
 
 #include "generated/text_ids.h"
@@ -7,6 +8,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/bg_map.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/duel.h"
 #include "home/effect_functions.h"
@@ -4184,6 +4186,7 @@ void CopyPlayAreaHPToBackup_Unreferenced(void)
 		gb_write8((uint16_t)(wBackupPlayerAreaHP_ADDR + i), gb_read8((uint16_t)(hp.hl + i)));
 }
 /* <<< factory CopyPlayAreaHPToBackup_Unreferenced */
+/* >>> factory CopyPlayAreaHPFromBackup_Unreferenced */
 void CopyPlayAreaHPFromBackup_Unreferenced(void)
 {
 	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);

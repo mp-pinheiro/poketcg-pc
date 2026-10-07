@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/common.h"
 
 #include "generated/constants.h"
@@ -6,6 +7,7 @@
 #include "mem.h"
 #include "home/starter_deck.h"
 #include "home/promotional_card.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/core.h"
 

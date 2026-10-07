@@ -1,15 +1,21 @@
 #ifndef POKETCG_HOME_DEBUG_MAIN_H
 #define POKETCG_HOME_DEBUG_MAIN_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part Func126b3Result */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
 	uint16_t hl;
 } Func126b3Result;
+/* <<< part Func126b3Result */
 
+/* >>> factory Func_126b3 */
 Func126b3Result Func_126b3(void);
+/* <<< factory Func_126b3 */
 
 /* >>> factory Func_12661 */
 /* debug_main.asm:36 `ret` inherits Func_126b3's a/f/hl unchanged, so the

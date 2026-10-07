@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/play_area.h"
 
 #include "generated/constants.h"
@@ -5,6 +6,7 @@
 #include "generated/wram.h"
 #include "home/objects.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/duel.h"
 #include "home/random.h"
@@ -99,11 +101,13 @@ static void open_in_play_area_print_associated_text(uint8_t position)
 }
 /* <<< factory statics */
 
+/* >>> factory ZeroObjectPositionsAndToggleOAMCopy_Bank6 */
 void ZeroObjectPositionsAndToggleOAMCopy_Bank6(void)
 {
 	ZeroObjectPositions();
 	gb_write8(wVBlankOAMCopyToggle_ADDR, 1);
 }
+/* <<< factory ZeroObjectPositionsAndToggleOAMCopy_Bank6 */
 
 /* >>> factory OpenInPlayAreaScreen_HandleInput */
 OpenInPlayAreaScreenHandleInputResult OpenInPlayAreaScreen_HandleInput(void)

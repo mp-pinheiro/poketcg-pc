@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_MEDAL_H
 #define POKETCG_HOME_MEDAL_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory ShowMedalReceivedScreen */
 /* poketcg/src/engine/menus/medal.asm */

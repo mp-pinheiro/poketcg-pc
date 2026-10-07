@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_UNKNOWN_H
 #define POKETCG_HOME_UNKNOWN_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory Func_18661 */
 typedef struct {

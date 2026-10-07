@@ -1,12 +1,15 @@
+/* >>> part includes */
 #include "home/dma.h"
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/hram.h"
 #define DMA_COPY_LENGTH 10u
 /* <<< factory statics */
 
+/* >>> factory DMA */
 void DMA(void)
 {
 	const uint8_t source_page = (uint8_t)(wOAM_ADDR >> 8);
@@ -18,6 +21,7 @@ void DMA(void)
 		gb_write8((uint16_t)(0xFE00u + i),
 			  gb_read8((uint16_t)(source + i)));
 }
+/* <<< factory DMA */
 
 /* >>> factory CopyDMAFunction */
 void CopyDMAFunction(void)

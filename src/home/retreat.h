@@ -1,14 +1,20 @@
 #ifndef POKETCG_HOME_RETREAT_H
 #define POKETCG_HOME_RETREAT_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part SetAIRetreatFlagsResult */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
 } SetAIRetreatFlagsResult;
+/* <<< part SetAIRetreatFlagsResult */
 
+/* >>> factory SetAIRetreatFlags */
 SetAIRetreatFlagsResult SetAIRetreatFlags(void);
+/* <<< factory SetAIRetreatFlags */
 
 /* >>> factory AITryToRetreat */
 /* engine/duel/ai/retreat.asm:775-1012. a/f only: b, c, d, e and hl are list-walk

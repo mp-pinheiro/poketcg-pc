@@ -1,12 +1,16 @@
+/* >>> part includes */
 #include "home/retreat.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory SetAIRetreatFlags */
 static void adapt_SetAIRetreatFlags(ProbeState *s)
 {
 	SetAIRetreatFlagsResult r = SetAIRetreatFlags();
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory SetAIRetreatFlags */
 
 /* >>> factory AITryToRetreat */
 static void adapt_AITryToRetreat(ProbeState *s)
@@ -37,6 +41,7 @@ static void adapt_AIDecideWhetherToRetreat(ProbeState *s)
 }
 /* <<< factory AIDecideWhetherToRetreat */
 
+/* >>> part probe_entries_retreat */
 const ProbeEntry probe_entries_retreat[] = {
 	{ "SetAIRetreatFlags", adapt_SetAIRetreatFlags },
 	{ "AITryToRetreat", adapt_AITryToRetreat },
@@ -44,3 +49,4 @@ const ProbeEntry probe_entries_retreat[] = {
 	{ "AIDecideWhetherToRetreat", adapt_AIDecideWhetherToRetreat },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_retreat */

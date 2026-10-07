@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_LEGENDARY_ZAPDOS_H
 #define POKETCG_HOME_LEGENDARY_ZAPDOS_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory AIDoTurn_LegendaryZapdos */
 typedef struct { uint8_t f; } AIDoTurn_LegendaryZapdosResult;

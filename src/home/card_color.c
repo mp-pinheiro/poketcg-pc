@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/card_color.h"
 
 #include "generated/constants.h"
@@ -7,7 +8,9 @@
 #include "home/duel.h"
 #include "home/substatus.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part PLAYER_TURN */
 /* card_color.asm's duel-variable and deck-index helpers (duel.asm:1316, 762) reduce to
  * WRAM reads keyed by hWhoseTurn. ConvertSpecialTrainerCardToPokemon is a no-op for the
  * pokemon cards these routines query, so LoadCardDataToBuffer2_FromCardID alone matches. */
@@ -15,36 +18,48 @@
 #define DUELVARS_ARENA_CARD               0xBBu
 #define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS   0xE9u
 #define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xEAu
+/* <<< part PLAYER_TURN */
 
+/* >>> part turn_duel_var */
 static uint8_t turn_duel_var(uint8_t off)
 {
 	return gb_read8((uint16_t)(((uint16_t)hWhoseTurn << 8) + off));
 }
+/* <<< part turn_duel_var */
 
+/* >>> part deck_card_id */
 static CardId deck_card_id(uint8_t idx)
 {
 	return GetCardIDFromDeckIndex(idx);
 }
+/* <<< part deck_card_id */
 
+/* >>> part card_weakness_of */
 static uint8_t card_weakness_of(uint8_t duelvar_off)
 {
 	uint8_t idx = turn_duel_var(duelvar_off);
 	LoadCardDataToBuffer2_FromCardID(deck_card_id(idx));
 	return wLoadedCard2Weakness;
 }
+/* <<< part card_weakness_of */
 
+/* >>> part card_resistance_of */
 static uint8_t card_resistance_of(uint8_t duelvar_off)
 {
 	uint8_t idx = turn_duel_var(duelvar_off);
 	LoadCardDataToBuffer2_FromCardID(deck_card_id(idx));
 	return wLoadedCard2Resistance;
 }
+/* <<< part card_resistance_of */
 
+/* >>> factory GetCardWeakness */
 uint8_t GetCardWeakness(uint8_t a)
 {
 	return card_weakness_of(a);
 }
+/* <<< factory GetCardWeakness */
 
+/* >>> factory GetArenaCardWeakness */
 /* card_color.asm:52-64 */
 uint8_t GetArenaCardWeakness(void)
 {
@@ -53,7 +68,9 @@ uint8_t GetArenaCardWeakness(void)
 		return changed;
 	return card_weakness_of(DUELVARS_ARENA_CARD);
 }
+/* <<< factory GetArenaCardWeakness */
 
+/* >>> factory GetPlayAreaCardWeakness */
 /* card_color.asm:44-48 */
 uint8_t GetPlayAreaCardWeakness(uint8_t a)
 {
@@ -61,12 +78,16 @@ uint8_t GetPlayAreaCardWeakness(uint8_t a)
 		return GetArenaCardWeakness();
 	return card_weakness_of((uint8_t)(a + DUELVARS_ARENA_CARD));
 }
+/* <<< factory GetPlayAreaCardWeakness */
 
+/* >>> factory GetCardResistance */
 uint8_t GetCardResistance(uint8_t a)
 {
 	return card_resistance_of(a);
 }
+/* <<< factory GetCardResistance */
 
+/* >>> factory GetArenaCardResistance */
 /* card_color.asm:77-89 */
 uint8_t GetArenaCardResistance(void)
 {
@@ -75,7 +96,9 @@ uint8_t GetArenaCardResistance(void)
 		return changed;
 	return card_resistance_of(DUELVARS_ARENA_CARD);
 }
+/* <<< factory GetArenaCardResistance */
 
+/* >>> factory GetPlayAreaCardResistance */
 /* card_color.asm:69-73 */
 uint8_t GetPlayAreaCardResistance(uint8_t a)
 {
@@ -83,10 +106,14 @@ uint8_t GetPlayAreaCardResistance(uint8_t a)
 		return GetArenaCardResistance();
 	return card_resistance_of((uint8_t)(a + DUELVARS_ARENA_CARD));
 }
+/* <<< factory GetPlayAreaCardResistance */
 
+/* >>> part DUELVARS_ARENA_CARD_CHANGED_TYPE */
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
 #define HAS_CHANGED_COLOR_F_MASK 0x80u
+/* <<< part DUELVARS_ARENA_CARD_CHANGED_TYPE */
 
+/* >>> factory GetPlayAreaCardColor */
 uint8_t GetPlayAreaCardColor(uint8_t a)
 {
 	uint8_t changed = turn_duel_var((uint8_t)(a + DUELVARS_ARENA_CARD_CHANGED_TYPE));
@@ -99,13 +126,17 @@ uint8_t GetPlayAreaCardColor(uint8_t a)
 	uint8_t type = GetCardType(deck_card_id(idx));
 	return type == TYPE_TRAINER ? COLORLESS : type;
 }
+/* <<< factory GetPlayAreaCardColor */
 
+/* >>> factory GetArenaCardColor */
 uint8_t GetArenaCardColor(void)
 {
 	return GetPlayAreaCardColor(0);
 }
+/* <<< factory GetArenaCardColor */
 
 
+/* >>> factory HandleEnergyBurn */
 void HandleEnergyBurn(void)
 {
 	uint8_t card_id = deck_card_id(turn_duel_var(DUELVARS_ARENA_CARD));
@@ -118,3 +149,4 @@ void HandleEnergyBurn(void)
 		gb_write8((uint16_t)(wAttachedEnergies_ADDR + i), 0);
 	gb_write8((uint16_t)(wAttachedEnergies_ADDR + FIRE), wTotalAttachedEnergies);
 }
+/* <<< factory HandleEnergyBurn */

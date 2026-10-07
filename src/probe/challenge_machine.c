@@ -1,13 +1,18 @@
+/* >>> part includes */
 #include "home/challenge_machine.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory ChallengeMachine_CheckIfOpponentAlreadySelected */
 static void adapt_ChallengeMachine_CheckIfOpponentAlreadySelected(ProbeState *s)
 {
 	ChallengeMachineCheckResult result = ChallengeMachine_CheckIfOpponentAlreadySelected(s->a, s->c);
 	s->f = result.f;
 	s->hl = result.hl;
 }
+/* <<< factory ChallengeMachine_CheckIfOpponentAlreadySelected */
 
+/* >>> factory ChallengeMachine_PrintText */
 static void adapt_ChallengeMachine_PrintText(ProbeState *s)
 {
 	ChallengeMachinePrintResult result = ChallengeMachine_PrintText(s->hl, s->b, s->c);
@@ -15,6 +20,7 @@ static void adapt_ChallengeMachine_PrintText(ProbeState *s)
 	s->e = result.e;
 	s->hl = result.hl;
 }
+/* <<< factory ChallengeMachine_PrintText */
 
 /* >>> factory ChallengeMachine_PickOpponentSequence */
 static void adapt_ChallengeMachine_PickOpponentSequence(ProbeState *s)
@@ -206,6 +212,7 @@ static void adapt_ChallengeMachine_Start(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_Start */
 
+/* >>> part probe_entries_challenge_machine */
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
@@ -233,3 +240,4 @@ const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_Start", adapt_ChallengeMachine_Start },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_challenge_machine */

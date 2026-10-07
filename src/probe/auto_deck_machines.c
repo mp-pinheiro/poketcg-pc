@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/auto_deck_machines.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory ReadAutoDeckConfiguration */
 static void adapt_ReadAutoDeckConfiguration(ProbeState *s)
@@ -19,8 +21,10 @@ static void adapt_CheckWhichDecksToDismantleToBuildSavedDeck(ProbeState *s)
 }
 /* <<< factory CheckWhichDecksToDismantleToBuildSavedDeck */
 
+/* >>> part probe_entries_auto_deck_machines */
 const ProbeEntry probe_entries_auto_deck_machines[] = {
 	{ "ReadAutoDeckConfiguration", adapt_ReadAutoDeckConfiguration },
 	{ "CheckWhichDecksToDismantleToBuildSavedDeck", adapt_CheckWhichDecksToDismantleToBuildSavedDeck },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_auto_deck_machines */

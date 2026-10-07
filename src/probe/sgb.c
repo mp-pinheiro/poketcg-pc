@@ -1,6 +1,9 @@
+/* >>> part includes */
 #include "home/sgb.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory Wait */
 static void adapt_Wait(ProbeState *s)
 {
 	uint16_t bc = (uint16_t)(((uint16_t)s->b << 8) | s->c);
@@ -12,6 +15,7 @@ static void adapt_Wait(ProbeState *s)
 	s->d = r.d;
 	s->e = r.e;
 }
+/* <<< factory Wait */
 
 /* >>> factory SendSGB */
 static void adapt_SendSGB(ProbeState *s)
@@ -69,6 +73,7 @@ static void adapt_Func_0bcb(ProbeState *s)
 }
 /* <<< factory Func_0bcb */
 
+/* >>> part probe_entries_sgb */
 const ProbeEntry probe_entries_sgb[] = {
 	{ "Wait", adapt_Wait },
 	{ "SendSGB", adapt_SendSGB },
@@ -77,3 +82,4 @@ const ProbeEntry probe_entries_sgb[] = {
 	{ "Func_0bcb", adapt_Func_0bcb },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_sgb */

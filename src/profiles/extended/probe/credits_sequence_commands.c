@@ -1,22 +1,30 @@
+/* >>> part includes */
 #include "home/credits_sequence_commands.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory SetCreditsSequenceCmdPtr */
 static void adapt_SetCreditsSequenceCmdPtr(ProbeState *s)
 {
 	(void)s;
 	SetCreditsSequenceCmdPtr();
 }
+/* <<< factory SetCreditsSequenceCmdPtr */
 
+/* >>> factory ExecuteCreditsSequenceCmd */
 static void adapt_ExecuteCreditsSequenceCmd(ProbeState *s)
 {
 	(void)s;
 	ExecuteCreditsSequenceCmd();
 }
+/* <<< factory ExecuteCreditsSequenceCmd */
 
+/* >>> factory AdvanceCreditsSequenceCmdPtr */
 static void adapt_AdvanceCreditsSequenceCmdPtr(ProbeState *s)
 {
 	AdvanceCreditsSequenceCmdPtr(s->a);
 }
+/* <<< factory AdvanceCreditsSequenceCmdPtr */
 
 /* >>> factory AdvanceCreditsSequenceCmdPtrBy2 */
 static void adapt_AdvanceCreditsSequenceCmdPtrBy2(ProbeState *s)
@@ -190,6 +198,7 @@ static void adapt_CreditsSequenceCmd_LoadClubMap(ProbeState *s)
 }
 /* <<< factory CreditsSequenceCmd_LoadClubMap */
 
+/* >>> part probe_entries_credits_sequence_commands */
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -218,3 +227,4 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "CreditsSequenceCmd_LoadClubMap", adapt_CreditsSequenceCmd_LoadClubMap },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_credits_sequence_commands */

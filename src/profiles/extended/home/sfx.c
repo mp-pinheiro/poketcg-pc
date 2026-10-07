@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/sfx.h"
 
 #include "home/audio.h"
@@ -6,6 +7,7 @@
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "mem.h"
@@ -23,6 +25,7 @@
 #include "home/sfx.h"
 /* <<< factory statics */
 
+/* >>> part SFX_BANK */
 #define SFX_BANK NumberOfSFX_BANK
 
 #define SFX_NumberOfSFX_ADDR     NumberOfSFX_ADDR
@@ -40,6 +43,7 @@
 #define AUD3WAVE_SIZE 16u
 
 #define AUD1ENV_UP 0x08u
+/* <<< part SFX_BANK */
 
 /* >>> factory Func_fc279 */
 /* sfx.asm:485-497. The asm is a documented ROM bug: it loads $8/$80 into `a`
@@ -69,20 +73,25 @@ void Func_fc26c(void)
 }
 /* <<< factory Func_fc26c */
 
+/* >>> part StoreCmdPtr */
 static void StoreCmdPtr(uint8_t c, uint16_t ptr)
 {
 	uint16_t addr = (uint16_t)(wSFXCommandPointers_ADDR + (uint16_t)c * 2u);
 	gb_write8(addr, (uint8_t)ptr);
 	gb_write8((uint16_t)(addr + 1u), (uint8_t)(ptr >> 8));
 }
+/* <<< part StoreCmdPtr */
 
+/* >>> part read_wde2b */
 static uint8_t read_wde2b(uint8_t c)
 {
 	if (c == 3u)
 		return gb_read8(wde2e_ADDR);
 	return gb_read8((uint16_t)(wde2b_ADDR + c));
 }
+/* <<< part read_wde2b */
 
+/* >>> part write_wde2b */
 static void write_wde2b(uint8_t c, uint8_t v)
 {
 	if (c == 3u)
@@ -90,7 +99,9 @@ static void write_wde2b(uint8_t c, uint8_t v)
 	else
 		gb_write8((uint16_t)(wde2b_ADDR + c), v);
 }
+/* <<< part write_wde2b */
 
+/* >>> part read_wde37 */
 static uint16_t read_wde37(uint8_t c)
 {
 	if (c == 3u)
@@ -98,7 +109,9 @@ static uint16_t read_wde37(uint8_t c)
 	uint16_t addr = (uint16_t)(wde37_ADDR + (uint16_t)c * 2u);
 	return (uint16_t)gb_read8(addr) | (uint16_t)(gb_read8((uint16_t)(addr + 1u)) << 8);
 }
+/* <<< part read_wde37 */
 
+/* >>> part write_wde37 */
 static void write_wde37(uint8_t c, uint16_t freq)
 {
 	if (c == 3u) {
@@ -110,14 +123,18 @@ static void write_wde37(uint8_t c, uint16_t freq)
 	gb_write8(addr, (uint8_t)freq);
 	gb_write8((uint16_t)(addr + 1u), (uint8_t)(freq >> 8));
 }
+/* <<< part write_wde37 */
 
+/* >>> part read_pitch_offset */
 static uint8_t read_pitch_offset(uint8_t c)
 {
 	if (c == 3u)
 		return gb_read8(wde32_ADDR);
 	return gb_read8((uint16_t)(wSFXPitchOffsets_ADDR + c));
 }
+/* <<< part read_pitch_offset */
 
+/* >>> part apu_write_freq */
 static void apu_write_freq(uint8_t c, uint8_t low, uint8_t high)
 {
 	uint16_t reg = (uint16_t)(rAUD1LEN + (uint16_t)c * 5u);
@@ -126,6 +143,7 @@ static void apu_write_freq(uint8_t c, uint8_t low, uint8_t high)
 	gb_write8((uint16_t)(reg + 2u), low);
 	gb_write8((uint16_t)(reg + 3u), high);
 }
+/* <<< part apu_write_freq */
 
 /* >>> factory SFX_ApplyPitchOffset */
 /* sfx.asm:297-350. Indexes wde37 by 2*c and wSFXPitchOffsets/wde2b by c; the
@@ -181,6 +199,7 @@ void Func_fc1cd(void)
 }
 /* <<< factory Func_fc1cd */
 
+/* >>> part SFX_Frequency */
 static uint16_t SFX_Frequency(uint16_t cmd_ptr, uint8_t c, uint8_t high_nibble)
 {
 	uint8_t low = wAudioArg;
@@ -197,7 +216,9 @@ static uint16_t SFX_Frequency(uint16_t cmd_ptr, uint8_t c, uint8_t high_nibble)
 	apu_write_freq(c, low, (uint8_t)(high_flags | env));
 	return cmd_ptr;
 }
+/* <<< part SFX_Frequency */
 
+/* >>> part SFX_Envelope */
 static uint16_t SFX_Envelope(uint16_t cmd_ptr, uint8_t c)
 {
 	write_wde2b(c, 0x80u);
@@ -207,14 +228,18 @@ static uint16_t SFX_Envelope(uint16_t cmd_ptr, uint8_t c)
 	gb_write8(reg, env_val);
 	return cmd_ptr;
 }
+/* <<< part SFX_Envelope */
 
+/* >>> part SFX_Duty */
 static void SFX_Duty(uint8_t c, uint8_t param)
 {
 	uint8_t duty = (uint8_t)((param << 4u) | (param >> 4u));
 	uint16_t reg = (uint16_t)(rAUD1LEN + (uint16_t)c * 5u);
 	gb_write8(reg, duty);
 }
+/* <<< part SFX_Duty */
 
+/* >>> part SFX_Loop */
 static uint16_t SFX_Loop(uint16_t cmd_ptr, uint8_t c)
 {
 	uint8_t count = wAudioArg;
@@ -225,7 +250,9 @@ static uint16_t SFX_Loop(uint16_t cmd_ptr, uint8_t c)
 	gb_write8((uint16_t)(wde3f_ADDR + c), count);
 	return cmd_ptr;
 }
+/* <<< part SFX_Loop */
 
+/* >>> part SFX_EndLoop */
 /* sfx.asm:248-265. Both branches fall through to
  * `jp ExecuteNextSFXCommand`: a finished loop (count reaches zero) resumes
  * forward at the saved post-opcode pointer, it never halts the
@@ -243,7 +270,9 @@ static uint16_t SFX_EndLoop(uint16_t cmd_ptr, uint8_t c)
 	uint16_t loop_addr = (uint16_t)gb_read8(store_addr) | (uint16_t)(gb_read8((uint16_t)(store_addr + 1u)) << 8);
 	return loop_addr;
 }
+/* <<< part SFX_EndLoop */
 
+/* >>> part SFX_PitchOffset */
 static uint16_t SFX_PitchOffset(uint16_t cmd_ptr, uint8_t c)
 {
 	uint8_t offset = wAudioArg;
@@ -254,7 +283,9 @@ static uint16_t SFX_PitchOffset(uint16_t cmd_ptr, uint8_t c)
 		gb_write8((uint16_t)(wSFXPitchOffsets_ADDR + c), offset);
 	return cmd_ptr;
 }
+/* <<< part SFX_PitchOffset */
 
+/* >>> part SFX_Wait */
 static uint16_t SFX_Wait(uint16_t cmd_ptr, uint8_t c)
 {
 	if (c == 3u)
@@ -266,7 +297,9 @@ static uint16_t SFX_Wait(uint16_t cmd_ptr, uint8_t c)
 	gb_write8((uint16_t)(wde33_ADDR + c), wait_val);
 	return cmd_ptr;
 }
+/* <<< part SFX_Wait */
 
+/* >>> part SFX_Wave */
 static void SFX_Wave(uint8_t param)
 {
 	uint16_t table_addr = (uint16_t)(SFX_WaveInstruments_ADDR + (uint16_t)param * 2u);
@@ -283,7 +316,9 @@ static void SFX_Wave(uint8_t param)
 	wMusicWaveChange = 1u;
 	gb_write8(0xFF1Au, AUD3ENA_ON);
 }
+/* <<< part SFX_Wave */
 
+/* >>> part SFX_Pan */
 /* sfx.asm:423-445. `rlca` rotates pan_val (a) and `rlc e` (sfx.asm:434)
  * independently rotates e's own top bit into its bottom bit; e never reads
  * from a. */
@@ -303,7 +338,9 @@ static uint16_t SFX_Pan(uint16_t cmd_ptr, uint8_t c)
 	wdd85 = (uint8_t)((wdd85 & e) | pan_val);
 	return cmd_ptr;
 }
+/* <<< part SFX_Pan */
 
+/* >>> part SFX_End */
 static void SFX_End(uint8_t c)
 {
 	uint8_t e = (uint8_t)(c + 1u);
@@ -317,6 +354,7 @@ static void SFX_End(uint8_t c)
 	gb_write8(reg, AUD1ENV_UP);
 	gb_write8((uint16_t)(reg + 2u), 0x80u);
 }
+/* <<< part SFX_End */
 
 /* >>> factory ExecuteNextSFXCommand */
 /* sfx.asm:103-138 */
@@ -372,6 +410,7 @@ void ExecuteNextSFXCommand(uint16_t hl, uint16_t bc)
 }
 /* <<< factory ExecuteNextSFXCommand */
 
+/* >>> factory SFX_Play */
 void SFX_Play(uint8_t sfx_id)
 {
 	g_rom_bank = SFX_BANK;
@@ -418,7 +457,9 @@ void SFX_Play(uint8_t sfx_id)
 			break;
 	}
 }
+/* <<< factory SFX_Play */
 
+/* >>> factory SFX_Update */
 void SFX_Update(void)
 {
 	g_rom_bank = SFX_BANK;
@@ -448,6 +489,7 @@ void SFX_Update(void)
 			break;
 	}
 }
+/* <<< factory SFX_Update */
 
 /* >>> factory Func_fc105 */
 /* sfx.asm:188-196 */

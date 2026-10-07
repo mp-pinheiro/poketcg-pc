@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/screen_effects.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +8,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "mem.h"
 #include "generated/wram.h"
@@ -184,6 +186,7 @@ void Func_1ce03(uint8_t a)
 }
 /* <<< factory Func_1ce03 */
 
+/* >>> part ScreenEffectForAddress */
 /* Probe support: .pointer_table's targets by their bank-6 address
  * (poketcg.sym), for an adapter holding the asm pointer rather than the
  * animation id. Not part of any routine's port. */
@@ -197,7 +200,9 @@ void (*ScreenEffectForAddress(uint16_t address))(void)
 			return screen_effects[i];
 	return NULL;
 }
+/* <<< part ScreenEffectForAddress */
 
+/* >>> part shake_screen_x_update */
 /* screen_effects.asm:104-111 and 132-139: the per-frame shake, run through
  * wScreenAnimUpdatePtr. UpdateShakeOffset leaves hl on the offset byte when
  * it advanced (carry), which is added to the scroll register. */
@@ -209,7 +214,9 @@ static void shake_screen_x_update(void)
 		hSCX = (uint8_t)(hSCX + gb_read8(shake.hl));
 	LoadDefaultScreenAnimationUpdateWhenFinished();
 }
+/* <<< part shake_screen_x_update */
 
+/* >>> part shake_screen_y_update */
 static void shake_screen_y_update(void)
 {
 	(void)DecrementScreenAnimDuration(0u);
@@ -218,6 +225,7 @@ static void shake_screen_y_update(void)
 		hSCY = (uint8_t)(hSCY + gb_read8(shake.hl));
 	LoadDefaultScreenAnimationUpdateWhenFinished();
 }
+/* <<< part shake_screen_y_update */
 
 /* >>> factory ShakeScreenX_Big */
 void ShakeScreenX_Big(void)
@@ -233,6 +241,7 @@ void ShakeScreenX_Small(void)
 }
 /* <<< factory ShakeScreenX_Small */
 
+/* >>> part distort_screen_update */
 /* screen_effects.asm:238-255: each BGScrollMod value lasts 8 ticks of the
  * duration, walked from the last entry backwards. */
 static void distort_screen_update(void)
@@ -243,6 +252,7 @@ static void distort_screen_update(void)
 	(void)DecrementScreenAnimDuration(0u);
 	LoadDefaultScreenAnimationUpdateWhenFinished();
 }
+/* <<< part distort_screen_update */
 
 /* >>> factory DistortScreen */
 void DistortScreen(void)
@@ -261,6 +271,7 @@ void DistortScreen(void)
 }
 /* <<< factory DistortScreen */
 
+/* >>> part white_flash_screen_update */
 /* screen_effects.asm:208-221: restores the saved palettes when the flash
  * runs out. */
 static void white_flash_screen_update(void)
@@ -273,6 +284,7 @@ static void white_flash_screen_update(void)
 	FlushAllPalettes();
 	DefaultScreenAnimationUpdate();
 }
+/* <<< part white_flash_screen_update */
 
 /* >>> factory WhiteFlashScreen */
 void WhiteFlashScreen(void)
@@ -343,6 +355,7 @@ void InitScreenAnimation(void)
 }
 /* <<< factory InitScreenAnimation */
 
+/* >>> part CallScreenAnimationUpdate */
 uint16_t CallScreenAnimationUpdate(void)
 {
 	uint16_t target = (uint16_t)(gb_read8(wScreenAnimUpdatePtr_ADDR) |
@@ -360,3 +373,4 @@ uint16_t CallScreenAnimationUpdate(void)
 	}
 	return (uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u);
 }
+/* <<< part CallScreenAnimationUpdate */

@@ -1,6 +1,9 @@
+/* >>> part includes */
 #include "home/debug.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory DebugSGBFrame */
 static void adapt_DebugSGBFrame(ProbeState *s)
 {
 	DebugSGBFrameResult result = DebugSGBFrame(s->b, s->c, s->d, s->e, s->hl);
@@ -12,7 +15,9 @@ static void adapt_DebugSGBFrame(ProbeState *s)
 	s->e = result.e;
 	s->hl = result.hl;
 }
+/* <<< factory DebugSGBFrame */
 
+/* >>> factory DebugStandardBGCharacter */
 static void adapt_DebugStandardBGCharacter(ProbeState *s)
 {
 	DebugStandardBGCharacterResult result = DebugStandardBGCharacter(
@@ -22,13 +27,16 @@ static void adapt_DebugStandardBGCharacter(ProbeState *s)
 	s->d = result.d;
 	s->e = result.e;
 }
+/* <<< factory DebugStandardBGCharacter */
 
+/* >>> factory DebugQuit */
 static void adapt_DebugQuit(ProbeState *s)
 {
 	DebugQuitResult result = DebugQuit(s->a, s->f);
 	s->a = result.a;
 	s->f = result.f;
 }
+/* <<< factory DebugQuit */
 
 /* >>> factory UnreferencedFillVRAMWithRandomData */
 static void adapt_UnreferencedFillVRAMWithRandomData(ProbeState *s)
@@ -137,6 +145,7 @@ static void adapt_DebugDuelMode(ProbeState *s)
 }
 /* <<< factory DebugDuelMode */
 
+/* >>> part probe_entries_debug */
 const ProbeEntry probe_entries_debug[] = {
 	{"DebugSGBFrame", adapt_DebugSGBFrame},
 	{"DebugStandardBGCharacter", adapt_DebugStandardBGCharacter},
@@ -153,3 +162,4 @@ const ProbeEntry probe_entries_debug[] = {
 	{ "DebugDuelMode", adapt_DebugDuelMode },
 	{NULL, NULL},
 };
+/* <<< part probe_entries_debug */

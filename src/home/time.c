@@ -1,8 +1,10 @@
+/* >>> part includes */
 #include "home/time.h"
 
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/switch_rom.h"
 #include "home/time.h"
@@ -15,6 +17,7 @@
 /* <<< factory statics */
 
 
+/* >>> factory IncrementPlayTimeCounter */
 /* time.asm:40-67. Byte 3 counts mod 256 (ret nz), not 60, and only rolls into
  * byte 4 when it wraps. */
 void IncrementPlayTimeCounter(void)
@@ -52,7 +55,9 @@ void IncrementPlayTimeCounter(void)
 	uint16_t a4 = (uint16_t)(base + 4u);
 	gb_write8(a4, (uint8_t)(gb_read8(a4) + 1u));
 }
+/* <<< factory IncrementPlayTimeCounter */
 
+/* >>> factory CheckForCGB */
 /* time.asm:88-93. Returns the exit F register: Z/C encode the CGB check. */
 uint8_t CheckForCGB(void)
 {
@@ -61,14 +66,18 @@ uint8_t CheckForCGB(void)
 		return (uint8_t)(0x40u | 0x80u);
 	return 0x10u;
 }
+/* <<< factory CheckForCGB */
 
+/* >>> part rIE */
 #define rIE 0xFFFFu
 #define rIF 0xFF0Fu
 #define rJOYP 0xFF00u
 #define rSPD 0xFF4Du
 #define B_SPD_DOUBLE 7u
 #define B_SPD_PREPARE 0u
+/* <<< part rIE */
 
+/* >>> part SwitchToCGBNormalSpeed */
 void SwitchToCGBNormalSpeed(void)
 {
 	if ((CheckForCGB() & 0x10u) != 0u)
@@ -89,7 +98,9 @@ void SwitchToCGBNormalSpeed(void)
 	(void)SetupTimer();
 	gb_write8(rIE, ie);
 }
+/* <<< part SwitchToCGBNormalSpeed */
 
+/* >>> part SwitchToCGBDoubleSpeed */
 void SwitchToCGBDoubleSpeed(void)
 {
 	if ((CheckForCGB() & 0x10u) != 0u)
@@ -111,10 +122,14 @@ void SwitchToCGBDoubleSpeed(void)
 	(void)SetupTimer();
 	gb_write8(rIE, ie);
 }
+/* <<< part SwitchToCGBDoubleSpeed */
 
+/* >>> part rTMA */
 #define rTMA 0xFF06u
 #define rTAC 0xFF07u
+/* <<< part rTMA */
 
+/* >>> factory SetupTimer */
 TimerSetupResult SetupTimer(void)
 {
 	uint8_t b = 0xBCu;
@@ -131,6 +146,7 @@ TimerSetupResult SetupTimer(void)
 	gb_write8(rTAC, 0x07u);
 	return (TimerSetupResult){0x07u, b, f};
 }
+/* <<< factory SetupTimer */
 
 /* >>> factory TimerHandler */
 void TimerHandler(void)

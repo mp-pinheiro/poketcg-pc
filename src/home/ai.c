@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/ai.h"
 
 #include "generated/constants.h"
@@ -8,6 +9,7 @@
 #include "mem.h"
 #include <stdio.h>
 #include <stdlib.h>
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -35,12 +37,15 @@
 
 /* <<< factory statics */
 
+/* >>> part SAMS_PRACTICE_DECK_ID */
 #define SAMS_PRACTICE_DECK_ID 0u
 #define SAMS_NORMAL_DECK_ID 2u
 #define PRACTICE_PLAYER_DECK_ID 1u
 #define PRACTICE_PLAYER_DECK 3u
 #define DUELVARS_DUELIST_TYPE 0xF1u
+/* <<< part SAMS_PRACTICE_DECK_ID */
 
+/* >>> factory LoadOpponentDeck */
 /* ai.asm:1-46. Sam paths (deck id 0 or 2) force PRACTICE_PLAYER_DECK onto the
  * OTHER duelist (swap in, load, swap back) and reseed the RNG to $57/$57/$57;
  * every path then loads the (possibly Sam-forced) deck for the current turn
@@ -78,6 +83,7 @@ DeckLoadResult LoadOpponentDeck(void)
 	gb_write8(dv.hl, v);
 	return (DeckLoadResult){v, dv.hl};
 }
+/* <<< factory LoadOpponentDeck */
 
 /* >>> factory AIDoAction */
 /* ai.asm:76-107 with the deck tables of engine/duel/ai/decks. Each deck

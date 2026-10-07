@@ -1,6 +1,9 @@
+/* >>> part includes */
 #include "home/debug_main.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory Func_126b3 */
 static void adapt_Func_126b3(ProbeState *s)
 {
 	Func126b3Result result = Func_126b3();
@@ -8,6 +11,7 @@ static void adapt_Func_126b3(ProbeState *s)
 	s->f = result.f;
 	s->hl = result.hl;
 }
+/* <<< factory Func_126b3 */
 
 /* >>> factory Func_12661 */
 static void adapt_Func_12661(ProbeState *s)
@@ -20,8 +24,10 @@ static void adapt_Func_12661(ProbeState *s)
 }
 /* <<< factory Func_12661 */
 
+/* >>> part probe_entries_debug_main */
 const ProbeEntry probe_entries_debug_main[] = {
 	{"Func_126b3", adapt_Func_126b3},
 	{ "Func_12661", adapt_Func_12661 },
 	{NULL, NULL},
 };
+/* <<< part probe_entries_debug_main */

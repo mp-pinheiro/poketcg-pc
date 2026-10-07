@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/ishiharas_house.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Preload_NikkiInIshiharasHouse */
 static void adapt_Preload_NikkiInIshiharasHouse(ProbeState *s)
@@ -30,9 +32,11 @@ static void adapt_Preload_Ronald1InIshiharasHouse(ProbeState *s)
 }
 /* <<< factory Preload_Ronald1InIshiharasHouse */
 
+/* >>> part probe_entries_ishiharas_house */
 const ProbeEntry probe_entries_ishiharas_house[] = {
 	{ "Preload_NikkiInIshiharasHouse", adapt_Preload_NikkiInIshiharasHouse },
 	{ "Preload_IshiharaInIshiharasHouse", adapt_Preload_IshiharaInIshiharasHouse },
 	{ "Preload_Ronald1InIshiharasHouse", adapt_Preload_Ronald1InIshiharasHouse },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_ishiharas_house */

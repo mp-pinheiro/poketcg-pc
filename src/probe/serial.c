@@ -1,18 +1,25 @@
+/* >>> part includes */
 #include "home/serial.h"
 #include "probe.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part pair */
 static uint16_t pair(uint8_t hi, uint8_t lo)
 {
 	return (uint16_t)((uint16_t)hi << 8 | lo);
 }
+/* <<< part pair */
 
+/* >>> factory SerialTimerHandler */
 static void adapt_SerialTimerHandler(ProbeState *s)
 {
 	(void)s;
 	SerialTimerHandler();
 }
+/* <<< factory SerialTimerHandler */
 
+/* >>> factory Func_0cc5 */
 static void adapt_Func_0cc5(ProbeState *s)
 {
 	Func0cc5Result r = Func_0cc5(s->a, s->b, s->c, s->e);
@@ -22,13 +29,17 @@ static void adapt_Func_0cc5(ProbeState *s)
 	s->e = r.e;
 	s->f = r.f;
 }
+/* <<< factory Func_0cc5 */
 
+/* >>> factory SerialHandler */
 static void adapt_SerialHandler(ProbeState *s)
 {
 	(void)s;
 	SerialHandler();
 }
+/* <<< factory SerialHandler */
 
+/* >>> factory SerialHandleRecv */
 static void adapt_SerialHandleRecv(ProbeState *s)
 {
 	SerialHandleRecvResult r = SerialHandleRecv(s->a, s->d);
@@ -37,7 +48,9 @@ static void adapt_SerialHandleRecv(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
+/* <<< factory SerialHandleRecv */
 
+/* >>> factory SerialHandleSend */
 static void adapt_SerialHandleSend(ProbeState *s)
 {
 	SerialHandleSendResult r = SerialHandleSend(s->d, s->e);
@@ -46,7 +59,9 @@ static void adapt_SerialHandleSend(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
+/* <<< factory SerialHandleSend */
 
+/* >>> factory SerialSendByte */
 /* Exit carry is entry carry passed through untouched; SerialSendByte only
  * returns the freshly computed Z/H bits (see serial.h), so the adapter ORs
  * them onto s->f's own C bit, same as load_deck.c's LoadDeck adapter. */
@@ -55,21 +70,27 @@ static void adapt_SerialSendByte(ProbeState *s)
 	uint8_t zh = SerialSendByte(s->a);
 	s->f = (uint8_t)(zh | (s->f & 0x10u));
 }
+/* <<< factory SerialSendByte */
 
+/* >>> factory Func_0e32 */
 static void adapt_Func_0e32(ProbeState *s)
 {
 	SerialRecvReadyResult r = Func_0e32();
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory Func_0e32 */
 
+/* >>> factory SerialRecvByte */
 static void adapt_SerialRecvByte(ProbeState *s)
 {
 	SerialByteResult r = SerialRecvByte();
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory SerialRecvByte */
 
+/* >>> factory SerialExchangeBytes */
 static void adapt_SerialExchangeBytes(ProbeState *s)
 {
 	SerialExchangeResult r = SerialExchangeBytes(s->c, s->hl, pair(s->d, s->e));
@@ -81,24 +102,32 @@ static void adapt_SerialExchangeBytes(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory SerialExchangeBytes */
 
+/* >>> factory Func_0e8e */
 static void adapt_Func_0e8e(ProbeState *s)
 {
 	s->a = Func_0e8e();
 }
+/* <<< factory Func_0e8e */
 
+/* >>> factory ResetSerial */
 static void adapt_ResetSerial(ProbeState *s)
 {
 	(void)s;
 	ResetSerial();
 }
+/* <<< factory ResetSerial */
 
+/* >>> factory ClearSerialData */
 static void adapt_ClearSerialData(ProbeState *s)
 {
 	(void)s;
 	ClearSerialData();
 }
+/* <<< factory ClearSerialData */
 
+/* >>> factory SerialSendBytes */
 static void adapt_SerialSendBytes(ProbeState *s)
 {
 	SerialSendBytesResult r = SerialSendBytes(s->hl, pair(s->b, s->c));
@@ -106,7 +135,9 @@ static void adapt_SerialSendBytes(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory SerialSendBytes */
 
+/* >>> factory SerialRecvBytes */
 static void adapt_SerialRecvBytes(ProbeState *s)
 {
 	SerialRecvBytesResult r = SerialRecvBytes(s->hl, pair(s->b, s->c));
@@ -114,6 +145,7 @@ static void adapt_SerialRecvBytes(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+/* <<< factory SerialRecvBytes */
 
 /* >>> factory DuelTransmissionError */
 static void adapt_DuelTransmissionError(ProbeState *s)
@@ -215,6 +247,7 @@ static void adapt_UnreferencedSaveSerialReturnAddress(ProbeState *s)
 }
 /* <<< factory UnreferencedSaveSerialReturnAddress */
 
+/* >>> part probe_entries_serial */
 const ProbeEntry probe_entries_serial[] = {
 	{ "SerialTimerHandler", adapt_SerialTimerHandler },
 	{ "Func_0cc5", adapt_Func_0cc5 },
@@ -241,3 +274,4 @@ const ProbeEntry probe_entries_serial[] = {
 	{ "UnreferencedSaveSerialReturnAddress", adapt_UnreferencedSaveSerialReturnAddress },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_serial */

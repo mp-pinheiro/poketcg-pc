@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/music.h"
 
 #include "home/frames.h"
@@ -8,7 +9,9 @@
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part MUSIC_BANK */
 #define MUSIC_BANK 0x42u
 #define ADR_CHANNEL_LOOP_STACKS ChannelLoopStacks_ADDR
 #define ADR_OCTAVE_OFFSETS OctaveOffsets_ADDR
@@ -56,43 +59,58 @@
 #define AUD1LEN_TIMER 0x3Fu
 #define AUD2LEN_TIMER 0x3Fu
 #define AUD3WAVE_SIZE 16u
+/* <<< part MUSIC_BANK */
 
+/* >>> part rom_read8 */
 static uint8_t rom_read8(uint16_t addr)
 {
 	return *rom_ptr(MUSIC_BANK, addr);
 }
+/* <<< part rom_read8 */
 
+/* >>> part rom_read16 */
 static uint16_t rom_read16(uint16_t addr)
 {
 	return (uint16_t)(rom_read8(addr) |
 		((uint16_t)rom_read8((uint16_t)(addr + 1u)) << 8u));
 }
+/* <<< part rom_read16 */
+/* >>> part read16 */
 static uint16_t read16(uint16_t addr)
 {
 	return (uint16_t)(gb_read8(addr) |
 		((uint16_t)gb_read8((uint16_t)(addr + 1u)) << 8u));
 }
+/* <<< part read16 */
 
+/* >>> part write16 */
 static void write16(uint16_t addr, uint16_t value)
 {
 	gb_write8(addr, (uint8_t)value);
 	gb_write8((uint16_t)(addr + 1u), (uint8_t)(value >> 8u));
 }
+/* <<< part write16 */
 
+/* >>> part channel_addr */
 static uint16_t channel_addr(uint16_t base, uint8_t ch)
 {
 	return (uint16_t)(base + ch);
 }
+/* <<< part channel_addr */
 
+/* >>> part channel_word_addr */
 static uint16_t channel_word_addr(uint16_t base, uint8_t ch)
 {
 	return (uint16_t)(base + (uint16_t)ch * 2u);
 }
+/* <<< part channel_word_addr */
 
+/* >>> part play_next_from */
 static void play_next_from(uint16_t stream, uint8_t ch)
 {
 	PlayNextNote(&stream, ch);
 }
+/* <<< part play_next_from */
 
 /* >>> factory _SetupSound */
 /* music.asm:1-3 */
@@ -340,6 +358,7 @@ void MusicEmptyFunc(void)
 }
 /* <<< factory MusicEmptyFunc */
 
+/* >>> part stop_channel */
 static void stop_channel(uint8_t ch)
 {
 	uint8_t disabled_bit = ch == 3u ? 0x08u : (uint8_t)(1u << ch);
@@ -360,7 +379,9 @@ static void stop_channel(uint8_t ch)
 		gb_write8(APU_AUD4GO, AUD4GO_RESTART);
 	}
 }
+/* <<< part stop_channel */
 
+/* >>> part update_channel */
 static void update_channel(uint8_t ch)
 {
 	uint8_t playing = gb_read8(channel_addr(wMusicIsPlaying_ADDR, ch));
@@ -417,6 +438,7 @@ static void update_channel(uint8_t ch)
 	if (ch != 3u)
 		Music_f485a(ch);
 }
+/* <<< part update_channel */
 
 /* >>> factory UpdateChannel1 */
 /* music.asm:319-369 */
@@ -464,6 +486,7 @@ uint8_t GetMusicCommandAndArgs(uint16_t *hl)
 }
 /* <<< factory GetMusicCommandAndArgs */
 
+/* >>> part note_body */
 static void note_body(uint16_t *hl, uint8_t note, uint8_t ch)
 {
 	g_rom_bank = MUSIC_BANK;
@@ -535,6 +558,7 @@ static void note_body(uint16_t *hl, uint8_t note, uint8_t ch)
 	}
 	write16(channel_word_addr(wMusicChannelPointers_ADDR, ch), *hl);
 }
+/* <<< part note_body */
 
 /* >>> factory Music_note */
 /* music.asm:586-778 */
@@ -843,11 +867,13 @@ void Music_ret(uint16_t caller_stream, uint8_t ch)
 }
 /* <<< factory Music_ret */
 
+/* >>> part one_byte_command */
 static void one_byte_command(uint16_t caller_stream, uint8_t ch, uint16_t address, uint8_t value)
 {
 	gb_write8(channel_addr(address, ch), value);
 	play_next_from((uint16_t)(caller_stream + 1u), ch);
 }
+/* <<< part one_byte_command */
 
 /* >>> factory Music_frequency_offset */
 /* music.asm:946-955 */

@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/core.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory DrawHPBar */
 static void adapt_DrawHPBar(ProbeState *s)
@@ -225,7 +227,7 @@ static void adapt_GetAnimCoordsAndFlags(ProbeState *s)
 /* <<< factory GetAnimCoordsAndFlags */
 
 
-/* >>> factory GetDamageNumberChars.ConvertDigitToCharTile */
+/* >>> factory GetDamageNumberChars_ConvertDigitToCharTile */
 static void adapt_GetDamageNumberChars_ConvertDigitToCharTile(ProbeState *s)
 {
 	DamageDigitResult r = GetDamageNumberChars_ConvertDigitToCharTile(
@@ -236,7 +238,7 @@ static void adapt_GetDamageNumberChars_ConvertDigitToCharTile(ProbeState *s)
 	s->e = (uint8_t)r.de;
 	s->hl = r.hl;
 }
-/* <<< factory GetDamageNumberChars.ConvertDigitToCharTile */
+/* <<< factory GetDamageNumberChars_ConvertDigitToCharTile */
 
 /* >>> factory PlayBufferedDuelAnimations */
 static void adapt_PlayBufferedDuelAnimations(ProbeState *s)
@@ -2015,10 +2017,12 @@ static void adapt_OpenCardPage(ProbeState *s)
 }
 /* <<< factory OpenCardPage */
 
+/* >>> factory OpenCardPage_input_loop */
 static void adapt_OpenCardPage_input_loop(ProbeState *s)
 {
 	OpenCardPage_input_loop(s->b);
 }
+/* <<< factory OpenCardPage_input_loop */
 
 /* >>> factory DisplayCardDetailScreen */
 static void adapt_DisplayCardDetailScreen(ProbeState *s)
@@ -2364,12 +2368,12 @@ static void adapt_DisplayDrawOneCardScreen(ProbeState *s)
 }
 /* <<< factory DisplayDrawOneCardScreen */
 
- /* >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+/* >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
  static void adapt_PlayShuffleAndDrawCardsAnimation_TurnDuelist(ProbeState *s)
  {
  	PlayShuffleAndDrawCardsAnimation_TurnDuelist(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
  }
- /* <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+/* <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
  
 /* >>> factory OppAction_ExecuteTrainerCardEffectCommands */
 static void adapt_OppAction_ExecuteTrainerCardEffectCommands(ProbeState *s)
@@ -2925,6 +2929,7 @@ static void adapt_PlayPokemonCard(ProbeState *s)
 }
 /* <<< factory PlayPokemonCard */
 
+/* >>> part probe_entries_core */
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
@@ -3272,3 +3277,4 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlayPokemonCard", adapt_PlayPokemonCard },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_core */

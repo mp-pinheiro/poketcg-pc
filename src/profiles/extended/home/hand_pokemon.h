@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_HAND_POKEMON_H
 #define POKETCG_HOME_HAND_POKEMON_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory AIDecideSpecialEvolutions */
 void AIDecideSpecialEvolutions(void);

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/psychic_club.h"
 
 #include "generated/rom.h"
@@ -5,6 +6,7 @@
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/psychic_club.h"
 #include "home/grass_club_entrance.h"

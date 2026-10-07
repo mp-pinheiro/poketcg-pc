@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/load_gfx.h"
 
 #include "generated/constants.h"
@@ -15,7 +16,9 @@
 #include "home/switch_rom.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part GFX_TABLE_POINTERS */
 #define GFX_TABLE_POINTERS GfxTablePointers_ADDR
 #define GFX_TABLE_TILEMAPS 0u
 #define GFX_TABLE_TILESETS 2u
@@ -28,22 +31,30 @@
 #define TILEMAP_WIDTH 32u
 #define VRAM_BANK_REGISTER 0xFF4Fu
 #define PORTRAIT_PAL_BASE 0x97u
+/* <<< part GFX_TABLE_POINTERS */
+/* >>> part switch_vram */
 static void switch_vram(uint8_t bank)
 {
 	hBankVRAM = bank;
 	gb_write8(0xff4fu, (uint8_t)(0xfeu | (bank & 1u)));
 }
+/* <<< part switch_vram */
 
+/* >>> part state16 */
 static uint16_t state16(uint16_t addr)
 {
 	return (uint16_t)(gb_read8(addr) | ((uint16_t)gb_read8((uint16_t)(addr + 1u)) << 8));
 }
+/* <<< part state16 */
 
+/* >>> part put16 */
 static void put16(uint16_t addr, uint16_t value)
 {
 	gb_write8(addr, (uint8_t)value);
 	gb_write8((uint16_t)(addr + 1u), (uint8_t)(value >> 8));
 }
+/* <<< part put16 */
+/* >>> part extended_gfx_entry */
 static uint16_t extended_gfx_entry(uint8_t table, uint8_t index)
 {
 	uint8_t saved_bank = hBankROM;
@@ -55,7 +66,9 @@ static uint16_t extended_gfx_entry(uint8_t table, uint8_t index)
 	BankswitchROM(saved_bank);
 	return (uint16_t)(table_ptr + (uint16_t)index * 4u);
 }
+/* <<< part extended_gfx_entry */
 
+/* >>> part load_extended_palette_data */
 static void load_extended_palette_data(uint8_t palette)
 {
 	uint8_t saved_bank = hBankROM;
@@ -66,6 +79,7 @@ static void load_extended_palette_data(uint8_t palette)
 	BankswitchROM(saved_bank);
 	CopyBankedDataToDE((uint16_t)((uint16_t)count * 8u + 1u), wLoadedPalData_ADDR);
 }
+/* <<< part load_extended_palette_data */
 /* >>> factory _DrawPortrait */
 void _DrawPortrait(uint8_t b, uint8_t c)
 {
@@ -124,18 +138,23 @@ void _DrawPortrait(uint8_t b, uint8_t c)
 }
 /* <<< factory _DrawPortrait */
 
+/* >>> factory LoadTilemap_ToSRAM */
 void LoadTilemap_ToSRAM(uint8_t b, uint8_t c)
 {
 	wWriteBGMapToSRAM = 1;
 	LoadTilemap(b, c);
 }
+/* <<< factory LoadTilemap_ToSRAM */
 
+/* >>> factory LoadTilemap_ToVRAM */
 void LoadTilemap_ToVRAM(uint8_t b, uint8_t c)
 {
 	wWriteBGMapToSRAM = 0;
 	LoadTilemap(b, c);
 }
+/* <<< factory LoadTilemap_ToVRAM */
 
+/* >>> factory LoadTilemap */
 void LoadTilemap(uint8_t b, uint8_t c)
 {
 	uint16_t de = BCCoordToBGMap0Address(b, c);
@@ -151,7 +170,9 @@ void LoadTilemap(uint8_t b, uint8_t c)
 	wBGMapCGBMode = gb_read8((uint16_t)(wDecompressionBuffer_ADDR + 4u));
 	LoadTilemap_InitAndDecompressBGMap();
 }
+/* <<< factory LoadTilemap */
 
+/* >>> factory LoadTilemap_InitAndDecompressBGMap */
 void LoadTilemap_InitAndDecompressBGMap(void)
 {
 	uint16_t source = (uint16_t)(state16(wTempPointer_ADDR) + 5u);
@@ -161,7 +182,9 @@ void LoadTilemap_InitAndDecompressBGMap(void)
 		LoadTilemap_Decompress(&de);
 	}
 }
+/* <<< factory LoadTilemap_InitAndDecompressBGMap */
 
+/* >>> factory LoadTilemap_Decompress */
 void LoadTilemap_Decompress(uint16_t *de)
 {
 	uint8_t width = wBGMapWidth;
@@ -187,7 +210,9 @@ void LoadTilemap_Decompress(uint16_t *de)
 			break;
 	}
 }
+/* <<< factory LoadTilemap_Decompress */
 
+/* >>> part FuncEightZeroOneFourEight */
 void FuncEightZeroOneFourEight(uint16_t hl, uint8_t b)
 {
 	uint8_t i;
@@ -201,7 +226,9 @@ void FuncEightZeroOneFourEight(uint16_t hl, uint8_t b)
 			gb_write8((uint16_t)(hl + i), wd291);
 	}
 }
+/* <<< part FuncEightZeroOneFourEight */
 
+/* >>> factory CopyBGDataToVRAMOrSRAM */
 void CopyBGDataToVRAMOrSRAM(uint16_t *hl, uint16_t *de, uint8_t b)
 {
 	uint8_t saved = hBankSRAM;
@@ -218,7 +245,9 @@ void CopyBGDataToVRAMOrSRAM(uint16_t *hl, uint16_t *de, uint8_t b)
 	BankswitchSRAM(saved);
 	DisableSRAM();
 }
+/* <<< factory CopyBGDataToVRAMOrSRAM */
 
+/* >>> factory SafelyCopyBGMapFromSRAMToVRAM */
 void SafelyCopyBGMapFromSRAMToVRAM(void)
 {
 	uint8_t saved = hBankSRAM;
@@ -237,7 +266,9 @@ void SafelyCopyBGMapFromSRAMToVRAM(void)
 	BankswitchSRAM(saved);
 	DisableSRAM();
 }
+/* <<< factory SafelyCopyBGMapFromSRAMToVRAM */
 
+/* >>> factory ClearSRAMBGMaps */
 void ClearSRAMBGMaps(void)
 {
 	uint8_t saved = hBankSRAM;
@@ -246,7 +277,9 @@ void ClearSRAMBGMaps(void)
 	BankswitchSRAM(saved);
 	DisableSRAM();
 }
+/* <<< factory ClearSRAMBGMaps */
 
+/* >>> factory GetMapDataPointer */
 MapDataPointerResult GetMapDataPointer(uint8_t a, uint8_t l)
 {
 	uint8_t saved = hBankROM;
@@ -264,7 +297,9 @@ MapDataPointerResult GetMapDataPointer(uint8_t a, uint8_t l)
 		| (result < table ? 0x10u : 0u));
 	return (MapDataPointerResult){result, f};
 }
+/* <<< factory GetMapDataPointer */
 
+/* >>> factory LoadGraphicsPointerFromHL */
 void LoadGraphicsPointerFromHL(uint16_t *hl)
 {
 	uint8_t saved = hBankROM;
@@ -276,7 +311,9 @@ void LoadGraphicsPointerFromHL(uint16_t *hl)
 	BankswitchROM(saved);
 	*hl = (uint16_t)(p + 1u);
 }
+/* <<< factory LoadGraphicsPointerFromHL */
 
+/* >>> factory LoadSpriteGfx */
 uint8_t LoadSpriteGfx(uint8_t a)
 {
 	uint8_t saved = hBankROM;
@@ -290,19 +327,25 @@ uint8_t LoadSpriteGfx(uint8_t a)
 	LoadGfxDataFromTempPointerToVRAMBank();
 	return total;
 }
+/* <<< factory LoadSpriteGfx */
 
+/* >>> factory LoadGfxDataFromTempPointerToVRAMBank */
 void LoadGfxDataFromTempPointerToVRAMBank(void)
 {
 	GetTileOffsetPointerAndSwitchVRAM();
 	LoadGfxDataFromTempPointer();
 }
+/* <<< factory LoadGfxDataFromTempPointerToVRAMBank */
 
+/* >>> part LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2 */
 void LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2(void)
 {
 	GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2();
 	LoadGfxDataFromTempPointer();
 }
+/* <<< part LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2 */
 
+/* >>> factory LoadGfxDataFromTempPointer */
 void LoadGfxDataFromTempPointer(void)
 {
 	uint16_t src = state16(wTempPointer_ADDR);
@@ -310,14 +353,18 @@ void LoadGfxDataFromTempPointer(void)
 	CopyGfxDataFromTempBank(&src, &dst, wTotalNumTiles, wCurSpriteTileSize);
 	switch_vram(0);
 }
+/* <<< factory LoadGfxDataFromTempPointer */
 
+/* >>> factory GetTileOffsetPointerAndSwitchVRAM */
 void GetTileOffsetPointerAndSwitchVRAM(void)
 {
 	uint8_t offset = wVRAMTileOffset;
 	put16(wVRAMPointer_ADDR, (uint16_t)(0x8000u + ((uint16_t)offset << 4)));
 	switch_vram((uint8_t)(wWhichVRAMBank & 1u));
 }
+/* <<< factory GetTileOffsetPointerAndSwitchVRAM */
 
+/* >>> factory GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2 */
 void GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2(void)
 {
 	uint8_t saved = wVRAMTileOffset;
@@ -327,7 +374,9 @@ void GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2(void)
 		(uint8_t)(gb_read8(wVRAMPointer_ADDR + 1u) + 0x08u));
 	wVRAMTileOffset = saved;
 }
+/* <<< factory GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2 */
 
+/* >>> factory LoadTilesetGfx */
 void LoadTilesetGfx(void)
 {
 	uint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;
@@ -335,7 +384,9 @@ void LoadTilesetGfx(void)
 	LoadTilesetGfx_LoadTileGfx();
 	switch_vram(0);
 }
+/* <<< factory LoadTilesetGfx */
 
+/* >>> part Func_80238 */
 void Func_80238(void)
 {
 	uint8_t saved = hBankROM;
@@ -349,7 +400,9 @@ void Func_80238(void)
 	wVRAMTileOffset = 0x80;
 	LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2();
 }
+/* <<< part Func_80238 */
 
+/* >>> factory LoadTilesetGfx_LoadTileGfx */
 void LoadTilesetGfx_LoadTileGfx(void)
 {
 	uint16_t hl = state16(wTempPointer_ADDR);
@@ -366,7 +419,9 @@ void LoadTilesetGfx_LoadTileGfx(void)
 		return;
 	(void)LoadTilesetGfx_CopyGfxData(1, 0x80u);
 }
+/* <<< factory LoadTilesetGfx_LoadTileGfx */
 
+/* >>> factory LoadTilesetGfx_CopyGfxData */
 LoadTilesetChunkResult LoadTilesetGfx_CopyGfxData(uint8_t b, uint8_t c)
 {
 	uint8_t current_bank = wWhichVRAMBank;
@@ -405,7 +460,9 @@ LoadTilesetChunkResult LoadTilesetGfx_CopyGfxData(uint8_t b, uint8_t c)
 		(uint8_t)remaining, remaining ? 0u : 0x80u
 	};
 }
+/* <<< factory LoadTilesetGfx_CopyGfxData */
 
+/* >>> factory Func_803b9 */
 void Func_803b9(void)
 {
 	uint8_t saved = hBankROM;
@@ -415,7 +472,9 @@ void Func_803b9(void)
 	wCurTileset = gb_read8(hl);
 	BankswitchROM(saved);
 }
+/* <<< factory Func_803b9 */
 
+/* >>> factory LoadBGPalette */
 void LoadBGPalette(uint8_t a)
 {
 	LoadPaletteDataToBuffer(a);
@@ -424,7 +483,9 @@ void LoadBGPalette(uint8_t a)
 		LoadPaletteDataFromHL((uint16_t)(wLoadedPalData_ADDR + 1u),
 				      wWhichBGPalIndex, count);
 }
+/* <<< factory LoadBGPalette */
 
+/* >>> factory LoadPaletteDataFromHL */
 void LoadPaletteDataFromHL(uint16_t hl, uint8_t b, uint8_t c)
 {
 	uint16_t dst;
@@ -442,7 +503,9 @@ void LoadPaletteDataFromHL(uint16_t hl, uint8_t b, uint8_t c)
 	}
 	FlushAllPalettes();
 }
+/* <<< factory LoadPaletteDataFromHL */
 
+/* >>> factory LoadOBPalette */
 void LoadOBPalette(uint8_t a)
 {
 	LoadPaletteDataToBuffer(a);
@@ -451,7 +514,9 @@ void LoadOBPalette(uint8_t a)
 		LoadPaletteDataFromHL((uint16_t)(wLoadedPalData_ADDR + 1u),
 				      (uint8_t)(wWhichOBPalIndex | 8u), count);
 }
+/* <<< factory LoadOBPalette */
 
+/* >>> factory LoadPaletteDataToBuffer */
 void LoadPaletteDataToBuffer(uint8_t a)
 {
 	uint8_t saved = hBankROM;
@@ -468,3 +533,4 @@ void LoadPaletteDataToBuffer(uint8_t a)
 	CopyBankedDataToDE(count, de);
 	BankswitchROM(saved);
 }
+/* <<< factory LoadPaletteDataToBuffer */

@@ -1,12 +1,17 @@
+/* >>> part includes */
 #include "home/tiles.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory FillRectangle */
 static void adapt_FillRectangle(ProbeState *s)
 {
 	uint16_t de = (uint16_t)(s->d << 8 | s->e);
 	FillRectangle(s->a, s->b, s->c, de, s->hl);
 }
+/* <<< factory FillRectangle */
 
+/* >>> factory Copy1bppTiles */
 static void adapt_Copy1bppTiles(ProbeState *s)
 {
 	uint16_t de = (uint16_t)(s->d << 8 | s->e);
@@ -14,7 +19,9 @@ static void adapt_Copy1bppTiles(ProbeState *s)
 	s->d = (uint8_t)(de >> 8);
 	s->e = (uint8_t)de;
 }
+/* <<< factory Copy1bppTiles */
 
+/* >>> factory CopyFontsOrDuelGraphicsTiles */
 static void adapt_CopyFontsOrDuelGraphicsTiles(ProbeState *s)
 {
 	uint16_t de = (uint16_t)(s->d << 8 | s->e);
@@ -22,7 +29,9 @@ static void adapt_CopyFontsOrDuelGraphicsTiles(ProbeState *s)
 	s->d = (uint8_t)(de >> 8);
 	s->e = (uint8_t)de;
 }
+/* <<< factory CopyFontsOrDuelGraphicsTiles */
 
+/* >>> factory LoadSymbolsFont */
 static void adapt_LoadSymbolsFont(ProbeState *s)
 {
 	TileCopyResult r = LoadSymbolsFont();
@@ -30,7 +39,9 @@ static void adapt_LoadSymbolsFont(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadSymbolsFont */
 
+/* >>> factory LoadCardSet2Tiles */
 static void adapt_LoadCardSet2Tiles(ProbeState *s)
 {
 	TileCopyResult r = LoadCardSet2Tiles(s->a);
@@ -38,7 +49,9 @@ static void adapt_LoadCardSet2Tiles(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadCardSet2Tiles */
 
+/* >>> factory LoadDuelDrawCardsScreenTiles */
 static void adapt_LoadDuelDrawCardsScreenTiles(ProbeState *s)
 {
 	TileCopyResult r = LoadDuelDrawCardsScreenTiles();
@@ -46,7 +59,9 @@ static void adapt_LoadDuelDrawCardsScreenTiles(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadDuelDrawCardsScreenTiles */
 
+/* >>> factory LoadCardOrDuelMenuBorderTiles */
 static void adapt_LoadCardOrDuelMenuBorderTiles(ProbeState *s)
 {
 	TileCopyResult r = LoadCardOrDuelMenuBorderTiles();
@@ -54,7 +69,9 @@ static void adapt_LoadCardOrDuelMenuBorderTiles(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadCardOrDuelMenuBorderTiles */
 
+/* >>> factory LoadCardTypeHeaderTiles */
 static void adapt_LoadCardTypeHeaderTiles(ProbeState *s)
 {
 	TileCopyResult r = LoadCardTypeHeaderTiles(s->a);
@@ -62,7 +79,9 @@ static void adapt_LoadCardTypeHeaderTiles(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadCardTypeHeaderTiles */
 
+/* >>> factory LoadDuelCardSymbolTiles */
 static void adapt_LoadDuelCardSymbolTiles(ProbeState *s)
 {
 	TileCopyResult r = LoadDuelCardSymbolTiles();
@@ -70,7 +89,9 @@ static void adapt_LoadDuelCardSymbolTiles(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadDuelCardSymbolTiles */
 
+/* >>> factory LoadDuelCardSymbolTiles2 */
 static void adapt_LoadDuelCardSymbolTiles2(ProbeState *s)
 {
 	TileCopyResult r = LoadDuelCardSymbolTiles2();
@@ -78,7 +99,9 @@ static void adapt_LoadDuelCardSymbolTiles2(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadDuelCardSymbolTiles2 */
 
+/* >>> factory LoadDuelFaceDownCardTiles */
 static void adapt_LoadDuelFaceDownCardTiles(ProbeState *s)
 {
 	TileCopyResult r = LoadDuelFaceDownCardTiles();
@@ -86,7 +109,9 @@ static void adapt_LoadDuelFaceDownCardTiles(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadDuelFaceDownCardTiles */
 
+/* >>> factory LoadDuelCheckPokemonScreenTiles */
 static void adapt_LoadDuelCheckPokemonScreenTiles(ProbeState *s)
 {
 	TileCopyResult r = LoadDuelCheckPokemonScreenTiles();
@@ -94,7 +119,9 @@ static void adapt_LoadDuelCheckPokemonScreenTiles(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadDuelCheckPokemonScreenTiles */
 
+/* >>> factory LoadPlacingThePrizesScreenTiles */
 static void adapt_LoadPlacingThePrizesScreenTiles(ProbeState *s)
 {
 	TileCopyResult r = LoadPlacingThePrizesScreenTiles();
@@ -102,7 +129,9 @@ static void adapt_LoadPlacingThePrizesScreenTiles(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadPlacingThePrizesScreenTiles */
 
+/* >>> factory LoadDeckAndDiscardPileIcons */
 static void adapt_LoadDeckAndDiscardPileIcons(ProbeState *s)
 {
 	TileCopyResult r = LoadDeckAndDiscardPileIcons();
@@ -110,7 +139,9 @@ static void adapt_LoadDeckAndDiscardPileIcons(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadDeckAndDiscardPileIcons */
 
+/* >>> factory LoadDuelCoinTossResultTiles */
 static void adapt_LoadDuelCoinTossResultTiles(ProbeState *s)
 {
 	TileCopyResult r = LoadDuelCoinTossResultTiles();
@@ -118,7 +149,9 @@ static void adapt_LoadDuelCoinTossResultTiles(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory LoadDuelCoinTossResultTiles */
 
+/* >>> factory Func_212f */
 static void adapt_Func_212f(ProbeState *s)
 {
 	TileCopyResult r = Func_212f();
@@ -126,17 +159,22 @@ static void adapt_Func_212f(ProbeState *s)
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }
+/* <<< factory Func_212f */
 
+/* >>> factory DrawDuelBoxMessage */
 static void adapt_DrawDuelBoxMessage(ProbeState *s)
 {
 	DrawDuelBoxMessage(s->a);
 }
+/* <<< factory DrawDuelBoxMessage */
 
+/* >>> factory LoadFullWidthFontTiles */
 static void adapt_LoadFullWidthFontTiles(ProbeState *s)
 {
 	(void)s;
 	LoadFullWidthFontTiles();
 }
+/* <<< factory LoadFullWidthFontTiles */
 
 /* >>> factory Func_2057 */
 static void adapt_Func_2057(ProbeState *s)
@@ -178,6 +216,7 @@ static void adapt_Func_1f96(ProbeState *s)
 }
 /* <<< factory Func_1f96 */
 
+/* >>> part probe_entries_tiles */
 const ProbeEntry probe_entries_tiles[] = {
 	{ "FillRectangle", adapt_FillRectangle },
 	{ "Copy1bppTiles", adapt_Copy1bppTiles },
@@ -204,3 +243,4 @@ const ProbeEntry probe_entries_tiles[] = {
 	{ "Func_1f96", adapt_Func_1f96 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_tiles */

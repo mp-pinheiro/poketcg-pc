@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/npc_data.h"
 
 #include "generated/constants.h"
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "mem.h"
 #define NPC_HEADER_POINTERS_BANK 0x04u

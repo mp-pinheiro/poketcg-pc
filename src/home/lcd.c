@@ -1,10 +1,13 @@
+/* >>> part includes */
 #include "home/lcd.h"
 
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "home/frames.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part rLCDC */
 #define rLCDC 0xFF40u
 #define rIE 0xFFFFu
 #define rBGP 0xFF47u
@@ -14,7 +17,9 @@
 #define LCDC_WIN_ON 0x20u
 #define LCDC_OBJ_16 0x04u
 #define IE_VBLANK 0x01u
+/* <<< part rLCDC */
 
+/* >>> factory EnableLCD */
 uint8_t EnableLCD(void)
 {
 	uint8_t value = gb_read8(wLCDC_ADDR);
@@ -27,7 +32,9 @@ uint8_t EnableLCD(void)
 	gb_write8(wFlushPaletteFlags_ADDR, FLUSH_ALL_PALS);
 	return FLUSH_ALL_PALS;
 }
+/* <<< factory EnableLCD */
 
+/* >>> factory DisableLCD */
 /* poketcg/src/home/lcd.asm:30-56. The .wait_vblank loop busy-polls rLY
  * (lcd.asm:39-42) until the beam enters VBlank before clearing LCDC, which
  * consumes one PPU frame per DisableLCD call on hardware and in the reference
@@ -73,23 +80,32 @@ void DisableLCD(void)
 		gb_write8(wVBlankCounter_ADDR,
 		          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 }
+/* <<< factory DisableLCD */
 
+/* >>> factory Set_OBJ_8x8 */
 void Set_OBJ_8x8(void)
 {
 	gb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & (uint8_t)~LCDC_OBJ_16));
 }
+/* <<< factory Set_OBJ_8x8 */
 
+/* >>> factory Set_OBJ_8x16 */
 void Set_OBJ_8x16(void)
 {
 	gb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) | LCDC_OBJ_16));
 }
+/* <<< factory Set_OBJ_8x16 */
 
+/* >>> factory SetWindowOn */
 void SetWindowOn(void)
 {
 	gb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) | LCDC_WIN_ON));
 }
+/* <<< factory SetWindowOn */
 
+/* >>> factory SetWindowOff */
 void SetWindowOff(void)
 {
 	gb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & (uint8_t)~LCDC_WIN_ON));
 }
+/* <<< factory SetWindowOff */

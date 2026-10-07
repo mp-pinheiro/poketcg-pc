@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/pokemon_dome_entrance.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory PokemonDomeEntranceLoadMap */
 static void adapt_PokemonDomeEntranceLoadMap(ProbeState *s)
@@ -20,7 +22,7 @@ static void adapt_PokemonDomeEntranceCloseTextBox(ProbeState *s)
 }
 /* <<< factory PokemonDomeEntranceCloseTextBox */
 
-/* >>> factory Script_f631.ows_f63c */
+/* >>> factory Script_f631_ows_f63c */
 static void adapt_Script_f631_ows_f63c(ProbeState *s)
 {
 	ScriptF631OwsF63cResult r = Script_f631_ows_f63c(s->b, s->c, s->d, s->e, s->hl);
@@ -32,7 +34,7 @@ static void adapt_Script_f631_ows_f63c(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
-/* <<< factory Script_f631.ows_f63c */
+/* <<< factory Script_f631_ows_f63c */
 
 /* >>> factory Script_f631 */
 static void adapt_Script_f631(ProbeState *s)
@@ -42,6 +44,7 @@ static void adapt_Script_f631(ProbeState *s)
 }
 /* <<< factory Script_f631 */
 
+/* >>> part probe_entries_pokemon_dome_entrance */
 const ProbeEntry probe_entries_pokemon_dome_entrance[] = {
 	{ "PokemonDomeEntranceLoadMap", adapt_PokemonDomeEntranceLoadMap },
 	{ "PokemonDomeEntranceCloseTextBox", adapt_PokemonDomeEntranceCloseTextBox },
@@ -49,3 +52,4 @@ const ProbeEntry probe_entries_pokemon_dome_entrance[] = {
 	{ "Script_f631", adapt_Script_f631 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_pokemon_dome_entrance */

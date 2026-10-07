@@ -1,11 +1,16 @@
+/* >>> part includes */
 #include "home/objects.h"
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part OAM_COUNT */
 #define OAM_COUNT 40u
 #define OAM_SIZE  (OAM_COUNT * 4u)
+/* <<< part OAM_COUNT */
 
+/* >>> factory SetOneObjectAttributes */
 void SetOneObjectAttributes(uint8_t e, uint8_t d, uint8_t c, uint8_t b)
 {
 	uint8_t off = wOAMOffset;
@@ -18,7 +23,9 @@ void SetOneObjectAttributes(uint8_t e, uint8_t d, uint8_t c, uint8_t b)
 	gb_write8(p, b);
 	wOAMOffset = (uint8_t)(off + 4u);
 }
+/* <<< factory SetOneObjectAttributes */
 
+/* >>> factory ZeroObjectPositions */
 /* objects.asm:72-85. Zeroes only Y/X (bytes 0,1); tile and attrs survive. */
 void ZeroObjectPositions(void)
 {
@@ -29,7 +36,9 @@ void ZeroObjectPositions(void)
 		gb_write8((uint16_t)(p + 1u), 0);
 	}
 }
+/* <<< factory ZeroObjectPositions */
 
+/* >>> part SetManyObjectsAttributes */
 /* objects.asm:1-42. n==0 means 256 (post-test loop). Exit hl is always
  * &wOAMOffset regardless of path. */
 SetManyObjResult SetManyObjectsAttributes(uint16_t hl, uint8_t d, uint8_t e)
@@ -55,3 +64,4 @@ SetManyObjResult SetManyObjectsAttributes(uint16_t hl, uint8_t d, uint8_t e)
 	wOAMOffset = (uint8_t)(oam - wOAM_ADDR);
 	return (SetManyObjResult){wOAMOffset_ADDR, carry};
 }
+/* <<< part SetManyObjectsAttributes */

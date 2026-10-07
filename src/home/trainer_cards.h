@@ -1,6 +1,7 @@
 #ifndef POKETCG_HOME_TRAINER_CARDS_H
 #define POKETCG_HOME_TRAINER_CARDS_H
 
+/* >>> part includes */
 #include <stdint.h>
 
 /* Callee result types used by this file's declarations live in core.h
@@ -9,6 +10,7 @@
  * naming a core.h type could not compile and cost four AIPlay_* attempts one
  * generation each on 2026-08-28. */
 #include "home/core.h"
+/* <<< part includes */
 
 /* >>> factory RemoveCardFromList */
 void RemoveCardFromList(uint16_t *hl);

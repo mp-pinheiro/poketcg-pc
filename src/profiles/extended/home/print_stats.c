@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/print_stats.h"
 
 #include "generated/text_ids.h"
@@ -7,6 +8,7 @@
 #include "mem.h"
 #include "home/frames.h"
 #include "home/tiles.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/load_animation.h"
 

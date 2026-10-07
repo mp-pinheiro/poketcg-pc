@@ -1,14 +1,20 @@
+/* >>> part includes */
 #include "home/play_area.h"
 
 #include "generated/constants.h"
+/* <<< part includes */
+/* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 #define CURSOR_BLINK_PERIOD_MASK 0x0Fu
 #define B_CURSOR_BLINK_PERIOD 4u
+/* <<< part MENU_CONFIRM */
+/* >>> part includes_tail */
 #include "generated/rom.h"
 #include "generated/text_ids.h"
 #include "generated/wram.h"
 #include "home/objects.h"
 #include "mem.h"
+/* <<< part includes_tail */
 /* >>> factory statics */
 #include "home/duel.h"
 #include "home/random.h"
@@ -103,11 +109,13 @@ static void open_in_play_area_print_associated_text(uint8_t position)
 }
 /* <<< factory statics */
 
+/* >>> factory ZeroObjectPositionsAndToggleOAMCopy_Bank6 */
 void ZeroObjectPositionsAndToggleOAMCopy_Bank6(void)
 {
 	ZeroObjectPositions();
 	gb_write8(wVBlankOAMCopyToggle_ADDR, 1);
 }
+/* <<< factory ZeroObjectPositionsAndToggleOAMCopy_Bank6 */
 
 /* >>> factory OpenInPlayAreaScreen_HandleInput */
 OpenInPlayAreaScreenHandleInputResult OpenInPlayAreaScreen_HandleInput(void)

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/effect_functions.h"
 
 #include "generated/text_ids.h"
@@ -7,6 +8,7 @@
 #include "generated/rom.h"
 #include "mem.h"
 #include "home/bg_map.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/duel.h"
 #include "home/card_id_bus.h"

@@ -1,10 +1,14 @@
+/* >>> part includes */
 #include "home/start.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory ShowCardPopCGBDisclaimer */
 static void adapt_ShowCardPopCGBDisclaimer(ProbeState *s)
 {
 	s->f = ShowCardPopCGBDisclaimer();
 }
+/* <<< factory ShowCardPopCGBDisclaimer */
 
 /* >>> factory CheckIfHasSaveData */
 static void adapt_CheckIfHasSaveData(ProbeState *s)
@@ -76,6 +80,7 @@ static void adapt_Start(ProbeState *s)
 }
 /* <<< factory Start */
 
+/* >>> part probe_entries_start */
 const ProbeEntry probe_entries_start[] = {
 	{ "ShowCardPopCGBDisclaimer", adapt_ShowCardPopCGBDisclaimer },
 	{ "CheckIfHasSaveData", adapt_CheckIfHasSaveData },
@@ -88,3 +93,4 @@ const ProbeEntry probe_entries_start[] = {
 	{ "Start", adapt_Start },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_start */

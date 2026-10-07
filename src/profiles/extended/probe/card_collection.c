@@ -1,16 +1,23 @@
+/* >>> part includes */
 #include "home/card_collection.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory CreateTempCardCollection */
 static void adapt_CreateTempCardCollection(ProbeState *s)
 {
 	(void)s;
 	CreateTempCardCollection();
 }
+/* <<< factory CreateTempCardCollection */
+/* >>> factory AddCardToCollection */
 static void adapt_AddCardToCollection(ProbeState *s)
 {
 	AddCardToCollection((CardId)(((uint16_t)s->d << 8) | s->e));
 }
+/* <<< factory AddCardToCollection */
 
+/* >>> factory GetCardAlbumProgress */
 static void adapt_GetCardAlbumProgress(ProbeState *s)
 {
 	AlbumProgress p = GetCardAlbumProgress();
@@ -19,12 +26,16 @@ static void adapt_GetCardAlbumProgress(ProbeState *s)
 	s->d = p.d;
 	s->e = p.e;
 }
+/* <<< factory GetCardAlbumProgress */
 
+/* >>> factory GetAmountOfCardsOwned */
 static void adapt_GetAmountOfCardsOwned(ProbeState *s)
 {
 	s->hl = GetAmountOfCardsOwned();
 }
+/* <<< factory GetAmountOfCardsOwned */
 
+/* >>> factory GetCardCountInCollectionAndDecks */
 static void adapt_GetCardCountInCollectionAndDecks(ProbeState *s)
 {
 	CardCountResult r = GetCardCountInCollectionAndDecks(
@@ -32,7 +43,9 @@ static void adapt_GetCardCountInCollectionAndDecks(ProbeState *s)
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory GetCardCountInCollectionAndDecks */
 
+/* >>> factory GetCardCountInCollection */
 static void adapt_GetCardCountInCollection(ProbeState *s)
 {
 	CardCountResult r = GetCardCountInCollection(
@@ -40,12 +53,16 @@ static void adapt_GetCardCountInCollection(ProbeState *s)
 	s->a = r.a;
 	s->f = r.f;
 }
+/* <<< factory GetCardCountInCollection */
 
+/* >>> factory RemoveCardFromCollection */
 static void adapt_RemoveCardFromCollection(ProbeState *s)
 {
 	RemoveCardFromCollection((CardId)(((uint16_t)s->d << 8) | s->e));
 }
+/* <<< factory RemoveCardFromCollection */
 
+/* >>> part probe_entries_card_collection */
 const ProbeEntry probe_entries_card_collection[] = {
 	{ "CreateTempCardCollection", adapt_CreateTempCardCollection },
 	{ "AddCardToCollection", adapt_AddCardToCollection },
@@ -56,3 +73,4 @@ const ProbeEntry probe_entries_card_collection[] = {
 	{ "RemoveCardFromCollection", adapt_RemoveCardFromCollection },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_card_collection */

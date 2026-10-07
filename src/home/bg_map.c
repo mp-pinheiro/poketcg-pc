@@ -1,14 +1,19 @@
+/* >>> part includes */
 #include "home/bg_map.h"
 
 #include "generated/wram.h"
 #include "mem.h"
 #include "ppu.h"
+/* <<< part includes */
 
+/* >>> part bg_map0_address */
 static uint16_t bg_map0_address(uint8_t x, uint8_t y)
 {
 	return (uint16_t)(0x9800u + (uint16_t)y * TILEMAP_W + x);
 }
+/* <<< part bg_map0_address */
 
+/* >>> factory SafeCopyDataHLtoDE */
 void SafeCopyDataHLtoDE(uint16_t *hl, uint16_t *de, uint8_t b)
 {
 	uint32_t n = b ? b : 0x100;
@@ -21,7 +26,9 @@ void SafeCopyDataHLtoDE(uint16_t *hl, uint16_t *de, uint8_t b)
 	*hl = src;
 	*de = dst;
 }
+/* <<< factory SafeCopyDataHLtoDE */
 
+/* >>> factory WriteDataBlockToBGMap0 */
 void WriteDataBlockToBGMap0(uint16_t *hl, uint16_t *de, uint8_t *a, uint8_t *b, uint8_t *c)
 {
 	uint8_t x = gb_read8((*hl)++);
@@ -51,14 +58,18 @@ void WriteDataBlockToBGMap0(uint16_t *hl, uint16_t *de, uint8_t *a, uint8_t *b, 
 	*c = (uint8_t)(length + 1);
 	*hl = (uint16_t)(data + (uint8_t)(length + 1));
 }
+/* <<< factory WriteDataBlockToBGMap0 */
 
+/* >>> factory WriteDataBlocksToBGMap0 */
 void WriteDataBlocksToBGMap0(uint16_t *hl, uint16_t *de, uint8_t *a, uint8_t *b, uint8_t *c)
 {
 	do {
 		WriteDataBlockToBGMap0(hl, de, a, b, c);
 	} while ((gb_read8(*hl) & 0x80) == 0);
 }
+/* <<< factory WriteDataBlocksToBGMap0 */
 
+/* >>> factory WriteByteToBGMap0 */
 /* bg_map.asm:52-68. With the LCD off the byte goes straight to the map; with it
  * on the asm falls through into HblankWriteByteToBGMap0, which stages the byte
  * in wTempByte and returns a = 0. The staging write is observable, so the
@@ -71,7 +82,9 @@ uint8_t WriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
 	gb_write8(bg_map0_address(b, c), a);
 	return a;
 }
+/* <<< factory WriteByteToBGMap0 */
 
+/* >>> factory HblankWriteByteToBGMap0 */
 /* bg_map.asm:73-88. Not an alias of WriteByteToBGMap0: the byte is staged in
  * wTempByte and copied from there, and HblankCopyDataHLtoDE ends on
  * `ldh a, [rSTAT] / and STAT_MODE` whose loop only exits when that is zero, so
@@ -82,9 +95,12 @@ uint8_t HblankWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
 	gb_write8(bg_map0_address(b, c), a);
 	return 0;
 }
+/* <<< factory HblankWriteByteToBGMap0 */
 
+/* >>> factory CopyDataToBGMap0 */
 void CopyDataToBGMap0(uint8_t a, uint16_t *hl, uint16_t *de, uint8_t b, uint8_t c)
 {
 	*de = bg_map0_address(b, c);
 	SafeCopyDataHLtoDE(hl, de, a);
 }
+/* <<< factory CopyDataToBGMap0 */

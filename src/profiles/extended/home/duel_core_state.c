@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/duel_core_state.h"
 
 #include "generated/constants.h"
@@ -5,19 +6,25 @@
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "home/duel.h"
+/* <<< part includes */
 
+/* >>> part DUELVARS_PRIZE_CARDS */
 #define DUELVARS_PRIZE_CARDS 0x3cu
 #define DUELVARS_PRIZES 0xecu
 #define DUELVARS_ARENA_CARD 0xbbu
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define DUELVARS_ARENA_CARD_FLAGS 0xc2u
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
+/* <<< part DUELVARS_PRIZE_CARDS */
 
+/* >>> part duelvar_addr */
 static uint16_t duelvar_addr(uint8_t offset)
 {
 	return (uint16_t)(((uint16_t)hWhoseTurn << 8) | offset);
 }
+/* <<< part duelvar_addr */
 
+/* >>> factory InitVariablesToBeginTurn */
 DuelCoreStateResult InitVariablesToBeginTurn(void)
 {
 	wAlreadyPlayedEnergy = 0;
@@ -26,7 +33,9 @@ DuelCoreStateResult InitVariablesToBeginTurn(void)
 	wWhoseTurn = hWhoseTurn;
 	return (DuelCoreStateResult){hWhoseTurn, 0, 0, 0, 0x80};
 }
+/* <<< factory InitVariablesToBeginTurn */
 
+/* >>> factory SetAllPlayAreaPokemonCanEvolve */
 DuelCoreStateResult SetAllPlayAreaPokemonCanEvolve(void)
 {
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
@@ -42,7 +51,9 @@ DuelCoreStateResult SetAllPlayAreaPokemonCanEvolve(void)
 	} while (count != 0);
 	return (DuelCoreStateResult){a, 0, count, flags, 0x80};
 }
+/* <<< factory SetAllPlayAreaPokemonCanEvolve */
 
+/* >>> factory InitializeDuelVariables */
 DuelCoreStateWideResult InitializeDuelVariables(void)
 {
 	uint8_t page = hWhoseTurn;
@@ -71,7 +82,9 @@ DuelCoreStateWideResult InitializeDuelVariables(void)
 	return (DuelCoreStateWideResult){type, b, c, 0, 0,
 		(uint16_t)(((uint16_t)page << 8) | l), 0x80};
 }
+/* <<< factory InitializeDuelVariables */
 
+/* >>> factory InitTurnDuelistPrizes */
 DuelCoreStateWideResult InitTurnDuelistPrizes(void)
 {
 	uint8_t page = hWhoseTurn;
@@ -93,7 +106,9 @@ DuelCoreStateWideResult InitTurnDuelistPrizes(void)
 	return (DuelCoreStateWideResult){a, b, count, 0, count,
 		(uint16_t)(((uint16_t)page << 8) | DUELVARS_PRIZES), 0x80};
 }
+/* <<< factory InitTurnDuelistPrizes */
 
+/* >>> factory TakeAPrizes */
 DuelCoreStateResult TakeAPrizes(uint8_t a)
 {
 	if (a == 0)
@@ -111,7 +126,9 @@ DuelCoreStateResult TakeAPrizes(uint8_t a)
 	gb_write8(prizes.hl, mask);
 	return (DuelCoreStateResult){prizes.a, mask, remaining, prizes.hl, 0};
 }
+/* <<< factory TakeAPrizes */
 
+/* >>> factory CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut */
 DuelCoreStateResult CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut(void)
 {
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
@@ -126,7 +143,9 @@ DuelCoreStateResult CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut(void)
 	} while (count != 0);
 	return (DuelCoreStateResult){0, 0, count, hp, 0x90};
 }
+/* <<< factory CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut */
 
+/* >>> factory CountKnockedOutPokemon */
 DuelCoreStateWideResult CountKnockedOutPokemon(void)
 {
 	uint16_t hp = duelvar_addr(DUELVARS_ARENA_CARD_HP);
@@ -150,3 +169,4 @@ DuelCoreStateWideResult CountKnockedOutPokemon(void)
 	wNumberPrizeCardsToTake = b;
 	return (DuelCoreStateWideResult){b, b, c, d, e, hp, b == 0 ? 0x80 : 0x10};
 }
+/* <<< factory CountKnockedOutPokemon */

@@ -1,12 +1,16 @@
+/* >>> part includes */
 #include "home/ai.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory LoadOpponentDeck */
 static void adapt_LoadOpponentDeck(ProbeState *s)
 {
 	DeckLoadResult r = LoadOpponentDeck();
 	s->a = r.a;
 	s->hl = r.hl;
 }
+/* <<< factory LoadOpponentDeck */
 
 /* >>> factory AIDoAction */
 static void adapt_AIDoAction(ProbeState *s)
@@ -50,6 +54,7 @@ static void adapt_AIDoAction_Turn(ProbeState *s)
 }
 /* <<< factory AIDoAction_Turn */
 
+/* >>> part probe_entries_ai */
 const ProbeEntry probe_entries_ai[] = {
 	{ "LoadOpponentDeck", adapt_LoadOpponentDeck },
 	{ "AIDoAction", adapt_AIDoAction },
@@ -60,3 +65,4 @@ const ProbeEntry probe_entries_ai[] = {
 	{ "AIDoAction_Turn", adapt_AIDoAction_Turn },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_ai */

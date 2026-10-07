@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/legendary_moltres.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory AIDoTurn_LegendaryMoltres */
 static void adapt_AIDoTurn_LegendaryMoltres(ProbeState *s)
@@ -11,7 +13,9 @@ static void adapt_AIDoTurn_LegendaryMoltres(ProbeState *s)
 }
 /* <<< factory AIDoTurn_LegendaryMoltres */
 
+/* >>> part probe_entries_legendary_moltres */
 const ProbeEntry probe_entries_legendary_moltres[] = {
 	{ "AIDoTurn_LegendaryMoltres", adapt_AIDoTurn_LegendaryMoltres },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_legendary_moltres */

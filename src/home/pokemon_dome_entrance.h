@@ -1,8 +1,12 @@
+/* >>> part includes */
 #include "generated/rom.h"
+/* <<< part includes */
 #ifndef POKETCG_HOME_POKEMON_DOME_ENTRANCE_H
 #define POKETCG_HOME_POKEMON_DOME_ENTRANCE_H
 
+/* >>> part includes_tail */
 #include <stdint.h>
+/* <<< part includes_tail */
 
 /* >>> factory PokemonDomeEntranceLoadMap */
 typedef struct { uint8_t a; uint8_t f; } PokemonDomeEntranceLoadMapResult;

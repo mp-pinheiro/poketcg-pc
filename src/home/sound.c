@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/sound.h"
 #include "home/frames.h"
 
@@ -6,9 +7,13 @@
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part BANK_CARD_GRAPHICS */
 #define BANK_CARD_GRAPHICS 0x31u
+/* <<< part BANK_CARD_GRAPHICS */
 
+/* >>> factory Func_37c5 */
 /* sound.asm:56-113. Bit-serial 2bpp -> shifted-tile-plane converter. Carry
  * threads continuously through every rotate triple with no reset anywhere in
  * the routine, so it is a genuine (if undocumented) entry/exit parameter --
@@ -60,7 +65,9 @@ TileConvertResult Func_37c5(uint16_t hl, uint16_t de, uint8_t a, uint8_t carry_i
 	}
 	return (TileConvertResult){hl, de, a, carry};
 }
+/* <<< factory Func_37c5 */
 
+/* >>> factory Func_37a5 */
 /* sound.asm:35-54. Bank-switches to CardGraphics (offset by hl's top 3 bits),
  * normalizes hl into $4000-$7fff (hl <<= 3, forced into that window), and
  * hands off to Func_37c5. `f` is untouched by anything before the wrapper's
@@ -88,7 +95,9 @@ TileConvertWrapResult Func_37a5(uint16_t hl, uint16_t de)
 	BankswitchROM(saved);
 	return (TileConvertWrapResult){r.hl, r.de, saved};
 }
+/* <<< factory Func_37a5 */
 
+/* >>> part BANK_AUDIO_1 */
 /* home/sound.asm:19-33 reaches the driver by `farcall`, which selects the
  * driver's own bank and restores the caller's on return. The port calls the
  * bodies directly, and it renamed them (`_PlaySFX` -> `Music1_PlaySFX`), so
@@ -97,7 +106,9 @@ TileConvertWrapResult Func_37a5(uint16_t hl, uint16_t de)
  * leaks: the overworld script interpreter then fetched its next opcode out of
  * bank $3D and ran a different command. */
 #define BANK_AUDIO_1 0x3Du
+/* <<< part BANK_AUDIO_1 */
 
+/* >>> part enter_audio_bank */
 static uint8_t enter_audio_bank(void)
 {
 	uint8_t saved = hBankROM;
@@ -108,7 +119,9 @@ static uint8_t enter_audio_bank(void)
 	BankswitchROM(BANK_AUDIO_1);
 	return saved;
 }
+/* <<< part enter_audio_bank */
 
+/* >>> part SetupSound */
 void SetupSound(void)
 {
 	uint8_t saved = enter_audio_bank();
@@ -116,7 +129,9 @@ void SetupSound(void)
 	Music1_Init();
 	BankswitchROM(saved);
 }
+/* <<< part SetupSound */
 
+/* >>> part StopMusic */
 void StopMusic(void)
 {
 	uint8_t saved = enter_audio_bank();
@@ -124,7 +139,9 @@ void StopMusic(void)
 	Music1_PlaySong(0);
 	BankswitchROM(saved);
 }
+/* <<< part StopMusic */
 
+/* >>> part PlaySong */
 void PlaySong(uint8_t a)
 {
 	uint8_t saved = enter_audio_bank();
@@ -132,7 +149,9 @@ void PlaySong(uint8_t a)
 	Music1_PlaySong(a);
 	BankswitchROM(saved);
 }
+/* <<< part PlaySong */
 
+/* >>> part AssertSongFinished */
 uint8_t AssertSongFinished(void)
 {
 	uint8_t saved = enter_audio_bank();
@@ -141,7 +160,9 @@ uint8_t AssertSongFinished(void)
 	BankswitchROM(saved);
 	return result;
 }
+/* <<< part AssertSongFinished */
 
+/* >>> part AssertSFXFinished */
 uint8_t AssertSFXFinished(void)
 {
 	uint8_t saved = enter_audio_bank();
@@ -150,12 +171,16 @@ uint8_t AssertSFXFinished(void)
 	BankswitchROM(saved);
 	return result;
 }
+/* <<< part AssertSFXFinished */
 
+/* >>> part PlaySFX_InvalidChoice */
 void PlaySFX_InvalidChoice(void)
 {
 	PlaySFX(SFX_DENIED);
 }
+/* <<< part PlaySFX_InvalidChoice */
 
+/* >>> part PlaySFX */
 void PlaySFX(uint8_t a)
 {
 	uint8_t saved = enter_audio_bank();
@@ -163,7 +188,9 @@ void PlaySFX(uint8_t a)
 	Music1_PlaySFX(a);
 	BankswitchROM(saved);
 }
+/* <<< part PlaySFX */
 
+/* >>> part PauseSong */
 void PauseSong(void)
 {
 	uint8_t saved = enter_audio_bank();
@@ -171,7 +198,9 @@ void PauseSong(void)
 	Music1_PauseSong();
 	BankswitchROM(saved);
 }
+/* <<< part PauseSong */
 
+/* >>> part ResumeSong */
 void ResumeSong(void)
 {
 	uint8_t saved = enter_audio_bank();
@@ -179,3 +208,4 @@ void ResumeSong(void)
 	Music1_ResumeSong();
 	BankswitchROM(saved);
 }
+/* <<< part ResumeSong */

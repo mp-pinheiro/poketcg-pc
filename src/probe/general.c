@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/general.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory AIProcessRetreat */
 static void adapt_AIProcessRetreat(ProbeState *s)
@@ -20,8 +22,10 @@ static void adapt_AIMainTurnLogic(ProbeState *s)
 }
 /* <<< factory AIMainTurnLogic */
 
+/* >>> part probe_entries_general */
 const ProbeEntry probe_entries_general[] = {
 	{ "AIProcessRetreat", adapt_AIProcessRetreat },
 	{ "AIMainTurnLogic", adapt_AIMainTurnLogic },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_general */

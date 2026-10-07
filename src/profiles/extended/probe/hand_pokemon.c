@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/hand_pokemon.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory AIDecideSpecialEvolutions */
 static void adapt_AIDecideSpecialEvolutions(ProbeState *s)
@@ -36,6 +38,7 @@ static void adapt_AIDecidePlayPokemonCard(ProbeState *s)
 }
 /* <<< factory AIDecidePlayPokemonCard */
 
+/* >>> part probe_entries_hand_pokemon */
 const ProbeEntry probe_entries_hand_pokemon[] = {
 	{ "AIDecideSpecialEvolutions", adapt_AIDecideSpecialEvolutions },
 	{ "AIDecideEvolution", adapt_AIDecideEvolution },
@@ -43,3 +46,4 @@ const ProbeEntry probe_entries_hand_pokemon[] = {
 	{ "AIDecidePlayPokemonCard", adapt_AIDecidePlayPokemonCard },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_hand_pokemon */

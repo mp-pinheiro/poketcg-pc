@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_CHALLENGE_HALL_ENTRANCE_H
 #define POKETCG_HOME_CHALLENGE_HALL_ENTRANCE_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory Preload_Clerk9 */
 typedef struct {

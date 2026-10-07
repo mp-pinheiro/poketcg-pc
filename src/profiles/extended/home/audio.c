@@ -1,8 +1,10 @@
+/* >>> part includes */
 #include "home/audio.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes */
 
 /* >>> factory GetAudioCmdAndArgs */
 /* audio.asm:3-26 */

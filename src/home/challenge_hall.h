@@ -1,22 +1,34 @@
 #ifndef POKETCG_HOME_CHALLENGE_HALL_H
 #define POKETCG_HOME_CHALLENGE_HALL_H
 
+/* >>> part includes */
 #include <stdint.h>
 #include "home/scripting.h"
+/* <<< part includes */
 
+/* >>> part ChallengeHallClearResult */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
 } ChallengeHallClearResult;
+/* <<< part ChallengeHallClearResult */
 
+/* >>> part ChallengeHallBitResult */
 typedef struct {
 	uint8_t b;
 	uint16_t hl;
 } ChallengeHallBitResult;
+/* <<< part ChallengeHallBitResult */
 
+/* >>> factory Func_f5db */
 ChallengeHallClearResult Func_f5db(void);
+/* <<< factory Func_f5db */
+/* >>> factory Func_f5e9 */
 ChallengeHallBitResult Func_f5e9(uint8_t c);
+/* <<< factory Func_f5e9 */
+/* >>> factory Script_Host */
 void Script_Host(void);
+/* <<< factory Script_Host */
 
 /* >>> factory ChallengeHallLoadMap */
 typedef struct { uint8_t a, f, b, c; uint16_t hl; } ChallengeHallLoadMapResult;

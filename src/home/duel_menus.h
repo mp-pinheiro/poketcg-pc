@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_DUEL_MENUS_H
 #define POKETCG_HOME_DUEL_MENUS_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory DrawPlayersPrizeAndBenchCards */
 void DrawPlayersPrizeAndBenchCards(void);

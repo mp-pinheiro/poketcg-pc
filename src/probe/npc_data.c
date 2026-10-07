@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/npc_data.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory GetNPCHeaderPointer */
 static void adapt_GetNPCHeaderPointer(ProbeState *s)
@@ -98,6 +100,7 @@ static void adapt_SetNPCMatchStartTheme(ProbeState *s)
 }
 /* <<< factory SetNPCMatchStartTheme */
 
+/* >>> part probe_entries_npc_data */
 const ProbeEntry probe_entries_npc_data[] = {
 	{ "GetNPCHeaderPointer", adapt_GetNPCHeaderPointer },
 	{ "SetNPCOpponentNameAndPortrait", adapt_SetNPCOpponentNameAndPortrait },
@@ -110,3 +113,4 @@ const ProbeEntry probe_entries_npc_data[] = {
 	{ "SetNPCMatchStartTheme", adapt_SetNPCMatchStartTheme },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_npc_data */

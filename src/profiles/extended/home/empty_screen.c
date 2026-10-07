@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/empty_screen.h"
 
 #include "generated/hram.h"
@@ -6,7 +7,9 @@
 #include "home/setup.h"
 #include "mem.h"
 #include "ppu.h"
+/* <<< part includes */
 
+/* >>> factory EmptyScreen */
 /* empty_screen.asm:2-14. DisableLCD first: it is what turns wLCDC's enable
  * bit off, so every WriteByteToBGMap0 until the next EnableLCD takes the
  * direct path (no wTempByte staging) and DoFrameIfLCDEnabled skips its
@@ -17,10 +20,13 @@ void EmptyScreen(void)
 	(void)FillTileMap();
 	wDuelDisplayedScreen = 0;
 }
+/* <<< factory EmptyScreen */
 
+/* >>> factory BCCoordToBGMap0Address */
 uint16_t BCCoordToBGMap0Address(uint8_t b, uint8_t c)
 {
 	uint16_t offset = (uint16_t)((uint16_t)c * TILEMAP_W + b);
 
 	return (uint16_t)(0x9800u + offset);
 }
+/* <<< factory BCCoordToBGMap0Address */

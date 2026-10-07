@@ -1,7 +1,9 @@
 #ifndef HOME_ATTACKS_H
 #define HOME_ATTACKS_H
 
+/* >>> factory RetrievePlayAreaAIScoreFromBackup2 */
 void RetrievePlayAreaAIScoreFromBackup2(void);
+/* <<< factory RetrievePlayAreaAIScoreFromBackup2 */
 
 /* >>> factory GetAIScoreOfAttack */
 void GetAIScoreOfAttack(unsigned char a);

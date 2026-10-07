@@ -1,5 +1,7 @@
+/* >>> part includes */
 #include "home/sound.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory SetupSound */
 static void adapt_SetupSound(ProbeState *s)
@@ -61,6 +63,7 @@ static void adapt_ResumeSong(ProbeState *s)
 }
 /* <<< factory ResumeSong */
 
+/* >>> part probe_entries_sound */
 const ProbeEntry probe_entries_sound[] = {
 	{ "SetupSound", adapt_SetupSound },
 	{ "PlaySong", adapt_PlaySong },
@@ -72,3 +75,4 @@ const ProbeEntry probe_entries_sound[] = {
 	{ "ResumeSong", adapt_ResumeSong },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_sound */

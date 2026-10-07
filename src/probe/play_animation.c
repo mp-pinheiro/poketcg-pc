@@ -1,14 +1,19 @@
+/* >>> part includes */
 #include "home/play_animation.h"
 #include "home/screen_effects.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory CheckAnyAnimationPlaying */
 static void adapt_CheckAnyAnimationPlaying(ProbeState *s)
 {
 	AnimationStatusResult result = CheckAnyAnimationPlaying();
 	s->a = result.a;
 	s->f = result.f;
 }
+/* <<< factory CheckAnyAnimationPlaying */
 
+/* >>> factory SetDoFrameFunction */
 static void adapt_SetDoFrameFunction(ProbeState *s)
 {
 	uint8_t f = s->f;
@@ -17,7 +22,9 @@ static void adapt_SetDoFrameFunction(ProbeState *s)
 	s->f = f;
 	s->hl = result.hl;
 }
+/* <<< factory SetDoFrameFunction */
 
+/* >>> factory ResetDoFrameFunction */
 static void adapt_ResetDoFrameFunction(ProbeState *s)
 {
 	uint8_t f = s->f;
@@ -26,6 +33,7 @@ static void adapt_ResetDoFrameFunction(ProbeState *s)
 	s->f = f;
 	s->hl = result.hl;
 }
+/* <<< factory ResetDoFrameFunction */
 
 /* >>> factory PlayDuelAnimation */
 static void adapt_PlayDuelAnimation(ProbeState *s)
@@ -60,6 +68,7 @@ static void adapt_Func_3bb5(ProbeState *s)
 }
 /* <<< factory Func_3bb5 */
 
+/* >>> part probe_entries_play_animation */
 const ProbeEntry probe_entries_play_animation[] = {
 	{ "CheckAnyAnimationPlaying", adapt_CheckAnyAnimationPlaying },
 	{ "SetDoFrameFunction", adapt_SetDoFrameFunction },
@@ -69,3 +78,4 @@ const ProbeEntry probe_entries_play_animation[] = {
 	{ "Func_3bb5", adapt_Func_3bb5 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_play_animation */

@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/duel_init.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Duel_Init */
 static void adapt_Duel_Init(ProbeState *s)
@@ -12,7 +14,9 @@ static void adapt_Duel_Init(ProbeState *s)
 }
 /* <<< factory Duel_Init */
 
+/* >>> part probe_entries_duel_init */
 const ProbeEntry probe_entries_duel_init[] = {
 	{ "Duel_Init", adapt_Duel_Init },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_duel_init */

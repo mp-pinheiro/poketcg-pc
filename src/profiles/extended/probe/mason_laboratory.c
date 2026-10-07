@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/mason_laboratory.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Func_d703 */
 static void adapt_Func_d703(ProbeState *s)
@@ -93,6 +95,7 @@ static void adapt_Script_Tech1(ProbeState *s)
 }
 /* <<< factory Script_Tech1 */
 
+/* >>> part probe_entries_mason_laboratory */
 const ProbeEntry probe_entries_mason_laboratory[] = {
 	{ "Script_Tech1", adapt_Script_Tech1 },
 	{ "Func_d703", adapt_Func_d703 },
@@ -105,3 +108,4 @@ const ProbeEntry probe_entries_mason_laboratory[] = {
 	{ "MasonLabPressedA", adapt_MasonLabPressedA },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_mason_laboratory */

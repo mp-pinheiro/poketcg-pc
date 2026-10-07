@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/card_pop.h"
 
 #include "generated/text_ids.h"
@@ -5,6 +6,7 @@
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 #include "generated/sram.h"
@@ -39,9 +41,12 @@
 #include "home/sprite_vblank.h"
 /* <<< factory statics */
 
+/* >>> part CARDPOP_NAME_LENGTH */
 #define CARDPOP_NAME_LENGTH 16u
 #define FIRST_CARD_ID 8u
+/* <<< part CARDPOP_NAME_LENGTH */
 
+/* >>> factory CreateCardPopCandidateList */
 uint8_t CreateCardPopCandidateList(uint8_t a)
 {
 	uint16_t out = wCardPopCardCandidates_ADDR;
@@ -66,7 +71,9 @@ uint8_t CreateCardPopCandidateList(uint8_t a)
 		count++;
 	return count;
 }
+/* <<< factory CreateCardPopCandidateList */
 
+/* >>> factory CalculateNameHash */
 void CalculateNameHash(uint16_t *hl, uint16_t *de)
 {
 	uint8_t low = 0;
@@ -81,6 +88,7 @@ void CalculateNameHash(uint16_t *hl, uint16_t *de)
 	*hl = cursor;
 	*de = (uint16_t)((uint16_t)high << 8 | low);
 }
+/* <<< factory CalculateNameHash */
 
 /* >>> factory LookUpNameInCardPopNameList */
 void LookUpNameInCardPopNameList(void)

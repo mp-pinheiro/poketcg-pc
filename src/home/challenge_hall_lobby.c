@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/challenge_hall_lobby.h"
 
 #include "generated/constants.h"
@@ -9,6 +10,8 @@
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
+/* >>> part EVENT_CHALLENGE_CUP_NOT_STARTED */
 #define EVENT_CHALLENGE_CUP_NOT_STARTED 0u
 #define SCRIPT_F166 Script_f166_ADDR
 #define CUP1_TABLE RonaldChallengeHallLobbyCup1States_ADDR
@@ -16,6 +19,7 @@
 #define EVENT_CHALLENGE_CUP_STARTING_MASK 0x80u
 #define W_DEFAULT_SONG_ADDR wDefaultSong_ADDR
 #define CUP2_TABLE RonaldChallengeHallLobbyCup2States_ADDR
+/* <<< part EVENT_CHALLENGE_CUP_NOT_STARTED */
 
 /* >>> factory Preload_ChallengeHallNPCs1 */
 /* challenge_hall_lobby.asm:6-14 */
@@ -43,6 +47,7 @@ ChallengeHallLobbyLoadMapResult ChallengeHallLobbyLoadMap(uint8_t b, uint8_t c, 
 }
 /* <<< factory ChallengeHallLobbyLoadMap */
 
+/* >>> factory Preload_ChallengeHallNPCs2 */
 ChallengeHallLobbyResult Preload_ChallengeHallNPCs2(void)
 {
 	uint8_t event_byte = gb_read8((uint16_t)(wEventVars_ADDR + EVENT_CHALLENGE_CUP_STARTING_OFFSET));
@@ -52,6 +57,7 @@ ChallengeHallLobbyResult Preload_ChallengeHallNPCs2(void)
 	gb_write8(W_DEFAULT_SONG_ADDR, MUSIC_CHALLENGE_HALL);
 	return (ChallengeHallLobbyResult){MUSIC_CHALLENGE_HALL, 0};
 }
+/* <<< factory Preload_ChallengeHallNPCs2 */
 
 /* >>> factory Preload_ChallengeHallLobbyRonald1 */
 /* challenge_hall_lobby.asm:50-97 */

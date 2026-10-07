@@ -1,6 +1,8 @@
+/* >>> part includes */
 #include "home/sprite_vblank.h"
 
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/empty_screen.h"
 #include "home/lcd.h"
@@ -17,6 +19,7 @@
 #include "generated/wram.h"
 /* <<< factory statics */
 
+/* >>> factory BackupVBlankFunctionTrampoline */
 uint8_t BackupVBlankFunctionTrampoline(uint16_t *hl, uint16_t *de)
 {
 	const uint8_t first = gb_read8(*hl);
@@ -29,6 +32,7 @@ uint8_t BackupVBlankFunctionTrampoline(uint16_t *hl, uint16_t *de)
 	gb_write8(*de, second);
 	return second;
 }
+/* <<< factory BackupVBlankFunctionTrampoline */
 
 /* >>> factory SetSpriteAnimationsAsVBlankFunction */
 /* sprite_vblank.asm:1-17 */

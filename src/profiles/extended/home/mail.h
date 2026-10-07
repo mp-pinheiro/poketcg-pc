@@ -1,15 +1,23 @@
 #ifndef POKETCG_HOME_MAIL_H
 #define POKETCG_HOME_MAIL_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part PCPackCoordinates */
 typedef struct {
 	uint8_t b;
 	uint8_t c;
 } PCPackCoordinates;
+/* <<< part PCPackCoordinates */
 
+/* >>> factory GePCPackSelectionCoordinates */
 PCPackCoordinates GePCPackSelectionCoordinates(void);
+/* <<< factory GePCPackSelectionCoordinates */
+/* >>> factory TryGivePCPack */
 void TryGivePCPack(uint8_t id);
+/* <<< factory TryGivePCPack */
 
 /* >>> factory InitPCPacks */
 void InitPCPacks(void);

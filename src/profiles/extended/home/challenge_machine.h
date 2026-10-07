@@ -1,22 +1,32 @@
 #ifndef POKETCG_HOME_CHALLENGE_MACHINE_H
 #define POKETCG_HOME_CHALLENGE_MACHINE_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part ChallengeMachineCheckResult */
 typedef struct {
 	uint16_t hl;
 	uint8_t f;
 } ChallengeMachineCheckResult;
+/* <<< part ChallengeMachineCheckResult */
 
+/* >>> factory ChallengeMachine_CheckIfOpponentAlreadySelected */
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c);
+/* <<< factory ChallengeMachine_CheckIfOpponentAlreadySelected */
 
+/* >>> part ChallengeMachinePrintResult */
 typedef struct {
 	uint16_t hl;
 	uint8_t d;
 	uint8_t e;
 } ChallengeMachinePrintResult;
+/* <<< part ChallengeMachinePrintResult */
 
+/* >>> factory ChallengeMachine_PrintText */
 ChallengeMachinePrintResult ChallengeMachine_PrintText(uint16_t hl, uint8_t b, uint8_t c);
+/* <<< factory ChallengeMachine_PrintText */
 /* >>> factory ChallengeMachine_PickOpponentSequence */
 void ChallengeMachine_PickOpponentSequence(void);
 /* <<< factory ChallengeMachine_PickOpponentSequence */

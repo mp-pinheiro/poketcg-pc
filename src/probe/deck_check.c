@@ -1,6 +1,9 @@
+/* >>> part includes */
 #include "home/deck_check.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory DrawCheckMenuCursor */
 static void adapt_DrawCheckMenuCursor(ProbeState *s)
 {
 	DrawCheckMenuCursorResult result = DrawCheckMenuCursor(s->a);
@@ -8,11 +11,14 @@ static void adapt_DrawCheckMenuCursor(ProbeState *s)
 	s->e = result.e;
 	s->f = result.f;
 }
+/* <<< factory DrawCheckMenuCursor */
 
+/* >>> factory PlaySFXConfirmOrCancel */
 static void adapt_PlaySFXConfirmOrCancel(ProbeState *s)
 {
 	PlaySFXConfirmOrCancel(s->a);
 }
+/* <<< factory PlaySFXConfirmOrCancel */
 
 /* >>> factory EraseCheckMenuCursor */
 static void adapt_EraseCheckMenuCursor(ProbeState *s)
@@ -43,6 +49,7 @@ static void adapt_HandleCheckMenuInput(ProbeState *s)
 }
 /* <<< factory HandleCheckMenuInput */
 
+/* >>> part probe_entries_deck_check */
 const ProbeEntry probe_entries_deck_check[] = {
 	{"DrawCheckMenuCursor", adapt_DrawCheckMenuCursor},
 	{"PlaySFXConfirmOrCancel", adapt_PlaySFXConfirmOrCancel},
@@ -51,3 +58,4 @@ const ProbeEntry probe_entries_deck_check[] = {
 	{ "HandleCheckMenuInput", adapt_HandleCheckMenuInput },
 	{NULL, NULL},
 };
+/* <<< part probe_entries_deck_check */

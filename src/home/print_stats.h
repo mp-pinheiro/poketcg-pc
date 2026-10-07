@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_PRINT_STATS_H
 #define POKETCG_HOME_PRINT_STATS_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory DrawPauseMenuPlayerPortrait */
 void DrawPauseMenuPlayerPortrait(uint8_t b, uint8_t c);

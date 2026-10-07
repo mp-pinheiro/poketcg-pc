@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/science_club_lobby.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory ScienceClubLobbyAfterDuel */
 static void adapt_ScienceClubLobbyAfterDuel(ProbeState *s)
@@ -40,9 +42,11 @@ static void adapt_Preload_ImakuniInScienceClubLobby(ProbeState *s)
 }
 /* <<< factory Preload_ImakuniInScienceClubLobby */
 
+/* >>> part probe_entries_science_club_lobby */
 const ProbeEntry probe_entries_science_club_lobby[] = {
 	{ "Script_Specs2", adapt_Script_Specs2 },
 	{ "ScienceClubLobbyAfterDuel", adapt_ScienceClubLobbyAfterDuel },
 	{ "Preload_ImakuniInScienceClubLobby", adapt_Preload_ImakuniInScienceClubLobby },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_science_club_lobby */

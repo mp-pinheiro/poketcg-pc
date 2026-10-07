@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_GENERAL_NO_RETREAT_H
 #define POKETCG_HOME_GENERAL_NO_RETREAT_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory AIDoTurn_GeneralNoRetreat */
 typedef struct { uint8_t f; } AIDoTurn_GeneralNoRetreatResult;

@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/common.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory CountOppEnergyCardsInHand */
 static void adapt_CountOppEnergyCardsInHand(ProbeState *s)
@@ -335,6 +337,7 @@ static void adapt_SetUpAndStartLinkDuel(ProbeState *s)
 }
 /* <<< factory SetUpAndStartLinkDuel */
 
+/* >>> part probe_entries_common */
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -375,3 +378,4 @@ const ProbeEntry probe_entries_common[] = {
 	{ "SetUpAndStartLinkDuel", adapt_SetUpAndStartLinkDuel },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_common */

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/scroll.h"
 #include "home/frames.h"
 
@@ -6,7 +7,9 @@
 #include "home/copy.h"
 #include "mem.h"
 #include "generated/hram.h"
+/* <<< part includes */
 
+/* >>> part rLCDC */
 #define rLCDC 0xFF40u
 #define rSTAT 0xFF41u
 #define rLYC  0xFF45u
@@ -19,7 +22,9 @@
 
 /* BGScrollData, scroll.asm:112, read live from bank 0. */
 #define BGSCROLL_DATA BGScrollData_ADDR
+/* <<< part rLCDC */
 
+/* >>> factory Func_3e44 */
 void Func_3e44(void)
 {
 	uint8_t guard = gb_read8(wd657_ADDR);
@@ -54,7 +59,9 @@ void Func_3e44(void)
 	gb_write8(rLYC, scroll);
 	gb_write8(wd657_ADDR, (uint8_t)(guard & (uint8_t)~0x01u));
 }
+/* <<< factory Func_3e44 */
 
+/* >>> factory GetNextBackgroundScroll */
 uint8_t GetNextBackgroundScroll(uint8_t a)
 {
 	uint8_t idx = (uint8_t)((a + gb_read8(wVBlankCounter_ADDR)) & 0x3f);
@@ -65,20 +72,26 @@ uint8_t GetNextBackgroundScroll(uint8_t a)
 		v = (uint8_t)((v >> 1) | (v & 0x80)); /* sra a */
 	return v;
 }
+/* <<< factory GetNextBackgroundScroll */
 
+/* >>> factory EnableInt_LYCoincidence */
 void EnableInt_LYCoincidence(void)
 {
 	gb_write8(rSTAT, (uint8_t)(gb_read8(rSTAT) | STAT_LYC));
 	gb_write8(rIE, (uint8_t)(gb_read8(rIE) | IE_STAT));
 	frame_boundary_isr_site(ISR_SITE_LYC_ARM);
 }
+/* <<< factory EnableInt_LYCoincidence */
 
+/* >>> factory DisableInt_LYCoincidence */
 void DisableInt_LYCoincidence(void)
 {
 	gb_write8(rSTAT, (uint8_t)(gb_read8(rSTAT) & (uint8_t)~STAT_LYC));
 	gb_write8(rIE, (uint8_t)(gb_read8(rIE) & (uint8_t)~IE_STAT));
 }
+/* <<< factory DisableInt_LYCoincidence */
 
+/* >>> factory ApplyBackgroundScroll */
 void ApplyBackgroundScroll(void)
 {
 	DisableInt_LYCoincidence();
@@ -101,3 +114,4 @@ void ApplyBackgroundScroll(void)
 	gb_write8(wApplyBGScroll_ADDR, 0);
 	EnableInt_LYCoincidence();
 }
+/* <<< factory ApplyBackgroundScroll */

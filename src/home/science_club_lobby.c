@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/science_club_lobby.h"
 
 #include "generated/constants.h"
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #define DATA_EBE7 Data_ebe7_ADDR
 #define DATA_EBE7_BANK 3u

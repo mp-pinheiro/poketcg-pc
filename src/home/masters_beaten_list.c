@@ -1,10 +1,15 @@
+/* >>> part includes */
 #include "home/masters_beaten_list.h"
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part MASTERS_BEATEN_COUNT */
 #define MASTERS_BEATEN_COUNT 10u
+/* <<< part MASTERS_BEATEN_COUNT */
 
+/* >>> factory ClearMasterBeatenList */
 uint8_t ClearMasterBeatenList(uint8_t *f)
 {
 	uint16_t address = wMastersBeatenList_ADDR;
@@ -15,7 +20,9 @@ uint8_t ClearMasterBeatenList(uint8_t *f)
 	*f = 0xC0u;
 	return 0;
 }
+/* <<< factory ClearMasterBeatenList */
 
+/* >>> factory AddMasterBeatenToList */
 uint8_t AddMasterBeatenToList(uint8_t a, uint8_t *f)
 {
 	uint8_t master = a;
@@ -53,6 +60,7 @@ uint8_t AddMasterBeatenToList(uint8_t a, uint8_t *f)
 	*f = 0x80u;
 	return a;
 }
+/* <<< factory AddMasterBeatenToList */
 
 /* >>> factory AddAllMastersToMastersBeatenList */
 /* masters_beaten_list.asm:46-55 */

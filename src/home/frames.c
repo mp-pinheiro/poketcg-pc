@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/frames.h"
 #include "serial_track.h"
 #include "isr.h"
@@ -13,7 +14,9 @@
 #include "home/play_animation.h"
 #include "home/serial.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part PAD_CTRL_PAD */
 #define PAD_CTRL_PAD 0xF0u
 #define PAD_BUTTONS 0x0Fu
 #define PAD_SELECT 0x04u
@@ -25,16 +28,34 @@
 #define DO_FRAME_ALL_SPRITE_ANIMATIONS HandleAllSpriteAnimations_ADDR
 #define DO_FRAME_LINK_OPPONENT_TURN LinkOpponentTurnFrameFunction_ADDR
 #define DO_FRAME_NOOP NoOp_ADDR
+/* <<< part PAD_CTRL_PAD */
 
+/* >>> part g_frame_boundary_hook */
 static FrameBoundaryHook g_frame_boundary_hook;
+/* <<< part g_frame_boundary_hook */
+/* >>> part g_frame_boundary_context */
 static void *g_frame_boundary_context;
+/* <<< part g_frame_boundary_context */
+/* >>> part g_frame_watchdog */
 static FrameBoundaryHook g_frame_watchdog;
+/* <<< part g_frame_watchdog */
+/* >>> part g_frame_watchdog_context */
 static void *g_frame_watchdog_context;
+/* <<< part g_frame_watchdog_context */
+/* >>> part g_frame_anchor */
 static FrameBoundaryHook g_frame_anchor;
+/* <<< part g_frame_anchor */
+/* >>> part g_frame_anchor_context */
 static void *g_frame_anchor_context;
+/* <<< part g_frame_anchor_context */
+/* >>> part g_doframe_ordinal */
 static uint32_t g_doframe_ordinal;
+/* <<< part g_doframe_ordinal */
+/* >>> part g_pending_service_passes */
 static uint8_t g_pending_service_passes;
+/* <<< part g_pending_service_passes */
 
+/* >>> part frame_boundary_take_service_pass */
 uint8_t frame_boundary_take_service_pass(void)
 {
 	uint8_t pending = g_pending_service_passes;
@@ -43,19 +64,25 @@ uint8_t frame_boundary_take_service_pass(void)
 		g_pending_service_passes = (uint8_t)(pending - 1u);
 	return pending;
 }
+/* <<< part frame_boundary_take_service_pass */
 
+/* >>> part frame_boundary_install */
 void frame_boundary_install(FrameBoundaryHook hook, void *context)
 {
 	g_frame_boundary_hook = hook;
 	g_frame_boundary_context = context;
 }
+/* <<< part frame_boundary_install */
 
+/* >>> part frame_boundary_install_watchdog */
 void frame_boundary_install_watchdog(FrameBoundaryHook hook, void *context)
 {
 	g_frame_watchdog = hook;
 	g_frame_watchdog_context = context;
 }
+/* <<< part frame_boundary_install_watchdog */
 
+/* >>> part frame_boundary_reach */
 void frame_boundary_reach(void)
 {
 	if (g_frame_boundary_hook)
@@ -63,6 +90,8 @@ void frame_boundary_reach(void)
 	if (g_frame_watchdog)
 		g_frame_watchdog(g_frame_watchdog_context);
 }
+/* <<< part frame_boundary_reach */
+/* >>> part g_services_from_track */
 /* Models VBlank services the reference delivers while game code is still
  * running, so no DoFrame completes around them: each count entry runs one
  * host SERVICE pass (ISR-equivalent work only -- RuntimeVBlankHandler; no
@@ -71,18 +100,26 @@ void frame_boundary_reach(void)
  * RNG advance. No-op in the probe world. The per-boot sites are annotated
  * where they call this. */
 static int g_services_from_track;
+/* <<< part g_services_from_track */
+/* >>> part g_doframe_pass */
 static int g_doframe_pass;
+/* <<< part g_doframe_pass */
 
+/* >>> part frame_boundary_pass_is_doframe */
 int frame_boundary_pass_is_doframe(void)
 {
 	return g_doframe_pass;
 }
+/* <<< part frame_boundary_pass_is_doframe */
 
+/* >>> part frame_boundary_services_from_track */
 void frame_boundary_services_from_track(int enable)
 {
 	g_services_from_track = enable;
 }
+/* <<< part frame_boundary_services_from_track */
 
+/* >>> part frame_boundary_consume_services */
 void frame_boundary_consume_services(uint8_t count)
 {
 	if (!g_frame_boundary_hook || g_services_from_track)
@@ -95,69 +132,101 @@ void frame_boundary_consume_services(uint8_t count)
 	}
 	g_pending_service_passes = 0;
 }
+/* <<< part frame_boundary_consume_services */
 
 
+/* >>> part frame_boundary_is_installed */
 int frame_boundary_is_installed(void)
 {
 	return g_frame_boundary_hook != NULL;
 }
+/* <<< part frame_boundary_is_installed */
 
+/* >>> part frame_boundary_doframe_ordinal */
 uint32_t frame_boundary_doframe_ordinal(void)
 {
 	return g_doframe_ordinal;
 }
+/* <<< part frame_boundary_doframe_ordinal */
 
+/* >>> part frame_boundary_reset_ordinal */
 void frame_boundary_reset_ordinal(void)
 {
 	g_doframe_ordinal = 0;
 }
+/* <<< part frame_boundary_reset_ordinal */
 
+/* >>> part frame_boundary_install_anchor */
 void frame_boundary_install_anchor(FrameBoundaryHook hook, void *context)
 {
 	g_frame_anchor = hook;
 	g_frame_anchor_context = context;
 }
+/* <<< part frame_boundary_install_anchor */
 
+/* >>> part g_overread_hook */
 static FrameOverreadHook g_overread_hook;
+/* <<< part g_overread_hook */
+/* >>> part g_overread_context */
 static void *g_overread_context;
+/* <<< part g_overread_context */
 
+/* >>> part frame_boundary_install_overread */
 void frame_boundary_install_overread(FrameOverreadHook hook, void *context)
 {
 	g_overread_hook = hook;
 	g_overread_context = context;
 }
+/* <<< part frame_boundary_install_overread */
 
+/* >>> part frame_boundary_overread */
 int frame_boundary_overread(uint8_t *out, size_t length)
 {
 	if (!g_overread_hook)
 		return 0;
 	return g_overread_hook(g_overread_context, g_doframe_ordinal, out, length);
 }
+/* <<< part frame_boundary_overread */
 
+/* >>> part g_timer_sync_hook */
 static FrameBoundaryHook g_timer_sync_hook;
+/* <<< part g_timer_sync_hook */
+/* >>> part g_timer_sync_context */
 static void *g_timer_sync_context;
+/* <<< part g_timer_sync_context */
 
+/* >>> part frame_boundary_install_timer_sync */
 void frame_boundary_install_timer_sync(FrameBoundaryHook hook, void *context)
 {
 	g_timer_sync_hook = hook;
 	g_timer_sync_context = context;
 }
+/* <<< part frame_boundary_install_timer_sync */
 
+/* >>> part frame_boundary_timer_sync */
 void frame_boundary_timer_sync(void)
 {
 	if (g_timer_sync_hook)
 		g_timer_sync_hook(g_timer_sync_context);
 }
+/* <<< part frame_boundary_timer_sync */
 
+/* >>> part g_busy_wait_hook */
 static FrameBoundaryHook g_busy_wait_hook;
+/* <<< part g_busy_wait_hook */
+/* >>> part g_busy_wait_context */
 static void *g_busy_wait_context;
+/* <<< part g_busy_wait_context */
 
+/* >>> part frame_boundary_install_busy_wait */
 void frame_boundary_install_busy_wait(FrameBoundaryHook hook, void *context)
 {
 	g_busy_wait_hook = hook;
 	g_busy_wait_context = context;
 }
+/* <<< part frame_boundary_install_busy_wait */
 
+/* >>> part frame_boundary_busy_wait */
 void frame_boundary_busy_wait(void)
 {
 	if (g_busy_wait_hook)
@@ -165,27 +234,39 @@ void frame_boundary_busy_wait(void)
 	else
 		SoundTimerHandler();
 }
+/* <<< part frame_boundary_busy_wait */
 
+/* >>> part frame_boundary_isr_site */
 void frame_boundary_isr_site(unsigned site)
 {
 	isr_on_site(site);
 }
+/* <<< part frame_boundary_isr_site */
 
+/* >>> part g_vblank_sync_hook */
 static FrameBoundaryHook g_vblank_sync_hook;
+/* <<< part g_vblank_sync_hook */
+/* >>> part g_vblank_sync_context */
 static void *g_vblank_sync_context;
+/* <<< part g_vblank_sync_context */
 
+/* >>> part frame_boundary_install_vblank_sync */
 void frame_boundary_install_vblank_sync(FrameBoundaryHook hook, void *context)
 {
 	g_vblank_sync_hook = hook;
 	g_vblank_sync_context = context;
 }
+/* <<< part frame_boundary_install_vblank_sync */
 
+/* >>> part frame_boundary_vblank_sync */
 void frame_boundary_vblank_sync(void)
 {
 	if (g_vblank_sync_hook)
 		g_vblank_sync_hook(g_vblank_sync_context);
 }
+/* <<< part frame_boundary_vblank_sync */
 
+/* >>> part CallDoFrameFunction */
 /* CallIndirect(wDoFrameFunction), poketcg/src/home/frames.asm:18-19 through
  * jumptable.asm:15-30: call the registered per-frame function unless the
  * pointer is NULL (DispatchIndirect treats zero as a no-op, matching
@@ -234,7 +315,9 @@ static void CallDoFrameFunction(void)
 		return;
 	}
 }
+/* <<< part CallDoFrameFunction */
 
+/* >>> factory HandleDPadRepeat */
 /* frames.asm:45-65. hDPadHeld carries the d-pad only on the frame a
  * direction is pressed and on every frame the repeat counter runs out (24,
  * then 6); on the frames in between the `jr nz, .done` masks it back to the
@@ -263,7 +346,9 @@ uint16_t HandleDPadRepeat(uint16_t hl)
 	          (uint8_t)(gb_read8(hKeysPressed_ADDR) & PAD_BUTTONS));
 	return hl;
 }
+/* <<< factory HandleDPadRepeat */
 
+/* >>> part DoFrameDebugPause */
 /* frames.asm:23-39: when wDebugPauseAllowed is set, pressing SELECT freezes
  * the game inside DoFrame until SELECT is pressed again. Each paused
  * iteration repeats DoFrame's vblank tail (WaitForVBlank, ReadJoypad,
@@ -285,7 +370,9 @@ static void DoFrameDebugPause(void)
 			return;
 	}
 }
+/* <<< part DoFrameDebugPause */
 
+/* >>> factory DoFrame */
 void DoFrame(void)
 {
 	CallDoFrameFunction();
@@ -317,7 +404,9 @@ void DoFrame(void)
 	if (g_frame_anchor)
 		g_frame_anchor(g_frame_anchor_context);
 }
+/* <<< factory DoFrame */
 
+/* >>> factory DoAFrames */
 void DoAFrames(uint8_t a)
 {
 	uint16_t count = a ? a : 0x100u;
@@ -325,3 +414,4 @@ void DoAFrames(uint8_t a)
 	while (count--)
 		DoFrame();
 }
+/* <<< factory DoAFrames */

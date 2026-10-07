@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_SCRIPTING_H
 #define POKETCG_HOME_SCRIPTING_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory IncreaseScriptPointer */
 typedef struct {
@@ -93,6 +95,7 @@ JumpIfCardInCollectionResult ScriptCommand_JumpIfCardInCollection(uint8_t b, uin
 /* >>> factory ScriptCommand_GiveCard */
 IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_GiveCard */
+/* >>> factory ScriptCommand_TakeCard */
 IncreaseScriptPointerResult ScriptCommand_TakeCard(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_TakeCard */
 /* >>> factory ScriptCommand_PauseSong */
@@ -218,6 +221,7 @@ IncreaseScriptPointerResultWithB ScriptCommand_SetActiveNPCCoords(uint8_t b, uin
 /* >>> factory ScriptCommand_JumpIfEnoughCardsOwned */
 JumpIfCardInCollectionResult ScriptCommand_JumpIfEnoughCardsOwned(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_JumpIfEnoughCardsOwned */
+/* >>> part ScriptCommand_RemoveAllEnergyCardsResult */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
@@ -226,8 +230,11 @@ typedef struct {
 	uint8_t d;
 	uint8_t e;
 } ScriptCommand_RemoveAllEnergyCardsResult;
+/* <<< part ScriptCommand_RemoveAllEnergyCardsResult */
 
+/* >>> factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
 ScriptCommand_RemoveAllEnergyCardsResult ScriptCommand_RemoveAllEnergyCardsFromCollection(uint8_t b);
+/* <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
 /* >>> factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 typedef struct {
 	uint8_t a;

@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H
 #define POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
 uint8_t AnimateRandomTitleScreenOrb(void);

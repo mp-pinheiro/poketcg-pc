@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/special_attacks.h"
 
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -25,8 +27,11 @@
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 /* <<< factory statics */
 
+/* >>> part DUELVARS_CARD_LOCATIONS */
 #define DUELVARS_CARD_LOCATIONS 0x00u
+/* <<< part DUELVARS_CARD_LOCATIONS */
 
+/* >>> factory CheckIfAnyBasicPokemonInDeck */
 BasicPokemonDeckResult CheckIfAnyBasicPokemonInDeck(void)
 {
 	uint8_t e = 0;
@@ -46,6 +51,7 @@ BasicPokemonDeckResult CheckIfAnyBasicPokemonInDeck(void)
 	}
 	return (BasicPokemonDeckResult){DECK_SIZE, DECK_SIZE, 0, hl};
 }
+/* <<< factory CheckIfAnyBasicPokemonInDeck */
 
 /* >>> factory CheckWhetherToSwitchToFirstAttack */
 void CheckWhetherToSwitchToFirstAttack(void)

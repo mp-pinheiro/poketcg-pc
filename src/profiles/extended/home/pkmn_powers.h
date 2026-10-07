@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_PKMN_POWERS_H
 #define POKETCG_HOME_PKMN_POWERS_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory HandleAIShift */
 typedef struct { uint8_t a; uint8_t f; } AIShiftResult;

@@ -1,13 +1,19 @@
 #ifndef POKETCG_HOME_SGB_H
 #define POKETCG_HOME_SGB_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part SGBWaitResult */
 typedef struct {
 	uint8_t a, f, b, c, d, e;
 } SGBWaitResult;
+/* <<< part SGBWaitResult */
 
+/* >>> factory Wait */
 SGBWaitResult Wait(uint16_t bc);
+/* <<< factory Wait */
 
 /* >>> factory SendSGB */
 typedef struct {

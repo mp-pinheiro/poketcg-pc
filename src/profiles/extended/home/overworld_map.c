@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/overworld_map.h"
 
 #include "generated/constants.h"
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/load_animation.h"
 

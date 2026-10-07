@@ -1,8 +1,11 @@
 #ifndef POKETCG_HOME_DEBUG_H
 #define POKETCG_HOME_DEBUG_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part DebugSGBFrameResult */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
@@ -12,24 +15,35 @@ typedef struct {
 	uint8_t e;
 	uint16_t hl;
 } DebugSGBFrameResult;
+/* <<< part DebugSGBFrameResult */
 
+/* >>> part DebugStandardBGCharacterResult */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
 	uint8_t d;
 	uint8_t e;
 } DebugStandardBGCharacterResult;
+/* <<< part DebugStandardBGCharacterResult */
 
+/* >>> part DebugQuitResult */
 typedef struct {
 	uint8_t a;
 	uint8_t f;
 } DebugQuitResult;
+/* <<< part DebugQuitResult */
 
+/* >>> factory DebugSGBFrame */
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
 	uint8_t e, uint16_t hl);
+/* <<< factory DebugSGBFrame */
+/* >>> factory DebugStandardBGCharacter */
 DebugStandardBGCharacterResult DebugStandardBGCharacter(uint8_t b, uint8_t c,
 	uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory DebugStandardBGCharacter */
+/* >>> factory DebugQuit */
 DebugQuitResult DebugQuit(uint8_t a, uint8_t f);
+/* <<< factory DebugQuit */
 
 /* >>> factory UnreferencedFillVRAMWithRandomData */
 typedef struct {

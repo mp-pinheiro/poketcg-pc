@@ -1,14 +1,19 @@
+/* >>> part includes */
 #include "home/debug_sprites.h"
 #include "probe.h"
 #include "generated/hram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> factory Func_1c865 */
 static void adapt_Func_1c865(ProbeState *s)
 {
 	(void)s;
 	Func_1c865();
 }
+/* <<< factory Func_1c865 */
 
+/* >>> factory Func_1c866 */
 static void adapt_Func_1c866(ProbeState *s)
 {
 	Func_1c866();
@@ -16,15 +21,20 @@ static void adapt_Func_1c866(ProbeState *s)
 	s->b = gb_read8(hSCX_ADDR);
 	s->c = gb_read8(hSCY_ADDR);
 }
+/* <<< factory Func_1c866 */
 
+/* >>> factory Func_1c890 */
 static void adapt_Func_1c890(ProbeState *s)
 {
 	s->a = Func_1c890(&s->c, &s->hl);
 }
+/* <<< factory Func_1c890 */
 
+/* >>> part probe_entries_debug_sprites */
 const ProbeEntry probe_entries_debug_sprites[] = {
 	{ "Func_1c865", adapt_Func_1c865 },
 	{ "Func_1c866", adapt_Func_1c866 },
 	{ "Func_1c890", adapt_Func_1c890 },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_debug_sprites */

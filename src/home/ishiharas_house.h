@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_ISHIHARAS_HOUSE_H
 #define POKETCG_HOME_ISHIHARAS_HOUSE_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory Preload_NikkiInIshiharasHouse */
 typedef struct { uint8_t a; uint8_t f; } PreloadNikkiInIshiharasHouseResult;

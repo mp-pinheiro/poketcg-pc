@@ -1,5 +1,7 @@
+/* >>> part includes */
 #include "home/scripting.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory IncreaseScriptPointer */
 static void adapt_IncreaseScriptPointer(ProbeState *s)
@@ -1567,6 +1569,7 @@ static void adapt_Func_d4fb(ProbeState *s)
 }
 /* <<< factory Func_d4fb */
 
+/* >>> part probe_entries_scripting */
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1722,3 +1725,4 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_d4fb", adapt_Func_d4fb },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_scripting */

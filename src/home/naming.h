@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_NAMING_H
 #define POKETCG_HOME_NAMING_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory DisplayPlayerNamingScreen */
 /* naming.asm:1-40. Result is the asm's exit state: a is the second

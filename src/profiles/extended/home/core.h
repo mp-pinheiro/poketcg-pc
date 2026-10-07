@@ -1,8 +1,10 @@
 #ifndef POKETCG_HOME_CORE_H
 #define POKETCG_HOME_CORE_H
 
+/* >>> part includes */
 #include <stdint.h>
 #include "home/card_id.h"
+/* <<< part includes */
 
 /* >>> factory DrawHPBar */
 void DrawHPBar(uint8_t d, uint8_t e);
@@ -246,15 +248,16 @@ CheckIfOpponentHasBossDeckIDResult CheckIfOpponentHasBossDeckID(uint8_t a);
 /* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
 uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a);
 /* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
-/* >>> factory GetDamageNumberChars.ConvertDigitToCharTile */
+/* >>> factory GetDamageNumberChars_ConvertDigitToCharTile */
 typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; } DamageDigitResult;
 DamageDigitResult GetDamageNumberChars_ConvertDigitToCharTile(uint16_t bc, uint16_t de, uint16_t hl);
-/* <<< factory GetDamageNumberChars.ConvertDigitToCharTile */
+/* <<< factory GetDamageNumberChars_ConvertDigitToCharTile */
 /* >>> factory GetDamageNumberChars */
 void GetDamageNumberChars(void);
 /* <<< factory GetDamageNumberChars */
 /* >>> factory CardPageSwitch_PokemonAttack2Page2 */
 CardPageExistsResult CardPageSwitch_PokemonAttack2Page2(void);
+/* <<< factory CardPageSwitch_PokemonAttack2Page2 */
 /* >>> factory CardPageSwitch_08 */
 CardPageResult CardPageSwitch_08(void);
 /* <<< factory CardPageSwitch_08 */
@@ -911,7 +914,9 @@ WaitResult _DisplayCardDetailScreen(uint16_t hl);
 /* >>> factory OpenCardPage */
 void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory OpenCardPage */
+/* >>> factory OpenCardPage_input_loop */
 void OpenCardPage_input_loop(uint8_t b);
+/* <<< factory OpenCardPage_input_loop */
 /* >>> factory DisplayCardDetailScreen */
 WaitResult DisplayCardDetailScreen(uint8_t a, uint16_t hl);
 /* <<< factory DisplayCardDetailScreen */
@@ -1069,9 +1074,9 @@ void PlayShuffleAndDrawCardsAnimation(uint8_t b, uint8_t c, uint8_t d, uint8_t e
 /* >>> factory DisplayDrawOneCardScreen */
 void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory DisplayDrawOneCardScreen */
- /* >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+/* >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
  void PlayShuffleAndDrawCardsAnimation_TurnDuelist(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
- /* <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+/* <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
 /* >>> factory OppAction_ExecuteTrainerCardEffectCommands */
 void OppAction_ExecuteTrainerCardEffectCommands(uint8_t b, uint8_t d, uint8_t e);
 /* <<< factory OppAction_ExecuteTrainerCardEffectCommands */

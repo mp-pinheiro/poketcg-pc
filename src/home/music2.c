@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/music2.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
@@ -6,10 +7,12 @@
 #include "home/switch_rom.h"
 #include "home/sfx.h"
 #include "home/frames.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/music2.h"
 /* <<< factory statics */
 
+/* >>> part MUSIC2_BANK */
 #define MUSIC2_BANK 0x3Eu
 
 /* ── ROM table addresses (bank $3e) ─────────────────────────────────── */
@@ -56,30 +59,50 @@
 #define K_SWEEP_DOWN   0x08u
 #define K_LEN_TIMER    0x3Fu
 #define K_WAVE_SIZE    16
+/* <<< part MUSIC2_BANK */
 
+/* >>> part pnn_note_decl */
 /* ── Forward declarations ───────────────────────────────────────────── */
 static void pnn_note(uint16_t *hl, uint8_t note, uint8_t ch);
+/* <<< part pnn_note_decl */
+/* >>> part update_channel_decl */
 static void update_channel(uint8_t ch);
+/* <<< part update_channel_decl */
+/* >>> part Music2_CheckForNewSound_decl */
 void Music2_CheckForNewSound(void);
+/* <<< part Music2_CheckForNewSound_decl */
 
+/* >>> part Music2_CheckForNewSound_decl_2 */
 void Music2_CheckForNewSound(void);
+/* <<< part Music2_CheckForNewSound_decl_2 */
+/* >>> part update_ch_output_decl */
 static void update_ch_output(uint8_t ch);
+/* <<< part update_ch_output_decl */
 
+/* >>> factory Music2_EmptyFunc */
 /* ======================================================================
  * Leaf helpers (unchanged from phase 1)
  * ====================================================================== */
 
 void Music2_EmptyFunc(void)          { g_rom_bank = MUSIC2_BANK; }
+/* <<< factory Music2_EmptyFunc */
+/* >>> factory Music2_f404e */
 void Music2_f404e(uint8_t a)         { g_rom_bank = MUSIC2_BANK; wddf0 = a; }
+/* <<< factory Music2_f404e */
+/* >>> factory Music2_f4066 */
 void Music2_f4066(void)              { g_rom_bank = MUSIC2_BANK; wddf2 ^= 1; }
+/* <<< factory Music2_f4066 */
 
+/* >>> factory Music2_f406f */
 void Music2_f406f(uint8_t a)
 {
 	g_rom_bank = MUSIC2_BANK;
 	uint8_t lo = a & 0x07;
 	wMusicPanning = lo | (uint8_t)(lo << 4);
 }
+/* <<< factory Music2_f406f */
 
+/* >>> factory Music2_PlaySong */
 void Music2_PlaySong(uint8_t a)
 {
 	g_rom_bank = MUSIC2_BANK;
@@ -87,7 +110,9 @@ void Music2_PlaySong(uint8_t a)
 	frame_boundary_timer_sync();
 	wCurSongID = a;
 }
+/* <<< factory Music2_PlaySong */
 
+/* >>> factory Music2_PlaySFX */
 void Music2_PlaySFX(uint8_t a)
 {
 	uint8_t priority = 0u;
@@ -102,19 +127,25 @@ void Music2_PlaySFX(uint8_t a)
 	wSfxPriority = priority;
 	wCurSfxID = a;
 }
+/* <<< factory Music2_PlaySFX */
 
+/* >>> factory Music2_AssertSongFinished */
 uint8_t Music2_AssertSongFinished(void)
 {
 	g_rom_bank = MUSIC2_BANK;
 	return (wCurSongID != 0x80) ? 1 : 0;
 }
+/* <<< factory Music2_AssertSongFinished */
 
+/* >>> factory Music2_AssertSFXFinished */
 uint8_t Music2_AssertSFXFinished(void)
 {
 	g_rom_bank = MUSIC2_BANK;
 	return (wCurSfxID != 0x80) ? 1 : 0;
 }
+/* <<< factory Music2_AssertSFXFinished */
 
+/* >>> factory Music2_CheckForEndOfSong */
 void Music2_CheckForEndOfSong(void)
 {
 	g_rom_bank = MUSIC2_BANK;
@@ -122,14 +153,18 @@ void Music2_CheckForEndOfSong(void)
 	                       + wMusicIsPlaying_PTR[2] + wMusicIsPlaying_PTR[3]);
 	if (sum == 0) wCurSongID = 0x80;
 }
+/* <<< factory Music2_CheckForEndOfSong */
 
+/* >>> factory Music2_CopyData */
 void Music2_CopyData(uint16_t *hl, uint16_t *de, uint8_t n)
 {
 	g_rom_bank = MUSIC2_BANK;
 	uint8_t c = n;
 	do { gb_write8((*de)++, gb_read8((*hl)++)); } while (--c);
 }
+/* <<< factory Music2_CopyData */
 
+/* >>> factory Music2_Init */
 /* ======================================================================
  * Music2_Init
  * ====================================================================== */
@@ -167,7 +202,9 @@ void Music2_Init(void)
 		gb_write8(wMusicChannelStackPointers_ADDR + i,
 		          gb_read8(ADR_ChannelLoopStacks + i));
 }
+/* <<< factory Music2_Init */
 
+/* >>> factory Music2_StopAllChannels */
 /* ======================================================================
  * Music2_StopAllChannels
  * ====================================================================== */
@@ -187,7 +224,9 @@ void Music2_StopAllChannels(void)
 	wMusicIsPlaying_PTR[2] = 0;
 	if (!(d & 0x04))   gb_write8(APU_AUD3LEVEL, K_LEVEL_MUTE);
 }
+/* <<< factory Music2_StopAllChannels */
 
+/* >>> factory Music2_f4980 */
 void Music2_f4980(void)
 {
 	uint8_t d;
@@ -198,7 +237,9 @@ void Music2_f4980(void)
 	if (!(d & 0x08)) { gb_write8(APU_AUD4ENV, K_AUDENV_UP); gb_write8(APU_AUD4GO,  K_RESTART); }
 	if (!(d & 0x04))   gb_write8(APU_AUD3LEVEL, K_LEVEL_MUTE);
 }
+/* <<< factory Music2_f4980 */
 
+/* >>> factory Music2_BeginSong */
 /* ======================================================================
  * Music2_BeginSong
  * ====================================================================== */
@@ -276,7 +317,9 @@ void Music2_BeginSong(uint8_t a)
 	}
 	wddf2 = 0;
 }
+/* <<< factory Music2_BeginSong */
 
+/* >>> factory Music2_GetChannelStackPointer */
 /* ======================================================================
  * Stack helpers
  * ====================================================================== */
@@ -286,14 +329,18 @@ uint16_t Music2_GetChannelStackPointer(uint8_t ch)
 	uint16_t addr = wMusicChannelStackPointers_ADDR + ((uint16_t)ch << 1);
 	return (uint16_t)gb_read8(addr + 1) << 8 | gb_read8(addr);
 }
+/* <<< factory Music2_GetChannelStackPointer */
 
+/* >>> factory Music2_SetChannelStackPointer */
 void Music2_SetChannelStackPointer(uint8_t ch, uint16_t sp)
 {
 	uint16_t addr = wMusicChannelStackPointers_ADDR + ((uint16_t)ch << 1);
 	gb_write8(addr, (uint8_t)sp);
 	gb_write8(addr + 1, (uint8_t)(sp >> 8));
 }
+/* <<< factory Music2_SetChannelStackPointer */
 
+/* >>> part read16 */
 /* ======================================================================
  * Command dispatch system
  * ====================================================================== */
@@ -302,7 +349,9 @@ static uint16_t read16(uint16_t addr)
 {
 	return (uint16_t)gb_read8(addr + 1) << 8 | gb_read8(addr);
 }
+/* <<< part read16 */
 
+/* >>> factory Music2_PlayNextNote */
 /* Command mapping is Music2_CommandTable (music2.asm:598-646), indexed by
  * `cmd - $D0`. The arms stay inlined rather than calling the ported
  * Music2_<cmd> handlers, because each of those tail-calls this dispatcher: in
@@ -497,7 +546,9 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 		}
 	}
 }
+/* <<< factory Music2_PlayNextNote */
 
+/* >>> part pnn_note */
 /* ── Note processing ────────────────────────────────────────────────── */
 
 /* music2.asm:648-840. Entered with the command byte in `note` and *hl already
@@ -614,7 +665,9 @@ static void pnn_note(uint16_t *hl, uint8_t note, uint8_t ch)
 	wMusicChannelPointers_PTR[ch * 2] = (uint8_t)*hl;
 	wMusicChannelPointers_PTR[ch * 2 + 1] = (uint8_t)(*hl >> 8);
 }
+/* <<< part pnn_note */
 
+/* >>> factory Music2_note */
 /* ======================================================================
  * PlayNextNote adapter wrappers — exposed for oracle diff
  * ====================================================================== */
@@ -624,7 +677,9 @@ void Music2_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch)
 	(void)instrument;
 	pnn_note(hl, note, ch);
 }
+/* <<< factory Music2_note */
 
+/* >>> factory Music2_speed */
 /* Command handlers, reached by `jp` from Music2_CommandTable with the stream
  * pointer on the stack. The one-line `{ Music2_PlayNextNote(hl, ch); }` bodies
  * below are UNFAITHFUL aliases pending re-port: they skip their handler's own
@@ -642,6 +697,8 @@ void Music2_speed(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicSpeed_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_speed */
+/* >>> factory Music2_octave */
 /* music2.asm:851-867. Reached from six table slots ($D1-$D6), so the octave
  * comes from the COMMAND BYTE, not from the stream: the dispatcher's `pop af`
  * restores it in `a` before `jp hl`. `and $7` then `dec a`, except channel 2
@@ -655,6 +712,8 @@ void Music2_octave(uint16_t caller_stream, uint8_t ch, uint8_t cmd)
 	gb_write8((uint16_t)(wMusicOctave_ADDR + ch), oct);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_octave */
+/* >>> factory Music2_inc_octave */
 /* music2.asm:869-873. Consumes no operand. */
 void Music2_inc_octave(uint16_t caller_stream, uint8_t ch)
 {
@@ -663,6 +722,8 @@ void Music2_inc_octave(uint16_t caller_stream, uint8_t ch)
 	gb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_inc_octave */
+/* >>> factory Music2_dec_octave */
 /* music2.asm:875-879. Consumes no operand. */
 void Music2_dec_octave(uint16_t caller_stream, uint8_t ch)
 {
@@ -671,6 +732,8 @@ void Music2_dec_octave(uint16_t caller_stream, uint8_t ch)
 	gb_write8(addr, (uint8_t)(gb_read8(addr) - 1u));
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_dec_octave */
+/* >>> factory Music2_tie */
 /* music2.asm:881-885. Consumes no operand; the tie flag is a constant $80. */
 void Music2_tie(uint16_t caller_stream, uint8_t ch)
 {
@@ -678,6 +741,8 @@ void Music2_tie(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicTie_ADDR + ch), 0x80u);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_tie */
+/* >>> factory Music2_stereo_panning */
 /* music2.asm:887-908. Operand and the %11101110 keep-mask are both rotated
  * left `ch` times, then merged into the single global panning byte. */
 void Music2_stereo_panning(uint16_t caller_stream, uint8_t ch)
@@ -694,6 +759,8 @@ void Music2_stereo_panning(uint16_t caller_stream, uint8_t ch)
 	gb_write8(wMusicStereoPanning_ADDR, merged);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_stereo_panning */
+/* >>> factory Music2_MainLoop */
 /* music2.asm:910-920. Records the loop start as the byte BEFORE the
  * continuation, then resumes at the unadvanced stream. */
 void Music2_MainLoop(uint16_t caller_stream, uint8_t ch)
@@ -705,6 +772,8 @@ void Music2_MainLoop(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(addr + 1u), (uint8_t)(target >> 8u));
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_MainLoop */
+/* >>> factory Music2_EndMainLoop */
 /* music2.asm:922-930. Discards the popped stream and resumes at the recorded
  * loop start, so the continuation address is its only observable. */
 void Music2_EndMainLoop(uint16_t caller_stream, uint8_t ch)
@@ -715,6 +784,8 @@ void Music2_EndMainLoop(uint16_t caller_stream, uint8_t ch)
 		| ((uint16_t)gb_read8((uint16_t)(addr + 1u)) << 8u));
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_EndMainLoop */
+/* >>> factory Music2_Loop */
 /* music2.asm:932-947. Pushes a 3-byte frame - continuation address then loop
  * count - onto this channel's stack and advances the stack pointer. */
 void Music2_Loop(uint16_t caller_stream, uint8_t ch)
@@ -728,6 +799,8 @@ void Music2_Loop(uint16_t caller_stream, uint8_t ch)
 	Music2_SetChannelStackPointer(ch, (uint16_t)(sp + 3u));
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_Loop */
+/* >>> factory Music2_EndLoop */
 /* music2.asm:949-967. Decrements the count at sp-1: still nonzero jumps back to
  * the address at sp-3/sp-2 with the count written back; reaching zero pops the
  * 3-byte frame and falls through. The exhausted path deliberately does not
@@ -747,6 +820,8 @@ void Music2_EndLoop(uint16_t caller_stream, uint8_t ch)
 	}
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_EndLoop */
+/* >>> factory Music2_jp */
 /* music2.asm:969-974. Reads a little-endian target from the stream and resumes
  * there; the jump is its only observable. */
 void Music2_jp(uint16_t caller_stream, uint8_t ch)
@@ -755,6 +830,8 @@ void Music2_jp(uint16_t caller_stream, uint8_t ch)
 		| ((uint16_t)gb_read8((uint16_t)(caller_stream + 1u)) << 8u));
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_jp */
+/* >>> factory Music2_call */
 /* music2.asm:976-992. Stores the popped stream pointer itself (which addresses
  * the 2-byte target) as the return address, advances the stack pointer by 2,
  * and resumes at the target. Music2_ret adds the 2 back. */
@@ -768,6 +845,8 @@ void Music2_call(uint16_t caller_stream, uint8_t ch)
 	Music2_SetChannelStackPointer(ch, (uint16_t)(sp + 2u));
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_call */
+/* >>> factory Music2_ret */
 /* music2.asm:994-1005. Pops the return address, skips the call operand it
  * addresses, and resumes there. */
 void Music2_ret(uint16_t caller_stream, uint8_t ch)
@@ -780,6 +859,8 @@ void Music2_ret(uint16_t caller_stream, uint8_t ch)
 	Music2_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_ret */
+/* >>> factory Music2_frequency_offset */
 /* music2.asm:1007-1016. */
 void Music2_frequency_offset(uint16_t caller_stream, uint8_t ch)
 {
@@ -788,6 +869,8 @@ void Music2_frequency_offset(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicFrequencyOffset_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_frequency_offset */
+/* >>> factory Music2_duty */
 /* music2.asm:1018-1028. The operand is masked to the duty bits. */
 void Music2_duty(uint16_t caller_stream, uint8_t ch)
 {
@@ -796,6 +879,8 @@ void Music2_duty(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicDuty1_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_duty */
+/* >>> factory Music2_volume */
 /* music2.asm:1030-1039. */
 void Music2_volume(uint16_t caller_stream, uint8_t ch)
 {
@@ -804,6 +889,8 @@ void Music2_volume(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicVolume_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_volume */
+/* >>> factory Music2_wave */
 /* music2.asm:1041-1050. Wave is a single global byte, not per channel, and the
  * handler also raises the wave-change flag. */
 void Music2_wave(uint16_t caller_stream, uint8_t ch)
@@ -814,6 +901,8 @@ void Music2_wave(uint16_t caller_stream, uint8_t ch)
 	gb_write8(wMusicWaveChange_ADDR, 0x01u);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_wave */
+/* >>> factory Music2_cutoff */
 /* music2.asm:1052-1061. */
 void Music2_cutoff(uint16_t caller_stream, uint8_t ch)
 {
@@ -822,6 +911,8 @@ void Music2_cutoff(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicCutoff_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_cutoff */
+/* >>> factory Music2_echo */
 /* music2.asm:1063-1072. */
 void Music2_echo(uint16_t caller_stream, uint8_t ch)
 {
@@ -830,6 +921,8 @@ void Music2_echo(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicEcho_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_echo */
+/* >>> factory Music2_vibrato_type */
 /* music2.asm:1074-1086. One operand, written to BOTH vibrato tables. */
 void Music2_vibrato_type(uint16_t caller_stream, uint8_t ch)
 {
@@ -839,6 +932,8 @@ void Music2_vibrato_type(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicVibratoType2_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_vibrato_type */
+/* >>> factory Music2_vibrato_delay */
 /* music2.asm:1088-1097. */
 void Music2_vibrato_delay(uint16_t caller_stream, uint8_t ch)
 {
@@ -847,6 +942,8 @@ void Music2_vibrato_delay(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicVibratoDelay_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_vibrato_delay */
+/* >>> factory Music2_pitch_offset */
 /* music2.asm:1099-1108. */
 void Music2_pitch_offset(uint16_t caller_stream, uint8_t ch)
 {
@@ -855,6 +952,8 @@ void Music2_pitch_offset(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicPitchOffset_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_pitch_offset */
+/* >>> factory Music2_adjust_pitch_offset */
 /* music2.asm:1110-1120. `add [hl]` makes this additive against the current
  * pitch offset rather than a plain store. */
 void Music2_adjust_pitch_offset(uint16_t caller_stream, uint8_t ch)
@@ -865,6 +964,8 @@ void Music2_adjust_pitch_offset(uint16_t caller_stream, uint8_t ch)
 	gb_write8(addr, (uint8_t)(value + gb_read8(addr)));
 	Music2_PlayNextNote(&hl, ch);
 }
+/* <<< factory Music2_adjust_pitch_offset */
+/* >>> factory Music2_end */
 /* music2.asm:1122-1127. Clears this channel's playing flag and RETURNS to its
  * caller (`pop hl; ret`) instead of tail-calling the dispatcher. */
 void Music2_end(uint16_t caller_stream, uint8_t ch)
@@ -872,7 +973,9 @@ void Music2_end(uint16_t caller_stream, uint8_t ch)
 	(void)caller_stream;
 	gb_write8((uint16_t)(wMusicIsPlaying_ADDR + ch), 0x00u);
 }
+/* <<< factory Music2_end */
 
+/* >>> part update_channel */
 /* ======================================================================
  * Channel updaters
  * ====================================================================== */
@@ -965,18 +1068,34 @@ stop_chan:
 		gb_write8(APU_AUD4GO,  K_RESTART);
 	}
 }
+/* <<< part update_channel */
 
+/* >>> factory Music2_UpdateChannel1 */
 void Music2_UpdateChannel1(void) { g_rom_bank = MUSIC2_BANK; update_channel(0); }
+/* <<< factory Music2_UpdateChannel1 */
+/* >>> factory Music2_UpdateChannel2 */
 void Music2_UpdateChannel2(void) { g_rom_bank = MUSIC2_BANK; update_channel(1); }
+/* <<< factory Music2_UpdateChannel2 */
+/* >>> factory Music2_UpdateChannel3 */
 void Music2_UpdateChannel3(void) { g_rom_bank = MUSIC2_BANK; update_channel(2); }
+/* <<< factory Music2_UpdateChannel3 */
+/* >>> factory Music2_UpdateChannel4 */
 void Music2_UpdateChannel4(void) { g_rom_bank = MUSIC2_BANK; update_channel(3); }
+/* <<< factory Music2_UpdateChannel4 */
 
+/* >>> part update_channel_decl_2 */
 /* ── Per-channel APU output ─────────────────────────────────────────── */
 
 static void update_channel(uint8_t ch);
+/* <<< part update_channel_decl_2 */
+/* >>> part Music2_CheckForNewSound_decl_3 */
 void Music2_CheckForNewSound(void);
+/* <<< part Music2_CheckForNewSound_decl_3 */
 
+/* >>> part Music2_CheckForNewSound_decl_4 */
 void Music2_CheckForNewSound(void);
+/* <<< part Music2_CheckForNewSound_decl_4 */
+/* >>> part update_ch_output */
 static void update_ch_output(uint8_t ch)
 {
 	if (wdd8c & (1 << (ch == 3 ? 3 : ch))) return;
@@ -1031,11 +1150,19 @@ static void update_ch_output(uint8_t ch)
 		          (uint8_t)(wMusicCh1CurPitch_PTR[ch * 2 + 1] | d));
 	}
 }
+/* <<< part update_ch_output */
 
+/* >>> factory Music2_f4714 */
 void Music2_f4714(void) { g_rom_bank = MUSIC2_BANK; update_ch_output(0); }
+/* <<< factory Music2_f4714 */
+/* >>> factory Music2_f475a */
 void Music2_f475a(void) { g_rom_bank = MUSIC2_BANK; update_ch_output(1); }
+/* <<< factory Music2_f475a */
+/* >>> factory Music2_f479c */
 void Music2_f479c(void) { g_rom_bank = MUSIC2_BANK; update_ch_output(2); }
+/* <<< factory Music2_f479c */
 
+/* >>> factory Music2_f480a */
 void Music2_f480a(void)
 {
 	g_rom_bank = MUSIC2_BANK;
@@ -1051,7 +1178,9 @@ void Music2_f480a(void)
 	gb_write8(APU_AUD4POLY, wddab_PTR[2]);
 	gb_write8(APU_AUD4GO,   wddab_PTR[3]);
 }
+/* <<< factory Music2_f480a */
 
+/* >>> factory Music2_f4839 */
 void Music2_f4839(void)
 {
 	g_rom_bank = MUSIC2_BANK;
@@ -1071,7 +1200,9 @@ void Music2_f4839(void)
 		wdded_PTR[0] = (uint8_t)de;
 	}
 }
+/* <<< factory Music2_f4839 */
 
+/* >>> factory Music2_f485a */
 /* ======================================================================
  * Music2_f485a — vibrato + frequency output
  * ====================================================================== */
@@ -1083,7 +1214,9 @@ void Music2_f485a(uint8_t ch)
 	de = Music2_UpdateVibrato(ch);
 	Music2_f490b(ch, de);
 }
+/* <<< factory Music2_f485a */
 
+/* >>> factory Music2_f4866 */
 /* ======================================================================
  * Music2_f4866 — panning / output select
  * ====================================================================== */
@@ -1112,7 +1245,9 @@ void Music2_f4866(void)
 	a = (uint8_t)(d & e);
 	gb_write8(APU_TERM, a);
 }
+/* <<< factory Music2_f4866 */
 
+/* >>> factory Music2_LoadWaveInstrument */
 /* ======================================================================
  * Music2_LoadWaveInstrument
  * ====================================================================== */
@@ -1129,7 +1264,9 @@ void Music2_LoadWaveInstrument(void)
 	}
 	wMusicWaveChange = 0;
 }
+/* <<< factory Music2_LoadWaveInstrument */
 
+/* >>> part base_pitch */
 /* ======================================================================
  * Music2_UpdateVibrato
  * ====================================================================== */
@@ -1139,7 +1276,9 @@ static uint16_t base_pitch(uint8_t ch)
 	return (uint16_t)((uint16_t)wMusicCh1CurPitch_PTR[ch * 2 + 1] << 8
 			  | wMusicCh1CurPitch_PTR[ch * 2]);
 }
+/* <<< part base_pitch */
 
+/* >>> factory Music2_UpdateVibrato */
 uint16_t Music2_UpdateVibrato(uint8_t ch)
 {
 	uint8_t delay;
@@ -1187,7 +1326,9 @@ uint16_t Music2_UpdateVibrato(uint8_t ch)
 		return (uint16_t)((uint16_t)(hi & 0x07u) << 8 | lo);
 	}
 }
+/* <<< factory Music2_UpdateVibrato */
 
+/* >>> factory Music2_f490b */
 /* ======================================================================
  * Music2_f490b — write frequency to APU
  * ====================================================================== */
@@ -1223,7 +1364,9 @@ not_ch2:
 	gb_write8(APU_AUD3LEN, 0);
 	gb_write8(APU_AUD3HIGH, hi);
 }
+/* <<< factory Music2_f490b */
 
+/* >>> factory Music2_f4967 */
 /* ======================================================================
  * Music2_f4967 — frequency offset
  * ====================================================================== */
@@ -1249,7 +1392,9 @@ void Music2_f4967(uint8_t ch)
 	/* In the ASM, de is returned via d/e registers and used inline.
 	 * We store to WRAM for consistency. */
 }
+/* <<< factory Music2_f4967 */
 
+/* >>> factory Music2_Update */
 /* ======================================================================
  * Music2_Update — timer tick handler
  * ====================================================================== */
@@ -1276,13 +1421,17 @@ void Music2_Update(void)
 	Music2_f4866();
 	Music2_CheckForEndOfSong();
 }
+/* <<< factory Music2_Update */
 
+/* >>> part Music2_CheckForNewSound_decl_5 */
 /* ======================================================================
  * Music2_CheckForNewSound
  * ====================================================================== */
 
 void Music2_CheckForNewSound(void);
+/* <<< part Music2_CheckForNewSound_decl_5 */
 
+/* >>> factory Music2_CheckForNewSound */
 void Music2_CheckForNewSound(void)
 {
 	g_rom_bank = MUSIC2_BANK;
@@ -1298,7 +1447,9 @@ void Music2_CheckForNewSound(void)
 		wCurSfxID = (uint8_t)(wCurSfxID | 0x80u);
 	}
 }
+/* <<< factory Music2_CheckForNewSound */
 
+/* >>> factory Music2_PauseSong */
 /* ======================================================================
  * Pause / Resume
  * ====================================================================== */
@@ -1310,7 +1461,9 @@ void Music2_PauseSong(void)
 	Music2_BackupSong();
 	Music2_StopAllChannels();
 }
+/* <<< factory Music2_PauseSong */
 
+/* >>> factory Music2_ResumeSong */
 void Music2_ResumeSong(void)
 {
 	g_rom_bank = MUSIC2_BANK;
@@ -1318,7 +1471,9 @@ void Music2_ResumeSong(void)
 	Music2_StopAllChannels();
 	Music2_LoadBackup();
 }
+/* <<< factory Music2_ResumeSong */
 
+/* >>> factory Music2_BackupSong */
 /* ======================================================================
  * Backup / Restore — copy all music WRAM state to backup area
  * ====================================================================== */
@@ -1406,7 +1561,9 @@ void Music2_BackupSong(void)
 	hl = wMusicCh1Stack_ADDR; de = wMusicCh1StackBackup_ADDR;
 	Music2_CopyData(&hl, &de, 48);
 }
+/* <<< factory Music2_BackupSong */
 
+/* >>> factory Music2_LoadBackup */
 void Music2_LoadBackup(void)
 {
 	uint16_t hl, de;
@@ -1486,6 +1643,7 @@ void Music2_LoadBackup(void)
 	hl = wMusicCh1StackBackup_ADDR; de = wMusicCh1Stack_ADDR;
 	Music2_CopyData(&hl, &de, 48);
 }
+/* <<< factory Music2_LoadBackup */
 
 /* >>> factory Music2_f400c_2 */
 void Music2_f400c_2(uint8_t a)

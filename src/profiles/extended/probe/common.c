@@ -1,11 +1,15 @@
+/* >>> part includes */
 #include "home/common.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
+/* >>> part probe_card_id */
 static CardId probe_card_id(const ProbeState *s)
 {
 	return (CardId)(((uint16_t)s->d << 8) | s->e);
 }
+/* <<< part probe_card_id */
 
 /* >>> factory CountOppEnergyCardsInHand */
 static void adapt_CountOppEnergyCardsInHand(ProbeState *s)
@@ -263,6 +267,7 @@ static void adapt_ShowPromotionalCardScreen(ProbeState *s)
 }
 /* <<< factory ShowPromotionalCardScreen */
 
+/* >>> part probe_entries_common */
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -293,3 +298,4 @@ const ProbeEntry probe_entries_common[] = {
 	{ "ShowPromotionalCardScreen", adapt_ShowPromotionalCardScreen },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_common */

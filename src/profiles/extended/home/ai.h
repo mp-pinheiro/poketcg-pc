@@ -1,12 +1,18 @@
 #ifndef POKETCG_HOME_AI_H
 #define POKETCG_HOME_AI_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
+/* >>> part DeckLoadResult */
 /* poketcg/src/home/ai.asm */
 
 typedef struct { uint8_t a; uint16_t hl; } DeckLoadResult;
+/* <<< part DeckLoadResult */
+/* >>> factory LoadOpponentDeck */
 DeckLoadResult LoadOpponentDeck(void);
+/* <<< factory LoadOpponentDeck */
 
 /* >>> factory AIDoAction */
 uint8_t AIDoAction(uint8_t a);

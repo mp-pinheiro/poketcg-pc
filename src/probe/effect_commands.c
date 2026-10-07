@@ -1,7 +1,10 @@
+/* >>> part includes */
 #include "generated/hram.h"
 #include "home/effect_commands.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory CheckMatchingCommand */
 static void adapt_CheckMatchingCommand(ProbeState *s)
 {
 	uint16_t list = s->hl;
@@ -16,6 +19,7 @@ static void adapt_CheckMatchingCommand(ProbeState *s)
 	else
 		s->f = (uint8_t)(hBankROM == 0 ? 0x80u : 0u);
 }
+/* <<< factory CheckMatchingCommand */
 
 /* >>> factory TryExecuteEffectCommandFunction */
 static void adapt_TryExecuteEffectCommandFunction(ProbeState *s)
@@ -32,8 +36,10 @@ static void adapt_TryExecuteEffectCommandFunction(ProbeState *s)
 }
 /* <<< factory TryExecuteEffectCommandFunction */
 
+/* >>> part probe_entries_effect_commands */
 const ProbeEntry probe_entries_effect_commands[] = {
 	{ "CheckMatchingCommand", adapt_CheckMatchingCommand },
 	{ "TryExecuteEffectCommandFunction", adapt_TryExecuteEffectCommandFunction },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_effect_commands */

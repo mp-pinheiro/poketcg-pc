@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/gift_center.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Preload_GiftCenterClerk */
 static void adapt_Preload_GiftCenterClerk(ProbeState *s)
@@ -40,6 +42,7 @@ static void adapt_GiftCenterMenu(ProbeState *s)
 }
 /* <<< factory GiftCenterMenu */
 
+/* >>> part probe_entries_gift_center */
 const ProbeEntry probe_entries_gift_center[] = {
 	{ "Preload_GiftCenterClerk", adapt_Preload_GiftCenterClerk },
 	{ "Func_fc7a", adapt_Func_fc7a },
@@ -47,3 +50,4 @@ const ProbeEntry probe_entries_gift_center[] = {
 	{ "GiftCenterMenu", adapt_GiftCenterMenu },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_gift_center */

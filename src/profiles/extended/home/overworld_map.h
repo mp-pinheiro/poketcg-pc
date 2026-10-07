@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_OVERWORLD_MAP_H
 #define POKETCG_HOME_OVERWORLD_MAP_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
 void OverworldMap_ContinuePlayerWalkingAnimation(void);

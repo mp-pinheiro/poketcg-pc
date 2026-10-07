@@ -1,6 +1,7 @@
 #ifndef POKETCG_HOME_TRAINER_CARDS_H
 #define POKETCG_HOME_TRAINER_CARDS_H
 
+/* >>> part includes */
 #include <stdint.h>
 #include "home/card_id.h"
 
@@ -10,6 +11,7 @@
  * naming a core.h type could not compile and cost four AIPlay_* attempts one
  * generation each on 2026-08-28. */
 #include "home/core.h"
+/* <<< part includes */
 
 /* >>> factory RemoveCardFromList */
 void RemoveCardFromList(uint16_t *hl);
@@ -222,12 +224,24 @@ AIDecideResult AIPlay_PokemonCenter(uint8_t d, uint8_t e);
 typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } AIDecideGustOfWindResult;
 AIDecideGustOfWindResult AIDecide_GustOfWind(uint8_t d, uint8_t e);
 /* <<< factory AIDecide_GustOfWind */
+/* >>> part AIDecide_Defender1 */
 AIDecideParameterResult AIDecide_Defender1(uint8_t d);
+/* <<< part AIDecide_Defender1 */
+/* >>> part AIDecide_Defender2 */
 AIDecideParameterResult AIDecide_Defender2(uint8_t d);
+/* <<< part AIDecide_Defender2 */
+/* >>> part AIDecide_PlusPower1 */
 AIDecideParameterResult AIDecide_PlusPower1(uint8_t d);
+/* <<< part AIDecide_PlusPower1 */
+/* >>> part AIDecide_PlusPower2 */
 AIDecideParameterResult AIDecide_PlusPower2(uint8_t d);
+/* <<< part AIDecide_PlusPower2 */
+/* >>> part AIDecide_SuperPotion1 */
 AIDecideParameterResult AIDecide_SuperPotion1(uint8_t d);
+/* <<< part AIDecide_SuperPotion1 */
+/* >>> part AIDecide_SuperPotion2 */
 AIDecideParameterResult AIDecide_SuperPotion2(uint8_t d);
+/* <<< part AIDecide_SuperPotion2 */
 /* >>> factory AIDecide_Switch */
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } AIDecide_SwitchResult;
 AIDecide_SwitchResult AIDecide_Switch(uint8_t d);

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/default_palettes.h"
 
 #include "generated/hram.h"
@@ -8,7 +9,9 @@
 #include "home/palettes.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> factory SetDefaultPalettes */
 void SetDefaultPalettes(void)
 {
 	gb_write8(wBGP_ADDR, 0xE4u);
@@ -21,7 +24,9 @@ void SetDefaultPalettes(void)
 	BankswitchROM(bank);
 	FlushAllPalettes();
 }
+/* <<< factory SetDefaultPalettes */
 
+/* >>> factory Func_12871 */
 void Func_12871(void)
 {
 	ZeroObjectPositions();
@@ -34,3 +39,4 @@ void Func_12871(void)
 	gb_write8(hWY_ADDR, 0);
 	SetWindowOff();
 }
+/* <<< factory Func_12871 */

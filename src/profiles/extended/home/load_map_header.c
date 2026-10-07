@@ -1,13 +1,18 @@
+/* >>> part includes */
 #include "home/load_map_header.h"
 
 #include "generated/wram.h"
 #include "generated/rom.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part MAP_HEADERS_BANK */
 #define MAP_HEADERS_BANK MapHeaders_BANK
 #define MAP_HEADERS MapHeaders_ADDR
 #define MAP_HEADER_SIZE 4u
+/* <<< part MAP_HEADERS_BANK */
 
+/* >>> factory LoadMapHeader */
 void LoadMapHeader(void)
 {
 	uint16_t entry = (uint16_t)(MAP_HEADERS +
@@ -19,3 +24,4 @@ void LoadMapHeader(void)
 	gb_write8(wCurMapPalette_ADDR, header[2]);
 	gb_write8(wDefaultSong_ADDR, header[3]);
 }
+/* <<< factory LoadMapHeader */

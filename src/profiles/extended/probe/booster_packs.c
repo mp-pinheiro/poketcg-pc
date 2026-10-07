@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/booster_packs.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory GetCurrentRarityAmount */
 static void adapt_GetCurrentRarityAmount(ProbeState *s)
@@ -346,6 +348,7 @@ static void adapt_GenerateBoosterPack(ProbeState *s)
 }
 /* <<< factory GenerateBoosterPack */
 
+/* >>> part probe_entries_booster_packs */
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -384,3 +387,4 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GenerateBoosterPack", adapt_GenerateBoosterPack },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_booster_packs */

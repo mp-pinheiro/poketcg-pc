@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/npc_core.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory CheckIfNPCIsRonald */
 static void adapt_CheckIfNPCIsRonald(ProbeState *s)
@@ -215,6 +217,7 @@ static void adapt_HandleAllNPCMovement(ProbeState *s)
 }
 /* <<< factory HandleAllNPCMovement */
 
+/* >>> part probe_entries_npc_core */
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -245,3 +248,4 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "HandleAllNPCMovement", adapt_HandleAllNPCMovement },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_npc_core */

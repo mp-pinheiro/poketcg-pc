@@ -1,8 +1,11 @@
+/* >>> part includes */
 #include "home/damage.h"
 
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> factory AddToDamage */
 /* damage.asm:2-11 */
 void AddToDamage(uint8_t a)
 {
@@ -11,7 +14,9 @@ void AddToDamage(uint8_t a)
 	uint16_t addr_hi = (uint16_t)(wDamage_ADDR + 1u);
 	gb_write8(addr_hi, (uint8_t)(gb_read8(addr_hi) + (lo >> 8)));
 }
+/* <<< factory AddToDamage */
 
+/* >>> part SubtractFromDamage */
 /* damage.asm:14-27 */
 void SubtractFromDamage(uint8_t a)
 {
@@ -21,3 +26,4 @@ void SubtractFromDamage(uint8_t a)
 	uint16_t addr_hi = (uint16_t)(wDamage_ADDR + 1u);
 	gb_write8(addr_hi, (uint8_t)(gb_read8(addr_hi) - borrow));
 }
+/* <<< part SubtractFromDamage */

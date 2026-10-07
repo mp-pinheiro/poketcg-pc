@@ -2,7 +2,9 @@
 #ifndef POKETCG_HOME_EFFECT_FUNCTIONS_H
 #define POKETCG_HOME_EFFECT_FUNCTIONS_H
 
+/* >>> part includes_tail */
 #include "home/print_text.h"
+/* <<< part includes_tail */
 
 /* >>> factory UpdateExpectedAIDamage */
 void UpdateExpectedAIDamage(uint8_t a, uint8_t d, uint8_t e);
@@ -635,10 +637,10 @@ uint8_t PrehistoricPowerEffect(void);
 /* >>> factory Scavenge_DiscardEffect */
 uint8_t Scavenge_DiscardEffect(void);
 /* <<< factory Scavenge_DiscardEffect */
-/* >>> factory Peek_OncePerTurnCheck */
 /* >>> factory StepIn_BenchCheck */
 SolarPowerCheckUseResult StepIn_BenchCheck(void);
 /* <<< factory StepIn_BenchCheck */
+/* >>> factory Peek_OncePerTurnCheck */
 SolarPowerCheckUseResult Peek_OncePerTurnCheck(void);
 /* <<< factory Peek_OncePerTurnCheck */
 /* >>> factory Wail_BenchCheck */
@@ -711,6 +713,7 @@ ScoopUpBenchCheckResult ScoopUp_BenchCheck(void);
 /* <<< factory ScoopUp_BenchCheck */
 /* >>> factory Toxic_DoublePoisonEffect */
 QueueStatusConditionResult Toxic_DoublePoisonEffect(void);
+/* <<< factory Toxic_DoublePoisonEffect */
 /* >>> factory LeekSlap_OncePerDuelCheck */
 uint8_t LeekSlap_OncePerDuelCheck(void);
 /* <<< factory LeekSlap_OncePerDuelCheck */
@@ -741,7 +744,10 @@ TryGiveDamageCounter_StrangeBehaviorResult TryGiveDamageCounter_StrangeBehavior(
 typedef struct { uint8_t a; uint8_t f; uint8_t c; uint8_t e; uint16_t hl; } SpacingOutCheckDamageResult;
 SpacingOutCheckDamageResult SpacingOut_CheckDamage(void);
 /* <<< factory SpacingOut_CheckDamage */
+/* >>> part SpacingOutHealEffectResult */
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; uint8_t update_hl; } SpacingOutHealEffectResult;
+/* <<< part SpacingOutHealEffectResult */
+/* >>> factory SpacingOut_HealEffect */
 SpacingOutHealEffectResult SpacingOut_HealEffect(void);
 /* <<< factory SpacingOut_HealEffect */
 /* >>> factory CopyPlayAreaHPToBackup_Unreferenced */
@@ -2263,7 +2269,6 @@ DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void);
 /* >>> factory EnergySpike_PlayerSelectEffect */
 void EnergySpike_PlayerSelectEffect(void);
 /* <<< factory EnergySpike_PlayerSelectEffect */
-#endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
 /* <<< factory Barrier_DiscardEffect */
@@ -2286,3 +2291,4 @@ void FireSpin_DiscardEffect(void);
 /* >>> factory MixUpEffect */
 void MixUpEffect(void);
 /* <<< factory MixUpEffect */
+#endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

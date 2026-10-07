@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/serial.h"
 #include "serial_track.h"
 
@@ -6,6 +7,7 @@
 #include "generated/wram.h"
 #include "home/printer.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/menus.h"
 #include "home/print_text.h"
@@ -37,6 +39,7 @@
 #include "generated/wram.h"
 /* <<< factory statics */
 
+/* >>> part rSB */
 #define rSB 0xFF01u
 #define rSC 0xFF02u
 #define rIF 0xFF0Fu
@@ -45,7 +48,9 @@
 #define SC_INTERNAL 0x01u
 #define SC_START 0x80u
 #define IE_SERIAL 0x08u
+/* <<< part rSB */
 
+/* >>> factory SerialTimerHandler */
 /* serial.asm:2-36. Driven at ~240 Hz by TimerHandler. The two opcode paths are
  * mutually exclusive ($29 = begin a transfer, $12 = check for timeout); any other
  * value returns immediately. Registers b/c/d/e are untouched on every path. */
@@ -81,7 +86,9 @@ void SerialTimerHandler(void)
 	gb_write8(wSerialTimeoutCounter_ADDR, timeout);
 	gb_write8(wSerialFlags_ADDR, (uint8_t)(gb_read8(wSerialFlags_ADDR) | 0x80u));
 }
+/* <<< factory SerialTimerHandler */
 
+/* >>> factory Func_0cc5 */
 Func0cc5Result Func_0cc5(uint8_t a, uint8_t b, uint8_t c, uint8_t e)
 {
 	if (a == 0) {
@@ -125,7 +132,9 @@ Func0cc5Result Func_0cc5(uint8_t a, uint8_t b, uint8_t c, uint8_t e)
 	gb_write8(wSerialOp_ADDR, e);
 	return (Func0cc5Result){e, b, c, e, f};
 }
+/* <<< factory Func_0cc5 */
 
+/* >>> factory SerialHandler */
 void SerialHandler(void)
 {
 	if (gb_read8(wPrinterPacketSequence_ADDR) != 0) {
@@ -148,7 +157,9 @@ void SerialHandler(void)
 	}
 	gb_write8(wSerialCounter_ADDR, (uint8_t)(gb_read8(wSerialCounter_ADDR) + 1u));
 }
+/* <<< factory SerialHandler */
 
+/* >>> factory SerialHandleRecv */
 SerialHandleRecvResult SerialHandleRecv(uint8_t a, uint8_t d)
 {
 	uint8_t e = (uint8_t)(gb_read8(wSerialLastReadCA_ADDR) - 1u);
@@ -182,7 +193,9 @@ SerialHandleRecvResult SerialHandleRecv(uint8_t a, uint8_t d)
 	gb_write8(wSerialFlags_ADDR, 0);
 	return (SerialHandleRecvResult){0, d, e, wSerialRecvCounter_ADDR};
 }
+/* <<< factory SerialHandleRecv */
 
+/* >>> factory SerialHandleSend */
 SerialHandleSendResult SerialHandleSend(uint8_t d, uint8_t e)
 {
 	if (gb_read8(wSerialSendSave_ADDR) != 0) {
@@ -206,7 +219,9 @@ SerialHandleSendResult SerialHandleSend(uint8_t d, uint8_t e)
 	}
 	return (SerialHandleSendResult){a, d, e, hl};
 }
+/* <<< factory SerialHandleSend */
 
+/* >>> factory SerialSendByte */
 uint8_t SerialSendByte(uint8_t a)
 {
 	uint8_t e;
@@ -228,13 +243,17 @@ uint8_t SerialSendByte(uint8_t a)
 		f |= 0x20u;
 	return f;
 }
+/* <<< factory SerialSendByte */
 
+/* >>> factory Func_0e32 */
 SerialRecvReadyResult Func_0e32(void)
 {
 	uint8_t a = gb_read8(wSerialRecvCounter_ADDR);
 	return (SerialRecvReadyResult){a, a ? 0x10u : 0x80u};
 }
+/* <<< factory Func_0e32 */
 
+/* >>> factory SerialRecvByte */
 SerialByteResult SerialRecvByte(void)
 {
 	if (gb_read8(wSerialRecvCounter_ADDR) == 0) {
@@ -249,7 +268,9 @@ SerialByteResult SerialRecvByte(void)
 	gb_write8(wcba3_ADDR, (uint8_t)((idx + 1u) & 0x1Fu));
 	return (SerialByteResult){a, a ? 0x00u : 0x80u};
 }
+/* <<< factory SerialRecvByte */
 
+/* >>> factory SerialExchangeBytes */
 SerialExchangeResult SerialExchangeBytes(uint8_t c, uint16_t hl, uint16_t de)
 {
 	uint8_t b = c;
@@ -277,7 +298,9 @@ SerialExchangeResult SerialExchangeBytes(uint8_t c, uint16_t hl, uint16_t de)
 			return (SerialExchangeResult){0, 0, 0, 0x80u, hl, de};
 	}
 }
+/* <<< factory SerialExchangeBytes */
 
+/* >>> factory Func_0e8e */
 uint8_t Func_0e8e(void)
 {
 	ClearSerialData();
@@ -288,7 +311,9 @@ uint8_t Func_0e8e(void)
 	gb_write8(rIE, ie);
 	return ie;
 }
+/* <<< factory Func_0e8e */
 
+/* >>> factory ResetSerial */
 void ResetSerial(void)
 {
 	gb_write8(rIE, (uint8_t)(gb_read8(rIE) & (uint8_t)~IE_SERIAL));
@@ -296,13 +321,17 @@ void ResetSerial(void)
 	gb_write8(rSC, 0);
 	ClearSerialData();
 }
+/* <<< factory ResetSerial */
 
+/* >>> factory ClearSerialData */
 void ClearSerialData(void)
 {
 	for (uint16_t addr = wSerialOp_ADDR; addr != wSerialEnd_ADDR; addr++)
 		gb_write8(addr, 0);
 }
+/* <<< factory ClearSerialData */
 
+/* >>> factory SerialSendBytes */
 SerialSendBytesResult SerialSendBytes(uint16_t hl, uint16_t bc)
 {
 	uint32_t n = bc ? bc : 0x10000u;
@@ -317,7 +346,9 @@ SerialSendBytesResult SerialSendBytes(uint16_t hl, uint16_t bc)
 			return (SerialSendBytesResult){0, 0x80u, hl};
 	}
 }
+/* <<< factory SerialSendBytes */
 
+/* >>> factory SerialRecvBytes */
 SerialRecvBytesResult SerialRecvBytes(uint16_t hl, uint16_t bc)
 {
 	uint32_t n = bc ? bc : 0x10000u;
@@ -335,6 +366,7 @@ SerialRecvBytesResult SerialRecvBytes(uint16_t hl, uint16_t bc)
 			return (SerialRecvBytesResult){0, 0x80u, hl};
 	}
 }
+/* <<< factory SerialRecvBytes */
 
 /* >>> factory DuelTransmissionError */
 /* serial.asm:523-540. The tail (`ld sp, hl` from wDuelReturnAddress, then

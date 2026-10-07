@@ -1,8 +1,10 @@
+/* >>> part includes */
 #include "home/debug_player_coordinates.h"
 
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/debug_player_coordinates.h"
 #include "home/load_animation.h"
@@ -15,12 +17,16 @@
 #define WX_OFS 0x07u
 /* <<< factory statics */
 
+/* >>> part LCDC_WIN_ON */
 #define LCDC_WIN_ON 0x20u
+/* <<< part LCDC_WIN_ON */
 
+/* >>> factory JumpSetWindowOff */
 void JumpSetWindowOff(void)
 {
 	gb_write8(wLCDC_ADDR, (uint8_t)(gb_read8(wLCDC_ADDR) & (uint8_t)~LCDC_WIN_ON));
 }
+/* <<< factory JumpSetWindowOff */
 
 /* >>> factory Func_1c003 */
 void Func_1c003(void)

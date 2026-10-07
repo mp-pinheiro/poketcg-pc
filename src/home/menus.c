@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/menus.h"
 
 #include "generated/constants.h"
@@ -11,6 +12,7 @@
 #include "home/random.h"
 #include "home/text_box.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/menus.h"
 #include "home/sound.h"
@@ -72,11 +74,14 @@
 #define CONTINUE_DUEL_BANK 0x01u
 /* <<< factory statics */
 
+/* >>> part SYM_0 */
 #define SYM_0 0x20
 #define SYM_SPACE 0x00
 #define CARD_SYMBOL_TABLE CardSymbolTable_ADDR
 #define YES_OR_NO_TEXT_ID 0x2f
+/* <<< part SYM_0 */
 
+/* >>> factory InitializeCardListParameters */
 void InitializeCardListParameters(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 {
 	wNumListItems = a;
@@ -95,7 +100,9 @@ void InitializeCardListParameters(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 	wCursorBlinkCounter = 0;
 	wMenuYSeparation = 1;
 }
+/* <<< factory InitializeCardListParameters */
 
+/* >>> factory InitializeMenuParameters */
 void InitializeMenuParameters(uint8_t a, uint16_t *hl)
 {
 	wCurMenuItem = a;
@@ -104,14 +111,18 @@ void InitializeMenuParameters(uint8_t a, uint16_t *hl)
 		gb_write8((uint16_t)(wMenuCursorXOffset_ADDR + i), gb_read8((*hl)++));
 	wCursorBlinkCounter = 0;
 }
+/* <<< factory InitializeMenuParameters */
 
+/* >>> factory SetMenuItem */
 void SetMenuItem(uint8_t a)
 {
 	wCurMenuItem = a;
 	hCurMenuItem = a;
 	wCursorBlinkCounter = 0;
 }
+/* <<< factory SetMenuItem */
 
+/* >>> part tx_symbol_core */
 static TxSymbolResult tx_symbol_core(uint8_t a)
 {
 	uint8_t e = (uint8_t)(SYM_0 - 1);
@@ -127,12 +138,16 @@ static TxSymbolResult tx_symbol_core(uint8_t a)
 	gb_write8((uint16_t)(wDefaultText_ADDR + 2), SYM_SPACE);
 	return (TxSymbolResult){ones, wDefaultText_ADDR};
 }
+/* <<< part tx_symbol_core */
 
+/* >>> factory OneByteNumberToTxSymbol */
 TxSymbolResult OneByteNumberToTxSymbol(uint8_t a)
 {
 	return tx_symbol_core(a);
 }
+/* <<< factory OneByteNumberToTxSymbol */
 
+/* >>> factory OneByteNumberToTxSymbol_PadSpace */
 TxSymbolResult OneByteNumberToTxSymbol_PadSpace(uint8_t a)
 {
 	TxSymbolResult result = tx_symbol_core(a);
@@ -142,7 +157,9 @@ TxSymbolResult OneByteNumberToTxSymbol_PadSpace(uint8_t a)
 	result.a = first;
 	return result;
 }
+/* <<< factory OneByteNumberToTxSymbol_PadSpace */
 
+/* >>> factory OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign */
 TxSymbolResult OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign(uint8_t a)
 {
 	TxSymbolResult result = tx_symbol_core(a);
@@ -159,7 +176,9 @@ TxSymbolResult OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign(uint8_t a)
 	result.hl = hl;
 	return result;
 }
+/* <<< factory OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign */
 
+/* >>> factory CardTypeToSymbolID */
 uint8_t CardTypeToSymbolID(void)
 {
 	uint8_t type = wLoadedCard1Type;
@@ -169,14 +188,18 @@ uint8_t CardTypeToSymbolID(void)
 		return (uint8_t)(type & 7);
 	return (uint8_t)(wLoadedCard1Stage + 8);
 }
+/* <<< factory CardTypeToSymbolID */
 
+/* >>> factory GetCardSymbolData */
 uint8_t GetCardSymbolData(void)
 {
 	uint8_t id = CardTypeToSymbolID();
 	uint16_t address = (uint16_t)(CARD_SYMBOL_TABLE + (uint16_t)id * 2);
 	return gb_read8(address);
 }
+/* <<< factory GetCardSymbolData */
 
+/* >>> factory SetCursorParametersForTextBox */
 CursorTileResult SetCursorParametersForTextBox(uint8_t d, uint8_t e, uint8_t b, uint8_t c)
 {
 	gb_write8(wCurMenuItem_ADDR, 0);
@@ -189,21 +212,27 @@ CursorTileResult SetCursorParametersForTextBox(uint8_t d, uint8_t e, uint8_t b, 
 	gb_write8(wCursorBlinkCounter_ADDR, 0);
 	return (CursorTileResult){.b = b, .c = c, .hl = wMenuInvisibleCursorTile_ADDR};
 }
+/* <<< factory SetCursorParametersForTextBox */
 
+/* >>> factory SetCursorParametersForTextBox_Default */
 CursorTileResult SetCursorParametersForTextBox_Default(uint8_t d, uint8_t e)
 {
 	CursorTileResult result = SetCursorParametersForTextBox(d, e, 0x0f, 0x00);
 	result.f = WaitForButtonAorB().f;
 	return result;
 }
+/* <<< factory SetCursorParametersForTextBox_Default */
 
+/* >>> part CursorRegs */
 /* menus.asm:190-210's tail (`or a; ret`) reloads the tile into a before the
  * write, so DrawCursor's exit a/e/f are fully determined by the tile and the
  * computed BG coordinate -- not garbage. HandleMenuInput's tail jumps into
  * RefreshMenuCursor_CheckPlaySFX (menus.asm:122,135) need that exit state,
  * so it is kept here instead of discarded. */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } CursorRegs;
+/* <<< part CursorRegs */
 
+/* >>> part draw_cursor */
 static CursorRegs draw_cursor(uint8_t tile)
 {
 	uint16_t product = HtimesL((uint16_t)((uint16_t)wCurMenuItem << 8 | wMenuYSeparation));
@@ -215,28 +244,38 @@ static CursorRegs draw_cursor(uint8_t tile)
 	return (CursorRegs){a, (a == 0u) ? 0x80u : 0x00u, d, e, d, e,
 		(uint16_t)(wMenuCursorXOffset_ADDR + 1u)};
 }
+/* <<< part draw_cursor */
 
+/* >>> part DrawCursorRegs */
 static HandleMenuInputResult DrawCursorRegs(uint8_t tile)
 {
 	CursorRegs r = draw_cursor(tile);
 	return (HandleMenuInputResult){r.a, r.e, r.f, r.d};
 }
+/* <<< part DrawCursorRegs */
 
+/* >>> part DrawCursor */
 void DrawCursor(uint8_t a)
 {
 	(void)DrawCursorRegs(a);
 }
+/* <<< part DrawCursor */
 
+/* >>> part EraseCursor */
 void EraseCursor(void)
 {
 	DrawCursor(wMenuInvisibleCursorTile);
 }
+/* <<< part EraseCursor */
 
+/* >>> part DrawCursor2 */
 void DrawCursor2(void)
 {
 	DrawCursor(wMenuVisibleCursorTile);
 }
+/* <<< part DrawCursor2 */
 
+/* >>> part RefreshMenuCursorRegs */
 /* menus.asm:173-184. `and $f; ret nz` (:178-179) only fires when the
  * pre-increment counter's low nibble is non-zero; e is left untouched by it.
  * RefreshMenuCursor_CheckPlaySFX is only ever reached with carry already
@@ -257,12 +296,16 @@ static HandleMenuInputResult RefreshMenuCursorRegs(void)
 		return DrawCursorRegs(wMenuVisibleCursorTile);
 	return DrawCursorRegs(wMenuInvisibleCursorTile);
 }
+/* <<< part RefreshMenuCursorRegs */
 
+/* >>> part RefreshMenuCursor */
 void RefreshMenuCursor(void)
 {
 	(void)RefreshMenuCursorRegs();
 }
+/* <<< part RefreshMenuCursor */
 
+/* >>> part fill_symbol_2x2 */
 /* menus.asm:654-683 always fills a fixed 2x2 block (`lb bc, 2, 2`). Not using
  * the shared FillRectangle: its hl split is backwards vs hardware (H is the
  * per-column step, L the per-row step -- verified against the oracle here;
@@ -277,7 +320,9 @@ static void fill_symbol_2x2(uint8_t tile, uint8_t x, uint8_t y, uint8_t col_step
 		gb_write8((uint16_t)(pos + 1), (uint8_t)(t + col_step));
 	}
 }
+/* <<< part fill_symbol_2x2 */
 
+/* >>> part DrawCardSymbol */
 void DrawCardSymbol(uint8_t d, uint8_t e)
 {
 	uint8_t id = CardTypeToSymbolID();
@@ -297,7 +342,9 @@ void DrawCardSymbol(uint8_t d, uint8_t e)
 	}
 	fill_symbol_2x2(tile, x, y, 1, 2);
 }
+/* <<< part DrawCardSymbol */
 
+/* >>> part DrawNarrowTextBox */
 uint16_t DrawNarrowTextBox(void)
 {
 	uint8_t d = 0, e = 12;
@@ -307,7 +354,9 @@ uint16_t DrawNarrowTextBox(void)
 	DrawRegularTextBox(&hl, 0, 12, 6, d, e);
 	return hl;
 }
+/* <<< part DrawNarrowTextBox */
 
+/* >>> part DrawWideTextBox */
 uint16_t DrawWideTextBox(void)
 {
 	uint8_t d = 0, e = 12;
@@ -317,6 +366,7 @@ uint16_t DrawWideTextBox(void)
 	DrawRegularTextBox(&hl, 0, 20, 6, d, e);
 	return hl;
 }
+/* <<< part DrawWideTextBox */
 
 /* >>> factory DrawTextBox_PrintTextNoDelay */
 /* menus.asm:775-784. Reached by fallthrough from the two callers below, both of
@@ -338,18 +388,23 @@ TextResult DrawTextBox_PrintTextNoDelay(uint8_t a, uint16_t hl)
 }
 /* <<< factory DrawTextBox_PrintTextNoDelay */
 
+/* >>> part DrawNarrowTextBox_PrintTextNoDelay */
 TextResult DrawNarrowTextBox_PrintTextNoDelay(uint16_t hl)
 {
 	DrawNarrowTextBox();
 	return DrawTextBox_PrintTextNoDelay(11, hl);
 }
+/* <<< part DrawNarrowTextBox_PrintTextNoDelay */
 
+/* >>> part DrawWideTextBox_PrintTextNoDelay */
 TextResult DrawWideTextBox_PrintTextNoDelay(uint16_t hl)
 {
 	DrawWideTextBox();
 	return DrawTextBox_PrintTextNoDelay(19, hl);
 }
+/* <<< part DrawWideTextBox_PrintTextNoDelay */
 
+/* >>> part DrawWideTextBox_PrintText */
 TextResult DrawWideTextBox_PrintText(uint16_t hl)
 {
 	uint8_t d = 1, e = 14;
@@ -360,18 +415,24 @@ TextResult DrawWideTextBox_PrintText(uint16_t hl)
 	EnableLCD();
 	return PrintText(hl, d, e);
 }
+/* <<< part DrawWideTextBox_PrintText */
 
+/* >>> part PrintYesOrNoItems */
 ProcessTextHeaderResult PrintYesOrNoItems(uint8_t d, uint8_t e)
 {
 	AdjustCoordinatesForBGScroll(&d, &e);
 	return InitTextPrinting_ProcessTextFromID(d, e, YES_OR_NO_TEXT_ID);
 }
+/* <<< part PrintYesOrNoItems */
 
+/* >>> part PAD_A */
 #define PAD_A        0x01u
 #define PAD_B        0x02u
 #define NTBM_PARAMS  NarrowTextBoxMenuParameters_ADDR
 #define WTBM_PARAMS  WideTextBoxMenuParameters_ADDR
+/* <<< part PAD_A */
 
+/* >>> part WaitForButtonAorB */
 WaitResult WaitForButtonAorB(void)
 {
 	for (;;) {
@@ -390,13 +451,17 @@ WaitResult WaitForButtonAorB(void)
 		}
 	}
 }
+/* <<< part WaitForButtonAorB */
 
+/* >>> part DrawWideTextBox_PrintTextNoDelay_Wait */
 void DrawWideTextBox_PrintTextNoDelay_Wait(uint16_t hl)
 {
 	(void)DrawWideTextBox_PrintTextNoDelay(hl);
 	WaitForWideTextBoxInput();
 }
+/* <<< part DrawWideTextBox_PrintTextNoDelay_Wait */
 
+/* >>> part DrawNarrowTextBox_WaitForInput */
 void DrawNarrowTextBox_WaitForInput(uint16_t hl)
 {
 	(void)DrawNarrowTextBox_PrintTextNoDelay(hl);
@@ -411,13 +476,17 @@ void DrawNarrowTextBox_WaitForInput(uint16_t hl)
 			break;
 	}
 }
+/* <<< part DrawNarrowTextBox_WaitForInput */
 
+/* >>> part DrawWideTextBox_WaitForInput */
 WaitResult DrawWideTextBox_WaitForInput(uint16_t hl)
 {
 	(void)DrawWideTextBox_PrintText(hl);
 	return WaitForWideTextBoxInput();
 }
+/* <<< part DrawWideTextBox_WaitForInput */
 
+/* >>> part WaitForWideTextBoxInput */
 WaitResult WaitForWideTextBoxInput(void)
 {
 	uint16_t params = WTBM_PARAMS;
@@ -433,7 +502,9 @@ WaitResult WaitForWideTextBoxInput(void)
 		}
 	}
 }
+/* <<< part WaitForWideTextBoxInput */
 
+/* >>> part RefreshMenuCursor_CheckPlaySFXRegs */
 /* HandleMenuInput's two callers of RefreshMenuCursor_CheckPlaySFX are tail
  * jumps in the real asm (menus.asm:122 `jr nc`, :135 `jr z` -- not `call`),
  * so the a/e/f state it exits with is exactly what HandleMenuInput itself
@@ -445,6 +516,7 @@ static HandleMenuInputResult RefreshMenuCursor_CheckPlaySFXRegs(void)
 		PlaySFX(a);
 	return RefreshMenuCursorRegs();
 }
+/* <<< part RefreshMenuCursor_CheckPlaySFXRegs */
 
 /* >>> factory RefreshMenuCursor_CheckPlaySFX */
 void RefreshMenuCursor_CheckPlaySFX(void)

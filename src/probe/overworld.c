@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/overworld.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory Func_c6cc */
 static void adapt_Func_c6cc(ProbeState *s)
@@ -724,6 +726,7 @@ static void adapt_PCMenu(ProbeState *s)
 }
 /* <<< factory PCMenu */
 
+/* >>> part probe_entries_overworld */
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -813,3 +816,4 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "PCMenu", adapt_PCMenu },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_overworld */

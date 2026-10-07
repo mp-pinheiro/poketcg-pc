@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/printer.h"
 #include "home/serial.h"
 #include "printer_sink.h"
@@ -11,6 +12,7 @@
 #include "generated/wram.h"
 #include "isr.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 
@@ -188,11 +190,14 @@
 #define PRINTER_QUALITY_PARAMETERS_ADDR (InputDeckName_ADDR + 0x6Cu)
 /* <<< factory statics */
 
+/* >>> part rSB */
 #define rSB 0xFF01u
 #define rSC 0xFF02u
 #define SC_INTERNAL 0x01u
 #define SC_START 0x80u
+/* <<< part rSB */
 
+/* >>> factory SendNextPrinterPacketByte */
 SendNextPrinterPacketByteResult SendNextPrinterPacketByte(void)
 {
 	uint16_t ptr = (uint16_t)(gb_read8(wSerialDataPtr_ADDR) |
@@ -211,7 +216,9 @@ SendNextPrinterPacketByteResult SendNextPrinterPacketByte(void)
 	SendByteThroughSerialData(byte);
 	return (SendNextPrinterPacketByteResult){(uint8_t)(advanced >> 8), byte};
 }
+/* <<< factory SendNextPrinterPacketByte */
 
+/* >>> factory SendByteThroughSerialData */
 void SendByteThroughSerialData(uint8_t a)
 {
 	gb_write8(rSB, a);
@@ -219,19 +226,25 @@ void SendByteThroughSerialData(uint8_t a)
 	gb_write8(rSC, (uint8_t)(SC_START | SC_INTERNAL));
 	printer_serial_byte(a);
 }
+/* <<< factory SendByteThroughSerialData */
 
+/* >>> part increment_sequence */
 static void increment_sequence(void)
 {
 	gb_write8(wPrinterPacketSequence_ADDR, (uint8_t)(gb_read8(wPrinterPacketSequence_ADDR) + 1u));
 }
+/* <<< part increment_sequence */
 
+/* >>> part send_checksum_byte */
 static ExecutePrinterPacketSequenceResult send_checksum_byte(uint8_t byte, uint8_t d, uint8_t e)
 {
 	SendByteThroughSerialData(byte);
 	increment_sequence();
 	return (ExecutePrinterPacketSequenceResult){0x81u, d, e};
 }
+/* <<< part send_checksum_byte */
 
+/* >>> part send_rest_of_data_section */
 static ExecutePrinterPacketSequenceResult send_rest_of_data_section(void)
 {
 	SendNextPrinterPacketByteResult r = SendNextPrinterPacketByte();
@@ -251,7 +264,9 @@ static ExecutePrinterPacketSequenceResult send_rest_of_data_section(void)
 	}
 	return (ExecutePrinterPacketSequenceResult){remaining, r.d, r.e};
 }
+/* <<< part send_rest_of_data_section */
 
+/* >>> factory ExecutePrinterPacketSequence */
 ExecutePrinterPacketSequenceResult ExecutePrinterPacketSequence(uint8_t a, uint8_t d, uint8_t e)
 {
 	switch (a) {
@@ -295,6 +310,7 @@ ExecutePrinterPacketSequenceResult ExecutePrinterPacketSequence(uint8_t a, uint8
 		return (ExecutePrinterPacketSequenceResult){0, d, e};
 	}
 }
+/* <<< factory ExecutePrinterPacketSequence */
 
 /* >>> factory Func_1a14b */
 Func_1a14bResult Func_1a14b(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)

@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/ishiharas_house.h"
 
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/scripting.h"
 #define TRUE 0x01u

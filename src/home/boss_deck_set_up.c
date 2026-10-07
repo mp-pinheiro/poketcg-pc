@@ -1,9 +1,11 @@
+/* >>> part includes */
 #include "home/boss_deck_set_up.h"
 
 #include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/duel.h"
 #include "generated/wram.h"

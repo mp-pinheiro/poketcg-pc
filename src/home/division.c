@@ -1,9 +1,12 @@
+/* >>> part includes */
 #include "home/division.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> factory DivideBCbyDE */
 /* Restoring division hand-ported from poketcg/src/home/division.asm.
  *
  * Divisor 0 yields quotient $FFFF and remainder = dividend. Bug-compatible with
@@ -52,3 +55,4 @@ DivResult DivideBCbyDE(uint16_t bc, uint16_t de)
 
 	return (DivResult){ .quotient = bc, .remainder = hl };
 }
+/* <<< factory DivideBCbyDE */

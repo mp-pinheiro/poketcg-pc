@@ -1,6 +1,9 @@
+/* >>> part includes */
 #include "home/damage_calculation.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory CalculateDamage_VersusDefendingPokemon */
 static void adapt_CalculateDamage_VersusDefendingPokemon(ProbeState *s)
 {
     DamageCalculationResult r = CalculateDamage_VersusDefendingPokemon();
@@ -10,6 +13,7 @@ static void adapt_CalculateDamage_VersusDefendingPokemon(ProbeState *s)
     s->e = r.e;
     s->hl = r.hl;
 }
+/* <<< factory CalculateDamage_VersusDefendingPokemon */
 
 /* >>> factory EstimateDamage_VersusDefendingCard */
 static void adapt_EstimateDamage_VersusDefendingCard(ProbeState *s)
@@ -35,6 +39,7 @@ static void adapt_EstimateDamage_FromDefendingPokemon(ProbeState *s)
 }
 /* <<< factory EstimateDamage_FromDefendingPokemon */
 
+/* >>> factory CalculateDamage_FromDefendingPokemon */
 static void adapt_CalculateDamage_FromDefendingPokemon(ProbeState *s)
 {
     DamageCalculationResult r = CalculateDamage_FromDefendingPokemon();
@@ -44,7 +49,9 @@ static void adapt_CalculateDamage_FromDefendingPokemon(ProbeState *s)
     s->e = r.e;
     s->hl = r.hl;
 }
+/* <<< factory CalculateDamage_FromDefendingPokemon */
 
+/* >>> part probe_entries_damage_calculation */
 const ProbeEntry probe_entries_damage_calculation[] = {
     {"CalculateDamage_VersusDefendingPokemon", adapt_CalculateDamage_VersusDefendingPokemon},
     {"EstimateDamage_VersusDefendingCard", adapt_EstimateDamage_VersusDefendingCard},
@@ -52,3 +59,4 @@ const ProbeEntry probe_entries_damage_calculation[] = {
     {"CalculateDamage_FromDefendingPokemon", adapt_CalculateDamage_FromDefendingPokemon},
     {NULL, NULL},
 };
+/* <<< part probe_entries_damage_calculation */

@@ -1,12 +1,15 @@
+/* >>> part includes */
 #include "home/input.h"
 
 #include "home/serial.h"
 #include "mem.h"
 #include "generated/hram.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/wram.h"
 /* <<< factory statics */
 
+/* >>> part JOYP */
 #define JOYP 0xFF00u
 #define JOYP_GET_BUTTONS 0x10u
 #define JOYP_GET_CTRL_PAD 0x20u
@@ -17,17 +20,22 @@
 #define PAD_SELECT 0x04u
 #define PAD_START 0x08u
 #define PAD_BUTTONS (PAD_A | PAD_B | PAD_SELECT | PAD_START)
+/* <<< part JOYP */
 
+/* >>> part read_joypad */
 static uint8_t read_joypad(void)
 {
 	return gb_read8(JOYP);
 }
+/* <<< part read_joypad */
 
+/* >>> factory SaveButtonsHeld */
 void SaveButtonsHeld(uint8_t c)
 {
 	gb_write8(hKeysHeld_ADDR, c);
 	gb_write8(JOYP, JOYP_GET_NONE);
 }
+/* <<< factory SaveButtonsHeld */
 /* >>> factory ReadJoypad */
 void ReadJoypad(void)
 {
@@ -60,6 +68,7 @@ void ReadJoypad(void)
 }
 /* <<< factory ReadJoypad */
 
+/* >>> factory ClearJoypad */
 void ClearJoypad(uint16_t *hl)
 {
 	uint16_t address = hDPadRepeat_ADDR;
@@ -71,6 +80,7 @@ void ClearJoypad(uint16_t *hl)
 	gb_write8(address, 0);
 	(void)hl;
 }
+/* <<< factory ClearJoypad */
 
 /* >>> factory Reset */
 /* input.asm:43-46: `ld a, [wInitialA]; di; jp Start`. The C port cannot

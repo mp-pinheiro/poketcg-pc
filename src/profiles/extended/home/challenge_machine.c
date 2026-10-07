@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/challenge_machine.h"
 
 #include "generated/text_ids.h"
@@ -9,6 +10,7 @@
 #include "home/process_text.h"
 #include "home/save.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/challenge_machine.h"
 #include "home/random.h"
@@ -158,6 +160,7 @@ static const uint16_t challenge_machine_duel_result_icons[3] = {
 #include "generated/wram.h"
 /* <<< factory statics */
 
+/* >>> factory ChallengeMachine_CheckIfOpponentAlreadySelected */
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
 {
 	uint16_t hl = sChallengeMachineOpponents_ADDR;
@@ -169,7 +172,9 @@ ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint
 	}
 	return (ChallengeMachineCheckResult){hl, a ? 0x00u : 0x80u};
 }
+/* <<< factory ChallengeMachine_CheckIfOpponentAlreadySelected */
 
+/* >>> factory ChallengeMachine_PrintText */
 ChallengeMachinePrintResult ChallengeMachine_PrintText(uint16_t hl, uint8_t b, uint8_t c)
 {
 	uint16_t text = (uint16_t)(gb_read8(hl) | ((uint16_t)gb_read8((uint16_t)(hl + 1u)) << 8));
@@ -177,6 +182,7 @@ ChallengeMachinePrintResult ChallengeMachine_PrintText(uint16_t hl, uint8_t b, u
 	TextResult result = PrintTextNoDelay(text, b, c);
 	return (ChallengeMachinePrintResult){result.hl, b, c};
 }
+/* <<< factory ChallengeMachine_PrintText */
 
 /* >>> factory ChallengeMachine_PickOpponentSequence */
 /* challenge_machine.asm:697-779. No arguments and no register outputs: a/f are

@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/duel_core_status.h"
 
 #include "generated/constants.h"
@@ -5,11 +6,15 @@
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "mem.h"
+/* <<< part includes */
 
+/* >>> part DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
 #define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xdau
 #define DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER 0xe0u
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
+/* <<< part DUELVARS_ARENA_CARD_ATTACHED_DEFENDER */
 
+/* >>> factory IsArenaPokemonAsleepOrPoisoned */
 DuelCoreStatusResult IsArenaPokemonAsleepOrPoisoned(void)
 {
 	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
@@ -26,7 +31,9 @@ DuelCoreStatusResult IsArenaPokemonAsleepOrPoisoned(void)
 		return (DuelCoreStatusResult){low, status.hl, 0x90u};
 	return (DuelCoreStatusResult){low, status.hl, low == 0 ? 0x80u : 0x00u};
 }
+/* <<< factory IsArenaPokemonAsleepOrPoisoned */
 
+/* >>> part discard_attached */
 static DuelCoreStatusDiscardResult discard_attached(uint8_t offset, uint8_t card)
 {
 	DuelistVarResult attached = GetTurnDuelistVariable(offset);
@@ -45,13 +52,18 @@ static DuelCoreStatusDiscardResult discard_attached(uint8_t offset, uint8_t card
 	}
 	return result;
 }
+/* <<< part discard_attached */
 
+/* >>> factory DiscardAttachedPlusPowers */
 DuelCoreStatusDiscardResult DiscardAttachedPlusPowers(void)
 {
 	return discard_attached(DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER, PLUSPOWER);
 }
+/* <<< factory DiscardAttachedPlusPowers */
 
+/* >>> factory DiscardAttachedDefenders */
 DuelCoreStatusDiscardResult DiscardAttachedDefenders(void)
 {
 	return discard_attached(DUELVARS_ARENA_CARD_ATTACHED_DEFENDER, DEFENDER);
 }
+/* <<< factory DiscardAttachedDefenders */

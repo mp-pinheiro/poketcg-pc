@@ -1,8 +1,10 @@
 #ifndef POKETCG_HOME_BOOSTER_PACKS_H
 #define POKETCG_HOME_BOOSTER_PACKS_H
 
+/* >>> part includes */
 #include <stdint.h>
 #include "home/card_id.h"
+/* <<< part includes */
 
 /* >>> factory GetCurrentRarityAmount */
 typedef struct { uint8_t a; uint16_t hl; } RarityAmount;

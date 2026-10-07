@@ -1,6 +1,9 @@
+/* >>> part includes */
 #include "home/sams_practice.h"
 #include "probe.h"
+/* <<< part includes */
 
+/* >>> factory IsAIPracticeScriptedTurn */
 static void adapt_IsAIPracticeScriptedTurn(ProbeState *s)
 {
 	SamsPracticeResult r = IsAIPracticeScriptedTurn(s->a, s->f, s->b, s->c,
@@ -13,7 +16,9 @@ static void adapt_IsAIPracticeScriptedTurn(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
+/* <<< factory IsAIPracticeScriptedTurn */
 
+/* >>> factory SetSamsStartingPlayArea */
 static void adapt_SetSamsStartingPlayArea(ProbeState *s)
 {
 	SamsPracticeResult r = SetSamsStartingPlayArea(s->a, s->f, s->b, s->c,
@@ -26,6 +31,7 @@ static void adapt_SetSamsStartingPlayArea(ProbeState *s)
 	s->e = r.e;
 	s->hl = r.hl;
 }
+/* <<< factory SetSamsStartingPlayArea */
 
 /* >>> factory GetPlayAreaLocationOfRaticateOrRattata */
 static void adapt_GetPlayAreaLocationOfRaticateOrRattata(ProbeState *s)
@@ -45,6 +51,7 @@ static void adapt_AIPerformScriptedTurn(ProbeState *s)
 }
 /* <<< factory AIPerformScriptedTurn */
 
+/* >>> part probe_entries_sams_practice */
 const ProbeEntry probe_entries_sams_practice[] = {
 	{"IsAIPracticeScriptedTurn", adapt_IsAIPracticeScriptedTurn},
 	{"SetSamsStartingPlayArea", adapt_SetSamsStartingPlayArea},
@@ -52,3 +59,4 @@ const ProbeEntry probe_entries_sams_practice[] = {
 	{ "AIPerformScriptedTurn", adapt_AIPerformScriptedTurn },
 	{NULL, NULL},
 };
+/* <<< part probe_entries_sams_practice */

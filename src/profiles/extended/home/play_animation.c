@@ -1,8 +1,10 @@
+/* >>> part includes */
 #include "home/play_animation.h"
 
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/hram.h"
 #include "home/switch_rom.h"
@@ -20,8 +22,11 @@
 #include "home/load_animation.h"
 /* <<< factory statics */
 
+/* >>> part rQUEUE */
 #define rQUEUE wAnimationQueue_ADDR
+/* <<< part rQUEUE */
 
+/* >>> factory CheckAnyAnimationPlaying */
 AnimationStatusResult CheckAnyAnimationPlaying(void)
 {
 	uint8_t value = (uint8_t)(gb_read8(wActiveScreenAnim_ADDR) & gb_read8(wd4c0_ADDR));
@@ -38,18 +43,23 @@ AnimationStatusResult CheckAnyAnimationPlaying(void)
 	}
 	return (AnimationStatusResult){value, flags};
 }
+/* <<< factory CheckAnyAnimationPlaying */
+/* >>> factory SetDoFrameFunction */
 FrameFunctionResult SetDoFrameFunction(uint16_t hl)
 {
 	gb_write8(wDoFrameFunction_ADDR, (uint8_t)hl);
 	gb_write8(wDoFrameFunction_ADDR + 1u, (uint8_t)(hl >> 8));
 	return (FrameFunctionResult){(uint8_t)(hl >> 8), (uint8_t)((hl >> 8) ? 0 : 0x80), hl};
 }
+/* <<< factory SetDoFrameFunction */
 
+/* >>> factory ResetDoFrameFunction */
 FrameFunctionResult ResetDoFrameFunction(uint16_t hl)
 {
 	SetDoFrameFunction(0);
 	return (FrameFunctionResult){0, 0x80, hl};
 }
+/* <<< factory ResetDoFrameFunction */
 
 /* >>> factory PlayDuelAnimation */
 /* play_animation.asm:26-62 */

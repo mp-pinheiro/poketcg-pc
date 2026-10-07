@@ -1,8 +1,10 @@
+/* >>> part includes */
 #include "home/attacks.h"
 
 #include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "generated/hram.h"
 #include "home/core.h"
@@ -30,6 +32,7 @@
 #include "home/attacks.h"
 /* <<< factory statics */
 
+/* >>> factory RetrievePlayAreaAIScoreFromBackup2 */
 /* engine/duel/ai/attacks.asm:26-41 */
 void RetrievePlayAreaAIScoreFromBackup2(void)
 {
@@ -38,6 +41,7 @@ void RetrievePlayAreaAIScoreFromBackup2(void)
 			  gb_read8((uint16_t)(wTempPlayAreaAIScore_ADDR + i)));
 	gb_write8(wAIScore_ADDR, gb_read8(wTempAIScore_ADDR));
 }
+/* <<< factory RetrievePlayAreaAIScoreFromBackup2 */
 
 /* >>> factory GetAIScoreOfAttack */
 /* attacks.asm .check_if_kos_bench: how many of the turn holder's benched

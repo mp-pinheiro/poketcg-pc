@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_STARTER_DECK_H
 #define POKETCG_HOME_STARTER_DECK_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory CopyDeckNameAndCards */
 void CopyDeckNameAndCards(uint8_t a, uint16_t hl);

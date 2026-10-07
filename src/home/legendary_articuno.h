@@ -1,7 +1,9 @@
 #ifndef POKETCG_HOME_LEGENDARY_ARTICUNO_H
 #define POKETCG_HOME_LEGENDARY_ARTICUNO_H
 
+/* >>> part includes */
 #include <stdint.h>
+/* <<< part includes */
 
 /* >>> factory ScoreLegendaryArticunoCards */
 void ScoreLegendaryArticunoCards(void);

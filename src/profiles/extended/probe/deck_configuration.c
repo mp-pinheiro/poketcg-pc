@@ -1,7 +1,9 @@
+/* >>> part includes */
 #include "home/deck_configuration.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "probe.h"
+/* <<< part includes */
 
 /* >>> factory DecrementDeckCardsInCollection */
 static void adapt_DecrementDeckCardsInCollection(ProbeState *s)
@@ -753,6 +755,7 @@ static void adapt_ModifyDeckConfiguration(ProbeState *s)
 }
 /* <<< factory ModifyDeckConfiguration */
 
+/* >>> part probe_entries_deck_configuration */
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -842,3 +845,4 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "ModifyDeckConfiguration", adapt_ModifyDeckConfiguration },
 	{ NULL, NULL },
 };
+/* <<< part probe_entries_deck_configuration */

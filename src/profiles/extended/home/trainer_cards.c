@@ -1,3 +1,4 @@
+/* >>> part includes */
 #include "home/trainer_cards.h"
 
 #include "generated/text_ids.h"
@@ -5,6 +6,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* <<< part includes */
 /* >>> factory statics */
 #include "home/card_id_bus.h"
 #include "generated/wram.h"
@@ -280,6 +282,7 @@
 #include "home/core.h"
 /* <<< factory statics */
 
+/* >>> part cp_flags */
 /* The exit F register of a `cp n` and of an `or a`, for the decisions whose
  * carry is the verdict and whose a register becomes the card parameter. */
 static uint8_t cp_flags(uint8_t a, uint8_t n)
@@ -289,11 +292,14 @@ static uint8_t cp_flags(uint8_t a, uint8_t n)
 		| (((a & 0x0Fu) < (n & 0x0Fu)) ? 0x20u : 0u)
 		| ((a < n) ? 0x10u : 0u));
 }
+/* <<< part cp_flags */
 
+/* >>> part or_a_flags */
 static uint8_t or_a_flags(uint8_t a)
 {
 	return a == 0u ? 0x80u : 0x00u;
 }
+/* <<< part or_a_flags */
 
 
 /* >>> factory RemoveCardFromList */
@@ -2726,6 +2732,7 @@ AIDecideResult AIPlay_Bill(uint8_t d, uint8_t e)
 }
 /* <<< factory AIPlay_Bill */
 
+/* >>> part AIDecide_Defender1 */
 AIDecideParameterResult AIDecide_Defender1(uint8_t d)
 {
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
@@ -2780,6 +2787,8 @@ AIDecideParameterResult AIDecide_Defender1(uint8_t d)
 		return (AIDecideParameterResult){left, or_a_flags(left), d};
 	return (AIDecideParameterResult){left, 0x10u, d};
 }
+/* <<< part AIDecide_Defender1 */
+/* >>> part AIDecide_Defender2 */
 AIDecideParameterResult AIDecide_Defender2(uint8_t d)
 {
 	AttackFlagResult recoil = CheckLoadedAttackFlag(ATTACK_FLAG1_ADDRESS | HIGH_RECOIL_F);
@@ -2808,6 +2817,7 @@ AIDecideParameterResult AIDecide_Defender2(uint8_t d)
 		return (AIDecideParameterResult){left, or_a_flags(left), damage};
 	return (AIDecideParameterResult){left, 0x10u, damage};
 }
+/* <<< part AIDecide_Defender2 */
 /* >>> factory AIPlay_Defender */
 /* trainer_cards.asm:594-601 */
 AIDecideResult AIPlay_Defender(uint8_t d, uint8_t e)
@@ -3664,6 +3674,7 @@ AIDecideParameterResult AIDecide_PokemonCenter(uint8_t d)
 }
 /* <<< factory AIDecide_PokemonCenter */
 
+/* >>> part AIDecide_PlusPower1 */
 AIDecideParameterResult AIDecide_PlusPower1(uint8_t d)
 {
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
@@ -3737,6 +3748,8 @@ AIDecideParameterResult AIDecide_PlusPower1(uint8_t d)
 		attack = SECOND_ATTACK;
 	}
 }
+/* <<< part AIDecide_PlusPower1 */
+/* >>> part AIDecide_PlusPower2 */
 AIDecideParameterResult AIDecide_PlusPower2(uint8_t d)
 {
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
@@ -3773,6 +3786,7 @@ AIDecideParameterResult AIDecide_PlusPower2(uint8_t d)
 		return (AIDecideParameterResult){(uint8_t)defender, 0x00u, d};
 	return (AIDecideParameterResult){(uint8_t)defender, 0x10u, d};
 }
+/* <<< part AIDecide_PlusPower2 */
 /* >>> factory AIPlay_PlusPower */
 AIDecideResult AIPlay_PlusPower(uint8_t d, uint8_t e)
 {
@@ -4206,6 +4220,7 @@ AIDecidePotionPhase10Result AIDecide_Potion_Phase10(uint8_t d)
 }
 /* <<< factory AIDecide_Potion_Phase10 */
 
+/* >>> part AIDecide_SuperPotion1 */
 AIDecideParameterResult AIDecide_SuperPotion1(uint8_t d)
 {
 	AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat(d);
@@ -4237,6 +4252,8 @@ AIDecideParameterResult AIDecide_SuperPotion1(uint8_t d)
 		return (AIDecideParameterResult){remaining, or_a_flags(remaining), d};
 	return (AIDecideParameterResult){e, 0x10u, d};
 }
+/* <<< part AIDecide_SuperPotion1 */
+/* >>> part AIDecide_SuperPotion2 */
 AIDecideParameterResult AIDecide_SuperPotion2(uint8_t d)
 {
 	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
@@ -4323,6 +4340,7 @@ AIDecideParameterResult AIDecide_SuperPotion2(uint8_t d)
 		return (AIDecideParameterResult){e, 0x10u, d};
 	}
 }
+/* <<< part AIDecide_SuperPotion2 */
 /* >>> factory AIPlay_SuperPotion */
 AIDecideResult AIPlay_SuperPotion(uint8_t d, uint8_t e)
 {

@@ -1,12 +1,17 @@
+/* >>> part includes */
 #include "home/card_storage.h"
 #include <stddef.h>
+/* <<< part includes */
 
 
+/* >>> part card_id_is_valid */
 static uint8_t card_id_is_valid(CardId id)
 {
 	return (uint8_t)(id <= CARD_ID_MAX);
 }
+/* <<< part card_id_is_valid */
 
+/* >>> part CompressCardIdDeck */
 uint8_t CompressCardIdDeck(const CardId *cards, uint8_t *compressed)
 {
 	if (cards == NULL || compressed == NULL)
@@ -33,7 +38,9 @@ uint8_t CompressCardIdDeck(const CardId *cards, uint8_t *compressed)
 		*out++ = (uint8_t)cards[56u + bit];
 	return (uint8_t)(out - compressed == CARD_DECK_COMPRESSED_SIZE);
 }
+/* <<< part CompressCardIdDeck */
 
+/* >>> part DecompressCardIdDeck */
 uint8_t DecompressCardIdDeck(const uint8_t *compressed, CardId *cards)
 {
 	if (compressed == NULL || cards == NULL)
@@ -49,3 +56,4 @@ uint8_t DecompressCardIdDeck(const uint8_t *compressed, CardId *cards)
 		cards[56u + bit] = (CardId)(*in++ | ((command >> (7u - bit) & 1u) << 8));
 	return (uint8_t)(in - compressed == CARD_DECK_COMPRESSED_SIZE);
 }
+/* <<< part DecompressCardIdDeck */
