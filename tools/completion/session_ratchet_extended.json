@@ -85,5 +85,8 @@
   },
   "three-palette-screens": {
     "confirmed_ordinal": 25250
+  },
+  "vanilla-save-import": {
+    "confirmed_ordinal": 2013
   }
 }

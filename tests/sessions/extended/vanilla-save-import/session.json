@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "A vanilla diary save converted by poketcg-extended --convert-vanilla-save (from tests/sessions/seed-built-decks): the Extended ROM offers Continue from Diary with four medals and the 228-card album, continues in Mason Laboratory, and opens the converted built deck in Modify Deck (60 cards from the compressed deck storage)",
+  "name": "vanilla-save-import",
+  "ordinals": 2013,
+  "pokes": {},
+  "recorded": "2026-10-07T16:11:39+00:00",
+  "save": "seed-built-decks.extended.sav",
+  "save_sha256": "a146bc0363131508b6981ba76a640a7a28d9f0df3c190b8d327717d1a9ca637c",
+  "schema": 1
+}
