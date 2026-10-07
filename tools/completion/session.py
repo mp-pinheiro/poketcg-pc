@@ -168,6 +168,9 @@ def _isr_sites() -> tuple[dict[tuple[int | None, int], str], int, frozenset[int]
     credits = _home_site(rom, "Func_1d765", 0x82, 0xEA)
     if credits is not None:
         events[credits] = "@Func_1d765"
+    lyc_arm = _home_site(rom, "EnableInt_LYCoincidence", 0x0C, 0xE1)
+    if lyc_arm is not None:
+        events[(None, lyc_arm[1])] = "@EnableInt_LYCoincidence"
     halt = _home_site(rom, "WaitForVBlank", 0x0D, 0x00)
     if halt is None:
         raise SystemExit("WaitForVBlank is missing from the profile symbols")
@@ -1087,8 +1090,10 @@ def lag_track(records: bytes, calls: bytes = b"", vblank_writes: bytes = b"", st
 
 
 def native_save_file(image: bytes) -> bytes:
-    """The port's save container (src/persistence.c): `PKSR`, version 1, the
-    payload size and an FNV-1a checksum, then the 32 KiB cartridge RAM."""
+    """The port's save container (src/persistence.c): `PKSR`, the version, the
+    payload size and an FNV-1a checksum, then the 32 KiB cartridge RAM. Vanilla
+    is version 1; other profiles are version 2 with their four-byte save tag and
+    schema between the header and the payload."""
     if len(image) != refstream.SAVE_SIZE:
         raise SessionError(f"a save image is {refstream.SAVE_SIZE} bytes, not {len(image)}")
     digest = 2166136261

@@ -45,6 +45,7 @@ void frame_boundary_busy_wait(void);
 enum {
 	ISR_SITE_DISABLE_LCD = 0,
 	ISR_SITE_CREDITS_ARM = 1,
+	ISR_SITE_LYC_ARM = 2,
 };
 void frame_boundary_isr_site(unsigned site);
 /* Timer sync points: every routine through which game code observes

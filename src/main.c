@@ -244,6 +244,8 @@ static int load_isr_sites(const char *path, IsrTrack *track)
 			track->site_event[track->sites] = ISR_SITE_DISABLE_LCD;
 		else if (strcmp(line, "@Func_1d765") == 0)
 			track->site_event[track->sites] = ISR_SITE_CREDITS_ARM;
+		else if (strcmp(line, "@EnableInt_LYCoincidence") == 0)
+			track->site_event[track->sites] = ISR_SITE_LYC_ARM;
 		else if (line[0] != '@')
 			track->site_fn[track->sites] = routine_address(line);
 		track->sites++;

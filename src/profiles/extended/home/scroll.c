@@ -1,4 +1,5 @@
 #include "home/scroll.h"
+#include "home/frames.h"
 
 #include "generated/rom.h"
 #include "generated/wram.h"
@@ -69,6 +70,7 @@ void EnableInt_LYCoincidence(void)
 {
 	gb_write8(rSTAT, (uint8_t)(gb_read8(rSTAT) | STAT_LYC));
 	gb_write8(rIE, (uint8_t)(gb_read8(rIE) | IE_STAT));
+	frame_boundary_isr_site(ISR_SITE_LYC_ARM);
 }
 
 void DisableInt_LYCoincidence(void)
