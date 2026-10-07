@@ -133,6 +133,12 @@ class Profile:
     def receipt_path(self, root: Path = ROOT) -> Path:
         return root / str(self.evidence["receipt_namespace"])
 
+    def hatch_registry_path(self, root: Path = ROOT) -> Path:
+        return root / str(self.evidence["hatch_registry"])
+
+    def hatch_ratchet_path(self, root: Path = ROOT) -> Path:
+        return root / str(self.evidence["hatch_ratchet"])
+
     def artifact_path(self, name: str, root: Path = ROOT) -> Path:
         value = self.artifacts.get(name)
         if not isinstance(value, str) or not value:
@@ -225,7 +231,8 @@ def _validate_profile(name: str, raw: Any) -> Profile:
         value = _require(fields["artifacts"], key, f"profile {name}.artifacts")
         if not isinstance(value, str) or not value:
             raise ProfileError(f"profile {name}.artifacts.{key} is invalid")
-    for key in ("oracle_namespace", "session_namespace", "case_namespace", "receipt_namespace"):
+    for key in ("oracle_namespace", "session_namespace", "case_namespace", "receipt_namespace",
+                "hatch_registry", "hatch_ratchet"):
         value = _require(fields["evidence"], key, f"profile {name}.evidence")
         if not isinstance(value, str) or not value:
             raise ProfileError(f"profile {name}.evidence.{key} is invalid")

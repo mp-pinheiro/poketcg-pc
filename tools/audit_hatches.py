@@ -13,11 +13,12 @@ turn dispatch, _AIProcessHandTrainerCards):
 A third symptom is visible from the C alone: a factory body with no calls and
 no bus access while the disassembly's body is more than a return.
 
-Every routine relying on one of these must be declared in tests/hatches.py with
+Every routine relying on one of these must be declared in the profile's hatch
+registry (tests/hatches.py for vanilla) with
 a kind. `never-returns` (a loop the asm never leaves), `hardware-only` (IR,
 printer, serial) and `link-only` are facts about the ROM. `unaudited` is debt:
 it passes the routine stage so the grind can proceed, and the release stage
-ratchets it: the count may only fall below tools/oracle/hatch_ratchet.json,
+ratchets it: the count may only fall below the profile's hatch ratchet,
 which `--write-ratchet` lowers, so a landing that adds no debt is not blocked
 by the debt it inherited. An undeclared hatch fails both stages, so a new stub
 cannot be introduced.
@@ -48,7 +49,7 @@ from audit_oracle_cases import load_modules
 
 HATCH_KINDS = {"never-returns", "hardware-only", "link-only", "unaudited"}
 RELEASE_BLOCKING = {"unaudited"}
-RATCHET = ROOT / "tools" / "oracle" / "hatch_ratchet.json"
+RATCHET = PROFILE.hatch_ratchet_path(ROOT)
 LABEL = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)::?\s*(;.*)?$")
 FACTORY = re.compile(r"^/\* >>> factory (\w+) \*/\n(.*?)\n/\* <<< factory \1 \*/", re.DOTALL | re.MULTILINE)
 CALL = re.compile(r"\b([A-Za-z_]\w*)\s*\(")
@@ -57,7 +58,7 @@ TRIVIAL_ASM = 3  # `ld a, X / scf / ret` and shorter are real empty bodies
 
 
 def load_hatches() -> dict[str, dict[str, str]]:
-    spec = importlib.util.spec_from_file_location("hatches", ROOT / "tests" / "hatches.py")
+    spec = importlib.util.spec_from_file_location("hatches", PROFILE.hatch_registry_path(ROOT))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return dict(getattr(module, "HATCHES", {}))
@@ -168,7 +169,8 @@ def main() -> int:
 
     for fn, mechanisms in sorted(uses.items()):
         if fn not in hatches:
-            print(f"HATCH {fn}: {'/'.join(sorted(mechanisms))} case without a declared hatch in tests/hatches.py")
+            print(f"HATCH {fn}: {'/'.join(sorted(mechanisms))} case without a declared hatch in "
+                  f"{PROFILE.hatch_registry_path(ROOT).relative_to(ROOT)}")
             failures += 1
     for fn, file in sorted(hollow.items()):
         if fn not in hatches:

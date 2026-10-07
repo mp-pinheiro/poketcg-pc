@@ -35,7 +35,9 @@
         "oracle_namespace": "vanilla",
         "session_namespace": "tests/sessions",
         "case_namespace": "tests/cases",
-        "receipt_namespace": "tools/oracle/mutation_receipts"
+        "receipt_namespace": "tools/oracle/mutation_receipts",
+        "hatch_registry": "tests/hatches.py",
+        "hatch_ratchet": "tools/oracle/hatch_ratchet.json"
       },
       "save": {
         "tag": "VANL",
@@ -106,7 +108,9 @@
         "oracle_namespace": "extended",
         "session_namespace": "tests/sessions/extended",
         "case_namespace": "tests/profiles/extended/cases",
-        "receipt_namespace": "tools/oracle/mutation_receipts/extended"
+        "receipt_namespace": "tools/oracle/mutation_receipts/extended",
+        "hatch_registry": "tests/profiles/extended/hatches.py",
+        "hatch_ratchet": "tools/oracle/hatch_ratchet_extended.json"
       },
       "save": {
         "tag": "EXTD",
