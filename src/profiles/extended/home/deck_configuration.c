@@ -2002,9 +2002,9 @@ CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)
 	CardId previous = 0u;
 	uint16_t hl = wCurDeckCards_ADDR;
 	uint16_t de = wUniqueDeckCardList_ADDR;
-	for (uint8_t i = 0u; i <= DECK_SIZE; i++) {
+	for (;;) {
 		CardId card = card_id_read(&hl);
-		if (card == previous && card != 0u)
+		if (card == previous)
 			continue;
 		previous = card;
 		card_id_write(&de, card);
