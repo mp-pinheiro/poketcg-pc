@@ -19285,7 +19285,7 @@ CASES = {
             'entry_sp': 0xDFE4,
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
-        {   'keys': [0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x02],
+        {   'keys': [0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02],
             'wram': {   0xFF97: b'\xc2',
                         0xFF9D: b'\x00',
                         0xFFA0: b'\x00',
@@ -19310,7 +19310,7 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'keys': [0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x02],
+            'keys': [0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02],
             'wram': {   0xFF97: b'\xc2',
                         0xFF9D: b'\x00',
                         0xFFA0: b'\x00',
@@ -24399,6 +24399,3 @@ CASES["Heal_OncePerTurnCheck"][3]["instruction_budget"] = 0x1E8480
 CASES["Heal_OncePerTurnCheck"][3]["cycle_budget"] = 0x7A1200
 SCHEMA2_CASES["Heal_OncePerTurnCheck"][3]["instruction_budget"] = 0x1E8480
 SCHEMA2_CASES["Heal_OncePerTurnCheck"][3]["cycle_budget"] = 0x7A1200
-for _index in (1, 2):
-    SCHEMA2_CASES["DevolutionSpray_PlayerSelection"][_index]["evidence"] = "native-stress"
-    SCHEMA2_CASES["DevolutionSpray_PlayerSelection"][_index]["reason"] = "Key-driven selection whose isolated gbref run consumes the key timeline on a different screen than the native probe; the PyBoy oracle still checks it."
