@@ -1,0 +1,9 @@
+{
+  "fn": "Firegiver_AddToHandEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Firegiver_AddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010\", \"49850\": \"3b\", \"50432\": \"ff\", \"51899\": \"80\", \"51906\": \"09\", \"52147\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Firegiver_AddToHandEffect\", \"mismatches\": {\"bus\": {\"address\": 50432, \"reference\": \"1010103bff800900c2\", \"native\": \"1010103b00800900c2\", \"reference_size\": 66, \"native_size\": 66, \"spans\": [[49664, 60], [49850, 1], [50432, 1], [51899, 1], [51906, 1], [52147, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"Firegiver_AddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010\", \"49850\": \"3b\", \"50432\": \"ff\", \"51899\": \"80\", \"51906\": \"09\", \"52147\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

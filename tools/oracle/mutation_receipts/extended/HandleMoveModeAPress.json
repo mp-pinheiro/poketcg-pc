@@ -1,0 +1,9 @@
+{
+  "fn": "HandleMoveModeAPress",
+  "case": "tests/profiles/extended/cases/script.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleMoveModeAPress\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 2, \"d\": 0, \"e\": 85, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 30248, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53427\": \"5c4a\", \"53430\": \"43044404\", \"54044\": \"011204\", \"54049\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleMoveModeAPress\", \"mismatches\": {\"a\": [1, 165], \"f\": [16, 0], \"d\": [0, 255], \"hl\": [30248, 21413], \"bus\": {\"address\": 53427, \"reference\": \"5c4a430444\", \"native\": \"0000000000\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[53427, 2], [53430, 4], [54044, 3], [54049, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleMoveModeAPress\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 2, \"d\": 0, \"e\": 85, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 30248, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53427\": \"5c4a\", \"53430\": \"43044404\", \"54044\": \"011204\", \"54049\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

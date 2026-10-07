@@ -92,7 +92,7 @@ def main() -> int:
     parser.add_argument("--mutation", type=Path,
                         help="JSON file with source, source_symbol, before and after, used instead of the case module's MUTATIONS entry")
     parser.add_argument("--receipt", type=Path,
-                        help="receipt path (default tools/oracle/mutation_receipts/<fn>.json)")
+                        help="receipt path (default <profile receipt namespace>/<fn>.json)")
     args = parser.parse_args()
     case_path = (ROOT / args.case).resolve()
     module = load_case(case_path)
@@ -176,7 +176,7 @@ def main() -> int:
     if restored.returncode != 0 or comparison_status(restored) != "PASS":
         raise SystemExit(f"MUTATION_RESTORE_FAILED: {restored.stdout or restored.stderr}")
 
-    receipt = args.receipt if args.receipt else ROOT / "tools/oracle/mutation_receipts" / f"{args.fn}.json"
+    receipt = args.receipt if args.receipt else PROFILE.receipt_path(ROOT) / f"{args.fn}.json"
     if not receipt.is_absolute():
         receipt = ROOT / receipt
     receipt.parent.mkdir(parents=True, exist_ok=True)

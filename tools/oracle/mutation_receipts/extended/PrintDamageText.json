@@ -1,0 +1,9 @@
+{
+  "fn": "PrintDamageText",
+  "case": "tests/profiles/extended/cases/commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintDamageText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"2203\", \"52323\": \"00\", \"52337\": \"08\", \"52741\": \"0000\", \"52793\": \"0100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintDamageText\", \"mismatches\": {\"bus\": {\"address\": 52741, \"reference\": \"2203000800000100\", \"native\": \"2203000801000100\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51923, 2], [52323, 1], [52337, 1], [52741, 2], [52793, 2]]}}}\n",
+  "restored": "{\"fn\": \"PrintDamageText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"2203\", \"52323\": \"00\", \"52337\": \"08\", \"52741\": \"0000\", \"52793\": \"0100\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,9 +1,9 @@
 {
   "fn": "PrintEmptyPCPackName",
-  "case": "tests/profiles/extended/cases/mail.py",
-  "index": 0,
+  "case": "tests/cases/mail.py",
+  "index": 1,
   "status": "RED",
-  "baseline": "{\"fn\": \"PrintEmptyPCPackName\", \"registers\": {\"a\": 14, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38978\": \"0f\"}}, \"wram\": {\"53514\": \"00\", \"65450\": \"5399\", \"65453\": \"0e\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"PrintEmptyPCPackName\", \"mismatches\": {\"bus\": {\"address\": 65450, \"reference\": \"0053990e\", \"native\": \"00cf990a\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[53514, 1], [65450, 2], [65453, 1]]}}}\n",
-  "restored": "{\"fn\": \"PrintEmptyPCPackName\", \"registers\": {\"a\": 14, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38978\": \"0f\"}}, \"wram\": {\"53514\": \"00\", \"65450\": \"5399\", \"65453\": \"0e\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"PrintEmptyPCPackName\", \"registers\": {\"a\": 14, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"39246\": \"00\"}}, \"wram\": {\"53533\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintEmptyPCPackName\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintEmptyPCPackName\", \"registers\": {\"a\": 14, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"39246\": \"00\"}}, \"wram\": {\"53533\": \"00\"}}, \"status\": \"PASS\"}\n"
 }

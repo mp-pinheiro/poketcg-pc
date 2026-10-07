@@ -1,0 +1,9 @@
+{
+  "fn": "FireBlast_CheckEnergy",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FireBlast_CheckEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"frame_budget_reached\": 0, \"hl\": 165, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FireBlast_CheckEnergy\", \"mismatches\": {\"hl\": [165, 0]}}\n",
+  "restored": "{\"fn\": \"FireBlast_CheckEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"frame_budget_reached\": 0, \"hl\": 165, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

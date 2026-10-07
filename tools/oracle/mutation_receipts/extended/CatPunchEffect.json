@@ -1,0 +1,9 @@
+{
+  "fn": "CatPunchEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CatPunchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"52323\": \"83\", \"52341\": \"01\", \"52377\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CatPunchEffect\", \"mismatches\": {\"bus\": {\"address\": 52323, \"reference\": \"01830100c2\", \"native\": \"01820100c2\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50159, 1], [52323, 1], [52341, 1], [52377, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CatPunchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"52323\": \"83\", \"52341\": \"01\", \"52377\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

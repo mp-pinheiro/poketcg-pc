@@ -1,0 +1,9 @@
+{
+  "fn": "ClefairyMetronome_UseAttackEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClefairyMetronome_UseAttackEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"01\", \"51899\": \"80\", \"51906\": \"01\", \"52154\": \"000000\", \"52309\": \"0000\", \"52333\": \"00\", \"52340\": \"00\", \"52382\": \"03\", \"52781\": \"0000\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClefairyMetronome_UseAttackEffect\", \"mismatches\": {\"bus\": {\"address\": 52382, \"reference\": \"00000000030000c200\", \"native\": \"00000000000000c200\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [52154, 3], [52309, 2], [52333, 1], [52340, 1], [52382, 1], [52781, 2], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"ClefairyMetronome_UseAttackEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"01\", \"51899\": \"80\", \"51906\": \"01\", \"52154\": \"000000\", \"52309\": \"0000\", \"52333\": \"00\", \"52340\": \"00\", \"52382\": \"03\", \"52781\": \"0000\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

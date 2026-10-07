@@ -1,0 +1,9 @@
+{
+  "fn": "ScienceClubLobbyAfterDuel",
+  "case": "tests/profiles/extended/cases/science_club_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScienceClubLobbyAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 27083, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScienceClubLobbyAfterDuel\", \"mismatches\": {\"hl\": [27083, 27258]}}\n",
+  "restored": "{\"fn\": \"ScienceClubLobbyAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 27083, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}

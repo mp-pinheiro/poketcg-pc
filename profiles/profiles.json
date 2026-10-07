@@ -34,7 +34,8 @@
       "evidence": {
         "oracle_namespace": "vanilla",
         "session_namespace": "tests/sessions",
-        "case_namespace": "tests/cases"
+        "case_namespace": "tests/cases",
+        "receipt_namespace": "tools/oracle/mutation_receipts"
       },
       "save": {
         "tag": "VANL",
@@ -104,7 +105,8 @@
       "evidence": {
         "oracle_namespace": "extended",
         "session_namespace": "tests/sessions/extended",
-        "case_namespace": "tests/profiles/extended/cases"
+        "case_namespace": "tests/profiles/extended/cases",
+        "receipt_namespace": "tools/oracle/mutation_receipts/extended"
       },
       "save": {
         "tag": "EXTD",

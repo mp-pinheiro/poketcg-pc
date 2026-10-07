@@ -1,9 +1,9 @@
 {
   "fn": "ChallengeMachine_PrintScores",
-  "case": "tests/profiles/extended/cases/challenge_machine.py",
-  "index": 0,
+  "case": "tests/cases/challenge_machine.py",
+  "index": 1,
   "status": "RED",
-  "baseline": "{\"fn\": \"ChallengeMachine_PrintScores\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"41728\": \"3412\"}}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38912\": \"000020\"}}, \"wram\": {\"50416\": \"00a200000000\", \"54433\": \"000020\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_PrintScores\", \"mismatches\": {\"bus\": {\"address\": 54433, \"reference\": \"00000000000020\", \"native\": \"00000000442128\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[50416, 6], [54433, 3]]}, \"vram\": \"reference/native state differs\"}}\n",
-  "restored": "{\"fn\": \"ChallengeMachine_PrintScores\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"41728\": \"3412\"}}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38912\": \"000020\"}}, \"wram\": {\"50416\": \"00a200000000\", \"54433\": \"000020\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"ChallengeMachine_PrintScores\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"41472\": \"3412\"}}, \"vram\": {\"0\": {\"38912\": \"4e2620\"}}, \"wram\": {\"50432\": \"00a200000000\", \"54452\": \"4e2620\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_PrintScores\", \"mismatches\": {\"bus\": {\"address\": 54452, \"reference\": \"000000004e2620\", \"native\": \"00000000222021\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[50432, 6], [54452, 3]]}, \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"ChallengeMachine_PrintScores\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"41472\": \"3412\"}}, \"vram\": {\"0\": {\"38912\": \"4e2620\"}}, \"wram\": {\"50432\": \"00a200000000\", \"54452\": \"4e2620\"}}, \"status\": \"PASS\"}\n"
 }

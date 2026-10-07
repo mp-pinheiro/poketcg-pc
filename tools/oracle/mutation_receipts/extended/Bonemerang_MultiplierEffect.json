@@ -1,0 +1,9 @@
+{
+  "fn": "Bonemerang_MultiplierEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Bonemerang_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Bonemerang_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52514, \"reference\": \"1e001e1e020100021e\", \"native\": \"1e001e1e010100021e\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 4], [52514, 4], [52745, 2], [52756, 2]]}}}\n",
+  "restored": "{\"fn\": \"Bonemerang_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

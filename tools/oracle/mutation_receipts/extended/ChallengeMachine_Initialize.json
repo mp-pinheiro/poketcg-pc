@@ -1,0 +1,9 @@
+{
+  "fn": "ChallengeMachine_Initialize",
+  "case": "tests/profiles/extended/cases/challenge_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChallengeMachine_Initialize\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47682\": \"e395aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_Initialize\", \"mismatches\": {\"f\": [192, 128]}}\n",
+  "restored": "{\"fn\": \"ChallengeMachine_Initialize\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47682\": \"e395aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

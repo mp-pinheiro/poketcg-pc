@@ -1,0 +1,9 @@
+{
+  "fn": "SuperEnergyRetrieval_DiscardAndAddToHandEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SuperEnergyRetrieval_DiscardAndAddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 52, \"d\": 197, \"e\": 3, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 49905, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49667\": \"0101\", \"49730\": \"0304\", \"49901\": \"0002\", \"50432\": \"0304ff\", \"52151\": \"00\", \"65431\": \"c2\", \"65440\": \"03040304ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SuperEnergyRetrieval_DiscardAndAddToHandEffect\", \"mismatches\": {\"bus\": {\"address\": 50432, \"reference\": \"030400020304ff00c2\", \"native\": \"0304000200000000c2\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[49667, 2], [49730, 2], [49901, 2], [50432, 3], [52151, 1], [65431, 1], [65440, 5]]}}}\n",
+  "restored": "{\"fn\": \"SuperEnergyRetrieval_DiscardAndAddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 52, \"d\": 197, \"e\": 3, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 49905, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49667\": \"0101\", \"49730\": \"0304\", \"49901\": \"0002\", \"50432\": \"0304ff\", \"52151\": \"00\", \"65431\": \"c2\", \"65440\": \"03040304ff\"}}, \"status\": \"PASS\"}\n"
+}

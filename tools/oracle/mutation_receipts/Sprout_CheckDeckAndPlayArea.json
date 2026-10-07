@@ -1,9 +1,9 @@
 {
   "fn": "Sprout_CheckDeckAndPlayArea",
-  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "case": "tests/cases/effect_functions.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"Sprout_CheckDeckAndPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 150, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"Sprout_CheckDeckAndPlayArea\", \"mismatches\": {\"hl\": [150, 151]}}\n",
-  "restored": "{\"fn\": \"Sprout_CheckDeckAndPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 150, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"Sprout_CheckDeckAndPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 178, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Sprout_CheckDeckAndPlayArea\", \"mismatches\": {\"hl\": [178, 179]}}\n",
+  "restored": "{\"fn\": \"Sprout_CheckDeckAndPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 178, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
 }

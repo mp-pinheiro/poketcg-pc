@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Rod",
+  "case": "tests/profiles/extended/cases/pokemon_dome.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Rod\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54232\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Rod\", \"mismatches\": {\"f\": [16, 17]}}\n",
+  "restored": "{\"fn\": \"Preload_Rod\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54232\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

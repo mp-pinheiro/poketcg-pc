@@ -1,0 +1,9 @@
+{
+  "fn": "MoltresLv35DiveBomb_AIEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MoltresLv35DiveBomb_AIEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"280000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MoltresLv35DiveBomb_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"280000\", \"native\": \"290000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52324, 3]]}}}\n",
+  "restored": "{\"fn\": \"MoltresLv35DiveBomb_AIEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"280000\"}}, \"status\": \"PASS\"}\n"
+}

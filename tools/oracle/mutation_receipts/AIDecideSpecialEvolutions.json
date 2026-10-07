@@ -1,9 +1,9 @@
 {
   "fn": "AIDecideSpecialEvolutions",
-  "case": "tests/profiles/extended/cases/hand_pokemon.py",
-  "index": 0,
+  "case": "tests/cases/hand_pokemon.py",
+  "index": 1,
   "status": "RED",
-  "baseline": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52152\": \"0f\", \"52247\": \"31\", \"52548\": \"16\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecideSpecialEvolutions\", \"mismatches\": {\"bus\": {\"address\": 52548, \"reference\": \"0f3116\", \"native\": \"0f3120\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52152, 1], [52247, 1], [52548, 1]]}}}\n",
-  "restored": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52152\": \"0f\", \"52247\": \"31\", \"52548\": \"16\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52238\": \"0e\", \"52332\": \"31\", \"52670\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecideSpecialEvolutions\", \"mismatches\": {\"bus\": {\"address\": 52670, \"reference\": \"0e3120\", \"native\": \"0e3116\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52238, 1], [52332, 1], [52670, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52238\": \"0e\", \"52332\": \"31\", \"52670\": \"20\"}}, \"status\": \"PASS\"}\n"
 }

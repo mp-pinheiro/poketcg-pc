@@ -1,9 +1,9 @@
 {
   "fn": "ScriptCommand_JumpIfMan1RequestedCardOwned",
-  "case": "tests/profiles/extended/cases/scripting.py",
-  "index": 0,
+  "case": "tests/cases/scripting.py",
+  "index": 3,
   "status": "RED",
-  "baseline": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"030000\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"mismatches\": {\"bus\": {\"address\": 54276, \"reference\": \"030000\", \"native\": \"0300ff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54274, 3]]}}}\n",
-  "restored": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"030000\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41221\": \"00\", \"41496\": \"050000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54234\": \"05\", \"54291\": \"0300ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"mismatches\": {\"b\": [0, 187], \"bus\": {\"address\": 54293, \"reference\": \"050300ff\", \"native\": \"05030000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54234, 1], [54291, 3]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41221\": \"00\", \"41496\": \"050000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54234\": \"05\", \"54291\": \"0300ff\"}}, \"status\": \"PASS\"}\n"
 }

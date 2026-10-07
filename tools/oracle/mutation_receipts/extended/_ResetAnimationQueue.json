@@ -1,0 +1,9 @@
+{
+  "fn": "_ResetAnimationQueue",
+  "case": "tests/profiles/extended/cases/duel_animation_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_ResetAnimationQueue\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54288\": \"ffffffffffffff\", \"54425\": \"00007f\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_ResetAnimationQueue\", \"mismatches\": {\"bus\": {\"address\": 54288, \"reference\": \"ffffffffff\", \"native\": \"fefefefefe\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[54288, 7], [54425, 3]]}}}\n",
+  "restored": "{\"fn\": \"_ResetAnimationQueue\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54288\": \"ffffffffffffff\", \"54425\": \"00007f\"}}, \"status\": \"PASS\"}\n"
+}

@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT))
 from tools.profiles import get_profile  # noqa: E402
 
 PROFILE = get_profile(root=ROOT)
-RECEIPT_DIR = ROOT / "tools" / "oracle" / "mutation_receipts"
+RECEIPT_DIR = PROFILE.receipt_path(ROOT)
 OUTPUT = PROFILE.build_path(ROOT) / "completion" / "mutation-campaign.json"
 
 

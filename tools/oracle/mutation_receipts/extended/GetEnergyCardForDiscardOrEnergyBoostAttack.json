@@ -1,0 +1,9 @@
+{
+  "fn": "GetEnergyCardForDiscardOrEnergyBoostAttack",
+  "case": "tests/profiles/extended/cases/energy.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"registers\": {\"a\": 2, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52240\": \"01df02ae07001008002800000002000000af07b007000014007347000200015900000000000000000000000000000000000000018000b107010d02049600b207\", \"52340\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"mismatches\": {\"b\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"registers\": {\"a\": 2, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52240\": \"01df02ae07001008002800000002000000af07b007000014007347000200015900000000000000000000000000000000000000018000b107010d02049600b207\", \"52340\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

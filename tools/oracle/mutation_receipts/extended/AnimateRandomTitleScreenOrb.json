@@ -1,0 +1,9 @@
+{
+  "fn": "AnimateRandomTitleScreenOrb",
+  "case": "tests/profiles/extended/cases/intro_sequence_commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AnimateRandomTitleScreenOrb\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54460\": \"00\", \"54818\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AnimateRandomTitleScreenOrb\", \"mismatches\": {\"a\": [1, 2]}}\n",
+  "restored": "{\"fn\": \"AnimateRandomTitleScreenOrb\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54460\": \"00\", \"54818\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

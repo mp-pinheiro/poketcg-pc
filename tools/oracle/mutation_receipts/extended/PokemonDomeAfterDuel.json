@@ -1,0 +1,9 @@
+{
+  "fn": "PokemonDomeAfterDuel",
+  "case": "tests/profiles/extended/cases/pokemon_dome.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PokemonDomeAfterDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 30061, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PokemonDomeAfterDuel\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"PokemonDomeAfterDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 30061, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

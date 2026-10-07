@@ -1,0 +1,9 @@
+{
+  "fn": "LoadDuelAnimationToBuffer",
+  "case": "tests/profiles/extended/cases/duel_animation_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadDuelAnimationToBuffer\", \"registers\": {\"a\": 7, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54287\": \"01\", \"54297\": \"0102010534120307\", \"54425\": \"0008020105341203\", \"54443\": \"07\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadDuelAnimationToBuffer\", \"mismatches\": {\"bus\": {\"address\": 54297, \"reference\": \"010102010534\", \"native\": \"010000000000\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[54287, 1], [54297, 8], [54425, 8], [54443, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadDuelAnimationToBuffer\", \"registers\": {\"a\": 7, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54287\": \"01\", \"54297\": \"0102010534120307\", \"54425\": \"0008020105341203\", \"54443\": \"07\"}}, \"status\": \"PASS\"}\n"
+}

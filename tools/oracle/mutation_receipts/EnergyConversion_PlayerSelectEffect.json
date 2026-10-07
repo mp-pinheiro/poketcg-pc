@@ -1,9 +1,9 @@
 {
   "fn": "EnergyConversion_PlayerSelectEffect",
-  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "case": "tests/cases/effect_functions.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"EnergyConversion_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 65440, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff00\", \"51899\": \"00\", \"65431\": \"c2\", \"65458\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"EnergyConversion_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 65440, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00\", \"51899\": \"00\", \"65431\": \"c2\", \"65458\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"EnergyConversion_PlayerSelectEffect\", \"mismatches\": {\"a\": [0, 1]}}\n",
-  "restored": "{\"fn\": \"EnergyConversion_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 65440, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff00\", \"51899\": \"00\", \"65431\": \"c2\", \"65458\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"EnergyConversion_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 65440, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00\", \"51899\": \"00\", \"65431\": \"c2\", \"65458\": \"01\"}}, \"status\": \"PASS\"}\n"
 }
