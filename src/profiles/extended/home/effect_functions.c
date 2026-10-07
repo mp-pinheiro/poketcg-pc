@@ -1294,11 +1294,11 @@ void BankswitchROM(uint8_t bank);
 
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define HANDLE_COLOR_CHANGE_MENU_PARAMS (HandleColorChangeScreen_ADDR + 0x2Eu)
+#define HANDLE_COLOR_CHANGE_MENU_PARAMS (HandleColorChangeScreen__menu_params_ADDR)
 #define SHIFT_MENU_DATA ShiftMenuData_ADDR /* ShiftMenuData, bank $0b */
 #define COLOR_TILE_AND_BGP ColorTileAndBGP_ADDR /* ColorTileAndBGP, bank $0b */
 #define SHIFT_LIST_ITEM_TO_COLOR ShiftListItemToColor_ADDR /* ShiftListItemToColor, bank $0b */
-#define HANDLE_DEFENDING_ATTACK_MENU_PARAMS (HandleDefendingPokemonAttackSelection_ADDR + 0x63u)
+#define HANDLE_DEFENDING_ATTACK_MENU_PARAMS (HandleDefendingPokemonAttackSelection__menu_parameters_ADDR)
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */

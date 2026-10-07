@@ -49,7 +49,7 @@ DECL = re.compile(r"^[A-Za-z_][\w ]*\**\s*\b(\w+)\s*\(\s*void\s*\)\s*;", re.MULT
 MAP_SCRIPT_TARGET = re.compile(r"^\tdw\s+(\w+)\s*$", re.MULTILINE)
 GLOBAL_LABEL = re.compile(r"^([A-Za-z_]\w*):")
 NEXT_SCRIPT_TARGET = re.compile(r"^\tset_next_npc_and_script\s+\w+,\s*(\.?\w+(?:\.\w+)?)\s*(?:;.*)?$")
-START_SCRIPT = re.compile(r"^#define\s+(\w+)_START_SCRIPT\s+0x([0-9A-Fa-f]+)u", re.MULTILINE)
+START_SCRIPT = re.compile(r"^#define\s+(\w+)_START_SCRIPT\s+\(?(?:0x([0-9A-Fa-f]+)u|(\w+)_ADDR \+ (0x[0-9A-Fa-f]+|\d+)u?)\)?", re.MULTILINE)
 
 
 def c_name(symbol: str) -> str:
@@ -169,10 +169,17 @@ PROTOTYPE = re.compile(
 )
 
 
-def ported_symbols(home: Path) -> dict[str, tuple[str, str, str]]:
+def header_files(home: Path, overlay: Path | None) -> list[Path]:
+    headers = {path.name: path for path in home.glob("*.h")}
+    if overlay is not None:
+        headers.update({path.name: path for path in overlay.glob("*.h")})
+    return [headers[name] for name in sorted(headers)]
+
+
+def ported_symbols(home: Path, overlay: Path | None = None) -> dict[str, tuple[str, str, str]]:
     """name -> (header, return type, argument list) for every declared routine."""
     owners: dict[str, tuple[str, str, str]] = {}
-    for header in sorted(home.glob("*.h")):
+    for header in header_files(home, overlay):
         text = header.read_text()
         for match in PROTOTYPE.finditer(text):
             owners.setdefault(
@@ -195,9 +202,20 @@ def struct_members(header_text: str, type_name: str) -> set[str]:
 THUNK_PARAMETERS = ("b", "c", "d", "e", "hl")
 
 
-def thunk(name: str, owner: tuple[str, str, str], header_text: str) -> str:
+def start_script_addresses(header_text: str, symbols: dict[str, tuple[int, int]]) -> dict[str, int]:
+    found: dict[str, int] = {}
+    for name, literal, label, offset in START_SCRIPT.findall(header_text):
+        if literal:
+            found[name] = int(literal, 16)
+        elif label in symbols:
+            found[name] = symbols[label][1] + int(offset, 0)
+    return found
+
+
+def thunk(name: str, owner: tuple[str, str, str], header_text: str,
+          symbols: dict[str, tuple[int, int]]) -> str:
     _header, ret, args = owner
-    continuation = dict(START_SCRIPT.findall(header_text)).get(name)
+    continuation = start_script_addresses(header_text, symbols).get(name)
     declared = [] if not args or args == "void" else [
         parameter.split()[-1].lstrip("*") for parameter in args.split(",")
     ]
@@ -223,7 +241,7 @@ def thunk(name: str, owner: tuple[str, str, str], header_text: str) -> str:
         if "f" not in members and "carry" in members:
             lines.append("\tout.f = r.carry ? 0x10u : 0u;")
     if continuation is not None:
-        rst = int(continuation, 16)
+        rst = continuation
         lines.append(
             f"\tout = script_entry_regs_from_rst20(RST20(out.a, out.f, out.b, out.c, "
             f"out.d, out.e, 0x{rst + 1:04X}u));"
@@ -233,10 +251,12 @@ def thunk(name: str, owner: tuple[str, str, str], header_text: str) -> str:
 
 
 def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
-           npc_map_data: Path, map_objects: Path, scripts: list[Path]) -> str:
+           npc_map_data: Path, map_objects: Path, scripts: list[Path],
+           overlay: Path | None = None) -> str:
     entries = script_entries(sym_path, rom_path, map_scripts, npc_map_data, map_objects, scripts)
-    owners = ported_symbols(home)
-    header_text = {p.name: p.read_text() for p in home.glob("*.h")}
+    owners = ported_symbols(home, overlay)
+    header_text = {p.name: p.read_text() for p in header_files(home, overlay)}
+    symbols = symbol_table(sym_path)
 
     rows, thunks = [], []
     headers = {"scripting.h"}
@@ -249,7 +269,7 @@ def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
         elif ported:
             owner = owners[c_name(name)]
             headers.add(owner[0])
-            thunks.append(thunk(c_name(name), owner, header_text[owner[0]]))
+            thunks.append(thunk(c_name(name), owner, header_text[owner[0]], symbols))
             rows.append(f'\t{{ 0x{offset:04X}u, "{name}", SCRIPT_ENTRY_ROUTINE, 0x{bank:02X}u, enter_{c_name(name)} }},')
         else:
             rows.append(f'\t{{ 0x{offset:04X}u, "{name}", SCRIPT_ENTRY_UNPORTED, 0x{bank:02X}u, NULL }},')
@@ -370,9 +390,10 @@ def main() -> int:
     parser.add_argument("--scripts", type=Path, nargs="+", required=True,
                         help="script sources whose set_next_npc_and_script operands are entries")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--overlay", type=Path, help="profile headers that replace same-named shared headers")
     args = parser.parse_args()
     content = render(args.sym, args.rom, args.home, args.map_scripts, args.npc_map_data,
-                     args.map_objects, args.scripts)
+                     args.map_objects, args.scripts, args.overlay)
     if not args.output.is_file() or args.output.read_text() != content:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(content)

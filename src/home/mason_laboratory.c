@@ -12,7 +12,7 @@
 #define ENERGY_CARD_LIST_LEN 6u
 
 #include "home/grass_club_entrance.h"
-#define MasonLaboratoryAfterDuelTable (MasonLaboratoryAfterDuel_ADDR + 0x07u)
+#define MasonLaboratoryAfterDuelTable (MasonLaboratoryAfterDuel__after_duel_table_ADDR)
 
 #include "home/fire_club_lobby.h"
 #include "home/map.h"

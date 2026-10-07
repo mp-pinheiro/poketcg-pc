@@ -166,10 +166,13 @@ def card_overreads() -> dict[int, int]:
     return result
 REGIONS = ("wram", "hram", "oam", "vram", "sram", "audio")
 GATED = 5
-REGION_LENGTHS = {"wram": 0x2000, "hram": 0x80, "oam": 0xA0, "vram": 0x4000, "sram": 0x8000, "audio": 0x165}
-REGION_BASES = {"wram": 0xC000, "hram": 0xFF80, "oam": 0xFE00, "vram": 0x8000, "sram": 0xA000, "audio": 0xDD80}
+AUDIO_BASE = symbol_address(PROFILE, "wCurSongID", ROOT)[1]
+AUDIO_END = scenario_module.wram_declared_end()
+REGION_LENGTHS = {"wram": 0x2000, "hram": 0x80, "oam": 0xA0, "vram": 0x4000, "sram": 0x8000,
+                  "audio": AUDIO_END - AUDIO_BASE}
+REGION_BASES = {"wram": 0xC000, "hram": 0xFF80, "oam": 0xFE00, "vram": 0x8000, "sram": 0xA000, "audio": AUDIO_BASE}
 
-TIMING_PHASE: dict[str, list[tuple[int, int]]] = {"wram": [(0xDD80 - 0xC000, 0xDEE5 - 0xC000)]}
+TIMING_PHASE: dict[str, list[tuple[int, int]]] = {"wram": [(AUDIO_BASE - 0xC000, AUDIO_END - 0xC000)]}
 # Ledger entries whose justification is the frame axis, compared on this one:
 #   hram $FF8D hDPadRepeat   -- HandleDPadRepeat runs once per anchor on both lanes
 #   wram $CAB8 wVBlankCounter, $CAC3 wTimerCounter -- ISR counts replayed exactly
@@ -307,7 +310,7 @@ def reference_regions(core: refstream.Core) -> dict[str, bytes]:
         "oam": core.area("OAM")[:0xA0],
         "vram": core.area("VRAM")[:0x4000],
         "sram": core.area("CartRAM")[:0x8000],
-        "audio": wram[0x1D80:0x1EE5],
+        "audio": wram[AUDIO_BASE - 0xC000:AUDIO_END - 0xC000],
     }
     if core.printer is not None:
         regions["printer"] = core.printer
@@ -322,7 +325,7 @@ def native_regions(dump: dict[str, Any]) -> dict[str, bytes]:
         "oam": bytes(dump["oam"]),
         "vram": bytes(dump["vram_bank_0"]) + bytes(dump["vram_bank_1"]),
         "sram": bytes(dump["save"]),
-        "audio": wram[0x1D80:0x1EE5],
+        "audio": wram[AUDIO_BASE - 0xC000:AUDIO_END - 0xC000],
     }
 
 
@@ -1469,7 +1472,9 @@ def attribute(name: str, masks: list[int], frames: int, ordinal: int,
     return out
 
 
-AUDIO_REQUESTS = {0xDD80: "wCurSongID", 0xDD81: "wCurSongBank", 0xDD82: "wCurSfxID", 0xDD83: "wSfxPriority"}
+AUDIO_REQUESTS = {symbol_address(PROFILE, name, ROOT, (0, 0))[1]: name
+                  for name in ("wCurSongID", "wCurSongBank", "wCurSfxID", "wSfxPriority")
+                  if symbol_address(PROFILE, name, ROOT, (0, 0))[1]}
 
 
 def audio_requests(name: str, masks: list[int], frames: int, ordinal: int,
@@ -1488,7 +1493,7 @@ def audio_requests(name: str, masks: list[int], frames: int, ordinal: int,
         native = native_regions(json.loads(dump_path.read_text()))["audio"]
     reference = reference_capture(name, masks, frames, ordinal, pokes, save=save, printer=printer)["audio"]
     return [{"address": f"0x{address:04X}", "symbol": symbol,
-             "native": native[address - 0xDD80], "reference": reference[address - 0xDD80]}
+             "native": native[address - AUDIO_BASE], "reference": reference[address - AUDIO_BASE]}
             for address, symbol in AUDIO_REQUESTS.items()]
 
 
@@ -1820,12 +1825,10 @@ def record_meta(name: str, goal: str, *, printer: bool | None = None,
 # so the deck id is poked one anchor earlier as well and the opponent plays
 # the deck's own cards, not the practice deck it would otherwise keep. Text
 # boxes still wait for a press, so the tail mashes A.
-AI_DUEL = {
-    "wPlayerDuelistType": 0xC2F1, "wOpponentDuelistType": 0xC3F1,
-    "wDuelType": 0xCC09, "wOpponentDeckID": 0xCC0E, "wIsPracticeDuel": 0xCC13,
-    "wNPCDuelDeckID": 0xCC19, "wPlayerDeck": 0xC400, "wOpponentDeck": 0xC480,
-    "wDuelInitialPrizes": 0xCC08, "wRNG1": 0xCACA, "wRNG2": 0xCACB,
-}
+AI_DUEL = {name: symbol_address(PROFILE, name, ROOT)[1]
+           for name in ("wPlayerDuelistType", "wOpponentDuelistType", "wDuelType", "wOpponentDeckID",
+                        "wIsPracticeDuel", "wNPCDuelDeckID", "wPlayerDeck", "wOpponentDeck",
+                        "wDuelInitialPrizes", "wRNG1", "wRNG2")}
 DUELIST_TYPE_AI_OPP = 0x80
 DECK_POINTERS = profile_symbol("DeckPointers", (0x0C, 0x4000))
 DECK_SIZE = 60

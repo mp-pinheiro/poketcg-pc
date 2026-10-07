@@ -8,7 +8,7 @@
 #include "home/fire_club.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define FireClubAfterDuelTable (FireClubAfterDuel_ADDR + 0x07u)
+#define FireClubAfterDuelTable (FireClubAfterDuel__after_duel_table_ADDR)
 /* <<< factory statics */
 
 /* >>> factory FireClubAfterDuel */

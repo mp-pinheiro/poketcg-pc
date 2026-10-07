@@ -185,10 +185,38 @@ def boot_input(frames: int) -> list[int]:
 #   two lines (ai-duel-13 at DoFrame 25318, against $60 on lightning-3). It is
 #   zeroed at the start of every run and read only inside that run; the
 #   io[68] ($FF44 LY) exclusion above is the same quantity one register over.
+def _wram_symbols() -> dict[str, int]:
+    from tools.profiles import symbol_table
+
+    symbols = symbol_table(PROFILE, ROOT)
+    return {name: address for name, (bank, address) in symbols.items() if 0xC000 <= address < 0xE000}
+
+
+def wram_declared_end() -> int:
+    wram = _wram_symbols()
+    return max(max(wram.values()) + 1, wram["wMusicCh1StackBackup"] + 0x30)
+
+
+def _wram_exclusions() -> list[tuple[int, int]]:
+    wram = _wram_symbols()
+
+    def span(name: str, length: int) -> list[tuple[int, int]]:
+        if name not in wram:
+            return []
+        start = wram[name] - 0xC000
+        return [(start, start + length)]
+
+    declared_end = wram_declared_end() - 0xC000
+    ranges = [(wram["wStringBuffer"] + 9 - 0xC000, wram["wStringBuffer"] + 10 - 0xC000)]
+    ranges += span("wVBlankCounter", 1) + span("wReentrancyFlag", 3) + span("wVBlankOAMCopyToggle", 2)
+    ranges += span("wTimerCounter", 1) + span("wDuelReturnAddress", 2) + span("wLinkOpponentTurnReturnAddress", 2)
+    ranges += span("wNextScrollLY", 1) + [(declared_end, 0x2000)]
+    return sorted(ranges)
+
+
 COMPARATOR_EXCLUDED_RANGES = {
     "hram": [(0, 1), (13, 14), (96, 128)],
-    "wram": [(0xAA9, 0xAAA), (0xAB8, 0xAB9), (0xABA, 0xABD), (0xAC0, 0xAC2),
-             (0xAC3, 0xAC4), (0xBE5, 0xBE7), (0xBF7, 0xBF9), (0x1668, 0x1669), (0x1EE5, 0x2000)],
+    "wram": _wram_exclusions(),
     "io": [(4, 6), (15, 16), (16, 64), (65, 66), (68, 70), (104, 108)],
 }
 

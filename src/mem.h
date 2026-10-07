@@ -47,6 +47,7 @@ extern uint8_t g_scratch[MEM_SCRATCH_SIZE];
  * data-extraction phase replaces those reads with generated C arrays. */
 extern uint8_t *g_rom;
 extern size_t g_rom_size;
+extern uint16_t g_rom_banks;
 
 /* MBC5 latches, written only through mbc5_write() -- the single decoder for every
  * register write below $8000, so the port has exactly one MBC5 model. */

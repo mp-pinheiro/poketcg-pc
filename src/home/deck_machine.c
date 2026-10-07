@@ -51,7 +51,7 @@
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
 #include "home/print_text.h"
-#define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR (PrintDeckMachineEntry_ADDR + 0xB0u)
+#define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR (PrintDeckMachineEntry__text_ADDR)
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -94,8 +94,8 @@
  * 02:52a7 DeckNameSuffix,
  * 02:6e91 HandleDeckMissingCardsList.DeckConfirmationCardSelectionParams,
  * 02:6e9a HandleDeckMissingCardsList.CardListUpdateFunction. */
-#define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR (HandleDeckMissingCardsList_ADDR + 0x93u)
-#define CARD_LIST_UPDATE_FUNCTION_ADDR (HandleDeckMissingCardsList_ADDR + 0x9Cu)
+#define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR (HandleDeckMissingCardsList__DeckConfirmationCardSelectionParams_ADDR)
+#define CARD_LIST_UPDATE_FUNCTION_ADDR (HandleDeckMissingCardsList__CardListUpdateFunction_ADDR)
 
 
 #include "home/deck_machine.h"
@@ -195,7 +195,7 @@
 
 #include "generated/wram.h"
 #define DECK_MACHINE_SELECTION_PARAMS_ADDR DeckMachineSelectionParams_ADDR
-#define DECK_MACHINE_MENU_DATA_ADDR (HandleDeckSaveMachineMenu_ADDR + 0xD7u)
+#define DECK_MACHINE_MENU_DATA_ADDR (HandleDeckSaveMachineMenu__DeckMachineMenuData_ADDR)
 
 #include "home/common.h"
 #include "home/save.h"

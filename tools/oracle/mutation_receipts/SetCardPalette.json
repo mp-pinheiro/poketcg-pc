@@ -1,0 +1,9 @@
+{
+  "fn": "SetCardPalette",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetCardPalette\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51960\": \"112233000000000000000000000000000000000000000000\", \"52649\": \"112233\", \"52673\": \"0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetCardPalette\", \"mismatches\": {\"bus\": {\"address\": 52673, \"reference\": \"001122330102030405\", \"native\": \"00112233ff00010203\", \"reference_size\": 75, \"native_size\": 75, \"spans\": [[51960, 24], [52649, 3], [52673, 48]]}}}\n",
+  "restored": "{\"fn\": \"SetCardPalette\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51960\": \"112233000000000000000000000000000000000000000000\", \"52649\": \"112233\", \"52673\": \"0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f30\"}}, \"status\": \"PASS\"}\n"
+}

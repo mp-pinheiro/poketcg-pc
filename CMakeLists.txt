@@ -172,6 +172,10 @@ function(add_poketcg_profile profile)
   file(GLOB SCRIPT_SOURCES CONFIGURE_DEPENDS "${PROFILE_DISASM}/src/scripts/*.asm")
   list(APPEND SCRIPT_SOURCES "${PROFILE_DISASM}/src/engine/overworld/scripting.asm")
   set(script_entry_source "${profile_build_root}/script_entry_dispatch_generated.c")
+  set(script_entry_overlay "")
+  if(PROFILE_ROOT)
+    set(script_entry_overlay --overlay "${PROFILE_ROOT}/home")
+  endif()
   add_custom_command(
     OUTPUT "${script_entry_source}"
     COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_script_entry_dispatch.py"
@@ -183,6 +187,7 @@ function(add_poketcg_profile profile)
             --map-objects "${PROFILE_DISASM}/src/data/map_objects.asm"
             --scripts ${SCRIPT_SOURCES}
             --output "${script_entry_source}"
+            ${script_entry_overlay}
     DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_script_entry_dispatch.py"
             "${PROFILE_SYM}"
             "${PROFILE_ROM}"

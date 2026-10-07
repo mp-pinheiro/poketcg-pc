@@ -24,7 +24,7 @@
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define ClubEntranceAfterDuelTable (ClubEntranceAfterDuel_ADDR + 0x06u)
+#define ClubEntranceAfterDuelTable (ClubEntranceAfterDuel__after_duel_table_ADDR)
 
 #include "home/scripting.h"
 #include "generated/wram.h"

@@ -58,27 +58,19 @@ SCHEMA = (
 
 # Static tables embedded in code sections are declared explicitly so the
 # production resolver never reads unclassified code bytes from the ROM.
-NATIVE_DATA_SPANS = (
-    ("input_name_question_data", 6, 0x675E, 0x29),
-    ("input_name_background_data", 6, 0x68BC, 0x05),
-    ("input_name_char_underbar", 6, 0x68F2, 0x16),
-    ("input_name_cursor_tile", 6, 0x6A77, 0x10),
-    ("input_name_keyboard", 6, 0x6BAF, 0x14A),
-    ("input_name_transition_1", 6, 0x6CF9, 0x66),
-    ("input_name_transition_2", 6, 0x6D5F, 0x2A),
-    ("naming_default_player_name", 4, 0x68EB, 0x10),
-    ("input_name_deck_underbar", 6, 0x6E83, 0x16),
-    ("intro_sequence", 7, 0x559D, 0x77),
-    ("intro_sequence_lookahead", 7, 0x5614, 0x01),
-    ("input_name_deck_keyboard", 6, 0x7019, 0xC1),
-    # card_data.asm:60-74 copies PKMN_CARD_DATA_LENGTH bytes for every card, so
-    # the trainer records at the end of bank $0C read the padding after RecycleCard.
-    ("card_data_tail", 12, 0x7FE1, 0x1F),
-    # CardPointers[0] is NULL and GetCardPointer accepts card id 0, so a stale
-    # wPlayerAttackingCardID of 0 (an AI-versus-AI forced switch,
-    # effect_functions.asm:1015) copies PKMN_CARD_DATA_LENGTH bytes of the rst
-    # vectors at $0000 into the card buffer. The ROM reads them; so does the port.
-    ("null_card", 0, 0x0000, 0x41),
+NATIVE_DATA_LABELS = (
+    ("input_name_question_data", "WhatIsYourNameData", 0, 0x29),
+    ("input_name_background_data", "DrawPlayerNamingScreenBG.data", 0, 0x05),
+    ("input_name_char_underbar", "PrintPlayerNameFromInput.char_underbar", 0, 0x16),
+    ("input_name_cursor_tile", "LoadTextCursorTile.data", 0, 0x10),
+    ("input_name_keyboard", "PlayerNamingScreen_KeyboardData", 0, 0x14A),
+    ("input_name_transition_1", "TransitionTable1", 0, 0x66),
+    ("input_name_transition_2", "TransitionTable2", 0, 0x2A),
+    ("naming_default_player_name", "DisplayPlayerNamingScreen.default_name", 0, 0x10),
+    ("input_name_deck_underbar", "PrintDeckNameFromInput.underbar_data", 0, 0x16),
+    ("intro_sequence", "IntroSequence", 0, 0x77),
+    ("intro_sequence_lookahead", "AnimateRandomTitleScreenOrb", 0, 0x01),
+    ("input_name_deck_keyboard", "DeckNamingScreen_KeyboardData", 0, 0xC1),
 )
 
 SECTION_RE = re.compile(
@@ -205,6 +197,25 @@ def script_entry_spans(rom: bytes, sym_path: Path) -> list[tuple[str, int, int, 
     return spans
 
 
+def native_data_spans(sym_path: Path, rom: bytes) -> list[tuple[str, int, int, int]]:
+    sym_line = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
+    symbols: dict[str, tuple[int, int]] = {}
+    for line in sym_path.read_text().splitlines():
+        match = sym_line.match(line.strip())
+        if match:
+            symbols.setdefault(match.group(3), (int(match.group(1), 16), int(match.group(2), 16)))
+    spans = []
+    for name, label, offset, length in NATIVE_DATA_LABELS:
+        if label not in symbols:
+            raise ValueError(f"native data span {name} needs symbol {label}")
+        bank, address = symbols[label]
+        spans.append((name, bank, address + offset, length))
+    card_bank = symbols["CardPointers"][0]
+    spans.append(("card_data_tail", card_bank, 0x7FE1, 0x1F))
+    spans.append(("null_card", 0, 0x0000, 0x41))
+    return spans
+
+
 def sparse_items(
     rom: bytes,
     inventory_path: Path,
@@ -239,7 +250,7 @@ def sparse_items(
         entry = {"name": name, "section": section.name, "ctype": "uint8_t"}
         result.append((entry, section, rom[start:end]))
     for name, bank, address, length in (
-            tuple(NATIVE_DATA_SPANS) + tuple(script_entry_spans(rom, sym_path))):
+            tuple(native_data_spans(sym_path, rom)) + tuple(script_entry_spans(rom, sym_path))):
         start = rom_offset(bank, address)
         end = start + length
         if length < 1 or end > len(rom):

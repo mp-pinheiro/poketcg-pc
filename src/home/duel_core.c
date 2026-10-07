@@ -30,7 +30,7 @@ static void load_tx_ram2(uint16_t text_id)
 
 
 
-#define TRAINER_TO_PKMN_DATA (ConvertSpecialTrainerCardToPokemon_ADDR + 0x35u) /* bank 1 */
+#define TRAINER_TO_PKMN_DATA (ConvertSpecialTrainerCardToPokemon__trainer_to_pkmn_data_ADDR) /* bank 1 */
 
 static const uint8_t *trainer_to_pkmn_data(void)
 {

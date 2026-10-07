@@ -63,7 +63,15 @@ class Resolver:
         names = self.index.get((bank, address))
         return f"{self.choose(names)}_ADDR" if names else None
 
+    def exact_unique(self, address: int) -> str | None:
+        banks = self.banks_at(address)
+        names = sorted({name for bank in banks for name in self.index[(bank, address)] if name in self.preferred})
+        return f"{names[0]}_ADDR" if len(names) == 1 else None
+
     def offset(self, bank: int, address: int) -> str | None:
+        unique = self.exact_unique(address)
+        if unique is not None:
+            return unique
         addresses = self.tables.get(bank, [])
         position = bisect.bisect_right(addresses, address) - 1
         if position < 0:

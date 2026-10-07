@@ -56,7 +56,7 @@ static_assert({high}u - {base}u < {size}u,
 """
 
 
-def parse(sym_path: Path) -> list[tuple[int, int, str]]:
+def parse(sym_path: Path, locals_too: bool = False) -> list[tuple[int, int, str]]:
     out = []
     for lineno, line in enumerate(sym_path.read_text().splitlines(), 1):
         line = line.strip()
@@ -68,8 +68,10 @@ def parse(sym_path: Path) -> list[tuple[int, int, str]]:
                 print(f"{sym_path}:{lineno}: unparsable symbol line: {line!r}", file=sys.stderr)
             continue
         bank, addr, name = int(m[1], 16), int(m[2], 16), m[3]
-        if "." in name:  # local label
-            continue
+        if "." in name:
+            if not locals_too or name.count(".") != 1 or addr >= 0x8000:
+                continue
+            name = name.replace(".", "__")
         out.append((bank, addr, name))
     return out
 
@@ -106,6 +108,9 @@ def emit(region: str, base: int, end: int, array: str, size: int, max_bank: int,
         else:
             body.append(f"#define {name + '_ADDR':<{width + 5}} 0x{addr:04X}u\n")
             body.append(f"#define {name + '_BANK':<{width + 5}} {bank}u\n")
+    if region == "wram":
+        stack_backup = seen.get("wMusicCh1StackBackup", (0, high))[1] + 0x30
+        body.append(f"#define POKETCG_WRAM_DECLARED_END 0x{max(high + 1, stack_backup):04X}u\n")
     body.append(FOOTER.format(high=f"0x{high:04X}", base=f"0x{base:04X}", size=f"0x{size:X}",
                               region=region, array=array, GUARD=guard))
 
@@ -154,7 +159,7 @@ def main() -> int:
     for region, base, end, array, size, max_bank in REGIONS:
         n = emit(region, base, end, array, size, max_bank, syms, args.sym, args.out)
         print(f"gen_layout: {region}.h  {n} symbols")
-    n = emit_rom(syms, args.out)
+    n = emit_rom(parse(args.sym, locals_too=True), args.out)
     print(f"gen_layout: rom.h  {n} symbols")
     return 0
 

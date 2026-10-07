@@ -8,7 +8,7 @@
 #include "generated/wram.h"
 
 #include "home/grass_club_entrance.h"
-#define WaterClubAfterDuelTable (WaterClubAfterDuel_ADDR + 0x07u)
+#define WaterClubAfterDuelTable (WaterClubAfterDuel__after_duel_table_ADDR)
 /* <<< factory statics */
 
 #define W_ACTIVE_GAME_EVENT_ADDR 0xD0C2u

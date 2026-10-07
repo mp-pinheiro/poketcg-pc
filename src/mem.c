@@ -55,6 +55,16 @@ void gb_keys_arm_timeline(const uint8_t *entries, uint8_t count, uint16_t latch_
 
 uint8_t *g_rom = NULL;
 size_t g_rom_size = 0;
+uint16_t g_rom_banks = 64u;
+#define ROM_FONT_BANK_BASE 0xF0u
+
+static uint16_t cart_bank_count(uint32_t highest_bank)
+{
+	uint16_t banks = 64u;
+	while (banks <= highest_bank && banks < 256u)
+		banks = (uint16_t)(banks * 2u);
+	return banks;
+}
 
 typedef struct {
 	uint32_t bank;
@@ -346,6 +356,7 @@ int rom_load(const char *path)
 	free(g_rom);
 	g_rom = buf;
 	g_rom_size = (size_t)n;
+	g_rom_banks = cart_bank_count((uint32_t)((g_rom_size - 1u) / 0x4000u));
 	return 0;
 }
 
@@ -460,6 +471,11 @@ int rom_pack_load(const char *path)
 	g_product_pack_size = size;
 	g_product_spans = spans;
 	g_product_span_count = count;
+	uint32_t highest_bank = 0u;
+	for (size_t i = 0; i < count; i++)
+		if (spans[i].bank < ROM_FONT_BANK_BASE && spans[i].bank > highest_bank)
+			highest_bank = spans[i].bank;
+	g_rom_banks = cart_bank_count(highest_bank);
 	return 0;
 }
 
@@ -516,7 +532,7 @@ void mem_reset(void)
 
 const uint8_t *rom_ptr_reference(uint8_t bank, uint16_t addr)
 {
-	size_t off = addr < 0x4000 ? addr : (size_t)0x4000 * (bank % 64u) + (addr - 0x4000);
+	size_t off = addr < 0x4000 ? addr : (size_t)0x4000 * (bank % g_rom_banks) + (addr - 0x4000);
 	if (!g_rom || off >= g_rom_size)
 		return g_scratch;
 	return g_rom + off;
@@ -528,7 +544,6 @@ static const uint8_t *missing_product_data(uint8_t bank, uint16_t addr)
 	abort();
 	return NULL;
 }
-#define ROM_FONT_BANK_BASE 0xF0u
 #define ROM_FONT_COUNT 3u
 #define ROM_FONT_WINDOW_FIRST 0x4000u
 #define ROM_FONT_SMALL_FIRST 0x6668u
@@ -807,7 +822,7 @@ void mbc5_write(uint16_t addr, uint8_t v)
 	if (addr < 0x2000)
 		g_sram_enabled = (v == 0x0A);
 	else if (addr < 0x3000)
-		g_rom_bank = rom_extension_bank(v) ? v : (uint8_t)(v % 64u);
+		g_rom_bank = rom_extension_bank(v) ? v : (uint8_t)(v % g_rom_banks);
 	else if (addr >= 0x4000 && addr < 0x6000)
 		g_sram_bank = (v & 0x0F) % 4;
 }

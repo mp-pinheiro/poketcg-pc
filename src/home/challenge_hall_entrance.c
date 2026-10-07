@@ -28,9 +28,9 @@ PreloadClerk9Result Preload_Clerk9(uint8_t b, uint8_t c, uint8_t d, uint8_t e, u
 	 * jumped to; the event helpers keep hl, so it is the exit value. A count
 	 * of nine or more skips the table and keeps the table's own address. */
 	static const uint16_t jump_table[9] = {
-		(Preload_Clerk9_ADDR + 0x4Eu), (Preload_Clerk9_ADDR + 0x4Eu), (Preload_Clerk9_ADDR + 0x4Eu), (Preload_Clerk9_ADDR + 0x24u), (Preload_Clerk9_ADDR + 0x48u), (Preload_Clerk9_ADDR + 0x33u), (Preload_Clerk9_ADDR + 0x42u), (Preload_Clerk9_ADDR + 0x42u), (Preload_Clerk9_ADDR + 0x42u),
+		(Preload_Clerk9__less_than_three_medals_ADDR), (Preload_Clerk9__less_than_three_medals_ADDR), (Preload_Clerk9__less_than_three_medals_ADDR), (Preload_Clerk9__three_medals_ADDR), (Preload_Clerk9__four_medals_ADDR), (Preload_Clerk9__five_medals_ADDR), (Preload_Clerk9__more_than_five_medals_ADDR), (Preload_Clerk9__more_than_five_medals_ADDR), (Preload_Clerk9__more_than_five_medals_ADDR),
 	};
-	result.hl = medals < 9u ? jump_table[medals] : (Preload_Clerk9_ADDR + 0x12u);
+	result.hl = medals < 9u ? jump_table[medals] : (Preload_Clerk9__jump_table_ADDR);
 	if (medals < 9u) {
 		if (medals == 3u) {
 			if (GetEventValue(EVENT_CHALLENGE_CUP_1_STATE) == CHALLENGE_CUP_NOT_STARTED) {

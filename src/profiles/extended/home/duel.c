@@ -439,7 +439,7 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/wram.h"
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xEDu
 #define PLAYER_ICON_COORDS PlayAreaIconCoordinates_ADDR
-#define OPPONENT_ICON_COORDS (PlayAreaIconCoordinates_ADDR + 0x06u)
+#define OPPONENT_ICON_COORDS (PlayAreaIconCoordinates__opponent1_ADDR)
 
 #include "home/duel.h"
 #include "generated/wram.h"
@@ -457,8 +457,8 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/objects.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define PLAYER_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x61u)
-#define OPP_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x67u)
+#define PLAYER_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x60u)
+#define OPP_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x66u)
 
 #include "home/duel.h"
 #include "home/serial.h"
@@ -591,8 +591,8 @@ static const uint8_t kCursorTileData[16] = {
  * 02:48fa (poketcg.sym). Every constant is prefixed because duel.c already
  * defines TRUE, MENU_CANCEL, PAD_A/PAD_B, PLAYER_TURN, DUELVARS_PRIZES and
  * DUELVARS_PRIZE_CARDS for earlier routines. */
-#define PEEK_MENU_PARAMETERS (_HandlePeekSelection_ADDR + 0xADu)
-#define PEEK_MENU_TEXT_ITEMS (_HandlePeekSelection_ADDR + 0xA4u)
+#define PEEK_MENU_PARAMETERS (_HandlePeekSelection__PlayAreaMenuParameters_ADDR)
+#define PEEK_MENU_TEXT_ITEMS (_HandlePeekSelection__YourOrOppPlayAreaData_ADDR)
 #define PEEK_YOUR_TRANSITION_TABLE PeekYourPlayAreaTransitionTable_ADDR
 #define PEEK_OPP_TRANSITION_TABLE PeekOppPlayAreaTransitionTable_ADDR
 #define PEEK_WHICH_CARD_TEXT 0x024Cu
@@ -2105,7 +2105,7 @@ void DrawPlayArea_PrizeCards(uint16_t hl)
  * DrawPlayArea_PrizeCards through hl. Passed by ROM address, never copied
  * into WRAM -- the asm writes nothing while pointing at them. */
 #define PRIZE_COORDS_YOUR_OR_OPP_PLAYER PrizeCardsCoordinateData_YourOrOppPlayArea_ADDR
-#define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT (PrizeCardsCoordinateData_YourOrOppPlayArea_ADDR + 0x0Cu)
+#define PRIZE_COORDS_YOUR_OR_OPP_OPPONENT (PrizeCardsCoordinateData_YourOrOppPlayArea__opponent_ADDR)
 #define PRIZE_COORDS_2_PLAYER PrizeCardsCoordinateData_2_ADDR
 #define PRIZE_COORDS_2_OPPONENT 0x44D8u
 
@@ -2730,14 +2730,14 @@ void DrawInPlayAreaScreen(void)
 	wCheckMenuPlayAreaWhichLayout = hWhoseTurn;
 	DrawPlayArea_PrizeCards(PrizeCardsCoordinateData_InPlayArea_ADDR); /* PrizeCardsCoordinateData_InPlayArea.player */
 	DrawPlayArea_BenchCards(3u, 3u, 15u);
-	DrawInPlayArea_Icons((PlayAreaIconCoordinates_ADDR + 0x0Cu)); /* PlayAreaIconCoordinates.player2 */
+	DrawInPlayArea_Icons((PlayAreaIconCoordinates__player2_ADDR)); /* PlayAreaIconCoordinates.player2 */
 	SwapTurn();
 	wCheckMenuPlayAreaWhichDuelist = hWhoseTurn;
 	SwapTurn();
-	DrawPlayArea_PrizeCards((PrizeCardsCoordinateData_InPlayArea_ADDR + 0x0Cu)); /* PrizeCardsCoordinateData_InPlayArea.opponent */
+	DrawPlayArea_PrizeCards((PrizeCardsCoordinateData_InPlayArea__opponent_ADDR)); /* PrizeCardsCoordinateData_InPlayArea.opponent */
 	DrawPlayArea_BenchCards(3u, 3u, 0u);
 	SwapTurn();
-	DrawInPlayArea_Icons((PlayAreaIconCoordinates_ADDR + 0x12u)); /* PlayAreaIconCoordinates.opponent2 */
+	DrawInPlayArea_Icons((PlayAreaIconCoordinates__opponent2_ADDR)); /* PlayAreaIconCoordinates.opponent2 */
 	SwapTurn();
 	DrawInPlayArea_ActiveCardGfx();
 }
@@ -2847,8 +2847,8 @@ void _SelectPrizeCards(void)
 		(void)DrawWideTextBox();
 		InitTextPrinting(1u, 14u);
 		(void)ProcessTextFromID(PleaseChooseAPrizeText);
-		wMenuInputTablePointer = (uint8_t)(_SelectPrizeCards_ADDR + 0xB1u);
-		gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u), (uint8_t)((_SelectPrizeCards_ADDR + 0xB1u) >> 8));
+		wMenuInputTablePointer = (uint8_t)(_SelectPrizeCards__cursor_transition_table_ADDR);
+		gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u), (uint8_t)((_SelectPrizeCards__cursor_transition_table_ADDR) >> 8));
 		uint8_t mask;
 		for (;;) {
 			wVBlankOAMCopyToggle = TRUE;

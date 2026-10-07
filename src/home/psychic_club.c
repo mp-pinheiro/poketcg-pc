@@ -8,7 +8,7 @@
 #include "home/psychic_club.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define PsychicClubAfterDuelTable (PsychicClubAfterDuel_ADDR + 0x07u)
+#define PsychicClubAfterDuelTable (PsychicClubAfterDuel__after_duel_table_ADDR)
 
 #include "home/scripting.h"
 #include "mem.h"

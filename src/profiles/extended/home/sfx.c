@@ -1,5 +1,7 @@
 #include "home/sfx.h"
 
+#include "home/audio.h"
+
 #include <stdbool.h>
 #include "generated/rom.h"
 #include "generated/wram.h"
@@ -180,7 +182,7 @@ void Func_fc1cd(void)
 
 static uint16_t SFX_Frequency(uint16_t cmd_ptr, uint8_t c, uint8_t high_nibble)
 {
-	uint8_t low = gb_read8(cmd_ptr);
+	uint8_t low = wAudioArg;
 	cmd_ptr = (uint16_t)(cmd_ptr + 1u);
 	uint8_t old_low = (uint8_t)read_wde37(c);
 	write_wde37(c, (uint16_t)((uint16_t)high_nibble << 8 | low));
@@ -198,7 +200,7 @@ static uint16_t SFX_Frequency(uint16_t cmd_ptr, uint8_t c, uint8_t high_nibble)
 static uint16_t SFX_Envelope(uint16_t cmd_ptr, uint8_t c)
 {
 	write_wde2b(c, 0x80u);
-	uint8_t env_val = gb_read8(cmd_ptr);
+	uint8_t env_val = wAudioArg;
 	cmd_ptr = (uint16_t)(cmd_ptr + 1u);
 	uint16_t reg = (uint16_t)(rAUD1ENV + (uint16_t)c * 5u);
 	gb_write8(reg, env_val);
@@ -214,7 +216,7 @@ static void SFX_Duty(uint8_t c, uint8_t param)
 
 static uint16_t SFX_Loop(uint16_t cmd_ptr, uint8_t c)
 {
-	uint8_t count = gb_read8(cmd_ptr);
+	uint8_t count = wAudioArg;
 	cmd_ptr = (uint16_t)(cmd_ptr + 1u);
 	uint16_t store_addr = (uint16_t)(wde43_ADDR + (uint16_t)c * 2u);
 	gb_write8(store_addr, (uint8_t)cmd_ptr);
@@ -243,7 +245,7 @@ static uint16_t SFX_EndLoop(uint16_t cmd_ptr, uint8_t c)
 
 static uint16_t SFX_PitchOffset(uint16_t cmd_ptr, uint8_t c)
 {
-	uint8_t offset = gb_read8(cmd_ptr);
+	uint8_t offset = wAudioArg;
 	cmd_ptr = (uint16_t)(cmd_ptr + 1u);
 	if (c == 3u)
 		gb_write8(wde32_ADDR, offset);
@@ -258,7 +260,7 @@ static uint16_t SFX_Wait(uint16_t cmd_ptr, uint8_t c)
 		Func_fc1cd();
 	else
 		SFX_ApplyPitchOffset(c);
-	uint8_t wait_val = gb_read8(cmd_ptr);
+	uint8_t wait_val = wAudioArg;
 	cmd_ptr = (uint16_t)(cmd_ptr + 1u);
 	gb_write8((uint16_t)(wde33_ADDR + c), wait_val);
 	return cmd_ptr;
@@ -286,7 +288,7 @@ static void SFX_Wave(uint8_t param)
  * from a. */
 static uint16_t SFX_Pan(uint16_t cmd_ptr, uint8_t c)
 {
-	uint8_t pan_val = gb_read8(cmd_ptr);
+	uint8_t pan_val = wAudioArg;
 	cmd_ptr = (uint16_t)(cmd_ptr + 1u);
 	uint8_t ch = (uint8_t)(c + 1u);
 	uint8_t e = 0xEEu;
@@ -322,7 +324,7 @@ void ExecuteNextSFXCommand(uint16_t hl, uint16_t bc)
 	uint16_t cmd_ptr = hl;
 	uint8_t c = (uint8_t)bc;
 	for (;;) {
-		uint8_t cmd = gb_read8(cmd_ptr);
+		uint8_t cmd = GetAudioCmdAndArgs(wSFXBank, cmd_ptr);
 		cmd_ptr = (uint16_t)(cmd_ptr + 1u);
 		uint8_t idx = (uint8_t)(cmd >> 4u);
 		uint8_t param = (uint8_t)(cmd & 0xFu);
@@ -384,6 +386,8 @@ void SFX_Play(uint8_t sfx_id)
 	ptr = (uint16_t)(ptr + 1u);
 	wdd8c = flags;
 	wde54 = flags;
+	wSFXBank = gb_read8(ptr);
+	ptr = (uint16_t)(ptr + 1u);
 
 	uint16_t de = wSFXCommandPointers_ADDR;
 	uint8_t c = 0u;
@@ -473,7 +477,7 @@ SFX_endResult SFX_end(uint8_t b, uint8_t c, uint16_t caller_hl)
 void SFX_frequency(uint16_t bc, uint16_t caller_hl, uint8_t high)
 {
 	uint8_t d = high;
-	uint8_t e = gb_read8(caller_hl);
+	uint8_t e = wAudioArg;
 	caller_hl = (uint16_t)(caller_hl + 1u);
 	uint16_t freq_addr = (uint16_t)(wde37_ADDR + bc + bc);
 	uint8_t old_low = gb_read8(freq_addr);
@@ -501,7 +505,7 @@ void SFX_frequency(uint16_t bc, uint16_t caller_hl, uint8_t high)
 void SFX_loop(uint16_t bc, uint16_t caller_de)
 {
 	uint16_t store_addr = (uint16_t)(wde43_ADDR + bc + bc);
-	uint8_t a = gb_read8(caller_de);
+	uint8_t a = wAudioArg;
 	caller_de = (uint16_t)(caller_de + 1u);
 	gb_write8(store_addr, (uint8_t)caller_de);
 	gb_write8((uint16_t)(store_addr + 1u), (uint8_t)(caller_de >> 8));
@@ -513,7 +517,7 @@ void SFX_loop(uint16_t bc, uint16_t caller_de)
 /* >>> factory SFX_pan */
 void SFX_pan(uint16_t bc, uint16_t caller_hl)
 {
-	uint8_t pan_val = gb_read8(caller_hl);
+	uint8_t pan_val = wAudioArg;
 	caller_hl = (uint16_t)(caller_hl + 1u);
 	uint8_t rotate_count = (uint8_t)(bc + 1u);
 	uint8_t mask = 0xEEu;
@@ -539,7 +543,7 @@ void SFX_unused(uint16_t hl, uint16_t bc)
 /* >>> factory SFX_pitch_offset */
 void SFX_pitch_offset(uint16_t bc, uint16_t caller_hl)
 {
-	gb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), gb_read8(caller_hl));
+	gb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), wAudioArg);
 	caller_hl = (uint16_t)(caller_hl + 1u);
 	ExecuteNextSFXCommand(caller_hl, bc);
 }
@@ -574,7 +578,7 @@ void SFX_envelope(uint16_t bc, uint16_t caller_hl)
 {
 	uint16_t store_addr = (uint16_t)(wde2b_ADDR + bc);
 	gb_write8(store_addr, 0x80u);
-	uint8_t e = gb_read8(caller_hl);
+	uint8_t e = wAudioArg;
 	caller_hl = (uint16_t)(caller_hl + 1u);
 	uint8_t c = (uint8_t)bc;
 	uint16_t reg = (uint16_t)(rAUD1ENV + (uint16_t)c * 5u);
@@ -607,7 +611,7 @@ uint16_t SFX_wait(uint16_t bc, uint16_t caller_hl)
 		Func_fc1cd();
 	else
 		SFX_ApplyPitchOffset(c);
-	uint8_t wait_val = gb_read8(caller_hl);
+	uint8_t wait_val = wAudioArg;
 	caller_hl = (uint16_t)(caller_hl + 1u);
 	gb_write8((uint16_t)(wde33_ADDR + bc), wait_val);
 	return Func_fc105(bc, caller_hl);

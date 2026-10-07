@@ -7,7 +7,7 @@
 
 #include "home/grass_club_entrance.h"
 
-#define DeckMachineRoomAfterDuelTable (DeckMachineRoomAfterDuel_ADDR + 0x07u)
+#define DeckMachineRoomAfterDuelTable (DeckMachineRoomAfterDuel_ADDR + 0x06u)
 
 #include "generated/wram.h"
 

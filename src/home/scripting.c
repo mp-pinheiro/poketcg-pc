@@ -263,7 +263,7 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/switch_rom.h"
 #include "generated/wram.h"
 #define SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK 0x03u
-#define MULTICHOICE_MENU_ARGS (ScriptCommand_ChooseStarterDeckMultichoice_ADDR + 0x0Au)
+#define MULTICHOICE_MENU_ARGS (ScriptCommand_ChooseStarterDeckMultichoice__multichoice_menu_args_ADDR)
 
 #include "home/scripting.h"
 #include "generated/wram.h"
@@ -2126,7 +2126,7 @@ IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)
 IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
 {
 	BankswitchROM(3u);
-	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, (ScriptCommand_ShowSamNormalMultichoice_ADDR + 0x16u));
+	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, (ScriptCommand_ShowSamNormalMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
 	(void)SetEventValue(0x75u, 0u, 0u, choice);
@@ -2142,7 +2142,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 	 * follows the routine in bank 3 ($03:532B). */
 	BankswitchROM(3u);
 	ShowMultichoiceTextboxResult menu =
-		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, (ScriptCommand_ShowSamRulesMultichoice_ADDR + 0x14u));
+		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, (ScriptCommand_ShowSamRulesMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
 	(void)SetEventValue(0x75u, 0u, 0u, choice);
@@ -2154,7 +2154,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)
 {
 	BankswitchROM(3u);
-	(void)ShowMultichoiceTextbox(0u, (ScriptCommand_ChooseDeckToDuelAgainstMultichoice_ADDR + 0x12u));
+	(void)ShowMultichoiceTextbox(0u, (ScriptCommand_ChooseDeckToDuelAgainstMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;
 	(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);
 	return IncreaseScriptPointerBy1();

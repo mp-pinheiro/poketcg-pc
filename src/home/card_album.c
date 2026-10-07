@@ -445,8 +445,8 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
  * dispatches it. */
 #define PRINT_CARD_SET_LIST_ENTRIES PrintCardSetListEntries_ADDR
 /* >>> factory CardAlbum */
-#define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS (CardAlbum_ADDR + 0xEFu)
-#define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum_ADDR + 0xF7u)
+#define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS (CardAlbum__BoosterPackMenuParams_ADDR)
+#define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum__BoosterPackCardsMenuParams_ADDR)
 #define CARD_ALBUM_BOOSTER_PACKS_MENU_DATA 0x6B62u
 #define MENU_CANCEL 0xFFu
 #define PAD_B 0x02u

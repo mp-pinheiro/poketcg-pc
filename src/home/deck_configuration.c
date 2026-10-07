@@ -167,7 +167,7 @@
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define APPEND_DECK_NAME_TEXT_START_ADDR (AppendDeckName_ADDR + 0x3Au)
+#define APPEND_DECK_NAME_TEXT_START_ADDR (AppendDeckName__text_start_ADDR)
 
 #include "home/deck_configuration.h"
 #include "home/text_box.h"
@@ -305,7 +305,7 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 /* poketcg.sym / poketcg.map, bank 02:
  *   $5eaf HandleDeckConfirmationMenu.CardSelectionParams,
  *   $5e31 UpdateConfirmationCardScreen. */
-#define DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR (HandleDeckConfirmationMenu_ADDR + 0x6Eu)
+#define DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR (HandleDeckConfirmationMenu__CardSelectionParams_ADDR)
 #define UPDATE_CONFIRMATION_CARD_SCREEN_ADDR UpdateConfirmationCardScreen_ADDR
 
 #include "home/deck_configuration.h"
@@ -350,7 +350,7 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
  * UpdateDeckMachineScrollArrowsAndEntries (deck_machine.asm:1899-1902),
  * 02:7403 DrawDeckMachineScreen (deck_machine.asm:638-641). */
 #define CARD_LIST_PRINT_CARD_SET_ADDR PrintCardSetListEntries_ADDR
-#define CARD_LIST_MISSING_CARDS_ADDR (HandleDeckMissingCardsList_ADDR + 0x9Cu)
+#define CARD_LIST_MISSING_CARDS_ADDR (HandleDeckMissingCardsList__CardListUpdateFunction_ADDR)
 #define CARD_LIST_SHOW_RECEIVED_ADDR ShowReceivedCardsList_ADDR
 #define CARD_LIST_UPDATE_MACHINE_ARROWS_ADDR UpdateDeckMachineScrollArrowsAndEntries_ADDR
 #define CARD_LIST_DRAW_MACHINE_SCREEN_ADDR DrawDeckMachineScreen_ADDR

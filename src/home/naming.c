@@ -24,7 +24,7 @@
  * data; the NAME_BUFFER_LENGTH copy runs past the 12-byte "MARK" fixed-width
  * label into the first four bytes of Unknown_128f7. */
 #define NAMING_BANK 0x04u
-#define DEFAULT_PLAYER_NAME (DisplayPlayerNamingScreen_ADDR + 0x42u)
+#define DEFAULT_PLAYER_NAME (DisplayPlayerNamingScreen__default_name_ADDR)
 /* <<< factory statics */
 
 /* >>> factory DisplayPlayerNamingScreen */

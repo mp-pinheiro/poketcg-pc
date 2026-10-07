@@ -55,10 +55,23 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tools" / "completion"))
 
 import refstream
 import session
+from gen_constants import constant_names, evaluate
+from tools.profiles import get_profile, symbol_address, symbol_table
+
+PROFILE = get_profile()
+
+
+def wram(name: str) -> int:
+    return symbol_address(PROFILE, name, ROOT)[1]
+
+
+CONSTANTS = evaluate(PROFILE.source_path(ROOT), constant_names(PROFILE.source_path(ROOT)))
 
 BUTTONS = {"A": 0x10, "B": 0x20, "SELECT": 0x40, "START": 0x80,
            "RIGHT": 0x01, "LEFT": 0x02, "UP": 0x04, "DOWN": 0x08}
@@ -107,12 +120,12 @@ def parse_script(path: Path) -> list[tuple[str, int, str]]:
 
 
 IDLE_RUN = 150
-# WRAM that moves while the ROM waits for a press, on top of the session
-# mask: the OAM shadow, VBlank/timer/play-time counters and the RNG
-# ($CAB8-$CACD), the three cursor-blink counters, and the overworld's sprite
-# animation state and decompression scratch ($D200-$D560).
-IDLE_EXTRA_MASK = ((0xCA00, 0xCAA0), (0xCAB8, 0xCACE), (0xCB74, 0xCBC5), (0xCD04, 0xCD05), (0xCD0F, 0xCD10),
-                   (0xCEA3, 0xCEA4), (0xD200, 0xD560))
+IDLE_EXTRA_MASK = ((wram("wOAM"), wram("wStringBuffer")), (wram("wVBlankCounter"), wram("wVBlankFunctionTrampoline")),
+                   (wram("wcd04"), wram("wcd04") + 1), (wram("wCursorBlinkCounter"), wram("wCursorBlinkCounter") + 1),
+                   (wram("wCheckMenuCursorBlinkCounter"), wram("wCheckMenuCursorBlinkCounter") + 1),
+                   (wram("wd233"), wram("wSprite10Enabled")))
+if "wSerialOp" in symbol_table(PROFILE, ROOT):
+    IDLE_EXTRA_MASK += ((wram("wSerialOp"), wram("wSerialEnd")),)
 
 
 def write_png(path: Path, pixels: bytes, width: int, height: int) -> None:
@@ -125,19 +138,18 @@ def write_png(path: Path, pixels: bytes, width: int, height: int) -> None:
                      + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
 
 
-# wram.asm: wPlayerXCoord/wPlayerYCoord ($D330/$D331, in tiles), wPlayerDirection
-# ($D334, NORTH..WEST), wCurMap ($D32F), wLoadedNPCs ($D34A: 8 entries of 12
-# bytes, id at +0, x/y tiles at +2/+3, direction at +4).
 DIRECTIONS = ("north", "east", "south", "west")
+PLAYER_X, PLAYER_Y, PLAYER_DIRECTION, CUR_MAP, LOADED_NPCS = (
+    wram("wPlayerXCoord"), wram("wPlayerYCoord"), wram("wPlayerDirection"), wram("wCurMap"), wram("wLoadedNPC1ID"))
 
 
 def peek(core: refstream.Core) -> str:
     read = core.library.gambatte_cpuread
     at = lambda address: read(core.core, address)  # noqa: E731
-    facing = DIRECTIONS[at(0xD334) & 3]
-    lines = [f"player x={at(0xD330)} y={at(0xD331)} facing={facing} map={at(0xD32F)}"]
+    facing = DIRECTIONS[at(PLAYER_DIRECTION) & 3]
+    lines = [f"player x={at(PLAYER_X)} y={at(PLAYER_Y)} facing={facing} map={at(CUR_MAP)}"]
     for slot in range(8):
-        base = 0xD34A + slot * 12
+        base = LOADED_NPCS + slot * 12
         npc = at(base)
         if npc == 0:
             continue
@@ -145,18 +157,27 @@ def peek(core: refstream.Core) -> str:
     return "\n".join(lines)
 
 
-# The duel, read straight from WRAM (wram.asm `duel_vars`, constants/duel_constants.asm
-# and card_data_constants.asm). Card data comes from the ROM's CardPointers table.
-PLAYER_VARS = 0xC200
-CARD_LOCATIONS, HAND, ARENA_CARD, ARENA_CARD_HP = 0x00, 0x42, 0xBB, 0xC8
-NUMBER_OF_CARDS_IN_HAND, NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEE, 0xEF
-LOCATION_ARENA = 0x10
-PLAYER_DECK = 0xC400
-DUEL_FINISHED, ALREADY_PLAYED_ENERGY, CUR_MENU_ITEM, DUEL_TURNS = 0xCC07, 0xCC0B, 0xCD10, 0xCC06
-WHOSE_TURN, BANK_ROM = 0xFF97, 0xFF80
-CARD_POINTERS_BANK, CARD_POINTERS = 0x0C, 0x4C5C
-CARD_TYPE, CARD_STAGE, ATTACK1_COST, ATTACK1_DAMAGE, ATTACK2_COST, ATTACK2_DAMAGE = 0x00, 0x09, 0x0C, 0x16, 0x1F, 0x29
-TYPE_ENERGY_FIRE, TYPE_ENERGY_DOUBLE_COLORLESS, TYPE_TRAINER = 0x08, 0x0E, 0x10
+PLAYER_VARS = wram("wPlayerDuelVariables")
+CARD_LOCATIONS = wram("wPlayerCardLocations") - PLAYER_VARS
+HAND = wram("wPlayerHand") - PLAYER_VARS
+ARENA_CARD = wram("wPlayerArenaCard") - PLAYER_VARS
+ARENA_CARD_HP = wram("wPlayerArenaCardHP") - PLAYER_VARS
+NUMBER_OF_CARDS_IN_HAND = wram("wPlayerNumberOfCardsInHand") - PLAYER_VARS
+NUMBER_OF_POKEMON_IN_PLAY_AREA = wram("wPlayerNumberOfPokemonInPlayArea") - PLAYER_VARS
+LOCATION_ARENA = CONSTANTS["CARD_LOCATION_ARENA"]
+PLAYER_DECK = wram("wPlayerDeck")
+DECK_ENTRY_BYTES = 2 if PROFILE.name == "extended" else 1
+DUEL_TEMP_LIST = wram("wDuelTempList")
+DUEL_FINISHED, ALREADY_PLAYED_ENERGY, CUR_MENU_ITEM, DUEL_TURNS = (
+    wram("wDuelFinished"), wram("wAlreadyPlayedEnergy"), wram("wCurMenuItem"), wram("wDuelTurns"))
+WHOSE_TURN, BANK_ROM = wram("hWhoseTurn"), wram("hBankROM")
+CARD_POINTERS_BANK, CARD_POINTERS = symbol_address(PROFILE, "CardPointers", ROOT)
+CARD_POINTER_BYTES = 3 if PROFILE.name == "extended" else 2
+CARD_TYPE, CARD_STAGE = CONSTANTS["CARD_DATA_TYPE"], CONSTANTS["CARD_DATA_STAGE"]
+ATTACK1_COST, ATTACK1_DAMAGE = CONSTANTS["CARD_DATA_ATTACK1_ENERGY_COST"], CONSTANTS["CARD_DATA_ATTACK1_DAMAGE"]
+ATTACK2_COST, ATTACK2_DAMAGE = CONSTANTS["CARD_DATA_ATTACK2_ENERGY_COST"], CONSTANTS["CARD_DATA_ATTACK2_DAMAGE"]
+TYPE_ENERGY_FIRE, TYPE_ENERGY_DOUBLE_COLORLESS, TYPE_TRAINER = (
+    CONSTANTS["TYPE_ENERGY_FIRE"], CONSTANTS["TYPE_ENERGY_DOUBLE_COLORLESS"], CONSTANTS["TYPE_TRAINER"])
 COLORS = ("fire", "grass", "lightning", "water", "fighting", "psychic")
 FRAME_WRAPPERS = {"DoFrame", "DoFrameIfLCDEnabled", "CallIndirect", "CallHL", "CallHL2", "DoAFrames"}
 # Where the ROM is when it waits for the player, by the routine that called
@@ -207,10 +228,22 @@ class DuelReader:
     def rom_byte(self, bank: int, address: int) -> int:
         return self.rom[bank * 0x4000 + (address - 0x4000)]
 
-    def card(self, card_id: int) -> dict:
-        entry = CARD_POINTERS + 2 * card_id
+    def card_data_pointer(self, card_id: int) -> tuple[int, int]:
+        entry = CARD_POINTERS + CARD_POINTER_BYTES * card_id
         pointer = self.rom_byte(CARD_POINTERS_BANK, entry) | (self.rom_byte(CARD_POINTERS_BANK, entry + 1) << 8)
-        data = lambda offset: self.rom_byte(CARD_POINTERS_BANK, pointer + offset)  # noqa: E731
+        bank = self.rom_byte(CARD_POINTERS_BANK, entry + 2) if CARD_POINTER_BYTES == 3 else CARD_POINTERS_BANK
+        return bank, pointer
+
+    def deck_card(self, index: int) -> int:
+        base = PLAYER_DECK + DECK_ENTRY_BYTES * index
+        card_id = self.at(base)
+        if DECK_ENTRY_BYTES == 2:
+            card_id |= self.at(base + 1) << 8
+        return card_id
+
+    def card(self, card_id: int) -> dict:
+        bank, pointer = self.card_data_pointer(card_id)
+        data = lambda offset: self.rom_byte(bank, pointer + offset)  # noqa: E731
         kind = data(CARD_TYPE)
         attacks = []
         if kind < TYPE_ENERGY_FIRE:
@@ -227,16 +260,15 @@ class DuelReader:
         """wDuelTempList: the deck indices a card list screen shows, in order."""
         listed = []
         for offset in range(60):
-            index = self.at(0xC510 + offset)
+            index = self.at(DUEL_TEMP_LIST + offset)
             if index == 0xFF:
                 break
             listed.append(index)
         return listed
 
     def is_basic(self, card_id: int) -> bool:
-        entry = CARD_POINTERS + 2 * card_id
-        pointer = self.rom_byte(CARD_POINTERS_BANK, entry) | (self.rom_byte(CARD_POINTERS_BANK, entry + 1) << 8)
-        return self.rom_byte(CARD_POINTERS_BANK, pointer) < TYPE_ENERGY_FIRE and self.rom_byte(CARD_POINTERS_BANK, pointer + CARD_STAGE) == 0
+        bank, pointer = self.card_data_pointer(card_id)
+        return self.rom_byte(bank, pointer) < TYPE_ENERGY_FIRE and self.rom_byte(bank, pointer + CARD_STAGE) == 0
 
     def hand(self) -> list[int]:
         count = self.var(NUMBER_OF_CARDS_IN_HAND)
@@ -248,7 +280,7 @@ class DuelReader:
         for index in range(60):
             if self.var(CARD_LOCATIONS + index) != LOCATION_ARENA + location:
                 continue
-            kind = self.card(self.at(PLAYER_DECK + index))["type"]
+            kind = self.card(self.deck_card(index))["type"]
             if TYPE_ENERGY_FIRE <= kind < TYPE_ENERGY_DOUBLE_COLORLESS:
                 energy[COLORS[kind - TYPE_ENERGY_FIRE]] += 1
             elif kind == TYPE_ENERGY_DOUBLE_COLORLESS:
@@ -295,12 +327,12 @@ class DuelReader:
                  f"energy_played={self.at(ALREADY_PLAYED_ENERGY)} waiting_in={waiting}"]
         for slot in range(self.var(NUMBER_OF_POKEMON_IN_PLAY_AREA)):
             index = self.var(ARENA_CARD + slot)
-            card = self.card(self.at(PLAYER_DECK + index))
+            card = self.card(self.deck_card(index))
             have = self.attached(slot)
             costs = " ".join(f"atk{n}={a['damage']}:{sum(a['need'].values())}" for n, a in enumerate(card["attacks"], 1))
             lines.append(f"slot{slot} deck={index} card={card['id']:#04x} hp={self.var(ARENA_CARD_HP + slot)} "
                          f"energy={sum(have.values())} {costs}")
-        hand = " ".join(f"{index}:{self.card(self.at(PLAYER_DECK + index))['id']:#04x}" for index in self.hand())
+        hand = " ".join(f"{index}:{self.card(self.deck_card(index))['id']:#04x}" for index in self.hand())
         lines.append(f"hand deck:card = {hand}")
         return "\n".join(lines)
 
@@ -380,15 +412,32 @@ class Driver:
         last = self.digest()
         stable = 0
         waited = 0
+        churn: dict[int, int] = {}
         while stable < IDLE_RUN:
             self.step(0)
             waited += 1
             current = self.digest()
-            stable = stable + 1 if current == last else 0
+            if current == last:
+                stable += 1
+            else:
+                stable = 0
+                for offset, (before, after) in enumerate(zip(last, current)):
+                    if before != after:
+                        churn[offset] = churn.get(offset, 0) + 1
             last = current
             if waited > 4000:
-                raise SystemExit(f"never idle after {waited} DoFrames at ordinal {self.core.ordinal}")
+                busiest = sorted(churn, key=lambda offset: -churn[offset])[:12]
+                names = " ".join(f"{self.label_at(0xC000 + offset)}={churn[offset]}" for offset in busiest)
+                raise SystemExit(f"never idle after {waited} DoFrames at ordinal {self.core.ordinal}; churn: {names}")
         return waited
+
+    def label_at(self, address: int) -> str:
+        rows = self.reader.labels.get(0, []) if self.reader is not None else []
+        index = bisect_right(rows, (address, "\xff")) - 1
+        if index < 0:
+            return f"${address:04X}"
+        base, name = rows[index]
+        return name if base == address else f"{name}+{address - base}"
 
     def close(self) -> None:
         self.core.close()
@@ -399,7 +448,7 @@ A, B, RIGHT, LEFT, UP, DOWN = 0x10, 0x20, 0x01, 0x02, 0x04, 0x08
 # 3 PKMN POWER, 5 DONE below (core.asm DuelMenuFunctionTable; up/down flips the
 # low bit, left/right steps by two).
 MENU_HAND, MENU_ATTACK, MENU_DONE = 0, 1, 5
-CURRENT_DUEL_MENU_ITEM, LIST_SCROLL_OFFSET = 0xCBC6, 0xCD19
+CURRENT_DUEL_MENU_ITEM, LIST_SCROLL_OFFSET = wram("wCurrentDuelMenuItem"), wram("wListScrollOffset")
 LINK_OPPONENT_WAITS = {"HandleWaitingLinkOpponentMenu"}
 
 
@@ -487,7 +536,7 @@ def play_duel(driver: "Driver", max_actions: int = 1200) -> None:
             listed = reader.temp_list()
             wanted_card = goal[1] if goal is not None and goal[0] == "attach" else None
             if wanted_card is None and reader.at(DUEL_TURNS) == 0:
-                basics = [index for index in listed if reader.is_basic(reader.at(PLAYER_DECK + index))]
+                basics = [index for index in listed if reader.is_basic(reader.deck_card(index))]
                 wanted_card = basics[0] if basics else None
             if wanted_card is None or wanted_card not in listed:
                 press = B
@@ -564,7 +613,7 @@ def decide_turn(reader: DuelReader, failed_attaches: set[int]) -> tuple:
     affordable attack, else DONE."""
     if reader.var(NUMBER_OF_POKEMON_IN_PLAY_AREA) == 0:
         return ("done",)
-    active = reader.card(reader.at(PLAYER_DECK + reader.var(ARENA_CARD)))
+    active = reader.card(reader.deck_card(reader.var(ARENA_CARD)))
     have = reader.attached(0)
     for number, attack in enumerate(active["attacks"]):
         if reader.affordable(attack["need"], have):
@@ -574,7 +623,7 @@ def decide_turn(reader: DuelReader, failed_attaches: set[int]) -> tuple:
         for index in reader.hand():
             if index in failed_attaches:
                 continue
-            kind = reader.card(reader.at(PLAYER_DECK + index))["type"]
+            kind = reader.card(reader.deck_card(index))["type"]
             if not TYPE_ENERGY_FIRE <= kind <= TYPE_ENERGY_DOUBLE_COLORLESS:
                 continue
             color = COLORS[kind - TYPE_ENERGY_FIRE] if kind < TYPE_ENERGY_DOUBLE_COLORLESS else "colorless"

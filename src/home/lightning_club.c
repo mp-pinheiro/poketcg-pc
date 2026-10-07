@@ -10,7 +10,7 @@
 #include "home/grass_club_entrance.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
-#define LightningClubAfterDuelTable (LightningClubAfterDuel_ADDR + 0x07u)
+#define LightningClubAfterDuelTable (LightningClubAfterDuel__after_duel_table_ADDR)
 /* <<< factory statics */
 
 /* >>> factory LightningClubAfterDuel */

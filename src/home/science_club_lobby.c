@@ -11,7 +11,7 @@
 #include "home/science_club_lobby.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define ScienceClubLobbyAfterDuelTable (ScienceClubLobbyAfterDuel_ADDR + 0x07u)
+#define ScienceClubLobbyAfterDuelTable (ScienceClubLobbyAfterDuel__after_duel_table_ADDR)
 #include "home/scripting.h"
 #include "home/random.h"
 #include "home/card_data.h"

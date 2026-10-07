@@ -1,5 +1,6 @@
 #include "digest.h"
 
+#include "generated/wram.h"
 #include "mem.h"
 
 #include <stdlib.h>
@@ -83,7 +84,7 @@ static int load_mask(const char *path)
 int digest_open(const char *sink_path, const char *mask_path)
 {
 	static uint8_t wram_mask[0x2000], hram_mask[0x80], oam_mask[0xA0], vram_mask[0x4000],
-	               sram_mask[0x8000], audio_mask[0x165];
+	               sram_mask[0x8000], audio_mask[POKETCG_WRAM_DECLARED_END - wCurSongID_ADDR];
 	g_regions[0] = (DigestRegion){"wram", g_wram, sizeof wram_mask, wram_mask};
 	g_regions[1] = (DigestRegion){"hram", g_hram, sizeof hram_mask, hram_mask};
 	g_regions[2] = (DigestRegion){"oam", g_oam, sizeof oam_mask, oam_mask};
@@ -92,7 +93,7 @@ int digest_open(const char *sink_path, const char *mask_path)
 	/* SECTION "WRAM Audio", $DD80-$DEE4 (wram.asm:2992-3289): the sound
 	 * driver, digested on its own so its transient ISR phase is reported
 	 * without gating the game-state regions. */
-	g_regions[5] = (DigestRegion){"audio", g_wram + 0x1D80, sizeof audio_mask, audio_mask};
+	g_regions[5] = (DigestRegion){"audio", g_wram + (wCurSongID_ADDR - 0xC000u), sizeof audio_mask, audio_mask};
 	crc_init();
 	if (mask_path && load_mask(mask_path) != 0)
 		return -1;

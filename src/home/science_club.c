@@ -10,7 +10,7 @@
 #include "generated/wram.h"
 
 #include "home/grass_club_entrance.h"
-#define ScienceClubAfterDuelTable (ScienceClubAfterDuel_ADDR + 0x07u)
+#define ScienceClubAfterDuelTable (ScienceClubAfterDuel__after_duel_table_ADDR)
 /* <<< factory statics */
 
 /* >>> factory Preload_Joseph */

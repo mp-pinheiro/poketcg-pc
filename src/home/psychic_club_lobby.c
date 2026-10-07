@@ -11,7 +11,7 @@
 #include "generated/wram.h"
 
 #include "home/grass_club_entrance.h"
-#define PsychicClubLobbyAfterDuelTable (PsychicClubLobbyAfterDuel_ADDR + 0x07u)
+#define PsychicClubLobbyAfterDuelTable (PsychicClubLobbyAfterDuel__after_duel_table_ADDR)
 
 #include "home/scripting.h"
 #include "mem.h"

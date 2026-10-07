@@ -30,7 +30,7 @@
 #include "generated/hram.h"
 #include "mem.h"
 
-#define SHAKE_SCREEN_X_UPDATE_FUNC_ADDR (ShakeScreenX_ADDR + 0x11u)
+#define SHAKE_SCREEN_X_UPDATE_FUNC_ADDR (ShakeScreenX__UpdateFunc_ADDR)
 
 #include "generated/wram.h"
 #include "home/play_animation.h"
@@ -39,7 +39,7 @@
 
 #include "home/scroll.h"
 #include "generated/wram.h"
-#define DISTORTSCREEN_UPDATEFUNC_ADDR (DistortScreen_ADDR + 0x1Cu)
+#define DISTORTSCREEN_UPDATEFUNC_ADDR (DistortScreen__UpdateFunc_ADDR)
 #define APPLYBACKGROUNDSCROLL_ADDR ApplyBackgroundScroll_ADDR
 
 #include "home/copy.h"
@@ -47,12 +47,12 @@
 #include "home/palettes.h"
 #include "home/screen_effects.h"
 #include "generated/wram.h"
-#define WHITEFLASHSCREEN_UPDATEFUNC_ADDR (WhiteFlashScreen_ADDR + 0x2Du)
+#define WHITEFLASHSCREEN_UPDATEFUNC_ADDR (WhiteFlashScreen__UpdateFunc_ADDR)
 
 #include "home/screen_effects.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR (ShakeScreenY_ADDR + 0x11u)
+#define SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR (ShakeScreenY__UpdateFunc_ADDR)
 
 #include "home/screen_effects.h"
 #include "mem.h"
@@ -190,7 +190,7 @@ void Func_1ce03(uint8_t a)
 void (*ScreenEffectForAddress(uint16_t address))(void)
 {
 	static const uint16_t addresses[8] = {
-		(HandleTitleScreen_ADDR + 0x7Cu), (HandleStartMenu_ADDR + 0x16u), (HandleStartMenu_ADDR + 0x7Du), (HandleStartMenu_ADDR + 0x87u), (HandleStartMenu_ADDR + 0x87u), (HandleStartMenu_ADDR + 0x87u), (HandleStartMenu_ADDR + 0x87u), (HandleStartMenu_ADDR + 0x87u),
+		SetScreenForDuelAnimation_ADDR, PrintDamageText_ADDR, UpdateMainSceneHUD_ADDR, DuelAnim153_ADDR, DuelAnim154_ADDR, DuelAnim155_ADDR, DuelAnim156_ADDR, DuelAnim157_ADDR,
 	};
 	for (size_t i = 0; i < 8u; i++)
 		if (addresses[i] == address)

@@ -92,7 +92,7 @@ int checkpoint_load(const char *path)
 	long rom_bank = 0;
 	long vram_bank = 0;
 	if (read_number(text, "rom_bank", &rom_bank) == 0)
-		g_rom_bank = (uint8_t)(rom_bank & 0x3F);
+		g_rom_bank = (uint8_t)(rom_bank % g_rom_banks);
 	if (read_number(text, "vram_bank", &vram_bank) == 0)
 		g_vram_bank = (uint8_t)(vram_bank & 0x01);
 	free(text);

@@ -31,7 +31,7 @@
 #define SYM_1 0x21u
 #define SYM_2 0x22u
 #define SYM_SLASH 0x2Eu
-#define GLOSSARY_TRANSITION_TABLE (FlyingPikachuFlyEffectCommands_ADDR + 0x02u) /* bank 2: OpenGlossaryScreen_TransitionTable */
+#define GLOSSARY_TRANSITION_TABLE OpenGlossaryScreen_TransitionTable_ADDR /* bank 2: OpenGlossaryScreen_TransitionTable */
 #define GLOSSARY_DATA1 GlossaryData1_ADDR            /* bank 6: GlossaryData1 */
 #define GLOSSARY_DATA2 GlossaryData2_ADDR            /* bank 6: GlossaryData2 */
 #define GLOSSARY_BANK 6u

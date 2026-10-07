@@ -67,7 +67,7 @@
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define CHAR_UNDERBAR_ADDR (PrintPlayerNameFromInput_ADDR + 0x27u)
+#define CHAR_UNDERBAR_ADDR (PrintPlayerNameFromInput__char_underbar_ADDR)
 
 #include "home/input_name.h"
 #include "home/lcd.h"
@@ -75,7 +75,7 @@
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
-#define DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR (DrawPlayerNamingScreenBG_ADDR + 0x2Au)
+#define DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR (DrawPlayerNamingScreenBG__data_ADDR)
 
 #include "home/input_name.h"
 #include "generated/wram.h"

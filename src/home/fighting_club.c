@@ -9,7 +9,7 @@
 #include "home/fighting_club.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define FightingClubAfterDuelTable (FightingClubAfterDuel_ADDR + 0x07u)
+#define FightingClubAfterDuelTable (FightingClubAfterDuel__after_duel_table_ADDR)
 
 #include "home/scripting.h"
 

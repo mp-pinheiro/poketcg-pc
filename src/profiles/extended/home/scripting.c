@@ -11,7 +11,6 @@
 #include "home/color.h"
 #include "home/map_events.h"
 /* >>> factory statics */
-#define EVENT_VAR_MASKS_BANK 3u
 #define EVENT_VAR_MASKS EventVarMasks_ADDR
 
 static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
@@ -260,7 +259,7 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "home/switch_rom.h"
 #include "generated/wram.h"
 #define SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK 0x03u
-#define MULTICHOICE_MENU_ARGS (ScriptCommand_ChooseStarterDeckMultichoice_ADDR + 0x0Au)
+#define MULTICHOICE_MENU_ARGS (ScriptCommand_ChooseStarterDeckMultichoice__multichoice_menu_args_ADDR)
 
 #include "home/scripting.h"
 #include "generated/wram.h"
@@ -364,21 +363,11 @@ GetScriptArgsAfterPointerResult GetScriptArgsAfterPointer(uint8_t a)
 
 
 /* >>> factory GetEventVar */
-/* scripting.asm:366-382 */
 GetEventVarResult GetEventVar(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 {
 	(void)f;
 	uint16_t bc = (uint16_t)a * 2u;
-	uint8_t local_entry[2];
-	const uint8_t *entry;
-	if (a == EVENT_PLAYER_GENDER) {
-		local_entry[0] = 0x1du;
-		local_entry[1] = 0x01u;
-		entry = local_entry;
-	} else {
-		uint16_t table_addr = (uint16_t)(EVENT_VAR_MASKS + bc);
-		entry = rom_ptr(EVENT_VAR_MASKS_BANK, table_addr);
-	}
+	const uint8_t *entry = rom_ptr(EventVarMasks_BANK, (uint16_t)(EVENT_VAR_MASKS + bc));
 	uint8_t flags = (bc & 0xFF00u) == 0 ? 0x80u : 0u;
 	uint8_t offset = entry[0];
 	if (((wEventVars_ADDR & 0x0FFFu) + (offset & 0x0FFFu)) > 0x0FFFu)
@@ -2070,7 +2059,7 @@ IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)
 IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
 {
 	BankswitchROM(3u);
-	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, (ScriptCommand_ShowSamNormalMultichoice_ADDR + 0x16u));
+	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, (ScriptCommand_ShowSamNormalMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
 	(void)SetEventValue(0x75u, 0u, 0u, choice);
@@ -2086,7 +2075,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 	 * follows the routine in bank 3 ($03:532B). */
 	BankswitchROM(3u);
 	ShowMultichoiceTextboxResult menu =
-		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, (ScriptCommand_ShowSamRulesMultichoice_ADDR + 0x14u));
+		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, (ScriptCommand_ShowSamRulesMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
 	(void)SetEventValue(0x75u, 0u, 0u, choice);
@@ -2098,7 +2087,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)
 {
 	BankswitchROM(3u);
-	(void)ShowMultichoiceTextbox(0u, (ScriptCommand_ChooseDeckToDuelAgainstMultichoice_ADDR + 0x12u));
+	(void)ShowMultichoiceTextbox(0u, (ScriptCommand_ChooseDeckToDuelAgainstMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;
 	(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);
 	return IncreaseScriptPointerBy1();

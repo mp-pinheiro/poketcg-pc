@@ -131,8 +131,8 @@ static uint32_t duel_save_total_size(void)
 #include "home/play_animation.h"
 
 #define ANIM_DATA_BANK 7u
-#define ANIM_COORDS_INDEX_ADDR (PrintDeckAndHandIconsAndNumberOfCards_ADDR + 0x16u)
-#define ANIM_COORDS_ADDR (PrintPlayerNumberOfHandAndDeckCards_ADDR + 0x11u)
+#define ANIM_COORDS_INDEX_ADDR AnimationCoordinatesIndex_ADDR
+#define ANIM_COORDS_ADDR AnimationCoordinates_ADDR
 #define PLAYER_TURN 0xc2u
 
 
@@ -486,7 +486,7 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "home/tiles.h"
 #include "generated/wram.h"
-#define DUEL_OTHER_GFX (GameLoop_ADDR + 0x08u)
+#define DUEL_OTHER_GFX DuelOtherGraphics_ADDR
 
 #include "home/core.h"
 #include "home/duel.h"

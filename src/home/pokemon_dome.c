@@ -13,7 +13,7 @@
 #include "generated/wram.h"
 #include "home/fire_club_lobby.h"
 #include "home/grass_club_entrance.h"
-#define PokemonDomeAfterDuelTable (PokemonDomeAfterDuel_ADDR + 0x07u)
+#define PokemonDomeAfterDuelTable (PokemonDomeAfterDuel__after_duel_table_ADDR)
 
 static PokemonDomeResult preload_grand_master(uint8_t event, uint8_t x, uint8_t y,
 	uint8_t challenged, uint8_t defeated)

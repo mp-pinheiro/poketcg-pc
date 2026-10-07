@@ -8,7 +8,7 @@
 #include "home/rock_club.h"
 #include "home/grass_club_entrance.h"
 #include "generated/wram.h"
-#define RockClubAfterDuelTable (RockClubAfterDuel_ADDR + 0x07u)
+#define RockClubAfterDuelTable (RockClubAfterDuel__after_duel_table_ADDR)
 /* <<< factory statics */
 
 /* >>> factory RockClubAfterDuel */

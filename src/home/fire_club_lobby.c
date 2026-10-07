@@ -17,7 +17,7 @@
 
 #include "home/grass_club_entrance.h"
 #include "mem.h"
-#define AFTER_DUEL_TABLE_830 (FireClubLobbyAfterDuel_ADDR + 0x07u)
+#define AFTER_DUEL_TABLE_830 (FireClubLobbyAfterDuel__after_duel_table_ADDR)
 /* <<< factory statics */
 
 /* >>> factory FindExtraInteractableObjects */

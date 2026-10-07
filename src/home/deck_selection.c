@@ -69,7 +69,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define DECK_BUILDING_PARAMS_ADDR DeckBuildingParams_ADDR
-#define DECK_SELECTION_MENU_PARAMS_ADDR (DeckSelectionMenu_ADDR + 0x32u)
+#define DECK_SELECTION_MENU_PARAMS_ADDR (DeckSelectionMenu__DeckSelectionMenuParameters_ADDR)
 #define DECK_SELECTION_DATA_ADDR DeckSelectionData_ADDR
 /* <<< factory statics */
 
