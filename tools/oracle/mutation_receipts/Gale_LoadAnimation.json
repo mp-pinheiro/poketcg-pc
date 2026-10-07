@@ -1,9 +1,9 @@
 {
   "fn": "Gale_LoadAnimation",
-  "case": "tests/cases/effect_functions.py",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"Gale_LoadAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52408\": \"87\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"Gale_LoadAnimation\", \"mismatches\": {\"bus\": {\"address\": 52408, \"reference\": \"87\", \"native\": \"88\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52408, 1]]}}}\n",
-  "restored": "{\"fn\": \"Gale_LoadAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52408\": \"87\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"Gale_LoadAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52323\": \"87\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Gale_LoadAnimation\", \"mismatches\": {\"bus\": {\"address\": 52323, \"reference\": \"87\", \"native\": \"88\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52323, 1]]}}}\n",
+  "restored": "{\"fn\": \"Gale_LoadAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52323\": \"87\"}}, \"status\": \"PASS\"}\n"
 }

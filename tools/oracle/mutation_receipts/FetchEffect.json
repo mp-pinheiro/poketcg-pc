@@ -1,9 +1,9 @@
 {
   "fn": "FetchEffect",
-  "case": "tests/cases/effect_functions.py",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"FetchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49665\": \"01\", \"49730\": \"01\", \"49790\": \"01\", \"49850\": \"01\", \"49902\": \"01\", \"52237\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"FetchEffect\", \"mismatches\": {\"bus\": {\"address\": 49665, \"reference\": \"0101010101\", \"native\": \"4002010101\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49665, 1], [49730, 1], [49790, 1], [49850, 1], [49902, 1], [52237, 1], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"FetchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49665\": \"01\", \"49730\": \"01\", \"49790\": \"01\", \"49850\": \"01\", \"49902\": \"01\", \"52237\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"FetchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49665\": \"00\", \"49730\": \"00\", \"49850\": \"01\", \"49902\": \"01\", \"50176\": \"01\", \"52151\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FetchEffect\", \"mismatches\": {\"bus\": {\"address\": 49665, \"reference\": \"0000010101\", \"native\": \"0101010101\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49665, 1], [49730, 1], [49850, 1], [49902, 1], [50176, 1], [52151, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"FetchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49665\": \"00\", \"49730\": \"00\", \"49850\": \"01\", \"49902\": \"01\", \"50176\": \"01\", \"52151\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }

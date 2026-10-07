@@ -1,0 +1,9 @@
+{
+  "fn": "Thunder_Recoil50PercentEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Thunder_Recoil50PercentEffect\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 30, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"0000\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"0000000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Thunder_Recoil50PercentEffect\", \"mismatches\": {\"hl\": [30, 31]}}\n",
+  "restored": "{\"fn\": \"Thunder_Recoil50PercentEffect\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 30, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"0000\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"0000000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

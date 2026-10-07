@@ -1,0 +1,9 @@
+{
+  "fn": "Flamethrower_DiscardEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Flamethrower_DiscardEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49790\": \"0500\", \"49901\": \"01\", \"65431\": \"c2\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Flamethrower_DiscardEffect\", \"mismatches\": {\"bus\": {\"address\": 49790, \"reference\": \"050001c205\", \"native\": \"000001c205\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49790, 2], [49901, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Flamethrower_DiscardEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49790\": \"0500\", \"49901\": \"01\", \"65431\": \"c2\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,9 +1,9 @@
 {
   "fn": "ShuffleCardsInDeck",
-  "case": "tests/cases/effect_functions.py",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"ShuffleCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3b\", \"50688\": \"00\", \"51906\": \"09\", \"52233\": \"00\", \"52807\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"ShuffleCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3b\", \"50688\": \"00\", \"51906\": \"09\", \"52147\": \"00\", \"52749\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ShuffleCardsInDeck\", \"mismatches\": {\"a\": [0, 1]}}\n",
-  "restored": "{\"fn\": \"ShuffleCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3b\", \"50688\": \"00\", \"51906\": \"09\", \"52233\": \"00\", \"52807\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ShuffleCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3b\", \"50688\": \"00\", \"51906\": \"09\", \"52147\": \"00\", \"52749\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n"
 }

@@ -1,7 +1,7 @@
 {
   "fn": "CheckIfDefendingPokemonHasAnyAttack",
   "case": "tests/profiles/extended/cases/effect_functions.py",
-  "index": 1,
+  "index": 0,
   "status": "RED",
   "baseline": "{\"fn\": \"CheckIfDefendingPokemonHasAnyAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"52264\": \"c3\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfDefendingPokemonHasAnyAttack\", \"mismatches\": {\"f\": [0, 1]}}\n",

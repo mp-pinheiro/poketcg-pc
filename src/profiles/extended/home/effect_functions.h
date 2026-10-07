@@ -1783,6 +1783,149 @@ DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void);
 /* >>> factory EnergySpike_PlayerSelectEffect */
 void EnergySpike_PlayerSelectEffect(void);
 /* <<< factory EnergySpike_PlayerSelectEffect */
+/* >>> factory StiffenEffect */
+uint8_t StiffenEffect(void);
+/* <<< factory StiffenEffect */
+/* >>> factory SupersonicEffect */
+uint8_t SupersonicEffect(void);
+/* <<< factory SupersonicEffect */
+/* >>> factory FurySwipes10_AIEffect */
+void FurySwipes10_AIEffect(void);
+/* <<< factory FurySwipes10_AIEffect */
+/* >>> factory FurySwipes10_MultiplierEffect */
+void FurySwipes10_MultiplierEffect(void);
+/* <<< factory FurySwipes10_MultiplierEffect */
+/* >>> factory DoubleKick30_AIEffect */
+void DoubleKick30_AIEffect(void);
+/* <<< factory DoubleKick30_AIEffect */
+/* >>> factory DoubleKick30_MultiplierEffect */
+void DoubleKick30_MultiplierEffect(void);
+/* <<< factory DoubleKick30_MultiplierEffect */
+/* >>> factory Whirlwind_SelectEffect */
+typedef struct { uint8_t a; uint8_t f; } WhirlwindSelectEffectResult;
+WhirlwindSelectEffectResult Whirlwind_SelectEffect(void);
+/* <<< factory Whirlwind_SelectEffect */
+/* >>> factory Whirlwind_SwitchEffect */
+HandleSwitchDefendingPokemonEffectResult Whirlwind_SwitchEffect(void);
+/* <<< factory Whirlwind_SwitchEffect */
+/* >>> factory MinimizeEffect */
+uint16_t MinimizeEffect(void);
+/* <<< factory MinimizeEffect */
+/* >>> factory WithdrawEffect */
+uint8_t WithdrawEffect(void);
+/* <<< factory WithdrawEffect */
+/* >>> factory Flail_AIEffect */
+void Flail_AIEffect(void);
+/* <<< factory Flail_AIEffect */
+/* >>> factory Flail_HPCheck */
+void Flail_HPCheck(void);
+/* <<< factory Flail_HPCheck */
+/* >>> factory AgilityEffect */
+uint8_t AgilityEffect(void);
+/* <<< factory AgilityEffect */
+/* >>> factory QuickAttack_AIEffect */
+void QuickAttack_AIEffect(void);
+/* <<< factory QuickAttack_AIEffect */
+/* >>> factory QuickAttack_DamageBoostEffect */
+void QuickAttack_DamageBoostEffect(void);
+/* <<< factory QuickAttack_DamageBoostEffect */
+/* >>> factory SmokescreenEffect */
+uint16_t SmokescreenEffect(uint16_t hl);
+/* <<< factory SmokescreenEffect */
+/* >>> factory Flamethrower_CheckEnergy */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } FlamethrowerCheckEnergyResult;
+FlamethrowerCheckEnergyResult Flamethrower_CheckEnergy(void);
+/* <<< factory Flamethrower_CheckEnergy */
+/* >>> factory Flamethrower_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult Flamethrower_PlayerSelectEffect(void);
+/* <<< factory Flamethrower_PlayerSelectEffect */
+/* >>> factory Flamethrower_AISelectEffect */
+void Flamethrower_AISelectEffect(void);
+/* <<< factory Flamethrower_AISelectEffect */
+/* >>> factory Flamethrower_DiscardEffect */
+void Flamethrower_DiscardEffect(void);
+/* <<< factory Flamethrower_DiscardEffect */
+/* >>> factory Rage_AIEffect */
+void Rage_AIEffect(void);
+/* <<< factory Rage_AIEffect */
+/* >>> factory Rage_DamageBoostEffect */
+void Rage_DamageBoostEffect(void);
+/* <<< factory Rage_DamageBoostEffect */
+/* >>> factory DarkMind_PlayerSelectEffect */
+void DarkMind_PlayerSelectEffect(void);
+/* <<< factory DarkMind_PlayerSelectEffect */
+/* >>> factory DarkMind_AISelectEffect */
+SparkAISelectEffectResult DarkMind_AISelectEffect(void);
+/* <<< factory DarkMind_AISelectEffect */
+/* >>> factory DarkMind_DamageBenchEffect */
+void DarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory DarkMind_DamageBenchEffect */
+/* >>> factory EnergyAbsorption_CheckDiscardPile */
+EnergyConversionCheckEnergyResult EnergyAbsorption_CheckDiscardPile(void);
+/* <<< factory EnergyAbsorption_CheckDiscardPile */
+/* >>> factory EnergyAbsorption_PlayerSelectEffect */
+HandleEnergyCardsInDiscardPileSelectionResult EnergyAbsorption_PlayerSelectEffect(void);
+/* <<< factory EnergyAbsorption_PlayerSelectEffect */
+/* >>> factory EnergyAbsorption_AISelectEffect */
+void EnergyAbsorption_AISelectEffect(void);
+/* <<< factory EnergyAbsorption_AISelectEffect */
+/* >>> factory EnergyAbsorption_AddToHandEffect */
+void EnergyAbsorption_AddToHandEffect(void);
+/* <<< factory EnergyAbsorption_AddToHandEffect */
+/* >>> factory Amnesia_CheckAttacks */
+ClefableMetronomeCheckAttacksResult Amnesia_CheckAttacks(void);
+/* <<< factory Amnesia_CheckAttacks */
+/* >>> factory Amnesia_PlayerSelectEffect */
+PlayerPickAttackForAmnesiaResult Amnesia_PlayerSelectEffect(void);
+/* <<< factory Amnesia_PlayerSelectEffect */
+/* >>> factory Amnesia_AISelectEffect */
+uint8_t Amnesia_AISelectEffect(void);
+/* <<< factory Amnesia_AISelectEffect */
+/* >>> factory Amnesia_DisableEffect */
+void Amnesia_DisableEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory Amnesia_DisableEffect */
+/* >>> factory Meditate_AIEffect */
+void Meditate_AIEffect(void);
+/* <<< factory Meditate_AIEffect */
+/* >>> factory Meditate_DamageBoostEffect */
+void Meditate_DamageBoostEffect(void);
+/* <<< factory Meditate_DamageBoostEffect */
+/* >>> factory HardenEffect */
+uint16_t HardenEffect(void);
+/* <<< factory HardenEffect */
+/* >>> factory FurySwipes20_AIEffect */
+void FurySwipes20_AIEffect(void);
+/* <<< factory FurySwipes20_AIEffect */
+/* >>> factory FurySwipes20_MultiplierEffect */
+void FurySwipes20_MultiplierEffect(void);
+/* <<< factory FurySwipes20_MultiplierEffect */
+/* >>> factory Thunder_Recoil50PercentEffect */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint16_t hl; } ThunderRecoil50PercentEffectResult;
+ThunderRecoil50PercentEffectResult Thunder_Recoil50PercentEffect(void);
+/* <<< factory Thunder_Recoil50PercentEffect */
+/* >>> factory Thunder_RecoilEffect */
+typedef struct { uint8_t a; uint8_t f; } ThunderRecoilEffectResult;
+ThunderRecoilEffectResult Thunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e);
+/* <<< factory Thunder_RecoilEffect */
+/* >>> factory GrowlEffect */
+uint16_t GrowlEffect(uint16_t hl);
+/* <<< factory GrowlEffect */
+/* >>> factory Sonicboom_UnaffectedByColorEffect */
+typedef struct { uint8_t f; uint16_t hl; } SonicboomUnaffectedByColorEffectResult;
+SonicboomUnaffectedByColorEffectResult Sonicboom_UnaffectedByColorEffect(uint8_t f);
+/* <<< factory Sonicboom_UnaffectedByColorEffect */
+/* >>> factory Sonicboom_NullEffect */
+void Sonicboom_NullEffect(void);
+/* <<< factory Sonicboom_NullEffect */
+/* >>> factory HyperBeam_PlayerSelectEffect */
+void HyperBeam_PlayerSelectEffect(void);
+/* <<< factory HyperBeam_PlayerSelectEffect */
+/* >>> factory HyperBeam_AISelectEffect */
+void HyperBeam_AISelectEffect(void);
+/* <<< factory HyperBeam_AISelectEffect */
+/* >>> factory HyperBeam_DiscardEffect */
+uint16_t HyperBeam_DiscardEffect(uint16_t hl);
+/* <<< factory HyperBeam_DiscardEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
