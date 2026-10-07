@@ -91,7 +91,7 @@ static void UpdateSpriteAttributes(void)
 
 #include "home/intro_sequence_commands.h"
 #include "generated/wram.h"
-#define INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION 0x5301u
+#define INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION (IntroSequenceCmd_WaitOrbsAnimation_ADDR)
 #define INTRO_SEQUENCE_CMD_WAIT (IntroSequenceCmd_Wait_ADDR)
 #define INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS (IntroSequenceCmd_SetOrbsAnimations_ADDR)
 #define INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES (IntroSequenceCmd_SetOrbsCoordinates_ADDR)
@@ -101,7 +101,7 @@ static void UpdateSpriteAttributes(void)
 #define INTRO_SEQUENCE_CMD_FADE_IN (IntroSequenceCmd_FadeIn_ADDR)
 #define INTRO_SEQUENCE_CMD_FADE_OUT (IntroSequenceCmd_FadeOut_ADDR)
 #define INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE (IntroSequenceCmd_LoadCharizardScene_ADDR)
-#define INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE (ExecuteIntroSequenceCmd__call_function_ADDR)
+#define INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE (IntroSequenceCmd_LoadScytherScene_ADDR)
 #define INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE (IntroSequenceCmd_LoadAerodactylScene_ADDR)
 #define INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE (IntroSequenceCmd_LoadTitleScreenScene_ADDR)
 #define INTRO_SEQUENCE_LOAD_OPENING_SCENE (LoadOpeningScene_ADDR)

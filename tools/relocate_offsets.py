@@ -40,10 +40,11 @@ def main() -> int:
     for name, (bank, address) in vanilla.items():
         at_vanilla[(bank, address)].append(name)
     at_extended: dict[tuple[int, int], list[str]] = defaultdict(list)
-    extended_labelled: set[tuple[int, int]] = set()
+    extended_locals: dict[tuple[int, int], set[str]] = defaultdict(set)
     for name, (bank, address) in extended.items():
-        extended_labelled.add((bank, address))
-        if "." not in name:
+        if "." in name:
+            extended_locals[(bank, address)].add(name.split(".")[0])
+        else:
             at_extended[(bank, address)].append(name)
     paths = [path.resolve() for path in args.paths] or sorted((ROOT / "src" / "profiles" / "extended").rglob("*.[ch]"))
     total = fixed = manual = 0
@@ -65,7 +66,7 @@ def main() -> int:
             candidates.sort(key=lambda name: (not name.startswith(label + "."), "." in name, name))
             if not candidates:
                 line = text.count("\n", 0, match.start()) + 1
-                if (extended[label][0], extended[label][1] + offset) in extended_labelled:
+                if label in extended_locals.get((extended[label][0], extended[label][1] + offset), set()):
                     continue
                 already = at_extended.get((extended[label][0], extended[label][1] + offset), [])
                 direct = at_extended.get((bank, target), [])

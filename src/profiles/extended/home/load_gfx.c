@@ -129,7 +129,7 @@ void _DrawPortrait(uint8_t b, uint8_t c)
 	uint16_t source_attr = wDecompressionBuffer_ADDR;
 	for (uint8_t y = 0u; y < 6u; y++) {
 		for (uint8_t x = 0u; x < 6u; x++) {
-			gb_write8((uint16_t)(row + x), (uint8_t)(gb_read8(source_attr++) + 1u));
+			gb_write8((uint16_t)(row + x), gb_read8(source_attr++));
 		}
 		row = (uint16_t)(row + TILEMAP_WIDTH);
 	}
