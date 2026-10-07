@@ -2407,8 +2407,8 @@ MUTATIONS["CheckLoadedAttackFlag"] = {
 }
 MUTATIONS["CheckPrizeTaken"] = {
     "source_symbol": "CheckPrizeTaken",
-    "before": "\tuint8_t mask = rom_ptr(0u, 0x11B7u)[a];",
-    "after": "\tuint8_t mask = rom_ptr(0u, 0x11B6u)[a];",
+    "before": "\tuint8_t mask = rom_ptr(0u, PowersOf2_ADDR)[a];",
+    "after": "\tuint8_t mask = rom_ptr(0u, InvertedPowersOf2_ADDR)[a];",
     "case_ids": ["CheckPrizeTaken-0"],
 }
 MUTATIONS["ClearAllStatusConditions"] = {
@@ -2563,8 +2563,8 @@ MUTATIONS["GetPlayAreaCardRetreatCost"] = {
 }
 MUTATIONS["GetCardIDFromDeckIndex"] = {
     "source_symbol": "GetCardIDFromDeckIndex",
-    "before": "\treturn _GetCardIDFromDeckIndex(a).a;",
-    "after": "\treturn (_GetCardIDFromDeckIndex(a).a) ^ 1u;",
+    "before": "\treturn card_id_read_at(card_id_index_address(deck, a));",
+    "after": "\treturn card_id_read_at(card_id_index_address(deck, (uint8_t)(a ^ 1u)));",
     "case_ids": ["GetCardIDFromDeckIndex-0"],
 }
 MUTATIONS["GetCardIDFromDeckIndex_bc"] = {
@@ -2731,14 +2731,14 @@ MUTATIONS["SwapPlayAreaPokemon"] = {
 }
 MUTATIONS["TranslateColorToWR"] = {
     "source_symbol": "TranslateColorToWR",
-    "before": "\treturn rom_ptr(0u, 0x1A1Au)[a];",
-    "after": "\treturn rom_ptr(0u, 0x1A19u)[a];",
+    "before": "\treturn rom_ptr(0u, InvertedPowersOf2_ADDR)[a];",
+    "after": "\treturn rom_ptr(0u, PowersOf2_ADDR)[a];",
     "case_ids": ["TranslateColorToWR-0"],
 }
 MUTATIONS["_GetCardIDFromDeckIndex"] = {
     "source_symbol": "_GetCardIDFromDeckIndex",
-    "before": "\treturn (DeckCardResult){gb_read8((uint16_t)(deck + a)), (uint16_t)(deck + a)};",
-    "after": "\treturn (DeckCardResult){gb_read8((uint16_t)(deck - a)), (uint16_t)(deck + a)};",
+    "before": "\treturn (DeckCardResult){(uint8_t)id, (uint16_t)(deck + a)};",
+    "after": "\treturn (DeckCardResult){(uint8_t)id, (uint16_t)(deck + (uint8_t)(a + 1u))};",
     "case_ids": ["_GetCardIDFromDeckIndex-1"],
 }
 MUTATIONS["SortCardsInListByID_CheckForListTerminator"] = {

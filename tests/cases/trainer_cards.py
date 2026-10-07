@@ -1523,8 +1523,8 @@ MUTATIONS["AIDecide_PokemonCenter"] = {"source_symbol": "AIDecide_PokemonCenter"
 # >>> factory-mutation AIDecide_PlusPower_Phase13
 MUTATIONS["AIDecide_PlusPower_Phase13"] = {
     "source_symbol": "AIDecide_PlusPower_Phase13",
-    "before": "\tDuelistVarResult attacker = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\twTempTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(attacker.a);",
-    "after": "\tDuelistVarResult attacker = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\twTempTurnDuelistCardID = (uint8_t)(GetCardIDFromDeckIndex(attacker.a) + 1u);",
+    "before": "\twTempTurnDuelistCardID = GetCardIDFromDeckIndex(attacker.a);",
+    "after": "\twTempTurnDuelistCardID = (uint8_t)(GetCardIDFromDeckIndex(attacker.a) + 1u);",
     "case_ids": ["AIDecide_PlusPower_Phase13-0", "AIDecide_PlusPower_Phase13-1", "AIDecide_PlusPower_Phase13-2"],
 }
 # <<< factory-mutation AIDecide_PlusPower_Phase13

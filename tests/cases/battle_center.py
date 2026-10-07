@@ -26,5 +26,5 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {}
 # >>> factory-mutation Func_fc2b
-MUTATIONS["Func_fc2b"] = {"source_symbol": "Func_fc2b", "before": "bc = 0x7C64u;", "after": "bc = 0x7C60u;", "case_ids": ["Func_fc2b-0"]}
+MUTATIONS["Func_fc2b"] = {"source_symbol": "Func_fc2b", "before": "bc = Script_fc64_ADDR;", "after": "bc = Script_fc68_ADDR;", "case_ids": ["Func_fc2b-0"]}
 # <<< factory-mutation Func_fc2b

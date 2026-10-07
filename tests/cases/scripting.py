@@ -5298,8 +5298,8 @@ MUTATIONS["GetScriptArgs1AfterPointer"] = {
 # >>> factory-mutation SetNextScript
 MUTATIONS["SetNextScript"] = {
     "source_symbol": "SetNextScript",
-    "before": "wNextScript_PTR[1] = (uint8_t)(bc >> 8);",
-    "after": "wNextScript_PTR[1] = (uint8_t)(bc >> 8) + 1u;",
+    "before": "script_pointer_write(bc, 0u);",
+    "after": "script_pointer_write((uint16_t)(bc + 1u), 0u);",
     "case_ids": ["SetNextScript-0", "SetNextScript-1", "SetNextScript-2"],
 }
 # <<< factory-mutation SetNextScript
@@ -6177,8 +6177,8 @@ MUTATIONS["ScriptCommand_ChooseStarterDeckMultichoice"] = {
 # >>> factory-mutation ScriptCommand_ShowSamNormalMultichoice
 MUTATIONS["ScriptCommand_ShowSamNormalMultichoice"] = {
     "source_symbol": "ScriptCommand_ShowSamNormalMultichoice",
-    "before": "IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)\n{\n\tBankswitchROM(3u);\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);\n\tuint8_t choice = wMultichoiceTextboxResult_Sam;",
-    "after": "IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)\n{\n\tBankswitchROM(3u);\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);\n\tuint8_t choice = (uint8_t)(wMultichoiceTextboxResult_Sam ^ 1u);",
+    "before": "\tuint8_t choice = wMultichoiceTextboxResult_Sam;",
+    "after": "\tuint8_t choice = (uint8_t)(wMultichoiceTextboxResult_Sam ^ 1u);",
     "case_ids": [
         "ScriptCommand_ShowSamNormalMultichoice-0",
         "ScriptCommand_ShowSamNormalMultichoice-1",
@@ -6200,8 +6200,8 @@ MUTATIONS["ScriptCommand_ShowSamRulesMultichoice"] = {
 # >>> factory-mutation ScriptCommand_ChooseDeckToDuelAgainstMultichoice
 MUTATIONS["ScriptCommand_ChooseDeckToDuelAgainstMultichoice"] = {
     "source_symbol": "ScriptCommand_ChooseDeckToDuelAgainstMultichoice",
-    "before": "IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)\n{\n\tBankswitchROM(3u);\n\t(void)ShowMultichoiceTextbox(0u, 0x525Eu);\n\tuint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;\n\t(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy1();\n}",
-    "after": "IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)\n{\n\tBankswitchROM(3u);\n\t(void)ShowMultichoiceTextbox(0u, 0x525Eu);\n\tuint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;\n\t(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy3();\n}",
+    "before": "\treturn IncreaseScriptPointerBy1();",
+    "after": "\treturn IncreaseScriptPointerBy2();",
     "case_ids": [
         "ScriptCommand_ChooseDeckToDuelAgainstMultichoice-0",
         "ScriptCommand_ChooseDeckToDuelAgainstMultichoice-1",

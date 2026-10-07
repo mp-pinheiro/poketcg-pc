@@ -93,8 +93,8 @@ MUTATIONS["SendSGB"] = {
 # >>> factory-mutation InitSGB
 MUTATIONS["InitSGB"] = {
     "source_symbol": "InitSGB",
-    "before": "\tr = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AE0u); /* MaskEnPacket_Cancel */",
-    "after": "\tr = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AD0u); /* MaskEnPacket_Cancel (mutated) */",
+    "before": "\tr = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, MaskEnPacket_Cancel_ADDR);",
+    "after": "\tr = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, DataSndPacket1_ADDR);",
     "case_ids": ["InitSGB-0", "InitSGB-1"],
 }
 # <<< factory-mutation InitSGB

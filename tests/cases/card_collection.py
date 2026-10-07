@@ -349,14 +349,14 @@ MUTATIONS["AddCardToCollection"] = {
 }
 MUTATIONS["CreateTempCardCollection"] = {
     "source_symbol": "CreateTempCardCollection",
-    "before": "\tCopyDataHLtoDE(&hl, &de, 0x0100u); /* CARD_COLLECTION_SIZE */",
-    "after": "\tCopyDataHLtoDE(&hl, &de, 0xFFu); /* CARD_COLLECTION_SIZE */",
+    "before": "\tCopyDataHLtoDE(&hl, &de, card_id_collection_bytes());",
+    "after": "\tCopyDataHLtoDE(&hl, &de, (uint16_t)(card_id_collection_bytes() - 1u));",
     "case_ids": ["CreateTempCardCollection-0"],
 }
 MUTATIONS["GetAmountOfCardsOwned"] = {
     "source_symbol": "GetAmountOfCardsOwned",
-    "before": "\tfor (uint16_t i = 0; i < 0x100u; i++) { /* CARD_COLLECTION_SIZE */",
-    "after": "\tfor (uint16_t i = 0; i < 0xFFu; i++) { /* CARD_COLLECTION_SIZE */",
+    "before": "\tfor (uint16_t i = 0; i < card_id_collection_bytes(); i++) {",
+    "after": "\tfor (uint16_t i = 0; i < (uint16_t)(card_id_collection_bytes() - 1u); i++) {",
     "case_ids": ["GetAmountOfCardsOwned-1"],
 }
 MUTATIONS["GetCardAlbumProgress"] = {

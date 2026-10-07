@@ -125,8 +125,8 @@ MUTATIONS["GetCardName"] = {
 }
 MUTATIONS["GetCardPointer"] = {
     "source_symbol": "GetCardPointer",
-    "before": "\tif (hl >= GETCARDPTR_BOUND)",
-    "after": "\tif (hl > GETCARDPTR_BOUND)",
+    "before": "\treturn get_card_pointer(e);",
+    "after": "\treturn get_card_pointer((CardId)(e - 1u));",
     "case_ids": ["GetCardPointer-2"],
 }
 MUTATIONS["LoadCardDataToBuffer1_FromCardID"] = {
@@ -137,8 +137,8 @@ MUTATIONS["LoadCardDataToBuffer1_FromCardID"] = {
 }
 MUTATIONS["LoadCardDataToBuffer1_FromName"] = {
     "source_symbol": "LoadCardDataToBuffer1_FromName",
-    "before": "\t\tif (ptr == 0)",
-    "after": "\t\tif (ptr != 0)",
+    "before": "\t\tif (pointer.carry)\n\t\t\treturn;",
+    "after": "\t\tif (!pointer.carry)\n\t\t\treturn;",
     "case_ids": ["LoadCardDataToBuffer1_FromName-0"],
 }
 MUTATIONS["LoadCardDataToBuffer2_FromCardID"] = {

@@ -512,8 +512,8 @@ MUTATIONS["SetOppAction_SerialSendDuelData"] = {
 # >>> factory-mutation SerialRecvDuelData
 MUTATIONS["SerialRecvDuelData"] = {
     "source_symbol": "SerialRecvDuelData",
-    "before": "SerialRecvBytes(0xFF9Eu, 10u);",
-    "after": "SerialRecvBytes(0xFF9Eu, 9u);",
+    "before": "SerialRecvBytes(hOppActionTableIndex_ADDR, 10u);",
+    "after": "SerialRecvBytes(hOppActionTableIndex_ADDR, 9u);",
     "case_ids": ["SerialRecvDuelData-0"],
 }
 # <<< factory-mutation SerialRecvDuelData

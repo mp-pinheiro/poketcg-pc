@@ -243,10 +243,10 @@ MUTATIONS["ShakeScreenX"] = {"source_symbol": "ShakeScreenX", "before": "\tgb_wr
 MUTATIONS["Func_1ce03"] = {"source_symbol": "Func_1ce03", "before": "\tFunc_3bb5(effects[(uint8_t)(a - 0x96u)]);", "after": "\tFunc_3bb5(DuelAnim153);", "case_ids": ["Func_1ce03-1"]}
 # <<< factory-mutation Func_1ce03
 # >>> factory-mutation ShakeScreenX_Big
-MUTATIONS["ShakeScreenX_Big"] = {"source_symbol": "ShakeScreenX_Big", "before": "\tShakeScreenX(0x4d61u);", "after": "\tShakeScreenX(0x4d62u);", "case_ids": ["ShakeScreenX_Big-0", "ShakeScreenX_Big-1"]}
+MUTATIONS["ShakeScreenX_Big"] = {"source_symbol": "ShakeScreenX_Big", "before": "\tShakeScreenX(BigShakeOffsets_ADDR);", "after": "\tShakeScreenX((uint16_t)(BigShakeOffsets_ADDR + 1u));", "case_ids": ["ShakeScreenX_Big-0", "ShakeScreenX_Big-1"]}
 # <<< factory-mutation ShakeScreenX_Big
 # >>> factory-mutation ShakeScreenX_Small
-MUTATIONS["ShakeScreenX_Small"] = {"source_symbol": "ShakeScreenX_Small", "before": "void ShakeScreenX_Small(void)\n{\n\tShakeScreenX(0x4d55u);\n}", "after": "void ShakeScreenX_Small(void)\n{\n\tShakeScreenX(0x4d56u);\n}", "case_ids": ["ShakeScreenX_Small-0", "ShakeScreenX_Small-1"]}
+MUTATIONS["ShakeScreenX_Small"] = {"source_symbol": "ShakeScreenX_Small", "before": "\tShakeScreenX(SmallShakeOffsets_ADDR);", "after": "\tShakeScreenX((uint16_t)(SmallShakeOffsets_ADDR + 1u));", "case_ids": ["ShakeScreenX_Small-0", "ShakeScreenX_Small-1"]}
 # <<< factory-mutation ShakeScreenX_Small
 # >>> factory-mutation DistortScreen
 MUTATIONS["DistortScreen"] = {"source_symbol": "DistortScreen", "before": "static const uint8_t BGScrollModData[8] = {4u, 3u, 2u, 1u, 1u, 1u, 1u, 2u};", "after": "static const uint8_t BGScrollModData[8] = {5u, 3u, 2u, 1u, 1u, 1u, 1u, 2u};", "case_ids": ["DistortScreen-0", "DistortScreen-1"]}
@@ -258,10 +258,10 @@ MUTATIONS["WhiteFlashScreen"] = {"source_symbol": "WhiteFlashScreen", "before": 
 MUTATIONS["ShakeScreenY"] = {"source_symbol": "ShakeScreenY", "before": "gb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR);", "after": "gb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)(SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR + 1u));", "case_ids": ["ShakeScreenY-0"]}
 # <<< factory-mutation ShakeScreenY
 # >>> factory-mutation ShakeScreenY_Big
-MUTATIONS["ShakeScreenY_Big"] = {"source_symbol": "ShakeScreenY_Big", "before": "ShakeScreenY(0x4D61u);", "after": "ShakeScreenY(0x4D10u);", "case_ids": ["ShakeScreenY_Big-0"]}
+MUTATIONS["ShakeScreenY_Big"] = {"source_symbol": "ShakeScreenY_Big", "before": "\tShakeScreenY(BigShakeOffsets_ADDR);", "after": "\tShakeScreenY((uint16_t)(BigShakeOffsets_ADDR + 1u));", "case_ids": ["ShakeScreenY_Big-0"]}
 # <<< factory-mutation ShakeScreenY_Big
 # >>> factory-mutation ShakeScreenY_Small
-MUTATIONS["ShakeScreenY_Small"] = {"source_symbol": "ShakeScreenY_Small", "before": "ShakeScreenY(0x4D55u);", "after": "ShakeScreenY(0x4D61u);", "case_ids": ["ShakeScreenY_Small-0"]}
+MUTATIONS["ShakeScreenY_Small"] = {"source_symbol": "ShakeScreenY_Small", "before": "\tShakeScreenY(SmallShakeOffsets_ADDR);", "after": "\tShakeScreenY((uint16_t)(SmallShakeOffsets_ADDR + 1u));", "case_ids": ["ShakeScreenY_Small-0"]}
 # <<< factory-mutation ShakeScreenY_Small
 # >>> factory-mutation InitScreenAnimation
 MUTATIONS["InitScreenAnimation"] = {

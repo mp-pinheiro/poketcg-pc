@@ -313,8 +313,8 @@ MUTATIONS["TwoByteNumberToTxSymbol_PadSpace"] = {
 }
 MUTATIONS["SetupText"] = {
     "source_symbol": "SetupText",
-    "before": "\treturn 0xc600;",
-    "after": "\treturn (0xc600) ^ 1u;",
+    "before": "\treturn wc600_ADDR;",
+    "after": "\treturn (uint16_t)(wc600_ADDR ^ 1u);",
     "case_ids": ["SetupText-0"],
 }
 for _rec in SCHEMA2_CASES["Func_235e"]:

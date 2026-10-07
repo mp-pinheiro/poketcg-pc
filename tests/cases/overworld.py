@@ -1339,7 +1339,7 @@ MUTATIONS["UpdatePlayerDirection"] = {"source_symbol": "UpdatePlayerDirection", 
 MUTATIONS["UpdatePlayerDirectionFromDPad"] = {"source_symbol": "UpdatePlayerDirectionFromDPad", "before": "void UpdatePlayerDirectionFromDPad(uint8_t a)\n{\n\tGetDirectionFromDPadResult result = GetDirectionFromDPad(a);\n\tUpdatePlayerDirection(result.a);\n}", "after": "void UpdatePlayerDirectionFromDPad(uint8_t a)\n{\n\tGetDirectionFromDPadResult result = GetDirectionFromDPad(a);\n\tUpdatePlayerDirection(result.f);\n}", "case_ids": ["UpdatePlayerDirectionFromDPad-0", "UpdatePlayerDirectionFromDPad-1", "UpdatePlayerDirectionFromDPad-2", "UpdatePlayerDirectionFromDPad-3", "UpdatePlayerDirectionFromDPad-4"]}
 # <<< factory-mutation UpdatePlayerDirectionFromDPad
 # >>> factory-mutation SetOverworldDoFrameFunction
-MUTATIONS["SetOverworldDoFrameFunction"] = {"source_symbol": "SetOverworldDoFrameFunction", "before": "\t(void)SetDoFrameFunction(0x380eu);", "after": "\t(void)SetDoFrameFunction(0x380fu);", "case_ids": ["SetOverworldDoFrameFunction-0", "SetOverworldDoFrameFunction-1"]}
+MUTATIONS["SetOverworldDoFrameFunction"] = {"source_symbol": "SetOverworldDoFrameFunction", "before": "\t(void)SetDoFrameFunction(OverworldDoFrameFunction_ADDR);", "after": "\t(void)SetDoFrameFunction((uint16_t)(OverworldDoFrameFunction_ADDR + 1u));", "case_ids": ["SetOverworldDoFrameFunction-0", "SetOverworldDoFrameFunction-1"]}
 # <<< factory-mutation SetOverworldDoFrameFunction
 # >>> factory-mutation Func_c3ee
 MUTATIONS["Func_c3ee"] = {"source_symbol": "Func_c3ee", "before": "\t\tgb_write8(hl, (uint8_t)(gb_read8(hl) & (uint8_t)~0x10u));", "after": "\t\tgb_write8(hl, gb_read8(hl));", "case_ids": ["Func_c3ee-0", "Func_c3ee-1"]}
@@ -1436,7 +1436,7 @@ MUTATIONS["ReturnToOverworldWithCallback"] = {"source_symbol": "ReturnToOverworl
 MUTATIONS["FindNPCOrObject"] = {"source_symbol": "FindNPCOrObject", "before": "\t\t\t\t(uint8_t)(0x10u | (npc.f & 0x80u)),", "after": "\t\t\t\t0x10u,", "case_ids": ["FindNPCOrObject-0", "FindNPCOrObject-1", "FindNPCOrObject-2"]}
 # <<< factory-mutation FindNPCOrObject
 # >>> factory-mutation Func_c6dc
-MUTATIONS["Func_c6dc"] = {"source_symbol": "Func_c6dc", "before": "FuncC6dcResult Func_c6dc(uint16_t saved_hl)\n{\n\tuint16_t movement_hl = 0xD335u;\n\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x03u);", "after": "FuncC6dcResult Func_c6dc(uint16_t saved_hl)\n{\n\tuint16_t movement_hl = 0xD335u;\n\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x01u);", "case_ids": ["Func_c6dc-0", "Func_c6dc-1", "Func_c6dc-3", "Func_c6dc-4"]}
+MUTATIONS["Func_c6dc"] = {"source_symbol": "Func_c6dc", "before": "\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x03u);", "after": "\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x01u);", "case_ids": ["Func_c6dc-0", "Func_c6dc-1", "Func_c6dc-3", "Func_c6dc-4"]}
 # <<< factory-mutation Func_c6dc
 # >>> factory-mutation HandlePlayerMoveModeInput
 MUTATIONS["HandlePlayerMoveModeInput"] = {"source_symbol": "HandlePlayerMoveModeInput", "before": "\tif ((hKeysPressed & PAD_A) != 0u) {\n\t\t(void)FindNPCOrObject(1u, 0u, 0u, 0u, 0u, 0u, 0u);", "after": "\tif ((hKeysPressed & PAD_A) == 0u) {\n\t\t(void)FindNPCOrObject(1u, 0u, 0u, 0u, 0u, 0u, 0u);", "case_ids": ["HandlePlayerMoveModeInput-1", "HandlePlayerMoveModeInput-2"]}
@@ -1477,7 +1477,7 @@ MUTATIONS["Func_c2a3"] = {"source_symbol": "Func_c2a3", "before": "void Func_c2a
 MUTATIONS["PauseMenu_Card"] = {"source_symbol": "PauseMenu_Card", "before": "void PauseMenu_Card(void)\n{\n\thSCX = 0u;", "after": "void PauseMenu_Card(void)\n{\n\thSCX = 1u;", "case_ids": ["PauseMenu_Card-0", "PauseMenu_Card-1"]}
 # <<< factory-mutation PauseMenu_Card
 # >>> factory-mutation EnterScript
-MUTATIONS["EnterScript"] = {"source_symbol": "EnterScript", "before": "\tuint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8));", "after": "\tuint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8) | 1u);", "case_ids": ["EnterScript-0", "EnterScript-1"]}
+MUTATIONS["EnterScript"] = {"source_symbol": "EnterScript", "before": "\treturn (EnterScriptResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};", "after": "\treturn (EnterScriptResult){(uint8_t)(r.a ^ 1u), r.f, r.b, r.c, r.d, r.e, r.hl};", "case_ids": ["EnterScript-0", "EnterScript-1"]}
 # <<< factory-mutation EnterScript
 # >>> factory-mutation SetScriptData
 MUTATIONS["SetScriptData"] = {"source_symbol": "SetScriptData", "before": "SetScriptDataResult SetScriptData(uint16_t hl)\n{\n\tuint8_t script_npc = wScriptNPC;\n\twLoadedNPCTempIndex = script_npc;\n\tSetNewScriptNPCResult npc = SetNewScriptNPC(hl);\n\twNextScript = npc.c;\n\twNextScript_PTR[1] = npc.b;\n\twOverworldMode = OWMODE_SCRIPT;", "after": "SetScriptDataResult SetScriptData(uint16_t hl)\n{\n\tuint8_t script_npc = wScriptNPC;\n\twLoadedNPCTempIndex = script_npc;\n\tSetNewScriptNPCResult npc = SetNewScriptNPC(hl);\n\twNextScript = npc.c;\n\twNextScript_PTR[1] = npc.b;\n\twOverworldMode = 0u;", "case_ids": ["SetScriptData-0", "SetScriptData-1", "SetScriptData-2"]}

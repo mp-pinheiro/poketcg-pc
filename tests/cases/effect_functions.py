@@ -8210,10 +8210,10 @@ MUTATIONS["ApplySubstatus1ToAttackingCard"] = {
 }
 # <<< factory-mutation ApplySubstatus1ToAttackingCard
 # >>> factory-mutation SetNoEffectFromStatus
-MUTATIONS["SetNoEffectFromStatus"] = {"source_symbol": "SetNoEffectFromStatus", "before": "gb_write8(0xCCEDu, 0x01u);", "after": "gb_write8(0xCCEDu, 0x02u);", "case_ids": ["SetNoEffectFromStatus-0", "SetNoEffectFromStatus-1"]}
+MUTATIONS["SetNoEffectFromStatus"] = {"source_symbol": "SetNoEffectFromStatus", "before": "gb_write8(wEffectFailed_ADDR, 0x01u);", "after": "gb_write8(wEffectFailed_ADDR, 0x02u);", "case_ids": ["SetNoEffectFromStatus-0", "SetNoEffectFromStatus-1"]}
 # <<< factory-mutation SetNoEffectFromStatus
 # >>> factory-mutation SetDefiniteAIDamage
-MUTATIONS["SetDefiniteAIDamage"] = {"source_symbol": "SetDefiniteAIDamage", "before": "gb_write8(0xCCBBu, a);", "after": "gb_write8(0xCCBBu, 0x00u);", "case_ids": ["SetDefiniteAIDamage-1", "SetDefiniteAIDamage-0", "SetDefiniteAIDamage-2"]}
+MUTATIONS["SetDefiniteAIDamage"] = {"source_symbol": "SetDefiniteAIDamage", "before": "gb_write8(wAIMinDamage_ADDR, a);", "after": "gb_write8(wAIMinDamage_ADDR, 0u);", "case_ids": ["SetDefiniteAIDamage-1", "SetDefiniteAIDamage-0", "SetDefiniteAIDamage-2"]}
 # <<< factory-mutation SetDefiniteAIDamage
 # >>> factory-mutation PickRandomPlayAreaCard
 MUTATIONS["PickRandomPlayAreaCard"] = {
@@ -8545,7 +8545,7 @@ MUTATIONS["TryGiveDamageCounter_DamageSwap"] = {"source_symbol": "TryGiveDamageC
 MUTATIONS["TransparencyEffect"] = {"source_symbol": "TransparencyEffect", "before": "\treturn 0x10u;", "after": "\treturn 0x00u;", "case_ids": ["TransparencyEffect-0", "TransparencyEffect-1"]}
 # <<< factory-mutation TransparencyEffect
 # >>> factory-mutation Barrier_CheckEnergy
-MUTATIONS["Barrier_CheckEnergy"] = {"source_symbol": "Barrier_CheckEnergy", "before": "#define NotEnoughPsychicEnergyText 0x00c2u", "after": "#define NotEnoughPsychicEnergyText 0x00c3u", "case_ids": ["Barrier_CheckEnergy-0", "Barrier_CheckEnergy-1"]}
+MUTATIONS["Barrier_CheckEnergy"] = {"source_symbol": "Barrier_CheckEnergy", "before": "\treturn (BarrierCheckEnergyResult){a, f, NotEnoughPsychicEnergyText};", "after": "\treturn (BarrierCheckEnergyResult){a, f, (uint16_t)(NotEnoughPsychicEnergyText + 1u)};", "case_ids": ["Barrier_CheckEnergy-0", "Barrier_CheckEnergy-1"]}
 # <<< factory-mutation Barrier_CheckEnergy
 # >>> factory-mutation ResetDevolvedCardStatus
 MUTATIONS["ResetDevolvedCardStatus"] = {
@@ -8699,8 +8699,8 @@ MUTATIONS["KakunaPoisonPowder_AIEffect"] = {
 # >>> factory-mutation SwordsDanceEffect
 MUTATIONS["SwordsDanceEffect"] = {
     "source_symbol": "SwordsDanceEffect",
-    "before": "if (gb_read8(0xCCC3u) != 0x2Eu)",
-    "after": "if (gb_read8(0xCCC3u) == 0x2Eu)",
+    "before": "\tif (gb_read8(wTempTurnDuelistCardID_ADDR) != 0x2Eu)",
+    "after": "\tif (gb_read8(wTempTurnDuelistCardID_ADDR) == 0x2Eu)",
     "case_ids": ["SwordsDanceEffect-0", "SwordsDanceEffect-1", "SwordsDanceEffect-2"],
 }
 # <<< factory-mutation SwordsDanceEffect
@@ -8731,8 +8731,8 @@ MUTATIONS["FoulGas_AIEffect"] = {
 # >>> factory-mutation Sprout_AISelectEffect
 MUTATIONS["Sprout_AISelectEffect"] = {
     "source_symbol": "Sprout_AISelectEffect",
-    "before": "if ((uint8_t)GetCardIDFromDeckIndex(card) == ODDISH)",
-    "after": "if ((uint8_t)GetCardIDFromDeckIndex(card) != ODDISH)",
+    "before": "if (GetCardIDFromDeckIndex(card) == ODDISH)",
+    "after": "if (GetCardIDFromDeckIndex(card) != ODDISH)",
     "case_ids": ["Sprout_AISelectEffect-0", "Sprout_AISelectEffect-1", "Sprout_AISelectEffect-2"],
 }
 # <<< factory-mutation Sprout_AISelectEffect
@@ -8767,8 +8767,8 @@ MUTATIONS["WeedlePoisonSting_AIEffect"] = {"source_symbol": "WeedlePoisonSting_A
 # >>> factory-mutation BellsproutCallForFamily_AISelectEffect
 MUTATIONS["BellsproutCallForFamily_AISelectEffect"] = {
     "source_symbol": "BellsproutCallForFamily_AISelectEffect",
-    "before": "if ((uint8_t)GetCardIDFromDeckIndex(card) == BELLSPROUT)",
-    "after": "if ((uint8_t)GetCardIDFromDeckIndex(card) != BELLSPROUT)",
+    "before": "if (GetCardIDFromDeckIndex(card) == BELLSPROUT)",
+    "after": "if (GetCardIDFromDeckIndex(card) != BELLSPROUT)",
     "case_ids": ["BellsproutCallForFamily_AISelectEffect-0", "BellsproutCallForFamily_AISelectEffect-1", "BellsproutCallForFamily_AISelectEffect-2"],
 }
 # <<< factory-mutation BellsproutCallForFamily_AISelectEffect
@@ -8858,8 +8858,8 @@ MUTATIONS["Quickfreeze_InitialEffect"] = {
 # >>> factory-mutation FocusEnergyEffect
 MUTATIONS["FocusEnergyEffect"] = {
     "source_symbol": "FocusEnergyEffect",
-    "before": "if (gb_read8(0xCCC3u) != 0x5Au)",
-    "after": "if (gb_read8(0xCCC3u) == 0x5Au)",
+    "before": "\tif (gb_read8(wTempTurnDuelistCardID_ADDR) != 0x5Au)",
+    "after": "\tif (gb_read8(wTempTurnDuelistCardID_ADDR) == 0x5Au)",
     "case_ids": ["FocusEnergyEffect-0", "FocusEnergyEffect-1", "FocusEnergyEffect-2"],
 }
 # <<< factory-mutation FocusEnergyEffect
@@ -10913,7 +10913,7 @@ MUTATIONS["WeezingSelfdestructEffect"] = {"source_symbol": "WeezingSelfdestructE
 MUTATIONS["PayDayEffect"] = {"source_symbol":"PayDayEffect","before":"void PayDayEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDraw1CardFromDeckText, 0u);\n\tif ((toss.f & 0x10u) != 0u) {","after":"void PayDayEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDraw1CardFromDeckText, 0u);\n\tif ((toss.f & 0x10u) == 0u) {","case_ids":["PayDayEffect-0","PayDayEffect-1"]}
 # <<< factory-mutation PayDayEffect
 # >>> factory-mutation StoneBarrage_MultiplierEffect
-MUTATIONS["StoneBarrage_MultiplierEffect"] = {"source_symbol": "StoneBarrage_MultiplierEffect", "before": "\t*gb_ptr(0xCE4E) = 0x00u;", "after": "\t*gb_ptr(0xCE4E) = 0x01u;", "case_ids": ["StoneBarrage_MultiplierEffect-0", "StoneBarrage_MultiplierEffect-1"]}
+MUTATIONS["StoneBarrage_MultiplierEffect"] = {"source_symbol": "StoneBarrage_MultiplierEffect", "before": "\t*gb_ptr(wCoinTossScreenTextID_ADDR) = 0x00u;", "after": "\t*gb_ptr(wCoinTossScreenTextID_ADDR) = 0x01u;", "case_ids": ["StoneBarrage_MultiplierEffect-0", "StoneBarrage_MultiplierEffect-1"]}
 # <<< factory-mutation StoneBarrage_MultiplierEffect
 # >>> factory-mutation EnergyConversion_AddToHandEffect
 MUTATIONS["EnergyConversion_AddToHandEffect"] = {"source_symbol": "EnergyConversion_AddToHandEffect", "before": "DealRecoilDamageToSelf(10u, f, d, e)", "after": "DealRecoilDamageToSelf(20u, f, d, e)", "case_ids": ["EnergyConversion_AddToHandEffect-0", "EnergyConversion_AddToHandEffect-1"]}
@@ -11056,7 +11056,7 @@ for _index, _record in enumerate(SCHEMA2_CASES["EnergySpike_PlayerSelectEffect"]
                                  "routine": "PlaySFX_InvalidChoice"}
 # <<< factory-completion EnergySpike_PlayerSelectEffect
 # >>> factory-mutation MrFuji_BenchCheck
-MUTATIONS["MrFuji_BenchCheck"] = {"source_symbol": "MrFuji_BenchCheck", "before": "#define EffectNoPokemonOnTheBenchText 0x00b7u", "after": "#define EffectNoPokemonOnTheBenchText 0x00b1u", "case_ids": ["MrFuji_BenchCheck-0", "MrFuji_BenchCheck-1", "MrFuji_BenchCheck-2", "MrFuji_BenchCheck-3", "MrFuji_BenchCheck-4"]}
+MUTATIONS["MrFuji_BenchCheck"] = {"source_symbol": "MrFuji_BenchCheck", "before": "EffectNoPokemonOnTheBenchText", "after": "(uint16_t)(EffectNoPokemonOnTheBenchText + 1u)", "case_ids": ["MrFuji_BenchCheck-0", "MrFuji_BenchCheck-1", "MrFuji_BenchCheck-2", "MrFuji_BenchCheck-3", "MrFuji_BenchCheck-4"]}
 # <<< factory-mutation MrFuji_BenchCheck
 # >>> factory-mutation DrawSymbolOnPlayAreaCursor
 MUTATIONS["DrawSymbolOnPlayAreaCursor"] = {"source_symbol": "DrawSymbolOnPlayAreaCursor", "before": "uint8_t row = (uint8_t)(a * 3u + 2u);", "after": "uint8_t row = (uint8_t)(a * 3u + 3u);", "case_ids": ["DrawSymbolOnPlayAreaCursor-0", "DrawSymbolOnPlayAreaCursor-1", "DrawSymbolOnPlayAreaCursor-2"]}

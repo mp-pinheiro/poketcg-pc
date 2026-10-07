@@ -12703,8 +12703,8 @@ MUTATIONS["CardPageSwitch_0c"] = {
 # >>> factory-mutation PlaceCardImageOAM
 MUTATIONS["PlaceCardImageOAM"] = {
     "source_symbol": "PlaceCardImageOAM",
-    "before": "\tgb_write8(0xcac0u, TRUE);",
-    "after": "\tgb_write8(0xcac0u, 0u);",
+    "before": "\tgb_write8(wVBlankOAMCopyToggle_ADDR, TRUE);",
+    "after": "\tgb_write8(wVBlankOAMCopyToggle_ADDR, 0u);",
     "case_ids": ["PlaceCardImageOAM-0", "PlaceCardImageOAM-1"],
 }
 # <<< factory-mutation PlaceCardImageOAM
@@ -13272,8 +13272,8 @@ MUTATIONS["LoadDefendingPokemonColorWRAndPrizeCards"] = {
 # >>> factory-mutation LookForCardIDInLocation_Bank5
 MUTATIONS["LookForCardIDInLocation_Bank5"] = {
     "source_symbol": "LookForCardIDInLocation_Bank5",
-    "before": "(uint8_t)GetCardIDFromDeckIndex(index) == card_id",
-    "after": "(uint8_t)GetCardIDFromDeckIndex(index) != card_id",
+    "before": "GetCardIDFromDeckIndex(index) == card_id",
+    "after": "GetCardIDFromDeckIndex(index) != card_id",
     "case_ids": ["LookForCardIDInLocation_Bank5-0", "LookForCardIDInLocation_Bank5-1"],
 }
 # <<< factory-mutation LookForCardIDInLocation_Bank5
@@ -13288,8 +13288,8 @@ MUTATIONS["PickRandomBenchPokemon"] = {
 # >>> factory-mutation RemoveCardIDInList
 MUTATIONS["RemoveCardIDInList"] = {
     "source_symbol": "RemoveCardIDInList",
-    "before": "(uint8_t)GetCardIDFromDeckIndex(index) != e",
-    "after": "(uint8_t)GetCardIDFromDeckIndex(index) == e",
+    "before": "GetCardIDFromDeckIndex(index) != e",
+    "after": "GetCardIDFromDeckIndex(index) == e",
     "case_ids": ["RemoveCardIDInList-0", "RemoveCardIDInList-1"],
 }
 # <<< factory-mutation RemoveCardIDInList
@@ -13986,8 +13986,8 @@ MUTATIONS["PrintNumberOfHandAndDeckCards"] = {
 # >>> factory-mutation PrintReturnCardsToDeckDrawAgain
 MUTATIONS["PrintReturnCardsToDeckDrawAgain"] = {
     "source_symbol": "PrintReturnCardsToDeckDrawAgain",
-    "before": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD12u);",
-    "after": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD13u);",
+    "before": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, wMenuCursorYOffset_ADDR);",
+    "after": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, (uint16_t)(wMenuCursorYOffset_ADDR + 1u));",
     "case_ids": [
         "PrintReturnCardsToDeckDrawAgain-0",
         "PrintReturnCardsToDeckDrawAgain-1",
@@ -14945,8 +14945,8 @@ MUTATIONS["OppAction_PlayTrainerCard"] = {
 # >>> factory-mutation OpenActivePokemonScreen
 MUTATIONS["OpenActivePokemonScreen"] = {
     "source_symbol": "OpenActivePokemonScreen",
-    "before": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 0u;",
-    "after": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 1u;",
+    "before": "\twCurPlayAreaSlot = 0u;",
+    "after": "\twCurPlayAreaSlot = 1u;",
     "case_ids": ["OpenActivePokemonScreen-1", "OpenActivePokemonScreen-2"],
 }
 # <<< factory-mutation OpenActivePokemonScreen

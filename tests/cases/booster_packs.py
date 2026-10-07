@@ -431,13 +431,13 @@ MUTATIONS["GenerateTwoTypesEnergyBooster"] = {"source_symbol": "GenerateTwoTypes
 MUTATIONS["GenerateRandomEnergy"] = {"source_symbol": "GenerateRandomEnergy", "before": "return AddBoosterEnergyToDrawnEnergies((uint8_t)(random + 1u));", "after": "return AddBoosterEnergyToDrawnEnergies((uint8_t)(random + 2u));", "case_ids": ["GenerateRandomEnergy-0", "GenerateRandomEnergy-1", "GenerateRandomEnergy-2", "GenerateRandomEnergy-3"]}
 # <<< factory-mutation GenerateRandomEnergy
 # >>> factory-mutation GenerateEnergyBoosterGrassPsychic
-MUTATIONS["GenerateEnergyBoosterGrassPsychic"] = {"source_symbol": "GenerateEnergyBoosterGrassPsychic", "before": "\treturn GenerateTwoTypesEnergyBooster(0x63CDu);", "after": "\treturn GenerateTwoTypesEnergyBooster(0x63CBu);", "case_ids": ["GenerateEnergyBoosterGrassPsychic-0", "GenerateEnergyBoosterGrassPsychic-1"]}
+MUTATIONS["GenerateEnergyBoosterGrassPsychic"] = {"source_symbol": "GenerateEnergyBoosterGrassPsychic", "before": "\treturn GenerateTwoTypesEnergyBooster(EnergyBoosterGrassPsychicData_ADDR);", "after": "\treturn GenerateTwoTypesEnergyBooster(EnergyBoosterLightningFireData_ADDR);", "case_ids": ["GenerateEnergyBoosterGrassPsychic-0", "GenerateEnergyBoosterGrassPsychic-1"]}
 # <<< factory-mutation GenerateEnergyBoosterGrassPsychic
 # >>> factory-mutation GenerateEnergyBoosterLightningFire
-MUTATIONS["GenerateEnergyBoosterLightningFire"] = {"source_symbol": "GenerateEnergyBoosterLightningFire", "before": "\treturn GenerateTwoTypesEnergyBooster(0x63C9u);", "after": "\treturn GenerateTwoTypesEnergyBooster(0x63CBu);", "case_ids": ["GenerateEnergyBoosterLightningFire-0", "GenerateEnergyBoosterLightningFire-1"]}
+MUTATIONS["GenerateEnergyBoosterLightningFire"] = {"source_symbol": "GenerateEnergyBoosterLightningFire", "before": "\treturn GenerateTwoTypesEnergyBooster(EnergyBoosterLightningFireData_ADDR);", "after": "\treturn GenerateTwoTypesEnergyBooster(EnergyBoosterWaterFightingData_ADDR);", "case_ids": ["GenerateEnergyBoosterLightningFire-0", "GenerateEnergyBoosterLightningFire-1"]}
 # <<< factory-mutation GenerateEnergyBoosterLightningFire
 # >>> factory-mutation GenerateEnergyBoosterWaterFighting
-MUTATIONS["GenerateEnergyBoosterWaterFighting"] = {"source_symbol": "GenerateEnergyBoosterWaterFighting", "before": "\treturn GenerateTwoTypesEnergyBooster(0x63CBu);", "after": "\treturn GenerateTwoTypesEnergyBooster(0x63C9u);", "case_ids": ["GenerateEnergyBoosterWaterFighting-0", "GenerateEnergyBoosterWaterFighting-1"]}
+MUTATIONS["GenerateEnergyBoosterWaterFighting"] = {"source_symbol": "GenerateEnergyBoosterWaterFighting", "before": "\treturn GenerateTwoTypesEnergyBooster(EnergyBoosterWaterFightingData_ADDR);", "after": "\treturn GenerateTwoTypesEnergyBooster(EnergyBoosterGrassPsychicData_ADDR);", "case_ids": ["GenerateEnergyBoosterWaterFighting-0", "GenerateEnergyBoosterWaterFighting-1"]}
 # <<< factory-mutation GenerateEnergyBoosterWaterFighting
 # >>> factory-mutation GenerateRandomEnergyBooster
 MUTATIONS["GenerateRandomEnergyBooster"] = {"source_symbol": "GenerateRandomEnergyBooster", "before": "\t\t(void)GenerateRandomEnergy();", "after": "\t\t(void)GenerateRandomEnergy();\n\t\t(void)GenerateRandomEnergy();", "case_ids": ["GenerateRandomEnergyBooster-0", "GenerateRandomEnergyBooster-1", "GenerateRandomEnergyBooster-2", "GenerateRandomEnergyBooster-3"]}

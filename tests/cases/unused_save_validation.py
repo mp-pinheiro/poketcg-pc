@@ -69,7 +69,7 @@ MUTATIONS["UnusedCalculateSaveDataValidationByte"] = {
 }
 # <<< factory-mutation UnusedCalculateSaveDataValidationByte
 # >>> factory-mutation UnusedSaveDataValidation
-MUTATIONS["UnusedSaveDataValidation"] = {"source_symbol": "UnusedSaveDataValidation", "before": "if (gb_read8(0xFF81u) != 0u)\n\t\treturn;", "after": "if (gb_read8(0xFF81u) != 0u) {\n\t\tgb_write8(0xCAB6u, 0xFFu);\n\t\treturn;\n\t}", "case_ids": ["UnusedSaveDataValidation-0", "UnusedSaveDataValidation-1"]}
+MUTATIONS["UnusedSaveDataValidation"] = {"source_symbol": "UnusedSaveDataValidation", "before": "if (gb_read8(hBankSRAM_ADDR) != 0u)\n\t\treturn;", "after": "if (gb_read8(hBankSRAM_ADDR) != 0u) {\n\t\tgb_write8(wTileMapFill_ADDR, 0xFFu);\n\t\treturn;\n\t}", "case_ids": ["UnusedSaveDataValidation-0", "UnusedSaveDataValidation-1"]}
 # <<< factory-mutation UnusedSaveDataValidation
 # >>> factory-completion UnusedSaveDataValidation
 for _record in SCHEMA2_CASES["UnusedSaveDataValidation"]:

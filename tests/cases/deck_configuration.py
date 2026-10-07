@@ -1486,7 +1486,7 @@ MUTATIONS["HandleCardSelectionCursorBlink"] = {"source_symbol": "HandleCardSelec
 MUTATIONS["DrawHandCardsTileOnCurDeck"] = {"source_symbol": "DrawHandCardsTileOnCurDeck", "before": "\tuint8_t e = (uint8_t)((uint8_t)product + 1u);", "after": "\tuint8_t e = (uint8_t)product;", "case_ids": ["DrawHandCardsTileOnCurDeck-0", "DrawHandCardsTileOnCurDeck-1"]}
 # <<< factory-mutation DrawHandCardsTileOnCurDeck
 # >>> factory-mutation HandleCardSelectionInput
-MUTATIONS["HandleCardSelectionInput"] = {"source_symbol": "HandleCardSelectionInput", "before": "\tgb_write8(0xFFB3u, gb_read8(wCardListCursorPos_ADDR));", "after": "\tgb_write8(0xFFB3u, (uint8_t)(gb_read8(wCardListCursorPos_ADDR) + 1u));", "case_ids": ["HandleCardSelectionInput-0", "HandleCardSelectionInput-1"]}
+MUTATIONS["HandleCardSelectionInput"] = {"source_symbol": "HandleCardSelectionInput", "before": "\tgb_write8(hffb3_ADDR, gb_read8(wCardListCursorPos_ADDR));", "after": "\tgb_write8(hffb3_ADDR, (uint8_t)(gb_read8(wCardListCursorPos_ADDR) + 1u));", "case_ids": ["HandleCardSelectionInput-0", "HandleCardSelectionInput-1"]}
 # <<< factory-mutation HandleCardSelectionInput
 # >>> factory-mutation HandleLeftRightInCardList
 MUTATIONS["HandleLeftRightInCardList"] = {"source_symbol": "HandleLeftRightInCardList", "before": "\t\tuint8_t f = (dpad == 0u) ? 0x80u : 0x00u;", "after": "\t\tuint8_t f = (dpad == 0u) ? 0x00u : 0x80u;", "case_ids": ["HandleLeftRightInCardList-0", "HandleLeftRightInCardList-1"]}

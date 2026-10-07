@@ -244,7 +244,7 @@ MUTATIONS["Func_f77d"] = {
 MUTATIONS["PokemonDomeCloseTextBox"] = {"source_symbol": "PokemonDomeCloseTextBox", "before": "\tApplyOWMapEventChangeIfEventSet(MAP_EVENT_HALL_OF_HONOR_DOOR);", "after": "\tApplyOWMapEventChangeIfEventSet((uint8_t)(MAP_EVENT_HALL_OF_HONOR_DOOR + 1u));", "case_ids": ["PokemonDomeCloseTextBox-0", "PokemonDomeCloseTextBox-1"]}
 # <<< factory-mutation PokemonDomeCloseTextBox
 # >>> factory-mutation PokemonDomeMovePlayer
-MUTATIONS["PokemonDomeMovePlayer"] = {"source_symbol": "PokemonDomeMovePlayer", "before": "gb_write8(0xD3ABu, 0x3Au);", "after": "gb_write8(0xD3ABu, 0x3Bu);", "case_ids": ["PokemonDomeMovePlayer-3"]}
+MUTATIONS["PokemonDomeMovePlayer"] = {"source_symbol": "PokemonDomeMovePlayer", "before": "gb_write8(wTempNPC_ADDR, 0x3Au);", "after": "gb_write8(wTempNPC_ADDR, 0x3Bu);", "case_ids": ["PokemonDomeMovePlayer-3"]}
 # <<< factory-mutation PokemonDomeMovePlayer
 # >>> factory-mutation PokemonDomeLoadMap
 MUTATIONS["PokemonDomeLoadMap"] = {"source_symbol": "PokemonDomeLoadMap", "before": "\tif (GetEventValue(EVENT_POKEMON_DOME_IN_MENU) == 0u)\n\t\treturn;", "after": "\tif ((uint8_t)((gb_read8(0xD3E9u) & 0x08u) >> 3) == 0u)\n\t\treturn;", "case_ids": ["PokemonDomeLoadMap-2"]}
