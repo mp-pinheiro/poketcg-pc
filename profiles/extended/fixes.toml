@@ -128,6 +128,13 @@ heading = "AI might use a Pkmn Power as an attack"
 kind = "code"
 routines = ["AIDecideEvolution"]
 
+[[fixes.reverts]]
+routine = "AIDecideEvolution"
+source = "src/profiles/extended/home/hand_pokemon.c"
+before = "\t\t\t\tif (wTempAI == 0u)\n\t\t\t\t\twPreviousAIFlags = (uint8_t)(wPreviousAIFlags\n\t\t\t\t\t\t& (uint8_t)~AI_FLAG_USED_PLUSPOWER);\n"
+after = ""
+case = "tests/profiles/extended/cases/hand_pokemon.py"
+index = 1
 [[fixes]]
 heading = "AI never uses Energy Trans in order to retreat Arena card"
 kind = "unfixed"
@@ -204,6 +211,13 @@ heading = "AI has flawed logic when considering evolutions"
 kind = "code"
 routines = ["AIDecideEvolution"]
 
+[[fixes.reverts]]
+routine = "AIDecideEvolution"
+source = "src/profiles/extended/home/hand_pokemon.c"
+before = "\t\t\twEvolutionHPDifference = (uint8_t)(wLoadedCard1HP - wLoadedCard2HP);"
+after = "\t\t\twEvolutionHPDifference = 0u;"
+case = "tests/profiles/extended/cases/hand_pokemon.py"
+index = 1
 [[fixes]]
 heading = "AI might disregard AI info flags"
 kind = "code"

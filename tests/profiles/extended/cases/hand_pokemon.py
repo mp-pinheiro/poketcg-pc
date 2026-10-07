@@ -7,6 +7,7 @@ _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
 _EVOLUTION = Fixture("ai-duel-fire-charge-aidecideevolution-entry", directory=_FIXTURES)
 _PLAY_POKEMON = Fixture("ai-duel-fire-charge-aidecideplaypokemoncard-entry", directory=_FIXTURES, holes=_HOLES)
 _EVOLUTION_AI_INFO = Fixture("ai-decide-evolution-fighting-carriers", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
+_EVOLUTION_AI_INFO_25303 = Fixture("ai-decide-evolution-fighting-carriers-25303", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
     case["read"][0xCC00] = 0xBD
@@ -17,6 +18,8 @@ def _fixture_case(fixture):
 def _ai_score_case(fixture):
     case = _fixture_case(fixture)
     case["read"][0xCD44] = 0x01
+    case["wram"][0xCDA6] = b"\x01"
+    case["read"][0xCDA6] = 0x01
     return dict(case, **fixture.regs)
 
 
@@ -1845,6 +1848,7 @@ CASES = {
 CASES['AIDecideEvolution'] = [
     dict(_EVOLUTION.case(vram=False), **_EVOLUTION.regs),
     _ai_score_case(_EVOLUTION_AI_INFO),
+    _ai_score_case(_EVOLUTION_AI_INFO_25303),
 ]
 CASES['AIDecidePlayPokemonCard'] = [
     dict(_fixture_case(_PLAY_POKEMON), **_PLAY_POKEMON.regs)
@@ -1852,13 +1856,9 @@ CASES['AIDecidePlayPokemonCard'] = [
 
 MUTATIONS = {
     'AIDecideSpecialEvolutions': {   'source_symbol': 'AIDecideSpecialEvolutions',
-        'before': '\tuint8_t deck = wOpponentDeckID;',
-        'after': '\tuint8_t deck = (uint8_t)(wOpponentDeckID + 1u);',
-        'case_ids': [   'AIDecideSpecialEvolutions-1',
-                        'AIDecideSpecialEvolutions-2',
-                        'AIDecideSpecialEvolutions-3',
-                        'AIDecideSpecialEvolutions-4',
-                        'AIDecideSpecialEvolutions-6'],
+        'before': '\t\tCardId card = card_id_read_at(wLoadedCard2ID_ADDR);',
+        'after': '\t\tCardId card = gb_read8(wLoadedCard2ID_ADDR);',
+        'case_ids': ['AIDecideSpecialEvolutions-6'],
         'source': 'src/profiles/extended/home/hand_pokemon.c'},
     'AIDecideEvolution': {   'source_symbol': 'AIDecideEvolution',
         'before': '\t\t\telse if ((wLoadedCard1AIInfo & 0x0Fu) == AI_INFO_ENCOURAGE_EVO)',

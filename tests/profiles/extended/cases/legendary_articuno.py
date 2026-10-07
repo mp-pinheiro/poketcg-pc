@@ -21,6 +21,7 @@ _ARTICUNO_SCORING_THREE = _ARTICUNO_SCORING.case(vram=False, bank=5)
 _ARTICUNO_SCORING_THREE["read"][0xCC00] = 0xBD
 _ARTICUNO_SCORING_THREE["read"][0xCCBE] = 0x42
 _ARTICUNO_SCORING_THREE["snapshot"] = True
+_ARTICUNO_SCORING_THREE["wram"][0xC2EC] = b"\x07"
 _ARTICUNO_SCORING_THREE["wram"][0xC3EC] = b"\x07"
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
