@@ -2473,7 +2473,7 @@ uint16_t DrawYourOrOppPlayArea_ActiveCardGfx(uint16_t de)
 	if (turn != page)
 		SwapTurn();
 
-	LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x20u));
+	LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x200u));
 	copy_card_palette(2u);
 	FlushAllPalettes();
 	FillRectangle(0xA0u, 8u, 6u, de, 0x0601u);
