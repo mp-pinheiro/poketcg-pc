@@ -145,3 +145,5 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _record in SCHEMA2_CASES["MainMenu_ContinueDuel"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x66FE, "bank": 4}

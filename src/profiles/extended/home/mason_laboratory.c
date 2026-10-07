@@ -170,8 +170,9 @@ ScriptTech1Result Script_Tech1(void)
 	uint8_t a;
 
 	do {
-		uint8_t id = rom_ptr(ENERGY_CARD_LIST_BANK, hl)[0];
-		hl = (uint16_t)(hl + 1u);
+		const uint8_t *entry = rom_ptr(ENERGY_CARD_LIST_BANK, hl);
+		CardId id = (CardId)(entry[0] | ((uint16_t)entry[1] << 8));
+		hl = (uint16_t)(hl + 2u);
 		a = GetCardCountInCollection(id).a;
 		a = (uint8_t)(a + b);
 		b = a;
@@ -186,10 +187,12 @@ ScriptTech1Result Script_Tech1(void)
 	hl = ENERGY_CARD_LIST;
 	do {
 		b = 10u;
-		a = rom_ptr(ENERGY_CARD_LIST_BANK, hl)[0];
-		hl = (uint16_t)(hl + 1u);
+		const uint8_t *entry = rom_ptr(ENERGY_CARD_LIST_BANK, hl);
+		CardId id = (CardId)(entry[0] | ((uint16_t)entry[1] << 8));
+		hl = (uint16_t)(hl + 2u);
+		a = (uint8_t)id;
 		do {
-			AddCardToCollection(a);
+			AddCardToCollection(id);
 			b--;
 		} while (b != 0u);
 		c--;

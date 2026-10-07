@@ -1274,7 +1274,7 @@ static void adapt_ScriptCommand_GiveOneOfEachTrainerBooster(ProbeState *s)
 /* >>> factory ScriptCommand_ShowCardReceivedScreen */
 static void adapt_ScriptCommand_ShowCardReceivedScreen(ProbeState *s)
 {
-	IncreaseScriptPointerResult result = ScriptCommand_ShowCardReceivedScreen(s->c);
+	IncreaseScriptPointerResult result = ScriptCommand_ShowCardReceivedScreen(s->b, s->c);
 	s->a = result.a;
 	s->f = result.f;
 	s->c = result.c;

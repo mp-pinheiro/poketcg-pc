@@ -2805,7 +2805,7 @@ CASES = {
     'ShowMultichoiceTextbox': [
         {   'a': 0x00,
             'hl': 0xC4F0,
-            'keys': [0x00, 0x01, 0x01],
+            'keys': [0x00, 0x01],
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'wram': {   0xC4F0: b'\x00\x00\x00\x00\x10\xc5\x00 \xc5\x00\x00',
                         0xC500: b'\x00\x00\x14\x06\x80\x00\x00\x00\x00\x00\x00\x00',
@@ -2817,7 +2817,7 @@ CASES = {
             'cycle_budget': 0x4C4B400},
         {   'a': 0x01,
             'hl': 0xC4F0,
-            'keys': [0x00, 0x01, 0x01],
+            'keys': [0x00, 0x01],
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'wram': {   0xC4F0: b'\x00\x00\x00\x00\x10\xc5\x00 \xc5\x00\x00',
                         0xC500: b'\x00\x00\x14\x06\x80\x00\x00\x00\x00\x00\x00\x00',
@@ -2829,7 +2829,7 @@ CASES = {
             'cycle_budget': 0x4C4B400},
         {   'a': 0x00,
             'hl': 0xC4F0,
-            'keys': [0x00, 0x02, 0x02],
+            'keys': [0x00, 0x02],
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'wram': {   0xC4F0: b'\x00\x00\x00\x00\x10\xc5\x03 \xc5\x00\x00',
                         0xC500: b'\x00\x00\x14\x06\x80\x00\x00\x00\x00\x00\x00\x00',
@@ -3060,27 +3060,36 @@ CASES = {
         {   'oracle': False,
             'why': 'ShowPromotionalCardScreen enters its frame-driven card detail '
                    'wait, which the isolated oracle cannot complete.',
+            'b': 0x00,
             'c': 0x1E,
-            'wram': {0xD685: b'C'},
-            'expect': {0xD685: b'C'}},
+            'wram': {0xD685: b'C\x00', 0xD402: b'\x6e\x7a'},
+            'expect': {0xD685: b'C\x00', 0xD402: b'\x71\x7a'}},
         {   'oracle': False,
             'why': 'ShowPromotionalCardScreen enters its frame-driven card detail '
                    'wait, which the isolated oracle cannot complete.',
+            'b': 0x00,
             'c': 0x00,
-            'wram': {0xD685: b'C'},
-            'expect': {0xD685: b'C'}},
+            'wram': {0xD685: b'C\x01', 0xD402: b'\x6e\x7a'},
+            'expect': {0xD685: b'C\x01', 0xD402: b'\x71\x7a'}},
+        {   'oracle': False,
+            'why': 'ShowPromotionalCardScreen enters its frame-driven card detail '
+                   'wait, which the isolated oracle cannot complete.',
+            'b': 0xFF,
+            'c': 0xFF,
+            'wram': {0xD685: b'\x00\x00', 0xD402: b'\x6e\x7a'},
+            'expect': {0xD685: b'\x00\x00', 0xD402: b'\x71\x7a'}},
         {   'oracle': False,
             'why': 'ShowPromotionalCardScreen enters its frame-driven card detail '
                    'wait, which the isolated oracle cannot complete.',
             'a': 0xAA,
             'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
+            'b': 0x01,
+            'c': 0xFF,
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xD685: b'C'},
-            'expect': {0xD685: b'C'}},
+            'wram': {0xD685: b'C\x00', 0xD402: b'\x6e\x7a'},
+            'expect': {0xD685: b'C\x00', 0xD402: b'\x71\x7a'}},
     ],
     'ScriptCommand_ShowMedalReceivedScreen': [
         {   'oracle': False,
@@ -4669,27 +4678,12 @@ MUTATIONS = {
                         'ScriptCommand_GiveOneOfEachTrainerBooster-1'],
         'source': 'src/profiles/extended/home/scripting.c'},
     'ScriptCommand_ShowCardReceivedScreen': {   'source_symbol': 'ScriptCommand_ShowCardReceivedScreen',
-        'before': 'IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c)\n'
-                  '{\n'
-                  '\tuint8_t card;\n'
-                  '\n'
-                  '\tFunc_c2a3();\n'
-                  '\tif (c == 0xFFu)\n'
-                  '\t\tcard = 0u;\n'
-                  '\telse if (c != 0u)\n'
-                  '\t\tcard = c;\n'
-                  '\telse\n'
-                  '\t\tcard = wCardReceived;',
-        'after': 'IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c)\n'
-                 '{\n'
-                 '\tuint8_t card;\n'
-                 '\n'
-                 '\tFunc_c2a3();\n'
-                 '\t(void)c;\n'
-                 '\tcard = 0x01u;',
+        'before': '\treturn IncreaseScriptPointerBy3();',
+        'after': '\treturn IncreaseScriptPointerBy2();',
         'case_ids': [   'ScriptCommand_ShowCardReceivedScreen-0',
                         'ScriptCommand_ShowCardReceivedScreen-1',
-                        'ScriptCommand_ShowCardReceivedScreen-2'],
+                        'ScriptCommand_ShowCardReceivedScreen-2',
+                        'ScriptCommand_ShowCardReceivedScreen-3'],
         'source': 'src/profiles/extended/home/scripting.c'},
     'ScriptCommand_ShowMedalReceivedScreen': {   'source_symbol': 'ScriptCommand_ShowMedalReceivedScreen',
         'before': 'IncreaseScriptPointerResult ScriptCommand_ShowMedalReceivedScreen(uint8_t c)\n'
@@ -4996,3 +4990,5 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _record in SCHEMA2_CASES["ShowMultichoiceTextbox"][:3]:
+    _record["completion"] = {"mode": "entry", "pc": 0x422F, "bank": 3, "routine": "Func_c241"}

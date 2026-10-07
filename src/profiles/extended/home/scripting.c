@@ -2146,24 +2146,18 @@ IncreaseScriptPointerResult ScriptCommand_GiveOneOfEachTrainerBooster(void)
 /* <<< factory ScriptCommand_GiveOneOfEachTrainerBooster */
 
 /* >>> factory ScriptCommand_ShowCardReceivedScreen */
-/* scripting.asm:990. `ld a, c` / `cp $ff` / `or a` selects the card id: $ff
- * is the legendary set and loads a == 0, any other non-zero c is the card id
- * itself, and c == 0 falls back to wCardReceived. `push af` / `pop af` around
- * the two farcalls only carries that id across them -- the flags it also saves
- * are dead, because ShowPromotionalCardScreen reads a alone. The tail
- * `jp IncreaseScriptPointerBy2` makes the shared IncreaseScriptPointerResult
- * (a, f, c) the exit contract. */
-IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c)
+IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t b, uint8_t c)
 {
-	uint8_t card;
+	CardId card;
 
 	Func_c2a3();
-	if (c == 0xFFu)
+	if ((uint8_t)(c & b) == 0xFFu)
 		card = 0u;
-	else if (c != 0u)
-		card = c;
+	else if ((uint8_t)(c | b) != 0u)
+		card = (CardId)(((uint16_t)b << 8) | c);
 	else
-		card = wCardReceived;
+		card = (CardId)(gb_read8(wCardReceived_ADDR)
+			| ((uint16_t)gb_read8((uint16_t)(wCardReceived_ADDR + 1u)) << 8));
 
 	(void)InitMenuScreen();
 	(void)FlashWhiteScreen();
@@ -2171,7 +2165,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c)
 	WhiteOutDMGPals();
 	DoFrameIfLCDEnabled();
 	(void)ReturnToOverworldNoCallback();
-	return IncreaseScriptPointerBy2();
+	return IncreaseScriptPointerBy3();
 }
 /* <<< factory ScriptCommand_ShowCardReceivedScreen */
 

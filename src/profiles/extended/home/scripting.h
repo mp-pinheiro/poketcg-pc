@@ -616,7 +616,7 @@ IncreaseScriptPointerResult ScriptCommand_GiveOneOfEachTrainerBooster(void);
  * the routine tail-jumps to IncreaseScriptPointerBy2, so the shared
  * IncreaseScriptPointerResult (a, f, c) is the exit contract. b/d/e/hl are not
  * reported: the promotional card screen does not carry them out. */
-IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t c);
+IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_ShowCardReceivedScreen */
 /* >>> factory ScriptCommand_ShowMedalReceivedScreen */
 /* scripting.asm:1361. c carries the medal event id the script command was

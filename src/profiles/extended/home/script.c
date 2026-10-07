@@ -29,6 +29,8 @@
 
 #define MAP_SCRIPTS_BANK MapScripts_BANK
 #define MAP_SCRIPTS MapScripts_ADDR
+#define OVERWORLD_SCRIPT_TABLE_BANK OverworldScriptTable_BANK
+#define OVERWORLD_SCRIPT_TABLE_ADDR OverworldScriptTable_ADDR
 
 /* script.asm:62-95. Entry l = script selector; the entry is
  * MapScripts + wCurMap * 16 + l in bank 4. The pointer is read there and the
@@ -115,10 +117,11 @@ HandleMoveModeAPressResult HandleMoveModeAPress(uint8_t a, uint8_t f, uint8_t b,
 		if (entry[0] == object_direction && entry[1] == movement.b && entry[2] == movement.c) {
 			wNextScript = entry[3];
 			gb_write8((uint16_t)(wNextScript_ADDR + 1u), entry[4]);
-			wDefaultObjectText = entry[5];
-			gb_write8((uint16_t)(wDefaultObjectText_ADDR + 1u), entry[6]);
-			wCurrentNPCNameTx = entry[7];
-			gb_write8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u), entry[8]);
+			wNextScriptBank = entry[5];
+			wDefaultObjectText = entry[6];
+			gb_write8((uint16_t)(wDefaultObjectText_ADDR + 1u), entry[7]);
+			wCurrentNPCNameTx = entry[8];
+			gb_write8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u), entry[9]);
 			BankswitchROM(saved_bank);
 			return (HandleMoveModeAPressResult){saved_bank, (uint8_t)((saved_f & 0x80u) | 0x10u), movement.b, movement.c, object_direction, e, (uint16_t)(cursor + 1u)};
 		}
@@ -158,8 +161,9 @@ RunOverworldScriptResult RunOverworldScript(
 	uint8_t command_b = script_operand((uint16_t)(args + 1u));
 	const uint8_t *entry;
 
-	BankswitchROM(MAP_SCRIPTS_BANK);
-	entry = rom_ptr(MAP_SCRIPTS_BANK, (uint16_t)(0x617Bu + (uint16_t)opcode * 2u));
+	BankswitchROM(OVERWORLD_SCRIPT_TABLE_BANK);
+	entry = rom_ptr(OVERWORLD_SCRIPT_TABLE_BANK,
+		(uint16_t)(OVERWORLD_SCRIPT_TABLE_ADDR + (uint16_t)opcode * 2u));
 	uint16_t target = (uint16_t)(entry[0] | ((uint16_t)entry[1] << 8));
 	BankswitchROM(saved_bank);
 
