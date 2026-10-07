@@ -2820,8 +2820,8 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xDCEE: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
+                        0xDD00: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -4719,7 +4719,11 @@ CASES = {
             'cycle_budget': 0x7A1200},
     ],
     'HandleDeckMissingCardsList': [
-        {   'hl': 0xA990,
+        {   'oracle': False,
+            'evidence': 'primary',
+            'why': "wCurDeckName ($CFBB) lies inside the oracle's reserved call frame, so the interactive missing-card list cannot be isolated safely.",
+            'expect': {},
+            'hl': 0xA990,
             'd': 0xA9,
             'e': 0xA8,
             'keys': [0x00, 0x02],
@@ -4756,7 +4760,11 @@ CASES = {
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
-        {   'hl': 0xA990,
+        {   'oracle': False,
+            'evidence': 'primary',
+            'why': "wCurDeckName ($CFBB) lies inside the oracle's reserved call frame, so the interactive missing-card list cannot be isolated safely.",
+            'expect': {},
+            'hl': 0xA990,
             'd': 0xA9,
             'e': 0xA8,
             'keys': [0x00, 0x02],
@@ -4793,7 +4801,11 @@ CASES = {
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
+        {   'oracle': False,
+            'evidence': 'primary',
+            'why': "wCurDeckName ($CFBB) lies inside the oracle's reserved call frame, so the interactive missing-card list cannot be isolated safely.",
+            'expect': {},
+            'hl': 0xA990,
             'f': 0xF0,
             'b': 0xBB,
             'c': 0xCC,
@@ -5287,8 +5299,8 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xDCEE: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
+                        0xDD00: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -5467,7 +5479,7 @@ CASES = {
                         0xFF81: b'\x00',
                         0xD091: b'\x00',
                         0xD075: b'\x00',
-                        0xD00E: b'P\xa3'},
+                        0xD00E: b'p\xa4'},
             'sram': {   0x00: {   0xA470: b'A\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                           b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                           b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
@@ -5493,7 +5505,7 @@ CASES = {
                         0xFF81: b'\x00',
                         0xD091: b'\x00',
                         0xD075: b'\x00',
-                        0xD00E: b'P\xa3'},
+                        0xD00E: b'p\xa4'},
             'sram': {   0x00: {   0xA470: b'A\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                           b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                           b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'

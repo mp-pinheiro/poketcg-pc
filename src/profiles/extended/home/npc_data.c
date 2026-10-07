@@ -101,21 +101,8 @@ LoadNPCSpriteDataResult LoadNPCSpriteData(uint8_t a, uint8_t b, uint8_t c, uint8
 	wTempNPC = entry[0];
 	wNPCSpriteID = entry[1];
 	wNPCAnim = entry[2];
-	uint8_t cgb_anim = entry[3];
-	wNPCAnimFlags = entry[4];
-	uint8_t console = wConsole;
-	uint8_t out_a = console;
-	uint8_t f = 0x40u;
-	if (console == CONSOLE_CGB) {
-		out_a = cgb_anim;
-		wNPCAnim = cgb_anim;
-		f |= 0x80u;
-	}
-	if ((uint8_t)(console & 0x0Fu) < (uint8_t)(CONSOLE_CGB & 0x0Fu))
-		f |= 0x20u;
-	if (console < CONSOLE_CGB)
-		f |= 0x10u;
-	return (LoadNPCSpriteDataResult){out_a, f, b, c, d, e, hl};
+	wNPCAnimFlags = entry[3];
+	return (LoadNPCSpriteDataResult){entry[3], header.f, b, c, d, e, hl};
 }
 /* <<< factory LoadNPCSpriteData */
 

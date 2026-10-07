@@ -1,9 +1,9 @@
 {
   "fn": "LoadNPCSpriteData",
-  "case": "tests/cases/npc_data.py",
+  "case": "tests/profiles/extended/cases/npc_data.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"LoadNPCSpriteData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54187\": \"01\", \"54193\": \"000002\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"LoadNPCSpriteData\", \"mismatches\": {\"bus\": {\"address\": 54187, \"reference\": \"0001000002\", \"native\": \"0002262700\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51892, 1], [54187, 1], [54193, 3]]}}}\n",
-  "restored": "{\"fn\": \"LoadNPCSpriteData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54187\": \"01\", \"54193\": \"000002\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"LoadNPCSpriteData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54169\": \"01\", \"54175\": \"200002\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadNPCSpriteData\", \"mismatches\": {\"a\": [0, 3], \"bus\": {\"address\": 54169, \"reference\": \"0001200002\", \"native\": \"0002000320\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51892, 1], [54169, 1], [54175, 3]]}}}\n",
+  "restored": "{\"fn\": \"LoadNPCSpriteData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54169\": \"01\", \"54175\": \"200002\"}}, \"status\": \"PASS\"}\n"
 }

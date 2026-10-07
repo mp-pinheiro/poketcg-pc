@@ -66,19 +66,44 @@ DIGEST_FORMAT = "session-digest-v8"
 REFERENCE_RECORD = struct.Struct("<6IQBB")
 NATIVE_RECORD = struct.Struct("<6I")
 CALL_RECORD = struct.Struct("<IQB")
-TIMER_SYNC = {
-    (None, 0x377F): "SetupSound", (None, 0x3785): "PlaySong",
-    (None, 0x3796): "PlaySFX", (None, 0x379B): "PauseSong", (None, 0x37A0): "ResumeSong",
-    (None, 0x383D): "ExecuteGameEvent",           # map.asm:26, enables the counter
-    (3, 0x41B1): "Func_c1b1",                     # overworld.asm:230, zeroes it
-    (4, 0x41CD): "PrintPlayTime",                 # print_stats.asm:115, reads it
-    (4, 0x52FD): "CopyGeneralSaveDataToSRAM",     # save.asm .loop_bytes `ld a, [hli]`: saves it
-    (4, 0x546E): "LoadGeneralSaveDataFromDE",     # save.asm .loop_copy `ld [de], a`: overwrites it
-    (0x3D, 0x4052): "Music1_AssertSongFinished", (0x3D, 0x405C): "Music1_AssertSFXFinished",
-    (0x3E, 0x4052): "Music2_AssertSongFinished", (0x3E, 0x405C): "Music2_AssertSFXFinished",
-    (0x3D, 0x4028): "Music1_PlaySong_store", (0x3D, 0x4048): "Music1_PlaySFX_store",
-    (0x3E, 0x4028): "Music2_PlaySong_store", (0x3E, 0x4048): "Music2_PlaySFX_store",
-}
+def _sync_table() -> dict[tuple[int | None, int], str]:
+    """Where the game observes the play-time counter or hands the sound driver
+    a request: the port syncs its timer ISR count to the reference's at each.
+    Addresses come from the profile's symbols; a local label is named by its
+    parent plus the offset the sync instruction sits at."""
+    points: list[tuple[str, str, int, str]] = [
+        ("SetupSound", "SetupSound", 0, "home"), ("PlaySong", "PlaySong", 0, "home"),
+        ("PlaySFX", "PlaySFX", 0, "home"), ("PauseSong", "PauseSong", 0, "home"),
+        ("ResumeSong", "ResumeSong", 0, "home"),
+        ("ExecuteGameEvent", "ExecuteGameEvent", 0, "home"),
+        ("Func_c1b1", "Func_c1b1", 0, "bank"),
+        ("PrintPlayTime", "PrintPlayTime", 0, "bank"),
+        ("CopyGeneralSaveDataToSRAM", "CopyGeneralSaveDataToSRAM.loop_bytes", 1, "bank"),
+        ("LoadGeneralSaveDataFromDE", "LoadGeneralSaveDataFromDE.loop_copy", 1, "bank"),
+    ]
+    if PROFILE.name == "vanilla":
+        points += [
+            ("Music1_AssertSongFinished", "Music1_AssertSongFinished", 0, "bank"),
+            ("Music1_AssertSFXFinished", "Music1_AssertSFXFinished", 0, "bank"),
+            ("Music2_AssertSongFinished", "Music2_AssertSongFinished", 0, "bank"),
+            ("Music2_AssertSFXFinished", "Music2_AssertSFXFinished", 0, "bank"),
+            ("Music1_PlaySong_store", "Music1_PlaySong", 7, "bank"), ("Music1_PlaySFX_store", "Music1_PlaySFX.play_sfx", 5, "bank"),
+            ("Music2_PlaySong_store", "Music2_PlaySong", 7, "bank"), ("Music2_PlaySFX_store", "Music2_PlaySFX.play_sfx", 5, "bank"),
+        ]
+    else:
+        points += [
+            ("Music_AssertSongFinished", "Music_AssertSongFinished", 0, "bank"),
+            ("Music_AssertSFXFinished", "Music_AssertSFXFinished", 0, "bank"),
+            ("Music_PlaySong_store", "SetCurSong", 7, "bank"), ("Music_PlaySFX_store", "SetCurSFX", 0, "bank"),
+        ]
+    table: dict[tuple[int | None, int], str] = {}
+    for name, symbol, offset, kind in points:
+        bank, address = symbol_address(PROFILE, symbol, ROOT)
+        table[(None if kind == "home" else bank, address + offset)] = name
+    return table
+
+
+TIMER_SYNC = _sync_table()
 
 
 def _sync_addresses(table: dict[tuple[int | None, int], str]) -> dict[int, frozenset[int | None]]:
@@ -91,9 +116,12 @@ def _sync_addresses(table: dict[tuple[int | None, int], str]) -> dict[int, froze
 TIMER_SYNC_ADDRESSES = _sync_addresses(TIMER_SYNC)
 # A sync point inside a copy loop fires once per byte; only the read of the
 # play-time counter's first byte is the sync (the port syncs at that read).
-TIMER_SYNC_HL = {0x52FD: 0xCAC5}
-TIMER_SYNC_DE = {0x546E: 0xCAC5}
-TIMER_SYNC_ENABLED = {0x546E: 0xCAC4}
+TIMER_SYNC_HL = {symbol_address(PROFILE, "CopyGeneralSaveDataToSRAM.loop_bytes", ROOT)[1] + 1:
+                 symbol_address(PROFILE, "wPlayTimeCounter", ROOT)[1]}
+TIMER_SYNC_DE = {symbol_address(PROFILE, "LoadGeneralSaveDataFromDE.loop_copy", ROOT)[1] + 1:
+                 symbol_address(PROFILE, "wPlayTimeCounter", ROOT)[1]}
+TIMER_SYNC_ENABLED = {symbol_address(PROFILE, "LoadGeneralSaveDataFromDE.loop_copy", ROOT)[1] + 1:
+                      symbol_address(PROFILE, "wPlayTimeCounterEnable", ROOT)[1]}
 # The game's own writes to wVBlankCounter, the only places VBlank-ISR timing
 # is observable mid-interval: `ld [wVBlankCounter], a` in DuelMainInterface
 # (core.asm:291) and AIMakeDecision (core.asm:6255). One record per write:

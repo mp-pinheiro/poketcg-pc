@@ -396,14 +396,16 @@ CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result CheckIfPlayerHasPokemonOtherTha
 		(void)LoadCardDataToBuffer2_FromDeckIndex(e);
 		if (wLoadedCard2Type >= TYPE_ENERGY)
 			continue;
-		uint8_t card_id = wLoadedCard2ID;
+		CardId card_id = card_id_read_at(wLoadedCard2ID_ADDR);
 		if (card_id != MEWTWO_LV53) {
 			SwapTurn();
-			return (CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result){card_id, F_C, b, c, d, e, hl};
+			return (CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result){
+				(uint8_t)card_id, F_C, b, c, d, e, wLoadedCard2ID_ADDR};
 		}
 	}
 	SwapTurn();
-	return (CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result){DECK_SIZE, 0x00u, b, c, d, e, hl};
+	return (CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result){
+		DECK_SIZE, 0x00u, b, c, d, e, wLoadedCard2ID_ADDR};
 }
 /* <<< factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */
 

@@ -1,4 +1,6 @@
 #include "home/sound.h"
+
+#include "home/frames.h"
 #include "home/music.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
@@ -80,6 +82,7 @@ TileConvertWrapResult Func_37a5(uint16_t hl, uint16_t de)
 static uint8_t enter_music_bank(void)
 {
 	uint8_t saved_bank = hBankROM;
+	frame_boundary_timer_sync();
 	BankswitchROM(MUSIC_BANK);
 	return saved_bank;
 }

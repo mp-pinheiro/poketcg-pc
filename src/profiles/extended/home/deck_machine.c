@@ -282,7 +282,7 @@ DeckBuildCheckResult CheckIfHasEnoughCardsToBuildDeck(uint16_t *hl)
 		if (owned == 0u || owned == CARD_NOT_OWNED) {
 			*hl = source;
 			return (DeckBuildCheckResult){
-				owned, (owned == 0u) ? 0x90u : 0xD0u};
+				owned, 0x90u};
 		}
 		gb_write8(slot, (uint8_t)(owned - 1u));
 		source = (uint16_t)(source + 1u);
@@ -718,7 +718,7 @@ HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void)
 
 	uint8_t cursor = 0u;
 	for (;;) {
-		uint16_t menu_parameters = 0x7609u;
+		uint16_t menu_parameters = DeckMachineMenuParameters_ADDR;
 		InitializeMenuParameters(cursor, &menu_parameters);
 		(void)DrawWideTextBox_PrintText(ChooseADeckToDismantleText);
 
@@ -758,7 +758,7 @@ HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void)
 
 			DrawDecksScreen(ALL_DECKS);
 			cursor = wCurDeck;
-			menu_parameters = 0x7609u;
+			menu_parameters = DeckMachineMenuParameters_ADDR;
 			InitializeMenuParameters(cursor, &menu_parameters);
 			DrawCursor2();
 			SafelySwitchToTempSRAMBank();
@@ -904,7 +904,7 @@ SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void)
 	uint8_t a = 0u;
 	DrawDecksScreen(ALL_DECKS);
 	for (;;) {
-		uint16_t menu_parameters = 0x7609u;
+		uint16_t menu_parameters = DeckMachineMenuParameters_ADDR;
 		InitializeMenuParameters(a, &menu_parameters);
 		(void)DrawWideTextBox_PrintText(ChooseADeckToSaveText);
 		for (;;) {
@@ -937,7 +937,7 @@ SaveDeckInDeckSaveMachineResult SaveDeckInDeckSaveMachine(void)
 			DrawListScrollArrows();
 			PrintNumSavedDecks();
 			uint8_t list_cursor = wTempDeckMachineCursorPos;
-			uint16_t selection_parameters = 0x76fbu;
+			uint16_t selection_parameters = DeckMachineSelectionParams_ADDR;
 			(void)InitCardSelectionParams(list_cursor, &selection_parameters);
 			(void)DrawListCursor_Visible();
 			source = GetPointerToDeckName();

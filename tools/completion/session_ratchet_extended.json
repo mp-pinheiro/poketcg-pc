@@ -1,5 +1,8 @@
 {
   "boot-menu": {
     "confirmed_ordinal": 1000
+  },
+  "new-game": {
+    "confirmed_ordinal": 5891
   }
 }

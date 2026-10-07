@@ -1,4 +1,6 @@
 #include "home/music.h"
+
+#include "home/frames.h"
 #include "home/audio.h"
 #include "home/sfx.h"
 #include "generated/rom.h"
@@ -161,8 +163,10 @@ void _ResumeSong(void)
 void SetCurSong(uint8_t a)
 {
 	g_rom_bank = MUSIC_BANK;
-	if (a < gb_read8(ADR_NUMBER_OF_SONGS))
-		wCurSongID = a;
+	if (a >= gb_read8(ADR_NUMBER_OF_SONGS))
+		return;
+	frame_boundary_timer_sync();
+	wCurSongID = a;
 }
 /* <<< factory SetCurSong */
 
@@ -171,6 +175,7 @@ void SetCurSong(uint8_t a)
 void SetCurSFX(uint8_t a)
 {
 	g_rom_bank = MUSIC_BANK;
+	frame_boundary_timer_sync();
 	wCurSfxID = a;
 }
 /* <<< factory SetCurSFX */
