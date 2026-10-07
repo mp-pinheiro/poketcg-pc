@@ -1,0 +1,9 @@
+{
+  "fn": "PlayDuelAnimation",
+  "case": "tests/profiles/extended/cases/play_animation.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayDuelAnimation\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"c932\", \"54288\": \"fffffffffffffeff\", \"54426\": \"08\", \"54444\": \"00ff\", \"54445\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayDuelAnimation\", \"mismatches\": {\"bus\": {\"address\": 54288, \"reference\": \"c932ffffffffff\", \"native\": \"c93200ffffffff\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[51923, 2], [54288, 8], [54426, 1], [54444, 2]]}}}\n",
+  "restored": "{\"fn\": \"PlayDuelAnimation\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"c932\", \"54288\": \"fffffffffffffeff\", \"54426\": \"08\", \"54444\": \"00ff\", \"54445\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

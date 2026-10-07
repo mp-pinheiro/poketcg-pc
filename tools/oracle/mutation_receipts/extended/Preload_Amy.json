@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Amy",
+  "case": "tests/profiles/extended/cases/water_club.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Amy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53423\": \"00\", \"54045\": \"0000\", \"54170\": \"55\", \"54207\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Amy\", \"mismatches\": {\"f\": [144, 16]}}\n",
+  "restored": "{\"fn\": \"Preload_Amy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53423\": \"00\", \"54045\": \"0000\", \"54170\": \"55\", \"54207\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

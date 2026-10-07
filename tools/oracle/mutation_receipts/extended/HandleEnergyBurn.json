@@ -1,0 +1,9 @@
+{
+  "fn": "HandleEnergyBurn",
+  "case": "tests/profiles/extended/cases/card_color.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleEnergyBurn\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"05ff\", \"49876\": \"00\", \"49904\": \"00\", \"50107\": \"ffff\", \"50186\": \"3201\", \"52166\": \"010203040506\", \"52174\": \"07\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleEnergyBurn\", \"mismatches\": {\"bus\": {\"address\": 52166, \"reference\": \"ffff32010102030405\", \"native\": \"ffff32010700000000\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[49851, 2], [49876, 1], [49904, 1], [50107, 2], [50186, 2], [52166, 6], [52174, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleEnergyBurn\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"05ff\", \"49876\": \"00\", \"49904\": \"00\", \"50107\": \"ffff\", \"50186\": \"3201\", \"52166\": \"010203040506\", \"52174\": \"07\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

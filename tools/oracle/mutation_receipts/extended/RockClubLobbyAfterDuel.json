@@ -1,0 +1,9 @@
+{
+  "fn": "RockClubLobbyAfterDuel",
+  "case": "tests/profiles/extended/cases/rock_club_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RockClubLobbyAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 23877, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RockClubLobbyAfterDuel\", \"mismatches\": {\"hl\": [23877, 23968]}}\n",
+  "restored": "{\"fn\": \"RockClubLobbyAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 23877, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}

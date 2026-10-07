@@ -1,0 +1,9 @@
+{
+  "fn": "PsychicClubLobbyLoadMap",
+  "case": "tests/profiles/extended/cases/psychic_club_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PsychicClubLobbyLoadMap\", \"registers\": {\"a\": 3, \"b\": 104, \"c\": 106, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54071\": \"00000000000000000000000001000000000000000000000002000000020000000000000003000000000000000000000004000000000000000000000005000000000000000000000006000000000000000000000007000000000000000000000002\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PsychicClubLobbyLoadMap\", \"mismatches\": {\"c\": [106, 107]}}\n",
+  "restored": "{\"fn\": \"PsychicClubLobbyLoadMap\", \"registers\": {\"a\": 3, \"b\": 104, \"c\": 106, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54071\": \"00000000000000000000000001000000000000000000000002000000020000000000000003000000000000000000000004000000000000000000000005000000000000000000000006000000000000000000000007000000000000000000000002\"}}, \"status\": \"PASS\"}\n"
+}

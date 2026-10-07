@@ -1,0 +1,9 @@
+{
+  "fn": "WaterClubMovePlayer",
+  "case": "tests/profiles/extended/cases/water_club.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WaterClubMovePlayer\", \"registers\": {\"a\": 9, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 64, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54046\": \"09\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WaterClubMovePlayer\", \"mismatches\": {\"a\": [9, 3], \"f\": [64, 0], \"b\": [18, 96], \"c\": [52, 35]}}\n",
+  "restored": "{\"fn\": \"WaterClubMovePlayer\", \"registers\": {\"a\": 9, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 64, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54046\": \"09\"}}, \"status\": \"PASS\"}\n"
+}

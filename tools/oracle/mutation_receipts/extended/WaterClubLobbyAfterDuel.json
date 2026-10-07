@@ -1,0 +1,9 @@
+{
+  "fn": "WaterClubLobbyAfterDuel",
+  "case": "tests/profiles/extended/cases/water_club_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WaterClubLobbyAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 24330, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WaterClubLobbyAfterDuel\", \"mismatches\": {\"hl\": [24330, 25045]}}\n",
+  "restored": "{\"fn\": \"WaterClubLobbyAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 24330, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}

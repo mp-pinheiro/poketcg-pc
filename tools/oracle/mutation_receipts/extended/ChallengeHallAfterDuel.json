@@ -1,0 +1,9 @@
+{
+  "fn": "ChallengeHallAfterDuel",
+  "case": "tests/profiles/extended/cases/challenge_hall.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChallengeHallAfterDuel\", \"registers\": {\"a\": 3, \"b\": 114, \"c\": 172, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 28864, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"00\", \"54169\": \"4a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeHallAfterDuel\", \"mismatches\": {\"b\": [114, 113], \"c\": [172, 253], \"hl\": [28864, 28866]}}\n",
+  "restored": "{\"fn\": \"ChallengeHallAfterDuel\", \"registers\": {\"a\": 3, \"b\": 114, \"c\": 172, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 28864, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53424\": \"00\", \"54169\": \"4a\"}}, \"status\": \"PASS\"}\n"
+}
