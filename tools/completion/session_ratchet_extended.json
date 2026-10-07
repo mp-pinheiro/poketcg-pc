@@ -1,12 +1,24 @@
 {
+  "ai-duel-fighting-carriers": {
+    "confirmed_ordinal": 37894
+  },
   "ai-duel-fire-charge": {
-    "confirmed_ordinal": 25258
+    "confirmed_ordinal": 30958
+  },
+  "ai-duel-grass-carriers": {
+    "confirmed_ordinal": 29278
+  },
+  "ai-duel-water-carriers": {
+    "confirmed_ordinal": 35326
   },
   "boot-menu": {
     "confirmed_ordinal": 1000
   },
   "credits-extended": {
     "confirmed_ordinal": 58522
+  },
+  "deck-reload-base": {
+    "confirmed_ordinal": 1000
   },
   "deck-save": {
     "confirmed_ordinal": 37360
@@ -35,6 +47,21 @@
   "extended-fixes": {
     "confirmed_ordinal": 36274
   },
+  "legendary-articuno": {
+    "confirmed_ordinal": 27226
+  },
+  "legendary-dragonite": {
+    "confirmed_ordinal": 27394
+  },
+  "legendary-moltres": {
+    "confirmed_ordinal": 28738
+  },
+  "legendary-ronald": {
+    "confirmed_ordinal": 29242
+  },
+  "legendary-zapdos": {
+    "confirmed_ordinal": 22978
+  },
   "multi-bank-scripts": {
     "confirmed_ordinal": 9917
   },
@@ -44,8 +71,14 @@
   "practice-begin": {
     "confirmed_ordinal": 8600
   },
+  "practice-menu": {
+    "confirmed_ordinal": 11859
+  },
   "practice-start": {
     "confirmed_ordinal": 7153
+  },
+  "practice-wait": {
+    "confirmed_ordinal": 8776
   },
   "starter-deck": {
     "confirmed_ordinal": 36458
