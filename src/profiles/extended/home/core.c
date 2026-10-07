@@ -2874,33 +2874,33 @@ RemoveCardIDResult RemoveCardIDInList(uint16_t *hl, CardId de)
 /* >>> factory SortTempHandByIDList */
 SortTempHandResult SortTempHandByIDList(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	uint16_t priority = (uint16_t)(gb_read8(wAICardListPlayFromHandPriority_ADDR) |
-		((uint16_t)gb_read8((uint16_t)(wAICardListPlayFromHandPriority_ADDR + 1u)) << 8));
 	if (gb_read8((uint16_t)(wAICardListPlayFromHandPriority_ADDR + 1u)) == 0u)
 		return (SortTempHandResult){0u, 0x80u, b, c, d, e, hl};
 
-	uint16_t list_id = priority;
-	b = 0u;
+	uint16_t de = (uint16_t)(gb_read8(wAICardListPlayFromHandPriority_ADDR) |
+		((uint16_t)gb_read8((uint16_t)(wAICardListPlayFromHandPriority_ADDR + 1u)) << 8));
 	c = 0u;
 	for (;;) {
-		CardId wanted = card_id_read(&list_id);
-		if (wanted == 0u)
-			return (SortTempHandResult){0u, 0x80u, b, c,
-				(uint8_t)(list_id >> 8), (uint8_t)list_id, hl};
-		uint16_t scan = wDuelTempList_ADDR;
+		if ((uint8_t)(gb_read8(de) | gb_read8((uint16_t)(de + 1u))) == 0u)
+			return (SortTempHandResult){0u, 0x80u, 0u, c,
+				(uint8_t)(de >> 8), (uint8_t)de, hl};
+		de++;
+		hl = (uint16_t)(wDuelTempList_ADDR + c);
 		for (;;) {
-			uint8_t entry = gb_read8(scan);
+			uint8_t entry = gb_read8(hl);
 			hTempCardIndex_ff98 = entry;
 			if (entry == 0xFFu)
 				break;
+			CardId wanted = (CardId)(gb_read8(de) |
+				((uint16_t)gb_read8((uint16_t)(de + 1u)) << 8));
 			if (GetCardIDFromDeckIndex(entry) == wanted) {
 				uint16_t slot = (uint16_t)(wDuelTempList_ADDR + c);
 				uint8_t old = gb_read8(slot);
-				gb_write8(slot, entry);
-				gb_write8(scan, old);
+				gb_write8(slot, hTempCardIndex_ff98);
+				gb_write8(hl, old);
 				c++;
 			}
-			scan++;
+			hl++;
 		}
 	}
 }

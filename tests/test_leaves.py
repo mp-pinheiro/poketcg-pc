@@ -80,6 +80,10 @@ def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
             cases[name] = []
             for index, entry in enumerate(entries):
                 case = dict(entry)
+                hram = {address: payload for address, payload in case.pop("hram", {}).items()
+                        if 0xFF80 <= int(address) < 0xFFFF}
+                if hram:
+                    case["wram"] = {**case.get("wram", {}), **hram}
                 record = records.get(f"{name}-{index}")
                 if record is not None:
                     case["_completion"] = record["completion"]
