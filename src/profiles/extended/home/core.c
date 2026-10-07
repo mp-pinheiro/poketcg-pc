@@ -8406,7 +8406,9 @@ void StartDuel_VSAIOpp(void)
 	wDuelInitialPrizes = wNPCDuelPrizes;
 	InitVariablesToBeginDuel();
 	PlaySong(wDuelTheme);
-	(void)HandleDuelSetup();
+	if ((HandleDuelSetup().f & FLAG_C) != 0u)
+		return;
+	MainDuelLoop();
 }
 /* <<< factory StartDuel_VSAIOpp */
 
