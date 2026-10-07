@@ -142,6 +142,25 @@ function(add_poketcg_profile profile)
     add_custom_target(gen_layout DEPENDS ${layout_target})
   endif()
 
+  set(save_import_sources "")
+  if(profile STREQUAL "extended")
+    set(save_import_header "${profile_generated}/save_import_layout.h")
+    file(GLOB save_import_inputs CONFIGURE_DEPENDS
+      "${POKETCG_DISASM}/src/constants/*.asm" "${POKETCG_DISASM}/src/text/*.asm"
+      "${PROFILE_DISASM}/src/constants/*.asm" "${PROFILE_DISASM}/src/text/*.asm")
+    add_custom_command(
+      OUTPUT "${save_import_header}"
+      COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_save_import.py"
+              --vanilla-sym "${POKETCG_DISASM}/poketcg.sym" --extended-sym "${PROFILE_SYM}"
+              --vanilla-disasm "${POKETCG_DISASM}" --extended-disasm "${PROFILE_DISASM}"
+              --out "${save_import_header}"
+      DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_save_import.py" "${CMAKE_SOURCE_DIR}/tools/gen_constants.py"
+              "${POKETCG_DISASM}/poketcg.sym" "${PROFILE_SYM}" ${save_import_inputs}
+      COMMENT "gen_save_import: ${profile}"
+      VERBATIM)
+    set(save_import_sources "${PROFILE_ROOT}/save_import.c" "${save_import_header}")
+  endif()
+
   set(effect_dispatch_source "${profile_build_root}/effect_dispatch_generated.c")
   add_custom_command(
     OUTPUT "${effect_dispatch_source}"
@@ -300,14 +319,14 @@ function(add_poketcg_profile profile)
   target_compile_options(${probe_target} PRIVATE -Wall -Wextra)
   set_target_properties(${probe_target} PROPERTIES ENABLE_EXPORTS ON)
 
-  set(shell_sources src/main.c src/checkpoint.c src/digest.c src/persistence.c src/profile.c src/pc_options.c src/presentation.c src/runtime.c src/shell.c src/state_dump.c)
+  set(shell_sources src/main.c src/checkpoint.c src/digest.c src/persistence.c src/profile.c src/pc_options.c src/presentation.c src/runtime.c src/shell.c src/state_dump.c ${save_import_sources})
   if(profile STREQUAL "extended")
     add_executable(${shell_target} EXCLUDE_FROM_ALL ${shell_sources})
   else()
     add_executable(${shell_target} ${shell_sources})
   endif()
   if(profile STREQUAL "extended")
-    target_compile_definitions(${shell_target} PRIVATE POKETCG_PROFILE_EXTENDED=1)
+    target_compile_definitions(${shell_target} PRIVATE POKETCG_PROFILE_EXTENDED=1 POKETCG_SAVE_IMPORT=1)
   endif()
   set_target_properties(${shell_target} PROPERTIES ENABLE_EXPORTS ON)
   target_include_directories(${shell_target} PRIVATE "${profile_build_root}" "${PROFILE_ROOT}" "${CMAKE_SOURCE_DIR}/src")

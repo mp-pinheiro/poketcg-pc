@@ -25,7 +25,6 @@
 #define SAVE_EXTENDED_HEADER_SIZE 24u
 #define SAVE_VERSION 1u
 #define SAVE_EXTENDED_VERSION 2u
-#define SAVE_PAYLOAD_SIZE 0x8000u
 
 static void put_u32(uint8_t *dst, uint32_t value)
 {
@@ -189,9 +188,10 @@ int sram_save_atomic(const char *path, ProfileId profile)
 	return result;
 }
 
-int sram_load(const char *path, ProfileId profile)
+int sram_read_payload(const char *path, ProfileId profile, uint8_t *payload)
 {
-	if (!path || !*path || !profile_matches_current(profile)) {
+	if (!path || !*path || !payload ||
+	    (profile == PROFILE_ID_EXTENDED && !profile_matches_current(profile))) {
 		errno = EINVAL;
 		return -1;
 	}
@@ -202,7 +202,6 @@ int sram_load(const char *path, ProfileId profile)
 	size_t header_size = profile == PROFILE_ID_EXTENDED ?
 		SAVE_EXTENDED_HEADER_SIZE : SAVE_VANILLA_HEADER_SIZE;
 	uint8_t header[SAVE_EXTENDED_HEADER_SIZE];
-	uint8_t payload[SAVE_PAYLOAD_SIZE];
 	int result = read_all(fd, header, header_size);
 	if (!result && (memcmp(header, "PKSR", 4) != 0 ||
 	                get_u32(header + 4) !=
@@ -218,8 +217,8 @@ int sram_load(const char *path, ProfileId profile)
 		result = -1;
 	}
 	if (!result)
-		result = read_all(fd, payload, sizeof payload);
-	if (!result && checksum(payload, sizeof payload) != get_u32(header + 12)) {
+		result = read_all(fd, payload, SAVE_PAYLOAD_SIZE);
+	if (!result && checksum(payload, SAVE_PAYLOAD_SIZE) != get_u32(header + 12)) {
 		errno = EINVAL;
 		result = -1;
 	}
@@ -228,8 +227,19 @@ int sram_load(const char *path, ProfileId profile)
 		result = -1;
 		saved_errno = errno;
 	}
-	if (!result)
-		memcpy(g_sram, payload, sizeof payload);
 	errno = saved_errno;
 	return result;
+}
+
+int sram_load(const char *path, ProfileId profile)
+{
+	if (!profile_matches_current(profile)) {
+		errno = EINVAL;
+		return -1;
+	}
+	uint8_t payload[SAVE_PAYLOAD_SIZE];
+	if (sram_read_payload(path, profile, payload) != 0)
+		return -1;
+	memcpy(g_sram, payload, sizeof payload);
+	return 0;
 }

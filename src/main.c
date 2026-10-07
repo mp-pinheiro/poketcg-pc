@@ -15,6 +15,9 @@
 #include "trace.h"
 #include "pc_options.h"
 #include "game_switch.h"
+#ifdef POKETCG_SAVE_IMPORT
+#include "save_import.h"
+#endif
 
 #include <ctype.h>
 #ifdef _WIN32
@@ -679,6 +682,10 @@ int main(int argc, char **argv)
 	const char *save_path = NULL;
 	const char *load_save_path = NULL;
 	const char *switch_label = NULL;
+#ifdef POKETCG_SAVE_IMPORT
+	const char *convert_from = NULL;
+	const char *convert_to = NULL;
+#endif
 	const char *dump_state_path = NULL;
 	const char *dump_state_frames_text = NULL;
 	const char *input_path = NULL;
@@ -724,6 +731,11 @@ int main(int argc, char **argv)
 			load_save_path = argv[++i];
 		} else if (strcmp(argv[i], "--switch-to") == 0 && i + 1 < argc) {
 			switch_label = argv[++i];
+#ifdef POKETCG_SAVE_IMPORT
+		} else if (strcmp(argv[i], "--convert-vanilla-save") == 0 && i + 2 < argc) {
+			convert_from = argv[++i];
+			convert_to = argv[++i];
+#endif
 		} else if (strcmp(argv[i], "--dump-state") == 0 && i + 1 < argc) {
 			dump_state_path = argv[++i];
 		} else if (strcmp(argv[i], "--dump-state-frames") == 0 && i + 1 < argc) {
@@ -809,6 +821,9 @@ int main(int argc, char **argv)
 			       "[--trace-window LO HI --trace-window-out PATH] "
 			       "[--load-checkpoint PATH] [--link-fd N] [--isr-track PATH] [--serial-track PATH] [--presentation 4:3|sgb] [--dump-pcm PATH] [--printer-dir DIR] [--switch-to LABEL]\n");
 			printf("--frames 0 runs until the window closes\n");
+#ifdef POKETCG_SAVE_IMPORT
+			printf("--convert-vanilla-save IN OUT writes OUT from the diary save in the vanilla save IN, then exits\n");
+#endif
 			printf("--input is one byte per host frame (a movie axis); "
 			       "--input-ordinal is one byte per DoFrame and never wraps: "
 			       "past its end the keyboard takes over. They are exclusive\n");
@@ -863,6 +878,13 @@ int main(int argc, char **argv)
 	}
 	if (require_data)
 		(void)rom_ptr_product(required_bank, required_address);
+#ifdef POKETCG_SAVE_IMPORT
+	if (convert_from) {
+		int converted = save_import_convert(convert_from, convert_to);
+		rom_pack_free();
+		return converted == 0 ? 0 : 2;
+	}
+#endif
 	if (link_fd >= 0 && link_open(link_fd) != 0) {
 		fprintf(stderr, "cannot use link fd %d: %s\n", link_fd, strerror(errno));
 		rom_pack_free();
