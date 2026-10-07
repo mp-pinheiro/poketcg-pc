@@ -1,0 +1,14 @@
+{
+  "ai_deck": 23,
+  "branch_ordinal": 8517,
+  "derived_from": "practice-begin",
+  "duel_finished_ordinal": 30358,
+  "duel_turns": 23,
+  "goal": "practice-begin branched after the duel start into an AI-versus-AI duel, both sides the Fire Charge deck, two prizes",
+  "name": "ai-duel-fire-charge",
+  "ordinals": 30958,
+  "prizes": 2,
+  "recorded": "2026-10-07T02:42:55+00:00",
+  "schema": 1,
+  "seed": 4660
+}

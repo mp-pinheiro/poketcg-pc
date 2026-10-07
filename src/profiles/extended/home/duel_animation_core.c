@@ -19,9 +19,9 @@
 #define STRUCT_SIZE 8u
 #define BUFFER_MASK 0x7fu
 #define UPDATE_ADDR UpdateQueuedAnimations_ADDR
-#define ANIMATIONS_BANK 7u
+#define ANIMATIONS_BANK Animations_BANK
 #define ANIMATIONS_ADDR Animations_ADDR
-#define ANIM_ENTRY_SIZE 6u
+#define ANIM_ENTRY_SIZE 5u
 #define SPRITE_UNSKIPPABLE 0x80u
 
 static uint8_t read(uint16_t addr) { return gb_read8(addr); }
@@ -60,22 +60,27 @@ void PlayLoadedDuelAnimation(void)
         Func_1cb5e(animation);
         return;
     }
+    ClearSpriteVRAMBuffer();
+    ZeroObjectPositions();
+    write(wVBlankOAMCopyToggle_ADDR, 1u);
     const uint8_t *anim = rom_ptr(ANIMATIONS_BANK, ANIMATIONS_ADDR) + (uint16_t)animation * ANIM_ENTRY_SIZE;
     uint8_t sprite_id  = anim[0];
     uint8_t palette_id = anim[1];
     uint8_t anim_id    = anim[2];
     uint8_t flags      = anim[3];
     uint8_t sfx_id     = anim[4];
-    if (!sprite_id || !palette_id || !anim_id) return;
     if (read(wAnimationsDisabled_ADDR) && !(flags & SPRITE_UNSKIPPABLE))
         return;
     if (sfx_id) PlaySFX(sfx_id);
+    if (!sprite_id || !palette_id || !anim_id) return;
     CreateSpriteAndAnimBufferEntry(sprite_id, 0);
     write(QUEUE_ADDR, read(wWhichSprite_ADDR));
     write(wWhichOBP_ADDR, 0);
     write(wWhichOBPalIndex_ADDR, 0);
     LoadOBPalette(palette_id);
     write(wAnimFlags_ADDR, flags);
+    if (flags & SPRITE_ANIM_FLAG_8x16)
+        Set_OBJ_8x16();
     LoadAnimCoordsAndFlags();
     StartNewSpriteAnimation(anim_id);
 }
@@ -115,6 +120,7 @@ static uint8_t play_buffered_duel_animations(void)
         write(wDuelAnimSetScreen_ADDR, read((uint16_t)(src + 6u)));
         write(wDuelAnimReturnBank_ADDR, read((uint16_t)(src + 7u)));
         write(wDuelAnimBufferCurPos_ADDR, (uint8_t)((cur + STRUCT_SIZE) & BUFFER_MASK));
+        Set_OBJ_8x8();
         PlayLoadedDuelAnimation();
         if (CheckAnyAnimationPlaying().f & 0x10u) break;
     }
