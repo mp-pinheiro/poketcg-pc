@@ -23,7 +23,6 @@ static uint8_t check_id_is_in_list(uint8_t deck_index)
 		CardId entry = card_id_read(&list);
 		if (entry == CARD_LIST_TERMINATOR || entry == card)
 			return (uint8_t)(entry == card);
-		list++;
 	}
 }
 

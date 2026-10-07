@@ -6,11 +6,18 @@ _FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
 _EVOLUTION = Fixture("ai-duel-fire-charge-aidecideevolution-entry", directory=_FIXTURES)
 _PLAY_POKEMON = Fixture("ai-duel-fire-charge-aidecideplaypokemoncard-entry", directory=_FIXTURES, holes=_HOLES)
+_EVOLUTION_AI_INFO = Fixture("ai-decide-evolution-fighting-carriers", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
     case["read"][0xCC00] = 0xBD
     case["read"][0xCCBE] = 0x42
     return case
+
+
+def _ai_score_case(fixture):
+    case = _fixture_case(fixture)
+    case["read"][0xCD44] = 0x01
+    return dict(case, **fixture.regs)
 
 
 
@@ -1833,7 +1840,8 @@ CASES = {
 }
 
 CASES['AIDecideEvolution'] = [
-    dict(_EVOLUTION.case(vram=False), **_EVOLUTION.regs)
+    dict(_EVOLUTION.case(vram=False), **_EVOLUTION.regs),
+    _ai_score_case(_EVOLUTION_AI_INFO),
 ]
 CASES['AIDecidePlayPokemonCard'] = [
     dict(_fixture_case(_PLAY_POKEMON), **_PLAY_POKEMON.regs)
@@ -1849,11 +1857,9 @@ MUTATIONS = {
                         'AIDecideSpecialEvolutions-4'],
         'source': 'src/profiles/extended/home/hand_pokemon.c'},
     'AIDecideEvolution': {   'source_symbol': 'AIDecideEvolution',
-        'before': '\t\twTempAIPokemonCard = card;\n'
-                  '\t\tif (IsPrehistoricPowerActive(hand).f & 0x10u)',
-        'after': '\t\twTempAIPokemonCard = (uint8_t)(card + 1u);\n'
-                 '\t\tif (IsPrehistoricPowerActive(hand).f & 0x10u)',
-        'case_ids': ['AIDecideEvolution-2'],
+        'before': '\t\t\telse if ((wLoadedCard1AIInfo & 0x0Fu) == AI_INFO_ENCOURAGE_EVO)',
+        'after': '\t\t\telse if (wLoadedCard1AIInfo == AI_INFO_ENCOURAGE_EVO)',
+        'case_ids': ['AIDecideEvolution-1'],
         'source': 'src/profiles/extended/home/hand_pokemon.c'},
     'AIDecidePlayLegendaryBirds': {   'source_symbol': 'AIDecidePlayLegendaryBirds',
         'before': 'void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = wOpponentDeckID;',

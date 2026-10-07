@@ -252,12 +252,13 @@ HandleSpecialAIAttacksResult HandleSpecialAIAttacks(void)
 			if (index == 0xFFu)
 				break;
 			DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(e + DUELVARS_ARENA_CARD_HP));
-			hl = hp.hl;
 			if (hp.a >= 20u)
 				continue;
 			d++;
 		}
+		SwapTurn();
 		uint8_t prizes = CountPrizes();
+		SwapTurn();
 		if (prizes <= d)
 			return special_zero_score();
 		return (HandleSpecialAIAttacksResult){0x80u, special_cp_flags(prizes, d)};

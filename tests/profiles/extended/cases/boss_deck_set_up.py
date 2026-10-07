@@ -9,6 +9,12 @@ _SETUP = Fixture(
     holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
     lcdc=0xCABB,
 )
+_SETUP_AVOID_PRIZE = Fixture(
+    "boss-setup-avoid-prize-fighting-carriers",
+    directory=_FIXTURES,
+    holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
+    lcdc=0xCABB,
+)
 
 CONTRACT = {
     'SetUpBossStartingHandAndDeck': {'compare': (), 'preserve': ()},
@@ -58,15 +64,16 @@ CASES = {
     ],
 }
 CASES['SetUpBossStartingHandAndDeck'] = [
-    dict(_SETUP.case(vram=False), **_SETUP.regs)
+    dict(_SETUP.case(vram=False), **_SETUP.regs),
+    dict(_SETUP_AVOID_PRIZE.case(vram=False), **_SETUP_AVOID_PRIZE.regs),
 ]
 
 
 MUTATIONS = {
     'SetUpBossStartingHandAndDeck': {   'source_symbol': 'SetUpBossStartingHandAndDeck',
-        'before': '\t\twAISetupBasicPokemonCount = 0u;\n\t\twAISetupEnergyCount = 0u;',
-        'after': '\t\twAISetupBasicPokemonCount = 1u;\n\t\twAISetupEnergyCount = 0u;',
-        'case_ids': ['SetUpBossStartingHandAndDeck-0', 'SetUpBossStartingHandAndDeck-1'],
+        'before': '\t\t\treturn (uint8_t)(entry == card);\n\t}',
+        'after': '\t\t\treturn (uint8_t)(entry == card);\n\t\tlist++;\n\t}',
+        'case_ids': ['SetUpBossStartingHandAndDeck-1'],
         'source': 'src/profiles/extended/home/boss_deck_set_up.c'},
 }
 

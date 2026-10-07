@@ -235,7 +235,7 @@ uint8_t AIDecideEvolution(void)
 			(void)LoadCardDataToBuffer1_FromDeckIndex(slot.a);
 			if (wLoadedCard1ID == MYSTERIOUS_FOSSIL)
 				(void)AIEncourage(5u);
-			else if (wLoadedCard1AIInfo == AI_INFO_ENCOURAGE_EVO)
+			else if ((wLoadedCard1AIInfo & 0x0Fu) == AI_INFO_ENCOURAGE_EVO)
 				(void)AIEncourage(2u);
 			/* .pikachu_deck */
 			if (wOpponentDeckID == PIKACHU_DECK_ID) {

@@ -959,8 +959,18 @@ CASES = {
 }
 
 
+_EARTHQUAKE = Fixture(
+    "special-ai-earthquake-fighting-carriers",
+    directory=_FIXTURES,
+    holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
+    lcdc=0xCABB,
+)
+_EARTHQUAKE_CASE = _EARTHQUAKE.case(vram=False)
+_EARTHQUAKE_CASE["read"][0xCC00] = 0xBD
+_EARTHQUAKE_CASE["read"][0xCCBE] = 0x42
 CASES['HandleSpecialAIAttacks'] = [
-    dict(_SPECIAL.case(vram=False), **_SPECIAL.regs)
+    dict(_SPECIAL.case(vram=False), **_SPECIAL.regs),
+    dict(_EARTHQUAKE_CASE, **_EARTHQUAKE.regs),
 ]
 
 MUTATIONS = {
@@ -980,13 +990,10 @@ MUTATIONS = {
                         'CheckWhetherToSwitchToFirstAttack-2'],
         'source': 'src/profiles/extended/home/special_attacks.c'},
     'HandleSpecialAIAttacks': {   'source_symbol': 'HandleSpecialAIAttacks',
-        'before': '\t\tif (!special_in_deck(card))\n'
-                  '\t\t\treturn special_zero_score();\n'
-                  '\t\treturn special_bench_slots_score(MAX_BENCH_POKEMON);',
-        'after': '\t\tif (!special_in_deck(card))\n'
-                 '\t\t\treturn special_zero_score();\n'
-                 '\t\treturn special_zero_score();',
-        'case_ids': ['HandleSpecialAIAttacks-0'],
+        'before': '\t\t\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(e + DUELVARS_ARENA_CARD_HP));\n',
+        'after': '\t\t\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(e + DUELVARS_ARENA_CARD_HP));\n'
+                 '\t\t\thl = hp.hl;\n',
+        'case_ids': ['HandleSpecialAIAttacks-1'],
         'source': 'src/profiles/extended/home/special_attacks.c'},
 }
 
