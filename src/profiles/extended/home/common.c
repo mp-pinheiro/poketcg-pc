@@ -499,8 +499,8 @@ LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(CardId de)
 	gb_write8(wTempCardIDToLook_ADDR, (uint8_t)de);
 	gb_write8((uint16_t)(wTempCardIDToLook_ADDR + 1u), (uint8_t)(de >> 8));
 	(void)CreateHandCardList(0u);
-	uint8_t d = (uint8_t)(wDuelTempList_ADDR >> 8);
 	uint16_t scan = wDuelTempList_ADDR;
+	uint8_t d = (uint8_t)(wDuelTempList_ADDR >> 8);
 	for (;;) {
 		uint8_t index = gb_read8(scan++);
 		if (index == 0xFFu)
@@ -555,15 +555,18 @@ LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferen
 	wTempAI = r2.a;
 	(void)CreateHandCardList(0u);
 	uint8_t *scan = wDuelTempList_PTR;
+	uint8_t out_d = (uint8_t)(wDuelTempList_ADDR >> 8);
 	for (;;) {
 		uint8_t index = *scan++;
 		if (index == 0xFFu)
-			return (LookForCardIDToTradeWithDifferentHandCardResult){0xFFu, 0x00u, 0u, 0xC5u};
+			return (LookForCardIDToTradeWithDifferentHandCardResult){0xFFu, 0x00u, 0u, out_d};
 		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
-		if (card_id_read_at(wLoadedCard1ID_ADDR) == bc)
+		CardId card_id = card_id_read_at(wLoadedCard1ID_ADDR);
+		out_d = (uint8_t)(card_id >> 8);
+		if (card_id == bc)
 			continue;
 		if (wLoadedCard1Type < TYPE_ENERGY)
-			return (LookForCardIDToTradeWithDifferentHandCardResult){wTempAI, 0x10u, index, 0xC5u};
+			return (LookForCardIDToTradeWithDifferentHandCardResult){wTempAI, 0x10u, index, out_d};
 	}
 }
 /* <<< factory LookForCardIDToTradeWithDifferentHandCard */
@@ -626,7 +629,6 @@ void AddStarterDeck(uint8_t a)
 }
 /* <<< factory AddStarterDeck */
 
-/* >>> factory FindDuplicatePokemonCards */
 FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
 {
 	wTempAI = 0xFFu;
@@ -638,13 +640,13 @@ FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
 		uint8_t outer_idx = gb_read8((uint16_t)(list + outer));
 		if (outer_idx == 0xFFu)
 			break;
-		uint8_t outer_id = GetCardIDFromDeckIndex(outer_idx);
+		CardId outer_id = GetCardIDFromDeckIndex(outer_idx);
 		uint8_t inner = (uint8_t)(outer + 1u);
 		for (;;) {
 			uint8_t inner_idx = gb_read8((uint16_t)(list + inner));
 			if (inner_idx == 0xFFu)
 				break;
-			uint8_t inner_id = GetCardIDFromDeckIndex(inner_idx);
+			CardId inner_id = GetCardIDFromDeckIndex(inner_idx);
 			if (inner_id == outer_id) {
 				uint8_t type = GetCardType(inner_id);
 				if (type < TYPE_ENERGY)

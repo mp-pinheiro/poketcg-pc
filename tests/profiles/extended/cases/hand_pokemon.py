@@ -1,4 +1,10 @@
 """Extended oracle-diff cases for hand_pokemon, seeded from tests/cases/hand_pokemon.py."""
+from pathlib import Path
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_EVOLUTION = Fixture("ai-duel-fire-charge-aidecideevolution-entry", directory=_FIXTURES)
+_PLAY_POKEMON = Fixture("ai-duel-fire-charge-aidecideplaypokemoncard-entry", directory=_FIXTURES)
 
 CONTRACT = {
     'AIDecideSpecialEvolutions': {'compare': (), 'preserve': ()},
@@ -1815,6 +1821,13 @@ CASES = {
             'hl': 0x6F5A},
     ],
 }
+
+CASES['AIDecideEvolution'] = [
+    dict(_EVOLUTION.case(vram=False), **_EVOLUTION.regs)
+]
+CASES['AIDecidePlayPokemonCard'] = [
+    dict(_PLAY_POKEMON.case(vram=False), **_PLAY_POKEMON.regs)
+]
 
 MUTATIONS = {
     'AIDecideSpecialEvolutions': {   'source_symbol': 'AIDecideSpecialEvolutions',

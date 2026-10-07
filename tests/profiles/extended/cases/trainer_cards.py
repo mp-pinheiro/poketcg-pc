@@ -1,4 +1,14 @@
 """Extended oracle-diff cases for trainer_cards, seeded from tests/cases/trainer_cards.py."""
+from pathlib import Path
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_PROFESSOR_OAK = Fixture(
+    "ai-duel-water-carriers-aidecide-professor-oak-entry",
+    directory=_FIXTURES,
+    holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
+    lcdc=0xCABB,
+)
 
 CONTRACT = {
     'RemoveCardFromList': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
@@ -7851,6 +7861,10 @@ CASES = {
             'cycle_budget': 0x4C4B400},
     ],
 }
+
+CASES['AIDecide_ProfessorOak'].append(
+    dict(_PROFESSOR_OAK.case(vram=False), **_PROFESSOR_OAK.regs)
+)
 
 MUTATIONS = {
     'RemoveCardFromList': {   'source_symbol': 'RemoveCardFromList',

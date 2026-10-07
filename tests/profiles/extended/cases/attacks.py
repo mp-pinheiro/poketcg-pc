@@ -1,4 +1,10 @@
 """Extended oracle-diff cases for attacks, seeded from tests/cases/attacks.py."""
+from pathlib import Path
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_AI_SCORE = Fixture("ai-duel-fire-charge-getaiscoreofattack-entry", directory=_FIXTURES)
+_AI_PROCESS = Fixture("ai-duel-fire-charge-aiprocessandtrytouseattack-entry", directory=_FIXTURES)
 
 CONTRACT = {
     'RetrievePlayAreaAIScoreFromBackup2': {'compare': ('a', 'f'), 'preserve': ('a', 'f')},
@@ -2703,6 +2709,13 @@ CASES = {
             'cycle_budget': 0x4C4B400},
     ],
 }
+
+CASES['GetAIScoreOfAttack'] = [
+    dict(_AI_SCORE.case(vram=False), **_AI_SCORE.regs)
+]
+CASES['AIProcessAndTryToUseAttack'] = [
+    dict(_AI_PROCESS.case(vram=False), **_AI_PROCESS.regs)
+]
 
 MUTATIONS = {
     'RetrievePlayAreaAIScoreFromBackup2': {   'source_symbol': 'RetrievePlayAreaAIScoreFromBackup2',

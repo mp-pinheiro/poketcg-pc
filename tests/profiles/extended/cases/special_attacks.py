@@ -1,4 +1,9 @@
 """Extended oracle-diff cases for special_attacks, seeded from tests/cases/special_attacks.py."""
+from pathlib import Path
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_SPECIAL = Fixture("ai-duel-grass-carriers-handlespecialaiattacks-entry", directory=_FIXTURES)
 
 CONTRACT = {
     'CheckIfAnyBasicPokemonInDeck': {'compare': ('a', 'b', 'c', 'd', 'e', 'f', 'hl'), 'preserve': ('b', 'c', 'd')},
@@ -952,6 +957,11 @@ CASES = {
                         0xC2EC: b'\x00'}},
     ],
 }
+
+
+CASES['HandleSpecialAIAttacks'] = [
+    dict(_SPECIAL.case(vram=False), **_SPECIAL.regs)
+]
 
 MUTATIONS = {
     'CheckIfAnyBasicPokemonInDeck': {   'source_symbol': 'CheckIfAnyBasicPokemonInDeck',

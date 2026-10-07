@@ -1,4 +1,11 @@
 """Extended oracle-diff cases for retreat, seeded from tests/cases/retreat.py."""
+from pathlib import Path
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_BENCH = Fixture("ai-duel-fire-charge-aidecidebenchpokemontoswitchto-entry", directory=_FIXTURES)
+_DECIDE = Fixture("ai-duel-fire-charge-aidecidewhethertoretreat-entry", directory=_FIXTURES)
+_TRY = Fixture("ai-duel-grass-carriers-aitrytoretreat-entry", directory=_FIXTURES)
 
 CONTRACT = {
     'SetAIRetreatFlags': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
@@ -6138,6 +6145,16 @@ CASES = {
             'hl': 0xD72F},
     ],
 }
+
+CASES['AIDecideBenchPokemonToSwitchTo'] = [
+    dict(_BENCH.case(vram=False), **_BENCH.regs)
+]
+CASES['AIDecideWhetherToRetreat'] = [
+    dict(_DECIDE.case(vram=False), **_DECIDE.regs)
+]
+CASES['AITryToRetreat'] = [
+    dict(_TRY.case(vram=False), **_TRY.regs)
+]
 
 MUTATIONS = {
     'SetAIRetreatFlags': {   'source_symbol': 'SetAIRetreatFlags',

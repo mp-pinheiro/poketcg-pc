@@ -104,7 +104,7 @@ static HandleSpecialAIAttacksResult special_bench_slots_score(uint8_t limit)
 	return (HandleSpecialAIAttacksResult){(uint8_t)(0x80u + limit - n.a), 0x00u};
 }
 
-static uint8_t special_in_deck(uint8_t card)
+static uint8_t special_in_deck(CardId card)
 {
 	return (uint8_t)(LookForCardIDInLocation_Bank5(CARD_LOCATION_DECK, card).f & 0x10u);
 }
@@ -113,7 +113,7 @@ HandleSpecialAIAttacksResult HandleSpecialAIAttacks(void)
 {
 	uint8_t location = hTempPlayAreaLocation_ff9d;
 	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
-	uint8_t card = GetCardIDFromDeckIndex(arena.a);
+	CardId card = GetCardIDFromDeckIndex(arena.a);
 
 	switch (card) {
 	case NIDORANF:

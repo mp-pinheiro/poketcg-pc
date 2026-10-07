@@ -1115,50 +1115,56 @@ AIDecide_PokemonTrader_StrangePowerResult AIDecide_PokemonTrader_StrangePower(ui
 /* >>> factory AIDecide_PokemonTrader_LegendaryArticuno */
 AIDecide_PokemonTrader_LegendaryArticunoResult AIDecide_PokemonTrader_LegendaryArticuno(uint8_t d)
 {
-	(void)d;
-	LookForCardIDInHandAndPlayAreaResult r = LookForCardIDInHandAndPlayArea(ARTICUNO_LV35);
-	if (r.f & 0x10u) {
-		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a, f, 0xC5u};
-	}
+	uint8_t entry_d = d;
+	LookForCardIDInHandAndPlayAreaResult r =
+		LookForCardIDInHandAndPlayArea(ARTICUNO_LV35);
+	if (r.f & 0x10u)
+		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a,
+			(uint8_t)(r.a == 0u ? 0x80u : 0u), entry_d};
 	r = LookForCardIDInHandAndPlayArea(LAPRAS);
-	if (r.f & 0x10u) {
-		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a, f, 0xC5u};
-	}
+	if (r.f & 0x10u)
+		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a,
+			(uint8_t)(r.a == 0u ? 0x80u : 0u), entry_d};
+
 	r = LookForCardIDInHandAndPlayArea(SEEL);
-	uint8_t found_in_deck = 0u;
 	if (!(r.f & 0x10u)) {
-		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, SEEL);
+		LookForCardIDInLocationBank8Result loc =
+			LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, SEEL);
+		d = 0u;
 		if (loc.f & 0x10u) {
 			wce1a = loc.a;
-			found_in_deck = 1u;
+			goto check_articuno_trader_hand;
 		}
 	}
-	if (!found_in_deck) {
-		r = LookForCardIDInHandAndPlayArea(DEWGONG);
-		if (r.f & 0x10u) {
-			uint8_t f = (r.a == 0u) ? 0x80u : 0u;
-			return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a, f, 0xC5u};
-		}
-		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, DEWGONG);
-		if (!(loc.f & 0x10u)) {
-			uint8_t f = (loc.a == 0u) ? 0x80u : 0u;
-			return (AIDecide_PokemonTrader_LegendaryArticunoResult){loc.a, f, 0u};
-		}
+
+	r = LookForCardIDInHandAndPlayArea(DEWGONG);
+	if (r.f & 0x10u)
+		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a,
+			(uint8_t)(r.a == 0u ? 0x80u : 0u), entry_d};
+	{
+		LookForCardIDInLocationBank8Result loc =
+			LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, DEWGONG);
+		d = 0u;
+		if (!(loc.f & 0x10u))
+			return (AIDecide_PokemonTrader_LegendaryArticunoResult){loc.a,
+				(uint8_t)(loc.a == 0u ? 0x80u : 0u), d};
 		wce1a = loc.a;
 	}
-	CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(CHANSEY);
-	if (h.f & 0x10u)
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
-	h = CheckIfHasCardIDInHand(DITTO);
-	if (h.f & 0x10u)
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
-	h = CheckIfHasCardIDInHand(ARTICUNO_LV37);
-	if (h.f & 0x10u)
-		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
-	uint8_t f = (h.a == 0u) ? 0x80u : 0u;
-	return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, f, 0xC5u};
+
+check_articuno_trader_hand:
+	{
+		CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(CHANSEY);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
+		h = CheckIfHasCardIDInHand(DITTO);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
+		h = CheckIfHasCardIDInHand(ARTICUNO_LV37);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
+		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a,
+			(uint8_t)(h.a == 0u ? 0x80u : 0u), 0xC5u};
+	}
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryArticuno */
 
@@ -2319,8 +2325,11 @@ AIDecide_PokemonTrader_PowerGeneratorResult AIDecide_PokemonTrader_PowerGenerato
 	LookForCardIDInDeck_GivenCardIDInHandResult r16 =
 		LookForCardIDInDeck_GivenCardIDInHand(MAGNEMITE_LV13, MAGNETON_LV28);
 		d = r16.d;
-	a = r16.a;
-	if (r16.f & 0x10u) goto find_duplicates;
+		a = r16.a;
+		if (r16.f & 0x10u)
+			goto find_duplicates;
+		return (AIDecide_PokemonTrader_PowerGeneratorResult){a,
+			(uint8_t)(a == 0u ? 0x80u : 0u), d};
 
 find_duplicates:
 	wce1a = a;
@@ -3421,9 +3430,16 @@ AIDecideFullHealResult AIDecide_FullHeal(uint8_t d)
 		if (scoop.f & 0x10u)
 			return (AIDecideFullHealResult){scoop.a, or_a_flags(scoop.a), d};
 	}
+	uint8_t saved_status = 0u;
+	DuelistVarResult status_var = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	if (status == PARALYZED || status == ASLEEP) {
+		saved_status = status_var.a;
+		gb_write8(status_var.hl, NO_STATUS);
+	}
 	CheckIfCanDamageDefendingPokemonResult damage =
 		CheckIfCanDamageDefendingPokemon(PLAY_AREA_ARENA, 0x80u, 0u, 0u, d, 0u, 0u);
-	d = damage.d;
+	if (status == PARALYZED || status == ASLEEP)
+		gb_write8(status_var.hl, saved_status);
 	if ((damage.f & 0x10u) == 0u)
 		return (AIDecideFullHealResult){damage.a, or_a_flags(damage.a), d};
 	uint8_t energy_for_retreat = wAIPlayEnergyCardForRetreat;
@@ -3751,7 +3767,7 @@ AIDecideResult AIPlay_GustOfWind(uint8_t d, uint8_t e)
 	wCurrentAIFlags = flags;
 	hTempCardIndex_ff9f = wAITrainerCardToPlay;
 	hTemp_ffa0 = wAITrainerCardParameter;
-	AIMakeDecisionResult decision = AIMakeDecision(0x07u, 0u, 0u, d, e);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, d, e);
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_GustOfWind */
@@ -4022,8 +4038,6 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 	    && (CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE).f & 0x10u) != 0u
 	    && (LookForCardIDInHand(WATER_ENERGY).f & 0x10u) != 0u)
 		wce06 = (uint8_t)(wce06 + 10u);
-	/* .check_hand: `jr c` where `jr nc` was meant, so only a Basic that is
-	 * not a Pokemon card counts -- a Basic Energy or a Trainer. */
 	(void)CreateHandCardList(0u);
 	uint16_t list = wDuelTempList_ADDR;
 	for (;;) {
@@ -4031,7 +4045,7 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 		if (index == 0xFFu)
 			break;
 		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
-		if (wLoadedCard1Type < TYPE_ENERGY)
+		if (wLoadedCard1Type >= TYPE_ENERGY)
 			continue;
 		if (wLoadedCard1Stage == 0u)
 			wce06 = (uint8_t)(wce06 + 10u);

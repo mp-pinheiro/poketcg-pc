@@ -1,4 +1,14 @@
 """Extended oracle-diff cases for boss_deck_set_up, seeded from tests/cases/boss_deck_set_up.py."""
+from pathlib import Path
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_SETUP = Fixture(
+    "ai-duel-fire-charge-setupbossstartinghandanddeck-entry",
+    directory=_FIXTURES,
+    holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
+    lcdc=0xCABB,
+)
 
 CONTRACT = {
     'SetUpBossStartingHandAndDeck': {'compare': (), 'preserve': ()},
@@ -47,6 +57,10 @@ CASES = {
             'cycle_budget': 0x7A1200},
     ],
 }
+CASES['SetUpBossStartingHandAndDeck'] = [
+    dict(_SETUP.case(vram=False), **_SETUP.regs)
+]
+
 
 MUTATIONS = {
     'SetUpBossStartingHandAndDeck': {   'source_symbol': 'SetUpBossStartingHandAndDeck',

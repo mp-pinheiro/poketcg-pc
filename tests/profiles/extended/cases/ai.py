@@ -1,4 +1,11 @@
 """Extended oracle-diff cases for ai, seeded from tests/cases/ai.py."""
+from pathlib import Path
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_AIDO = Fixture("ai-duel-fire-charge-aidoaction-entry", directory=_FIXTURES)
+_AIDO_START = Fixture("ai-duel-fire-charge-aidoaction-startduel-entry", directory=_FIXTURES)
+_AIDO_TURN = Fixture("ai-duel-fire-charge-aidoaction-turn-entry", directory=_FIXTURES)
 from tests.profiles.extended.cases.overworld import CASES as _OVERWORLD_CASES
 
 def _extended_ai_wram():
@@ -150,6 +157,15 @@ CASES = {
          'wram': _AI_WIDE_WRAM, 'keys': [0x00, 0x01]},
     ],
 }
+CASES['AIDoAction'].append(dict(_AIDO.case(vram=False), **_AIDO.regs))
+CASES['AIDoAction_StartDuel'].append(dict(_AIDO_START.case(vram=False), **_AIDO_START.regs))
+CASES['AIDoAction_Turn'].append(dict(_AIDO_TURN.case(vram=False), **_AIDO_TURN.regs))
+CASES['AIDoAction'] = [
+    dict(_AIDO.case(vram=False), **_AIDO.regs)
+]
+CASES['AIDoAction_Turn'] = [
+    dict(_AIDO_TURN.case(vram=False), **_AIDO_TURN.regs)
+]
 
 MUTATIONS = {
     'LoadOpponentDeck': {   'source_symbol': 'LoadOpponentDeck',

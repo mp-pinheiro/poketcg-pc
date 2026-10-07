@@ -323,7 +323,7 @@ AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(uint8_t d)
 		}
 		if (raise)
 			(void)AIEncourage(5u);
-		if (wLoadedCard1AIInfo == AI_INFO_BENCH_UTILITY)
+		if ((wLoadedCard1AIInfo & 0x0Fu) == AI_INFO_BENCH_UTILITY)
 			AIDiscourage(2u);
 		/* .mysterious_fossil_or_clefairy_doll; b for the bonus list below is
 		 * what a holds: the card ID, or AIDiscourage's exit a after -10. */
@@ -662,7 +662,7 @@ check_defending_id:
 		if (bench_id == MYSTERIOUS_FOSSIL || bench_id == CLEFAIRY_DOLL)
 			continue;
 		hTempPlayAreaLocation_ff9d = e;
-		CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(a, f, b, c, d, e, hl);
+		CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(e, f, b, c, d, e, hl);
 		a = ko.a; f = ko.f;
 		if ((f & 0x10u) == 0u)
 			goto check_active_id;

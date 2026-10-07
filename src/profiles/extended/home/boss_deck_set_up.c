@@ -7,10 +7,25 @@
 /* >>> factory statics */
 #include "home/duel.h"
 #include "generated/wram.h"
-#include "mem.h"
+#include "home/card_id_bus.h"
 #define DUELVARS_DECK_CARDS 0x7Eu
 #define DUELVARS_HAND 0x42u
-/* <<< factory statics */
+#define CARD_LIST_TERMINATOR 0x00u
+static uint8_t check_id_is_in_list(uint8_t deck_index)
+{
+	uint8_t high = gb_read8((uint16_t)(wAICardListAvoidPrize_ADDR + 1u));
+	if (high == 0u)
+		return 0u;
+	uint16_t list = (uint16_t)(gb_read8(wAICardListAvoidPrize_ADDR) |
+		((uint16_t)high << 8));
+	CardId card = GetCardIDFromDeckIndex(deck_index);
+	for (;;) {
+		CardId entry = card_id_read(&list);
+		if (entry == CARD_LIST_TERMINATOR || entry == card)
+			return (uint8_t)(entry == card);
+		list++;
+	}
+}
 
 /* >>> factory SetUpBossStartingHandAndDeck */
 void SetUpBossStartingHandAndDeck(void)
@@ -49,16 +64,18 @@ void SetUpBossStartingHandAndDeck(void)
 		}
 
 		b = 6u;
+		uint8_t avoid = 0u;
 		while (b != 0u) {
 			uint8_t card = gb_read8(hl++);
-			uint8_t avoid_high = gb_read8((uint16_t)(wAICardListAvoidPrize_ADDR + 1u));
-			if (avoid_high != 0u) {
-				uint16_t list = (uint16_t)(gb_read8(wAICardListAvoidPrize_ADDR) |
-					((uint16_t)avoid_high << 8));
-				(void)GetCardIDFromDeckIndex(card);
-				(void)gb_read8(list);
+			if (check_id_is_in_list(card)) {
+				avoid = 1u;
+				break;
 			}
 			b = (uint8_t)(b - 1u);
+		}
+		if (avoid != 0u) {
+			(void)ShuffleDeck(0u, 0u);
+			continue;
 		}
 
 		b = 6u;
