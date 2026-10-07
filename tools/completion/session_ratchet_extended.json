@@ -5,6 +5,9 @@
   "boot-menu": {
     "confirmed_ordinal": 1000
   },
+  "credits-extended": {
+    "confirmed_ordinal": 58522
+  },
   "deck-save": {
     "confirmed_ordinal": 37360
   },
@@ -22,6 +25,12 @@
   },
   "extended-attack-animations": {
     "confirmed_ordinal": 24412
+  },
+  "extended-attack-animations-2": {
+    "confirmed_ordinal": 22412
+  },
+  "extended-fixes": {
+    "confirmed_ordinal": 22822
   },
   "multi-bank-scripts": {
     "confirmed_ordinal": 9917
