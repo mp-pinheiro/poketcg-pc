@@ -3474,15 +3474,21 @@ AIDecideFullHealResult AIDecide_FullHeal(uint8_t d)
 	}
 	CheckIfCanDamageDefendingPokemonResult damage =
 		CheckIfCanDamageDefendingPokemon(PLAY_AREA_ARENA, 0x80u, 0u, 0u, d, 0u, 0u);
+	d = damage.d;
 	if (status == PARALYZED || status == ASLEEP)
 		gb_write8(status_var.hl, saved_status);
-	if ((damage.f & 0x10u) == 0u)
-		return (AIDecideFullHealResult){damage.a, or_a_flags(damage.a), d};
+	if (status == CONFUSED) {
+		if ((damage.f & 0x10u) == 0u)
+			return (AIDecideFullHealResult){damage.a, or_a_flags(damage.a), d};
+		if (wAIPlayEnergyCardForRetreat != 0u)
+			return (AIDecideFullHealResult){wAIPlayEnergyCardForRetreat, 0x10u, d};
+		return (AIDecideFullHealResult){0u, 0x80u, d};
+	}
+	if (damage.f & 0x10u)
+		return (AIDecideFullHealResult){damage.a, (uint8_t)((damage.f & 0x80u) | 0x10u), d};
 	uint8_t energy_for_retreat = wAIPlayEnergyCardForRetreat;
 	if (energy_for_retreat != 0u)
 		return (AIDecideFullHealResult){energy_for_retreat, 0x10u, d};
-	if (status == CONFUSED)
-		return (AIDecideFullHealResult){0u, 0x80u, d};
 	AIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat(d);
 	d = retreat.d;
 	if ((retreat.f & 0x10u) == 0u)

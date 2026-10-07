@@ -31001,9 +31001,9 @@ MUTATIONS = {
         'source': 'src/profiles/extended/home/core.c'},
     'CheckIfCanDamageDefendingPokemon': {   'source_symbol': 'CheckIfCanDamageDefendingPokemon',
         'before': '\tf = (a == 0u) ? 0x80u : 0x00u;\n'
-                  '\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, 0u, 0u};',
+                  '\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};',
         'after': '\tf = (a == 0u) ? 0x00u : 0x80u;\n'
-                 '\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, 0u, 0u};',
+                 '\treturn (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};',
         'case_ids': ['CheckIfCanDamageDefendingPokemon-0'],
         'source': 'src/profiles/extended/home/core.c'},
     'OpenDiscardPileScreen': {   'source_symbol': 'OpenDiscardPileScreen',
@@ -31664,6 +31664,26 @@ CASES["PrintPokemonCardWeight"] += [
      "vread": {0x00: {0x9841: 0x06}}}
     for hl in (1050, 1053, 9)
 ]
+
+_AI_TRAINER_STATE = Fixture(
+    "ai-duel-fire-charge-aiprocesshandtrainercards-20887",
+    directory=_FIXTURES, holes=_FIXTURE_HOLES, lcdc=0xCABB)
+
+
+def _confused_arena_case(**regs):
+    case = dict(_AI_TRAINER_STATE.case(vram=False), **_AI_TRAINER_STATE.regs)
+    case["read"][0xCC00] = 0xBD
+    case["read"][0xCCBE] = 0x42
+    case["wram"][0xC2F0] = b"\x01"
+    case.update(regs)
+    return case
+
+
+CASES["CheckIfCanDamageDefendingPokemon"].append(_confused_arena_case(a=0x00))
+_SECOND_ATTACK_ENERGY_CASE = _confused_arena_case(a=0x01)
+_SECOND_ATTACK_ENERGY_CASE["wram"][0xCC74] = b"\x01"
+_SECOND_ATTACK_ENERGY_CASE["wram"][0xFF9D] = b"\x00"
+CASES["CheckEnergyNeededForAttack"].append(_SECOND_ATTACK_ENERGY_CASE)
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

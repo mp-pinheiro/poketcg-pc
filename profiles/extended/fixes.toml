@@ -116,6 +116,13 @@ heading = "AI Full Heal has flawed logic for paralysis"
 kind = "code"
 routines = ["AIDecide_FullHeal"]
 
+[[fixes.reverts]]
+routine = "AIDecide_FullHeal"
+source = "src/profiles/extended/home/trainer_cards.c"
+before = "\tif (status == PARALYZED || status == ASLEEP) {\n\t\tsaved_status = status_var.a;\n\t\tgb_write8(status_var.hl, NO_STATUS);\n\t}\n\tCheckIfCanDamageDefendingPokemonResult damage =\n\t\tCheckIfCanDamageDefendingPokemon(PLAY_AREA_ARENA, 0x80u, 0u, 0u, d, 0u, 0u);\n\td = damage.d;\n\tif (status == PARALYZED || status == ASLEEP)\n\t\tgb_write8(status_var.hl, saved_status);\n"
+after = "\t(void)saved_status;\n\t(void)status_var;\n\tCheckIfCanDamageDefendingPokemonResult damage =\n\t\tCheckIfCanDamageDefendingPokemon(PLAY_AREA_ARENA, 0x80u, 0u, 0u, d, 0u, 0u);\n\td = damage.d;\n\tif (status != CONFUSED && (damage.f & 0x10u) == 0u)\n\t\treturn (AIDecideFullHealResult){damage.a, or_a_flags(damage.a), d};\n\tif (status != CONFUSED)\n\t\tdamage.f = 0u;\n"
+case = "tests/profiles/extended/cases/trainer_cards.py"
+index = 5
 [[fixes]]
 heading = "AI might use a Pkmn Power as an attack"
 kind = "code"

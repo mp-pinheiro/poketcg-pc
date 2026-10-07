@@ -4480,7 +4480,7 @@ CheckEnergyNeededForAttackResult CheckEnergyNeededForAttack(void)
 		b = wTempLoadedAttackEnergyNeededAmount;
 		a = wTempLoadedAttackEnergyNeededType;
 	ConvertColorResult converted = ConvertColorToEnergyCardID(a);
-	a = converted.e;
+	a = converted.a;
 	e = converted.e;
 	d = converted.d;
 		return (CheckEnergyNeededForAttackResult){a, not_enough_f, b, c, d, e, hl};
@@ -4503,7 +4503,7 @@ CheckEnergyNeededForAttackResult CheckEnergyNeededForAttack(void)
 	b = wTempLoadedAttackEnergyNeededAmount;
 	a = wTempLoadedAttackEnergyNeededType;
 	ConvertColorResult converted2 = ConvertColorToEnergyCardID(a);
-	a = converted2.e;
+	a = converted2.a;
 	e = converted2.e;
 	d = converted2.d;
 	return (CheckEnergyNeededForAttackResult){a, final_f, b, c, d, e, hl};
@@ -7155,13 +7155,6 @@ DisplayCardListResult DisplayCardList(void)
 /* <<< factory DisplayCardList */
 
 /* >>> factory CheckIfCanDamageDefendingPokemon */
-/* core.asm:2310-2355. Stores the caller's a in hTempPlayAreaLocation_ff9d, tries
- * the first attack and, failing that, the second one, and reports in a the damage
- * the last EstimateDamage_VersusDefendingCard left in wDamage. The body itself
- * touches no register but a -- b/c/d/e/hl only travel from one callee to the next,
- * and neither their values nor d's are part of what this routine computes -- and
- * both exits are plain flag work: `or a` on the fallthrough, `scf` as soon as
- * either attack deals damage. a and the flags are the whole output contract. */
 CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	hTempPlayAreaLocation_ff9d = a;
@@ -7184,7 +7177,7 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 		hl = estimate.hl;
 		a = wDamage;
 		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, 0u, 0u};
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d, e};
 		f = 0x80u; /* `or a` on a zero damage byte */
 	}
 
@@ -7202,12 +7195,12 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 		e = estimate.e;
 		a = wDamage;
 		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, 0u, 0u};
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d, e};
 	}
 
 	/* .no_carry */
 	f = (a == 0u) ? 0x80u : 0x00u;
-	return (CheckIfCanDamageDefendingPokemonResult){a, f, 0u, 0u};
+	return (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};
 }
 /* <<< factory CheckIfCanDamageDefendingPokemon */
 

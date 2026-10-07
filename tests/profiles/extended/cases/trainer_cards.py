@@ -8588,5 +8588,23 @@ _POKEDEX_CASE = _POKEDEX.case()
 _POKEDEX_CASE["read"][0xCD8F] = 0x20
 CASES["AIDecide_Pokedex"].append(_POKEDEX_CASE)
 
+_FULL_HEAL_STATE = Fixture(
+    "ai-duel-fire-charge-aiprocesshandtrainercards-20887",
+    directory=_FIXTURES,
+    holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
+    lcdc=0xCABB,
+)
+
+
+def _full_heal_case(status):
+    case = dict(_FULL_HEAL_STATE.case(vram=False), **_FULL_HEAL_STATE.regs)
+    case["read"][0xCC00] = 0xBD
+    case["read"][0xCCBE] = 0x42
+    case["wram"][0xC2F0] = bytes([status])
+    return case
+
+
+CASES["AIDecide_FullHeal"] += [_full_heal_case(0x03), _full_heal_case(0x01)]
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
