@@ -145,6 +145,13 @@ heading = "Sam's practice deck does wrong card ID check"
 kind = "code"
 routines = ["AIPerformScriptedTurn"]
 
+[[fixes.reverts]]
+routine = "AIPerformScriptedTurn"
+source = "src/profiles/extended/home/sams_practice.c"
+before = "if (arena_card == MACHOP)"
+after = "if (arena.a == MACHOP)"
+case = "tests/profiles/extended/cases/sams_practice.py"
+index = 4
 [[fixes]]
 heading = "AI does not use Shift properly"
 kind = "code"

@@ -1,0 +1,15 @@
+{
+  "fn": "AIPerformScriptedTurn",
+  "case": "tests/profiles/extended/cases/sams_practice.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPerformScriptedTurn\", \"registers\": {\"a\": 199, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"32\", \"49903\": \"01\", \"49920\": \"1011121210\", \"49986\": \"0303\", \"50107\": \"000102ffffffff\", \"50120\": \"3232\", \"50158\": \"000300\", \"50296\": \"7d00a7007d0005000500000000000000\", \"52131\": \"00\", \"52144\": \"08\", \"52574\": \"00\", \"65431\": \"c3\", \"65440\": \"0002\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPerformScriptedTurn\", \"mismatches\": {\"bus\": {\"address\": 65441, \"reference\": \"0800c30002\", \"native\": \"0800c30001\", \"reference_size\": 44, \"native_size\": 44, \"spans\": [[49851, 1], [49864, 1], [49903, 1], [49920, 5], [49986, 2], [50107, 7], [50120, 2], [50158, 3], [50296, 16], [52131, 1], [52144, 1], [52574, 1], [65431, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"AIPerformScriptedTurn\", \"registers\": {\"a\": 199, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"32\", \"49903\": \"01\", \"49920\": \"1011121210\", \"49986\": \"0303\", \"50107\": \"000102ffffffff\", \"50120\": \"3232\", \"50158\": \"000300\", \"50296\": \"7d00a7007d0005000500000000000000\", \"52131\": \"00\", \"52144\": \"08\", \"52574\": \"00\", \"65431\": \"c3\", \"65440\": \"0002\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source": "src/profiles/extended/home/sams_practice.c",
+    "source_symbol": "AIPerformScriptedTurn",
+    "before": "if (arena_card == MACHOP)",
+    "after": "if (arena.a == MACHOP)"
+  }
+}
