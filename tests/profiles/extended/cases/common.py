@@ -1069,5 +1069,16 @@ MUTATIONS["LookForCardIDInHandList_Bank8"] = {
     "source": "src/profiles/extended/home/common.c",
 }
 
+CASES["LookForCardIDInPlayArea_Bank8"].append(
+    {"a": 0x00, "b": 0x00, "d": 0x00, "e": 0x08,
+     "wram": {0xFF97: b"\xc2", 0xC2BB: b"\x00\xff", 0xC400: b"\x01\x00"}})
+MUTATIONS["LookForCardIDInPlayArea_Bank8"] = {
+    "source_symbol": "LookForCardIDInPlayArea_Bank8",
+    "before": "== (uint8_t)de\n\t\t    && gb_read8((uint16_t)(wTempCardIDToLook_ADDR + 1u)) == (uint8_t)(de >> 8))",
+    "after": "== gb_read8(wLoadedCard1ID_ADDR)\n\t\t    && gb_read8((uint16_t)(wTempCardIDToLook_ADDR + 1u)) == gb_read8((uint16_t)(wLoadedCard1ID_ADDR + 1u)))",
+    "case_ids": [f"LookForCardIDInPlayArea_Bank8-{len(CASES['LookForCardIDInPlayArea_Bank8']) - 1}"],
+    "source": "src/profiles/extended/home/common.c",
+}
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

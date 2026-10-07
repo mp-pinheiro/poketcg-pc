@@ -304,8 +304,9 @@ LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(CardId de, uint8_t b
 		DuelistVarResult r = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + b));
 		if (r.a == 0xffu)
 			return (LookForCardIDInPlayAreaResult){0xffu, b, 0xc0u};
-		CardId card_id = GetCardIDFromDeckIndex(r.a);
-		if (card_id == de)
+		(void)LoadCardDataToBuffer1_FromDeckIndex(r.a);
+		if (gb_read8(wTempCardIDToLook_ADDR) == (uint8_t)de
+		    && gb_read8((uint16_t)(wTempCardIDToLook_ADDR + 1u)) == (uint8_t)(de >> 8))
 			return (LookForCardIDInPlayAreaResult){b, b, 0x90u};
 		b++;
 		if (b == MAX_PLAY_AREA_POKEMON)
