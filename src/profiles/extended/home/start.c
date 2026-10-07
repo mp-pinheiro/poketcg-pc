@@ -436,7 +436,11 @@ PrintStartMenuDescriptionTextResult PrintStartMenuDescriptionText(uint8_t a, uin
 			InitTextPrinting(1u, 10u);
 			TextResult text = PrintTextNoDelay(ContinueFromDiarySummaryText, 1u, 10u);
 			(void)text;
-			PrintAlbumProgress_SkipGetProgress(9u, 14u, wTotalNumCardsCollected, wTotalNumCardsToCollect);
+			PrintAlbumProgress_SkipGetProgress(9u, 14u,
+				gb_read8((uint16_t)(wTotalNumCardsCollected_ADDR + 1u)),
+				gb_read8(wTotalNumCardsCollected_ADDR),
+				(uint16_t)(gb_read8(wTotalNumCardsToCollect_ADDR) |
+					((uint16_t)gb_read8((uint16_t)(wTotalNumCardsToCollect_ADDR + 1u)) << 8)));
 			PrintPlayTime_SkipUpdateTime(10u, 16u);
 			break;
 		}
