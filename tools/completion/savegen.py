@@ -26,33 +26,37 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import effects
 import session
-from tools.profiles import get_profile
+from tools.profiles import get_profile, symbol_address
 
 PROFILE = get_profile()
 
 
+def _sram(label: str) -> int:
+    return symbol_address(PROFILE, label, ROOT)[1]
+
+
 SAVES = PROFILE.build_path(ROOT) / "completion" / "saves"
 PRET = PROFILE.source_path(ROOT) / "src"
-SCRIPTING = PRET / "engine" / "overworld" / "scripting.asm"
 SCRIPT_CONSTANTS = PRET / "constants" / "script_constants.asm"
 BANK = 0x2000
-CARD_COLLECTION = 0xA100
-CARD_AND_DECK = (0xA100, 0xB708)
-GENERAL = 0xB800
-GENERAL_DATA = 0xB808
-GENERAL_END = 0xB900
+CARD_COLLECTION = _sram("sCardCollection")
+BUILT_DECKS = _sram("sBuiltDecks")
+SAVED_DECKS = _sram("sSavedDecks")
+CARD_AND_DECK = (_sram("sCardAndDeckSaveData"), _sram("sCardAndDeckSaveDataEnd"))
+GENERAL = _sram("sGeneralSaveData")
+GENERAL_DATA = _sram("sGeneralSaveDataHeaderEnd")
+GENERAL_END = _sram("sGeneralSaveDataEnd")
 GENERAL_MAGIC = (0x08, 0x00)
-MEDAL_COUNT = 0xB808
-PC_PACKS = 0xB82D
-BUILT_DECKS = 0xA200
+MEDAL_COUNT = _sram("sMedalCount")
+PC_PACKS = _sram("sPCPacks")
+EVENT_VARS = _sram("sEventVars")
+COLLECTION_SIZE = BUILT_DECKS - CARD_COLLECTION
 DECK_NAME_SIZE = 24
 DECK_SIZE = 60
-DECK_STRUCT_SIZE = DECK_NAME_SIZE + DECK_SIZE
 NUM_BUILT_DECKS = 4
-SAVED_DECKS = 0xA350
+DECK_STRUCT_SIZE = (SAVED_DECKS - BUILT_DECKS) // NUM_BUILT_DECKS
 NUM_SAVED_DECKS = 60
 NUM_PC_PACKS = 15
-EVENT_VARS = 0xB87B
 EVENT_MASKS = re.compile(r"^\s*event_def\s+\$([0-9a-fA-F]+),\s*%([01]{8})")
 CARD_NOT_OWNED = 0x80
 
@@ -80,10 +84,15 @@ def event_table() -> dict[str, tuple[int, int]]:
         elif counting and text.startswith("const EVENT_"):
             names.append(text.split()[1])
     masks: list[tuple[int, int]] = []
-    for line in SCRIPTING.read_text().splitlines():
-        match = EVENT_MASKS.match(line)
-        if match:
-            masks.append((int(match.group(1), 16), int(match.group(2), 2)))
+    for source in sorted(PRET.rglob("*.asm")):
+        lines = source.read_text().splitlines()
+        if "EventVarMasks:" not in lines:
+            continue
+        for line in lines[lines.index("EventVarMasks:"):]:
+            match = EVENT_MASKS.match(line)
+            if match:
+                masks.append((int(match.group(1), 16), int(match.group(2), 2)))
+        break
     if len(masks) < len(names):
         raise SaveError(f"{len(masks)} event masks for {len(names)} event names")
     return {name: masks[index] for index, name in enumerate(names)}
@@ -108,7 +117,7 @@ def validate(image: bytes) -> dict[str, object]:
         "checksum_ok": total == stored,
         "medals": working[offset(MEDAL_COUNT)],
         "packs": list(working[offset(PC_PACKS):offset(PC_PACKS) + NUM_PC_PACKS]),
-        "owned_cards": sum(1 for value in working[offset(CARD_COLLECTION):offset(CARD_COLLECTION) + 0x100]
+        "owned_cards": sum(1 for value in working[offset(CARD_COLLECTION):offset(CARD_COLLECTION) + COLLECTION_SIZE]
                            if value and not value & CARD_NOT_OWNED),
     }
 
@@ -155,6 +164,9 @@ def write_deck(image: bytearray, slot: int, cards: list[int], name: str,
     limit = NUM_SAVED_DECKS if saved else NUM_BUILT_DECKS
     if not 1 <= slot <= limit:
         raise SaveError(f"deck slot must be 1..{limit}, got {slot}")
+    if DECK_STRUCT_SIZE != DECK_NAME_SIZE + DECK_SIZE:
+        raise SaveError(f"{PROFILE.name} stores {DECK_STRUCT_SIZE - DECK_NAME_SIZE}-byte compressed decks; "
+                        "savegen writes only uncompressed 60-byte decks")
     if len(cards) != DECK_SIZE:
         raise SaveError(f"a deck wants {DECK_SIZE} card ids, got {len(cards)}")
     base = offset(SAVED_DECKS if saved else BUILT_DECKS) + (slot - 1) * DECK_STRUCT_SIZE
