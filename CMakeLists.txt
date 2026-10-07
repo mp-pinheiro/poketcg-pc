@@ -140,8 +140,16 @@ function(add_poketcg_profile profile)
             "${PROFILE_DISASM}/src/text/text_offsets.asm" "${CMAKE_SOURCE_DIR}/profiles/profiles.json"
     COMMENT "gen_constants: ${profile}"
     VERBATIM)
+  set(profile_header "${profile_generated}/profile_features.h")
+  add_custom_command(
+    OUTPUT "${profile_header}"
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_profile_header.py"
+            --profile "${profile}" --out "${profile_generated}"
+    DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_profile_header.py" "${CMAKE_SOURCE_DIR}/profiles/profiles.json"
+    COMMENT "gen_profile_header: ${profile}"
+    VERBATIM)
   set(layout_target "gen_layout_${profile}")
-  add_custom_target(${layout_target} DEPENDS ${generated_headers} ${constant_headers})
+  add_custom_target(${layout_target} DEPENDS ${generated_headers} ${constant_headers} "${profile_header}")
   if(profile STREQUAL "vanilla")
     add_custom_target(gen_layout DEPENDS ${layout_target})
   endif()
@@ -295,9 +303,6 @@ function(add_poketcg_profile profile)
   if(POKETCG_DEBUG_MENU)
     target_compile_definitions(${gbmem_target} PUBLIC POKETCG_DEBUG_MENU=1)
   endif()
-  if(profile STREQUAL "extended")
-    target_compile_definitions(${gbmem_target} PUBLIC POKETCG_PROFILE_EXTENDED=1)
-  endif()
   target_compile_options(${gbmem_target} PRIVATE
     -finstrument-functions
     -finstrument-functions-exclude-file-list=mem.c,ppu.c,apu.c,printer_sink.c,runtime_events.c,trace.c,bank_guard.c,bank_guard_generated.c,link.c,isr.c,serial_track.c,widescreen.c)
@@ -329,8 +334,8 @@ function(add_poketcg_profile profile)
   else()
     add_executable(${shell_target} ${shell_sources})
   endif()
-  if(profile STREQUAL "extended")
-    target_compile_definitions(${shell_target} PRIVATE POKETCG_PROFILE_EXTENDED=1 POKETCG_SAVE_IMPORT=1)
+  if(PROFILE_ROOT AND EXISTS "${PROFILE_ROOT}/host/save_import.c")
+    target_compile_definitions(${shell_target} PRIVATE POKETCG_SAVE_IMPORT=1)
   endif()
   set_target_properties(${shell_target} PROPERTIES ENABLE_EXPORTS ON)
   target_include_directories(${shell_target} PRIVATE "${profile_build_root}" "${CMAKE_SOURCE_DIR}/src")

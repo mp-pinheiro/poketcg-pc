@@ -1,10 +1,8 @@
 #include "profile.h"
 
+#include "generated/profile_features.h"
+
 ProfileDescriptor profile_current(void)
 {
-#ifdef POKETCG_PROFILE_EXTENDED
-	return (ProfileDescriptor){PROFILE_ID_EXTENDED, "EXTD", 1u};
-#else
-	return (ProfileDescriptor){PROFILE_ID_VANILLA, "VANL", 0u};
-#endif
+	return (ProfileDescriptor){(ProfileId)PROFILE_INDEX, PROFILE_SAVE_TAG, PROFILE_SAVE_SCHEMA};
 }
