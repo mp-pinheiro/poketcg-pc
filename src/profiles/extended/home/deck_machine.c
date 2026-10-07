@@ -1225,6 +1225,7 @@ static void hadm_init_auto_deck_menu(void)
 	(void)LoadSymbolsFont();
 	(void)LoadDuelCardSymbolTiles();
 	SetDefaultConsolePalettes();
+	SetDefaultConsolePalettes();
 	(void)SetupText(0x3Cu, 0xFFu);
 
 	uint16_t hl = 0u;

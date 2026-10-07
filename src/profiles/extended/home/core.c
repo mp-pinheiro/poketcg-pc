@@ -5727,6 +5727,7 @@ DrawCardListScreenLayoutResult DrawCardListScreenLayout(void)
 	EmptyScreen();
 	(void)LoadSymbolsFont();
 	TileCopyResult tiles = LoadDuelCardSymbolTiles();
+	SetDefaultConsolePalettes();
 	uint16_t box_hl = tiles.hl;
 	DrawRegularTextBox(&box_hl, 0u, 20u, 13u, 0u, 0u);
 	uint16_t image_hl = 0x0601u;
@@ -5745,6 +5746,7 @@ void DisplayPracticeDuelPlayerHandScreen(void)
 {
 	(void)CreateHandCardList(0u);
 	EmptyScreen();
+	SetDefaultConsolePalettes();
 	TileCopyResult tiles = LoadDuelCardSymbolTiles();
 	uint16_t box = tiles.hl;
 	DrawRegularTextBox(&box, 0u, 20u, 13u, 0u, 0u);
@@ -5918,6 +5920,7 @@ void RedrawTurnDuelistsMainSceneOrDuelHUD(void)
 void DisplayNoBasicPokemonInHandScreen(void)
 {
 	EmptyScreen();
+	SetDefaultConsolePalettes();
 	TileCopyResult tiles = LoadDuelCardSymbolTiles();
 	uint16_t box = tiles.hl;
 	DrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);
@@ -6071,6 +6074,7 @@ void DisplayEnergyDiscardScreen(uint8_t a)
 	EmptyScreen();
 	(void)LoadDuelCardSymbolTiles();
 	(void)LoadDuelFaceDownCardTiles();
+	SetDefaultConsolePalettes();
 	a = wEnergyDiscardPlayAreaLocation;
 	wCurPlayAreaSlot = a;
 	wCurPlayAreaY = 0u;
@@ -6412,6 +6416,7 @@ draw_screen:
 	EmptyScreen();
 	(void)LoadDuelCardSymbolTiles();
 	(void)LoadDuelCheckPokemonScreenTiles();
+	SetDefaultConsolePalettes();
 	SetListPointer(wDuelTempList_ADDR);
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 	uint8_t b = 0u;
@@ -7389,6 +7394,7 @@ void DisplayDrawNCardsScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t
 	uint8_t displayed = wDuelDisplayedScreen;
 	if (displayed != DRAW_CARDS && displayed != SHUFFLE_DECK) {
 		EmptyScreen();
+		SetDefaultConsolePalettes();
 		DrawDuelistPortraitsAndNames();
 	}
 	wDuelDisplayedScreen = DRAW_CARDS;
@@ -8493,6 +8499,7 @@ PlayAreaScreenResult DisplayPlayAreaScreen(uint8_t a)
 redraw:
 	ZeroObjectPositionsAndToggleOAMCopy();
 	EmptyScreen();
+	SetDefaultConsolePalettes();
 	(void)LoadDuelCardSymbolTiles();
 	(void)LoadDuelCheckPokemonScreenTiles();
 	PrintPlayAreaCardList();

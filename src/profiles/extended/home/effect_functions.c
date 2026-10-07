@@ -5793,6 +5793,7 @@ static void HandleColorChangeScreen_DrawScreen(uint8_t a, uint16_t hl)
 	ZeroObjectPositions();
 	(void)LoadDuelCardSymbolTiles();
 	SetDefaultConsolePalettes();
+	SetDefaultConsolePalettes();
 	uint8_t location = (uint8_t)(a & 0x7Fu);
 	gb_write8(wTempPlayAreaLocation_cceb_ADDR, location);
 	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
@@ -6503,6 +6504,7 @@ void Gigashock_PlayerSelectEffect(void)
 	(void)DrawWideTextBox_WaitForInput(ChooseUpTo3PkmnOnBenchToGiveDamageText);
 	hCurSelectionItem = 0u;
 	wCurGigashockItem = 0u;
+	SetDefaultConsolePalettes();
 	SetupPlayAreaScreen();
 	for (;;) {
 		uint8_t items = PrintPlayAreaCardList_EnableLCD().a;

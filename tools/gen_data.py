@@ -58,6 +58,8 @@ SCHEMA = (
 
 # Static tables embedded in code sections are declared explicitly so the
 # production resolver never reads unclassified code bytes from the ROM.
+PKMN_CARD_DATA_LENGTH = 0x41
+
 NATIVE_DATA_LABELS = (
     ("input_name_question_data", "WhatIsYourNameData", 0, 0x29),
     ("input_name_background_data", "DrawPlayerNamingScreenBG.data", 0, 0x05),
@@ -197,7 +199,7 @@ def script_entry_spans(rom: bytes, sym_path: Path) -> list[tuple[str, int, int, 
     return spans
 
 
-def native_data_spans(sym_path: Path, rom: bytes) -> list[tuple[str, int, int, int]]:
+def native_data_spans(sym_path: Path, rom: bytes, inventory_spans: list[dict[str, object]]) -> list[tuple[str, int, int, int]]:
     sym_line = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
     symbols: dict[str, tuple[int, int]] = {}
     for line in sym_path.read_text().splitlines():
@@ -210,8 +212,25 @@ def native_data_spans(sym_path: Path, rom: bytes) -> list[tuple[str, int, int, i
             raise ValueError(f"native data span {name} needs symbol {label}")
         bank, address = symbols[label]
         spans.append((name, bank, address + offset, length))
-    card_bank = symbols["CardPointers"][0]
-    spans.append(("card_data_tail", card_bank, 0x7FE1, 0x1F))
+    card_bank, pointers = symbols["CardPointers"]
+    entry_size = 3 if "poketcg_ext" in sym_path.name else 2
+    base = card_bank * 0x4000 - 0x4000
+    last_end = 0
+    index = 1
+    while True:
+        offset = base + pointers + index * entry_size
+        pointer = rom[offset] | rom[offset + 1] << 8
+        if pointer == 0:
+            break
+        bank = rom[offset + 2] if entry_size == 3 else card_bank
+        last_end = max(last_end, (bank << 16) | (pointer + PKMN_CARD_DATA_LENGTH))
+        index += 1
+    tail_bank, tail_end = last_end >> 16, min(last_end & 0xFFFF, 0x8000)
+    tail_start = max(span["address"] + span["length"] for span in inventory_spans
+                     if span.get("kind") == "data" and span.get("bank") == tail_bank
+                     and span["address"] < tail_end)
+    if tail_start < tail_end:
+        spans.append(("card_data_tail", tail_bank, tail_start, tail_end - tail_start))
     spans.append(("null_card", 0, 0x0000, 0x41))
     return spans
 
@@ -250,7 +269,7 @@ def sparse_items(
         entry = {"name": name, "section": section.name, "ctype": "uint8_t"}
         result.append((entry, section, rom[start:end]))
     for name, bank, address, length in (
-            tuple(native_data_spans(sym_path, rom)) + tuple(script_entry_spans(rom, sym_path))):
+            tuple(native_data_spans(sym_path, rom, spans)) + tuple(script_entry_spans(rom, sym_path))):
         start = rom_offset(bank, address)
         end = start + length
         if length < 1 or end > len(rom):
