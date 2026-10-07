@@ -2834,7 +2834,8 @@ PracticeDuelTurnActionsResult PracticeDuel_VerifyPlayerTurnActions(void)
 	}
 	if ((f & 0x10u) == 0u)
 		return (PracticeDuelTurnActionsResult){f};
-	return (PracticeDuelTurnActionsResult){PracticeDuel_RepeatInstructions()};
+	(void)PracticeDuel_RepeatInstructions();
+	return (PracticeDuelTurnActionsResult){FLAG_C};
 }
 /* <<< factory PracticeDuel_VerifyPlayerTurnActions */
 
@@ -3824,13 +3825,14 @@ retry:
 	EmptyScreen();
 	DrawDuelBoxMessage(BOXMSG_COIN_TOSS);
 	(void)DrawWideTextBox_WaitForInput(TX_COIN_TOSS);
+	WaitResult final;
 	if (hWhoseTurn == PLAYER_TURN) {
 		(void)CopyPlayerName(wDefaultText_ADDR);
 		LoadTxRam2(0u);
 		TossCoinRoutineResult toss = TossCoin(TX_IF_HEADS, TX_YOU_PLAY_FIRST);
 		if ((toss.f & FLAG_C) == 0u)
 			SwapTurn();
-		(void)DrawWideTextBox_WaitForInput(
+		final = DrawWideTextBox_WaitForInput(
 			toss.f & FLAG_C ? TX_YOU_PLAY_FIRST : TX_YOU_PLAY_SECOND);
 	} else {
 		(void)CopyOpponentName(wDefaultText_ADDR);
@@ -3838,10 +3840,10 @@ retry:
 		TossCoinRoutineResult toss = TossCoin(TX_IF_HEADS, TX_YOU_PLAY_SECOND);
 		if ((toss.f & FLAG_C) == 0u)
 			SwapTurn();
-		(void)DrawWideTextBox_WaitForInput(
+		final = DrawWideTextBox_WaitForInput(
 			toss.f & FLAG_C ? TX_YOU_PLAY_SECOND : TX_YOU_PLAY_FIRST);
 	}
-	return (HandleDuelSetupResult){0u};
+	return (HandleDuelSetupResult){final.a == 0u ? FLAG_Z : 0u};
 }
 
 /* >>> factory PrintOpponentNumberOfHandAndDeckCards */
@@ -6833,7 +6835,7 @@ OppActionBeginUseAttackResult OppAction_BeginUseAttack(uint8_t a, uint8_t f, uin
 	d = updated.d;
 	e = updated.e;
 	hl = updated.hl;
-wSkipDuelistIsThinkingDelay = 0x01u;
+	wSkipDuelistIsThinkingDelay = 0x01u;
 	SandAttackCheckResult check = CheckSandAttackOrSmokescreenSubstatus((uint16_t)((uint16_t)d << 8 | e));
 	a = check.a;
 	f = check.f;
@@ -6845,6 +6847,8 @@ wSkipDuelistIsThinkingDelay = 0x01u;
 		a = (uint8_t)(status.a & CNF_SLP_PRZ);
 		hl = status.hl;
 		if (a != CONFUSED) {
+			f = (uint8_t)(0x40u | ((a & 0x0Fu) < (CONFUSED & 0x0Fu) ? 0x20u : 0u)
+				| (a < CONFUSED ? 0x10u : 0u));
 			return (OppActionBeginUseAttackResult){a, f, b, c, d, e, hl};
 		}
 	}
@@ -6868,7 +6872,7 @@ wSkipDuelistIsThinkingDelay = 0x01u;
 		return (OppActionBeginUseAttackResult){a, f, b, c, d, e, hl};
 	ClearNonTurnTemporaryDuelvars();
 	a = 1u;
-wOpponentTurnEnded = 0x01u;
+	wOpponentTurnEnded = 0x01u;
 	return (OppActionBeginUseAttackResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory OppAction_BeginUseAttack */
@@ -7565,8 +7569,12 @@ void OppAction_UseMetronomeAttack(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 {
 	DrawDuelMainScene();
 	DuelistVarResult status = GetTurnDuelistVariable(OPP_METRONOME_ARENA_STATUS);
-	if ((status.a & OPP_METRONOME_CNF_SLP_PRZ) != OPP_METRONOME_CONFUSED)
-		(void)PrintPokemonsAttackText();
+	if ((status.a & OPP_METRONOME_CNF_SLP_PRZ) != OPP_METRONOME_CONFUSED) {
+		PrintPokemonsAttackTextResult text = PrintPokemonsAttackText();
+		b = text.b;
+		d = text.d;
+		e = text.e;
+	}
 	SwapTurn();
 	AttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);
 	SwapTurn();

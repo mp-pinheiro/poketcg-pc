@@ -1,4 +1,26 @@
 """Extended oracle-diff cases for core, seeded from tests/cases/core.py."""
+from pathlib import Path
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_FIXTURE_HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
+_ATTACK_ANIMATION = Fixture(
+    "opp-action-play-attack-animation-deal-attack-damage-entry",
+    directory=_FIXTURES, holes=_FIXTURE_HOLES, lcdc=0xCABB)
+
+
+def _attack_animation_case(regs):
+    case = _ATTACK_ANIMATION.case(vram=False)
+    case.update(regs)
+    case["read"][0xCC00] = 0xBD
+    case["read"][0xCCBE] = 0x42
+    case["oracle"] = False
+    case["why"] = "The attack animation's live reference waits for its frame-driven queue and never reaches the isolated return."
+    case["expect"] = {0xCB8F: b"\x01"}
+    case["expect_regs"] = {name: case.get(name, 0) for name in ("a", "f", "b", "c", "d", "e", "hl")}
+    return case
+
+
 
 CONTRACT = {
     'SetLineSeparation': {'compare': ('a',), 'preserve': ()},
@@ -3684,7 +3706,7 @@ CASES = {
             'c': 0x05,
             'd': 0x12,
             'e': 0x11,
-            'f': 0x60,
+            'f': 0x10,
             'hl': 0x00},
         {   'wram': {   0xC000: b'\x05\x18p\x06Dr. Mason\x07p\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05'
                                 b'\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x19\x00'
@@ -3898,7 +3920,7 @@ CASES = {
             'instruction_budget': 0x2625A00,
             'cycle_budget': 0x9896800,
             'a': 0xAA,
-            'f': 0xF0,
+            'f': 0x10,
             'b': 0xBB,
             'c': 0xCC,
             'd': 0xDD,
@@ -14213,7 +14235,6 @@ CASES = {
                         0xCAB8: b'',
                         0xCAB9: b'\x00\x00\xc3\xe4\xe6\xe4',
                         0xCAC0: b'',
-                        0xCAC1: b'\x0f\x01\xae\x01\x11*\x06\x00\x00\x00\x00X\xc3\x00\x00\xc3"\x03\x00\x00\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xfakLC\x08"\x80\x00\xffC\xa4\x02\x15\x00\x04\x00\x9cc\xb5BJ!\x00\x00_k\x1f\x00\x00\x02\x08\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\r\x00\x03\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x02\x00\x00o\x00\xa7\x00\x01\x00\x00\x00\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x06\x00\x00\xd5R\x00\x00\xc2\x00\x00\x02\x80\x00\x00\x00\x00\x00\xff\xff\xff\x00\x01\x07\x03\xb1\x03\x02\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x043/"\n\x00\x00}2\x00\x00\x00\x00\x00\x10\x00#\n\x00\x00\x00\x00\x14\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x04\x00$\nB\x00\x14\x02\x07\xae\x01%\n\x15\x043/"\n\x00\x00}2\x00\x00\x00\x00\x00\x10\x00#\n\x00\x00\x00\x00\x14\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x04\x00$\nB\x00\x14\x02\x07\xae\x01%\n\x15\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00S}\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xdf\x01\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\xae\xae\xa8\xa8\xe8\xe8\xec\xec\xe8\xe8\xa8\xa8\xae\xae\x9fQ\x88\x80\x00\x00\x01\x00\x00\x01\x00',
                         0xCCBE: b'\x03\x12\x11\x00\x01/\x1d\x00\x00\x00\x04\x05\x0e\x19W\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -17314,7 +17335,7 @@ CASES = {
                         0xCBA3: b'\x00',
                         0xCAC2: b'\x06',
                         0xCABB: b'\x00',
-                        0xCACA: b'\x00\x00\x80',
+                        0xCACA: b'\x00\x00\x00',
                         0xCD22: b'\xff',
                         0xCD23: b'\xff',
                         0xCD24: b'\xff',
@@ -18330,7 +18351,7 @@ CASES = {
                         0xC2ED: b'\x00',
                         0xC2F1: b'\x00',
                         0xCAC2: b'\x01',
-                        0xC0E8: b'\x06\x9c@\x00',
+                        0xC0E8: b'\x05\xa3@\x00',
                         0xCC5D: b'\xe8\xc0',
                         0xCC9B: b'\x00',
                         0xCDA8: b'\x0b'},
@@ -18347,7 +18368,7 @@ CASES = {
                         0xC2ED: b'\x00',
                         0xC2F1: b'\x00',
                         0xCAC2: b'\x01',
-                        0xC0E8: b'\x03\xa2@\x00',
+                        0xC0E8: b'\x05\xa3@\x00',
                         0xCC5D: b'\xe8\xc0',
                         0xCC9B: b'\x00',
                         0xCDA8: b'\x0b'},
@@ -18397,7 +18418,7 @@ CASES = {
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
-            'c': 0xCC,
+            'c': 0x91,
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
@@ -21039,7 +21060,10 @@ CASES = {
             'cycle_budget': 0x4C4B400},
     ],
     'ReplaceKnockedOutPokemon': [
-        {   'wram': {   0xC000: b'\x05\x18p\x06Dr. Mason\x07p\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05'
+        {   'oracle': False,
+            'why': 'The captured all-zero knockout board enters the player replacement selection loop and the live oracle cannot supply a second button edge.',
+            'expect': {0xCB82: b'\x01'},
+            'wram': {   0xC000: b'\x05\x18p\x06Dr. Mason\x07p\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05'
                                 b'\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x19\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -29256,6 +29280,13 @@ CASES = {
             'cycle_budget': 0x2FAF0800},
     ],
 }
+CASES['OppAction_PlayAttackAnimationDealAttackDamage'] = [
+    _attack_animation_case(_ATTACK_ANIMATION.regs),
+    _attack_animation_case({
+        'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC,
+        'd': 0xDD, 'e': 0xEE, 'hl': 0x1234}),
+]
+
 
 MUTATIONS = {
     'SetLineSeparation': {   'source_symbol': 'SetLineSeparation',
@@ -29751,9 +29782,9 @@ MUTATIONS = {
         'case_ids': ['PickRandomBenchPokemon-0', 'PickRandomBenchPokemon-1'],
         'source': 'src/profiles/extended/home/core.c'},
     'PracticeDuel_VerifyPlayerTurnActions': {   'source_symbol': 'PracticeDuel_VerifyPlayerTurnActions',
-        'before': '\tcase 0: f = PracticeDuelVerify_Turn1().f; break;',
-        'after': '\tcase 0: f = PracticeDuelVerify_Turn2().f; break;',
-        'case_ids': ['PracticeDuel_VerifyPlayerTurnActions-0'],
+        'before': '\treturn (PracticeDuelTurnActionsResult){FLAG_C};',
+        'after': '\treturn (PracticeDuelTurnActionsResult){0u};',
+        'case_ids': ['PracticeDuel_VerifyPlayerTurnActions-0', 'PracticeDuel_VerifyPlayerTurnActions-1'],
         'source': 'src/profiles/extended/home/core.c'},
     'PrintCardNameFromCardIDInTextBox': {   'source_symbol': 'PrintCardNameFromCardIDInTextBox',
         'before': 'LoadTxRam2(name);',
@@ -31547,8 +31578,8 @@ MUTATIONS = {
         'case_ids': ['PrintDeckAndHandIconsAndNumberOfCards-1'],
         'source': 'src/profiles/extended/home/core.c'},
     'HandleDuelSetup': {   'source_symbol': 'HandleDuelSetup',
-        'before': 'return (HandleDuelSetupResult){(rng.a == 0u) ? FLAG_Z : 0u};',
-        'after': 'return (HandleDuelSetupResult){(rng.a != 0u) ? FLAG_Z : 0u};',
+        'before': 'return (HandleDuelSetupResult){final.a == 0u ? FLAG_Z : 0u};',
+        'after': 'return (HandleDuelSetupResult){final.a != 0u ? FLAG_Z : 0u};',
         'case_ids': ['HandleDuelSetup-0', 'HandleDuelSetup-1'],
         'source': 'src/profiles/extended/home/core.c'},
     'ValidateSavedDuelData': {   'source_symbol': 'ValidateSavedDuelData',
