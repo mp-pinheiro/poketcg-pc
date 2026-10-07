@@ -339,6 +339,14 @@ int main(int argc, char **argv)
 			result = 2;
 			break;
 		}
+		if (!explicit_paths && strcmp(profile, PROFILE_EXTENDED) == 0 && !file_exists(save)) {
+			char vanilla_save[PATH_MAX];
+			if (snprintf(vanilla_save, sizeof vanilla_save, "%s/poketcg.sav", data_dir) < (int)sizeof vanilla_save &&
+			    file_exists(vanilla_save)) {
+				char *import_argv[] = {child, "--data-pack", pack, "--convert-vanilla-save", vanilla_save, save, NULL};
+				(void)run_child(child, import_argv);
+			}
+		}
 		int count = 0;
 		child_argv[count++] = child;
 		for (int index = 0; index < user_count; index++)
