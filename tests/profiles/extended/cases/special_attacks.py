@@ -980,8 +980,12 @@ MUTATIONS = {
                         'CheckWhetherToSwitchToFirstAttack-2'],
         'source': 'src/profiles/extended/home/special_attacks.c'},
     'HandleSpecialAIAttacks': {   'source_symbol': 'HandleSpecialAIAttacks',
-        'before': '\t\tif (u.f & 0x10u)\n\t\t\treturn (HandleSpecialAIAttacksResult){0x85u, u.f};',
-        'after': '\t\tif (u.f & 0x10u)\n\t\t\treturn (HandleSpecialAIAttacksResult){0x84u, u.f};',
+        'before': '\t\tif (!special_in_deck(card))\n'
+                  '\t\t\treturn special_zero_score();\n'
+                  '\t\treturn special_bench_slots_score(MAX_BENCH_POKEMON);',
+        'after': '\t\tif (!special_in_deck(card))\n'
+                 '\t\t\treturn special_zero_score();\n'
+                 '\t\treturn special_zero_score();',
         'case_ids': ['HandleSpecialAIAttacks-0'],
         'source': 'src/profiles/extended/home/special_attacks.c'},
 }

@@ -2728,13 +2728,17 @@ MUTATIONS = {
         'source': 'src/profiles/extended/home/attacks.c'},
     'GetAIScoreOfAttack': {   'source_symbol': 'GetAIScoreOfAttack',
         'before': 'void GetAIScoreOfAttack(uint8_t a)\n{\n\twSelectedAttack = a;',
-        'after': 'void GetAIScoreOfAttack(uint8_t a)\n{\n\twSelectedAttack = 0u;',
-        'case_ids': ['GetAIScoreOfAttack-0', 'GetAIScoreOfAttack-1', 'GetAIScoreOfAttack-2'],
+        'after': 'void GetAIScoreOfAttack(uint8_t a)\n'
+                 '{\n'
+                 '\twSelectedAttack = (uint8_t)(a + 1u);',
+        'case_ids': ['GetAIScoreOfAttack-0'],
         'source': 'src/profiles/extended/home/attacks.c'},
     'AIProcessAttacks': {   'source_symbol': 'AIProcessAttacks',
-        'before': '\t\twSelectedAttack = wAIPlusPowerAttack;',
-        'after': '\t\twSelectedAttack = 0u;',
-        'case_ids': ['AIProcessAttacks-1', 'AIProcessAttacks-2'],
+        'before': '\twAIRetreatScore = (uint8_t)(wAIRetreatScore + 1u);\n'
+                  '\treturn (AIProcessAttacksResult){failed_execute, 0x80u};',
+        'after': '\twAIRetreatScore = (uint8_t)(wAIRetreatScore + 2u);\n'
+                 '\treturn (AIProcessAttacksResult){failed_execute, 0x80u};',
+        'case_ids': ['AIProcessAttacks-0'],
         'source': 'src/profiles/extended/home/attacks.c'},
     'AIProcessAndTryToUseAttack': {   'source_symbol': 'AIProcessAndTryToUseAttack',
         'before': '\twAIExecuteProcessedAttack = 0u;',

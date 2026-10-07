@@ -419,18 +419,14 @@ MUTATIONS = {
         'case_ids': ['FindPlayAreaCardWithHighestAIScore-1'],
         'source': 'src/profiles/extended/home/energy.c'},
     'CheckSpecificDecksToAttachDoubleColorless': {   'source_symbol': 'CheckSpecificDecksToAttachDoubleColorless',
-        'before': 'return (CheckSpecificDecksToAttachDoubleColorlessResult){r.a, 0x10u, b, c, d, '
-                  'e, hl};',
-        'after': 'return (CheckSpecificDecksToAttachDoubleColorlessResult){r.a, 0x00u, b, c, d, e, '
-                 'hl};',
-        'case_ids': ['CheckSpecificDecksToAttachDoubleColorless-2'],
+        'before': 'return (CheckSpecificDecksToAttachDoubleColorlessResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), b, c, d, e, hl};',
+        'after': 'return (CheckSpecificDecksToAttachDoubleColorlessResult){(uint8_t)(a + 1u), (uint8_t)(a == 0u ? 0x80u : 0u), b, c, d, e, hl};',
+        'case_ids': ['CheckSpecificDecksToAttachDoubleColorless-0'],
         'source': 'src/profiles/extended/home/energy.c'},
     'GetEnergyCardForDiscardOrEnergyBoostAttack': {   'source_symbol': 'GetEnergyCardForDiscardOrEnergyBoostAttack',
-        'before': 'return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, b, c_in, 0u, '
-                  '0x00u};',
-        'after': 'return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, b, (uint8_t)(c_in + '
-                 '1u), 0u, 0x00u};',
-        'case_ids': ['GetEnergyCardForDiscardOrEnergyBoostAttack-2'],
+        'before': 'return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, TRUE, FALSE, e, f};',
+        'after': 'return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, FALSE, FALSE, e, f};',
+        'case_ids': ['GetEnergyCardForDiscardOrEnergyBoostAttack-0'],
         'source': 'src/profiles/extended/home/energy.c'},
     'CheckIfEvolutionNeedsEnergyForAttack': {   'source_symbol': 'CheckIfEvolutionNeedsEnergyForAttack',
         'before': 'uint8_t f_out = (evo.a == 0u) ? 0x80u : 0x00u;',

@@ -3,9 +3,17 @@ from pathlib import Path
 from tests.cases._fixtures import Fixture
 
 _FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
 _BENCH = Fixture("ai-duel-fire-charge-aidecidebenchpokemontoswitchto-entry", directory=_FIXTURES)
 _DECIDE = Fixture("ai-duel-fire-charge-aidecidewhethertoretreat-entry", directory=_FIXTURES)
-_TRY = Fixture("ai-duel-grass-carriers-aitrytoretreat-entry", directory=_FIXTURES)
+_TRY = Fixture("ai-duel-grass-carriers-aitrytoretreat-entry", directory=_FIXTURES, holes=_HOLES)
+def _fixture_case(fixture):
+    case = fixture.case(vram=False)
+    case["read"][0xCC00] = 0xBD
+    case["read"][0xCCBE] = 0x42
+    return case
+
+
 
 CONTRACT = {
     'SetAIRetreatFlags': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
@@ -6153,7 +6161,7 @@ CASES['AIDecideWhetherToRetreat'] = [
     dict(_DECIDE.case(vram=False), **_DECIDE.regs)
 ]
 CASES['AITryToRetreat'] = [
-    dict(_TRY.case(vram=False), **_TRY.regs)
+    dict(_fixture_case(_TRY), **_TRY.regs)
 ]
 
 MUTATIONS = {
@@ -6180,12 +6188,16 @@ MUTATIONS = {
         'before': '\tuint8_t count = '
                   'GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;',
         'after': '\tuint8_t count = 0u;',
-        'case_ids': ['AIDecideBenchPokemonToSwitchTo-0', 'AIDecideBenchPokemonToSwitchTo-1'],
+        'case_ids': ['AIDecideBenchPokemonToSwitchTo-0',
+                     'AIDecideBenchPokemonToSwitchTo-1',
+                     'AIDecideBenchPokemonToSwitchTo-2'],
         'source': 'src/profiles/extended/home/retreat.c'},
     'AIDecideWhetherToRetreat': {   'source_symbol': 'AIDecideWhetherToRetreat',
-        'before': '\t\tif (a >= 2u)\n\t\t\tAIEncourage(a);',
-        'after': '\t\tif (a >= 2u)\n\t\t\tAIEncourage(1u);',
-        'case_ids': ['AIDecideWhetherToRetreat-8'],
+        'before': '\tif (a >= 131u)\n'
+                  '\t\treturn (AIDecideWhetherToRetreatResult){a, (uint8_t)((a == 131u ? 0x80u : 0u) | 0x10u), d};',
+        'after': '\tif (a >= 127u)\n'
+                 '\t\treturn (AIDecideWhetherToRetreatResult){a, (uint8_t)((a == 127u ? 0x80u : 0u) | 0x10u), d};',
+        'case_ids': ['AIDecideWhetherToRetreat-0'],
         'source': 'src/profiles/extended/home/retreat.c'},
 }
 

@@ -3,8 +3,16 @@ from pathlib import Path
 from tests.cases._fixtures import Fixture
 
 _FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
 _EVOLUTION = Fixture("ai-duel-fire-charge-aidecideevolution-entry", directory=_FIXTURES)
-_PLAY_POKEMON = Fixture("ai-duel-fire-charge-aidecideplaypokemoncard-entry", directory=_FIXTURES)
+_PLAY_POKEMON = Fixture("ai-duel-fire-charge-aidecideplaypokemoncard-entry", directory=_FIXTURES, holes=_HOLES)
+def _fixture_case(fixture):
+    case = fixture.case(vram=False)
+    case["read"][0xCC00] = 0xBD
+    case["read"][0xCCBE] = 0x42
+    return case
+
+
 
 CONTRACT = {
     'AIDecideSpecialEvolutions': {'compare': (), 'preserve': ()},
@@ -15,6 +23,7 @@ CONTRACT = {
 
 CASES = {
     'AIDecideSpecialEvolutions': [
+        {'wram': {0xCBB8: b'\x0f', 0xCC17: b'\x31', 0xCD44: b'\x20'}},
         {'wram': {0xCBB8: b'\x00', 0xCD44: b' '}},
         {   'wram': {0xCBB8: b'\x0e', 0xCC17: b'1', 0xCD44: b' '},
             'hram': {0xFF9D: b'\x00'},
@@ -28,6 +37,7 @@ CASES = {
             'e': 0xEE,
             'hl': 0x1234,
             'wram': {0xCBB8: b'\x00', 0xCD44: b' '}},
+        {'wram': {0xCBB8: b'\x00', 0xCC17: b'\xc0'}, 'hram': {0xFF9D: b'\x01'}},
     ],
     'AIDecideEvolution': [
         {'expect_regs': {'a': 0xFF, 'f': 0x00}},
@@ -916,7 +926,7 @@ CASES = {
             'hl': 0xCE90},
     ],
     'AIDecidePlayLegendaryBirds': [
-        {'wram': {0xCBB8: b'\x00', 0xCBD6: b'\x00', 0xCD44: b' '}},
+        {'wram': {0xCBB8: b'\x00', 0xCBD6: b'\x40', 0xFF97: b'\xc2', 0xC2BA: b'\x38', 0xCD44: b' '}},
         {'wram': {0xCBB8: b'\x0c', 0xCBD6: b'@', 0xFF97: b'\xc2', 0xC2BA: b'7', 0xCD44: b' '}},
         {   'wram': {0xCBB8: b'\x0c', 0xCBD6: b'@', 0xFF97: b'\xc2', 0xC2BA: b'8', 0xCD44: b' '},
             'expect': {0xCD44: b'\x00'}},
@@ -1826,7 +1836,7 @@ CASES['AIDecideEvolution'] = [
     dict(_EVOLUTION.case(vram=False), **_EVOLUTION.regs)
 ]
 CASES['AIDecidePlayPokemonCard'] = [
-    dict(_PLAY_POKEMON.case(vram=False), **_PLAY_POKEMON.regs)
+    dict(_fixture_case(_PLAY_POKEMON), **_PLAY_POKEMON.regs)
 ]
 
 MUTATIONS = {
@@ -1835,7 +1845,8 @@ MUTATIONS = {
         'after': '\tuint8_t deck = (uint8_t)(wOpponentDeckID + 1u);',
         'case_ids': [   'AIDecideSpecialEvolutions-1',
                         'AIDecideSpecialEvolutions-2',
-                        'AIDecideSpecialEvolutions-3'],
+                        'AIDecideSpecialEvolutions-3',
+                        'AIDecideSpecialEvolutions-4'],
         'source': 'src/profiles/extended/home/hand_pokemon.c'},
     'AIDecideEvolution': {   'source_symbol': 'AIDecideEvolution',
         'before': '\t\twTempAIPokemonCard = card;\n'
@@ -1848,8 +1859,8 @@ MUTATIONS = {
         'before': 'void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = wOpponentDeckID;',
         'after': 'void AIDecidePlayLegendaryBirds(void)\n'
                  '{\n'
-                 '\tuint8_t deck = (uint8_t)(wOpponentDeckID + 1u);',
-        'case_ids': ['AIDecidePlayLegendaryBirds-2'],
+                 '\tuint8_t deck = LEGENDARY_ZAPDOS_DECK_ID;',
+        'case_ids': ['AIDecidePlayLegendaryBirds-0'],
         'source': 'src/profiles/extended/home/hand_pokemon.c'},
     'AIDecidePlayPokemonCard': {   'source_symbol': 'AIDecidePlayPokemonCard',
         'before': '\t\t\treturn (AIDecidePlayPokemonCardResult){last, (uint8_t)(last == 0u ? 0x80u '
