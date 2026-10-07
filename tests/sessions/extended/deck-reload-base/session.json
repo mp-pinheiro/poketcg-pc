@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "boot-menu seeded with deck-save's cartridge RAM (diary written after choosing the Charmander & Friends deck)",
+  "name": "deck-reload-base",
+  "ordinals": 1000,
+  "recorded": "2026-10-07T04:35:47+00:00",
+  "save": "deck-save.sav",
+  "save_sha256": "982ffe252465f243f800fa7b88d4f9a3af4b38b7e87b1a56ac03b47b3db8fddc",
+  "schema": 1,
+  "then": []
+}

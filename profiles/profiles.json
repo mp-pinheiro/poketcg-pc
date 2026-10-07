@@ -38,7 +38,8 @@
       },
       "save": {
         "tag": "VANL",
-        "default_filename": "poketcg.sav"
+        "default_filename": "poketcg.sav",
+        "schema": 0
       },
       "features": {
         "link_duel": true,
@@ -107,7 +108,8 @@
       },
       "save": {
         "tag": "EXTD",
-        "default_filename": "poketcg-extended.sav"
+        "default_filename": "poketcg-extended.sav",
+        "schema": 1
       },
       "features": {
         "link_duel": false,

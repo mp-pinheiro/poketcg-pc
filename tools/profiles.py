@@ -87,6 +87,10 @@ class Profile:
         return str(self.save["tag"])
 
     @property
+    def save_schema(self) -> int:
+        return int(self.save["schema"])
+
+    @property
     def default_save_filename(self) -> str:
         return str(self.save["default_filename"])
 
@@ -225,6 +229,9 @@ def _validate_profile(name: str, raw: Any) -> Profile:
             raise ProfileError(f"profile {name}.save.{key} is invalid")
     if len(fields["save"]["tag"]) != 4:
         raise ProfileError(f"profile {name}.save.tag must contain four bytes")
+    schema = _require(fields["save"], "schema", f"profile {name}.save")
+    if not isinstance(schema, int) or isinstance(schema, bool) or schema < 0:
+        raise ProfileError(f"profile {name}.save.schema is invalid")
     if any(not isinstance(value, bool) for value in fields["features"].values()):
         raise ProfileError(f"profile {name}.features must contain booleans")
     return Profile(name=name, title=title, **fields)

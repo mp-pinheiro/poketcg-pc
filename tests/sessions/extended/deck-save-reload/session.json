@@ -1,0 +1,8 @@
+{
+  "goal": "deck-save's cartridge RAM at power-on: Continue from the diary, Dr. Mason's mail script, then START > DECK: the deck list read back from SRAM and MODIFY DECK on the saved Charmander & Friends deck, which DecompressSRAMDeck rebuilds from its 68-byte compressed form, then back out",
+  "name": "deck-save-reload",
+  "ordinals": 2391,
+  "pokes": {},
+  "recorded": "2026-10-07T04:36:24+00:00",
+  "schema": 1
+}

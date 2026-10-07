@@ -1094,7 +1094,10 @@ def native_save_file(image: bytes) -> bytes:
     digest = 2166136261
     for byte in image:
         digest = ((digest ^ byte) * 16777619) & 0xFFFFFFFF
-    return b"PKSR" + struct.pack("<III", 1, len(image), digest) + image
+    if PROFILE.name == "vanilla":
+        return b"PKSR" + struct.pack("<III", 1, len(image), digest) + image
+    return (b"PKSR" + struct.pack("<III", 2, len(image), digest) + PROFILE.save_tag.encode("ascii")
+            + struct.pack("<I", PROFILE.save_schema) + image)
 
 
 def run_native(directory: Path, input_path: Path, n: int, *, lag_path: Path,

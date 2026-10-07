@@ -5,6 +5,12 @@
   "boot-menu": {
     "confirmed_ordinal": 1000
   },
+  "deck-save": {
+    "confirmed_ordinal": 36627
+  },
+  "deck-save-reload": {
+    "confirmed_ordinal": 2391
+  },
   "extended-animations": {
     "confirmed_ordinal": 9812
   },
@@ -22,6 +28,9 @@
   },
   "practice-start": {
     "confirmed_ordinal": 7153
+  },
+  "starter-deck": {
+    "confirmed_ordinal": 36458
   },
   "three-palette-screens": {
     "confirmed_ordinal": 25250

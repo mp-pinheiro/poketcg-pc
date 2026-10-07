@@ -1447,8 +1447,7 @@ void HandleOverworldMode(uint16_t hl)
 		break;
 	case 2u:
 		(void)SetScriptData(hl);
-		__attribute__((fallthrough));
-		/* overworld.asm:119 falls through with `jp EnterFarScript` */
+		break;
 	case 3u: {
 		(void)ScriptEntryEnterWithBank(
 			(uint16_t)(wNextScript |

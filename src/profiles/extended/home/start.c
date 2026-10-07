@@ -502,24 +502,28 @@ void HandleStartMenu(void)
 	DrawPlayerPortrait(14u, 1u); /* menus/start.asm:229 lb bc, 14, 1 */
 	static const uint8_t params[17] = {
 		0x00u, 0x00u, 0x0Eu, 0x04u, 0x02u, 0x02u,
-		(uint8_t)NewGameText, 0x03u, 0xFFu, 0x01u, 0x02u, 0x02u, 0x01u,
+		(uint8_t)NewGameText, (uint8_t)(NewGameText >> 8), 0xFFu, 0x01u, 0x02u, 0x02u, 0x01u,
 		SYM_CURSOR_R, SYM_SPACE, 0x00u, 0x00u
 	};
 	for (uint8_t i = 0u; i < 17u; ++i)
 		gb_write8((uint16_t)(wStartMenuParams_ADDR + i), params[i]);
+	static const uint16_t text_ids[3] = {
+		NewGameText, ContinueDiaryNewGameText, ContinueDiaryNewGameContinueDuelText
+	};
 	uint8_t item_count = 1u;
 	uint8_t box_height = 4u;
-	uint8_t text_id = (uint8_t)NewGameText;
+	uint8_t e = 0u;
 	if (wHasSaveData != 0u) {
-		item_count = (uint8_t)(item_count + 2u);
-		box_height = (uint8_t)(box_height + 4u);
-		text_id = (uint8_t)(text_id + 1u);
+		e++;
+		item_count++;
+		box_height = (uint8_t)(box_height + 2u);
 		if (wHasDuelSaveData != 0u) {
-			item_count = (uint8_t)(item_count + 1u);
+			e++;
+			item_count++;
 			box_height = (uint8_t)(box_height + 2u);
-			text_id = (uint8_t)(text_id + 1u);
 		}
 	}
+	uint16_t text_id = text_ids[e];
 	uint8_t pc_options = (uint8_t)runtime_pc_options_enabled();
 	uint8_t native_item_count = item_count;
 	uint8_t list_top = 2u;
@@ -535,15 +539,12 @@ void HandleStartMenu(void)
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 10u), list_top);
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 12u), item_count);
 	gb_write8((uint16_t)(wStartMenuParams_ADDR + 3u), box_height);
-	gb_write8((uint16_t)(wStartMenuParams_ADDR + 6u), text_id);
-	gb_write8((uint16_t)(wStartMenuParams_ADDR + 7u), 0x03u);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 6u), (uint8_t)text_id);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 7u), (uint8_t)(text_id >> 8));
 	wTitleScreenIgnoreInputCounter = 0xFFu;
 	uint8_t selected = wLastSelectedStartMenuItem;
-	/* start.asm:119-125: when wLastSelectedStartMenuItem >= 4, `ld a,
-	 * [wHasSaveData]` loads the flag over it, so a no-save boot starts on
-	 * item 0 and a has-save boot on item 1 -- never on the stale $FF. */
 	if (selected >= 4u)
-		selected = (wHasSaveData != 0u) ? 1u : 0u;
+		selected = 0u;
 	InitAndPrintMenu(wStartMenuParams_ADDR, selected);
 	if (pc_options != 0u)
 		print_host_text("PC OPTIONS", 2u,
