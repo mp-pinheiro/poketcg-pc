@@ -7,6 +7,14 @@ from tests.cases._fixtures import Fixture
 _FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
 _BENCH = Fixture("ai-duel-fire-charge-determineaiscore-bench-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
+_ARTICUNO_ENERGY = Fixture("legendary-articuno-aiprocessandtrytoplayenergy-entry", directory=_FIXTURES, holes=_HOLES)
+_FIRE_ENERGY = Fixture("ai-duel-fire-charge-aiprocessandtrytoplayenergy-entry", directory=_FIXTURES, holes=_HOLES)
+def _fixture_case(fixture):
+    case = fixture.case(vram=False)
+    case["read"][0xCC00] = 0xBD
+    case["read"][0xCCBE] = 0x42
+    return case
+
 
 CONTRACT = {
     'RetrievePlayAreaAIScoreFromBackup1': {'compare': ('a', 'f', 'c', 'd', 'e', 'hl'), 'preserve': ('a', 'f', 'c')},
@@ -17,7 +25,7 @@ CONTRACT = {
     'AITryToPlayEnergyCard': {'compare': ('a',), 'preserve': ()},
     'DetermineAIScoreOfAttackEnergyRequirement': {'compare': (), 'preserve': ()},
     'AIProcessEnergyCards': {'compare': ('a', 'f'), 'preserve': ()},
-    'AIProcessAndTryToPlayEnergy': {'compare': (), 'preserve': ()},
+    'AIProcessAndTryToPlayEnergy': {'compare': ('a', 'f'), 'preserve': ()},
     'AIProcessButDontPlayEnergy_SkipEvolution': {'compare': ('a', 'f'), 'preserve': ()},
     'AIProcessButDontPlayEnergy_SkipEvolutionAndArena': {'compare': ('a', 'f'), 'preserve': ()},
 }
@@ -393,6 +401,10 @@ CASES = {
             'cycle_budget': 0x4C4B400},
     ],
 }
+CASES['AIProcessAndTryToPlayEnergy'] += [
+    dict(_fixture_case(_ARTICUNO_ENERGY), **_ARTICUNO_ENERGY.regs),
+    dict(_fixture_case(_FIRE_ENERGY), **_FIRE_ENERGY.regs),
+]
 
 MUTATIONS = {
     'RetrievePlayAreaAIScoreFromBackup1': {   'source_symbol': 'RetrievePlayAreaAIScoreFromBackup1',
@@ -450,8 +462,8 @@ MUTATIONS = {
         'case_ids': ['AIProcessEnergyCards-0', 'AIProcessEnergyCards-2'],
         'source': 'src/profiles/extended/home/energy.c'},
     'AIProcessAndTryToPlayEnergy': {   'source_symbol': 'AIProcessAndTryToPlayEnergy',
-        'before': 'void AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;',
-        'after': 'void AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 1u;',
+        'before': 'AIEnergyResult AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;',
+        'after': 'AIEnergyResult AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 1u;',
         'case_ids': ['AIProcessAndTryToPlayEnergy-0', 'AIProcessAndTryToPlayEnergy-1'],
         'source': 'src/profiles/extended/home/energy.c'},
     'AIProcessButDontPlayEnergy_SkipEvolution': {   'source_symbol': 'AIProcessButDontPlayEnergy_SkipEvolution',

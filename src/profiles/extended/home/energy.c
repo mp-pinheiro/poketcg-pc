@@ -678,16 +678,17 @@ AIEnergyResult AIProcessEnergyCards(void)
 /* <<< factory AIProcessEnergyCards */
 
 /* >>> factory AIProcessAndTryToPlayEnergy */
-void AIProcessAndTryToPlayEnergy(void)
+AIEnergyResult AIProcessAndTryToPlayEnergy(void)
 {
 	wAIEnergyAttachLogicFlags = 0u;
 	CoreCardListResult list = CreateEnergyCardListFromHand(0u);
-	if ((list.f & 0x10u) == 0u) {
-		AIProcessEnergyCards();
-		return;
-	}
-	if (wAIEnergyAttachLogicFlags != 0u)
+	if ((list.f & 0x10u) == 0u)
+		return AIProcessEnergyCards();
+	if (wAIEnergyAttachLogicFlags != 0u) {
 		(void)RetrievePlayAreaAIScoreFromBackup1();
+		return (AIEnergyResult){wAIEnergyAttachLogicFlags, 0u};
+	}
+	return (AIEnergyResult){0u, 0x80u};
 }
 /* <<< factory AIProcessAndTryToPlayEnergy */
 

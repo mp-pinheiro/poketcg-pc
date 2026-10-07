@@ -45,7 +45,7 @@ typedef struct { uint8_t a; uint8_t f; } AIEnergyResult;
 AIEnergyResult AIProcessEnergyCards(void);
 /* <<< factory AIProcessEnergyCards */
 /* >>> factory AIProcessAndTryToPlayEnergy */
-void AIProcessAndTryToPlayEnergy(void);
+AIEnergyResult AIProcessAndTryToPlayEnergy(void);
 /* <<< factory AIProcessAndTryToPlayEnergy */
 /* >>> factory AIProcessButDontPlayEnergy_SkipEvolution */
 AIEnergyResult AIProcessButDontPlayEnergy_SkipEvolution(void);
