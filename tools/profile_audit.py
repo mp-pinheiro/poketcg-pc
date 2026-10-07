@@ -136,15 +136,17 @@ def main() -> int:
     shared_home = ROOT / "src" / "home"
     overlay_home = ROOT / "src" / "profiles" / args.profile / "home"
     failures: list[str] = []
+    vanilla_profile = get_profile("vanilla", ROOT)
+    extended_profile = get_profile(args.profile, ROOT)
     vanilla_asm = asm_by_basename(vanilla / "src")
     extended_asm = asm_by_basename(extended / "src")
     for basename in sorted(set(vanilla_asm) & set(extended_asm)):
         if {body for _, body in vanilla_asm[basename]} == {body for _, body in extended_asm[basename]}:
             continue
+        if basename in extended_profile.removed_basenames:
+            continue
         if (shared_home / f"{basename}.c").is_file() and not (overlay_home / f"{basename}.c").is_file():
             failures.append(f"asm differs without Extended overlay: {basename}")
-    vanilla_profile = get_profile("vanilla", ROOT)
-    extended_profile = get_profile(args.profile, ROOT)
     vanilla_symbols = symbols(vanilla / vanilla_profile.sym_name)
     extended_symbols = symbols(extended / extended_profile.sym_name)
     changed_addresses = {
