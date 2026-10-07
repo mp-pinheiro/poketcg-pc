@@ -879,11 +879,9 @@ CASES = {
 
 MUTATIONS = {
     'AnimateRandomTitleScreenOrb': {   'source_symbol': 'AnimateRandomTitleScreenOrb',
-        'before': '\tuint8_t a = (uint8_t)(wTitleScreenOrbCounter & ORB_COUNTER_MASK);',
-        'after': '\tuint8_t a = (uint8_t)(wTitleScreenOrbCounter & 0x1fu);',
-        'case_ids': [   'AnimateRandomTitleScreenOrb-1',
-                        'AnimateRandomTitleScreenOrb-2',
-                        'AnimateRandomTitleScreenOrb-4'],
+        'before': '\t\treturn a;',
+        'after': '\t\treturn (uint8_t)(a + 1u);',
+        'case_ids': ['AnimateRandomTitleScreenOrb-0'],
         'source': 'src/profiles/extended/home/intro_sequence_commands.c'},
     'AdvanceIntroSequenceCmdPtr': {   'source_symbol': 'AdvanceIntroSequenceCmdPtr',
         'before': 'uint8_t high_before = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));',
