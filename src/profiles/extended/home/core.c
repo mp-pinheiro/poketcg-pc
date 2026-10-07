@@ -2200,15 +2200,15 @@ CheckIfEnoughParticularAttachedEnergyResult CheckIfEnoughParticularAttachedEnerg
 /* >>> factory CreateEnergyCardListFromHand */
 CoreCardListResult CreateEnergyCardListFromHand(uint8_t a)
 {
-	uint8_t count = GetTurnDuelistVariable(0xeeu).a;
-	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | 0x42u);
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
+	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | DUELVARS_HAND);
 	uint16_t dst = wDuelTempList_ADDR;
-	uint8_t remaining = (uint8_t)(count + 1u);
+	uint8_t remaining = count;
 	(void)a;
 	while (remaining != 0u) {
 		uint8_t deck_index = gb_read8(hand++);
 		CardId card_id = GetCardIDFromDeckIndex(deck_index);
-		if (deck_index != 0xFFu && (GetCardType(card_id) & TYPE_ENERGY) != 0u)
+		if ((GetCardType(card_id) & TYPE_ENERGY) != 0u)
 			gb_write8(dst++, deck_index);
 		remaining--;
 	}
@@ -2222,9 +2222,9 @@ CoreCardListResult CreateEnergyCardListFromHand(uint8_t a)
 /* >>> factory LookForCardIDInHand */
 CoreCardListResult LookForCardIDInHand(CardId de)
 {
-	uint8_t count = GetTurnDuelistVariable(0xeeu).a;
-	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | 0x42u);
-	uint8_t remaining = (uint8_t)(count + 1u);
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
+	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | DUELVARS_HAND);
+	uint8_t remaining = count;
 	uint8_t last_a = 0u;
 	while (remaining != 0u) {
 		uint8_t deck_index = gb_read8(hand++);

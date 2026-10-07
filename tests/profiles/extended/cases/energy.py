@@ -1,5 +1,13 @@
 """Extended oracle-diff cases for energy, seeded from tests/cases/energy.py."""
 
+from pathlib import Path
+
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
+_BENCH = Fixture("ai-duel-fire-charge-determineaiscore-bench-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
+
 CONTRACT = {
     'RetrievePlayAreaAIScoreFromBackup1': {'compare': ('a', 'f', 'c', 'd', 'e', 'hl'), 'preserve': ('a', 'f', 'c')},
     'FindPlayAreaCardWithHighestAIScore': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
@@ -278,6 +286,7 @@ CASES = {
                                 b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff',
                         0xCD78: b'\xff'},
             'read': {0xCC74: 0x01}},
+        dict(_BENCH.case(), **_BENCH.regs),
     ],
     'AIProcessEnergyCards': [
         {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC,

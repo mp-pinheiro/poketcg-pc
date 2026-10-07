@@ -496,13 +496,12 @@ void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)
 		if ((uint8_t)(energy.b + energy.c - 1u) != 0u)
 			goto check_evolution;
 		(void)AIEncourage(3u);
-		if (hTempPlayAreaLocation_ff9d != 0u)
-			goto check_evolution;
 		(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
 		if (GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a > gb_read8(wDamage_ADDR))
 			goto check_evolution;
 		(void)AIEncourage(20u);
-		/* The asm re-tests the location it just tested; it is the arena. */
+		if (hTempPlayAreaLocation_ff9d != 0u)
+			goto check_evolution;
 		(void)AIEncourage(10u);
 	} else if (CheckLoadedAttackFlag(ATTACK_FLAG2_ADDRESS | ATTACHED_ENERGY_BOOST_F).f & 0x10u) {
 		/* .attached_energy_boost: a holds the effect parameter. */
