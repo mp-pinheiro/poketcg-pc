@@ -1,0 +1,20 @@
+{
+  "attack_animations": [
+    "ATK_ANIM_GUILLOTINE@12940",
+    "ATK_ANIM_LEG_SWEEP@14548",
+    "ATK_ANIM_MEGA_PUNCH@15844",
+    "ATK_ANIM_RAZOR_LEAF@16828",
+    "ATK_ANIM_SLAP@18364",
+    "ATK_ANIM_TAIL_WHIP@19900",
+    "ATK_ANIM_TELEPORT@21436",
+    "ATK_ANIM_TERROR_STRIKE@22084",
+    "ATK_ANIM_ROCK_THROW@23068"
+  ],
+  "branch_ordinal": 8612,
+  "derived_from": "ai-duel-fire-charge",
+  "goal": "ai-duel-fire-charge with the eight Extended-only attack animations, plus ATK_ANIM_ROCK_THROW for the new SFX_AVALANCHE, substituted into wLoadedAttackAnimation at the AI duel attacks, one attack each",
+  "name": "extended-attack-animations",
+  "ordinals": 24412,
+  "recorded": "2026-10-07T04:32:42+00:00",
+  "schema": 1
+}
