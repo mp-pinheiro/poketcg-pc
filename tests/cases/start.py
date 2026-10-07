@@ -1,14 +1,15 @@
+from tests.cases._symbols import sym, sym_bank
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-WCONSOLE = 0xCAB4
+WCONSOLE = sym("wConsole")
 
 CONTRACT = {
     "ShowCardPopCGBDisclaimer": {"compare": ("f",), "preserve": ()},
 }
 
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
-CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4,
-              0xCD05: 2, 0xCD0A: 1, 0xFFAA: 2, 0xFFAD: 1}
+CACHE_READ = {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4,
+              sym("wCurTextTile"): 2, sym("wFontWidth"): 1, sym("hTextBGMap0Address"): 2, sym("hTextHorizontalAlign"): 1}
 VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 
 CASES = {
@@ -17,12 +18,12 @@ CASES = {
     # that byte is what distinguishes running the wait from skipping it; the
     # cache and VRAM spans alone do not.
     "ShowCardPopCGBDisclaimer": [
-        {"wram": {WCONSOLE: b"\x00", 0xCD0F: b"\x00"}, "keys": 0x01,
-         "setup": SETUP, "read": {**CACHE_READ, 0xCD0F: 1}, "vread": VRAM_READ},
-        {"wram": {WCONSOLE: b"\x00", 0xCD0F: b"\x00"}, "keys": 0x02,
-         "setup": SETUP, "read": {**CACHE_READ, 0xCD0F: 1}, "vread": VRAM_READ},
-        dict(POISON, wram={WCONSOLE: b"\x00", 0xCD0F: b"\x00"}, keys=0x01,
-             setup=SETUP, read={**CACHE_READ, 0xCD0F: 1}, vread=VRAM_READ),
+        {"wram": {WCONSOLE: b"\x00", sym("wCursorBlinkCounter"): b"\x00"}, "keys": 0x01,
+         "setup": SETUP, "read": {**CACHE_READ, sym("wCursorBlinkCounter"): 1}, "vread": VRAM_READ},
+        {"wram": {WCONSOLE: b"\x00", sym("wCursorBlinkCounter"): b"\x00"}, "keys": 0x02,
+         "setup": SETUP, "read": {**CACHE_READ, sym("wCursorBlinkCounter"): 1}, "vread": VRAM_READ},
+        dict(POISON, wram={WCONSOLE: b"\x00", sym("wCursorBlinkCounter"): b"\x00"}, keys=0x01,
+             setup=SETUP, read={**CACHE_READ, sym("wCursorBlinkCounter"): 1}, vread=VRAM_READ),
         {"wram": {WCONSOLE: b"\x02"}},
     ],
 }
@@ -55,37 +56,37 @@ _VALID_IMAGE = _build_image(_VALID_PAYLOAD)
 _INVALID_IMAGE = (bytes([0x08 ^ 0xFF, 0x00 ^ 0xFF]) + _header_for(_VALID_PAYLOAD)[2:]
                   + b"\x00\x00" + _VALID_PAYLOAD)
 
-wCurHighlightedStartMenuItem = 0xD626
-wCurMenuItem = 0xCD10
-wHasSaveData = 0xD624
-wCurOverworldMap = 0xD3CB
-wMedalCount = 0xD3CC
-wTotalNumCardsCollected = 0xD3CD
-wTotalNumCardsToCollect = 0xD3CE
-wTxRam2 = 0xCE3F
-wTxRam3 = 0xCE43
+wCurHighlightedStartMenuItem = sym("wCurHighlightedStartMenuItem")
+wCurMenuItem = sym("wCurMenuItem")
+wHasSaveData = sym("wHasSaveData")
+wCurOverworldMap = sym("wCurOverworldMap")
+wMedalCount = sym("wMedalCount")
+wTotalNumCardsCollected = sym("wTotalNumCardsCollected")
+wTotalNumCardsToCollect = sym("wTotalNumCardsToCollect")
+wTxRam2 = sym("wTxRam2")
+wTxRam3 = sym("wTxRam3")
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 
-wHasSaveData = 0xD624
+wHasSaveData = sym("wHasSaveData")
 
-wLastSelectedStartMenuItem = 0xD627
-wCurSongID = 0xDD80
+wLastSelectedStartMenuItem = sym("wLastSelectedStartMenuItem")
+wCurSongID = sym("wCurSongID")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasSaveData
 CONTRACT["CheckIfHasSaveData"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["CheckIfHasSaveData"] = [
-    {"wram": {0xFF81: b"\x03"}, "ramg": True,
-     "sram": {2: {0xB800: _VALID_IMAGE}, 0: {0xBC03: b"\x00", 0xBC00: b"\x00" * 0x100}},
-     "read": {0xD624: 1, 0xD625: 1}},
-    dict(POISON, wram={0xFF81: b"\x03"}, ramg=True,
-         sram={2: {0xB800: _INVALID_IMAGE}},
-         read={0xD624: 1, 0xD625: 1}),
-    {"wram": {0xFF81: b"\x03"}, "ramg": True,
-     "sram": {2: {0xB800: _INVALID_IMAGE}},
-     "read": {0xD624: 1, 0xD625: 1}},
+    {"wram": {sym("hBankSRAM"): b"\x03"}, "ramg": True,
+     "sram": {2: {sym("sBackupGeneralSaveData"): _VALID_IMAGE}, 0: {sym("sCurrentDuelType"): b"\x00", sym("sCurrentDuel"): b"\x00" * 0x100}},
+     "read": {sym("wHasSaveData"): 1, sym("wHasDuelSaveData"): 1}},
+    dict(POISON, wram={sym("hBankSRAM"): b"\x03"}, ramg=True,
+         sram={2: {sym("sBackupGeneralSaveData"): _INVALID_IMAGE}},
+         read={sym("wHasSaveData"): 1, sym("wHasDuelSaveData"): 1}),
+    {"wram": {sym("hBankSRAM"): b"\x03"}, "ramg": True,
+     "sram": {2: {sym("sBackupGeneralSaveData"): _INVALID_IMAGE}},
+     "read": {sym("wHasSaveData"): 1, sym("wHasDuelSaveData"): 1}},
 ]
 # <<< factory CheckIfHasSaveData
 
@@ -101,30 +102,30 @@ CASES["PrintStartMenuDescriptionText"] = [
 # >>> factory AskToContinueFromDiaryWithDuelData
 CONTRACT["AskToContinueFromDiaryWithDuelData"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AskToContinueFromDiaryWithDuelData"] = [
-    {"wram": {0xD625: b"\x00"}, "read": {0xD625: 1}},
-    dict(POISON, wram={0xD625: b"\x00"}, read={0xD625: 1}),
+    {"wram": {sym("wHasDuelSaveData"): b"\x00"}, "read": {sym("wHasDuelSaveData"): 1}},
+    dict(POISON, wram={sym("wHasDuelSaveData"): b"\x00"}, read={sym("wHasDuelSaveData"): 1}),
 ]
 # <<< factory AskToContinueFromDiaryWithDuelData
 
 # >>> factory HandleStartMenu
 CONTRACT["HandleStartMenu"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["HandleStartMenu"] = [
-    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF", 0xD624: b"\x00", 0xD625: b"\x00", 0xD627: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCD08: 1, 0xD624: 1, 0xD625: 1, 0xD626: 1, 0xD627: 1, 0xD628: 1, 0xD636: 17, 0xFFB1: 1}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF", 0xD624: b"\x00", 0xD625: b"\x00", 0xD627: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000, read={0xCD08: 1, 0xD624: 1, 0xD625: 1, 0xD626: 1, 0xD627: 1, 0xD628: 1, 0xD636: 17, 0xFFB1: 1}),
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xFF", sym("wHasSaveData"): b"\x00", sym("wHasDuelSaveData"): b"\x00", sym("wLastSelectedStartMenuItem"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {sym("wLineSeparation"): 1, sym("wHasSaveData"): 1, sym("wHasDuelSaveData"): 1, sym("wCurHighlightedStartMenuItem"): 1, sym("wLastSelectedStartMenuItem"): 1, sym("wStartMenuChoice"): 1, sym("wStartMenuParams"): 17, sym("hCurMenuItem"): 1}},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xFF", sym("wHasSaveData"): b"\x00", sym("wHasDuelSaveData"): b"\x00", sym("wLastSelectedStartMenuItem"): b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000, read={sym("wLineSeparation"): 1, sym("wHasSaveData"): 1, sym("wHasDuelSaveData"): 1, sym("wCurHighlightedStartMenuItem"): 1, sym("wLastSelectedStartMenuItem"): 1, sym("wStartMenuChoice"): 1, sym("wStartMenuParams"): 17, sym("hCurMenuItem"): 1}),
 ]
 # <<< factory HandleStartMenu
 
 # >>> factory DrawPlayerPortraitAndPrintNewGameText
 CONTRACT["DrawPlayerPortraitAndPrintNewGameText"] = {"compare": (), "preserve": ()}
 CASES["DrawPlayerPortraitAndPrintNewGameText"] = [
-    {"wram": {0xCABB: b"\x00", 0xFF40: b"\x00", 0xD293: b"\xA5"},
+    {"wram": {sym("wLCDC"): b"\x00", 0xFF40: b"\x00", sym("wConsolePaletteData"): b"\xA5"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01], "instruction_budget": 60000000, "cycle_budget": 240000000,
-     "read": {0xD293: 1}},
-    dict(POISON, wram={0xCABB: b"\x00", 0xFF40: b"\x00", 0xD293: b"\x5A"},
+     "read": {sym("wConsolePaletteData"): 1}},
+    dict(POISON, wram={sym("wLCDC"): b"\x00", 0xFF40: b"\x00", sym("wConsolePaletteData"): b"\x5A"},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x01], instruction_budget=60000000, cycle_budget=240000000,
-         read={0xD293: 1}),
+         read={sym("wConsolePaletteData"): 1}),
 ]
 # <<< factory DrawPlayerPortraitAndPrintNewGameText
 
@@ -133,8 +134,8 @@ CONTRACT["DeleteSaveDataForNewGame"] = {"compare": (), "preserve": ()}
 CASES["DeleteSaveDataForNewGame"] = [
     {"wram": {wHasSaveData: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 100000000},
     dict(POISON, wram={wHasSaveData: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=100000000),
-    {"wram": {wHasSaveData: b"\x01", 0xCABB: b"\x00"}, "ramg": True, "sram": {2: {0xB800: b"\x00\x00"}}, "sread": {2: {0xB800: 2}}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, wram={wHasSaveData: b"\x01", 0xCABB: b"\x00"}, ramg=True, sram={2: {0xB800: b"\x00\x00"}}, sread={2: {0xB800: 2}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000)
+    {"wram": {wHasSaveData: b"\x01", sym("wLCDC"): b"\x00"}, "ramg": True, "sram": {2: {sym("sBackupGeneralSaveData"): b"\x00\x00"}}, "sread": {2: {sym("sBackupGeneralSaveData"): 2}}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, wram={wHasSaveData: b"\x01", sym("wLCDC"): b"\x00"}, ramg=True, sram={2: {sym("sBackupGeneralSaveData"): b"\x00\x00"}}, sread={2: {sym("sBackupGeneralSaveData"): 2}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000)
 ]
 # <<< factory DeleteSaveDataForNewGame
 
@@ -149,8 +150,8 @@ CASES["HandleTitleScreen"] = [
 # >>> factory Start
 CONTRACT["Start"] = {"compare": (), "preserve": ()}
 CASES["Start"] = [
-    dict(oracle=True, evidence="primary", why="The boot prefix initializes RAM, hardware, palettes, timer, serial state, DMA, and SRAM before the non-returning GameLoop jump; the initial byte and tile fill are asserted.", a=0x01, wram={0xCAB3: b"\xff", 0xCAB6: b"\xff"}, read={0xCAB3: 1, 0xCAB6: 1}, expect={0xCAB3: b"\x01", 0xCAB6: b"\x20"}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, oracle=True, evidence="primary", why="The boot prefix must preserve the incoming A value in wInitialA and initialize the tile fill with poisoned entry registers before the non-returning GameLoop jump.", wram={0xCAB3: b"\xff", 0xCAB6: b"\xff"}, read={0xCAB3: 1, 0xCAB6: 1}, expect={0xCAB3: b"\xaa", 0xCAB6: b"\x20"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(oracle=True, evidence="primary", why="The boot prefix initializes RAM, hardware, palettes, timer, serial state, DMA, and SRAM before the non-returning GameLoop jump; the initial byte and tile fill are asserted.", a=0x01, wram={sym("wInitialA"): b"\xff", sym("wTileMapFill"): b"\xff"}, read={sym("wInitialA"): 1, sym("wTileMapFill"): 1}, expect={sym("wInitialA"): b"\x01", sym("wTileMapFill"): b"\x20"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, oracle=True, evidence="primary", why="The boot prefix must preserve the incoming A value in wInitialA and initialize the tile fill with poisoned entry registers before the non-returning GameLoop jump.", wram={sym("wInitialA"): b"\xff", sym("wTileMapFill"): b"\xff"}, read={sym("wInitialA"): 1, sym("wTileMapFill"): 1}, expect={sym("wInitialA"): b"\xaa", sym("wTileMapFill"): b"\x20"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory Start
 
@@ -179,12 +180,12 @@ MUTATIONS["HandleTitleScreen"] = {"source_symbol": "HandleTitleScreen", "before"
 # <<< factory-mutation HandleTitleScreen
 # >>> factory-completion HandleTitleScreen
 for _record in SCHEMA2_CASES["HandleTitleScreen"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x5086, "bank": 7}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("HandleTitleScreen.play_opening") + 8, "bank": sym_bank("HandleTitleScreen.play_opening")}
 # <<< factory-completion HandleTitleScreen
 # >>> factory-mutation Start
 MUTATIONS["Start"] = {"source_symbol": "Start", "before": "wInitialA = a;", "after": "wInitialA = 0xFFu;", "case_ids": ["Start-0", "Start-1"]}
 # <<< factory-mutation Start
 # >>> factory-completion Start
 for _record in SCHEMA2_CASES["Start"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x03B8}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("SetupVRAM.loop")}
 # <<< factory-completion Start

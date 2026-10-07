@@ -1,18 +1,19 @@
+from tests.cases._symbols import data, sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wDefaultText = 0xC590
-wLoadedCard1Type = 0xCC24
-wLoadedCard1Level = 0xCC5D
-wCardNameLength = 0xCD9B
+wDefaultText = sym("wDefaultText")
+wLoadedCard1Type = sym("wLoadedCard1Type")
+wLoadedCard1Level = sym("wLoadedCard1Level")
+wCardNameLength = sym("wCardNameLength")
 
 # `stack` declares the words the caller pushed below the return address, in push
 # order. _CopyCardNameAndLevel does `push bc` then `push de` before jumping here,
 # so stack[0] is the saved bc that this label's `pop bc` restores and stack[1] the
 # saved de its `pop de` restores. Without them the synthesized frame holds only a
 # return address and the epilogue pops whatever preceded it.
-_SAVED_BC = 0xBBCC
-_SAVED_DE = 0xDDEE
+_SAVED_BC = data(0xBBCC)
+_SAVED_DE = data(0xDDEE)
 
 # wCardNameLength=4 pads to 2 * (4 + 1) = 10 tiles, and the name copy that ran in
 # the caller left "AB" + TX_END at wDefaultText.

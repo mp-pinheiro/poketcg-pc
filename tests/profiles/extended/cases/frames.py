@@ -64,12 +64,12 @@ MUTATIONS = {
         'before': '\tif (!frame_boundary_is_installed() && (gb_read8(wLCDC_ADDR) & 0x80u) != 0u)',
         'after': '\tif (!frame_boundary_is_installed() && (gb_read8(wLCDC_ADDR) & 0x80u) == 0u)',
         'case_ids': ['DoFrame-3'],
-        'source': 'src/profiles/extended/home/frames.c'},
+        'source': 'src/home/frames.c'},
     'HandleDPadRepeat': {   'source_symbol': 'HandleDPadRepeat',
         'before': '\t\tif (repeat == 0) {',
         'after': '\t\tif (repeat != 0) {',
         'case_ids': ['HandleDPadRepeat-5'],
-        'source': 'src/profiles/extended/home/frames.c'},
+        'source': 'src/home/frames.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

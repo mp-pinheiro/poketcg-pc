@@ -67,17 +67,17 @@ MUTATIONS = {
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(RockClubLobbyAfterDuelTable + 1u));',
         'case_ids': ['RockClubLobbyAfterDuel-0'],
-        'source': 'src/profiles/extended/home/rock_club_lobby.c'},
+        'source': 'src/home/rock_club_lobby.c'},
     'Preload_Lass3': {   'source_symbol': 'Preload_Lass3',
         'before': '\tif (a < TRUE)\n\t\tf |= 0x10u;',
         'after': '\tif (a <= TRUE)\n\t\tf |= 0x10u;',
         'case_ids': ['Preload_Lass3-1'],
-        'source': 'src/profiles/extended/home/rock_club_lobby.c'},
+        'source': 'src/home/rock_club_lobby.c'},
     'Preload_ChrisInRockClubLobby': {   'source_symbol': 'Preload_ChrisInRockClubLobby',
         'before': '\tif (a < PUPIL_DEFEATED)\n\t\tf |= 0x10u;',
         'after': '\tif (a <= PUPIL_DEFEATED)\n\t\tf |= 0x10u;',
         'case_ids': ['Preload_ChrisInRockClubLobby-2'],
-        'source': 'src/profiles/extended/home/rock_club_lobby.c'},
+        'source': 'src/home/rock_club_lobby.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

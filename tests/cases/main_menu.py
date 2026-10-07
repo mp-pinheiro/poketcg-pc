@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/main_menu.asm."""
+from tests.cases._symbols import sym, sym_bank
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,20 +10,20 @@ CASES = {}
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wConsole = 0xCAB4
-wLCDC = 0xCABB
-wCurSongID = 0xDD80
+wConsole = sym("wConsole")
+wLCDC = sym("wLCDC")
+wCurSongID = sym("wCurSongID")
 CARD_POP_WRAM = {wConsole: b"\x01", wLCDC: b"\x00", wCurSongID: b"\x80"}
 CARD_POP_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-wTempMap = 0xD0BB
+wTempMap = sym("wTempMap")
 
-wCurSongID = 0xDD80
+wCurSongID = sym("wCurSongID")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wVBlankOAMCopyToggle = 0xCAC0
-wLastSelectedStartMenuItem = 0xD627
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
+wLastSelectedStartMenuItem = sym("wLastSelectedStartMenuItem")
 # <<< factory-cases-statics
 
 # >>> factory MainMenu_CardPop
@@ -77,14 +78,14 @@ MUTATIONS["MainMenu_NewGame"] = {"source_symbol": "MainMenu_NewGame", "before": 
 # <<< factory-mutation MainMenu_NewGame
 # >>> factory-completion MainMenu_NewGame
 for _record in SCHEMA2_CASES["MainMenu_NewGame"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x6708, "bank": 4}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("MainMenu_NewGame") + 4, "bank": sym_bank("MainMenu_NewGame")}
 # <<< factory-completion MainMenu_NewGame
 # >>> factory-mutation MainMenu_ContinueFromDiary
 MUTATIONS["MainMenu_ContinueFromDiary"] = {"source_symbol": "MainMenu_ContinueFromDiary", "before": "uint8_t MainMenu_ContinueFromDiary(void)\n{\n\tPlaySong(MUSIC_STOP);", "after": "uint8_t MainMenu_ContinueFromDiary(void)\n{\n\tPlaySong(MUSIC_CARD_POP);", "case_ids": ["MainMenu_ContinueFromDiary-0", "MainMenu_ContinueFromDiary-1"]}
 # <<< factory-mutation MainMenu_ContinueFromDiary
 # >>> factory-completion MainMenu_ContinueFromDiary
 for _record in SCHEMA2_CASES["MainMenu_ContinueFromDiary"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x6746, "bank": 4}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("MainMenu_ContinueFromDiary") + 5, "bank": sym_bank("MainMenu_ContinueFromDiary")}
 # <<< factory-completion MainMenu_ContinueFromDiary
 # >>> factory-mutation MainMenu_ContinueDuel
 MUTATIONS["MainMenu_ContinueDuel"] = {"source_symbol": "MainMenu_ContinueDuel", "before": "uint8_t MainMenu_ContinueDuel(void)\n{\n\tPlaySong(MUSIC_STOP);", "after": "uint8_t MainMenu_ContinueDuel(void)\n{\n\tPlaySong(0x01u);", "case_ids": ["MainMenu_ContinueDuel-0", "MainMenu_ContinueDuel-1"]}
@@ -92,12 +93,12 @@ MUTATIONS["MainMenu_ContinueDuel"] = {"source_symbol": "MainMenu_ContinueDuel", 
 # >>> factory-completion MainMenu_ContinueDuel
 # MainMenu_ContinueDuel reaches the unported LoadGeneralSaveData farcall after PlaySong and ClearEvents.
 for _record in SCHEMA2_CASES["MainMenu_ContinueDuel"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x6787, "bank": 4}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("MainMenu_ContinueDuel") + 9, "bank": sym_bank("MainMenu_ContinueDuel")}
 # <<< factory-completion MainMenu_ContinueDuel
 # >>> factory-mutation _GameLoop
 MUTATIONS["_GameLoop"] = {"source_symbol": "_GameLoop", "before": "\t\tZeroObjectPositions();\n\t\twVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);", "after": "\t\tZeroObjectPositions();\n\t\twVBlankOAMCopyToggle = 0x7Fu;", "case_ids": ["_GameLoop-0", "_GameLoop-1"]}
 # <<< factory-mutation _GameLoop
 # >>> factory-completion _GameLoop
 for _record in SCHEMA2_CASES["_GameLoop"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x66E1, "bank": 4}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("_GameLoop.main_menu_loop"), "bank": sym_bank("_GameLoop.main_menu_loop")}
 # <<< factory-completion _GameLoop

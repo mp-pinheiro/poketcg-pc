@@ -81,7 +81,7 @@ MUTATIONS = {
                         'ClearOWMapEvents-1',
                         'ClearOWMapEvents-2',
                         'ClearOWMapEvents-3'],
-        'source': 'src/profiles/extended/home/map_events.c'},
+        'source': 'src/home/map_events.c'},
     'SetOWMapEvent_SRAMOrVRAM': {   'source_symbol': 'SetOWMapEvent_SRAMOrVRAM',
         'before': '\tgb_write8((uint16_t)(wOWMapEvents_ADDR + event_index), TRUE);',
         'after': '\tgb_write8((uint16_t)(wOWMapEvents_ADDR + event_index), 0u);',
@@ -91,12 +91,12 @@ MUTATIONS = {
         'before': '\tgb_write8(wWriteBGMapToSRAM_ADDR, TRUE);',
         'after': '\tgb_write8(wWriteBGMapToSRAM_ADDR, 0u);',
         'case_ids': ['ApplyOWMapEventChangeIfEventSet-0', 'ApplyOWMapEventChangeIfEventSet-1'],
-        'source': 'src/profiles/extended/home/map_events.c'},
+        'source': 'src/home/map_events.c'},
     'SetOWMapEvent': {   'source_symbol': 'SetOWMapEvent',
         'before': '\tgb_write8(wWriteBGMapToSRAM_ADDR, 0u);',
         'after': '\tgb_write8(wWriteBGMapToSRAM_ADDR, 1u);',
         'case_ids': ['SetOWMapEvent-0', 'SetOWMapEvent-1'],
-        'source': 'src/profiles/extended/home/map_events.c'},
+        'source': 'src/home/map_events.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

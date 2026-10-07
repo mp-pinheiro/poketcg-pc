@@ -1,14 +1,15 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-H_KEYS_HELD = 0xFF90
-H_SCX = 0xFF92
-H_SCY = 0xFF93
-W_VBLANK_COUNTER = 0xCAB8
-W_RNG1 = 0xCACA
-W_D41B = 0xD41B
-W_D41C = 0xD41C
-SPRITE_BUFFER = 0xD4D0
+H_KEYS_HELD = sym("hKeysHeld")
+H_SCX = sym("hSCX")
+H_SCY = sym("hSCY")
+W_VBLANK_COUNTER = sym("wVBlankCounter")
+W_RNG1 = sym("wRNG1")
+W_D41B = sym("wd41b")
+W_D41C = sym("wd41c")
+SPRITE_BUFFER = sym("wSprite1Enabled")
 
 CONTRACT = {
     "Func_1c865": {"compare": ("a", "f", "b", "c", "d", "e", "hl"),
@@ -21,10 +22,10 @@ CONTRACT = {
 
 CASES = {
     "Func_1c865": [
-        {"wram": {0xC100: b"\x00"}, "read": {0xC100: 1}},
-        dict(POISON, wram={0xC100: b"\x00"}, read={0xC100: 1}),
+        {"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 1}},
+        dict(POISON, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, read={sym("wDecompressionSecondaryBufferStart") + 0x11: 1}),
         {"a": 0, "f": 0xF0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
-         "wram": {0xC100: b"\xA5"}, "read": {0xC100: 1}},
+         "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xA5"}, "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 1}},
     ],
     "Func_1c866": [
         {"wram": {H_KEYS_HELD: b"\x00", H_SCX: b"\x00", H_SCY: b"\x00"}},
@@ -35,18 +36,18 @@ CASES = {
     ],
     "Func_1c890": [
         {"wram": {W_VBLANK_COUNTER: b"\x00", W_D41B: b"\x00", W_D41C: b"\x00",
-                  W_RNG1: b"\x00\x00\x00", 0xC100: b"\x00"}},
+                  W_RNG1: b"\x00\x00\x00", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}},
         dict(POISON, wram={W_VBLANK_COUNTER: b"\x00", W_D41B: b"\x0E", W_D41C: b"\x01",
                            W_RNG1: b"\x12\x34\x56", SPRITE_BUFFER: bytes(16),
-                           0xC100: b"\x00"}),
+                           sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}),
         {"wram": {W_VBLANK_COUNTER: b"\x01", W_D41B: b"\x11", W_D41C: b"\x00",
-                  W_RNG1: b"\xFF\xFF\xFF", 0xC100: b"\x5A"}},
+                  W_RNG1: b"\xFF\xFF\xFF", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x5A"}},
         {"wram": {W_VBLANK_COUNTER: b"\x00", W_D41B: b"\x11", W_D41C: b"\x00",
                   W_RNG1: b"\xFF\xFF\xFF", SPRITE_BUFFER: bytes(15) + b"\x04",
-                  0xC100: b"\x00"}},
+                  sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}},
         {"wram": {W_VBLANK_COUNTER: b"\x00", W_D41B: b"\x0F", W_D41C: b"\xFF",
                   W_RNG1: b"\x80\x01\xFF", SPRITE_BUFFER: bytes(16),
-                  0xC100: b"\x00"}},
+                  sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}},
     ],
 }
 

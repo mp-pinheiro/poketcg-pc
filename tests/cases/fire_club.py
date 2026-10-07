@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/fire_club.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,16 +8,16 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wDuelResult = 0xD0C3
-wNPCDuelist = 0xD0C4
-wTempNPC = 0xD3AB
-wLoadedNPCs = 0xD34A
-wLoadedNPCTempIndex = 0xD3AA
-wScriptNPC = 0xD3B6
-wPlayerDirection = 0xD334
-wOverworldNPCFlags = 0xD0C1
-wNextScript = 0xD0C6
-wOverworldMode = 0xD0BF
+wDuelResult = sym("wDuelResult")
+wNPCDuelist = sym("wNPCDuelist")
+wTempNPC = sym("wTempNPC")
+wLoadedNPCs = sym("wLoadedNPCs")
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wScriptNPC = sym("wScriptNPC")
+wPlayerDirection = sym("wPlayerDirection")
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+wNextScript = sym("wNextScript")
+wOverworldMode = sym("wOverworldMode")
 # <<< factory-cases-statics
 
 # >>> factory FireClubAfterDuel

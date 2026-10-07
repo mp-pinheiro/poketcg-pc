@@ -1,8 +1,9 @@
 """Oracle-diff cases for poketcg/src/home/damage.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wDamage = 0xCCB9
+wDamage = sym("wDamage")
 
 CONTRACT = {
     "AddToDamage": {

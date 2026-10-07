@@ -53,12 +53,12 @@ MUTATIONS = {
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(GrassClubLobbyAfterDuelTable + 1u));',
         'case_ids': ['GrassClubLobbyAfterDuel-0'],
-        'source': 'src/profiles/extended/home/grass_club_lobby.c'},
+        'source': 'src/home/grass_club_lobby.c'},
     'Preload_Gal2': {   'source_symbol': 'Preload_Gal2',
         'before': '\tif (a < TRUE)\n\t\tf |= 0x10u;',
         'after': '\tif (a <= TRUE)\n\t\tf |= 0x10u;',
         'case_ids': ['Preload_Gal2-1'],
-        'source': 'src/profiles/extended/home/grass_club_lobby.c'},
+        'source': 'src/home/grass_club_lobby.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

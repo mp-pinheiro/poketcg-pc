@@ -1,6 +1,7 @@
 """Oracle-diff cases for poketcg/src/home/unsafe_bg_map.asm."""
+from tests.cases._symbols import sym
 
-SRC = 0xC100
+SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
 VRAM = 0x9800
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,

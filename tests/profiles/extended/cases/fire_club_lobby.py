@@ -91,23 +91,23 @@ MUTATIONS = {
                  'FindExtraInteractableObjects((uint16_t)(SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520 '
                  '+ 5u));',
         'case_ids': ['FireClubPressedA-0', 'FireClubPressedA-1'],
-        'source': 'src/profiles/extended/home/fire_club_lobby.c'},
+        'source': 'src/home/fire_club_lobby.c'},
     'FireClubLobbyAfterDuel': {   'source_symbol': 'FireClubLobbyAfterDuel',
         'before': '\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(AFTER_DUEL_TABLE_830);',
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(AFTER_DUEL_TABLE_830 + 1u));',
         'case_ids': ['FireClubLobbyAfterDuel-0'],
-        'source': 'src/profiles/extended/home/fire_club_lobby.c'},
+        'source': 'src/home/fire_club_lobby.c'},
     'Preload_Lad2': {   'source_symbol': 'Preload_Lad2',
         'before': '\tif (a < LAD2_SLOWPOKE_AVAILABLE)\n\t\tf |= 0x10u;',
         'after': '\tif (a <= LAD2_SLOWPOKE_AVAILABLE)\n\t\tf |= 0x10u;',
         'case_ids': ['Preload_Lad2-1'],
-        'source': 'src/profiles/extended/home/fire_club_lobby.c'},
+        'source': 'src/home/fire_club_lobby.c'},
     'Preload_JessicaInFireClubLobby': {   'source_symbol': 'Preload_JessicaInFireClubLobby',
         'before': '\tif (a < PUPIL_DEFEATED)\n\t\tf |= 0x10u;',
         'after': '\tif (a <= PUPIL_DEFEATED)\n\t\tf |= 0x10u;',
         'case_ids': ['Preload_JessicaInFireClubLobby-2'],
-        'source': 'src/profiles/extended/home/fire_club_lobby.c'},
+        'source': 'src/home/fire_club_lobby.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/overworld_map.asm."""
+from tests.cases._symbols import data, sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,9 +10,9 @@ CASES = {}
 # >>> factory OverworldMap_ContinuePlayerWalkingAnimation
 CONTRACT["OverworldMap_ContinuePlayerWalkingAnimation"] = {"compare": ("b",), "preserve": ("b",)}
 CASES["OverworldMap_ContinuePlayerWalkingAnimation"] = [
-    {"wram": {0xD341: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {0xC100: 0x900}},
-    dict(POISON, wram={0xD341: b"\x01\x00\xFE\x03\x02\xFD\x05\xFF"}, read={0xC100: 0x900}),
-    {"wram": {0xD341: b"\x00\x00\xFF\x01\xFF\x00\x00\x01"}, "read": {0xC100: 0x900}},
+    {"wram": {sym("wOverworldMapPlayerMovementCounter"): b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 0x900}},
+    dict(POISON, wram={sym("wOverworldMapPlayerMovementCounter"): b"\x01\x00\xFE\x03\x02\xFD\x05\xFF"}, read={sym("wDecompressionSecondaryBufferStart") + 0x11: 0x900}),
+    {"wram": {sym("wOverworldMapPlayerMovementCounter"): b"\x00\x00\xFF\x01\xFF\x00\x00\x01"}, "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 0x900}},
 ]
 # <<< factory OverworldMap_ContinuePlayerWalkingAnimation
 
@@ -26,63 +27,63 @@ CASES["OverworldMap_NegateBC"] = [
 # <<< factory OverworldMap_NegateBC
 
 # >>> factory-cases-statics
-H_BANK = 0xFF80
-CACHE_SIZE = 0xD618
-SPRITE_BUFFER = 0xD4D0
-wConsole = 0xCAB4
+H_BANK = sym("hBankROM")
+CACHE_SIZE = sym("wSpriteVRAMBufferSize")
+SPRITE_BUFFER = sym("wSprite1Enabled")
+wConsole = sym("wConsole")
 
-wOverworldMapCursorAnimation = 0xD33C
-wOverworldMapCursorSprite = 0xD33B
-wWhichSprite = 0xD4CF
+wOverworldMapCursorAnimation = sym("wOverworldMapCursorAnimation")
+wOverworldMapCursorSprite = sym("wOverworldMapCursorSprite")
+wWhichSprite = sym("wWhichSprite")
 
-wOverworldMapSelection = 0xD32E
-wOverworldTransition = 0xD0B4
-wTempMap = 0xD0BB
-wTempPlayerXCoord = 0xD0BC
-wTempPlayerYCoord = 0xD0BD
-wTempPlayerDirection = 0xD0BE
-
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wPlayerDirection = 0xD334
-
-wOverworldMapSelection = 0xD32E
-EVENT_VARS = 0xD3D2
+wOverworldMapSelection = sym("wOverworldMapSelection")
+wOverworldTransition = sym("wOverworldTransition")
+wTempMap = sym("wTempMap")
+wTempPlayerXCoord = sym("wTempPlayerXCoord")
+wTempPlayerYCoord = sym("wTempPlayerYCoord")
+wTempPlayerDirection = sym("wTempPlayerDirection")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wPlayerDirection = sym("wPlayerDirection")
+
+wOverworldMapSelection = sym("wOverworldMapSelection")
+EVENT_VARS = sym("wEventVars")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wConsole = 0xCAB4
-wOverworldMapCursorAnimation = 0xD33C
-wOverworldMapCursorSprite = 0xD33B
-wOverworldMapPlayerAnimationState = 0xD33E
-wOverworldMapSelection = 0xD32E
-wOverworldMapStartingPosition = 0xD33D
-wWhichSprite = 0xD4CF
-wEventVars = 0xD3D2
-SPRITE_BUFFER = 0xD4D0
 
-MAPNAME_CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
-MAPNAME_PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wConsole = sym("wConsole")
+wOverworldMapCursorAnimation = sym("wOverworldMapCursorAnimation")
+wOverworldMapCursorSprite = sym("wOverworldMapCursorSprite")
+wOverworldMapPlayerAnimationState = sym("wOverworldMapPlayerAnimationState")
+wOverworldMapSelection = sym("wOverworldMapSelection")
+wOverworldMapStartingPosition = sym("wOverworldMapStartingPosition")
+wWhichSprite = sym("wWhichSprite")
+wEventVars = sym("wEventVars")
+SPRITE_BUFFER = sym("wSprite1Enabled")
+
+MAPNAME_CACHE_READ = {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("wCurTextTile"): 2, sym("wFontWidth"): 1}
+MAPNAME_PLACEMENT_READ = {sym("hTextBGMap0Address"): 2, sym("hTextHorizontalAlign"): 1}
 MAPNAME_VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 
-wPlayerSpriteIndex = 0xD336
+wPlayerSpriteIndex = sym("wPlayerSpriteIndex")
 
-wPlayerSpriteIndex_A = 0xD336
-wWhichSprite_A = 0xD4CF
-wOverworldMapStartingPosition_A = 0xD33D
-wOverworldMapSelection_A = 0xD32E
-wOverworldMapPlayerMovementPtr_A = 0xD33F
-wOverworldMapPlayerAnimationState_A = 0xD33E
-wOverworldMapPlayerMovementCounter_A = 0xD341
-wSpriteAnimFlagsSlot0_A = 0xD4DF
+wPlayerSpriteIndex_A = sym("wPlayerSpriteIndex")
+wWhichSprite_A = sym("wWhichSprite")
+wOverworldMapStartingPosition_A = sym("wOverworldMapStartingPosition")
+wOverworldMapSelection_A = sym("wOverworldMapSelection")
+wOverworldMapPlayerMovementPtr_A = sym("wOverworldMapPlayerMovementPtr")
+wOverworldMapPlayerAnimationState_A = sym("wOverworldMapPlayerAnimationState")
+wOverworldMapPlayerMovementCounter_A = sym("wOverworldMapPlayerMovementCounter")
+wSpriteAnimFlagsSlot0_A = sym("wSprite1Flags")
 
-wPlayerSpriteIndex_A = 0xD336
-wWhichSprite_A = 0xD4CF
-wOverworldMapPlayerMovementCounter_A = 0xD341
-wOverworldMapPlayerMovementPtr_A = 0xD33F
-wOverworldMapPlayerAnimationState_A = 0xD33E
-wOverworldMapSelection_A = 0xD32E
-wOverworldMapStartingPosition_A = 0xD33D
+wPlayerSpriteIndex_A = sym("wPlayerSpriteIndex")
+wWhichSprite_A = sym("wWhichSprite")
+wOverworldMapPlayerMovementCounter_A = sym("wOverworldMapPlayerMovementCounter")
+wOverworldMapPlayerMovementPtr_A = sym("wOverworldMapPlayerMovementPtr")
+wOverworldMapPlayerAnimationState_A = sym("wOverworldMapPlayerAnimationState")
+wOverworldMapSelection_A = sym("wOverworldMapSelection")
+wOverworldMapStartingPosition_A = sym("wOverworldMapStartingPosition")
 # <<< factory-cases-statics
 
 # >>> factory OverworldMap_InitVolcanoSprite
@@ -115,10 +116,10 @@ CASES["OverworldMap_LoadSelectedMap"] = [
 # >>> factory OverworldMap_InitPlayerEastWestMovement
 CONTRACT["OverworldMap_InitPlayerEastWestMovement"] = {"compare": (), "preserve": ()}
 CASES["OverworldMap_InitPlayerEastWestMovement"] = [
-    {"b": 0x04, "c": 0x01, "wram": {0xD343: b"\x00\x00", 0xD345: b"\x00\x00"}, "expect": {0xD341: b"\x04", 0xD343: b"\x40\x00", 0xD345: b"\x00\x01", 0xD334: b"\x01"}},
-    {"b": 0x04, "c": 0x01, "wram": {0xD343: b"\x00\x80", 0xD345: b"\x00\x00"}, "expect": {0xD341: b"\x04", 0xD343: b"\x40\xff", 0xD345: b"\x00\x01", 0xD334: b"\x03"}},
-    {"b": 0x04, "c": 0x01, "wram": {0xD343: b"\x00\x00", 0xD345: b"\x00\x80"}, "expect": {0xD341: b"\x04", 0xD343: b"\x40\x00", 0xD345: b"\xc0\xff", 0xD334: b"\x01"}},
-    dict(POISON, wram={0xD343: b"\x12\x80", 0xD345: b"\x34\x80"}, expect={0xD341: b"\xbb", 0xD343: b"\x00\xff", 0xD345: b"\xe9\xfe", 0xD334: b"\x03"}),
+    {"b": 0x04, "c": 0x01, "wram": {sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x00\x00", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x00"}, "expect": {sym("wOverworldMapPlayerMovementCounter"): b"\x04", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x40\x00", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x01", sym("wPlayerDirection"): b"\x01"}},
+    {"b": 0x04, "c": 0x01, "wram": {sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x00\x80", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x00"}, "expect": {sym("wOverworldMapPlayerMovementCounter"): b"\x04", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x40\xff", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x01", sym("wPlayerDirection"): b"\x03"}},
+    {"b": 0x04, "c": 0x01, "wram": {sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x00\x00", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x80"}, "expect": {sym("wOverworldMapPlayerMovementCounter"): b"\x04", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x40\x00", sym("wOverworldMapPlayerPathVerticalMovement"): b"\xc0\xff", sym("wPlayerDirection"): b"\x01"}},
+    dict(POISON, wram={sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x12\x80", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x34\x80"}, expect={sym("wOverworldMapPlayerMovementCounter"): b"\xbb", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x00\xff", sym("wOverworldMapPlayerPathVerticalMovement"): b"\xe9\xfe", sym("wPlayerDirection"): b"\x03"}),
 ]
 # <<< factory OverworldMap_InitPlayerEastWestMovement
 
@@ -156,26 +157,26 @@ CASES["OverworldMap_GetMapPosition"] = [
 # >>> factory OverworldMap_SetSpritePosition
 CONTRACT["OverworldMap_SetSpritePosition"] = {"compare": (), "preserve": ()}
 CASES["OverworldMap_SetSpritePosition"] = [
-    {"a": 0x01, "d": 0x02, "e": 0x03, "wram": {0xD4CF: b"\x00", 0xD4D0: b"\x99" * 16}, "expect": {0xD4D2: b"\x16", 0xD4D3: b"\x7B"}},
-    dict(POISON, a=0x00, d=0x00, e=0x00, wram={0xD4CF: b"\x00", 0xD4D0: b"\x55" * 16}, expect={0xD4D2: b"\x08", 0xD4D3: b"\x10"})
+    {"a": 0x01, "d": 0x02, "e": 0x03, "wram": {sym("wWhichSprite"): b"\x00", sym("wSprite1Enabled"): b"\x99" * 16}, "expect": {sym("wSprite1CoordX"): b"\x16", sym("wSprite1CoordY"): b"\x7B"}},
+    dict(POISON, a=0x00, d=0x00, e=0x00, wram={sym("wWhichSprite"): b"\x00", sym("wSprite1Enabled"): b"\x55" * 16}, expect={sym("wSprite1CoordX"): b"\x08", sym("wSprite1CoordY"): b"\x10"})
 ]
 # <<< factory OverworldMap_SetSpritePosition
 
 # >>> factory OverworldMap_InitPlayerNorthSouthMovement
 CONTRACT["OverworldMap_InitPlayerNorthSouthMovement"] = {"compare": (), "preserve": ()}
 CASES["OverworldMap_InitPlayerNorthSouthMovement"] = [
-    {"b": 0x01, "c": 0x04, "wram": {0xD343: b"\x00\x00", 0xD345: b"\x00\x00"}, "expect": {0xD341: b"\x04", 0xD343: b"\x40\x00", 0xD345: b"\x00\x01", 0xD334: b"\x02"}},
-    {"b": 0x01, "c": 0x04, "wram": {0xD343: b"\x00\xff", 0xD345: b"\x00\xff"}, "expect": {0xD341: b"\x04", 0xD343: b"\xc0\xff", 0xD345: b"\x00\xff", 0xD334: b"\x00"}},
-    dict(POISON, b=0x01, c=0x04, wram={0xD343: b"\x00\x00", 0xD345: b"\x00\x00"}, expect={0xD341: b"\x04", 0xD343: b"\x40\x00", 0xD345: b"\x00\x01", 0xD334: b"\x02"}),
+    {"b": 0x01, "c": 0x04, "wram": {sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x00\x00", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x00"}, "expect": {sym("wOverworldMapPlayerMovementCounter"): b"\x04", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x40\x00", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x01", sym("wPlayerDirection"): b"\x02"}},
+    {"b": 0x01, "c": 0x04, "wram": {sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x00\xff", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\xff"}, "expect": {sym("wOverworldMapPlayerMovementCounter"): b"\x04", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\xc0\xff", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\xff", sym("wPlayerDirection"): b"\x00"}},
+    dict(POISON, b=0x01, c=0x04, wram={sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x00\x00", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x00"}, expect={sym("wOverworldMapPlayerMovementCounter"): b"\x04", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x40\x00", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x01", sym("wPlayerDirection"): b"\x02"}),
 ]
 # <<< factory OverworldMap_InitPlayerNorthSouthMovement
 
 # >>> factory OverworldMap_PrintMapName
 CONTRACT["OverworldMap_PrintMapName"] = {"compare": (), "preserve": ()}
 CASES["OverworldMap_PrintMapName"] = [
-    {"wram": {0xD32E: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {**MAPNAME_CACHE_READ, **MAPNAME_PLACEMENT_READ}, "vread": MAPNAME_VRAM_READ},
-    {"wram": {0xD32E: b"\x01"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {**MAPNAME_CACHE_READ, **MAPNAME_PLACEMENT_READ}, "vread": MAPNAME_VRAM_READ},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD32E: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {**MAPNAME_CACHE_READ, **MAPNAME_PLACEMENT_READ}, "vread": MAPNAME_VRAM_READ},
+    {"wram": {sym("wOverworldMapSelection"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {**MAPNAME_CACHE_READ, **MAPNAME_PLACEMENT_READ}, "vread": MAPNAME_VRAM_READ},
+    {"wram": {sym("wOverworldMapSelection"): b"\x01"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {**MAPNAME_CACHE_READ, **MAPNAME_PLACEMENT_READ}, "vread": MAPNAME_VRAM_READ},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wOverworldMapSelection"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {**MAPNAME_CACHE_READ, **MAPNAME_PLACEMENT_READ}, "vread": MAPNAME_VRAM_READ},
 ]
 # <<< factory OverworldMap_PrintMapName
 
@@ -191,10 +192,10 @@ CASES["OverworldMap_UpdatePlayerAndCursorSprites"] = [
 # >>> factory OverworldMap_InitNextPlayerVelocity
 CONTRACT["OverworldMap_InitNextPlayerVelocity"] = {"compare": (), "preserve": ()}
 CASES["OverworldMap_InitNextPlayerVelocity"] = [
-    {"b": 0x20, "c": 0x30, "wram": {0xD4CF: b"\x00", 0xD4D0: b"\x00" * 16, 0xD4D2: b"\x10\x20"}, "expect": {0xD341: b"\x10", 0xD343: b"\x00\x01", 0xD345: b"\x00\x01", 0xD334: b"\x01", 0xD347: b"\x00", 0xD348: b"\x00"}},
-    {"b": 0x10, "c": 0x20, "wram": {0xD4CF: b"\x00", 0xD4D0: b"\x00" * 16, 0xD4D2: b"\x20\x20"}, "expect": {0xD341: b"\x10", 0xD343: b"\x00\xff", 0xD345: b"\x00\x01", 0xD334: b"\x03", 0xD347: b"\x00", 0xD348: b"\x00"}},
-    {"b": 0x28, "c": 0x40, "wram": {0xD4CF: b"\x00", 0xD4D0: b"\x00" * 16, 0xD4D2: b"\x20\x20"}, "expect": {0xD341: b"\x20", 0xD343: b"\x40\x00", 0xD345: b"\x00\x01", 0xD334: b"\x02", 0xD347: b"\x00", 0xD348: b"\x00"}},
-    dict(POISON, b=0xAA, c=0xCC, wram={0xD4CF: b"\x00", 0xD4D0: b"\x00" * 16, 0xD4D2: b"\x20\x10"}, expect={0xD341: b"\xbc", 0xD343: b"\x60\xff", 0xD345: b"\x00\x01", 0xD334: b"\x02", 0xD347: b"\x00", 0xD348: b"\x00"}),
+    {"b": 0x20, "c": 0x30, "wram": {sym("wWhichSprite"): b"\x00", sym("wSprite1Enabled"): b"\x00" * 16, sym("wSprite1CoordX"): b"\x10\x20"}, "expect": {sym("wOverworldMapPlayerMovementCounter"): b"\x10", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x00\x01", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x01", sym("wPlayerDirection"): b"\x01", sym("wOverworldMapPlayerHorizontalSubPixelPosition"): b"\x00", sym("wOverworldMapPlayerVerticalSubPixelPosition"): b"\x00"}},
+    {"b": 0x10, "c": 0x20, "wram": {sym("wWhichSprite"): b"\x00", sym("wSprite1Enabled"): b"\x00" * 16, sym("wSprite1CoordX"): b"\x20\x20"}, "expect": {sym("wOverworldMapPlayerMovementCounter"): b"\x10", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x00\xff", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x01", sym("wPlayerDirection"): b"\x03", sym("wOverworldMapPlayerHorizontalSubPixelPosition"): b"\x00", sym("wOverworldMapPlayerVerticalSubPixelPosition"): b"\x00"}},
+    {"b": 0x28, "c": 0x40, "wram": {sym("wWhichSprite"): b"\x00", sym("wSprite1Enabled"): b"\x00" * 16, sym("wSprite1CoordX"): b"\x20\x20"}, "expect": {sym("wOverworldMapPlayerMovementCounter"): b"\x20", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x40\x00", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x01", sym("wPlayerDirection"): b"\x02", sym("wOverworldMapPlayerHorizontalSubPixelPosition"): b"\x00", sym("wOverworldMapPlayerVerticalSubPixelPosition"): b"\x00"}},
+    dict(POISON, b=0xAA, c=0xCC, wram={sym("wWhichSprite"): b"\x00", sym("wSprite1Enabled"): b"\x00" * 16, sym("wSprite1CoordX"): b"\x20\x10"}, expect={sym("wOverworldMapPlayerMovementCounter"): b"\xbc", sym("wOverworldMapPlayerPathHorizontalMovement"): b"\x60\xff", sym("wOverworldMapPlayerPathVerticalMovement"): b"\x00\x01", sym("wPlayerDirection"): b"\x02", sym("wOverworldMapPlayerHorizontalSubPixelPosition"): b"\x00", sym("wOverworldMapPlayerVerticalSubPixelPosition"): b"\x00"}),
 ]
 # <<< factory OverworldMap_InitNextPlayerVelocity
 
@@ -233,31 +234,31 @@ CASES["OverworldMap_UpdatePlayerWalkingAnimation"] = [
 # >>> factory OverworldMap_HandleDPad
 CONTRACT["OverworldMap_HandleDPad"] = {"compare": (), "preserve": ()}
 CASES["OverworldMap_HandleDPad"] = [
-    {"wram": {wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x02"}, "stack": [0xBBCC, 0xDDEE], "expect": {wOverworldMapSelection: b"\x01"}},
-    {"wram": {wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x00"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect": {wOverworldMapSelection: b"\x06"}},
-    dict(POISON, wram={wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x02"}, stack=[0xBBCC, 0xDDEE], expect={wOverworldMapSelection: b"\x01"}),
-    {"wram": {wOverworldMapSelection: b"\x07", wPlayerDirection: b"\x00"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    {"wram": {wOverworldMapSelection: b"\x08", wPlayerDirection: b"\x00"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    {"wram": {wOverworldMapSelection: b"\x08", wPlayerDirection: b"\x01"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    {"wram": {wOverworldMapSelection: b"\x09", wPlayerDirection: b"\x00"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"wram": {wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x02"}, "stack": [data(0xBBCC), data(0xDDEE)], "expect": {wOverworldMapSelection: b"\x01"}},
+    {"wram": {wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x00"}, "stack": [data(0xBBCC), data(0xDDEE)], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect": {wOverworldMapSelection: b"\x06"}},
+    dict(POISON, wram={wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x02"}, stack=[data(0xBBCC), data(0xDDEE)], expect={wOverworldMapSelection: b"\x01"}),
+    {"wram": {wOverworldMapSelection: b"\x07", wPlayerDirection: b"\x00"}, "stack": [data(0xBBCC), data(0xDDEE)], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"wram": {wOverworldMapSelection: b"\x08", wPlayerDirection: b"\x00"}, "stack": [data(0xBBCC), data(0xDDEE)], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"wram": {wOverworldMapSelection: b"\x08", wPlayerDirection: b"\x01"}, "stack": [data(0xBBCC), data(0xDDEE)], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"wram": {wOverworldMapSelection: b"\x09", wPlayerDirection: b"\x00"}, "stack": [data(0xBBCC), data(0xDDEE)], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
 ]
 # <<< factory OverworldMap_HandleDPad
 
 # >>> factory OverworldMap_HandleKeyPress
 CONTRACT["OverworldMap_HandleKeyPress"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["OverworldMap_HandleKeyPress"] = [
-    {"hram": {0xFF91: b"\x00"}, "wram": {0xD32E: b"\x00", 0xD334: b"\x00"}},
-    dict(POISON, hram={0xFF91: b"\x10"}, wram={0xD32E: b"\x00", 0xD334: b"\x00"}, expect={0xD334: b"\x01"}, oracle=False, why="D-pad input enters the whole overworld movement scene and does not return in an isolated ROM call"),
-    dict(POISON, hram={0xFF91: b"\x01"}, wram={wOverworldMapCursorSprite: b"\x03", wPlayerSpriteIndex: b"\x07", wOverworldMapStartingPosition: b"\x01", wOverworldMapSelection: b"\x01", wWhichSprite: b"\x00"}, read={wWhichSprite: 1}, expect={wWhichSprite: b"\x07"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], instruction_budget=2000000, cycle_budget=8000000),
+    {"hram": {sym("hKeysPressed"): b"\x00"}, "wram": {sym("wOverworldMapSelection"): b"\x00", sym("wPlayerDirection"): b"\x00"}},
+    dict(POISON, hram={sym("hKeysPressed"): b"\x10"}, wram={sym("wOverworldMapSelection"): b"\x00", sym("wPlayerDirection"): b"\x00"}, expect={sym("wPlayerDirection"): b"\x01"}, oracle=False, why="D-pad input enters the whole overworld movement scene and does not return in an isolated ROM call"),
+    dict(POISON, hram={sym("hKeysPressed"): b"\x01"}, wram={wOverworldMapCursorSprite: b"\x03", wPlayerSpriteIndex: b"\x07", wOverworldMapStartingPosition: b"\x01", wOverworldMapSelection: b"\x01", wWhichSprite: b"\x00"}, read={wWhichSprite: 1}, expect={wWhichSprite: b"\x07"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory OverworldMap_HandleKeyPress
 
 # >>> factory OverworldMap_Update
 CONTRACT["OverworldMap_Update"] = {"compare": (), "preserve": ()}
 CASES["OverworldMap_Update"] = [
-    {"wram": {0xD336: b"\x12", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, "expect": {0xD4CF: b"\x12"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"wram": {0xD336: b"\x34", 0xD33E: b"\x01", 0xD4CF: b"\x00"}, "expect": {0xD4CF: b"\x34"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xD336: b"\x56", 0xD33E: b"\x02", 0xD4CF: b"\x00"}, expect={0xD4CF: b"\x56"}, instruction_budget=2000000, cycle_budget=8000000),
+    {"wram": {sym("wPlayerSpriteIndex"): b"\x12", sym("wOverworldMapPlayerAnimationState"): b"\x00", sym("wWhichSprite"): b"\x00"}, "expect": {sym("wWhichSprite"): b"\x12"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"wram": {sym("wPlayerSpriteIndex"): b"\x34", sym("wOverworldMapPlayerAnimationState"): b"\x01", sym("wWhichSprite"): b"\x00"}, "expect": {sym("wWhichSprite"): b"\x34"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={sym("wPlayerSpriteIndex"): b"\x56", sym("wOverworldMapPlayerAnimationState"): b"\x02", sym("wWhichSprite"): b"\x00"}, expect={sym("wWhichSprite"): b"\x56"}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory OverworldMap_Update
 

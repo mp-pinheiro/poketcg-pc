@@ -1,3 +1,4 @@
+from tests.cases._symbols import SRAM_START, sym, sym_bank
 from tests.cases._fixtures import full_heal_trainer_fixture as _full_heal_trainer_fixture, FULL_HEAL_TRAINER_REGS as _FULL_HEAL_TRAINER_REGS
 from tests.cases._fixtures import init_duelvar_fixture as _init_duelvar_fixture, INIT_DUELVAR_REGS as _INIT_DUELVAR_REGS
 from tests.cases._fixtures import swap_duelvar_fixture as _swap_duelvar_fixture, SWAP_DUELVAR_REGS as _SWAP_DUELVAR_REGS
@@ -5,28 +6,28 @@ from tests.cases._fixtures import count_card_id_fixture as _count_card_id_fixtur
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
 from tests.cases._fixtures import pkmn_power_fixture as _pkmn_power_fixture, PKMN_POWER_REGS as _PKMN_POWER_REGS
 
-_wTxRam2 = 0xCE3F
+_wTxRam2 = sym("wTxRam2")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 # hWhoseTurn (player $C2 / opponent $C3) selects the duel-variables page.
-hWhoseTurn = 0xFF97
-wPlayerDuelVariables = 0xC200
-wOpponentDuelVariables = 0xC300
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC480
-wDuelTempList = 0xC510
-wDamage_ADDR = 0xCCB9
-wDamageEffectiveness_ADDR = 0xCCC1
-wTempTurnDuelistCardID = 0xCCC3
-wTempNonTurnDuelistCardID = 0xCCC4
-wSentAttackDataToLinkOpponent = 0xCCEC
-wStatusConditionQueueIndex = 0xCCCD
-wEffectFailed = 0xCCED
-wIsDamageToSelf = 0xCCE6
-wDefendingWasForcedToSwitch = 0xCCEF
-wMetronomeEnergyCost = 0xCCF0
-wNoEffectFromWhichStatus = 0xCCF1
+hWhoseTurn = sym("hWhoseTurn")
+wPlayerDuelVariables = sym("wPlayerDuelVariables")
+wOpponentDuelVariables = sym("wOpponentDuelVariables")
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wOpponentDeck")
+wDuelTempList = sym("wDuelTempList")
+wDamage_ADDR = sym("wDamage")
+wDamageEffectiveness_ADDR = sym("wDamageEffectiveness")
+wTempTurnDuelistCardID = sym("wTempTurnDuelistCardID")
+wTempNonTurnDuelistCardID = sym("wTempNonTurnDuelistCardID")
+wSentAttackDataToLinkOpponent = sym("wSentAttackDataToLinkOpponent")
+wStatusConditionQueueIndex = sym("wStatusConditionQueueIndex")
+wEffectFailed = sym("wEffectFailed")
+wIsDamageToSelf = sym("wIsDamageToSelf")
+wDefendingWasForcedToSwitch = sym("wDefendingWasForcedToSwitch")
+wMetronomeEnergyCost = sym("wMetronomeEnergyCost")
+wNoEffectFromWhichStatus = sym("wNoEffectFromWhichStatus")
 
 CONTRACT = {
     "CopyPlayerName": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")},
@@ -116,17 +117,17 @@ CONTRACT = {
 
 CASES = {
     "CopyPlayerName": [
-        {"d": 0xC1, "e": 0x00, "sram": {0: {0xA010: b"\x21\x22\x00"}},
-         "read": {0xC100: 3}},
+        {"d": 0xC1, "e": 0x00, "sram": {0: {sym("sPlayerName"): b"\x21\x22\x00"}},
+         "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 3}},
         dict(POISON, d=0xC2, e=0x00,
-             sram={2: {0xA010: b"\x31\x00"}}, wram={0xFF81: b"\x02"},
-             read={0xC200: 2}),
+             sram={2: {SRAM_START + 0x10: b"\x31\x00"}}, wram={sym("hBankSRAM"): b"\x02"},
+             read={sym("wPlayerCardLocations"): 2}),
     ],
     "CopyOpponentName": [
-        {"d": 0xC1, "e": 0x00, "wram": {0xC500: b"\x41\x42\x00"},
-         "read": {0xC100: 3}},
-        dict(POISON, d=0xC2, e=0x00, wram={0xC500: b"\x51\x00"},
-             read={0xC200: 2}),
+        {"d": 0xC1, "e": 0x00, "wram": {sym("wNameBuffer"): b"\x41\x42\x00"},
+         "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 3}},
+        dict(POISON, d=0xC2, e=0x00, wram={sym("wNameBuffer"): b"\x51\x00"},
+             read={sym("wPlayerCardLocations"): 2}),
     ],
     # Player's turn: reads the $C2 page. Opponent's turn: reads the $C3 page.
     "GetTurnDuelistVariable": [
@@ -166,132 +167,132 @@ CASES = {
     ],
     # Temp-list entry shadowed in hTempCardIndex_ff98, hl preserved.
     "GetCardInDuelTempList_OnlyDeckIndex": [
-        {"a": 0, "wram": {wDuelTempList: b"\x07"}, "read": {0xFF98: 1}},
-        dict(POISON, a=2, wram={wDuelTempList + 2: b"\x09"}, read={0xFF98: 1}),
+        {"a": 0, "wram": {wDuelTempList: b"\x07"}, "read": {sym("hTempCardIndex_ff98"): 1}},
+        dict(POISON, a=2, wram={wDuelTempList + 2: b"\x09"}, read={sym("hTempCardIndex_ff98"): 1}),
     ],
     # Entry in a (reloaded), id in de, hl preserved.
     "GetCardInDuelTempList": [
         {"a": 0, "wram": {hWhoseTurn: b"\xC2", wDuelTempList: b"\x01",
-                          wPlayerDeck + 1: b"\x44"}, "read": {0xFF98: 1}},
+                          wPlayerDeck + 1: b"\x44"}, "read": {sym("hTempCardIndex_ff98"): 1}},
         dict(POISON, a=1, wram={hWhoseTurn: b"\xC3", wDuelTempList + 1: b"\x02",
-                                wOpponentDeck + 2: b"\x55"}, read={0xFF98: 1}),
+                                wOpponentDeck + 2: b"\x55"}, read={sym("hTempCardIndex_ff98"): 1}),
     ],
     # Deck card loaded into wLoadedCard1: the type byte lands in the buffer and
     # exit a is the card id's low byte. wLoadedCard1 = $CC24.
     "LoadCardDataToBuffer1_FromDeckIndex": [
         {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x10"},
-         "read": {0xCC24: 64}},
+         "read": {sym("wLoadedCard1"): 64}},
         dict(POISON, a=3, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 3: b"\x20"},
-             read={0xCC24: 64}),
+             read={sym("wLoadedCard1"): 64}),
     ],
     "LoadCardDataToBuffer2_FromDeckIndex": [
         {"a": 1, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck + 1: b"\x15"},
-         "read": {0xCC65: 64}},
+         "read": {sym("wLoadedCard2"): 64}},
         dict(POISON, a=4, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 4: b"\x25"},
-             read={0xCC65: 64}),
+             read={sym("wLoadedCard2"): 64}),
     ],
     # HP minus damage, clamped at zero; carry set iff HP remains.
     "SubtractHP": [
-        {"hl": 0xC400, "d": 0x00, "e": 3, "wram": {0xC400: b"\x0a"}, "read": {0xC400: 1}},
-        {"hl": 0xC400, "d": 0x00, "e": 10, "wram": {0xC400: b"\x0a"}, "read": {0xC400: 1}},
-        {"hl": 0xC400, "d": 0x01, "e": 0, "wram": {0xC400: b"\x0a"}, "read": {0xC400: 1}},
-        {"hl": 0xC400, "d": 0x00, "e": 0, "wram": {0xC400: b"\x00"}, "read": {0xC400: 1}},
-        dict(POISON, hl=0xC400, d=0x00, e=5, wram={0xC400: b"\x64"}, read={0xC400: 1}),
+        {"hl": sym("wBoosterCardsDrawn"), "d": 0x00, "e": 3, "wram": {sym("wBoosterCardsDrawn"): b"\x0a"}, "read": {sym("wBoosterCardsDrawn"): 1}},
+        {"hl": sym("wBoosterCardsDrawn"), "d": 0x00, "e": 10, "wram": {sym("wBoosterCardsDrawn"): b"\x0a"}, "read": {sym("wBoosterCardsDrawn"): 1}},
+        {"hl": sym("wBoosterCardsDrawn"), "d": 0x01, "e": 0, "wram": {sym("wBoosterCardsDrawn"): b"\x0a"}, "read": {sym("wBoosterCardsDrawn"): 1}},
+        {"hl": sym("wBoosterCardsDrawn"), "d": 0x00, "e": 0, "wram": {sym("wBoosterCardsDrawn"): b"\x00"}, "read": {sym("wBoosterCardsDrawn"): 1}},
+        dict(POISON, hl=sym("wBoosterCardsDrawn"), d=0x00, e=5, wram={sym("wBoosterCardsDrawn"): b"\x64"}, read={sym("wBoosterCardsDrawn"): 1}),
     ],
     # wDuelTempList = $C510. Deck cards occupy $C27E-$C2B9 in the player page.
     "CreateDeckCardList": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x00"},
-         "read": {0xC510: 62}},
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x3c"},
-         "read": {0xC510: 26}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x00"},
+         "read": {sym("wDuelTempList"): 62}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x3c"},
+         "read": {sym("wDuelTempList"): 26}},
         # All cards drawn: empty path, terminator only, carry set.
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x3c"},
-         "read": {0xC510: 2}},
-        dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3BA: b"\x05"},
-             read={0xC510: 60}),
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x3c"},
+         "read": {sym("wDuelTempList"): 2}},
+        dict(POISON, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsNotInDeck"): b"\x05"},
+             read={sym("wDuelTempList"): 60}),
     ],
     "CreateDiscardPileCardList": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2ED: b"\x00"}, "read": {0xC510: 2}},
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11",
-                  0xC27F: b"\x22"}, "read": {0xC510: 4}},
-        dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3ED: b"\x01", 0xC37F: b"\x33"},
-             read={0xC510: 4}),
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00"}, "read": {sym("wDuelTempList"): 2}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x02", sym("wPlayerDeckCards"): b"\x11",
+                  sym("wPlayerDeckCards") + 1: b"\x22"}, "read": {sym("wDuelTempList"): 4}},
+        dict(POISON, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x01", sym("wOpponentDeckCards") + 1: b"\x33"},
+             read={sym("wDuelTempList"): 4}),
     ],
     # Remove the card id in a from the FF-terminated wDuelTempList.
     "RemoveCardFromDuelTempList": [
-        {"a": 3, "wram": {0xC510: b"\x01\x02\x03\x04\xff"}, "read": {0xC510: 5}},
-        {"a": 1, "wram": {0xC510: b"\x01\xff"}, "read": {0xC510: 2}},
-        {"a": 9, "wram": {0xC510: b"\x01\x02\xff"}, "read": {0xC510: 4}},
-        dict(POISON, a=2, wram={0xC510: b"\x02\x02\xff"}, read={0xC510: 3}),
+        {"a": 3, "wram": {sym("wDuelTempList"): b"\x01\x02\x03\x04\xff"}, "read": {sym("wDuelTempList"): 5}},
+        {"a": 1, "wram": {sym("wDuelTempList"): b"\x01\xff"}, "read": {sym("wDuelTempList"): 2}},
+        {"a": 9, "wram": {sym("wDuelTempList"): b"\x01\x02\xff"}, "read": {sym("wDuelTempList"): 4}},
+        dict(POISON, a=2, wram={sym("wDuelTempList"): b"\x02\x02\xff"}, read={sym("wDuelTempList"): 3}),
     ],
     "CountCardsInDuelTempList": [
-        {"wram": {0xC510: b"\xff"}},
-        {"wram": {0xC510: b"\x01\x02\x03\xff"}},
-        dict(POISON, wram={0xC510: b"\x01\xff"}),
+        {"wram": {sym("wDuelTempList"): b"\xff"}},
+        {"wram": {sym("wDuelTempList"): b"\x01\x02\x03\xff"}},
+        dict(POISON, wram={sym("wDuelTempList"): b"\x01\xff"}),
     ],
     # Hand cards live at $C242+; count at $C2EE. Locations at $C200+.
     "FindLastCardInHand": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02"}},
-        dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}),
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x02"}},
+        dict(POISON, wram={hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"}),
     ],
     # Just-drawn cards (location bit 6) are skipped.
     "CreateHandCardList": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02",
-                  0xC243: b"\x03", 0xC242: b"\x01",
-                  0xC201: b"\x00", 0xC203: b"\x40"},
-         "read": {0xC510: 4}},
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01",
-                  0xC242: b"\x02", 0xC202: b"\x40"},
-         "read": {0xC510: 3}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x02",
+                  sym("wPlayerHand") + 1: b"\x03", sym("wPlayerHand"): b"\x01",
+                  sym("wPlayerCardLocations") + 1: b"\x00", sym("wPlayerCardLocations") + 3: b"\x40"},
+         "read": {sym("wDuelTempList"): 4}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x01",
+                  sym("wPlayerHand"): b"\x02", sym("wPlayerCardLocations") + 2: b"\x40"},
+         "read": {sym("wDuelTempList"): 3}},
         # Empty hand: carry set, terminator only.
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 2}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"}, "read": {sym("wDuelTempList"): 2}},
         # Poisoned c is preserved (the routine never touches it).
-        dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, read={0xC510: 2}),
+        dict(POISON, wram={hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"}, read={sym("wDuelTempList"): 2}),
     ],
     # Energy scan: deck index 0 is GRASS_ENERGY (id $01, energy type) in the play
     # area; deck index 1 is CLEFAIRY_DOLL (id $CB, trainer) so it is skipped.
     "CreateArenaOrBenchEnergyCardList": [
-        {"a": 0, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10", 0xC201: b"\x10",
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerCardLocations"): b"\x10", sym("wPlayerCardLocations") + 1: b"\x10",
                           wPlayerDeck: b"\x01", wPlayerDeck + 1: b"\xCB"},
-         "read": {0xC510: 4}},
+         "read": {sym("wDuelTempList"): 4}},
         # No cards in the requested location (1 = bench): empty list, carry set.
-        {"a": 1, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x00"}, "read": {0xC510: 2}},
+        {"a": 1, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerCardLocations"): b"\x00"}, "read": {sym("wDuelTempList"): 2}},
     ],
     # Shuffle uses Random over the seeded RNG state ($CACA-$CACC), so the
     # outcome is deterministic and diffed against the real ROM.
     "ShuffleCards": [
-        {"a": 0, "hl": 0xC27E, "wram": {0xC27E: b"\x01\x02\x03\x04"},
-         "read": {0xC27E: 4}},
-        {"a": 3, "hl": 0xC27E,
-         "wram": {0xC27E: b"\x01\x02\x03\x04",
-                  0xCACA: b"\x11\x22\x33"},
-         "read": {0xC27E: 4}},
-        {"a": 4, "hl": 0xC27E,
-         "wram": {0xC27E: b"\x0a\x0b\x0c\x0d\x0e",
-                  0xCACA: b"\x00\x00\x00"},
-         "read": {0xC27E: 5}},
-        dict(POISON, a=2, hl=0xC27E,
-             wram={0xC27E: b"\x05\x06\x07", 0xCACA: b"\x00\x00\x00"},
-             read={0xC27E: 3}),
+        {"a": 0, "hl": sym("wPlayerDeckCards"), "wram": {sym("wPlayerDeckCards"): b"\x01\x02\x03\x04"},
+         "read": {sym("wPlayerDeckCards"): 4}},
+        {"a": 3, "hl": sym("wPlayerDeckCards"),
+         "wram": {sym("wPlayerDeckCards"): b"\x01\x02\x03\x04",
+                  sym("wRNG1"): b"\x11\x22\x33"},
+         "read": {sym("wPlayerDeckCards"): 4}},
+        {"a": 4, "hl": sym("wPlayerDeckCards"),
+         "wram": {sym("wPlayerDeckCards"): b"\x0a\x0b\x0c\x0d\x0e",
+                  sym("wRNG1"): b"\x00\x00\x00"},
+         "read": {sym("wPlayerDeckCards"): 5}},
+        dict(POISON, a=2, hl=sym("wPlayerDeckCards"),
+             wram={sym("wPlayerDeckCards"): b"\x05\x06\x07", sym("wRNG1"): b"\x00\x00\x00"},
+             read={sym("wPlayerDeckCards"): 3}),
     ],
     # Sort by card id: deck index -> id at $C400. The sort is unstable (equal ids
     # swap the later card forward), so the deck seeds use distinct ids to pin order.
     "SortCardsInDuelTempListByID": [
         # ids: idx0=$CB, idx1=$01, idx2=$02 -> sorted [1, 2, 0].
         {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\xCB\x01\x02",
-                  0xC510: b"\x00\x02\x01\xff"},
-         "read": {0xC510: 4, 0xFF99: 2}},
+                  sym("wDuelTempList"): b"\x00\x02\x01\xff"},
+         "read": {sym("wDuelTempList"): 4, sym("hTempListPtr_ff99"): 2}},
         # Already sorted: identity passes.
         {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x02\xCB",
-                  0xC510: b"\x00\x01\x02\xff"},
-         "read": {0xC510: 4, 0xFF99: 2}},
+                  sym("wDuelTempList"): b"\x00\x01\x02\xff"},
+         "read": {sym("wDuelTempList"): 4, sym("hTempListPtr_ff99"): 2}},
         # Empty list.
-        {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01", 0xC510: b"\xff"},
-         "read": {0xC510: 2, 0xFF99: 2}},
+        {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01", sym("wDuelTempList"): b"\xff"},
+         "read": {sym("wDuelTempList"): 2, sym("hTempListPtr_ff99"): 2}},
         # Equal ids: the later card moves to the front (unstable).
         {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x01",
-                  0xC510: b"\x00\x01\xff"},
-         "read": {0xC510: 3, 0xFF99: 2}},
+                  sym("wDuelTempList"): b"\x00\x01\xff"},
+         "read": {sym("wDuelTempList"): 3, sym("hTempListPtr_ff99"): 2}},
     ],
     # hTempListPtr_ff99 preselects the list to sort. The direct entry reads [ptr]
     # as a card index and scans from [ptr+1], so a well-formed list ends with the
@@ -299,26 +300,26 @@ CASES = {
     # hTempCardID_ff9b ($FF9B-$FF9C) holds the running lowest id
     # (duel.asm:599-602, 618-622); its final value is the last pass's.
     "SortCardsInListByID": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x10\xC5", 0xFF9B: b"\x55\x55",
-                  0xC510: b"\x02\x01\x00\xff", wPlayerDeck: b"\x03\x02\x01"},
-         "read": {0xC510: 4, 0xFF99: 2}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("hTempListPtr_ff99"): b"\x10\xC5", sym("hTempCardID_ff9b"): b"\x55\x55",
+                  sym("wDuelTempList"): b"\x02\x01\x00\xff", wPlayerDeck: b"\x03\x02\x01"},
+         "read": {sym("wDuelTempList"): 4, sym("hTempListPtr_ff99"): 2}},
         # Single card at [ptr], terminator at [ptr+1].
-        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x00\xC5", 0xFF9B: b"\x55\x55",
-                  0xC500: b"\x00\xff", wPlayerDeck: b"\x01"},
-         "read": {0xC500: 2, 0xFF99: 2}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("hTempListPtr_ff99"): b"\x00\xC5", sym("hTempCardID_ff9b"): b"\x55\x55",
+                  sym("wNameBuffer"): b"\x00\xff", wPlayerDeck: b"\x01"},
+         "read": {sym("wNameBuffer"): 2, sym("hTempListPtr_ff99"): 2}},
     ],
     # Hand cards at $C242 (count 2): sorted ascending by id and written back so
     # the lowest id is at the newest slot ($C243).
     "SortHandCardsByID": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02",
-                  0xC243: b"\x00", 0xC242: b"\x01",
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x02",
+                  sym("wPlayerHand") + 1: b"\x00", sym("wPlayerHand"): b"\x01",
                   wPlayerDeck: b"\xCB\x01"},
-         "read": {0xC242: 2, 0xC510: 4}},
+         "read": {sym("wPlayerHand"): 2, sym("wDuelTempList"): 4}},
         # Already sorted: the write-back reverses the order.
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02",
-                  0xC243: b"\x01", 0xC242: b"\x00",
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x02",
+                  sym("wPlayerHand") + 1: b"\x01", sym("wPlayerHand"): b"\x00",
                   wPlayerDeck: b"\x01\x02"},
-         "read": {0xC242: 2, 0xC510: 4}},
+         "read": {sym("wPlayerHand"): 2, sym("wDuelTempList"): 4}},
     ],
     # Color index -> $80 >> index.
     "TranslateColorToWR": [
@@ -329,166 +330,166 @@ CASES = {
     ],
     # Count cards in location $10 (play area) with id $01; entry hl = $C200 page.
     "CountCardIDInLocation": [
-        {"b": 0x10, "e": 0x01, "hl": 0xC200,
+        {"b": 0x10, "e": 0x01, "hl": sym("wPlayerCardLocations"),
          "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x02\x01",
-                  0xC200: b"\x10\x00\x10"}},
-        {"b": 0x10, "e": 0x02, "hl": 0xC200,
+                  sym("wPlayerCardLocations"): b"\x10\x00\x10"}},
+        {"b": 0x10, "e": 0x02, "hl": sym("wPlayerCardLocations"),
          "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x02",
-                  0xC200: b"\x10\x00"}},
-        dict(POISON, b=0x10, e=0x01, hl=0xC200,
+                  sym("wPlayerCardLocations"): b"\x10\x00"}},
+        dict(POISON, b=0x10, e=0x01, hl=sym("wPlayerCardLocations"),
              wram={hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x01\x01",
-                   0xC200: b"\x10\x10\x00"}),
+                   sym("wPlayerCardLocations"): b"\x10\x10\x00"}),
         # ai-duel-12 33860: entry hl carries a non-zero low byte, which `ld l` discards,
         # so the walk starts at the page's card-location block either way.
-        {"b": 0x10, "e": 0x01, "hl": 0xC210,
+        {"b": 0x10, "e": 0x01, "hl": sym("wPlayerCardLocations") + 0x10,
          "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x02\x01",
-                  0xC200: b"\x10\x00\x10"}},
+                  sym("wPlayerCardLocations"): b"\x10\x00\x10"}},
         dict(_count_card_id_fixture(vram=False), **_COUNT_CARD_ID_REGS),
     ],
     # Attack flag: a = group<<3 | bit. wLoadedAttackFlag1 = $CCB4.
     "CheckLoadedAttackFlag": [
-        {"a": 0x00, "wram": {0xCCB4: b"\x01"}},
-        {"a": 0x03, "wram": {0xCCB4: b"\x08"}},
-        {"a": 0x08, "wram": {0xCCB5: b"\x02"}},
-        {"a": 0x02, "wram": {0xCCB4: b"\x00"}},
-        dict(POISON, a=0x10, wram={0xCCB6: b"\x80"}),
+        {"a": 0x00, "wram": {sym("wLoadedAttackFlag1"): b"\x01"}},
+        {"a": 0x03, "wram": {sym("wLoadedAttackFlag1"): b"\x08"}},
+        {"a": 0x08, "wram": {sym("wLoadedAttackFlag2"): b"\x02"}},
+        {"a": 0x02, "wram": {sym("wLoadedAttackFlag1"): b"\x00"}},
+        dict(POISON, a=0x10, wram={sym("wLoadedAttackFlag3"): b"\x80"}),
     ],
     # Arena slot 0: deck index at $C2BB, damage at $C2C8. Deck card $01 loads
     # with max HP $C9 (verified against the ROM).
     "GetCardDamageAndMaxHP": [
-        {"e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00",
+        {"e": 0, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): b"\x00",
                           wPlayerDeck: b"\x01"}},
-        {"e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05",
+        {"e": 0, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): b"\x05",
                           wPlayerDeck: b"\x01"}},
-        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\x00",
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerBench"): b"\x00", sym("wPlayerBench1CardHP"): b"\x00",
                           wPlayerDeck: b"\x01"}},
         # Damage above max HP: full-byte borrow sets C (nibble 9-0 does not set H).
-        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\xD0",
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerBench"): b"\x00", sym("wPlayerBench1CardHP"): b"\xD0",
                           wPlayerDeck: b"\x01"}},
         # Low-nibble borrow only: H without C.
-        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\x3A",
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerBench"): b"\x00", sym("wPlayerBench1CardHP"): b"\x3A",
                           wPlayerDeck: b"\x01"}},
         # Damage exactly at max HP ($71 for the loaded card): zero, no borrow.
-        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\x71",
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerBench"): b"\x00", sym("wPlayerBench1CardHP"): b"\x71",
                           wPlayerDeck: b"\x01"}},
         # Damage above max HP with nibble borrow: H and C both.
-        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\xC9",
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerBench"): b"\x00", sym("wPlayerBench1CardHP"): b"\xC9",
                           wPlayerDeck: b"\x01"}},
     ],
     "CopyDeckData": [
         {"d": 0xC1, "e": 0x00, "c": 0x00,
-         "wram": {hWhoseTurn: b"\xC2", 0xC100: b"\x00\x41\x42"},
-         "read": {wPlayerDeck: 60, 0xCCE9: 2}},
+         "wram": {hWhoseTurn: b"\xC2", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\x41\x42"},
+         "read": {wPlayerDeck: 60, sym("wDeckName"): 2}},
         {"d": 0xC1, "e": 0x50, "c": 0x00,
-         "wram": {hWhoseTurn: b"\xC3", 0xC150: b"\x02\x05\x00\x10\x20"},
-         "read": {wOpponentDeck: 60, 0xCCE9: 2}},
+         "wram": {hWhoseTurn: b"\xC3", sym("wDecompressionSecondaryBufferStart") + 0x61: b"\x02\x05\x00\x10\x20"},
+         "read": {wOpponentDeck: 60, sym("wDeckName"): 2}},
         # Exactly DECK_SIZE cards -> last slot becomes nonzero -> carry clear.
         {"d": 0xC1, "e": 0x00, "c": 0x00,
-         "wram": {hWhoseTurn: b"\xC2", 0xC100: b"\x3c\x07\x00\x30\x40"},
-         "read": {wPlayerDeck: 60, 0xCCE9: 2}},
+         "wram": {hWhoseTurn: b"\xC2", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x3c\x07\x00\x30\x40"},
+         "read": {wPlayerDeck: 60, sym("wDeckName"): 2}},
         # Empty description: c passes through untouched.
         dict(POISON, d=0xC1, e=0x00,
-             wram={hWhoseTurn: b"\xC2", 0xC100: b"\x00\x50\x60"},
-             read={wPlayerDeck: 60, 0xCCE9: 2}),
+             wram={hWhoseTurn: b"\xC2", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\x50\x60"},
+             read={wPlayerDeck: 60, sym("wDeckName"): 2}),
     ],
     "CountPrizes": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2EC: b"\x00"}},
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2EC: b"\x3f"}},
-        {"wram": {hWhoseTurn: b"\xC3", 0xC3EC: b"\x07"}},
-        dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EC: b"\xAA"}),
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerPrizes"): b"\x00"}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerPrizes"): b"\x3f"}},
+        {"wram": {hWhoseTurn: b"\xC3", sym("wOpponentPrizes"): b"\x07"}},
+        dict(POISON, wram={hWhoseTurn: b"\xC2", sym("wPlayerPrizes"): b"\xAA"}),
     ],
     "ShuffleDeck": [
-        {"c": 0, "e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x00"},
-         "read": {0xC27E: 60}},
+        {"c": 0, "e": 0, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x00"},
+         "read": {sym("wPlayerDeckCards"): 60}},
         {"c": 0, "e": 0,
-         "wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x3c", 0xCACA: b"\x11\x22\x33",
-                  0xC27E: b"\x01\x02\x03\x04"},
-         "read": {0xC27E: 4}},
+         "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x3c", sym("wRNG1"): b"\x11\x22\x33",
+                  sym("wPlayerDeckCards"): b"\x01\x02\x03\x04"},
+         "read": {sym("wPlayerDeckCards"): 4}},
         dict(POISON, c=0xCC, e=0xEE,
-             wram={hWhoseTurn: b"\xC3", 0xC3BA: b"\x05", 0xCACA: b"\x00\x00\x00"},
-             read={0xC37E: 60}),
+             wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsNotInDeck"): b"\x05", sym("wRNG1"): b"\x00\x00\x00"},
+             read={sym("wOpponentDeckCards"): 60}),
     ],
     "DrawCardFromDeck": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x00", 0xC27E: b"\x08"},
-         "read": {0xC2BA: 1, 0xC200: 1}},
-        {"wram": {hWhoseTurn: b"\xC3", 0xC3BA: b"\x3c"}, "read": {0xC3BA: 1}},
-        dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BA: b"\x00", 0xC27E: b"\x00"},
-             read={0xC2BA: 1, 0xC200: 1}),
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x00", sym("wPlayerDeckCards"): b"\x08"},
+         "read": {sym("wPlayerNumberOfCardsNotInDeck"): 1, sym("wPlayerCardLocations"): 1}},
+        {"wram": {hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsNotInDeck"): b"\x3c"}, "read": {sym("wOpponentNumberOfCardsNotInDeck"): 1}},
+        dict(POISON, wram={hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x00", sym("wPlayerDeckCards"): b"\x00"},
+             read={sym("wPlayerNumberOfCardsNotInDeck"): 1, sym("wPlayerCardLocations"): 1}),
     ],
     "ReturnCardToDeck": [
-        {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x01"},
-         "read": {0xC2BA: 1, 0xC27E: 1, 0xC200: 1}},
-        dict(POISON, a=0x05, wram={hWhoseTurn: b"\xC3", 0xC3BA: b"\x0a"},
-             read={0xC3BA: 1, 0xC283 + 0x100: 1}),
+        {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x01"},
+         "read": {sym("wPlayerNumberOfCardsNotInDeck"): 1, sym("wPlayerDeckCards"): 1, sym("wPlayerCardLocations"): 1}},
+        dict(POISON, a=0x05, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsNotInDeck"): b"\x0a"},
+             read={sym("wOpponentNumberOfCardsNotInDeck"): 1, sym("wPlayerDeckCards") + 5 + 0x100: 1}),
     ],
     "SearchCardInDeckAndAddToHand": [
-        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x00",
-                              0xC27E: b"\x01\x02\x03"},
-         "read": {0xC2BA: 1, 0xC202: 1, 0xC27E: 3}},
-        dict(POISON, a=0x00, wram={hWhoseTurn: b"\xC3", 0xC3BA: b"\x02",
-                                   0xC380: b"\x01\x02\x03"},
-             read={0xC3BA: 1, 0xC380: 1, 0xC300: 1}),
+        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x00",
+                              sym("wPlayerDeckCards"): b"\x01\x02\x03"},
+         "read": {sym("wPlayerNumberOfCardsNotInDeck"): 1, sym("wPlayerCardLocations") + 2: 1, sym("wPlayerDeckCards"): 3}},
+        dict(POISON, a=0x00, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsNotInDeck"): b"\x02",
+                                   sym("wOpponentDeckCards") + 2: b"\x01\x02\x03"},
+             read={sym("wOpponentNumberOfCardsNotInDeck"): 1, sym("wOpponentDeckCards") + 2: 1, sym("wOpponentCardLocations"): 1}),
     ],
     "AddCardToHand": [
-        {"a": 0x03, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"},
-         "read": {0xC200: 1, 0xC2EE: 1, 0xC242: 1}},
-        dict(POISON, a=0x05, wram={hWhoseTurn: b"\xC3", 0xC3EE: b"\x02"},
-             read={0xC305: 1, 0xC3EE: 1, 0xC344: 1}),
+        {"a": 0x03, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"},
+         "read": {sym("wPlayerCardLocations"): 1, sym("wPlayerNumberOfCardsInHand"): 1, sym("wPlayerHand"): 1}},
+        dict(POISON, a=0x05, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsInHand"): b"\x02"},
+             read={sym("wOpponentCardLocations") + 5: 1, sym("wOpponentNumberOfCardsInHand"): 1, sym("wOpponentHand") + 2: 1}),
     ],
     "RemoveCardFromHand": [
-        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x03",
-                              0xC242: b"\x01\x02\x03"},
-         "read": {0xC2EE: 1, 0xC242: 3}},
-        {"a": 0x09, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"},
-         "read": {0xC2EE: 1}},
-        dict(POISON, a=0x01, wram={hWhoseTurn: b"\xC3", 0xC3EE: b"\x02",
-                                   0xC342: b"\x01\x01"},
-             read={0xC3EE: 1, 0xC342: 2}),
+        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x03",
+                              sym("wPlayerHand"): b"\x01\x02\x03"},
+         "read": {sym("wPlayerNumberOfCardsInHand"): 1, sym("wPlayerHand"): 3}},
+        {"a": 0x09, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"},
+         "read": {sym("wPlayerNumberOfCardsInHand"): 1}},
+        dict(POISON, a=0x01, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsInHand"): b"\x02",
+                                   sym("wOpponentHand"): b"\x01\x01"},
+             read={sym("wOpponentNumberOfCardsInHand"): 1, sym("wOpponentHand"): 2}),
     ],
     "PutCardInDiscardPile": [
-        {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2ED: b"\x00"},
-         "read": {0xC200: 1, 0xC2ED: 1, 0xC27E: 1}},
-        dict(POISON, a=0x05, wram={hWhoseTurn: b"\xC3", 0xC3ED: b"\x02"},
-             read={0xC305: 1, 0xC3ED: 1, 0xC380: 1}),
+        {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00"},
+         "read": {sym("wPlayerCardLocations"): 1, sym("wPlayerNumberOfCardsInDiscardPile"): 1, sym("wPlayerDeckCards"): 1}},
+        dict(POISON, a=0x05, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x02"},
+             read={sym("wOpponentCardLocations") + 5: 1, sym("wOpponentNumberOfCardsInDiscardPile"): 1, sym("wOpponentDeckCards") + 2: 1}),
     ],
     "MoveHandCardToDiscardPile": [
         # Card is in hand (masked location == CARD_LOCATION_HAND): moved.
-        {"a": 0x03, "wram": {hWhoseTurn: b"\xC2", 0xC203: b"\x01",
-                              0xC2EE: b"\x01", 0xC242: b"\x03"},
-         "read": {0xC203: 1, 0xC2EE: 1, 0xC2ED: 1}},
+        {"a": 0x03, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerCardLocations") + 3: b"\x01",
+                              sym("wPlayerNumberOfCardsInHand"): b"\x01", sym("wPlayerHand"): b"\x03"},
+         "read": {sym("wPlayerCardLocations") + 3: 1, sym("wPlayerNumberOfCardsInHand"): 1, sym("wPlayerNumberOfCardsInDiscardPile"): 1}},
         # Card not in hand (in deck): early return.
-        {"a": 0x04, "wram": {hWhoseTurn: b"\xC2", 0xC204: b"\x00"},
-         "read": {0xC204: 1}},
-        dict(POISON, a=0x07, wram={hWhoseTurn: b"\xC3", 0xC307: b"\x02"},
-             read={0xC307: 1}),
+        {"a": 0x04, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerCardLocations") + 4: b"\x00"},
+         "read": {sym("wPlayerCardLocations") + 4: 1}},
+        dict(POISON, a=0x07, wram={hWhoseTurn: b"\xC3", sym("wOpponentCardLocations") + 7: b"\x02"},
+             read={sym("wOpponentCardLocations") + 7: 1}),
     ],
     "MoveDiscardPileCardToHand": [
-        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", 0xC2ED: b"\x02",
-                              0xC27E: b"\x01\x02"},
-         "read": {0xC202: 1, 0xC2ED: 1, 0xC27E: 2}},
-        {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2ED: b"\x00"},
-         "read": {0xC200: 1, 0xC2ED: 1}},
+        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x02",
+                              sym("wPlayerDeckCards"): b"\x01\x02"},
+         "read": {sym("wPlayerCardLocations") + 2: 1, sym("wPlayerNumberOfCardsInDiscardPile"): 1, sym("wPlayerDeckCards"): 2}},
+        {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00"},
+         "read": {sym("wPlayerCardLocations"): 1, sym("wPlayerNumberOfCardsInDiscardPile"): 1}},
         # Searched card not present: the scan's last `cp` compares against a
         # higher id, distinguishing the carry-flag's < vs > direction.
-        {"a": 0x09, "wram": {hWhoseTurn: b"\xC2", 0xC2ED: b"\x02",
-                              0xC27E: b"\x01\x02"},
-         "read": {0xC209: 1, 0xC2ED: 1, 0xC27E: 2}},
-        dict(POISON, a=0x05, wram={hWhoseTurn: b"\xC3", 0xC3ED: b"\x01",
-                                   0xC37E: b"\x05"},
-             read={0xC305: 1, 0xC3ED: 1, 0xC37E: 1}),
+        {"a": 0x09, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x02",
+                              sym("wPlayerDeckCards"): b"\x01\x02"},
+         "read": {sym("wPlayerCardLocations") + 9: 1, sym("wPlayerNumberOfCardsInDiscardPile"): 1, sym("wPlayerDeckCards"): 2}},
+        dict(POISON, a=0x05, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x01",
+                                   sym("wOpponentDeckCards"): b"\x05"},
+             read={sym("wOpponentCardLocations") + 5: 1, sym("wOpponentNumberOfCardsInDiscardPile"): 1, sym("wOpponentDeckCards"): 1}),
     ],
     "CheckPrizeTaken": [
-        {"a": 0, "wram": {hWhoseTurn: b"\xC2", 0xC2EC: b"\x01"}},
-        {"a": 3, "wram": {hWhoseTurn: b"\xC2", 0xC2EC: b"\x04"}},
-        {"a": 7, "wram": {hWhoseTurn: b"\xC3", 0xC3EC: b"\x80"}},
-        dict(POISON, a=5, wram={hWhoseTurn: b"\xC2", 0xC2EC: b"\x00"}),
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerPrizes"): b"\x01"}},
+        {"a": 3, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerPrizes"): b"\x04"}},
+        {"a": 7, "wram": {hWhoseTurn: b"\xC3", sym("wOpponentPrizes"): b"\x80"}},
+        dict(POISON, a=5, wram={hWhoseTurn: b"\xC2", sym("wPlayerPrizes"): b"\x00"}),
     ],
     "SortCardsInListByID_CheckForListTerminator": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x10\xC5",
-                  0xC510: b"\x02\x01\x00\xff", wPlayerDeck: b"\x03\x02\x01"},
-         "read": {0xC510: 4, 0xFF99: 2}},
-        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x00\xC5",
-                  0xC500: b"\xff"}, "read": {0xFF99: 2}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("hTempListPtr_ff99"): b"\x10\xC5",
+                  sym("wDuelTempList"): b"\x02\x01\x00\xff", wPlayerDeck: b"\x03\x02\x01"},
+         "read": {sym("wDuelTempList"): 4, sym("hTempListPtr_ff99"): 2}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("hTempListPtr_ff99"): b"\x00\xC5",
+                  sym("wNameBuffer"): b"\xff"}, "read": {sym("hTempListPtr_ff99"): 2}},
         # Poisoned b/c must survive an immediate (empty-list) terminator hit
         # unchanged -- this is the only branch where they're real pass-through
         # inputs rather than loop-derived outputs. f=0 (not full POISON):
@@ -496,204 +497,204 @@ CASES = {
         # touches carry, but the shared C hardcodes f=$20 (C=0) on this
         # branch, so poisoning entry carry would fail through code this
         # routine doesn't own.
-        dict(POISON, f=0x00, wram={hWhoseTurn: b"\xC3", 0xFF99: b"\x00\xC5",
-                           0xC500: b"\xff"}, read={0xFF99: 2}),
+        dict(POISON, f=0x00, wram={hWhoseTurn: b"\xC3", sym("hTempListPtr_ff99"): b"\x00\xC5",
+                           sym("wNameBuffer"): b"\xff"}, read={sym("hTempListPtr_ff99"): 2}),
     ],
     "CheckIfCanEvolveInto": [
         # card 9 (stage1) evolves from card 8 (basic) currently in play: eligible.
         {"d": 0x01, "e": 0x00,
          "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08\x09",
-                  0xC2BB: b"\x00", 0xC2C2: b"\x80"}},
+                  sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardFlags"): b"\x80"}},
         # Not eligible this turn (CAN_EVOLVE_THIS_TURN flag clear).
         {"d": 0x01, "e": 0x00,
          "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08\x09",
-                  0xC2BB: b"\x00", 0xC2C2: b"\x00"}},
+                  sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardFlags"): b"\x00"}},
         # Unrelated cards: name mismatch.
         dict(POISON, d=0x01, e=0x00,
              wram={hWhoseTurn: b"\xC3", wOpponentDeck: b"\x01\x02",
-                   0xC3BB: b"\x00", 0xC3C2: b"\x80"}),
+                   sym("wOpponentArenaCard"): b"\x00", sym("wOpponentArenaCardFlags"): b"\x80"}),
     ],
     "CheckIfCanEvolveInto_BasicToStage2": [
         # card 10 (stage2) evolves from card 8 (basic) via card 9 (stage1) by name.
         {"d": 0x01, "e": 0x00,
          "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08\x0a",
-                  0xC2BB: b"\x00", 0xC2C2: b"\x80"}},
+                  sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardFlags"): b"\x80"}},
         # Flag clear: not eligible.
         {"d": 0x01, "e": 0x00,
          "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08\x0a",
-                  0xC2BB: b"\x00", 0xC2C2: b"\x00"}},
+                  sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardFlags"): b"\x00"}},
         dict(POISON, d=0x01, e=0x00,
              wram={hWhoseTurn: b"\xC3", wOpponentDeck: b"\x01\x02",
-                   0xC3BB: b"\x00", 0xC3C2: b"\x80"}),
+                   sym("wOpponentArenaCard"): b"\x00", sym("wOpponentArenaCardFlags"): b"\x80"}),
     ],
     "EvolvePokemonCardIfPossible": [
         {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08\x09",
-                  0xC2BB: b"\x00", 0xC2C2: b"\x80", 0xC2C8: b"\x0a",
-                  0xFF98: b"\x01", 0xFF9D: b"\x00"},
-         "read": {0xC2BB: 1, 0xC2C8: 1, 0xC2C2: 1, 0xC2CE: 1, 0xCCEE: 1}},
+                  sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardFlags"): b"\x80", sym("wPlayerArenaCardHP"): b"\x0a",
+                  sym("hTempCardIndex_ff98"): b"\x01", sym("hTempPlayAreaLocation_ff9d"): b"\x00"},
+         "read": {sym("wPlayerArenaCard"): 1, sym("wPlayerArenaCardHP"): 1, sym("wPlayerArenaCardFlags"): 1, sym("wPlayerArenaCardStage"): 1, sym("wPreEvolutionPokemonCard"): 1}},
         dict(POISON, wram={hWhoseTurn: b"\xC3", wOpponentDeck: b"\x01\x02",
-                           0xC3BB: b"\x00", 0xC3C2: b"\x00",
-                           0xFF98: b"\x01", 0xFF9D: b"\x00"},
-             read={0xC3BB: 1}),
+                           sym("wOpponentArenaCard"): b"\x00", sym("wOpponentArenaCardFlags"): b"\x00",
+                           sym("hTempCardIndex_ff98"): b"\x01", sym("hTempPlayAreaLocation_ff9d"): b"\x00"},
+             read={sym("wOpponentArenaCard"): 1}),
     ],
     "EvolvePokemonCard": [
         # The practice-duel state (tests/cases/_fixtures.py): Seaking (deck
         # card 3, in hand) onto the arena Goldeen (card 6). Card 3 leaves the
         # hand for CARD_LOCATION_ARENA, the hand list and count shrink, the
         # arena card index, HP difference, flags and stage are rewritten.
-        dict(_attack_fixture(vram=False, **{"FF98": b"\x03", "FF9D": b"\x00"}), **_ATTACK_REGS),
+        dict(_attack_fixture(vram=False, changes={sym("hTempCardIndex_ff98"): b"\x03", sym("hTempPlayAreaLocation_ff9d"): b"\x00"}), **_ATTACK_REGS),
         {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08\x09",
-                  0xC2BB: b"\x00", 0xC2C8: b"\x0a",
-                  0xFF98: b"\x01", 0xFF9D: b"\x00"},
-         "read": {0xC2BB: 1, 0xC2C8: 1, 0xC2C2: 1, 0xC2CE: 1, 0xCCEE: 1}},
+                  sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): b"\x0a",
+                  sym("hTempCardIndex_ff98"): b"\x01", sym("hTempPlayAreaLocation_ff9d"): b"\x00"},
+         "read": {sym("wPlayerArenaCard"): 1, sym("wPlayerArenaCardHP"): 1, sym("wPlayerArenaCardFlags"): 1, sym("wPlayerArenaCardStage"): 1, sym("wPreEvolutionPokemonCard"): 1}},
         dict(POISON, wram={hWhoseTurn: b"\xC3", wOpponentDeck: b"\x01\x02",
-                           0xC3BB: b"\x00", 0xC3C8: b"\x05",
-                           0xFF98: b"\x00", 0xFF9D: b"\x01"},
-             read={0xC3BC: 1, 0xC3C9: 1, 0xC3CF: 1}),
+                           sym("wOpponentArenaCard"): b"\x00", sym("wOpponentArenaCardHP"): b"\x05",
+                           sym("hTempCardIndex_ff98"): b"\x00", sym("hTempPlayAreaLocation_ff9d"): b"\x01"},
+             read={sym("wOpponentBench"): 1, sym("wOpponentBench1CardHP"): 1, sym("wOpponentBench1CardStage"): 1}),
     ],
     "ClearAllStatusConditions": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xC2F0: b"\x05", 0xC2E7: b"\x01",
-                  0xC2E8: b"\x02", 0xC2EB: b"\x03", 0xC2F2: b"\xff\xff\xff\xff\xff\xff\xff\xff"},
-         "read": {0xC2F0: 1, 0xC2E7: 1, 0xC2E8: 1, 0xC2E9: 1, 0xC2EA: 1, 0xC2EB: 1,
-                  0xC2F2: 8}},
-        dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3F0: b"\x07", 0xC3EB: b"\x03"},
-             read={0xC3F0: 1, 0xC3EB: 1, 0xC3F2: 8}),
+        {"wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCardStatus"): b"\x05", sym("wPlayerArenaCardSubstatus1"): b"\x01",
+                  sym("wPlayerArenaCardSubstatus2"): b"\x02", sym("wPlayerArenaCardSubstatus3"): b"\x03", sym("wPlayerArenaCardDisabledAttackIndex"): b"\xff\xff\xff\xff\xff\xff\xff\xff"},
+         "read": {sym("wPlayerArenaCardStatus"): 1, sym("wPlayerArenaCardSubstatus1"): 1, sym("wPlayerArenaCardSubstatus2"): 1, sym("wPlayerArenaCardChangedWeakness"): 1, sym("wPlayerArenaCardChangedResistance"): 1, sym("wPlayerArenaCardSubstatus3"): 1,
+                  sym("wPlayerArenaCardDisabledAttackIndex"): 8}},
+        dict(POISON, wram={hWhoseTurn: b"\xC3", sym("wOpponentArenaCardStatus"): b"\x07", sym("wOpponentArenaCardSubstatus3"): b"\x03"},
+             read={sym("wOpponentArenaCardStatus"): 1, sym("wOpponentArenaCardSubstatus3"): 1, sym("wOpponentArenaCardDisabledAttackIndex"): 8}),
     ],
     "PutHandCardInPlayArea": [
-        {"a": 0x00, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01",
-                                        0xC242: b"\x00"},
-         "read": {0xC200: 1, 0xC2EE: 1}},
+        {"a": 0x00, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x01",
+                                        sym("wPlayerHand"): b"\x00"},
+         "read": {sym("wPlayerCardLocations"): 1, sym("wPlayerNumberOfCardsInHand"): 1}},
         dict(POISON, a=0x02, e=0x03,
-             wram={hWhoseTurn: b"\xC3", 0xC3EE: b"\x01", 0xC342: b"\x02"},
-             read={0xC302: 1, 0xC3EE: 1}),
+             wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfCardsInHand"): b"\x01", sym("wOpponentHand"): b"\x02"},
+             read={sym("wOpponentCardLocations") + 2: 1, sym("wOpponentNumberOfCardsInHand"): 1}),
     ],
     "PutHandPokemonCardInPlayArea": [
-        {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x00",
-                             0xC2EE: b"\x01", 0xC242: b"\x00", wPlayerDeck: b"\x08"},
-         "read": {0xC2EF: 1, 0xC2BB: 1, 0xC2C8: 1, 0xC2CE: 1, 0xC2C2: 1, 0xC2D4: 1,
-                  0xC2E0: 1, 0xC2DA: 1, 0xC2F0: 1}},
+        {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x00",
+                             sym("wPlayerNumberOfCardsInHand"): b"\x01", sym("wPlayerHand"): b"\x00", wPlayerDeck: b"\x08"},
+         "read": {sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wPlayerArenaCard"): 1, sym("wPlayerArenaCardHP"): 1, sym("wPlayerArenaCardStage"): 1, sym("wPlayerArenaCardFlags"): 1, sym("wPlayerArenaCardChangedType"): 1,
+                  sym("wPlayerArenaCardAttachedPlusPower"): 1, sym("wPlayerArenaCardAttachedDefender"): 1, sym("wPlayerArenaCardStatus"): 1}},
         # Play area already full: carry set, echoes input a.
-        {"a": 0x05, "wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x06"},
-         "read": {0xC2EF: 1}},
-        dict(POISON, a=0x00, wram={hWhoseTurn: b"\xC3", 0xC3EF: b"\x02",
-                                   0xC3EE: b"\x01", 0xC342: b"\x00",
+        {"a": 0x05, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x06"},
+         "read": {sym("wPlayerNumberOfPokemonInPlayArea"): 1}},
+        dict(POISON, a=0x00, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x02",
+                                   sym("wOpponentNumberOfCardsInHand"): b"\x01", sym("wOpponentHand"): b"\x00",
                                    wOpponentDeck: b"\x08"},
-             read={0xC3EF: 1, 0xC3BD: 1}),
+             read={sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wOpponentBench") + 1: 1}),
     ],
     "EmptyPlayAreaSlot.init_duelvar": [
-        {"a": 0xBB, "d": 0xFF, "e": 0x00, "hl": 0xC200, "wram": {0xC2BB: b"\x00"},
-         "read": {0xC2BB: 1}},
-        {"a": 0xC8, "d": 0x00, "e": 0x03, "hl": 0xC200, "wram": {0xC2CB: b"\x77"},
-         "read": {0xC2CB: 1}},
-        dict(POISON, a=0xE0, d=0x00, e=0x05, hl=0xC300, wram={0xC3E5: b"\x42"},
-             read={0xC3E5: 1}),
+        {"a": 0xBB, "d": 0xFF, "e": 0x00, "hl": sym("wPlayerCardLocations"), "wram": {sym("wPlayerArenaCard"): b"\x00"},
+         "read": {sym("wPlayerArenaCard"): 1}},
+        {"a": 0xC8, "d": 0x00, "e": 0x03, "hl": sym("wPlayerCardLocations"), "wram": {sym("wPlayerBench3CardHP"): b"\x77"},
+         "read": {sym("wPlayerBench3CardHP"): 1}},
+        dict(POISON, a=0xE0, d=0x00, e=0x05, hl=sym("wOpponentCardLocations"), wram={sym("wOpponentBench5CardAttachedPlusPower"): b"\x42"},
+             read={sym("wOpponentBench5CardAttachedPlusPower"): 1}),
 
-        dict(_init_duelvar_fixture(vram=False), **_INIT_DUELVAR_REGS, read={0xC3C9: 1}),
+        dict(_init_duelvar_fixture(vram=False), **_INIT_DUELVAR_REGS, read={sym("wOpponentBench1CardHP"): 1}),
     ],
     "SwapPlayAreaPokemon.swap_duelvar": [
-        {"a": 0xBB, "b": 0xC2, "d": 0x00, "e": 0x01, "hl": 0xC200,
-         "wram": {0xC2BB: b"\x01\x02"}, "read": {0xC2BB: 2}},
-        {"a": 0xC8, "b": 0xC2, "d": 0x02, "e": 0x04, "hl": 0xC200,
-         "wram": {0xC2CA: b"\x10", 0xC2CC: b"\x20"}, "read": {0xC2CA: 3}},
-        dict(POISON, a=0xBB, b=0xC3, d=0x01, e=0x00, hl=0xC300,
-             wram={0xC3BB: b"\x05\x06"}, read={0xC3BB: 2}),
+        {"a": 0xBB, "b": 0xC2, "d": 0x00, "e": 0x01, "hl": sym("wPlayerCardLocations"),
+         "wram": {sym("wPlayerArenaCard"): b"\x01\x02"}, "read": {sym("wPlayerArenaCard"): 2}},
+        {"a": 0xC8, "b": 0xC2, "d": 0x02, "e": 0x04, "hl": sym("wPlayerCardLocations"),
+         "wram": {sym("wPlayerBench2CardHP"): b"\x10", sym("wPlayerBench4CardHP"): b"\x20"}, "read": {sym("wPlayerBench2CardHP"): 3}},
+        dict(POISON, a=0xBB, b=0xC3, d=0x01, e=0x00, hl=sym("wOpponentCardLocations"),
+             wram={sym("wOpponentArenaCard"): b"\x05\x06"}, read={sym("wOpponentArenaCard"): 2}),
 
-        dict(_swap_duelvar_fixture(vram=False), **_SWAP_DUELVAR_REGS, read={0xC3BB: 2}),
+        dict(_swap_duelvar_fixture(vram=False), **_SWAP_DUELVAR_REGS, read={sym("wOpponentArenaCard"): 2}),
     ],
     "EmptyPlayAreaSlot": [
         {"e": 0x00, "wram": {hWhoseTurn: b"\xC2"},
-         "read": {0xC2BB: 1, 0xC2C8: 1, 0xC2CE: 1, 0xC2D4: 1, 0xC2DA: 1, 0xC2E0: 1}},
+         "read": {sym("wPlayerArenaCard"): 1, sym("wPlayerArenaCardHP"): 1, sym("wPlayerArenaCardStage"): 1, sym("wPlayerArenaCardChangedType"): 1, sym("wPlayerArenaCardAttachedDefender"): 1, sym("wPlayerArenaCardAttachedPlusPower"): 1}},
         dict(POISON, e=0x05, wram={hWhoseTurn: b"\xC3"},
-             read={0xC3C0: 1, 0xC3CD: 1, 0xC3D3: 1, 0xC3D9: 1, 0xC3DF: 1, 0xC3E5: 1}),
+             read={sym("wOpponentBench") + 4: 1, sym("wOpponentBench5CardHP"): 1, sym("wOpponentBench5CardStage"): 1, sym("wOpponentBench5CardChangedType"): 1, sym("wOpponentBench5CardAttachedDefender"): 1, sym("wOpponentBench5CardAttachedPlusPower"): 1}),
     ],
     "MovePlayAreaCardToDiscardPile": [
-        {"e": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x01",
-                             0xC200: b"\x10", 0xC2ED: b"\x00"},
-         "read": {0xC2EF: 1, 0xC200: 1, 0xC2ED: 1, 0xC27E: 1}},
-        dict(POISON, e=0x01, wram={hWhoseTurn: b"\xC3", 0xC3EF: b"\x02",
-                                   0xC301: b"\x11", 0xC3ED: b"\x00"},
-             read={0xC3EF: 1, 0xC301: 1, 0xC3ED: 1}),
+        {"e": 0x00, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
+                             sym("wPlayerCardLocations"): b"\x10", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00"},
+         "read": {sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wPlayerCardLocations"): 1, sym("wPlayerNumberOfCardsInDiscardPile"): 1, sym("wPlayerDeckCards"): 1}},
+        dict(POISON, e=0x01, wram={hWhoseTurn: b"\xC3", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x02",
+                                   sym("wOpponentCardLocations") + 1: b"\x11", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00"},
+             read={sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wOpponentCardLocations") + 1: 1, sym("wOpponentNumberOfCardsInDiscardPile"): 1}),
     ],
     "SwapPlayAreaPokemon": [
         {"d": 0x00, "e": 0x01,
-         "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x01", 0xC2BC: b"\x02",
-                  0xC200: b"\x10", 0xC201: b"\x11"},
-         "read": {0xC2BB: 1, 0xC2BC: 1, 0xC200: 1, 0xC201: 1}},
+         "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x01", sym("wPlayerBench"): b"\x02",
+                  sym("wPlayerCardLocations"): b"\x10", sym("wPlayerCardLocations") + 1: b"\x11"},
+         "read": {sym("wPlayerArenaCard"): 1, sym("wPlayerBench"): 1, sym("wPlayerCardLocations"): 1, sym("wPlayerCardLocations") + 1: 1}},
         # d == e: no-op.
-        {"d": 0x02, "e": 0x02, "wram": {hWhoseTurn: b"\xC2", 0xC2BD: b"\x03"},
-         "read": {0xC2BD: 1}},
+        {"d": 0x02, "e": 0x02, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerBench") + 1: b"\x03"},
+         "read": {sym("wPlayerBench") + 1: 1}},
         dict(POISON, d=0x01, e=0x00,
-             wram={hWhoseTurn: b"\xC3", 0xC3BB: b"\x05", 0xC3BC: b"\x06",
-                   0xC300: b"\x10", 0xC301: b"\x11"},
-             read={0xC3BB: 1, 0xC3BC: 1, 0xC300: 1, 0xC301: 1}),
+             wram={hWhoseTurn: b"\xC3", sym("wOpponentArenaCard"): b"\x05", sym("wOpponentBench"): b"\x06",
+                   sym("wOpponentCardLocations"): b"\x10", sym("wOpponentCardLocations") + 1: b"\x11"},
+             read={sym("wOpponentArenaCard"): 1, sym("wOpponentBench"): 1, sym("wOpponentCardLocations"): 1, sym("wOpponentCardLocations") + 1: 1}),
     ],
     "SwapArenaWithBenchPokemon": [
-        {"e": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x01", 0xC2BC: b"\x02",
-                             0xC200: b"\x10", 0xC201: b"\x11", 0xC2F0: b"\x05"},
-         "read": {0xC2BB: 1, 0xC2BC: 1, 0xC2F0: 1}},
-        dict(POISON, e=0x00, wram={hWhoseTurn: b"\xC3", 0xC3BB: b"\x07", 0xC3F0: b"\x02"},
-             read={0xC3BB: 1, 0xC3F0: 1}),
+        {"e": 0x01, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x01", sym("wPlayerBench"): b"\x02",
+                             sym("wPlayerCardLocations"): b"\x10", sym("wPlayerCardLocations") + 1: b"\x11", sym("wPlayerArenaCardStatus"): b"\x05"},
+         "read": {sym("wPlayerArenaCard"): 1, sym("wPlayerBench"): 1, sym("wPlayerArenaCardStatus"): 1}},
+        dict(POISON, e=0x00, wram={hWhoseTurn: b"\xC3", sym("wOpponentArenaCard"): b"\x07", sym("wOpponentArenaCardStatus"): b"\x02"},
+             read={sym("wOpponentArenaCard"): 1, sym("wOpponentArenaCardStatus"): 1}),
     ],
     "ShiftTurnPokemonToFirstPlayAreaSlots": [
         {"wram": {hWhoseTurn: b"\xC2",
-                  0xC2BB: b"\xff", 0xC2BC: b"\x02", 0xC2BD: b"\xff",
-                  0xC2BE: b"\x03", 0xC2BF: b"\xff", 0xC2C0: b"\xff",
-                  0xC202: b"\x11", 0xC203: b"\x12"},
-         "read": {0xC2BB: 6, 0xC200: 5}},
+                  sym("wPlayerArenaCard"): b"\xff", sym("wPlayerBench"): b"\x02", sym("wPlayerBench") + 1: b"\xff",
+                  sym("wPlayerBench") + 2: b"\x03", sym("wPlayerBench") + 3: b"\xff", sym("wPlayerBench") + 4: b"\xff",
+                  sym("wPlayerCardLocations") + 2: b"\x11", sym("wPlayerCardLocations") + 3: b"\x12"},
+         "read": {sym("wPlayerArenaCard"): 6, sym("wPlayerCardLocations"): 5}},
         {"wram": {hWhoseTurn: b"\xC3",
-                  0xC3BB: b"\xff", 0xC3BC: b"\xff", 0xC3BD: b"\xff",
-                  0xC3BE: b"\xff", 0xC3BF: b"\xff", 0xC3C0: b"\xff"},
-         "read": {0xC3BB: 6}},
+                  sym("wOpponentArenaCard"): b"\xff", sym("wOpponentBench"): b"\xff", sym("wOpponentBench") + 1: b"\xff",
+                  sym("wOpponentBench") + 2: b"\xff", sym("wOpponentBench") + 3: b"\xff", sym("wOpponentBench") + 4: b"\xff"},
+         "read": {sym("wOpponentArenaCard"): 6}},
         dict(POISON, wram={hWhoseTurn: b"\xC2",
-                           0xC2BB: b"\xff", 0xC2BC: b"\xff", 0xC2BD: b"\xff",
-                           0xC2BE: b"\xff", 0xC2BF: b"\xff", 0xC2C0: b"\xff"},
-             read={0xC2BB: 6}),
+                           sym("wPlayerArenaCard"): b"\xff", sym("wPlayerBench"): b"\xff", sym("wPlayerBench") + 1: b"\xff",
+                           sym("wPlayerBench") + 2: b"\xff", sym("wPlayerBench") + 3: b"\xff", sym("wPlayerBench") + 4: b"\xff"},
+             read={sym("wPlayerArenaCard"): 6}),
     ],
     "ShiftAllPokemonToFirstPlayAreaSlots": [
         {"wram": {hWhoseTurn: b"\xC2",
-                  0xC2BB: b"\xff", 0xC2BC: b"\x02", 0xC2BD: b"\xff",
-                  0xC2BE: b"\xff", 0xC2BF: b"\xff", 0xC2C0: b"\xff",
-                  0xC3BB: b"\xff", 0xC3BC: b"\xff", 0xC3BD: b"\xff",
-                  0xC3BE: b"\xff", 0xC3BF: b"\xff", 0xC3C0: b"\xff",
-                  0xC202: b"\x11"},
-         "read": {0xC2BB: 6, 0xC3BB: 6, hWhoseTurn: 1}},
+                  sym("wPlayerArenaCard"): b"\xff", sym("wPlayerBench"): b"\x02", sym("wPlayerBench") + 1: b"\xff",
+                  sym("wPlayerBench") + 2: b"\xff", sym("wPlayerBench") + 3: b"\xff", sym("wPlayerBench") + 4: b"\xff",
+                  sym("wOpponentArenaCard"): b"\xff", sym("wOpponentBench"): b"\xff", sym("wOpponentBench") + 1: b"\xff",
+                  sym("wOpponentBench") + 2: b"\xff", sym("wOpponentBench") + 3: b"\xff", sym("wOpponentBench") + 4: b"\xff",
+                  sym("wPlayerCardLocations") + 2: b"\x11"},
+         "read": {sym("wPlayerArenaCard"): 6, sym("wOpponentArenaCard"): 6, hWhoseTurn: 1}},
         dict(POISON, wram={hWhoseTurn: b"\xC3",
-                           0xC2BB: b"\xff", 0xC2BC: b"\xff", 0xC2BD: b"\xff",
-                           0xC2BE: b"\xff", 0xC2BF: b"\xff", 0xC2C0: b"\xff",
-                           0xC3BB: b"\xff", 0xC3BC: b"\xff", 0xC3BD: b"\xff",
-                           0xC3BE: b"\xff", 0xC3BF: b"\xff", 0xC3C0: b"\xff"},
-             read={0xC2BB: 6, 0xC3BB: 6, hWhoseTurn: 1}),
+                           sym("wPlayerArenaCard"): b"\xff", sym("wPlayerBench"): b"\xff", sym("wPlayerBench") + 1: b"\xff",
+                           sym("wPlayerBench") + 2: b"\xff", sym("wPlayerBench") + 3: b"\xff", sym("wPlayerBench") + 4: b"\xff",
+                           sym("wOpponentArenaCard"): b"\xff", sym("wOpponentBench"): b"\xff", sym("wOpponentBench") + 1: b"\xff",
+                           sym("wOpponentBench") + 2: b"\xff", sym("wOpponentBench") + 3: b"\xff", sym("wOpponentBench") + 4: b"\xff"},
+             read={sym("wPlayerArenaCard"): 6, sym("wOpponentArenaCard"): 6, hWhoseTurn: 1}),
     ],
     "GetPlayAreaCardAttachedEnergies": [
         # Slot 0 (arena): deck index 0 -> card id 1 (GRASS_ENERGY, energy).
-        {"e": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10",
+        {"e": 0x00, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerCardLocations"): b"\x10",
                              wPlayerDeck: b"\x01"},
-         "read": {0xCC1B: 8, 0xCC23: 1}},
-        {"e": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x00"},
-         "read": {0xCC1B: 8, 0xCC23: 1}},
-        dict(POISON, e=0x00, wram={hWhoseTurn: b"\xC3", 0xC300: b"\x10",
+         "read": {sym("wAttachedEnergies"): 8, sym("wTotalAttachedEnergies"): 1}},
+        {"e": 0x01, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerCardLocations"): b"\x00"},
+         "read": {sym("wAttachedEnergies"): 8, sym("wTotalAttachedEnergies"): 1}},
+        dict(POISON, e=0x00, wram={hWhoseTurn: b"\xC3", sym("wOpponentCardLocations"): b"\x10",
                                    wOpponentDeck: b"\x01"},
-             read={0xCC1B: 8, 0xCC23: 1}),
+             read={sym("wAttachedEnergies"): 8, sym("wTotalAttachedEnergies"): 1}),
     ],
     "CopyAttackDataAndDamage": [
-        {"e": 0, "wram": {0xCC2B: b"\x08", 0xCC30: b"\x01" * 0x13},
-         "read": {0xCCC2: 1, 0xCCA6: 0x13, 0xCCB9: 2, 0xCCC7: 1, 0xCCBF: 2}},
-        {"e": 1, "wram": {0xCC2B: b"\x09", 0xCC43: b"\x02" * 0x13},
-         "read": {0xCCC2: 1, 0xCCA6: 0x13, 0xCCB9: 2, 0xCCC7: 1, 0xCCBF: 2}},
-        dict(POISON, e=0, wram={0xCC2B: b"\x0a", 0xCC30: b"\x03" * 0x13},
-             read={0xCCC2: 1, 0xCCA6: 0x13}),
+        {"e": 0, "wram": {sym("wLoadedCard1ID"): b"\x08", sym("wLoadedCard1Atk1"): b"\x01" * 0x13},
+         "read": {sym("wTempCardID_ccc2"): 1, sym("wLoadedAttack"): 0x13, sym("wDamage"): 2, sym("wNoDamageOrEffect"): 1, sym("wDealtDamage"): 2}},
+        {"e": 1, "wram": {sym("wLoadedCard1ID"): b"\x09", sym("wLoadedCard1Atk2"): b"\x02" * 0x13},
+         "read": {sym("wTempCardID_ccc2"): 1, sym("wLoadedAttack"): 0x13, sym("wDamage"): 2, sym("wNoDamageOrEffect"): 1, sym("wDealtDamage"): 2}},
+        dict(POISON, e=0, wram={sym("wLoadedCard1ID"): b"\x0a", sym("wLoadedCard1Atk1"): b"\x03" * 0x13},
+             read={sym("wTempCardID_ccc2"): 1, sym("wLoadedAttack"): 0x13}),
     ],
     "CopyAttackDataAndDamage_FromDeckIndex": [
         {"d": 0x00, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08"},
-         "read": {0xFF9F: 1, 0xCCC6: 1, 0xCCC2: 1, 0xCCA6: 0x13}},
+         "read": {sym("hTempCardIndex_ff9f"): 1, sym("wSelectedAttack"): 1, sym("wTempCardID_ccc2"): 1, sym("wLoadedAttack"): 0x13}},
         dict(POISON, d=0x00, e=0x01, wram={hWhoseTurn: b"\xC3", wOpponentDeck: b"\x09"},
-             read={0xFF9F: 1, 0xCCC6: 1, 0xCCC2: 1}),
+             read={sym("hTempCardIndex_ff9f"): 1, sym("wSelectedAttack"): 1, sym("wTempCardID_ccc2"): 1}),
     ],
     "CopyAttackDataAndDamage_FromCardID": [
         {"a": 0x08, "d": 0x00, "e": 0x00,
-         "read": {0xFF9F: 1, 0xCCC6: 1, 0xCCC2: 1, 0xCCA6: 0x13}},
+         "read": {sym("hTempCardIndex_ff9f"): 1, sym("wSelectedAttack"): 1, sym("wTempCardID_ccc2"): 1, sym("wLoadedAttack"): 0x13}},
         dict(POISON, a=0x09, d=0x00, e=0x01,
-             read={0xFF9F: 1, 0xCCC6: 1, 0xCCC2: 1}),
+             read={sym("hTempCardIndex_ff9f"): 1, sym("wSelectedAttack"): 1, sym("wTempCardID_ccc2"): 1}),
     ],
     "ReturnCarry": [
         {"f": 0x00},
@@ -701,35 +702,35 @@ CASES = {
         dict(POISON),
     ],
     "LoadNonPokemonCardEffectCommands": [
-        {"wram": {0xFF9F: b"\x00", wPlayerDeck: b"\x08"},
-         "read": {0xCCB2: 2}},
-        dict(POISON, wram={hWhoseTurn: b"\xC3", 0xFF9F: b"\x00",
+        {"wram": {sym("hTempCardIndex_ff9f"): b"\x00", wPlayerDeck: b"\x08"},
+         "read": {sym("wLoadedAttackEffectCommands"): 2}},
+        dict(POISON, wram={hWhoseTurn: b"\xC3", sym("hTempCardIndex_ff9f"): b"\x00",
                            wOpponentDeck: b"\x09"},
-             read={0xCCB2: 2}),
+             read={sym("wLoadedAttackEffectCommands"): 2}),
     ],
     "ApplyAttachedPlusPower": [
         {"b": 0x10, "d": 0x00, "e": 0x0a,
-         "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10\x10",
+         "wram": {hWhoseTurn: b"\xC2", sym("wPlayerCardLocations"): b"\x10\x10",
                   wPlayerDeck: b"\xd8\xd8"},
-         "read": {0xC200: 2}},
+         "read": {sym("wPlayerCardLocations"): 2}},
         dict(POISON, b=0x10, d=0x00, e=0x00,
-             wram={hWhoseTurn: b"\xC3", 0xC300: b"\x00"}),
+             wram={hWhoseTurn: b"\xC3", sym("wOpponentCardLocations"): b"\x00"}),
     ],
     "ApplyAttachedDefender": [
         {"b": 0x10, "d": 0x00, "e": 0x64,
-         "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10",
+         "wram": {hWhoseTurn: b"\xC2", sym("wPlayerCardLocations"): b"\x10",
                   wPlayerDeck: b"\xd9"},
-         "read": {0xC200: 1}},
+         "read": {sym("wPlayerCardLocations"): 1}},
         dict(POISON, b=0x10, d=0x00, e=0x00,
-             wram={hWhoseTurn: b"\xC3", 0xC300: b"\x00"}),
+             wram={hWhoseTurn: b"\xC3", sym("wOpponentCardLocations"): b"\x00"}),
     ],
     "MoveCardToDiscardPileIfInPlayArea": [
-        {"d": 0x00, "e": 0xd8, "hl": 0xC200,
-         "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10\x00",
+        {"d": 0x00, "e": 0xd8, "hl": sym("wPlayerCardLocations"),
+         "wram": {hWhoseTurn: b"\xC2", sym("wPlayerCardLocations"): b"\x10\x00",
                   wPlayerDeck: b"\xd8\x01"},
-         "read": {0xC200: 2, 0xC2ED: 1}},
-        dict(POISON, d=0x00, e=0x00, hl=0xC300,
-             wram={hWhoseTurn: b"\xC3", 0xC300: b"\x00"}),
+         "read": {sym("wPlayerCardLocations"): 2, sym("wPlayerNumberOfCardsInDiscardPile"): 1}},
+        dict(POISON, d=0x00, e=0x00, hl=sym("wOpponentCardLocations"),
+             wram={hWhoseTurn: b"\xC3", sym("wOpponentCardLocations"): b"\x00"}),
     ],
     "ApplyDamageModifiers_DamageToTarget": [
         {"wram": {hWhoseTurn: b"\xC2",
@@ -737,50 +738,50 @@ CASES = {
          "read": {wDamageEffectiveness_ADDR: 1}},
         {"wram": {hWhoseTurn: b"\xC2",
                   wDamage_ADDR: b"\x0A\x00",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2BC: b"\xFF", 0xC3BC: b"\xFF",
-                  0xC2D4: b"\x00",
-                  0xC3E9: b"\x80", 0xC3EA: b"\x80",
-                  0xC2F0: b"\x00"},
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF",
+                  sym("wPlayerArenaCardChangedType"): b"\x00",
+                  sym("wOpponentArenaCardChangedWeakness"): b"\x80", sym("wOpponentArenaCardChangedResistance"): b"\x80",
+                  sym("wPlayerArenaCardStatus"): b"\x00"},
          "read": {wDamageEffectiveness_ADDR: 1}},
         {"wram": {hWhoseTurn: b"\xC2",
                   wDamage_ADDR: b"\x0A\x00",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2BC: b"\xFF", 0xC3BC: b"\xFF",
-                  0xC2D4: b"\x00",
-                  0xC3E9: b"\x40", 0xC3EA: b"\x80",
-                  0xC2F0: b"\x00"},
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF",
+                  sym("wPlayerArenaCardChangedType"): b"\x00",
+                  sym("wOpponentArenaCardChangedWeakness"): b"\x40", sym("wOpponentArenaCardChangedResistance"): b"\x80",
+                  sym("wPlayerArenaCardStatus"): b"\x00"},
          "read": {wDamageEffectiveness_ADDR: 1}},
         {"wram": {hWhoseTurn: b"\xC2",
                   wDamage_ADDR: b"\x28\x00",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2BC: b"\xFF", 0xC3BC: b"\xFF",
-                  0xC2D4: b"\x00",
-                  0xC3E9: b"\x80", 0xC3EA: b"\x40",
-                  0xC2F0: b"\x00"},
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF",
+                  sym("wPlayerArenaCardChangedType"): b"\x00",
+                  sym("wOpponentArenaCardChangedWeakness"): b"\x80", sym("wOpponentArenaCardChangedResistance"): b"\x40",
+                  sym("wPlayerArenaCardStatus"): b"\x00"},
          "read": {wDamageEffectiveness_ADDR: 1}},
         {"wram": {hWhoseTurn: b"\xC2",
                   wDamage_ADDR: b"\x14\x00",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2BC: b"\xFF", 0xC3BC: b"\xFF",
-                  0xC2D4: b"\x00",
-                  0xC3E9: b"\x80", 0xC3EA: b"\x40",
-                  0xC2F0: b"\x00"},
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF",
+                  sym("wPlayerArenaCardChangedType"): b"\x00",
+                  sym("wOpponentArenaCardChangedWeakness"): b"\x80", sym("wOpponentArenaCardChangedResistance"): b"\x40",
+                  sym("wPlayerArenaCardStatus"): b"\x00"},
          "read": {wDamageEffectiveness_ADDR: 1}},
         {"wram": {hWhoseTurn: b"\xC2",
                   wDamage_ADDR: b"\x0A\x80",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2BC: b"\xFF", 0xC3BC: b"\xFF",
-                  0xC2D4: b"\x00",
-                  0xC2F0: b"\x00"},
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF",
+                  sym("wPlayerArenaCardChangedType"): b"\x00",
+                  sym("wPlayerArenaCardStatus"): b"\x00"},
          "read": {wDamageEffectiveness_ADDR: 1}},
         dict(POISON, wram={hWhoseTurn: b"\xC2",
                            wDamage_ADDR: b"\x14\x00",
-                           0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                           0xC2BC: b"\xFF", 0xC3BC: b"\xFF",
-                           0xC2D4: b"\x00",
-                           0xC3E9: b"\x80", 0xC3EA: b"\x80",
-                           0xC2F0: b"\x00"},
+                           sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                           sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF",
+                           sym("wPlayerArenaCardChangedType"): b"\x00",
+                           sym("wOpponentArenaCardChangedWeakness"): b"\x80", sym("wOpponentArenaCardChangedResistance"): b"\x80",
+                           sym("wPlayerArenaCardStatus"): b"\x00"},
              read={wDamageEffectiveness_ADDR: 1}),
     ],
     "ApplyDamageModifiers_DamageToSelf": [
@@ -789,77 +790,77 @@ CASES = {
          "read": {wDamageEffectiveness_ADDR: 1}},
         {"wram": {hWhoseTurn: b"\xC2",
                   wDamage_ADDR: b"\x0A\x00",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2D4: b"\x00",
-                  0xC2E9: b"\x80", 0xC2EA: b"\x80",
-                  0xC2F0: b"\x00"},
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerArenaCardChangedType"): b"\x00",
+                  sym("wPlayerArenaCardChangedWeakness"): b"\x80", sym("wPlayerArenaCardChangedResistance"): b"\x80",
+                  sym("wPlayerArenaCardStatus"): b"\x00"},
          "read": {wDamageEffectiveness_ADDR: 1}},
         {"wram": {hWhoseTurn: b"\xC2",
                   wDamage_ADDR: b"\x0A\x00",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2D4: b"\x00",
-                  0xC2E9: b"\x40", 0xC2EA: b"\x80",
-                  0xC2F0: b"\x00"},
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerArenaCardChangedType"): b"\x00",
+                  sym("wPlayerArenaCardChangedWeakness"): b"\x40", sym("wPlayerArenaCardChangedResistance"): b"\x80",
+                  sym("wPlayerArenaCardStatus"): b"\x00"},
          "read": {wDamageEffectiveness_ADDR: 1}},
         {"wram": {hWhoseTurn: b"\xC2",
                   wDamage_ADDR: b"\x28\x00",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2D4: b"\x00",
-                  0xC2E9: b"\x80", 0xC2EA: b"\x40",
-                  0xC2F0: b"\x00"},
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerArenaCardChangedType"): b"\x00",
+                  sym("wPlayerArenaCardChangedWeakness"): b"\x80", sym("wPlayerArenaCardChangedResistance"): b"\x40",
+                  sym("wPlayerArenaCardStatus"): b"\x00"},
          "read": {wDamageEffectiveness_ADDR: 1}},
         {"wram": {hWhoseTurn: b"\xC2",
                   wDamage_ADDR: b"\x14\x00",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2D4: b"\x00",
-                  0xC2E9: b"\x80", 0xC2EA: b"\x40",
-                  0xC2F0: b"\x00"},
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerArenaCardChangedType"): b"\x00",
+                  sym("wPlayerArenaCardChangedWeakness"): b"\x80", sym("wPlayerArenaCardChangedResistance"): b"\x40",
+                  sym("wPlayerArenaCardStatus"): b"\x00"},
          "read": {wDamageEffectiveness_ADDR: 1}},
         dict(POISON, wram={hWhoseTurn: b"\xC2",
                            wDamage_ADDR: b"\x14\x00",
-                           0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                           0xC2D4: b"\x00",
-                           0xC2E9: b"\x80", 0xC2EA: b"\x80",
-                           0xC2F0: b"\x00"},
+                           sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                           sym("wPlayerArenaCardChangedType"): b"\x00",
+                           sym("wPlayerArenaCardChangedWeakness"): b"\x80", sym("wPlayerArenaCardChangedResistance"): b"\x80",
+                           sym("wPlayerArenaCardStatus"): b"\x00"},
              read={wDamageEffectiveness_ADDR: 1}),
     ],
     "GetPlayAreaCardRetreatCost": [
         {"wram": {hWhoseTurn: b"\xC2",
-                  0xFF9D: b"\x00",
-                  0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                  0xC2C1: b"\xFF"}},
+                  sym("hTempPlayAreaLocation_ff9d"): b"\x00",
+                  sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                  sym("wPlayerBench") + 5: b"\xFF"}},
         dict(POISON, wram={hWhoseTurn: b"\xC2",
-                           0xFF9D: b"\x00",
-                           0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                           0xC2C1: b"\xFF"}),
+                           sym("hTempPlayAreaLocation_ff9d"): b"\x00",
+                           sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                           sym("wPlayerBench") + 5: b"\xFF"}),
     ],
 }
 
-HP_ADDR = 0xC2C8  # player page (0xC2) + DUELVARS_ARENA_CARD_HP (0xC8)
+HP_ADDR = sym("wPlayerArenaCardHP")  # player page (0xC2) + DUELVARS_ARENA_CARD_HP (0xC8)
 CASES.update({
     "PrintPlayAreaCardKnockedOutIfNoHP": [
         # HP=30 (non-zero) → early return, a=30, f=0x00 (no carry)
         {"a": 0, "wram": {hWhoseTurn: b"\xC2", HP_ADDR: b"\x30"}},
         # HP=10, different play area location
-        {"a": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2C9: b"\x0A"}},
+        {"a": 1, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerBench1CardHP"): b"\x0A"}},
         # Poisoned registers, HP=50
-        dict(POISON, a=2, wram={hWhoseTurn: b"\xC2", 0xC2CA: b"\x32"}),
+        dict(POISON, a=2, wram={hWhoseTurn: b"\xC2", sym("wPlayerBench2CardHP"): b"\x32"}),
         {"a": 0, "wram": {hWhoseTurn: b"\xC2", HP_ADDR: b"\x00",
-                          0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
-                          0xCCC4: b"\x08", 0xCAD3: b"\x48\x03"},
+                          sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
+                          sym("wTempNonTurnDuelistCardID"): b"\x08", sym("wDoFrameFunction"): b"\x48\x03"},
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          "instruction_budget": 1000000, "cycle_budget": 4000000,
          "vread": {0: {0x9980: 1}}},
     ],
     "PrintKnockedOut": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xCCC4: b"\x08", 0xCAD3: b"\x48\x03"},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wTempNonTurnDuelistCardID"): b"\x08", sym("wDoFrameFunction"): b"\x48\x03"},
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          "instruction_budget": 1000000, "cycle_budget": 4000000,
          "vread": {0: {0x9980: 1}}},
     ],
     "DrawWideTextBox_WaitForInput_ReturnCarry": [
         {"hl": 0, "keys": 0x01,
-         "wram": {0xC590: b"\x00"},
+         "wram": {sym("wCurDeckCardChanges"): b"\x00"},
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          "vread": {0: {0x9980: 1, 0x9A32: 1}}},
     ],
@@ -868,7 +869,7 @@ CASES.update({
     "UpdateArenaCardIDsAndClearTwoTurnDuelVars": [
         {"wram": {
             hWhoseTurn: b"\xC2",
-            0xC2BB: b"\x00", 0xC3BB: b"\x01",
+            sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x01",
             wPlayerDeck: b"\x12", wOpponentDeck + 1: b"\x34",
             wTempTurnDuelistCardID: b"\xFF", wTempNonTurnDuelistCardID: b"\xFF",
             wSentAttackDataToLinkOpponent: b"\xFF",
@@ -876,37 +877,37 @@ CASES.update({
             wEffectFailed: b"\xFF",
             wIsDamageToSelf: b"\xFF", wDefendingWasForcedToSwitch: b"\xFF",
             wMetronomeEnergyCost: b"\xFF", wNoEffectFromWhichStatus: b"\xFF",
-            0xC3F2: b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"},
-         "read": {0xCCC3: 1, 0xCCC4: 1, 0xFF9F: 1,
+            sym("wOpponentArenaCardDisabledAttackIndex"): b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"},
+         "read": {sym("wTempTurnDuelistCardID"): 1, sym("wTempNonTurnDuelistCardID"): 1, sym("hTempCardIndex_ff9f"): 1,
                   wSentAttackDataToLinkOpponent: 1, wStatusConditionQueueIndex: 1,
                   wEffectFailed: 1, wIsDamageToSelf: 1, wDefendingWasForcedToSwitch: 1,
-                  wMetronomeEnergyCost: 1, wNoEffectFromWhichStatus: 1, 0xC3F2: 9}},
+                  wMetronomeEnergyCost: 1, wNoEffectFromWhichStatus: 1, sym("wOpponentArenaCardDisabledAttackIndex"): 9}},
         dict(POISON, wram={
-            hWhoseTurn: b"\xC2", 0xC2BB: b"\x02", 0xC3BB: b"\x03",
+            hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x02", sym("wOpponentArenaCard"): b"\x03",
             wPlayerDeck + 2: b"\x56", wOpponentDeck + 3: b"\x78",
-            0xC3F2: b"\xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA"},
-             read={0xCCC3: 1, 0xCCC4: 1, 0xFF9F: 1, 0xC3F2: 9}),
+            sym("wOpponentArenaCardDisabledAttackIndex"): b"\xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA"},
+             read={sym("wTempTurnDuelistCardID"): 1, sym("wTempNonTurnDuelistCardID"): 1, sym("hTempCardIndex_ff9f"): 1, sym("wOpponentArenaCardDisabledAttackIndex"): 9}),
         {"a": 0x01, "f": 0xF0, "b": 0x10, "c": 0x20, "d": 0x30,
-         "e": 0x40, "hl": 0xC1FF,
-         "wram": {hWhoseTurn: b"\xC3", 0xC3BB: b"\x3A",
-                  0xC2BB: b"\x3B", wOpponentDeck + 0x3A: b"\x9A",
-                  wPlayerDeck + 0x3B: b"\x9B", 0xC2F2: b"\xCC" * 9},
-         "read": {0xCCC3: 1, 0xCCC4: 1, 0xFF9F: 1, 0xC2F2: 9}},
+         "e": 0x40, "hl": sym("wDecompressionSecondaryBufferStart") + 0x110,
+         "wram": {hWhoseTurn: b"\xC3", sym("wOpponentArenaCard"): b"\x3A",
+                  sym("wPlayerArenaCard"): b"\x3B", wOpponentDeck + 0x3A: b"\x9A",
+                  wPlayerDeck + 0x3B: b"\x9B", sym("wPlayerArenaCardDisabledAttackIndex"): b"\xCC" * 9},
+         "read": {sym("wTempTurnDuelistCardID"): 1, sym("wTempNonTurnDuelistCardID"): 1, sym("hTempCardIndex_ff9f"): 1, sym("wPlayerArenaCardDisabledAttackIndex"): 9}},
     ],
     "ClearNonTurnTemporaryDuelvars_ResetCarry": [
-        {"wram": {hWhoseTurn: b"\xC2", 0xC3F2: b"\xFF" * 8},
-         "read": {0xC3F2: 8}},
-        dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC2F2: b"\xAA" * 8},
-             read={0xC2F2: 8}),
-        {"hl": 0xC1FF, "wram": {hWhoseTurn: b"\xC2", 0xC3F2: b"\x01" * 8},
-         "read": {0xC3F2: 8}},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wOpponentArenaCardDisabledAttackIndex"): b"\xFF" * 8},
+         "read": {sym("wOpponentArenaCardDisabledAttackIndex"): 8}},
+        dict(POISON, wram={hWhoseTurn: b"\xC3", sym("wPlayerArenaCardDisabledAttackIndex"): b"\xAA" * 8},
+             read={sym("wPlayerArenaCardDisabledAttackIndex"): 8}),
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x110, "wram": {hWhoseTurn: b"\xC2", sym("wOpponentArenaCardDisabledAttackIndex"): b"\x01" * 8},
+         "read": {sym("wOpponentArenaCardDisabledAttackIndex"): 8}},
     ],
     "PrintKnockedOutIfHLZero": [
-        {"hl": 0xC100, "wram": {0xC100: b"\x01"}},
-        dict(POISON, hl=0xC101, wram={0xC101: b"\x02"}),
-        {"hl": 0xC1FF, "wram": {0xC1FF: b"\x7F"}},
-        {"hl": 0xC100, "wram": {0xC100: b"\x00", wTempNonTurnDuelistCardID: b"\x08",
-                                0xCAD3: b"\x00\x00"},
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01"}},
+        dict(POISON, hl=sym("wDecompressionSecondaryBufferStart") + 0x12, wram={sym("wDecompressionSecondaryBufferStart") + 0x12: b"\x02"}),
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x110, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x110: b"\x7F"}},
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00", wTempNonTurnDuelistCardID: b"\x08",
+                                sym("wDoFrameFunction"): b"\x00\x00"},
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          "instruction_budget": 1000000, "cycle_budget": 4000000,
          "vread": {0: {0x9980: 1}}},
@@ -917,25 +918,25 @@ CASES.update({
 CONTRACT["GetFirstSetPrizeCard"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["GetFirstSetPrizeCard"] = [
     {},
-    {"a": 1, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\x02"}},
-    {"a": 3, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\x00"}},
-    {"a": 5, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\x01"}},
-    {"a": 6, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\x40"}},
-    {"a": 8, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\xFF"}},
-    dict(POISON, a=4, wram={0xFF97: b"\xC1", 0xC1EC: b"\x01"}),
+    {"a": 1, "wram": {sym("hWhoseTurn"): b"\xC1", sym("wDecompressionSecondaryBufferStart") + 0xFD: b"\x02"}},
+    {"a": 3, "wram": {sym("hWhoseTurn"): b"\xC1", sym("wDecompressionSecondaryBufferStart") + 0xFD: b"\x00"}},
+    {"a": 5, "wram": {sym("hWhoseTurn"): b"\xC1", sym("wDecompressionSecondaryBufferStart") + 0xFD: b"\x01"}},
+    {"a": 6, "wram": {sym("hWhoseTurn"): b"\xC1", sym("wDecompressionSecondaryBufferStart") + 0xFD: b"\x40"}},
+    {"a": 8, "wram": {sym("hWhoseTurn"): b"\xC1", sym("wDecompressionSecondaryBufferStart") + 0xFD: b"\xFF"}},
+    dict(POISON, a=4, wram={sym("hWhoseTurn"): b"\xC1", sym("wDecompressionSecondaryBufferStart") + 0xFD: b"\x01"}),
 ]
 # <<< factory GetFirstSetPrizeCard
 
 # >>> factory DrawCheckMenuCursor_YourOrOppPlayArea
 CONTRACT["DrawCheckMenuCursor_YourOrOppPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["DrawCheckMenuCursor_YourOrOppPlayArea"] = [
-    {"a": 0, "wram": {0xCEAF: b"\x00", 0xCEB0: b"\x00"},
+    {"a": 0, "wram": {sym("wCheckMenuCursorXPosition"): b"\x00", sym("wCheckMenuCursorYPosition"): b"\x00"},
      "vread": {0: {0x9800: 0x400}}},
-    {"a": 0x5A, "wram": {0xCEAF: b"\x01", 0xCEB0: b"\x02"},
+    {"a": 0x5A, "wram": {sym("wCheckMenuCursorXPosition"): b"\x01", sym("wCheckMenuCursorYPosition"): b"\x02"},
      "vread": {0: {0x9800: 0x400}}},
-    {"a": 0xAC, "wram": {0xCEAF: b"\x02", 0xCEB0: b"\x03"},
+    {"a": 0xAC, "wram": {sym("wCheckMenuCursorXPosition"): b"\x02", sym("wCheckMenuCursorYPosition"): b"\x03"},
      "vread": {0: {0x9800: 0x400}}},
-    dict(POISON, a=0x33, wram={0xCEAF: b"\x01", 0xCEB0: b"\x01"},
+    dict(POISON, a=0x33, wram={sym("wCheckMenuCursorXPosition"): b"\x01", sym("wCheckMenuCursorYPosition"): b"\x01"},
          vread={0: {0x9800: 0x400}}),
 ]
 # <<< factory DrawCheckMenuCursor_YourOrOppPlayArea
@@ -943,72 +944,72 @@ CASES["DrawCheckMenuCursor_YourOrOppPlayArea"] = [
 # >>> factory ZeroObjectPositionsWithCopyToggleOn
 CONTRACT["ZeroObjectPositionsWithCopyToggleOn"] = {"compare": (), "preserve": ()}
 CASES["ZeroObjectPositionsWithCopyToggleOn"] = [
-    {"wram": {0xCAC0: b"\x00"}, "read": {0xC000: 0xA0}},
-    dict(POISON, wram={0xCAC0: b"\xFF"}, read={0xC000: 0xA0}),
+    {"wram": {sym("wVBlankOAMCopyToggle"): b"\x00"}, "read": {sym("wDeckToBuild"): 0xA0}},
+    dict(POISON, wram={sym("wVBlankOAMCopyToggle"): b"\xFF"}, read={sym("wDeckToBuild"): 0xA0}),
 ]
 # <<< factory ZeroObjectPositionsWithCopyToggleOn
 
 # >>> factory YourOrOppPlayAreaScreen_HandleInput
 CONTRACT["YourOrOppPlayAreaScreen_HandleInput"] = {"compare": (), "preserve": ()}
 CASES["YourOrOppPlayAreaScreen_HandleInput"] = [
-    {"read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x00\x00\xC3\xFF", 0xCC08: b"\x04", 0xCEA3: b"\x00",
-               0xFF8F: b"\x40", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x00\x00\xC3\xFF", 0xCC08: b"\x04", 0xCEA3: b"\x00",
-               0xFF8F: b"\x80", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x00\x00\xC3\xFF", 0xCC08: b"\x04", 0xCEA3: b"\x00",
-               0xFF8F: b"\x10", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x00\x00\xC3\xFF", 0xCC08: b"\x04", 0xCEA3: b"\x00",
-               0xFF8F: b"\x20", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
+    {"read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x00\x00\xC3\xFF", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+               sym("hDPadHeld"): b"\x40", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x00\x00\xC3\xFF", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+               sym("hDPadHeld"): b"\x80", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x00\x00\xC3\xFF", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+               sym("hDPadHeld"): b"\x10", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x00\x00\xC3\xFF", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+               sym("hDPadHeld"): b"\x20", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
     dict(POISON,
-         wram={0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x02\x00\xC3\xFF", 0xCC08: b"\x04", 0xCEA3: b"\x05",
-               0xFF8F: b"\x40", 0xFF91: b"\x00"},
-         read={0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}),
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x03\x00\xC3\x00", 0xCC08: b"\x04", 0xCEA3: b"\x00",
-               0xFF8F: b"\x20", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x06\x00\xC3\x05", 0xCC08: b"\x04", 0xCEA3: b"\x00",
-               0xFF8F: b"\x10", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x06\x00\xC3\x01", 0xCC08: b"\x02", 0xCEA3: b"\x00",
-               0xFF8F: b"\x10", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x06\x00\xC3\x08", 0xCC08: b"\x04", 0xCEA3: b"\x00",
-               0xFF8F: b"\x20", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x06\x00\xC3\x00", 0xCC08: b"\x05", 0xCEA3: b"\x00",
-               0xFF8F: b"\x10", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x02\x00\xC3\xFF", 0xCC08: b"\x04", 0xCEA3: b"\x07",
-               0xFF8F: b"\x00", 0xFF91: b"\x01"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x02\x00\xC3\xFF", 0xCC08: b"\x04", 0xCEA3: b"\x07",
-               0xFF8F: b"\x00", 0xFF91: b"\x02"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x01\x00\xC3\xFF", 0xCC08: b"\x04", 0xCEA3: b"\x10",
-               0xFF8F: b"\x00", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
-    {"wram": {0xC300: b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
-               0xCE52: b"\x01\x00\xC3\xFF", 0xCC08: b"\x04", 0xCEA3: b"\x03",
-               0xFF8F: b"\x00", 0xFF91: b"\x00"},
-     "read": {0xCE52: 1, 0xCE61: 1, 0xCEA3: 1}},
+         wram={sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x02\x00\xC3\xFF", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x05",
+               sym("hDPadHeld"): b"\x40", sym("hKeysPressed"): b"\x00"},
+         read={sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}),
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x03\x00\xC3\x00", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+               sym("hDPadHeld"): b"\x20", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x06\x00\xC3\x05", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+               sym("hDPadHeld"): b"\x10", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x06\x00\xC3\x01", sym("wDuelInitialPrizes"): b"\x02", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+               sym("hDPadHeld"): b"\x10", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x06\x00\xC3\x08", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+               sym("hDPadHeld"): b"\x20", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x06\x00\xC3\x00", sym("wDuelInitialPrizes"): b"\x05", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+               sym("hDPadHeld"): b"\x10", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x02\x00\xC3\xFF", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x07",
+               sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x01"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x02\x00\xC3\xFF", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x07",
+               sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x02"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x01\x00\xC3\xFF", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x10",
+               sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
+    {"wram": {sym("wOpponentCardLocations"): b"\x10\x20\x30\x01\x02\x03\x04\x11\x21\x31\x00\x03\x02\x05\x12\x22\x32\x01\x04\x03\x06\x13\x23\x33\x02\x05\x04\x09\x14\x24\x34\x03\x06\x05\x01\x15\x25\x35\x04\x00\x06\x02\x16\x26\x36\x05\x01\x01\x05\x17\x27\x37\x06\x02\x00\x03",
+               sym("wInPlayAreaCurPosition"): b"\x01\x00\xC3\xFF", sym("wDuelInitialPrizes"): b"\x04", sym("wCheckMenuCursorBlinkCounter"): b"\x03",
+               sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00"},
+     "read": {sym("wInPlayAreaCurPosition"): 1, sym("wPrizeCardCursorTemporaryPosition"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}},
 ]
 # <<< factory YourOrOppPlayAreaScreen_HandleInput
 
@@ -1017,26 +1018,26 @@ CONTRACT["DrawPlayArea_BenchCards"] = {"compare": (), "preserve": ()}
 CASES["DrawPlayArea_BenchCards"] = [
     {"vread": {0: {0x9800: 0x400}}},
     {"c": 4, "d": 2, "e": 2,
-     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x03",
-              0xC2CF: b"\x00\x01\x02\x00"},
+     "wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x03",
+              sym("wPlayerBench1CardStage"): b"\x00\x01\x02\x00"},
      "vread": {0: {0x9800: 0x400}}},
     dict(POISON, c=4, d=2, e=2,
-         wram={0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x04",
-               0xC2CF: b"\x02\x01\x00\x01"},
+         wram={sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x04",
+               sym("wPlayerBench1CardStage"): b"\x02\x01\x00\x01"},
          vread={0: {0x9800: 0x400}}),
     {"c": 4, "d": 2, "e": 2,
-     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC3", 0xC2EF: b"\x03",
-              0xC2CF: b"\x00\x01\x02\x00"},
+     "wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC3", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x03",
+              sym("wPlayerBench1CardStage"): b"\x00\x01\x02\x00"},
      "vread": {0: {0x9800: 0x400}}},
     {"c": 1, "d": 0, "e": 0,
-     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x00"},
+     "wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x00"},
      "vread": {0: {0x9800: 0x400}}},
     {"c": 4, "d": 2, "e": 2,
-     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x01"},
+     "wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"},
      "vread": {0: {0x9800: 0x400}}},
     {"c": 4, "d": 2, "e": 2,
-     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x04",
-              0xC2CF: b"\x00\x01\x02\x03", 0xCAB4: b"\x02"},
+     "wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x04",
+              sym("wPlayerBench1CardStage"): b"\x00\x01\x02\x03", sym("wConsole"): b"\x02"},
      "vread": {0: {0x9800: 0x400}, 1: {0x9800: 0x400}}},
 ]
 # <<< factory DrawPlayArea_BenchCards
@@ -1046,7 +1047,7 @@ CONTRACT["EraseCheckMenuCursor_YourOrOppPlayArea"] = {"compare": ("a", "f"), "pr
 CASES["EraseCheckMenuCursor_YourOrOppPlayArea"] = [
     {"vread": {0: {0x9800: 0x400}}},
     dict(POISON, vread={0: {0x9800: 0x400}}),
-    {"wram": {0xCE50: b"\xC2", 0xCE51: b"\xC3"},
+    {"wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC3"},
      "vread": {0: {0x9800: 0x400}}},
 ]
 # <<< factory EraseCheckMenuCursor_YourOrOppPlayArea
@@ -1063,21 +1064,21 @@ CASES["LoadCursorTile"] = [
 CONTRACT["Func_8bf2"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("c",)}
 CASES["Func_8bf2"] = [
     {"vread": {0: {0x9800: 1}}},
-    {"hl": 0xC100, "c": 0x33,
-     "wram": {0xC100: b"\x06\x05\x06\x06", 0xC2EC: b"\x01",
-              0xCE50: b"\xC2", 0xCC08: b"\x02", 0xCAB4: b"\x01"},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 0x33,
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x06\x05\x06\x06", sym("wPlayerPrizes"): b"\x01",
+              sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wDuelInitialPrizes"): b"\x02", sym("wConsole"): b"\x01"},
      "vread": {0: {0x98A6: 1, 0x98C6: 1}}},
-    {"hl": 0xC100, "c": 0x33,
-     "wram": {0xC100: b"\x06\x05", 0xC2EC: b"\xFF",
-              0xCE50: b"\xC2", 0xCC08: b"\x01", 0xCAB4: b"\x01"},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 0x33,
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x06\x05", sym("wPlayerPrizes"): b"\xFF",
+              sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wDuelInitialPrizes"): b"\x01", sym("wConsole"): b"\x01"},
      "vread": {0: {0x98A6: 1}}},
-    {"hl": 0xC100, "c": 0x33,
-     "wram": {0xC100: b"\x07\x05", 0xC2EC: b"\x00",
-              0xCE50: b"\xC2", 0xCC08: b"\x01", 0xCAB4: b"\x02"},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 0x33,
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x07\x05", sym("wPlayerPrizes"): b"\x00",
+              sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wDuelInitialPrizes"): b"\x01", sym("wConsole"): b"\x02"},
      "vread": {0: {0x98A7: 1}, 1: {0x98A7: 1}}},
-    dict(POISON, hl=0xC100,
-         wram={0xC100: b"\x06\x05", 0xC2EC: b"\x0F",
-               0xCE50: b"\xC2", 0xCC08: b"\x00", 0xCAB4: b"\x01"},
+    dict(POISON, hl=sym("wDecompressionSecondaryBufferStart") + 0x11,
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x06\x05", sym("wPlayerPrizes"): b"\x0F",
+               sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC2", sym("wDuelInitialPrizes"): b"\x00", sym("wConsole"): b"\x01"},
          vread={0: {0x98A6: 1}}),
 ]
 # <<< factory Func_8bf2
@@ -1085,10 +1086,10 @@ CASES["Func_8bf2"] = [
 # >>> factory GetDuelInitialPrizesUpperBitsSet
 CONTRACT["GetDuelInitialPrizesUpperBitsSet"] = {"compare": (), "preserve": ()}
 CASES["GetDuelInitialPrizesUpperBitsSet"] = [
-    {"wram": {0xCC08: b"\x00"}, "read": {0xCE55: 1}},
-    dict(POISON, wram={0xCC08: b"\x01"}, read={0xCE55: 1}),
-    {"wram": {0xCC08: b"\x02"}, "read": {0xCE55: 1}},
-    {"wram": {0xCC08: b"\x06"}, "read": {0xCE55: 1}},
+    {"wram": {sym("wDuelInitialPrizes"): b"\x00"}, "read": {sym("wDuelInitialPrizesUpperBitsSet"): 1}},
+    dict(POISON, wram={sym("wDuelInitialPrizes"): b"\x01"}, read={sym("wDuelInitialPrizesUpperBitsSet"): 1}),
+    {"wram": {sym("wDuelInitialPrizes"): b"\x02"}, "read": {sym("wDuelInitialPrizesUpperBitsSet"): 1}},
+    {"wram": {sym("wDuelInitialPrizes"): b"\x06"}, "read": {sym("wDuelInitialPrizesUpperBitsSet"): 1}},
 ]
 # <<< factory GetDuelInitialPrizesUpperBitsSet
 
@@ -1111,180 +1112,180 @@ CASES["DrawYourOrOppPlayArea_DrawArrows"] = [
 # <<< factory DrawYourOrOppPlayArea_DrawArrows
 
 # >>> factory-cases-statics
-wYourOrOppPlayAreaLastCursorPosition = 0xCE5F
+wYourOrOppPlayAreaLastCursorPosition = sym("wYourOrOppPlayAreaLastCursorPosition")
 
-wCheckMenuCursorXPosition = 0xCEAF
-wCheckMenuCursorYPosition = 0xCEB0
-wYourOrOppPlayAreaLastCursorPosition = 0xCE5F
+wCheckMenuCursorXPosition = sym("wCheckMenuCursorXPosition")
+wCheckMenuCursorYPosition = sym("wCheckMenuCursorYPosition")
+wYourOrOppPlayAreaLastCursorPosition = sym("wYourOrOppPlayAreaLastCursorPosition")
 
-hTempCardIndex_ff9f = 0xFF9F
-hTemp_ffa0 = 0xFFA0
-wPlayerAttackingAttackIndex = 0xCC10
-wPlayerAttackingCardIndex = 0xCC11
-wSentAttackDataToLinkOpponent = 0xCCEC
+hTempCardIndex_ff9f = sym("hTempCardIndex_ff9f")
+hTemp_ffa0 = sym("hTemp_ffa0")
+wPlayerAttackingAttackIndex = sym("wPlayerAttackingAttackIndex")
+wPlayerAttackingCardIndex = sym("wPlayerAttackingCardIndex")
+wSentAttackDataToLinkOpponent = sym("wSentAttackDataToLinkOpponent")
 
-wCheckMenuPlayAreaWhichDuelist = 0xCE50
-wConsole = 0xCAB4
-wDuelInitialPrizes = 0xCC08
+wCheckMenuPlayAreaWhichDuelist = sym("wCheckMenuPlayAreaWhichDuelist")
+wConsole = sym("wConsole")
+wDuelInitialPrizes = sym("wDuelInitialPrizes")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wCheckMenuPlayAreaWhichLayout = 0xCE51
-wTileMapFill = 0xCAB6
-wVBlankOAMCopyToggle = 0xCAC0
+wCheckMenuPlayAreaWhichLayout = sym("wCheckMenuPlayAreaWhichLayout")
+wTileMapFill = sym("wTileMapFill")
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
 
-wConsole = 0xCAB4
-wDecimalDigitsSymbols = 0xCEB6
-wDefaultText = 0xC590
+wConsole = sym("wConsole")
+wDecimalDigitsSymbols = sym("wDecimalDigitsSymbols")
+wDefaultText = sym("wDefaultText")
 
-hWhoseTurn = 0xFF97
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC480
-wPlayerArenaCard = 0xC2BB
-wOpponentArenaCard = 0xC3BB
-wDuelTurns = 0xCC06
-wDuelType = 0xCC09
-wTempTurnDuelistCardID = 0xCCC3
-wTempNonTurnDuelistCardID = 0xCCC4
-s0a008 = 0xA008
-sDuelBuffer0 = 0xA000
+hWhoseTurn = sym("hWhoseTurn")
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wOpponentDeck")
+wPlayerArenaCard = sym("wPlayerArenaCard")
+wOpponentArenaCard = sym("wOpponentArenaCard")
+wDuelTurns = sym("wDuelTurns")
+wDuelType = sym("wDuelType")
+wTempTurnDuelistCardID = sym("wTempTurnDuelistCardID")
+wTempNonTurnDuelistCardID = sym("wTempNonTurnDuelistCardID")
+s0a008 = sym("s0a008")
+sDuelBuffer0 = sym("s0a000")
 BULBASAUR = 0x08
 IVYSAUR = 0x09
 
-hDPadHeld = 0xFF8F
-hKeysPressed = 0xFF91
-wMenuInputSFX = 0xCFE3
-wCheckMenuCursorXPosition = 0xCEAF
-wCheckMenuCursorYPosition = 0xCEB0
-wCheckMenuCursorBlinkCounter = 0xCEA3
+hDPadHeld = sym("hDPadHeld")
+hKeysPressed = sym("hKeysPressed")
+wMenuInputSFX = sym("wMenuInputSFX")
+wCheckMenuCursorXPosition = sym("wCheckMenuCursorXPosition")
+wCheckMenuCursorYPosition = sym("wCheckMenuCursorYPosition")
+wCheckMenuCursorBlinkCounter = sym("wCheckMenuCursorBlinkCounter")
 
-wCheckMenuPlayAreaWhichDuelist = 0xCE50
-wDefaultText = 0xC590
+wCheckMenuPlayAreaWhichDuelist = sym("wCheckMenuPlayAreaWhichDuelist")
+wDefaultText = sym("wDefaultText")
 
-wDefaultText = 0xC590
+wDefaultText = sym("wDefaultText")
 
-hTempPlayAreaLocation_ff9d = 0xFF9D
-wCurPlayAreaSlot = 0xCBC9
-wCurPlayAreaY = 0xCBCA
-wLoadedCard1Atk1Name = 0xCC34
-wLoadedCard1Atk1Description = 0xCC36
-hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
+wCurPlayAreaSlot = sym("wCurPlayAreaSlot")
+wCurPlayAreaY = sym("wCurPlayAreaY")
+wLoadedCard1Atk1Name = sym("wLoadedCard1Atk1Name")
+wLoadedCard1Atk1Description = sym("wLoadedCard1Atk1Description")
+hWhoseTurn = sym("hWhoseTurn")
 PLAYER_TURN = 0xC2
-wPlayerDeck = 0xC400
-wPlayerArenaCard = 0xC2BB
-wConsole = 0xCAB4
-wDefaultText = 0xC590
+wPlayerDeck = sym("wPlayerDeck")
+wPlayerArenaCard = sym("wPlayerArenaCard")
+wConsole = sym("wConsole")
+wDefaultText = sym("wDefaultText")
 DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
 DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
 
-hWhoseTurn = 0xFF97
+hWhoseTurn = sym("hWhoseTurn")
 PLAYER_TURN = 0xC2
 OPPONENT_TURN = 0xC3
-wCheckMenuPlayAreaWhichDuelist = 0xCE50
-wCheckMenuPlayAreaWhichLayout = 0xCE51
-wIsSwapTurnPending = 0xCE56
-wDefaultText = 0xC730
+wCheckMenuPlayAreaWhichDuelist = sym("wCheckMenuPlayAreaWhichDuelist")
+wCheckMenuPlayAreaWhichLayout = sym("wCheckMenuPlayAreaWhichLayout")
+wIsSwapTurnPending = sym("wIsSwapTurnPending")
+wDefaultText = sym("wc700") + 0x30
 
-hWhoseTurn = 0xFF97
-wCheckMenuPlayAreaWhichDuelist = 0xCE50
-wCheckMenuPlayAreaWhichLayout = 0xCE51
-wDefaultText = 0xC590
-wTileMapFill = 0xCAB6
-wVBlankOAMCopyToggle = 0xCAC0
+hWhoseTurn = sym("hWhoseTurn")
+wCheckMenuPlayAreaWhichDuelist = sym("wCheckMenuPlayAreaWhichDuelist")
+wCheckMenuPlayAreaWhichLayout = sym("wCheckMenuPlayAreaWhichLayout")
+wDefaultText = sym("wDefaultText")
+wTileMapFill = sym("wTileMapFill")
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
 
-wCheckMenuPlayAreaWhichDuelist = 0xCE50
-wCheckMenuPlayAreaWhichLayout = 0xCE51
+wCheckMenuPlayAreaWhichDuelist = sym("wCheckMenuPlayAreaWhichDuelist")
+wCheckMenuPlayAreaWhichLayout = sym("wCheckMenuPlayAreaWhichLayout")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hWhoseTurn = 0xFF97
-wIsSwapTurnPending = 0xCE56
-wMenuInputTablePointer = 0xCE53
-wVBlankOAMCopyToggle = 0xCAC0
-wYourOrOppPlayAreaCurPosition = 0xCE52
-wDefaultText = 0xC590
+hWhoseTurn = sym("hWhoseTurn")
+wIsSwapTurnPending = sym("wIsSwapTurnPending")
+wMenuInputTablePointer = sym("wMenuInputTablePointer")
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
+wYourOrOppPlayAreaCurPosition = sym("wYourOrOppPlayAreaCurPosition")
+wDefaultText = sym("wDefaultText")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hWhoseTurn = 0xFF97
-wPlayerDuelVariables = 0xC200
-wPlayerDeck = 0xC400
-wLoadedCard1Name = 0xCC27
-wLoadedAttackName = 0xCCAA
-wDefaultText = 0xC590
-wTxRam2 = 0xCE3F
+hWhoseTurn = sym("hWhoseTurn")
+wPlayerDuelVariables = sym("wPlayerDuelVariables")
+wPlayerDeck = sym("wPlayerDeck")
+wLoadedCard1Name = sym("wLoadedCard1Name")
+wLoadedAttackName = sym("wLoadedAttackName")
+wDefaultText = sym("wDefaultText")
+wTxRam2 = sym("wTxRam2")
 TEXT_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-wEffectFailed = 0xCCED
+wEffectFailed = sym("wEffectFailed")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wTileMapFill = 0xCAB6
-wDuelDisplayedScreen = 0xCAC2
-wCheckMenuPlayAreaWhichDuelist = 0xCE50
-wCheckMenuPlayAreaWhichLayout = 0xCE51
-hWhoseTurn = 0xFF97
-wLCDC = 0xCABB
+wTileMapFill = sym("wTileMapFill")
+wDuelDisplayedScreen = sym("wDuelDisplayedScreen")
+wCheckMenuPlayAreaWhichDuelist = sym("wCheckMenuPlayAreaWhichDuelist")
+wCheckMenuPlayAreaWhichLayout = sym("wCheckMenuPlayAreaWhichLayout")
+hWhoseTurn = sym("hWhoseTurn")
+wLCDC = sym("wLCDC")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hWhoseTurn = 0xFF97
-wDuelDisplayedScreen = 0xCAC2
-wPlayerDuelVariables = 0xC200
-wPlayerDeck = 0xC400
-wLoadedCard1Name = 0xCC27
-wLoadedAttackName = 0xCCAA
-wDefaultText = 0xC590
-wTxRam2 = 0xCE3F
+hWhoseTurn = sym("hWhoseTurn")
+wDuelDisplayedScreen = sym("wDuelDisplayedScreen")
+wPlayerDuelVariables = sym("wPlayerDuelVariables")
+wPlayerDeck = sym("wPlayerDeck")
+wLoadedCard1Name = sym("wLoadedCard1Name")
+wLoadedAttackName = sym("wLoadedAttackName")
+wDefaultText = sym("wDefaultText")
+wTxRam2 = sym("wTxRam2")
 TEXT_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-hTempCardIndex_ff98 = 0xFF98
-hTempCardIndex_ff9f = 0xFF9F
-wLoadedAttackCategory = 0xCCB1
-wLoadedAttackEffectCommands = 0xCCB2
-wLoadedCard1ID = 0xCC2B
-wLoadedCard1Name = 0xCC27
-wLoadedAttackName = 0xCCAA
-wTempTurnDuelistCardID = 0xCCC3
-wTxRam2 = 0xCE3F
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC480
-hWhoseTurn = 0xFF97
+hTempCardIndex_ff98 = sym("hTempCardIndex_ff98")
+hTempCardIndex_ff9f = sym("hTempCardIndex_ff9f")
+wLoadedAttackCategory = sym("wLoadedAttackCategory")
+wLoadedAttackEffectCommands = sym("wLoadedAttackEffectCommands")
+wLoadedCard1ID = sym("wLoadedCard1ID")
+wLoadedCard1Name = sym("wLoadedCard1Name")
+wLoadedAttackName = sym("wLoadedAttackName")
+wTempTurnDuelistCardID = sym("wTempTurnDuelistCardID")
+wTxRam2 = sym("wTxRam2")
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wOpponentDeck")
+hWhoseTurn = sym("hWhoseTurn")
 
-wNumberOfPrizeCardsToSelect = 0xCE59
-wYourOrOppPlayAreaCurPosition = 0xCE52
-hTemp_ffa0 = 0xFFA0
-hTempPlayAreaLocation_ffa1 = 0xFFA1
-hWhoseTurn = 0xFF97
+wNumberOfPrizeCardsToSelect = sym("wNumberOfPrizeCardsToSelect")
+wYourOrOppPlayAreaCurPosition = sym("wYourOrOppPlayAreaCurPosition")
+hTemp_ffa0 = sym("hTemp_ffa0")
+hTempPlayAreaLocation_ffa1 = sym("hTempPlayAreaLocation_ffa1")
+hWhoseTurn = sym("hWhoseTurn")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hWhoseTurn = 0xFF97
-hTempCardIndex_ff98 = 0xFF98
-hTempCardIndex_ff9f = 0xFF9F
-wLCDC = 0xCABB
+hWhoseTurn = sym("hWhoseTurn")
+hTempCardIndex_ff98 = sym("hTempCardIndex_ff98")
+hTempCardIndex_ff9f = sym("hTempCardIndex_ff9f")
+wLCDC = sym("wLCDC")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hWhoseTurn = 0xFF97
-wPlayerArenaCardStatus = 0xC2F0
-wConfusionAttackCheckWasUnsuccessful = 0xCCC9
+hWhoseTurn = sym("hWhoseTurn")
+wPlayerArenaCardStatus = sym("wPlayerArenaCardStatus")
+wConfusionAttackCheckWasUnsuccessful = sym("wConfusionAttackCheckWasUnsuccessful")
 
-wLoadedAttackCategory = 0xCCB1
-wNoDamageOrEffect = 0xCCC7
-wStatusConditionQueueIndex = 0xCCCD
-wTempPlayAreaLocation_cceb = 0xCCEB
-wTempNonTurnDuelistCardID = 0xCCC4
-hWhoseTurn = 0xFF97
+wLoadedAttackCategory = sym("wLoadedAttackCategory")
+wNoDamageOrEffect = sym("wNoDamageOrEffect")
+wStatusConditionQueueIndex = sym("wStatusConditionQueueIndex")
+wTempPlayAreaLocation_cceb = sym("wTempPlayAreaLocation_cceb")
+wTempNonTurnDuelistCardID = sym("wTempNonTurnDuelistCardID")
+hWhoseTurn = sym("hWhoseTurn")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hWhoseTurn = 0xFF97
-wPlayerDuelVariables = 0xC200
-wPlayerDeck = 0xC400
-wNoDamageOrEffect = 0xCCC7
-wTempPlayAreaLocation_cceb = 0xCCEB
+hWhoseTurn = sym("hWhoseTurn")
+wPlayerDuelVariables = sym("wPlayerDuelVariables")
+wPlayerDeck = sym("wPlayerDeck")
+wNoDamageOrEffect = sym("wNoDamageOrEffect")
+wTempPlayAreaLocation_cceb = sym("wTempPlayAreaLocation_cceb")
 
-wLoadedAttackAnimation = 0xCCB8
+wLoadedAttackAnimation = sym("wLoadedAttackAnimation")
 
 # DealRecoilDamageToSelf reuses the confusion-damage fixture, but its own write
 # to wLoadedAttackAnimation means the recoil animation really plays, so the
@@ -1309,14 +1310,14 @@ wLoadedAttackAnimation = 0xCCB8
 #     DrawDamageAnimationNumbers then fills every damage-char slot and the
 #     reference burns its budget without returning, so the poisoned case poisons
 #     f/b/c/d/e/hl and keeps a at $50.
-_drdts_arena_hp = 0xC2C8
-_drdts_wLoadedAttackAnimation = 0xCCB8
-_drdts_wDamage = 0xCCB9
-_drdts_wDamageEffectiveness = 0xCCC1
-_drdts_wTempTurn = 0xCCC3
-_drdts_wTempNonTurn = 0xCCC4
-_drdts_wNoDamageOrEffect = 0xCCC7
-_drdts_wAnimationsDisabled = 0xD421
+_drdts_arena_hp = sym("wPlayerArenaCardHP")
+_drdts_wLoadedAttackAnimation = sym("wLoadedAttackAnimation")
+_drdts_wDamage = sym("wDamage")
+_drdts_wDamageEffectiveness = sym("wDamageEffectiveness")
+_drdts_wTempTurn = sym("wTempTurnDuelistCardID")
+_drdts_wTempNonTurn = sym("wTempNonTurnDuelistCardID")
+_drdts_wNoDamageOrEffect = sym("wNoDamageOrEffect")
+_drdts_wAnimationsDisabled = sym("wAnimationsDisabled")
 
 def _drdts(**kw):
     case = {"wram": {_drdts_arena_hp: b"\x40", _drdts_wDamage: b"\x00\x00",
@@ -1345,18 +1346,18 @@ _hps_setup = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x4
 # card 0 is deck index 0 and that deck slot holds BULBASAUR, so a real card page
 # renders and pages out under the A taps instead of running on garbage card data.
 _hps_wram = {
-    0xFF97: b"\xC2",
-    0xC23C: b"\x00",
-    0xC2EC: b"\x3F",
-    0xC400: b"\x08",
-    0xCABB: b"\x00",
+    sym("hWhoseTurn"): b"\xC2",
+    sym("wPlayerPrizeCards"): b"\x00",
+    sym("wPlayerPrizes"): b"\x3F",
+    sym("wBoosterCardsDrawn"): b"\x08",
+    sym("wLCDC"): b"\x00",
 }
 # wYourOrOppPlayAreaCurPosition, wTransitionTablePtr (2), wIsSwapTurnPending and
 # wce5c: exactly the bytes this routine writes itself. Nothing here is touched by
 # the VBlank handler or by anything inside the card page.
-_hps_read = {0xCE52: 1, 0xCE53: 2, 0xCE56: 1, 0xCE5C: 1}
+_hps_read = {sym("wInPlayAreaCurPosition"): 1, sym("wMenuInputTablePointer"): 2, sym("wIsSwapTurnPending"): 1, sym("wce5c"): 1}
 
-wce5e = 0xCE5E
+wce5e = sym("wce5e")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -1365,28 +1366,28 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wSelectedAttack = 0xCCC6
-hTempCardIndex_ff9f = 0xFF9F
-wTempCardID_ccc2 = 0xCCC2
-wLoadedAttackCategory = 0xCCB1
-wPlayerAttackingAttackIndex = 0xCC10
-wPlayerAttackingCardIndex = 0xCC11
-wPlayerAttackingCardID = 0xCC12
-wLoadedAttackEffectCommands = 0xCCB2
-hWhoseTurn = 0xFF97
-wDuelType = 0xCC09
-wOpponentDuelVariables = 0xC300
+wSelectedAttack = sym("wSelectedAttack")
+hTempCardIndex_ff9f = sym("hTempCardIndex_ff9f")
+wTempCardID_ccc2 = sym("wTempCardID_ccc2")
+wLoadedAttackCategory = sym("wLoadedAttackCategory")
+wPlayerAttackingAttackIndex = sym("wPlayerAttackingAttackIndex")
+wPlayerAttackingCardIndex = sym("wPlayerAttackingCardIndex")
+wPlayerAttackingCardID = sym("wPlayerAttackingCardID")
+wLoadedAttackEffectCommands = sym("wLoadedAttackEffectCommands")
+hWhoseTurn = sym("hWhoseTurn")
+wDuelType = sym("wDuelType")
+wOpponentDuelVariables = sym("wOpponentDuelVariables")
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
 CONTRACT["DrawYourOrOppPlayArea_EraseArrows"] = {"compare": (), "preserve": ()}
 CASES["DrawYourOrOppPlayArea_EraseArrows"] = [
-    {"wram": {0xCE5F: b"\x00"},
+    {"wram": {sym("wYourOrOppPlayAreaLastCursorPosition"): b"\x00"},
      "vread": {0: {0x98A5: 1, 0x9940: 1, 0x9944: 1, 0x9948: 1,
                     0x994C: 1, 0x9950: 1}}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD,
      "e": 0xEE, "hl": 0x1234,
-     "wram": {0xCE5F: b"\x00"},
+     "wram": {sym("wYourOrOppPlayAreaLastCursorPosition"): b"\x00"},
      "vread": {0: {0x98A5: 1, 0x9940: 1, 0x9944: 1, 0x9948: 1,
                     0x994C: 1, 0x9950: 1}}},
 ]
@@ -1413,15 +1414,15 @@ CASES["SendAttackDataToLinkOpponent"] = [
 # >>> factory DrawPlayArea_PrizeCards
 CONTRACT["DrawPlayArea_PrizeCards"] = {"compare": (), "preserve": ()}
 CASES["DrawPlayArea_PrizeCards"] = [
-    {"hl": 0xC500,
-     "wram": {0xCE50: b"\xC4", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x00", 0xC500: b"\x00\x00\x00\x02"},
+    {"hl": sym("wNameBuffer"),
+     "wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC4", sym("wOpponentDeck") + 0x6C: b"\x01", sym("wDuelInitialPrizes"): b"\x02", sym("wConsole"): b"\x00", sym("wNameBuffer"): b"\x00\x00\x00\x02"},
      "vread": {0: {0x9800: 2, 0x9820: 2, 0x9840: 2, 0x9860: 2}}},
-    {"hl": 0xC510,
-     "wram": {0xCE50: b"\xC4", 0xC4EC: b"\x02", 0xCC08: b"\x02", 0xCAB4: b"\x00", 0xC510: b"\x00\x00\x00\x02"},
+    {"hl": sym("wDuelTempList"),
+     "wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC4", sym("wOpponentDeck") + 0x6C: b"\x02", sym("wDuelInitialPrizes"): b"\x02", sym("wConsole"): b"\x00", sym("wDuelTempList"): b"\x00\x00\x00\x02"},
      "vread": {0: {0x9800: 2, 0x9820: 2, 0x9840: 2, 0x9860: 2}}},
     dict(POISON,
-         hl=0xC520,
-         wram={0xCE50: b"\xC4", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x02", 0xC520: b"\x00\x00\x00\x02"},
+         hl=sym("wDuelTempList") + 0x10,
+         wram={sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC4", sym("wOpponentDeck") + 0x6C: b"\x01", sym("wDuelInitialPrizes"): b"\x02", sym("wConsole"): b"\x02", sym("wDuelTempList") + 0x10: b"\x00\x00\x00\x02"},
          vread={0: {0x9800: 2, 0x9820: 2, 0x9840: 2, 0x9860: 2},
                 1: {0x9800: 2, 0x9820: 2, 0x9840: 2, 0x9860: 2}}),
 ]
@@ -1435,7 +1436,7 @@ CONTRACT["_DrawPlayersPrizeAndBenchCards"] = {"compare": (), "preserve": ()}
 # asm passes the table by ROM address and writes no WRAM while doing so.
 CASES["_DrawPlayersPrizeAndBenchCards"] = [
     {"instruction_budget": 1000000, "cycle_budget": 4000000,
-     "wram": {0xCC08: b"\x02", 0xC2EC: b"\x01", 0xC3EC: b"\x03", 0xCAB4: b"\x00", 0xC100: b"\x00" * 12},
+     "wram": {sym("wDuelInitialPrizes"): b"\x02", sym("wPlayerPrizes"): b"\x01", sym("wOpponentPrizes"): b"\x03", sym("wConsole"): b"\x00", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00" * 12},
      "read": {wCheckMenuPlayAreaWhichLayout: 1, wTileMapFill: 1, wVBlankOAMCopyToggle: 1},
      "vread": {0: {0x9806: 2, 0x9826: 2, 0x9846: 2, 0x9866: 2, 0x9A04: 2, 0x9A24: 2, 0x9A44: 2, 0x9A64: 2}},
      "expect": {wCheckMenuPlayAreaWhichLayout: b"\xC2", wTileMapFill: b"\x00", wVBlankOAMCopyToggle: b"\x01"}},
@@ -1448,27 +1449,27 @@ CASES["_DrawPlayersPrizeAndBenchCards"] = [
 # >>> factory DrawPlayArea_HandText
 CONTRACT["DrawPlayArea_HandText"] = {"compare": ("b", "c", "hl"), "preserve": ("c",)}
 CASES["DrawPlayArea_HandText"] = [
-    {"b": 0x00, "c": 0x07, "hl": 0xC500, "wram": {0xC500: b"\x01\x02"},
+    {"b": 0x00, "c": 0x07, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x01\x02"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC590: 7, 0xCEB6: 2}},
-    dict(POISON, b=0x00, c=0x07, hl=0xC500, wram={0xC500: b"\x01\x02"},
+     "read": {sym("wCurDeckCardChanges"): 7, sym("wDecimalDigitsSymbols"): 2}},
+    dict(POISON, b=0x00, c=0x07, hl=sym("wNameBuffer"), wram={sym("wNameBuffer"): b"\x01\x02"},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xC590: 7, 0xCEB6: 2}),
-    {"b": 0x2D, "c": 0x11, "hl": 0xC500, "wram": {0xC500: b"\x03\x04"},
+         read={sym("wCurDeckCardChanges"): 7, sym("wDecimalDigitsSymbols"): 2}),
+    {"b": 0x2D, "c": 0x11, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x03\x04"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xC590: 7, 0xCEB6: 2}},
+     "read": {sym("wCurDeckCardChanges"): 7, sym("wDecimalDigitsSymbols"): 2}},
 ]
 # <<< factory DrawPlayArea_HandText
 
 # >>> factory DrawPlayArea_IconWithValue
 CONTRACT["DrawPlayArea_IconWithValue"] = {"compare": ("hl",), "preserve": (), "wram_out": True}
 CASES["DrawPlayArea_IconWithValue"] = [
-    {"a": 0xD4, "b": 0x2A, "c": 0x33, "hl": 0xC500,
-     "wram": {wConsole: b"\x00", 0xC500: b"\x0F\x02"},
+    {"a": 0xD4, "b": 0x2A, "c": 0x33, "hl": sym("wNameBuffer"),
+     "wram": {wConsole: b"\x00", sym("wNameBuffer"): b"\x0F\x02"},
      "read": {wDefaultText: 7, wDecimalDigitsSymbols: 2},
      "expect": {wDefaultText: b"\x05\x2D\x05\x32\x05\x20\x00", wDecimalDigitsSymbols: b"\x20\x32"}},
-    dict(POISON, a=0xD8, b=0x63, hl=0xC510,
-         wram={wConsole: b"\x02", 0xC510: b"\x01\x09"},
+    dict(POISON, a=0xD8, b=0x63, hl=sym("wDuelTempList"),
+         wram={wConsole: b"\x02", sym("wDuelTempList"): b"\x01\x09"},
          read={wDefaultText: 7, wDecimalDigitsSymbols: 2},
          expect={wDefaultText: b"\x05\x2D\x05\x36\x05\x26\x00", wDecimalDigitsSymbols: b"\x26\x36"}),
 ]
@@ -1521,10 +1522,10 @@ CASES["HandleCheckMenuInput_YourOrOppPlayArea"] = [
 # >>> factory DrawYourOrOppPlayArea_Icons
 CONTRACT["DrawYourOrOppPlayArea_Icons"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DrawYourOrOppPlayArea_Icons"] = [
-    {"a": 0x00, "wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03"},
+    {"a": 0x00, "wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03"},
      "read": {wDefaultText: 7},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, a=0x01, wram={wCheckMenuPlayAreaWhichDuelist: b"\xC3", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
+    dict(POISON, a=0x01, wram={wCheckMenuPlayAreaWhichDuelist: b"\xC3", sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00"},
          read={wDefaultText: 7},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
@@ -1533,11 +1534,11 @@ CASES["DrawYourOrOppPlayArea_Icons"] = [
 # >>> factory DrawInPlayArea_Icons
 CONTRACT["DrawInPlayArea_Icons"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DrawInPlayArea_Icons"] = [
-    {"hl": 0xC500, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-              0xC500: b"\x0F\x02\x0F\x04\x0F\x06"}, "read": {wDefaultText: 7},
+    {"hl": sym("wNameBuffer"), "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+              sym("wNameBuffer"): b"\x0F\x02\x0F\x04\x0F\x06"}, "read": {wDefaultText: 7},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, hl=0xC500, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-              0xC500: b"\x0F\x02\x0F\x04\x0F\x06"}, read={wDefaultText: 7},
+    dict(POISON, hl=sym("wNameBuffer"), wram={hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+              sym("wNameBuffer"): b"\x0F\x02\x0F\x04\x0F\x06"}, read={wDefaultText: 7},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory DrawInPlayArea_Icons
@@ -1573,14 +1574,14 @@ CONTRACT["_DrawPlayAreaToPlacePrizeCards"] = {"compare": (), "preserve": (), "wr
 CASES["_DrawPlayAreaToPlacePrizeCards"] = [
     {"instruction_budget": 20000000, "cycle_budget": 80000000,
      "wram": {hWhoseTurn: bytes((PLAYER_TURN,)),
-              0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-              0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
+              sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+              sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00"},
      "read": {wDefaultText: 7, wIsSwapTurnPending: 1, wCheckMenuPlayAreaWhichLayout: 1},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     dict(POISON, instruction_budget=20000000, cycle_budget=80000000,
          wram={hWhoseTurn: bytes((PLAYER_TURN,)),
-               0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
+               sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+               sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00"},
          read={wDefaultText: 7, wIsSwapTurnPending: 1, wCheckMenuPlayAreaWhichLayout: 1},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
@@ -1597,12 +1598,12 @@ CASES["UsePokemonPower"] = [
 # >>> factory DrawYourOrOppPlayArea_ActiveCardGfx
 CONTRACT["DrawYourOrOppPlayArea_ActiveCardGfx"] = {"compare": ("d", "e"), "preserve": ("d", "e")}
 CASES["DrawYourOrOppPlayArea_ActiveCardGfx"] = [
-    {"wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", 0xC2BB: b"\xFF", 0xC2BC: b"\x00"},
+    {"wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", sym("wPlayerArenaCard"): b"\xFF", sym("wPlayerBench"): b"\x00"},
      "sram": {}, "vread": {0: {0x8A00: 1, 0x9800: 1}}},
-    dict(POISON, wram={wCheckMenuPlayAreaWhichDuelist: b"\xC2", 0xC2BB: b"\xFF", 0xC2BC: b"\x00"},
+    dict(POISON, wram={wCheckMenuPlayAreaWhichDuelist: b"\xC2", sym("wPlayerArenaCard"): b"\xFF", sym("wPlayerBench"): b"\x00"},
          vread={0: {0x8A00: 1, 0x9800: 1}}),
     {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0x08, "e": 0x06,
-     "wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", 0xC2BB: b"\x00", wPlayerDeck: b"\x00"},
+     "wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", sym("wPlayerArenaCard"): b"\x00", wPlayerDeck: b"\x00"},
      "vread": {0: {0x8A00: 1, 0x98C8: 1}}},
 ]
 # <<< factory DrawYourOrOppPlayArea_ActiveCardGfx
@@ -1614,16 +1615,16 @@ CONTRACT["_DrawYourOrOppPlayAreaScreen"] = {"compare": (), "preserve": (), "wram
 # (2,1),(2,3) plus the (12,2) slot a wrong table drew into; 0xC100 seeded and
 # diffed because the table is passed by ROM address, never copied to WRAM.
 CASES["_DrawYourOrOppPlayAreaScreen"] = [
-    {"instruction_budget": 20000000, "cycle_budget": 80000000, "wram": {hWhoseTurn: b"\xC2", wCheckMenuPlayAreaWhichDuelist: b"\xC2", wCheckMenuPlayAreaWhichLayout: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16, 0xCC08: b"\x02", 0xC2EC: b"\x01", 0xC100: b"\x00" * 12}, "read": {wDefaultText: 7}, "vread": {0: {0x9822: 2, 0x9842: 2, 0x9862: 2, 0x9882: 2, 0x984C: 2}}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, instruction_budget=20000000, cycle_budget=80000000, wram={hWhoseTurn: b"\xC2", wCheckMenuPlayAreaWhichDuelist: b"\xC3", wCheckMenuPlayAreaWhichLayout: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16}, read={wDefaultText: 7}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {"instruction_budget": 20000000, "cycle_budget": 80000000, "wram": {hWhoseTurn: b"\xC2", wCheckMenuPlayAreaWhichDuelist: b"\xC2", wCheckMenuPlayAreaWhichLayout: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03", sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16, sym("wDuelInitialPrizes"): b"\x02", sym("wPlayerPrizes"): b"\x01", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00" * 12}, "read": {wDefaultText: 7}, "vread": {0: {0x9822: 2, 0x9842: 2, 0x9862: 2, 0x9882: 2, 0x984C: 2}}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, instruction_budget=20000000, cycle_budget=80000000, wram={hWhoseTurn: b"\xC2", wCheckMenuPlayAreaWhichDuelist: b"\xC3", wCheckMenuPlayAreaWhichLayout: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03", sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16}, read={wDefaultText: 7}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory _DrawYourOrOppPlayAreaScreen
 
 # >>> factory DrawYourOrOppPlayAreaScreen
 CONTRACT["DrawYourOrOppPlayAreaScreen"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DrawYourOrOppPlayAreaScreen"] = [
-    {"hl": 0xC3C2, "instruction_budget": 20000000, "cycle_budget": 80000000, "wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", wCheckMenuPlayAreaWhichLayout: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", 0xC590: b"\x00" * 16}, "read": {0xC590: 7}, "expect": {wCheckMenuPlayAreaWhichDuelist: b"\xC3", wCheckMenuPlayAreaWhichLayout: b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, instruction_budget=20000000, cycle_budget=80000000, wram={wCheckMenuPlayAreaWhichDuelist: b"\xC2", wCheckMenuPlayAreaWhichLayout: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", 0xC590: b"\x00" * 16}, read={0xC590: 7}, expect={wCheckMenuPlayAreaWhichDuelist: b"\x12", wCheckMenuPlayAreaWhichLayout: b"\x34"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {"hl": sym("wOpponentArenaCardFlags"), "instruction_budget": 20000000, "cycle_budget": 80000000, "wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", wCheckMenuPlayAreaWhichLayout: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03", sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", sym("wCurDeckCardChanges"): b"\x00" * 16}, "read": {sym("wCurDeckCardChanges"): 7}, "expect": {wCheckMenuPlayAreaWhichDuelist: b"\xC3", wCheckMenuPlayAreaWhichLayout: b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, instruction_budget=20000000, cycle_budget=80000000, wram={wCheckMenuPlayAreaWhichDuelist: b"\xC2", wCheckMenuPlayAreaWhichLayout: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03", sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", sym("wCurDeckCardChanges"): b"\x00" * 16}, read={sym("wCurDeckCardChanges"): 7}, expect={wCheckMenuPlayAreaWhichDuelist: b"\x12", wCheckMenuPlayAreaWhichLayout: b"\x34"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory DrawYourOrOppPlayAreaScreen
 
@@ -1631,20 +1632,20 @@ CASES["DrawYourOrOppPlayAreaScreen"] = [
 CONTRACT["_DrawAIPeekScreen"] = {"compare": (), "preserve": ()}
 CASES["_DrawAIPeekScreen"] = [
     {"b": 0x00, "keys": 0x01, "instruction_budget": 20000000, "cycle_budget": 80000000,
-     "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16},
+     "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+               sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16},
      "read": {wIsSwapTurnPending: 1, wMenuInputTablePointer: 2, wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
      "vread": {0: {0x9800: 32, 0x9C00: 32}},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     dict(POISON, b=0x80, keys=0x01, instruction_budget=20000000, cycle_budget=80000000,
-         wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16},
+         wram={hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+               sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16},
          read={wIsSwapTurnPending: 1, wMenuInputTablePointer: 2, wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
          vread={0: {0x9800: 32, 0x9C00: 32}},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
     {"b": 0xFF, "keys": 0x01, "instruction_budget": 20000000, "cycle_budget": 80000000,
-     "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16},
+     "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+               sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16},
      "read": {wIsSwapTurnPending: 1, wMenuInputTablePointer: 2, wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
      "vread": {0: {0x9800: 32, 0x9C00: 32}},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]}]
@@ -1670,24 +1671,24 @@ CASES["PrintFailedEffectText"] = [
     # what made the real-text path look untestable.
     {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
      "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
-     "wram": {wEffectFailed: b"\x01", 0xFF9D: b"\x00"}, "expect_regs": {"f": 0x10}},
+     "wram": {wEffectFailed: b"\x01", sym("hTempPlayAreaLocation_ff9d"): b"\x00"}, "expect_regs": {"f": 0x10}},
     {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
      "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
-     "wram": {wEffectFailed: b"\x02", 0xFF9D: b"\x00"}, "expect_regs": {"f": 0x10}},
+     "wram": {wEffectFailed: b"\x02", sym("hTempPlayAreaLocation_ff9d"): b"\x00"}, "expect_regs": {"f": 0x10}},
 ]
 # <<< factory PrintFailedEffectText
 
 # >>> factory DrawInPlayArea_ActiveCardGfx
 CONTRACT["DrawInPlayArea_ActiveCardGfx"] = {"compare": (), "preserve": ()}
 CASES["DrawInPlayArea_ActiveCardGfx"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF"}, "read": {0xCE5D: 1}, "expect": {0xCE5D: b"\x00"}},
-    {"wram": {0xFF97: b"\xC3", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF"}, "read": {0xCE5D: 1}, "expect": {0xCE5D: b"\x00"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF"}, read={0xCE5D: 1}, expect={0xCE5D: b"\x00"}),
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\xFF", sym("wOpponentArenaCard"): b"\xFF"}, "read": {sym("wArenaCardsInPlayArea"): 1}, "expect": {sym("wArenaCardsInPlayArea"): b"\x00"}},
+    {"wram": {sym("hWhoseTurn"): b"\xC3", sym("wPlayerArenaCard"): b"\xFF", sym("wOpponentArenaCard"): b"\xFF"}, "read": {sym("wArenaCardsInPlayArea"): 1}, "expect": {sym("wArenaCardsInPlayArea"): b"\x00"}},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\xFF", sym("wOpponentArenaCard"): b"\xFF"}, read={sym("wArenaCardsInPlayArea"): 1}, expect={sym("wArenaCardsInPlayArea"): b"\x00"}),
     # Both arenas hold Bulbasaur (deck index 0, id $08): the card image tiles
     # land at v0Tiles1 $8A00 and $9500, the palette in wCardPalette, and the
     # 6x8 images in the BG map at (9,6) and (2,6).
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC400: b"\x08", 0xC480: b"\x08", 0xC200: b"\x10", 0xC300: b"\x10", 0xCABB: b"\x00"},
-         read={0xCE5D: 1, 0xCE23: 8, 0xCB21: 8}, vread={0: {0x8A00: 0x300, 0x9500: 0x300, 0x9800: 0x400}},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wBoosterCardsDrawn"): b"\x08", sym("wOpponentDeck"): b"\x08", sym("wPlayerCardLocations"): b"\x10", sym("wOpponentCardLocations"): b"\x10", sym("wLCDC"): b"\x00"},
+         read={sym("wArenaCardsInPlayArea"): 1, sym("wCardPalette"): 8, sym("wBackgroundPalettesCGB") + 0x31: 8}, vread={0: {0x8A00: 0x300, 0x9500: 0x300, 0x9800: 0x400}},
          instruction_budget=3000000, cycle_budget=12000000),
 ]
 # <<< factory DrawInPlayArea_ActiveCardGfx
@@ -1697,10 +1698,10 @@ CONTRACT["DrawInPlayAreaScreen"] = {"compare": (), "preserve": (), "wram_out": T
 # The whole BG map is read back: the prize-card and icon coordinate tables are
 # ROM literals, and a wrong table draws both lanes' screens differently.
 CASES["DrawInPlayAreaScreen"] = [
-    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2EF: b"\x01", 0xC3EF: b"\x01", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC400: b"\x08", 0xC480: b"\x08", 0xC200: b"\x10", 0xC300: b"\x10", 0xC2EC: b"\x3F", 0xC3EC: b"\x0F", 0xCC08: b"\x06"},
-     "read": {0xCAB6: 1, 0xCAC2: 1, 0xCE50: 1, 0xCE51: 1}, "vread": {0: {0x9800: 0x400}}, "instruction_budget": 3000000, "cycle_budget": 12000000},
-    dict(POISON, wram={0xFF97: b"\xC3", 0xCABB: b"\x00", 0xC2EF: b"\x01", 0xC3EF: b"\x01", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC400: b"\x08", 0xC480: b"\x08", 0xC200: b"\x10", 0xC300: b"\x10", 0xC2EC: b"\x3F", 0xC3EC: b"\x0F", 0xCC08: b"\x06"},
-         read={0xCAB6: 1, 0xCAC2: 1, 0xCE50: 1, 0xCE51: 1}, vread={0: {0x9800: 0x400}}, instruction_budget=3000000, cycle_budget=12000000),
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wBoosterCardsDrawn"): b"\x08", sym("wOpponentDeck"): b"\x08", sym("wPlayerCardLocations"): b"\x10", sym("wOpponentCardLocations"): b"\x10", sym("wPlayerPrizes"): b"\x3F", sym("wOpponentPrizes"): b"\x0F", sym("wDuelInitialPrizes"): b"\x06"},
+     "read": {sym("wTileMapFill"): 1, sym("wDuelDisplayedScreen"): 1, sym("wCheckMenuPlayAreaWhichDuelist"): 1, sym("wCheckMenuPlayAreaWhichLayout"): 1}, "vread": {0: {0x9800: 0x400}}, "instruction_budget": 3000000, "cycle_budget": 12000000},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC3", sym("wLCDC"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wBoosterCardsDrawn"): b"\x08", sym("wOpponentDeck"): b"\x08", sym("wPlayerCardLocations"): b"\x10", sym("wOpponentCardLocations"): b"\x10", sym("wPlayerPrizes"): b"\x3F", sym("wOpponentPrizes"): b"\x0F", sym("wDuelInitialPrizes"): b"\x06"},
+         read={sym("wTileMapFill"): 1, sym("wDuelDisplayedScreen"): 1, sym("wCheckMenuPlayAreaWhichDuelist"): 1, sym("wCheckMenuPlayAreaWhichLayout"): 1}, vread={0: {0x9800: 0x400}}, instruction_budget=3000000, cycle_budget=12000000),
 ]
 # <<< factory DrawInPlayAreaScreen
 
@@ -1731,8 +1732,8 @@ CONTRACT["_SelectPrizeCards"] = {"compare": (), "preserve": ()}
 # deck index and the terminator, $FFA0 the remaining mask. Nothing to select:
 # only the terminator and mask are written.
 CASES["_SelectPrizeCards"] = [
-    dict(_attack_fixture(**{"CE59": b"\x01"}), read={0xC200: 0x200, 0xCC00: 0x100, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 3}, **_ATTACK_REGS),
-    dict(_attack_fixture(vram=False, **{"CE59": b"\x00"}), read={0xC200: 0x200, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 3}, **POISON),
+    dict(_attack_fixture(changes={sym("wNumberOfPrizeCardsToSelect"): b"\x01"}), read={sym("wPlayerCardLocations"): 0x200, sym("wPracticeDuelTurn"): 0x100, sym("wInPlayAreaCurPosition"): 1, sym("wSelectedPrizeCardListPtr"): 2, sym("hTempList"): 3}, **_ATTACK_REGS),
+    dict(_attack_fixture(vram=False, changes={sym("wNumberOfPrizeCardsToSelect"): b"\x00"}), read={sym("wPlayerCardLocations"): 0x200, sym("wInPlayAreaCurPosition"): 1, sym("wSelectedPrizeCardListPtr"): 2, sym("hTempList"): 3}, **POISON),
 ]
 # <<< factory _SelectPrizeCards
 
@@ -1740,9 +1741,9 @@ CASES["_SelectPrizeCards"] = [
 CONTRACT["PlayTrainerCard"] = {"compare": ("f",), "preserve": ()}
 CASES["PlayTrainerCard"] = [
     dict(_full_heal_trainer_fixture(vram=False), **_FULL_HEAL_TRAINER_REGS, keys=[0x00, 0x01],
-         read={0xCE7F: 1, hTempCardIndex_ff9f: 1}, instruction_budget=20000000,
+         read={sym("wDamageAnimAmount"): 1, hTempCardIndex_ff9f: 1}, instruction_budget=20000000,
          cycle_budget=80000000),
-    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", 0xC2EB: b"\x02", hTempCardIndex_ff98: b"\x01", hTempCardIndex_ff9f: b"\x55", wLCDC: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={hTempCardIndex_ff9f: 1}, expect={hTempCardIndex_ff9f: b"\x55"}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", sym("wPlayerArenaCardSubstatus3"): b"\x02", hTempCardIndex_ff98: b"\x01", hTempCardIndex_ff9f: b"\x55", wLCDC: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={hTempCardIndex_ff9f: 1}, expect={hTempCardIndex_ff9f: b"\x55"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PlayTrainerCard
 
@@ -1773,18 +1774,18 @@ CASES["ApplyTransparencyIfApplicable"] = [
 # >>> factory DealDamageToPlayAreaPokemon
 CONTRACT["DealDamageToPlayAreaPokemon"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
 CASES["DealDamageToPlayAreaPokemon"] = [
-    {"b": 0x00, "d": 0x00, "e": 0x14, "wram": {0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCEB: 1}},
-    dict(POISON, b=0x00, d=0x00, e=0x14, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x01", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCEB: 1}),
-    {"b": 0x00, "d": 0x00, "e": 0x0A, "wram": {0xCCC7: b"\x02", 0xCCEB: b"\xAA"}, "read": {0xCCEB: 1}},
+    {"b": 0x00, "d": 0x00, "e": 0x14, "wram": {sym("wNoDamageOrEffect"): b"\x01", sym("wTempPlayAreaLocation_cceb"): b"\xAA"}, "read": {sym("wTempPlayAreaLocation_cceb"): 1}},
+    dict(POISON, b=0x00, d=0x00, e=0x14, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wBoosterCardsDrawn"): b"\x01", sym("wNoDamageOrEffect"): b"\x01", sym("wTempPlayAreaLocation_cceb"): b"\xAA"}, read={sym("wTempPlayAreaLocation_cceb"): 1}),
+    {"b": 0x00, "d": 0x00, "e": 0x0A, "wram": {sym("wNoDamageOrEffect"): b"\x02", sym("wTempPlayAreaLocation_cceb"): b"\xAA"}, "read": {sym("wTempPlayAreaLocation_cceb"): 1}},
 ]
 # <<< factory DealDamageToPlayAreaPokemon
 
 # >>> factory DealDamageToPlayAreaPokemon_RegularAnim
 CONTRACT["DealDamageToPlayAreaPokemon_RegularAnim"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
 CASES["DealDamageToPlayAreaPokemon_RegularAnim"] = [
-    {"b": 0x00, "d": 0x00, "e": 0x14, "wram": {0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCB8: 1, 0xCCEB: 1}},
-    dict(POISON, b=0x00, d=0x00, e=0x14, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x01", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCB8: 1, 0xCCEB: 1}),
-    {"b": 0x00, "d": 0x00, "e": 0x0A, "wram": {0xCCC7: b"\x02", 0xCCEB: b"\xAA"}, "read": {0xCCB8: 1, 0xCCEB: 1}},
+    {"b": 0x00, "d": 0x00, "e": 0x14, "wram": {sym("wNoDamageOrEffect"): b"\x01", sym("wTempPlayAreaLocation_cceb"): b"\xAA"}, "read": {sym("wLoadedAttackAnimation"): 1, sym("wTempPlayAreaLocation_cceb"): 1}},
+    dict(POISON, b=0x00, d=0x00, e=0x14, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wBoosterCardsDrawn"): b"\x01", sym("wNoDamageOrEffect"): b"\x01", sym("wTempPlayAreaLocation_cceb"): b"\xAA"}, read={sym("wLoadedAttackAnimation"): 1, sym("wTempPlayAreaLocation_cceb"): 1}),
+    {"b": 0x00, "d": 0x00, "e": 0x0A, "wram": {sym("wNoDamageOrEffect"): b"\x02", sym("wTempPlayAreaLocation_cceb"): b"\xAA"}, "read": {sym("wLoadedAttackAnimation"): 1, sym("wTempPlayAreaLocation_cceb"): 1}},
 ]
 # <<< factory DealDamageToPlayAreaPokemon_RegularAnim
 
@@ -1794,15 +1795,15 @@ CASES["DealDamageToPlayAreaPokemon_RegularAnim"] = [
 # pc=0x2380 (which is what the old AUTO-RETIRED "BUDGET_EXHAUSTED pc=9088" note
 # recorded), and the real run takes ~700k instructions so the default budget is
 # far too small.
-_dcdts_wDamage = 0xCCB9
-_dcdts_wNoDamageOrEffect = 0xCCC7
-_dcdts_wTempNonTurn = 0xCCC4
-_dcdts_wTempTurn = 0xCCC3
-_dcdts_wDamageEffectiveness = 0xCCC1
-_dcdts_arena_hp = 0xC2C8
+_dcdts_wDamage = sym("wDamage")
+_dcdts_wNoDamageOrEffect = sym("wNoDamageOrEffect")
+_dcdts_wTempNonTurn = sym("wTempNonTurnDuelistCardID")
+_dcdts_wTempTurn = sym("wTempTurnDuelistCardID")
+_dcdts_wDamageEffectiveness = sym("wDamageEffectiveness")
+_dcdts_arena_hp = sym("wPlayerArenaCardHP")
 
 def _dcdts(**kw):
-    case = {"wram": {0xFF97: b"\xC2", _dcdts_arena_hp: b"\x40",
+    case = {"wram": {sym("hWhoseTurn"): b"\xC2", _dcdts_arena_hp: b"\x40",
                      _dcdts_wDamage: b"\x00\x00", _dcdts_wNoDamageOrEffect: b"\x00",
                      _dcdts_wTempNonTurn: b"\x01", _dcdts_wTempTurn: b"\x01",
                      _dcdts_wDamageEffectiveness: b"\x00"},
@@ -1825,26 +1826,26 @@ CASES["DealConfusionDamageToSelf"] = [
 # >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile
 CONTRACT["OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile"] = {"compare": (), "preserve": ()}
 CASES["OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile"] = [
-    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00"}, "read": {sym("wDuelTempList"): 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x02", sym("wPlayerDeckCards"): b"\x11\x22", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00", sym("wDuelTempList"): b"\xFF", sym("wNoItemSelectionMenuKeys"): b"\x00"}, "read": {sym("wNoItemSelectionMenuKeys"): 1, sym("wDuelTempList"): 3}, "expect": {sym("wNoItemSelectionMenuKeys"): b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00"}, read={sym("wDuelTempList"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile
 
 # >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand
 CONTRACT["OpenYourOrOppPlayAreaScreen_NonTurnHolderHand"] = {"compare": (), "preserve": ()}
 CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderHand"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC3EE: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC2"}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC3EE: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC2"}}
+    {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC2"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC2"}}
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand
 
 # >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderHand
 CONTRACT["OpenYourOrOppPlayAreaScreen_TurnHolderHand"] = {"compare": ("a", "f"), "preserve": ("f",)}
 CASES["OpenYourOrOppPlayAreaScreen_TurnHolderHand"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC1", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC1"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, read={0xFF97: 1}, expect={0xFF97: b"\xC2"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC1", sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC1"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, read={sym("hWhoseTurn"): 1}, expect={sym("hWhoseTurn"): b"\xC2"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderHand
 
@@ -1863,18 +1864,18 @@ CASES["DealRecoilDamageToSelf"] = [
 # >>> factory DuelCheckMenu_Glossary
 CONTRACT["DuelCheckMenu_Glossary"] = {"compare": (), "preserve": ()}
 CASES["DuelCheckMenu_Glossary"] = [
-    {"keys": [0x00, 0x02], "wram": {0xCE62: b"\x00", 0xCE52: b"\x00", 0xCE55: b"\xFF", 0xCEA3: b"\x00", 0xCAB6: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": [0x00, 0x02], "wram": {0xCE62: b"\x01", 0xCE52: b"\x00", 0xCE55: b"\xFF", 0xCEA3: b"\x00", 0xCAB6: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], wram={0xCE62: b"\x00", 0xCE52: b"\x00", 0xCE55: b"\xFF", 0xCEA3: b"\x00", 0xCAB6: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"keys": [0x00, 0x02], "wram": {sym("wGlossaryPageNo"): b"\x00", sym("wInPlayAreaCurPosition"): b"\x00", sym("wDuelInitialPrizesUpperBitsSet"): b"\xFF", sym("wCheckMenuCursorBlinkCounter"): b"\x00", sym("wTileMapFill"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x02], "wram": {sym("wGlossaryPageNo"): b"\x01", sym("wInPlayAreaCurPosition"): b"\x00", sym("wDuelInitialPrizesUpperBitsSet"): b"\xFF", sym("wCheckMenuCursorBlinkCounter"): b"\x00", sym("wTileMapFill"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={sym("wGlossaryPageNo"): b"\x00", sym("wInPlayAreaCurPosition"): b"\x00", sym("wDuelInitialPrizesUpperBitsSet"): b"\xFF", sym("wCheckMenuCursorBlinkCounter"): b"\x00", sym("wTileMapFill"): b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory DuelCheckMenu_Glossary
 
 # >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile
 CONTRACT["OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile"] = {"compare": (), "preserve": ()}
 CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile"] = [
-    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00"}, "read": {sym("wDuelTempList"): 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x02", sym("wPlayerDeckCards"): b"\x11\x22", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00", sym("wDuelTempList"): b"\xFF", sym("wNoItemSelectionMenuKeys"): b"\x00"}, "read": {sym("wNoItemSelectionMenuKeys"): 1, sym("wDuelTempList"): 3}, "expect": {sym("wNoItemSelectionMenuKeys"): b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00"}, read={sym("wDuelTempList"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile
 
@@ -1895,24 +1896,24 @@ CASES["_HandlePeekSelection"] = [
 # >>> factory _OpenDuelCheckMenu
 CONTRACT["_OpenDuelCheckMenu"] = {"compare": (), "preserve": ()}
 CASES["_OpenDuelCheckMenu"] = [
-    {"keys": [0x00, 0x02], "wram": {0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", wce5e: b"\x55"}, "read": {wce5e: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], wram={0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", wce5e: b"\xAA"}, read={wce5e: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "wram": {sym("hBankROM"): b"\x02", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", wce5e: b"\x55"}, "read": {wce5e: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={sym("hBankROM"): b"\x02", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", wce5e: b"\xAA"}, read={wce5e: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _OpenDuelCheckMenu
 
 # >>> factory DuelCheckMenu_InPlayArea
 CONTRACT["DuelCheckMenu_InPlayArea"] = {"compare": (), "preserve": ()}
 CASES["DuelCheckMenu_InPlayArea"] = [
-    {"wram": {0xCE60: b"\x55"}, "read": {0xCE60: 1}, "completion": {"mode": "pre-ret", "pc": 0x1DCA}},
-    dict(POISON, wram={0xCE60: b"\xAA"}, read={0xCE60: 1}, completion={"mode": "pre-ret", "pc": 0x1DCA}),
+    {"wram": {sym("wInPlayAreaFromSelectButton"): b"\x55"}, "read": {sym("wInPlayAreaFromSelectButton"): 1}, "completion": {"mode": "pre-ret", "pc": sym("SafeCopyDataDEtoHL")}},
+    dict(POISON, wram={sym("wInPlayAreaFromSelectButton"): b"\xAA"}, read={sym("wInPlayAreaFromSelectButton"): 1}, completion={"mode": "pre-ret", "pc": sym("SafeCopyDataDEtoHL")}),
 ]
 # <<< factory DuelCheckMenu_InPlayArea
 
 # >>> factory DuelCheckMenu_YourPlayArea
 CONTRACT["DuelCheckMenu_YourPlayArea"] = {"compare": (), "preserve": ()}
 CASES["DuelCheckMenu_YourPlayArea"] = [
-    {"keys": [0x00, 0x02], "wram": {0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", wce5e: b"\x55"}, "read": {wce5e: 1, 0xCE5F: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], wram={0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", wce5e: b"\xAA"}, read={wce5e: 1, 0xCE5F: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "wram": {sym("hBankROM"): b"\x02", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF", wce5e: b"\x55"}, "read": {wce5e: 1, sym("wYourOrOppPlayAreaLastCursorPosition"): 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={sym("hBankROM"): b"\x02", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF", wce5e: b"\xAA"}, read={wce5e: 1, sym("wYourOrOppPlayAreaLastCursorPosition"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory DuelCheckMenu_YourPlayArea
 
@@ -1920,8 +1921,8 @@ CASES["DuelCheckMenu_YourPlayArea"] = [
 CONTRACT["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = {"compare": (), "preserve": ()}
 CASES["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = [
     # The turn holder's play area screen until B; hWhoseTurn survives.
-    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, "read": {0xFF97: 1, 0xCBC9: 1, 0xCAC2: 1}, "expect": {0xFF97: b"\xC2"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x00", 0xC2C8: b"\x28", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00"}, read={0xFF97: 1, 0xCBC9: 1, 0xCAC2: 1}, expect={0xFF97: b"\xC2"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardStatus"): b"\x00", sym("wPlayerArenaCardHP"): b"\x28", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wBoosterCardsDrawn"): b"\x08", sym("wPlayerCardLocations"): b"\x10", sym("wLCDC"): b"\x00"}, "read": {sym("hWhoseTurn"): 1, sym("wCurPlayAreaSlot"): 1, sym("wDuelDisplayedScreen"): 1}, "expect": {sym("hWhoseTurn"): b"\xC2"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardStatus"): b"\x00", sym("wPlayerArenaCardHP"): b"\x28", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wBoosterCardsDrawn"): b"\x08", sym("wPlayerCardLocations"): b"\x10", sym("wLCDC"): b"\x00"}, read={sym("hWhoseTurn"): 1, sym("wCurPlayAreaSlot"): 1, sym("wDuelDisplayedScreen"): 1}, expect={sym("hWhoseTurn"): b"\xC2"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea
 
@@ -1929,16 +1930,16 @@ CASES["OpenYourOrOppPlayAreaScreen_TurnHolderPlayArea"] = [
 CONTRACT["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"] = {"compare": (), "preserve": ()}
 CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea"] = [
     # The opponent's play area screen until B; hWhoseTurn survives the swap inside.
-    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, "read": {0xFF97: 1, 0xCBC9: 1, 0xCAC2: 1}, "expect": {0xFF97: b"\xC2"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], wram={0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC3F0: b"\x00", 0xC3C8: b"\x28", 0xC3EF: b"\x01", 0xC480: b"\x08", 0xC300: b"\x10", 0xCABB: b"\x00"}, read={0xFF97: 1, 0xCBC9: 1, 0xCAC2: 1}, expect={0xFF97: b"\xC2"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentArenaCard"): b"\x00", sym("wOpponentArenaCardStatus"): b"\x00", sym("wOpponentArenaCardHP"): b"\x28", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wOpponentDeck"): b"\x08", sym("wOpponentCardLocations"): b"\x10", sym("wLCDC"): b"\x00"}, "read": {sym("hWhoseTurn"): 1, sym("wCurPlayAreaSlot"): 1, sym("wDuelDisplayedScreen"): 1}, "expect": {sym("hWhoseTurn"): b"\xC2"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={sym("hWhoseTurn"): b"\xC2", sym("wOpponentArenaCard"): b"\x00", sym("wOpponentArenaCardStatus"): b"\x00", sym("wOpponentArenaCardHP"): b"\x28", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wOpponentDeck"): b"\x08", sym("wOpponentCardLocations"): b"\x10", sym("wLCDC"): b"\x00"}, read={sym("hWhoseTurn"): 1, sym("wCurPlayAreaSlot"): 1, sym("wDuelDisplayedScreen"): 1}, expect={sym("hWhoseTurn"): b"\xC2"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderPlayArea
 
 # >>> factory DuelCheckMenu_OppPlayArea
 CONTRACT["DuelCheckMenu_OppPlayArea"] = {"compare": (), "preserve": ()}
 CASES["DuelCheckMenu_OppPlayArea"] = [
-    {"keys": [0x00, 0x02], "wram": {0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC200: b"\x00" * 0x100, 0xC300: b"\x00" * 0x100, 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", 0xC590: b"\x00" * 16, wce5e: b"\x55"}, "read": {wce5e: 1, 0xCE5F: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 30000000, "cycle_budget": 120000000},
-    dict(POISON, keys=[0x00, 0x02], wram={0xFF80: b"\x02", 0xFF97: b"\xC2", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xC200: b"\x00" * 0x100, 0xC300: b"\x00" * 0x100, 0xC2BC: b"\xFF", 0xC3BC: b"\xFF", 0xC590: b"\x00" * 16, wce5e: b"\xAA"}, read={wce5e: 1, 0xCE5F: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=30000000, cycle_budget=120000000),
+    {"keys": [0x00, 0x02], "wram": {sym("hBankROM"): b"\x02", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("wPlayerCardLocations"): b"\x00" * 0x100, sym("wOpponentCardLocations"): b"\x00" * 0x100, sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF", sym("wCurDeckCardChanges"): b"\x00" * 16, wce5e: b"\x55"}, "read": {wce5e: 1, sym("wYourOrOppPlayAreaLastCursorPosition"): 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 30000000, "cycle_budget": 120000000},
+    dict(POISON, keys=[0x00, 0x02], wram={sym("hBankROM"): b"\x02", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("wPlayerCardLocations"): b"\x00" * 0x100, sym("wOpponentCardLocations"): b"\x00" * 0x100, sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF", sym("wCurDeckCardChanges"): b"\x00" * 16, wce5e: b"\xAA"}, read={wce5e: 1, sym("wYourOrOppPlayAreaLastCursorPosition"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=30000000, cycle_budget=120000000),
 ]
 # <<< factory DuelCheckMenu_OppPlayArea
 
@@ -1960,16 +1961,16 @@ CONTRACT["HandleAfterDamageEffects"] = {"compare": ("a", "f"), "preserve": ()}
 # The second case knocks Machop out (HP 0) with no bench: Sam's replacement
 # fails, the duel finishes with the player's win.
 CASES["HandleAfterDamageEffects"] = [
-    dict(_attack_fixture(**{"C3C8": b"\x28"}), **_ATTACK_REGS),
-    dict(_attack_fixture(**{"C3C8": b"\x00", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}), **POISON),
+    dict(_attack_fixture(changes={sym("wOpponentArenaCardHP"): b"\x28"}), **_ATTACK_REGS),
+    dict(_attack_fixture(changes={sym("wOpponentArenaCardHP"): b"\x00", sym("wOpponentBench"): b"\xff" * 5, sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01"}), **POISON),
 ]
 # <<< factory HandleAfterDamageEffects
 
 # >>> factory Func_17ed
 CONTRACT["Func_17ed"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Func_17ed"] = [
-    dict(evidence="primary", oracle=False, why="Func_17ed falls through into HandleAfterDamageEffects, whose downstream effect handlers enter the live duel/frame loop and cannot complete as a standalone reference call; this bounded native case checks the derived return and writes.", hl=0x0031, keys=[0x00, 0x01], wram={0xCABB: b"\x00", 0xCCB9: b"\x34\x12", 0xCCC7: b"\x00"}, read={0xCCB9: 3}, expect_regs={"a": 0x03, "f": 0x00}, expect={0xCCB9: b"\x00\x00\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, evidence="primary", oracle=False, why="Func_17ed falls through into HandleAfterDamageEffects, whose downstream effect handlers enter the live duel/frame loop and cannot complete as a standalone reference call; this bounded native poison case checks the derived return and writes.", hl=0x0031, keys=[0x00, 0x01], wram={0xCABB: b"\x00", 0xCCB9: b"\xFF\xFF", 0xCCC7: b"\x7F"}, read={0xCCB9: 3}, expect_regs={"a": 0x03, "f": 0x00}, expect={0xCCB9: b"\x00\x00\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    dict(evidence="primary", oracle=False, why="Func_17ed falls through into HandleAfterDamageEffects, whose downstream effect handlers enter the live duel/frame loop and cannot complete as a standalone reference call; this bounded native case checks the derived return and writes.", hl=0x0031, keys=[0x00, 0x01], wram={sym("wLCDC"): b"\x00", sym("wDamage"): b"\x34\x12", sym("wNoDamageOrEffect"): b"\x00"}, read={sym("wDamage"): 3}, expect_regs={"a": 0x03, "f": 0x00}, expect={sym("wDamage"): b"\x00\x00\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, evidence="primary", oracle=False, why="Func_17ed falls through into HandleAfterDamageEffects, whose downstream effect handlers enter the live duel/frame loop and cannot complete as a standalone reference call; this bounded native poison case checks the derived return and writes.", hl=0x0031, keys=[0x00, 0x01], wram={sym("wLCDC"): b"\x00", sym("wDamage"): b"\xFF\xFF", sym("wNoDamageOrEffect"): b"\x7F"}, read={sym("wDamage"): 3}, expect_regs={"a": 0x03, "f": 0x00}, expect={sym("wDamage"): b"\x00\x00\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory Func_17ed
 
@@ -1980,7 +1981,7 @@ CONTRACT["PlayAttackAnimation_DealAttackDamage"] = {"compare": ("a", "f"), "pres
 # path runs too.
 CASES["PlayAttackAnimation_DealAttackDamage"] = [
     dict(_attack_fixture(), **_ATTACK_REGS),
-    dict(_attack_fixture(**{"C3C8": b"\x0a", "C3BC": b"\xff" * 5, "C3EF": b"\x01"}), **POISON),
+    dict(_attack_fixture(changes={sym("wOpponentArenaCardHP"): b"\x0a", sym("wOpponentBench"): b"\xff" * 5, sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01"}), **POISON),
 ]
 # <<< factory PlayAttackAnimation_DealAttackDamage
 
@@ -2006,18 +2007,18 @@ from tests.cases._schema_migration import legacy_to_schema
 # The wram seed is the UNION of DrawDuelHUDs' and DrawDuelMainScene's own registered
 # case seeds. 0xC2BB/0xC3BB = 0xFF marks both arena slots empty; without that,
 # DrawDuelHUDs draws HP for card ID 0 and never terminates on the native probe.
-_F1BB4_HUD = {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF",
-              0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00",
-              0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00",
-              0xCAC2: b"\x01"}
+_F1BB4_HUD = {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\xFF", sym("wOpponentArenaCard"): b"\xFF",
+              sym("wPlayerDuelistType"): b"\x00", sym("wPlayerArenaCardStatus"): b"\x00", sym("wOpponentDuelistType"): b"\x00", sym("wOpponentArenaCardStatus"): b"\x00",
+              sym("wPlayerPrizes"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x00", sym("wOpponentPrizes"): b"\x00", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x00",
+              sym("wDuelDisplayedScreen"): b"\x01"}
 _F1BB4_SETUP = [{"fn": "SetupText", "d": 0x30, "e": 0x7F}]
 CONTRACT["Func_1bb4"] = {"compare": ("a",), "preserve": ()}
 CASES["Func_1bb4"] = [
     {"b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000,
      "keys": 0x01, "cycle_budget": 40_000_000, "wram": dict(_F1BB4_HUD),
-     "setup": list(_F1BB4_SETUP), "read": {0xFF9D: 1}},
+     "setup": list(_F1BB4_SETUP), "read": {sym("hTempPlayAreaLocation_ff9d"): 1}},
     dict(POISON, keys=0x01, cycle_budget=40_000_000, wram=dict(_F1BB4_HUD),
-         setup=list(_F1BB4_SETUP), read={0xFF9D: 1}),
+         setup=list(_F1BB4_SETUP), read={sym("hTempPlayAreaLocation_ff9d"): 1}),
 ]
 # <<< factory Func_1bb4
 
@@ -2025,12 +2026,12 @@ CASES["Func_1bb4"] = [
 # >>> factory Func_82b6
 CONTRACT["Func_82b6"] = {"compare": (), "preserve": ()}
 CASES["Func_82b6"] = [
-    {"wram": {0xCE50: b"\xC4", 0xCE51: b"\xC4", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x00", 0xC100: b"\x00" * 12},
+    {"wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC4", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC4", sym("wOpponentDeck") + 0x6C: b"\x01", sym("wDuelInitialPrizes"): b"\x02", sym("wConsole"): b"\x00", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00" * 12},
      "vread": {0: {0x9822: 2, 0x9842: 2, 0x9862: 2, 0x9882: 2}}},
-    {"wram": {0xCE50: b"\xC4", 0xCE51: b"\xC3", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x00"},
+    {"wram": {sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC4", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC3", sym("wOpponentDeck") + 0x6C: b"\x01", sym("wDuelInitialPrizes"): b"\x02", sym("wConsole"): b"\x00"},
      "vread": {0: {0x99E9: 2, 0x9A09: 2, 0x9A29: 2, 0x9A49: 2}}},
     dict(POISON,
-         wram={0xCE50: b"\xC4", 0xCE51: b"\xC4", 0xC4EC: b"\x02", 0xCC08: b"\x02", 0xCAB4: b"\x00"},
+         wram={sym("wCheckMenuPlayAreaWhichDuelist"): b"\xC4", sym("wCheckMenuPlayAreaWhichLayout"): b"\xC4", sym("wOpponentDeck") + 0x6C: b"\x02", sym("wDuelInitialPrizes"): b"\x02", sym("wConsole"): b"\x00"},
          vread={0: {0x9822: 2, 0x9842: 2, 0x9862: 2, 0x9882: 2}}),
 ]
 # <<< factory Func_82b6
@@ -2327,7 +2328,7 @@ MUTATIONS["DuelCheckMenu_InPlayArea"] = {"source_symbol": "DuelCheckMenu_InPlayA
 # only exits on a keypress, so `pre-ret` stopped the reference while the native
 # lane ran into the loop. Both stop at the screen draw the loop opens with.
 for _record in SCHEMA2_CASES["DuelCheckMenu_InPlayArea"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x42CE, "bank": 2,
+    _record["completion"] = {"mode": "entry", "pc": sym("DrawInPlayAreaScreen"), "bank": sym_bank("DrawInPlayAreaScreen"),
                              "routine": "DrawInPlayAreaScreen"}
 # <<< factory-completion DuelCheckMenu_InPlayArea
 # >>> factory-mutation DuelCheckMenu_YourPlayArea

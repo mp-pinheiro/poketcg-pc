@@ -45,7 +45,7 @@ MUTATIONS = {
         'case_ids': [   'BCCoordToBGMap0Address-1',
                         'BCCoordToBGMap0Address-2',
                         'BCCoordToBGMap0Address-3'],
-        'source': 'src/profiles/extended/home/empty_screen.c'},
+        'source': 'src/home/empty_screen.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

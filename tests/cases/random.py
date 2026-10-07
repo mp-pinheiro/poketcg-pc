@@ -1,6 +1,7 @@
 """Oracle-diff cases for poketcg/src/home/random.asm."""
+from tests.cases._symbols import SRAM_START, WRAMX_START, WRAM_START, data, sym
 
-wRNG1 = 0xCACA  # wRNG1, wRNG2, wRNGCounter are consecutive
+wRNG1 = sym("wRNG1")  # wRNG1, wRNG2, wRNGCounter are consecutive
 
 CONTRACT = {
     "UpdateRNGSources": {
@@ -19,8 +20,8 @@ CONTRACT = {
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 STATE = {
-    "wram": [[0xC000, 4096], [0xD000, 4096]],
-    "sram": [[bank, addr, 4096] for bank in range(4) for addr in (0xA000, 0xB000)],
+    "wram": [[WRAM_START, 4096], [WRAMX_START, 4096]],
+    "sram": [[bank, addr, 4096] for bank in range(4) for addr in (SRAM_START, SRAM_START + 0x1000)],
     "vram": [[bank, addr, 4096] for bank in range(2) for addr in (0x8000, 0x9000)],
 }
 
@@ -51,7 +52,7 @@ CASES = {
         dict(POISON, hl=0x0180),  # h=1: single carry iteration, a hits 0 with it
         dict(POISON, hl=0x0101),
         dict(POISON, hl=0x02FF),  # de shifted left once before the add
-        dict(POISON, hl=0xA55A),
+        dict(POISON, hl=data(0xA55A)),
     ],
     "Random": [
         {"wram": {wRNG1: b"\x00\x00\x00"}},

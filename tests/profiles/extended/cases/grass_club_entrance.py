@@ -54,17 +54,17 @@ MUTATIONS = {
         'before': '\thl = (uint16_t)(hl + c);',
         'after': '\thl = (uint16_t)(hl + c + 1u);',
         'case_ids': ['FindEndOfDuelScript-2'],
-        'source': 'src/profiles/extended/home/grass_club_entrance.c'},
+        'source': 'src/home/grass_club_entrance.c'},
     'GrassClubEntranceAfterDuel': {   'source_symbol': 'GrassClubEntranceAfterDuel',
         'before': '\treturn FindEndOfDuelScript(GrassClubEntranceAfterDuelTable);',
         'after': '\treturn FindEndOfDuelScript((uint16_t)(GrassClubEntranceAfterDuelTable + 1u));',
         'case_ids': ['GrassClubEntranceAfterDuel-0'],
-        'source': 'src/profiles/extended/home/grass_club_entrance.c'},
+        'source': 'src/home/grass_club_entrance.c'},
     'Preload_MichaelInGrassClubEntrance': {   'source_symbol': 'Preload_MichaelInGrassClubEntrance',
         'before': '\tuint8_t a = GetEventValue(0x11u);',
         'after': '\tuint8_t a = GetEventValue(0x20u);',
         'case_ids': ['Preload_MichaelInGrassClubEntrance-1'],
-        'source': 'src/profiles/extended/home/grass_club_entrance.c'},
+        'source': 'src/home/grass_club_entrance.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

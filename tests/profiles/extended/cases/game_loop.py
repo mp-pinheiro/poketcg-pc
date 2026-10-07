@@ -115,7 +115,7 @@ MUTATIONS = {
         'before': 'wTileMapFill = 0;',
         'after': 'wTileMapFill = 0xFF;',
         'case_ids': ['SetupResetBackUpRamScreen-0', 'SetupResetBackUpRamScreen-1'],
-        'source': 'src/profiles/extended/home/game_loop.c'},
+        'source': 'src/home/game_loop.c'},
     'InitSaveDataAndSetUppercase': {   'source_symbol': 'InitSaveDataAndSetUppercase',
         'before': '\twUppercaseHalfWidthLetters = 1u;',
         'after': '\twUppercaseHalfWidthLetters = 0u;',

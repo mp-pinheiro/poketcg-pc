@@ -1,11 +1,12 @@
 """Oracle-diff cases for poketcg/src/home/palettes.asm."""
+from tests.cases._symbols import STACK_CANARY, sym
 
-WCONSOLE = 0xCAB4   # wConsole
-WLCDC = 0xCABB      # wLCDC (WRAM mirror of rLCDC, not the hw register)
-WBGP = 0xCABC       # wBGP
-WOBP0 = 0xCABD      # wOBP0
-WOBP1 = 0xCABE      # wOBP1
-WFLAG = 0xCABF      # wFlushPaletteFlags
+WCONSOLE = sym("wConsole")   # wConsole
+WLCDC = sym("wLCDC")      # wLCDC (WRAM mirror of rLCDC, not the hw register)
+WBGP = sym("wBGP")       # wBGP
+WOBP0 = sym("wOBP0")      # wOBP0
+WOBP1 = sym("wOBP1")      # wOBP1
+WFLAG = sym("wFlushPaletteFlags")      # wFlushPaletteFlags
 RBGP = 0xFF47       # rBGP  \
 ROBP0 = 0xFF48      # rOBP0   > DMG grayscale palette registers
 ROBP1 = 0xFF49      # rOBP1  /
@@ -44,7 +45,7 @@ CASES = {
         # the second OBP palette (wObjectPalettesCGB+8), palette-RAM offset 72.
         dict(POISON, wram={WFLAG: b"\x89", WCONSOLE: b"\x02",
                            WBGP: b"\x11", WOBP0: b"\x22", WOBP1: b"\x33",
-                           **{0xCB38 + i: bytes([0x40 + i]) for i in range(8)}},
+                           **{sym("wObjectPalettesCGB") + 8 + i: bytes([0x40 + i]) for i in range(8)}},
              read={WFLAG: 1},
              pread={72: 8}),
         # console==CGB, flags bit6 set: all-palette dispatch to
@@ -52,7 +53,7 @@ CASES = {
         # wFlushPaletteFlags on the FlushPalettesIfRequested.done fallthrough.
         dict(POISON, wram={WFLAG: b"\xC0", WCONSOLE: b"\x02",
                            WBGP: b"\x44", WOBP0: b"\x55", WOBP1: b"\x66",
-                           0xCAF0: bytes((0x80 + i) & 0xFF for i in range(128))},
+                           sym("wBackgroundPalettesCGB"): bytes((0x80 + i) & 0xFF for i in range(128))},
              read={WFLAG: 1},
              pread={0: 128}),
     ],
@@ -101,10 +102,10 @@ CASES = {
     "CopyCGBPalettes": [
         {"pread": {0: 64}},
         {"a": 0, "b": 8,
-         "wram": {0xCAF0 + i: bytes([0x11 + i]) for i in range(8)},
+         "wram": {sym("wBackgroundPalettesCGB") + i: bytes([0x11 + i]) for i in range(8)},
          "pread": {0: 8}},
         {"a": 8, "b": 8,
-         "wram": {0xCB30 + i: bytes([0x21 + i]) for i in range(8)},
+         "wram": {sym("wObjectPalettesCGB") + i: bytes([0x21 + i]) for i in range(8)},
          "pread": {64: 8}},
         dict(POISON, pread={64: 64}),
     ],
@@ -125,7 +126,7 @@ MUTATIONS = {
     },
 }
 for _rec in SCHEMA2_CASES["FlushPalettesIfRequested"]:
-    _rec.setdefault("bus", {}).update({0xCABF: 1})
+    _rec.setdefault("bus", {}).update({sym("wFlushPaletteFlags"): 1})
 MUTATIONS["CopyCGBPalettes"] = {
     "source_symbol": "CopyCGBPalettes",
     "before": "\tuint8_t e = (uint8_t)(off & 0xBFu);",
@@ -175,7 +176,7 @@ MUTATIONS["SetOBP1"] = {
     "case_ids": ["SetOBP1-0"],
 }
 for _rec in SCHEMA2_CASES["FlushPalettesIfRequested"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["FlushPalettesIfRequested"] = {
     "source_symbol": "FlushPalettesIfRequested_Registers",
     "before": "\tuint8_t flags = gb_read8(wFlushPaletteFlags_ADDR);",

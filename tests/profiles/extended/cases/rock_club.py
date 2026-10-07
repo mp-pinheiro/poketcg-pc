@@ -39,7 +39,7 @@ MUTATIONS = {
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(RockClubAfterDuelTable + 1u));',
         'case_ids': ['RockClubAfterDuel-0'],
-        'source': 'src/profiles/extended/home/rock_club.c'},
+        'source': 'src/home/rock_club.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

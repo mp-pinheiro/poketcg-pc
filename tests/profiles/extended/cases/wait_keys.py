@@ -469,7 +469,7 @@ MUTATIONS = {
                         'WaitUntilKeysArePressed-2',
                         'WaitUntilKeysArePressed-3',
                         'WaitUntilKeysArePressed-4'],
-        'source': 'src/profiles/extended/home/wait_keys.c'},
+        'source': 'src/home/wait_keys.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

@@ -175,12 +175,12 @@ MUTATIONS = {
         'before': 'if (d != b)',
         'after': 'if (d == b)',
         'case_ids': ['CompareDEtoBC-1', 'CompareDEtoBC-0', 'CompareDEtoBC-5'],
-        'source': 'src/profiles/extended/home/coin_toss.c'},
+        'source': 'src/home/coin_toss.c'},
     'TossCoinATimes': {   'source_symbol': 'TossCoinATimes',
         'before': '\tTossCoinResult result = _TossCoin(a);',
         'after': '\tTossCoinResult result = _TossCoin((uint8_t)(a + 1u));',
         'case_ids': ['TossCoinATimes-0', 'TossCoinATimes-1', 'TossCoinATimes-2'],
-        'source': 'src/profiles/extended/home/coin_toss.c'},
+        'source': 'src/home/coin_toss.c'},
     'TossCoin': {   'source_symbol': 'TossCoin',
         'before': 'TossCoinRoutineResult TossCoin(uint16_t de, uint16_t hl)\n'
                   '{\n'
@@ -193,7 +193,7 @@ MUTATIONS = {
                  '\tgb_write8((uint16_t)(wCoinTossScreenTextID_ADDR + 1u), (uint8_t)(de >> 8));\n'
                  '\tTossCoinResult result = _TossCoin(2u);',
         'case_ids': ['TossCoin-0', 'TossCoin-1', 'TossCoin-2'],
-        'source': 'src/profiles/extended/home/coin_toss.c'},
+        'source': 'src/home/coin_toss.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

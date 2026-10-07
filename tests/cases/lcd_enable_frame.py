@@ -1,6 +1,7 @@
 """Oracle-diff cases for poketcg/src/home/lcd_enable_frame.asm."""
+from tests.cases._symbols import sym
 
-HRAM = 0xFF8D
+HRAM = sym("hDPadRepeat")
 JOYP = 0xFF00
 RLCDC = 0xFF40
 

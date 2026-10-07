@@ -157,7 +157,7 @@ MUTATIONS = {
         'before': '\tgb_write8(R_STAT, (uint8_t)(gb_read8(R_STAT) & (uint8_t)~STAT_LYC_MASK));',
         'after': '\tgb_write8(R_STAT, (uint8_t)(gb_read8(R_STAT) | STAT_LYC_MASK));',
         'case_ids': ['Func_1d758-0', 'Func_1d758-1'],
-        'source': 'src/profiles/extended/home/credits.c'},
+        'source': 'src/home/credits.c'},
     'Func_1d765': {   'source_symbol': 'Func_1d765',
         'before': '\t\t\tif (gb_read8(wd64a_ADDR) == 0x00u)\n'
                   '\t\t\t\tgoto terminate;\n'
@@ -176,12 +176,12 @@ MUTATIONS = {
                  '\t\t\t}\n'
                  '\t\t}',
         'case_ids': ['Func_1d765-5'],
-        'source': 'src/profiles/extended/home/credits.c'},
+        'source': 'src/home/credits.c'},
     'Func_1d7ee': {   'source_symbol': 'Func_1d7ee',
         'before': 'FillRectangle(0x00u, 20u, 18u, 0x0020u, 0x0000u);',
         'after': 'FillRectangle(0x01u, 20u, 18u, 0x0020u, 0x0000u);',
         'case_ids': ['Func_1d7ee-0', 'Func_1d7ee-1'],
-        'source': 'src/profiles/extended/home/credits.c'},
+        'source': 'src/home/credits.c'},
     'Func_1d705': {   'source_symbol': 'Func_1d705',
         'before': 'wd647 = 0x91u;',
         'after': 'wd647 = 0x90u;',
@@ -191,7 +191,7 @@ MUTATIONS = {
         'before': '\t(void)AddAllMastersToMastersBeatenList(&f);',
         'after': '\t(void)f;',
         'case_ids': ['PlayCreditsSequence-0', 'PlayCreditsSequence-1'],
-        'source': 'src/profiles/extended/home/credits.c'},
+        'source': 'src/home/credits.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

@@ -1,22 +1,23 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
 """Oracle-diff cases for poketcg/src/home/ai.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
+hWhoseTurn = sym("hWhoseTurn")
 PLAYER_TURN = 0xC2
 OPPONENT_TURN = 0xC3
 
-wOpponentDeckID = 0xCC0E
-wIsPracticeDuel = 0xCC13
-wRNG1 = 0xCACA
-wRNG2 = 0xCACB
-wRNGCounter = 0xCACC
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC480
-wDeckName = 0xCCE9
-wPlayerDuelistType = 0xC2F1
-wOpponentDuelistType = 0xC3F1
+wOpponentDeckID = sym("wOpponentDeckID")
+wIsPracticeDuel = sym("wIsPracticeDuel")
+wRNG1 = sym("wRNG1")
+wRNG2 = sym("wRNG2")
+wRNGCounter = sym("wRNGCounter")
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wOpponentDeck")
+wDeckName = sym("wDeckName")
+wPlayerDuelistType = sym("wPlayerDuelistType")
+wOpponentDuelistType = sym("wOpponentDuelistType")
 
 CONTRACT = {
     "LoadOpponentDeck": {"compare": ("a", "hl"), "preserve": ()},
@@ -68,14 +69,14 @@ CASES = {
     ],
 }
 # >>> factory-cases-statics
-wOpponentDeckID = 0xCC0E
-hWhoseTurn = 0xFF97
-hTempPlayAreaLocation_ff9d = 0xFF9D
+wOpponentDeckID = sym("wOpponentDeckID")
+hWhoseTurn = sym("hWhoseTurn")
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hTemp_ffa0 = 0xFFA0
+hTemp_ffa0 = sym("hTemp_ffa0")
 # <<< factory-cases-statics
 
 # >>> factory AIDoAction
@@ -87,10 +88,10 @@ CONTRACT["AIDoAction"] = {"compare": ("a",), "preserve": ()}
 # Deck id 1 (a general deck) routes a forced switch through
 # AIDecideBenchPokemonToSwitchTo.
 CASES["AIDoAction"] = [
-    dict(_attack_fixture(**{"FF97": b"\xc3"}), a=0x01, read={0xC200: 0x200, 0xCC00: 0x100}),
-    dict(_attack_fixture(**{"FF97": b"\xc3"}), a=0x04, read={0xC200: 0x200, 0xFF9D: 4}),
-    dict(_attack_fixture(**{"FF97": b"\xc3"}), a=0x05, read={0xC200: 0x200, 0xFFA0: 2}),
-    dict(_attack_fixture(vram=False, **{"FF97": b"\xc3", "CC0E": b"\x01"}), read={0xC200: 0x200, 0xFF9D: 4}, **dict(POISON, a=0x03)),
+    dict(_attack_fixture(changes={sym("hWhoseTurn"): b"\xc3"}), a=0x01, read={sym("wPlayerCardLocations"): 0x200, sym("wPracticeDuelTurn"): 0x100}),
+    dict(_attack_fixture(changes={sym("hWhoseTurn"): b"\xc3"}), a=0x04, read={sym("wPlayerCardLocations"): 0x200, sym("hTempPlayAreaLocation_ff9d"): 4}),
+    dict(_attack_fixture(changes={sym("hWhoseTurn"): b"\xc3"}), a=0x05, read={sym("wPlayerCardLocations"): 0x200, sym("hTempList"): 2}),
+    dict(_attack_fixture(vram=False, changes={sym("hWhoseTurn"): b"\xc3", sym("wOpponentDeckID"): b"\x01"}), read={sym("wPlayerCardLocations"): 0x200, sym("hTempPlayAreaLocation_ff9d"): 4}, **dict(POISON, a=0x03)),
 ]
 # <<< factory AIDoAction
 
@@ -119,10 +120,10 @@ CASES["AIDoAction_KOSwitch"] = [
 # >>> factory AIDoAction_StartDuel
 CONTRACT["AIDoAction_StartDuel"] = {"compare": ("a",), "preserve": ()}
 CASES["AIDoAction_StartDuel"] = [
-    {"wram": {0xCC0E: b"\x01", 0xFF97: b"\xC2", 0xC2BA: b"\x00"},
+    {"wram": {sym("wOpponentDeckID"): b"\x01", sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x00"},
      "expect_regs": {"a": 0xFF}},
     dict(POISON,
-         wram={0xCC0E: b"\x01", 0xFF97: b"\xC2", 0xC2BA: b"\x00"},
+         wram={sym("wOpponentDeckID"): b"\x01", sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x00"},
          expect_regs={"a": 0xFF}),
 ]
 # <<< factory AIDoAction_StartDuel
@@ -130,16 +131,16 @@ CASES["AIDoAction_StartDuel"] = [
 # >>> factory AIDoAction_TakePrize
 CONTRACT["AIDoAction_TakePrize"] = {"compare": ("a",), "preserve": ()}
 CASES["AIDoAction_TakePrize"] = [
-    {"wram": {0xFF97: b"\xC3", 0xCCC8: b"\x01", 0xC3EC: b"\x3F", 0xC3EE: b"\x00",
-               0xC33C: b"\x00\x00\x00\x00\x00\x00", 0xCC0E: b"\x01"},
-     "read": {0xC3EC: 1, 0xC3EE: 1, 0xC342: 1},
+    {"wram": {sym("hWhoseTurn"): b"\xC3", sym("wNumberPrizeCardsToTake"): b"\x01", sym("wOpponentPrizes"): b"\x3F", sym("wOpponentNumberOfCardsInHand"): b"\x00",
+               sym("wOpponentPrizeCards"): b"\x00\x00\x00\x00\x00\x00", sym("wOpponentDeckID"): b"\x01"},
+     "read": {sym("wOpponentPrizes"): 1, sym("wOpponentNumberOfCardsInHand"): 1, sym("wOpponentHand"): 1},
      "expect_regs": {"a": 0x05},
      "instruction_budget": 20000000,
      "cycle_budget": 80000000},
     dict(POISON,
-         wram={0xFF97: b"\xC3", 0xCCC8: b"\x01", 0xC3EC: b"\x3F", 0xC3EE: b"\x00",
-               0xC33C: b"\x00\x00\x00\x00\x00\x00", 0xCC0E: b"\x01"},
-         read={0xC3EC: 1, 0xC3EE: 1, 0xC342: 1},
+         wram={sym("hWhoseTurn"): b"\xC3", sym("wNumberPrizeCardsToTake"): b"\x01", sym("wOpponentPrizes"): b"\x3F", sym("wOpponentNumberOfCardsInHand"): b"\x00",
+               sym("wOpponentPrizeCards"): b"\x00\x00\x00\x00\x00\x00", sym("wOpponentDeckID"): b"\x01"},
+         read={sym("wOpponentPrizes"): 1, sym("wOpponentNumberOfCardsInHand"): 1, sym("wOpponentHand"): 1},
          expect_regs={"a": 0x05},
          instruction_budget=20000000,
          cycle_budget=80000000),
@@ -153,8 +154,8 @@ CONTRACT["AIDoAction_Turn"] = {"compare": ("a",), "preserve": ()}
 # energy and attacks). With his deck id pointed at the general AI instead, the
 # same state runs AIMainTurnLogic.
 CASES["AIDoAction_Turn"] = [
-    dict(_attack_fixture(**{"FF97": b"\xc3"}), **_ATTACK_REGS),
-    dict(_attack_fixture(**{"FF97": b"\xc3", "CC0E": b"\x01"}), **POISON),
+    dict(_attack_fixture(changes={sym("hWhoseTurn"): b"\xc3"}), **_ATTACK_REGS),
+    dict(_attack_fixture(changes={sym("hWhoseTurn"): b"\xc3", sym("wOpponentDeckID"): b"\x01"}), **POISON),
 ]
 # <<< factory AIDoAction_Turn
 

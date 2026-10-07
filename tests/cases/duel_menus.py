@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/home/duel_menus.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,37 +8,37 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-hBankROM_A = 0xFF80
-wCheckMenuPlayAreaWhichLayout = 0xCE51
-wTileMapFill = 0xCEC7
-wVBlankOAMCopyToggle = 0xCAC0
+hBankROM_A = sym("hBankROM")
+wCheckMenuPlayAreaWhichLayout = sym("wCheckMenuPlayAreaWhichLayout")
+wTileMapFill = sym("wUnavailableAlbumCardSets") + 3
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hBankROM_B = 0xFF80
-hWhoseTurn_B = 0xFF97
-wCheckMenuPlayAreaWhichDuelist_B = 0xCE50
-wCheckMenuPlayAreaWhichLayout_B = 0xCE51
-wDefaultText_B = 0xC590
+hBankROM_B = sym("hBankROM")
+hWhoseTurn_B = sym("hWhoseTurn")
+wCheckMenuPlayAreaWhichDuelist_B = sym("wCheckMenuPlayAreaWhichDuelist")
+wCheckMenuPlayAreaWhichLayout_B = sym("wCheckMenuPlayAreaWhichLayout")
+wDefaultText_B = sym("wCurDeckCardChanges")
 
-hBankROM = 0xFF80
-hWhoseTurn = 0xFF97
-wDefaultText = 0xC590
-wVBlankOAMCopyToggle = 0xCAC0
-wYourOrOppPlayAreaCurPosition = 0xCE52
-wMenuInputTablePointer = 0xCE53
-wIsSwapTurnPending = 0xCE56
+hBankROM = sym("hBankROM")
+hWhoseTurn = sym("hWhoseTurn")
+wDefaultText = sym("wDefaultText")
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
+wYourOrOppPlayAreaCurPosition = sym("wYourOrOppPlayAreaCurPosition")
+wMenuInputTablePointer = sym("wMenuInputTablePointer")
+wIsSwapTurnPending = sym("wIsSwapTurnPending")
 
-wNumberOfPrizeCardsToSelect = 0xCE59
+wNumberOfPrizeCardsToSelect = sym("wNumberOfPrizeCardsToSelect")
 
-hBankROM = 0xFF80
+hBankROM = sym("hBankROM")
 _hps_wram = {
-    0xFF97: b"\xC2",
-    0xC23C: b"\x00",
-    0xC2EC: b"\x3F",
-    0xC400: b"\x08",
-    0xCABB: b"\x00",
+    sym("hWhoseTurn"): b"\xC2",
+    sym("wPlayerPrizeCards"): b"\x00",
+    sym("wPlayerPrizes"): b"\x3F",
+    sym("wBoosterCardsDrawn"): b"\x08",
+    sym("wLCDC"): b"\x00",
 }
-_hps_read = {0xFF80: 1, 0xCE52: 1, 0xCE53: 2, 0xCE56: 1, 0xCE5C: 1}
+_hps_read = {sym("hBankROM"): 1, sym("wInPlayAreaCurPosition"): 1, sym("wMenuInputTablePointer"): 2, sym("wIsSwapTurnPending"): 1, sym("wce5c"): 1}
 _hps_setup = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
@@ -57,18 +58,18 @@ CASES["DrawPlayersPrizeAndBenchCards"] = [
 CONTRACT["DrawPlayAreaToPlacePrizeCards"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DrawPlayAreaToPlacePrizeCards"] = [
     {"instruction_budget": 2000000, "cycle_budget": 8000000,
-     "hram": {0xFF80: b"\x01", 0xFF97: b"\xC2"},
-     "wram": {0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
-     "read": {0xFF80: 1, 0xCE51: 1, 0xCE56: 1},
-     "expect": {0xFF80: b"\x01"},
+     "hram": {sym("hBankROM"): b"\x01", sym("hWhoseTurn"): b"\xC2"},
+     "wram": {sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+               sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00"},
+     "read": {sym("hBankROM"): 1, sym("wCheckMenuPlayAreaWhichLayout"): 1, sym("wIsSwapTurnPending"): 1},
+     "expect": {sym("hBankROM"): b"\x01"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     dict(POISON, instruction_budget=2000000, cycle_budget=8000000,
-         hram={0xFF80: b"\x37", 0xFF97: b"\xC2"},
-         wram={0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
-         read={0xFF80: 1, 0xCE51: 1, 0xCE56: 1},
-         expect={0xFF80: b"\x37"},
+         hram={sym("hBankROM"): b"\x37", sym("hWhoseTurn"): b"\xC2"},
+         wram={sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+               sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00"},
+         read={sym("hBankROM"): 1, sym("wCheckMenuPlayAreaWhichLayout"): 1, sym("wIsSwapTurnPending"): 1},
+         expect={sym("hBankROM"): b"\x37"},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory DrawPlayAreaToPlacePrizeCards
@@ -78,14 +79,14 @@ CONTRACT["DrawYourOrOppPlayAreaScreen_Bank0"] = {"compare": (), "preserve": (), 
 CASES["DrawYourOrOppPlayAreaScreen_Bank0"] = [
     {"instruction_budget": 20000000, "cycle_budget": 80000000,
      "hram": {hBankROM_B: b"\x01", hWhoseTurn_B: b"\xC2"},
-     "wram": {wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText_B: b"\x00" * 16},
+     "wram": {wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03", sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText_B: b"\x00" * 16},
      "read": {hBankROM_B: 1, wCheckMenuPlayAreaWhichDuelist_B: 1, wCheckMenuPlayAreaWhichLayout_B: 1},
      "expect": {hBankROM_B: b"\x01", wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "hl": 0xC2C2},
-    dict(POISON, hl=0xC2C2, instruction_budget=20000000, cycle_budget=80000000,
+     "hl": sym("wPlayerArenaCardFlags")},
+    dict(POISON, hl=sym("wPlayerArenaCardFlags"), instruction_budget=20000000, cycle_budget=80000000,
          hram={hBankROM_B: b"\x37", hWhoseTurn_B: b"\xC2"},
-         wram={wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText_B: b"\x00" * 16},
+         wram={wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03", sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText_B: b"\x00" * 16},
          read={hBankROM_B: 1, wCheckMenuPlayAreaWhichDuelist_B: 1, wCheckMenuPlayAreaWhichLayout_B: 1},
          expect={hBankROM_B: b"\x37", wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2"},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
@@ -97,24 +98,24 @@ CONTRACT["DrawAIPeekScreen"] = {"compare": ("a", "f"), "preserve": ("f",)}
 CASES["DrawAIPeekScreen"] = [
     {"keys": 0x01, "instruction_budget": 20000000, "cycle_budget": 80000000,
      "hram": {hBankROM: b"\x01", hWhoseTurn: b"\xC2"},
-     "wram": {0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16},
+     "wram": {sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+               sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16},
      "read": {hBankROM: 1, wIsSwapTurnPending: 1, wMenuInputTablePointer: 2,
                wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
      "vread": {0: {0x9800: 32, 0x9C00: 32}},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     dict(POISON, keys=0x01, instruction_budget=20000000, cycle_budget=80000000,
          hram={hBankROM: b"\x37", hWhoseTurn: b"\xC2"},
-         wram={0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16},
+         wram={sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+               sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16},
          read={hBankROM: 1, wIsSwapTurnPending: 1, wMenuInputTablePointer: 2,
                wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
          vread={0: {0x9800: 32, 0x9C00: 32}},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
     {"a": 0xFF, "f": 0x00, "keys": 0x01, "instruction_budget": 20000000, "cycle_budget": 80000000,
      "hram": {hBankROM: b"\x02", hWhoseTurn: b"\xC2"},
-     "wram": {0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
-               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16},
+     "wram": {sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+               sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16},
      "read": {hBankROM: 1, wIsSwapTurnPending: 1, wMenuInputTablePointer: 2,
                wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
      "vread": {0: {0x9800: 32, 0x9C00: 32}},
@@ -124,8 +125,8 @@ CASES["DrawAIPeekScreen"] = [
 # >>> factory SelectPrizeCards
 CONTRACT["SelectPrizeCards"] = {"compare": (), "preserve": ()}
 CASES["SelectPrizeCards"] = [
-    {"a": 0x00, "f": 0x00, "wram": {wNumberOfPrizeCardsToSelect: b"\x00", hBankROM: b"\x01", 0xFF97: b"\xC2", 0xC2EC: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000, "read": {wNumberOfPrizeCardsToSelect: 1, hBankROM: 1, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 1, 0xFFA1: 1}},
-    dict(POISON, a=0x00, wram={wNumberOfPrizeCardsToSelect: b"\x00", hBankROM: b"\x37", 0xFF97: b"\xC2", 0xC2EC: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000, read={wNumberOfPrizeCardsToSelect: 1, hBankROM: 1, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 1, 0xFFA1: 1})
+    {"a": 0x00, "f": 0x00, "wram": {wNumberOfPrizeCardsToSelect: b"\x00", hBankROM: b"\x01", sym("hWhoseTurn"): b"\xC2", sym("wPlayerPrizes"): b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000, "read": {wNumberOfPrizeCardsToSelect: 1, hBankROM: 1, sym("wInPlayAreaCurPosition"): 1, sym("wSelectedPrizeCardListPtr"): 2, sym("hTempList"): 1, sym("hAIPkmnPowerEffectParam"): 1}},
+    dict(POISON, a=0x00, wram={wNumberOfPrizeCardsToSelect: b"\x00", hBankROM: b"\x37", sym("hWhoseTurn"): b"\xC2", sym("wPlayerPrizes"): b"\x00"}, instruction_budget=2000000, cycle_budget=8000000, read={wNumberOfPrizeCardsToSelect: 1, hBankROM: 1, sym("wInPlayAreaCurPosition"): 1, sym("wSelectedPrizeCardListPtr"): 2, sym("hTempList"): 1, sym("hAIPkmnPowerEffectParam"): 1})
 ]
 # <<< factory SelectPrizeCards
 
@@ -140,8 +141,8 @@ CASES["HandlePeekSelection"] = [
 # >>> factory OpenDuelCheckMenu
 CONTRACT["OpenDuelCheckMenu"] = {"compare": (), "preserve": ()}
 CASES["OpenDuelCheckMenu"] = [
-    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF80: b"\x01"}, "read": {0xFF80: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF80: b"\x01"}, read={0xFF80: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("hBankROM"): b"\x01"}, "read": {sym("hBankROM"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("hBankROM"): b"\x01"}, read={sym("hBankROM"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenDuelCheckMenu
 
@@ -151,8 +152,8 @@ CASES["OpenDuelCheckMenu"] = [
 # $80. BankswitchROM sets no flags, so the wrapper passes it through.
 CONTRACT["OpenInPlayAreaScreen_FromSelectButton"] = {"compare": ("f",), "preserve": ()}
 CASES["OpenInPlayAreaScreen_FromSelectButton"] = [
-    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF80: b"\x01"}, "read": {0xFF80: 1, 0xCE60: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF80: b"\x01"}, read={0xFF80: 1, 0xCE60: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("hBankROM"): b"\x01"}, "read": {sym("hBankROM"): 1, sym("wInPlayAreaFromSelectButton"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("hBankROM"): b"\x01"}, read={sym("hBankROM"): 1, sym("wInPlayAreaFromSelectButton"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenInPlayAreaScreen_FromSelectButton
 

@@ -1,18 +1,19 @@
 """Oracle-diff cases for poketcg/src/home/setup.asm."""
+from tests.cases._symbols import HRAM_START, STACK_CANARY, WRAMX_START, sym
 
-WCONSOLE = 0xCAB4
-WTILEMAPFILL = 0xCAB6
-WCAB0, WCAB1, WCAB2 = 0xCAB0, 0xCAB1, 0xCAB2
-WREENTRANCYFLAG = 0xCABA
-WLCDC = 0xCABB
-WBGP, WOBP0, WOBP1 = 0xCABC, 0xCABD, 0xCABE
-WFLAG = 0xCABF
-WLCDC_TRAMPOLINE = 0xCACD
-WVBLANK_TRAMPOLINE = 0xCAD0
-WBACKGROUND_PAL_CGB = 0xCAF0
+WCONSOLE = sym("wConsole")
+WTILEMAPFILL = sym("wTileMapFill")
+WCAB0, WCAB1, WCAB2 = sym("wcab0"), sym("wcab1"), sym("wcab2")
+WREENTRANCYFLAG = sym("wReentrancyFlag")
+WLCDC = sym("wLCDC")
+WBGP, WOBP0, WOBP1 = sym("wBGP"), sym("wOBP0"), sym("wOBP1")
+WFLAG = sym("wFlushPaletteFlags")
+WLCDC_TRAMPOLINE = sym("wLCDCFunctionTrampoline")
+WVBLANK_TRAMPOLINE = sym("wVBlankFunctionTrampoline")
+WBACKGROUND_PAL_CGB = sym("wBackgroundPalettesCGB")
 
-HSCX, HSCY, HWX, HWY = 0xFF92, 0xFF93, 0xFF94, 0xFF95
-HBANKVRAM = 0xFF82
+HSCX, HSCY, HWX, HWY = sym("hSCX"), sym("hSCY"), sym("hWX"), sym("hWY")
+HBANKVRAM = sym("hBankVRAM")
 
 RBGP, ROBP0, ROBP1 = 0xFF47, 0xFF48, 0xFF49
 RSCY, RSCX, RWY, RWX = 0xFF42, 0xFF43, 0xFF4A, 0xFF4B
@@ -107,18 +108,18 @@ CASES = {
         }),
     ],
     "ZeroRAM": [
-        {"wram": {0xC000: b"\xAA\xBB", 0xDFFE: b"\xCC\xDD",
-                  0xFF80: b"\x11\x02", 0xFFED: b"\x33\x44"},
-         "read": {0xC000: 2, 0xDFFE: 2, 0xFF80: 2, 0xFFED: 2}},
-        dict(POISON, wram={0xC000: b"\xFF", 0xDFFF: b"\xFF",
-                           0xFF80: b"\xFF", 0xFFEF: b"\xFF"},
-             read={0xC000: 1, 0xDFFF: 1, 0xFF80: 1, 0xFFEF: 1}),
+        {"wram": {sym("wDeckToBuild"): b"\xAA\xBB", WRAMX_START + 0xFFE: b"\xCC\xDD",
+                  sym("hBankROM"): b"\x11\x02", HRAM_START + 0x6D: b"\x33\x44"},
+         "read": {sym("wDeckToBuild"): 2, WRAMX_START + 0xFFE: 2, sym("hBankROM"): 2, HRAM_START + 0x6D: 2}},
+        dict(POISON, wram={sym("wDeckToBuild"): b"\xFF", WRAMX_START + 0xFFF: b"\xFF",
+                           sym("hBankROM"): b"\xFF", HRAM_START + 0x6F: b"\xFF"},
+             read={sym("wDeckToBuild"): 1, WRAMX_START + 0xFFF: 1, sym("hBankROM"): 1, HRAM_START + 0x6F: 1}),
     ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 for record in SCHEMA2_CASES["ZeroRAM"]:
-    record["completion"] = {"mode": "pre-ret", "pc": 0x0403}
+    record["completion"] = {"mode": "pre-ret", "pc": sym("ZeroRAM.zero_hram_loop") + 5}
 
 MUTATIONS = {
     "DetectConsole": {
@@ -159,7 +160,7 @@ MUTATIONS["ZeroRAM"] = {
     "case_ids": ["ZeroRAM-0"],
 }
 for _rec in SCHEMA2_CASES["NoOp"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["NoOp"] = {
     "source_symbol": "NoOp",
     "before": "void NoOp(void)\n{",

@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/battle_center.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,9 +8,9 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wDuelResult = 0xD0C3
-wCurrentNPCNameTx = 0xD0C8
-wNextScript = 0xD0C6
+wDuelResult = sym("wDuelResult")
+wCurrentNPCNameTx = sym("wCurrentNPCNameTx")
+wNextScript = sym("wNextScript")
 # <<< factory-cases-statics
 
 # >>> factory Func_fc2b

@@ -57,12 +57,12 @@ MUTATIONS = {
         'after': '\tuint8_t b = (uint8_t)((uint8_t)(wCardNameLength + 2u) << 1);',
         'case_ids': [   '_CopyCardNameAndLevel_HalfwidthText-0',
                         '_CopyCardNameAndLevel_HalfwidthText-2'],
-        'source': 'src/profiles/extended/home/copy_card_name.c'},
+        'source': 'src/home/copy_card_name.c'},
     '_CopyCardNameAndLevel': {   'source_symbol': '_CopyCardNameAndLevel',
         'before': '\tif (gb_read8(wDefaultText_ADDR) == TX_HALFWIDTH)',
         'after': '\tif (gb_read8(wDefaultText_ADDR) != TX_HALFWIDTH)',
         'case_ids': ['_CopyCardNameAndLevel-0', '_CopyCardNameAndLevel-1'],
-        'source': 'src/profiles/extended/home/copy_card_name.c'},
+        'source': 'src/home/copy_card_name.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

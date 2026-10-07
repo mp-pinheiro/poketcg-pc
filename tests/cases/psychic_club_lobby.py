@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/psychic_club_lobby.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,22 +10,22 @@ CASES = {}
 # >>> factory PsychicClubLobbyLoadMap
 CONTRACT["PsychicClubLobbyLoadMap"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ()}
 CASES["PsychicClubLobbyLoadMap"] = [
-    {"b": 0x12, "c": 0x34, "hl": 0x0000, "wram": {0xD34A: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00', 0xD3AA: b'\xEE'}},
-    dict(POISON, wram={0xD34A: b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00', 0xD3AA: b'\xEE'}),
+    {"b": 0x12, "c": 0x34, "hl": 0x0000, "wram": {sym("wLoadedNPC1ID"): b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00', sym("wLoadedNPCTempIndex"): b'\xEE'}},
+    dict(POISON, wram={sym("wLoadedNPC1ID"): b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00', sym("wLoadedNPCTempIndex"): b'\xEE'}),
 ]
 # <<< factory PsychicClubLobbyLoadMap
 
 # >>> factory-cases-statics
-wDuelResult = 0xD0C3
-wNPCDuelist = 0xD0C4
-wTempNPC = 0xD3AB
-wLoadedNPCs = 0xD34A
-wLoadedNPCTempIndex = 0xD3AA
-wScriptNPC = 0xD3B6
-wPlayerDirection = 0xD334
-wOverworldNPCFlags = 0xD0C1
-wNextScript = 0xD0C6
-wOverworldMode = 0xD0BF
+wDuelResult = sym("wDuelResult")
+wNPCDuelist = sym("wNPCDuelist")
+wTempNPC = sym("wTempNPC")
+wLoadedNPCs = sym("wLoadedNPCs")
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wScriptNPC = sym("wScriptNPC")
+wPlayerDirection = sym("wPlayerDirection")
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+wNextScript = sym("wNextScript")
+wOverworldMode = sym("wOverworldMode")
 # <<< factory-cases-statics
 
 # >>> factory PsychicClubLobbyAfterDuel
@@ -49,16 +50,16 @@ CASES["PsychicClubLobbyAfterDuel"] = [
 # >>> factory _Preload_Ronald1InPsychicClubLobby
 CONTRACT["_Preload_Ronald1InPsychicClubLobby"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["_Preload_Ronald1InPsychicClubLobby"] = [
-    {"wram": {0xD3D1: bytes([0xFF]), 0xD3D2: bytes(0x40)}},
-    dict(POISON, wram={0xD3D1: bytes([0xFF]), 0xD3D2: bytes(0x40)}),
+    {"wram": {sym("wLoadedEventBits"): bytes([0xFF]), sym("wEventVars"): bytes(0x40)}},
+    dict(POISON, wram={sym("wLoadedEventBits"): bytes([0xFF]), sym("wEventVars"): bytes(0x40)}),
 ]
 # <<< factory _Preload_Ronald1InPsychicClubLobby
 
 # >>> factory Preload_Ronald1InPsychicClubLobby
 CONTRACT["Preload_Ronald1InPsychicClubLobby"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Preload_Ronald1InPsychicClubLobby"] = [
-    {"wram": {0xD3D1: bytes([0xFF]), 0xD3D2: bytes(0x40)}},
-    dict(POISON, wram={0xD3D1: bytes([0xFF]), 0xD3D2: bytes(0x40)}),
+    {"wram": {sym("wLoadedEventBits"): bytes([0xFF]), sym("wEventVars"): bytes(0x40)}},
+    dict(POISON, wram={sym("wLoadedEventBits"): bytes([0xFF]), sym("wEventVars"): bytes(0x40)}),
 ]
 # <<< factory Preload_Ronald1InPsychicClubLobby
 

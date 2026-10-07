@@ -1,5 +1,6 @@
+from tests.cases._symbols import sym
 POISON={"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234}
-wCurMap=0xD32F;wPlayerXCoord=0xD330;wPlayerYCoord=0xD331;wPlayerDirection=0xD334;wTempMap=0xD0BB;wTempPlayerXCoord=0xD0BC;wTempPlayerYCoord=0xD0BD;wTempPlayerDirection=0xD0BE
+wCurMap=sym("wCurMap");wPlayerXCoord=sym("wPlayerXCoord");wPlayerYCoord=sym("wPlayerYCoord");wPlayerDirection=sym("wPlayerDirection");wTempMap=sym("wTempMap");wTempPlayerXCoord=sym("wTempPlayerXCoord");wTempPlayerYCoord=sym("wTempPlayerYCoord");wTempPlayerDirection=sym("wTempPlayerDirection")
 from tests.cases._fixtures import map_warp_fixture as _map_warp_fixture, MAP_WARP_REGS as _MAP_WARP_REGS
 CONTRACT={"_HandleMapWarp":{"compare":("a","f","b","c","d","e","hl"),"preserve":("b","c","d","e","hl")}}
 def _memory(m,x,y,d,t=b"\x11\x22\x33\x44"):return {wCurMap:bytes((m,)),wPlayerXCoord:bytes((x,)),wPlayerYCoord:bytes((y,)),wPlayerDirection:bytes((d,)),wTempMap:t}

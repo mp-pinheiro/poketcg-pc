@@ -75,7 +75,7 @@ MUTATIONS = {
                         'LoadDeck-3',
                         'LoadDeck-4',
                         'LoadDeck-5'],
-        'source': 'src/profiles/extended/home/load_deck.c'},
+        'source': 'src/home/load_deck.c'},
     'CompressDeckToSRAM': {'source_symbol': 'CompressDeckToSRAM',
         'before': 'gb_write8(destination++, (uint8_t)(command << 4));',
         'after': 'gb_write8(destination++, command);',

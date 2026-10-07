@@ -52,12 +52,12 @@ MUTATIONS = {
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(LightningClubAfterDuelTable + 1u));',
         'case_ids': ['LightningClubAfterDuel-0'],
-        'source': 'src/profiles/extended/home/lightning_club.c'},
+        'source': 'src/home/lightning_club.c'},
     'Preload_Isaac': {   'source_symbol': 'Preload_Isaac',
         'before': '\ta = SOUTH;',
         'after': '\ta = 0u;',
         'case_ids': ['Preload_Isaac-1', 'Preload_Isaac-2'],
-        'source': 'src/profiles/extended/home/lightning_club.c'},
+        'source': 'src/home/lightning_club.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

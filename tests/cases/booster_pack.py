@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/booster_pack.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,17 +8,17 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-hWhoseTurn = 0xFF97
-wDuelTempList = 0xC510
-wNoItemSelectionMenuKeys = 0xCBD6
-wPlayerDuelVariables = 0xC200
+hWhoseTurn = sym("hWhoseTurn")
+wDuelTempList = sym("wDuelTempList")
+wNoItemSelectionMenuKeys = sym("wNoItemSelectionMenuKeys")
+wPlayerDuelVariables = sym("wPlayerDuelVariables")
 # <<< factory-cases-statics
 
 # >>> factory _OpenBoosterPack
 CONTRACT["_OpenBoosterPack"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["_OpenBoosterPack"] = [
-    {"wram": {0xC200: b"\xAA" * 0x3C, 0xC400: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {0xFF97: 1, 0xC200: 0x3C, 0xC510: 1, 0xCBD6: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xC200: b"\xAA" * 0x3C, 0xC400: b"\x00", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={0xFF97: 1, 0xC200: 0x3C, 0xC510: 1, 0xCBD6: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wPlayerCardLocations"): b"\xAA" * 0x3C, sym("wBoosterCardsDrawn"): b"\x00", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {sym("hWhoseTurn"): 1, sym("wPlayerCardLocations"): 0x3C, sym("wDuelTempList"): 1, sym("wNoItemSelectionMenuKeys"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={sym("wPlayerCardLocations"): b"\xAA" * 0x3C, sym("wBoosterCardsDrawn"): b"\x00", sym("wLCDC"): b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={sym("hWhoseTurn"): 1, sym("wPlayerCardLocations"): 0x3C, sym("wDuelTempList"): 1, sym("wNoItemSelectionMenuKeys"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _OpenBoosterPack
 

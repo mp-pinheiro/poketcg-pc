@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/duel/ai/decks/legendary_zapdos.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,21 +8,21 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-hTempPlayAreaLocation_ff9d = 0xFF9D
-wAlreadyPlayedEnergy = 0xCC0B
-hWhoseTurn = 0xFF97
-wAIBarrierFlagCounter = 0xCDA7
-wPlayerHandCount = 0xC2EE
-wOpponentHandCount = 0xC3EE
-wPlayerArenaCard = 0xC2BB
-wOpponentArenaCard = 0xC3BB
-wPlayerBenchList = 0xC2BC
-wOpponentBenchList = 0xC3BC
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC600
-wDuelDisplayedScreen = 0xCAC2
-wLCDC = 0xCABB
-wSkipDuelistIsThinkingDelay = 0xCBF9
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
+wAlreadyPlayedEnergy = sym("wAlreadyPlayedEnergy")
+hWhoseTurn = sym("hWhoseTurn")
+wAIBarrierFlagCounter = sym("wAIBarrierFlagCounter")
+wPlayerHandCount = sym("wPlayerNumberOfCardsInHand")
+wOpponentHandCount = sym("wOpponentNumberOfCardsInHand")
+wPlayerArenaCard = sym("wPlayerArenaCard")
+wOpponentArenaCard = sym("wOpponentArenaCard")
+wPlayerBenchList = sym("wPlayerBench")
+wOpponentBenchList = sym("wOpponentBench")
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wc600")
+wDuelDisplayedScreen = sym("wDuelDisplayedScreen")
+wLCDC = sym("wLCDC")
+wSkipDuelistIsThinkingDelay = sym("wSkipDuelistIsThinkingDelay")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
@@ -29,8 +30,8 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 # >>> factory AIDoTurn_LegendaryZapdos
 CONTRACT["AIDoTurn_LegendaryZapdos"] = {"compare": ("f",), "preserve": ()}
 CASES["AIDoTurn_LegendaryZapdos"] = [
-    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wAIBarrierFlagCounter: b"\x80", wPlayerHandCount: b"\x00", wOpponentHandCount: b"\x00", wPlayerArenaCard: b"\x00", wOpponentArenaCard: b"\x00", wPlayerBenchList: b"\xFF", wOpponentBenchList: b"\xFF", wPlayerDeck: b"\xB9\xFF", wOpponentDeck: b"\xB9\xFF", wAlreadyPlayedEnergy: b"\x01", wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x01"}, "read": {0xCE20: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", wAIBarrierFlagCounter: b"\x80", wPlayerHandCount: b"\x00", wOpponentHandCount: b"\x00", wPlayerArenaCard: b"\x00", wOpponentArenaCard: b"\x00", wPlayerBenchList: b"\xFF", wOpponentBenchList: b"\xFF", wPlayerDeck: b"\xB9\xFF", wOpponentDeck: b"\xB9\xFF", wAlreadyPlayedEnergy: b"\x01", wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x01"}, read={0xCE20: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wAIBarrierFlagCounter: b"\x80", wPlayerHandCount: b"\x00", wOpponentHandCount: b"\x00", wPlayerArenaCard: b"\x00", wOpponentArenaCard: b"\x00", wPlayerBenchList: b"\xFF", wOpponentBenchList: b"\xFF", wPlayerDeck: b"\xB9\xFF", wOpponentDeck: b"\xB9\xFF", wAlreadyPlayedEnergy: b"\x01", wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x01"}, "read": {sym("wPreviousAIFlags"): 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", wAIBarrierFlagCounter: b"\x80", wPlayerHandCount: b"\x00", wOpponentHandCount: b"\x00", wPlayerArenaCard: b"\x00", wOpponentArenaCard: b"\x00", wPlayerBenchList: b"\xFF", wOpponentBenchList: b"\xFF", wPlayerDeck: b"\xB9\xFF", wOpponentDeck: b"\xB9\xFF", wAlreadyPlayedEnergy: b"\x01", wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x01"}, read={sym("wPreviousAIFlags"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory AIDoTurn_LegendaryZapdos
 

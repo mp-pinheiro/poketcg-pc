@@ -25,7 +25,7 @@ MUTATIONS = {
         'before': 'uint16_t lo = (uint16_t)((uint16_t)gb_read8(wDamage_ADDR) + a);',
         'after': 'uint16_t lo = (uint16_t)((uint16_t)gb_read8(wDamage_ADDR) + (uint8_t)(a + 1u));',
         'case_ids': ['AddToDamage-zero', 'AddToDamage-boundary'],
-        'source': 'src/profiles/extended/home/damage.c'},
+        'source': 'src/home/damage.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

@@ -1,3 +1,4 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import SAND_ATTACK_REGS, sand_attack_fixture
 from tests.cases._fixtures import STRIKES_BACK_RESIDUAL_REGS, strikes_back_residual_fixture
 from tests.cases._fixtures import DAMAGE_REDUCTION_REGS, damage_reduction_fixture
@@ -5,31 +6,31 @@ from tests.cases._fixtures import DAMAGE_REDUCTION_REGS, damage_reduction_fixtur
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
-wGotHeads = 0xCC0A
-ARENA_SUBSTATUS2 = 0xC200 + 0xE8  # player page, duelvar $E8
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC480
+hWhoseTurn = sym("hWhoseTurn")
+wGotHeads = sym("wGotHeadsFromSandAttackOrSmokescreenCheck")
+ARENA_SUBSTATUS2 = sym("wPlayerCardLocations") + 0xE8  # player page, duelvar $E8
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wOpponentDeck")
 
-ARENA_SUBSTATUS1 = 0xC200 + 0xE7
-ARENA_SUBSTATUS3 = 0xC200 + 0xEB
-ARENA_STATUS = 0xC200 + 0xF0
-ARENA_DISABLED_ATK = 0xC200 + 0xF2
-ARENA_CARD = 0xC200 + 0xBB
-BENCH = 0xC200 + 0xBC
-ARENA_CHANGED_TYPE = 0xC200 + 0xD4
-OPP_SUBSTATUS2 = 0xC300 + 0xE8
-OPP_ARENA_CARD = 0xC300 + 0xBB
-OPP_BENCH = 0xC300 + 0xBC
-OPP_CHANGED_TYPE = 0xC300 + 0xD4
+ARENA_SUBSTATUS1 = sym("wPlayerCardLocations") + 0xE7
+ARENA_SUBSTATUS3 = sym("wPlayerCardLocations") + 0xEB
+ARENA_STATUS = sym("wPlayerCardLocations") + 0xF0
+ARENA_DISABLED_ATK = sym("wPlayerCardLocations") + 0xF2
+ARENA_CARD = sym("wPlayerCardLocations") + 0xBB
+BENCH = sym("wPlayerCardLocations") + 0xBC
+ARENA_CHANGED_TYPE = sym("wPlayerCardLocations") + 0xD4
+OPP_SUBSTATUS2 = sym("wOpponentCardLocations") + 0xE8
+OPP_ARENA_CARD = sym("wOpponentCardLocations") + 0xBB
+OPP_BENCH = sym("wOpponentCardLocations") + 0xBC
+OPP_CHANGED_TYPE = sym("wOpponentCardLocations") + 0xD4
 
-wNoDamageOrEffect = 0xCCC7
-wLoadedAttackCategory = 0xCCB1
-wTempNonTurnDuelistCardID = 0xCCC4
-wTempTurnDuelistCardID = 0xCCC3
-wIsDamageToSelf = 0xCCE6
-wSelectedAttack = 0xCCC6
-wLoadedCard1RetreatCost = 0xCC56
+wNoDamageOrEffect = sym("wNoDamageOrEffect")
+wLoadedAttackCategory = sym("wLoadedAttackCategory")
+wTempNonTurnDuelistCardID = sym("wTempNonTurnDuelistCardID")
+wTempTurnDuelistCardID = sym("wTempTurnDuelistCardID")
+wIsDamageToSelf = sym("wIsDamageToSelf")
+wSelectedAttack = sym("wSelectedAttack")
+wLoadedCard1RetreatCost = sym("wLoadedCard1RetreatCost")
 
 POKEMON_POWER = 0x04
 MUK = 0x27
@@ -167,44 +168,44 @@ CASES = {
         # Unrelated substatus value: a = it, no carry, de untouched.
         {"wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x03"}},
         # Poisoned: opponent's turn reads the $C3 page.
-        dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC300 + 0xE8: b"\x00"}),
+        dict(POISON, wram={hWhoseTurn: b"\xC3", sym("wOpponentCardLocations") + 0xE8: b"\x00"}),
     ],
     # Count id $01 across arena ($C2BB) and bench ($C2BC+): MUK = $C3, DODRIO = $C5.
     "CountTurnDuelistPokemonWithActivePkmnPower": [
         # Arena only, no status: 1 found.
-        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00",
-                             wPlayerDeck: b"\x01", 0xC2BC: b"\xff"}},
+        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x00",
+                             wPlayerDeck: b"\x01", sym("wPlayerBench"): b"\xff"}},
         # Arena + two bench slots: 3 found.
-        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00",
+        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x00",
                              wPlayerDeck: b"\x01",
-                             0xC2BC: b"\x00\x00\xff"},
-         "read": {0xCE7C: 1}},
+                             sym("wPlayerBench"): b"\x00\x00\xff"},
+         "read": {sym("wTempPokemonID_ce7c"): 1}},
         # Arena asleep (status $01): skipped.
-        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x01",
-                             wPlayerDeck: b"\x01", 0xC2BC: b"\xff"}},
+        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardStatus"): b"\x01",
+                             wPlayerDeck: b"\x01", sym("wPlayerBench"): b"\xff"}},
         # Arena paralyzed (status $08): skipped too.
-        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2F0: b"\x08",
-                             wPlayerDeck: b"\x01", 0xC2BC: b"\xff"}},
+        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardStatus"): b"\x08",
+                             wPlayerDeck: b"\x01", sym("wPlayerBench"): b"\xff"}},
         # No match: 0 found, no carry.
-        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00",
-                             wPlayerDeck: b"\x01", 0xC2BC: b"\xff"}},
+        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x00",
+                             wPlayerDeck: b"\x01", sym("wPlayerBench"): b"\xff"}},
     ],
     "CountPokemonWithActivePkmnPowerInBothPlayAreas": [
         # Player arena has 1; opponent arena has 1 (opponent deck $C480): total 2.
-        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00",
-                             0xC3BB: b"\x00",
-                             wPlayerDeck: b"\x01", 0xC2BC: b"\xff",
-                             0xC480: b"\x01", 0xC3BC: b"\xff"}},
+        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x00",
+                             sym("wOpponentArenaCard"): b"\x00",
+                             wPlayerDeck: b"\x01", sym("wPlayerBench"): b"\xff",
+                             sym("wOpponentDeck"): b"\x01", sym("wOpponentBench"): b"\xff"}},
         # Player only: total 1. Opponent bench terminated.
-        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\xff",
-                             wPlayerDeck: b"\x01", 0xC2BC: b"\xff",
-                             0xC480: b"\x01", 0xC3BC: b"\xff"},
-         "read": {0xCE7C: 1}},
+        {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\xff",
+                             wPlayerDeck: b"\x01", sym("wPlayerBench"): b"\xff",
+                             sym("wOpponentDeck"): b"\x01", sym("wOpponentBench"): b"\xff"},
+         "read": {sym("wTempPokemonID_ce7c"): 1}},
         # Neither: 0. Both benches terminated.
-        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\xff", 0xC3BB: b"\xff",
-                             wPlayerDeck: b"\x01", 0xC2BC: b"\xff",
-                             0xC480: b"\x01", 0xC3BC: b"\xff"},
-         "read": {0xCE7C: 1}},
+        {"a": 0x02, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\xff", sym("wOpponentArenaCard"): b"\xff",
+                             wPlayerDeck: b"\x01", sym("wPlayerBench"): b"\xff",
+                             sym("wOpponentDeck"): b"\x01", sym("wOpponentBench"): b"\xff"},
+         "read": {sym("wTempPokemonID_ce7c"): 1}},
     ],
     "CheckIsIncapableOfUsingPkmnPower": [
         # a=0 (arena), status confused ($01, in CNF_SLP_PRZ): incapable via status.
@@ -419,83 +420,83 @@ CASES = {
               OPP_CHANGED_TYPE: b"\x07\x08\x09\x0a\x0b\x0c"})),
     ],
     "CheckRainDanceScenario": [
-        {"wram": {hWhoseTurn: bytes((0xC2,)), 0xFF98: b"\x00",
+        {"wram": {hWhoseTurn: bytes((0xC2,)), sym("hTempCardIndex_ff98"): b"\x00",
                   wPlayerDeck + 0: b"\x08",
-                  0xFF9D: b"\x00",
-                  0xC2BB: b"\x00", 0xC2D4: b"\x00"}},
-        {"wram": {hWhoseTurn: bytes((0xC2,)), 0xFF98: b"\x00",
+                  sym("hTempPlayAreaLocation_ff9d"): b"\x00",
+                  sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardChangedType"): b"\x00"}},
+        {"wram": {hWhoseTurn: bytes((0xC2,)), sym("hTempCardIndex_ff98"): b"\x00",
                   wPlayerDeck + 0: b"\x03",
-                  0xFF9D: b"\x00",
-                  0xC2BB: b"\x01", wPlayerDeck + 1: b"\x08", 0xC2D4: b"\x00"}},
-        {"wram": {hWhoseTurn: bytes((0xC2,)), 0xFF98: b"\x00",
+                  sym("hTempPlayAreaLocation_ff9d"): b"\x00",
+                  sym("wPlayerArenaCard"): b"\x01", wPlayerDeck + 1: b"\x08", sym("wPlayerArenaCardChangedType"): b"\x00"}},
+        {"wram": {hWhoseTurn: bytes((0xC2,)), sym("hTempCardIndex_ff98"): b"\x00",
                   wPlayerDeck + 0: b"\x03",
-                  0xFF9D: b"\x00",
-                  0xC2BB: b"\x01", wPlayerDeck + 1: b"\x43", 0xC2D4: b"\x00"}},
-        dict(POISON, wram={hWhoseTurn: bytes((0xC2,)), 0xFF98: b"\x00",
+                  sym("hTempPlayAreaLocation_ff9d"): b"\x00",
+                  sym("wPlayerArenaCard"): b"\x01", wPlayerDeck + 1: b"\x43", sym("wPlayerArenaCardChangedType"): b"\x00"}},
+        dict(POISON, wram={hWhoseTurn: bytes((0xC2,)), sym("hTempCardIndex_ff98"): b"\x00",
                            wPlayerDeck + 0: b"\x03",
-                           0xFF9D: b"\x00",
-                           0xC2BB: b"\x01", wPlayerDeck + 1: b"\x43", 0xC2D4: b"\x00"}),
+                           sym("hTempPlayAreaLocation_ff9d"): b"\x00",
+                           sym("wPlayerArenaCard"): b"\x01", wPlayerDeck + 1: b"\x43", sym("wPlayerArenaCardChangedType"): b"\x00"}),
     ],
 }
 
 STRIKES_WRAM = {
     hWhoseTurn: bytes((0xC2,)),
-    0xC2BC: b"\xFF",
-    0xC3BC: b"\xFF",
-    0xCCC4: bytes((0x7F,)),
+    sym("wPlayerBench"): b"\xFF",
+    sym("wOpponentBench"): b"\xFF",
+    sym("wTempNonTurnDuelistCardID"): bytes((0x7F,)),
 }
 CASES.update({
     "HandleStrikesBack_AgainstDamagingAttack": [
         # de=0 → immediate return, no carry
         {"d": 0, "e": 0, "wram": STRIKES_WRAM},
         # damage to self → return, no carry
-        {"d": 0, "e": 10, "wram": {**STRIKES_WRAM, 0xCCE6: b"\x01"}},
+        {"d": 0, "e": 10, "wram": {**STRIKES_WRAM, sym("wIsDamageToSelf"): b"\x01"}},
         # not MACHAMP → return, no carry
-        {"d": 0, "e": 10, "wram": {hWhoseTurn: bytes((0xC2,)), 0xCCC4: b"\x01"}},
+        {"d": 0, "e": 10, "wram": {hWhoseTurn: bytes((0xC2,)), sym("wTempNonTurnDuelistCardID"): b"\x01"}},
         # POKEMON_POWER category → return, no carry
-        {"d": 0, "e": 10, "wram": {**STRIKES_WRAM, 0xCCB1: b"\x04"}},
+        {"d": 0, "e": 10, "wram": {**STRIKES_WRAM, sym("wLoadedAttackCategory"): b"\x04"}},
         dict(POISON, d=0, e=0, wram=STRIKES_WRAM),
     ],
 })
 # >>> factory-cases-statics
-wLoadedCard2Name = 0xCC68
-wTempTurnDuelistCardID = 0xCCC3
+wLoadedCard2Name = sym("wLoadedCard2Name")
+wTempTurnDuelistCardID = sym("wTempTurnDuelistCardID")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wTempNonTurnDuelistCardID = 0xCCC4
-wLoadedAttackCategory = 0xCCB1
-wDealtDamage = 0xCCBF
+wTempNonTurnDuelistCardID = sym("wTempNonTurnDuelistCardID")
+wLoadedAttackCategory = sym("wLoadedAttackCategory")
+wDealtDamage = sym("wDealtDamage")
 
-DB_hWhoseTurn = 0xFF97
-DB_PLAYER_SUBSTATUS1 = 0xC2E7
-DB_PLAYER_ARENA_HP = 0xC2C8
-DB_OPP_SUBSTATUS1 = 0xC3E7
-DB_OPP_ARENA_CARD = 0xC3BB
-DB_OPP_ARENA_HP = 0xC3C8
+DB_hWhoseTurn = sym("hWhoseTurn")
+DB_PLAYER_SUBSTATUS1 = sym("wPlayerArenaCardSubstatus1")
+DB_PLAYER_ARENA_HP = sym("wPlayerArenaCardHP")
+DB_OPP_SUBSTATUS1 = sym("wOpponentArenaCardSubstatus1")
+DB_OPP_ARENA_CARD = sym("wOpponentArenaCard")
+DB_OPP_ARENA_HP = sym("wOpponentArenaCardHP")
 
-wDuelDisplayedScreen = 0xCAC2
-wNoDamageOrEffect = 0xCCC7
+wDuelDisplayedScreen = sym("wDuelDisplayedScreen")
+wNoDamageOrEffect = sym("wNoDamageOrEffect")
 
-wDuelDisplayedScreen = 0xCAC2
-wLoadedAttackCategory = 0xCCB1
-wNoDamageOrEffect = 0xCCC7
-wTempNonTurnDuelistCardID = 0xCCC4
-wTempPlayAreaLocation_cceb = 0xCCEB
+wDuelDisplayedScreen = sym("wDuelDisplayedScreen")
+wLoadedAttackCategory = sym("wLoadedAttackCategory")
+wNoDamageOrEffect = sym("wNoDamageOrEffect")
+wTempNonTurnDuelistCardID = sym("wTempNonTurnDuelistCardID")
+wTempPlayAreaLocation_cceb = sym("wTempPlayAreaLocation_cceb")
 POKEMON_POWER = 0x04
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
-ARENA_SUBSTATUS2 = 0xC2E8
+hWhoseTurn = sym("hWhoseTurn")
+ARENA_SUBSTATUS2 = sym("wPlayerArenaCardSubstatus2")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory ApplyStrikesBack_AgainstResidualAttack
 CONTRACT["ApplyStrikesBack_AgainstResidualAttack"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["ApplyStrikesBack_AgainstResidualAttack"] = [
-    {"hl": 0, "wram": {0xFF97: b"\xC2", wTempTurnDuelistCardID: b"\x01"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wLoadedCard2Name: 2}},
-    {"hl": 0, "wram": {0xFF97: b"\xC2", wTempTurnDuelistCardID: b"\xE4"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wLoadedCard2Name: 2}},
-    dict(POISON, hl=0, wram={0xFF97: b"\xC2", wTempTurnDuelistCardID: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wLoadedCard2Name: 2}),
+    {"hl": 0, "wram": {sym("hWhoseTurn"): b"\xC2", wTempTurnDuelistCardID: b"\x01"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wLoadedCard2Name: 2}},
+    {"hl": 0, "wram": {sym("hWhoseTurn"): b"\xC2", wTempTurnDuelistCardID: b"\xE4"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wLoadedCard2Name: 2}},
+    dict(POISON, hl=0, wram={sym("hWhoseTurn"): b"\xC2", wTempTurnDuelistCardID: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wLoadedCard2Name: 2}),
 ]
 # <<< factory ApplyStrikesBack_AgainstResidualAttack
 
@@ -504,7 +505,7 @@ CONTRACT["HandleStrikesBack_AgainstResidualAttack"] = {"compare": ("a", "f"), "p
 CASES["HandleStrikesBack_AgainstResidualAttack"] = [
     # dome-5 830990: the defender is not Machamp; `cp MACHAMP` borrows in the
     # low nibble only (N and H, no carry).
-    dict(strikes_back_residual_fixture(vram=False, bank=0), **STRIKES_BACK_RESIDUAL_REGS, read={0xCCC4: 1}),
+    dict(strikes_back_residual_fixture(vram=False, bank=0), **STRIKES_BACK_RESIDUAL_REGS, read={sym("wTempNonTurnDuelistCardID"): 1}),
     {"wram": {wTempNonTurnDuelistCardID: b"\x01"}},
     {"wram": {wTempNonTurnDuelistCardID: b"\x7f", wLoadedAttackCategory: b"\x80"}},
     {"wram": {wTempNonTurnDuelistCardID: b"\x7f", wLoadedAttackCategory: b"\x00", wDealtDamage: b"\x00"}},
@@ -533,9 +534,9 @@ CASES["HandleDestinyBondSubstatus"] = [
 # >>> factory HandleNShieldAndTransparency
 CONTRACT["HandleNShieldAndTransparency"] = {"compare": ("d", "e", "f"), "preserve": ("d", "e")}
 CASES["HandleNShieldAndTransparency"] = [
-    {"e": 0, "d": 0x12, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01", 0xC401: b"\x01", 0xCCC7: b"\x00"}, "read": {0xCCC7: 1}},
-    {"e": 0, "d": 0x12, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01", 0xC401: b"\xA0", 0xC3CE: b"\x01", 0xCCC7: b"\x00", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xCCC7: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01", 0xC401: b"\x01", 0xCCC7: b"\x00"}, "read": {0xCCC7: 1}}
+    {"e": 0, "d": 0x12, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x01", sym("wBoosterCardsDrawn") + 1: b"\x01", sym("wNoDamageOrEffect"): b"\x00"}, "read": {sym("wNoDamageOrEffect"): 1}},
+    {"e": 0, "d": 0x12, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x01", sym("wBoosterCardsDrawn") + 1: b"\xA0", sym("wOpponentArenaCardStage"): b"\x01", sym("wNoDamageOrEffect"): b"\x00", sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {sym("wNoDamageOrEffect"): 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x01", sym("wBoosterCardsDrawn") + 1: b"\x01", sym("wNoDamageOrEffect"): b"\x00"}, "read": {sym("wNoDamageOrEffect"): 1}}
 ]
 # <<< factory HandleNShieldAndTransparency
 
@@ -543,17 +544,17 @@ CASES["HandleNShieldAndTransparency"] = [
 CONTRACT["HandleTransparency"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",)}
 CASES["HandleTransparency"] = [
     {"wram": {wTempNonTurnDuelistCardID: b"\x00"}, "hl": 0x4567},
-    {"wram": {wTempNonTurnDuelistCardID: b"\x96", wLoadedAttackCategory: b"\x04"}, "hl": 0xC100},
-    dict(POISON, wram={wTempNonTurnDuelistCardID: b"\x96", wLoadedAttackCategory: b"\x04"}, hl=0xC200)
+    {"wram": {wTempNonTurnDuelistCardID: b"\x96", wLoadedAttackCategory: b"\x04"}, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11},
+    dict(POISON, wram={wTempNonTurnDuelistCardID: b"\x96", wLoadedAttackCategory: b"\x04"}, hl=sym("wPlayerCardLocations"))
 ]
 # <<< factory HandleTransparency
 
 # >>> factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects
 CONTRACT["HandleDamageReductionOrNoDamageFromPkmnPowerEffects"] = {"compare": ("f", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
 CASES["HandleDamageReductionOrNoDamageFromPkmnPowerEffects"] = [
-    {"d": 0x12, "e": 0x34, "hl": 0x4567, "wram": {0xCCB1: b"\x04"}},
-    {"d": 0x80, "e": 0x00, "hl": 0x0000, "wram": {0xCCB1: b"\x04"}},
-    dict(POISON, wram={0xCCB1: b"\x04"}),
+    {"d": 0x12, "e": 0x34, "hl": 0x4567, "wram": {sym("wLoadedAttackCategory"): b"\x04"}},
+    {"d": 0x80, "e": 0x00, "hl": 0x0000, "wram": {sym("wLoadedAttackCategory"): b"\x04"}},
+    dict(POISON, wram={sym("wLoadedAttackCategory"): b"\x04"}),
     dict(damage_reduction_fixture(vram=False), **DAMAGE_REDUCTION_REGS),
 ]
 # <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects
@@ -563,7 +564,7 @@ CONTRACT["HandleSandAttackOrSmokescreenSubstatus"] = {"compare": ("a", "f", "b",
 CASES["HandleSandAttackOrSmokescreenSubstatus"] = [
     {"d": 0x12, "e": 0x34, "hl": 0x4567, "wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}},
     {"d": 0xAB, "e": 0xCD, "hl": 0x0000, "wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}},
-    {"a": 0x01, "f": 0x10, "b": 0x22, "c": 0x33, "d": 0x80, "e": 0x01, "hl": 0xC000, "wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}},
+    {"a": 0x01, "f": 0x10, "b": 0x22, "c": 0x33, "d": 0x80, "e": 0x01, "hl": sym("wDeckToBuild"), "wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}),
     dict(sand_attack_fixture(vram=False), **SAND_ATTACK_REGS, keys=[0x00, 0x01]),
 ]

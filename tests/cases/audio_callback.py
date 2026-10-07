@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/home/audio_callback.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -10,7 +11,7 @@ CONTRACT = {
     },
 }
 
-HBANK_ROM = 0xFF80
+HBANK_ROM = sym("hBankROM")
 CALLBACK = 0x3FEE
 
 CASES = {

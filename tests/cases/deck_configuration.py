@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/deck_configuration.asm."""
+from tests.cases._symbols import sym, sym_bank
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -13,24 +14,24 @@ CASES = {}
 
 # >>> factory DecrementDeckCardsInCollection
 CONTRACT["DecrementDeckCardsInCollection"] = {"compare": ("hl",), "preserve": ()}
-sCardCollection = 0xA100
+sCardCollection = sym("sCardCollection")
 CASES["DecrementDeckCardsInCollection"] = [
-    {"hl": 0xC100, "wram": {0xC100: b"\x00"}, "sram": {0: {sCardCollection: b"\x00" * 4}}},
-    {"hl": 0xC100, "wram": {0xC100: b"\x01\x02\x00"}, "sram": {0: {sCardCollection: b"\x05\x05\x05"}}},
-    {"hl": 0xC100, "wram": {0xC100: b"\x01" * 60}, "sram": {0: {sCardCollection + 1: b"\x63"}}},
-    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE}, hl=0xC100, wram={0xC100: b"\x00"}, sram={0: {sCardCollection: b"\x00" * 4}}),
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, "sram": {0: {sCardCollection: b"\x00" * 4}}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01\x02\x00"}, "sram": {0: {sCardCollection: b"\x05\x05\x05"}}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01" * 60}, "sram": {0: {sCardCollection + 1: b"\x63"}}},
+    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE}, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, sram={0: {sCardCollection: b"\x00" * 4}}),
 ]
 # <<< factory DecrementDeckCardsInCollection
 
 
 # >>> factory AddDeckToCollection
 CONTRACT["AddDeckToCollection"] = {"compare": ("hl",), "preserve": ()}
-sCardCollection2 = 0xA100
+sCardCollection2 = sym("sCardAndDeckSaveData")
 CASES["AddDeckToCollection"] = [
-    {"hl": 0xC100, "wram": {0xC100: b"\x00"}, "sram": {0: {sCardCollection2: b"\x00" * 4}}},
-    {"hl": 0xC100, "wram": {0xC100: b"\x01\x02\x00"}, "sram": {0: {sCardCollection2: b"\x05\x05\x05"}}},
-    {"hl": 0xC100, "wram": {0xC100: b"\x01" * 60}, "sram": {0: {sCardCollection2 + 1: b"\x62"}}},
-    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE}, hl=0xC100, wram={0xC100: b"\x00"}, sram={0: {sCardCollection2: b"\x00" * 4}}),
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, "sram": {0: {sCardCollection2: b"\x00" * 4}}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01\x02\x00"}, "sram": {0: {sCardCollection2: b"\x05\x05\x05"}}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01" * 60}, "sram": {0: {sCardCollection2 + 1: b"\x62"}}},
+    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE}, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, sram={0: {sCardCollection2: b"\x00" * 4}}),
 ]
 # <<< factory AddDeckToCollection
 
@@ -38,10 +39,10 @@ CASES["AddDeckToCollection"] = [
 # >>> factory CopyListFromHLToDE
 CONTRACT["CopyListFromHLToDE"] = {"compare": ("hl", "d", "e"), "preserve": ()}
 CASES["CopyListFromHLToDE"] = [
-    {"hl": 0xC100, "d": 0xC2, "e": 0x00, "wram": {0xC100: b"\x00"}, "read": {0xC200: 1}},
-    {"hl": 0xC100, "d": 0xC2, "e": 0x00, "wram": {0xC100: b"\x01\x02\x00"}, "read": {0xC200: 3}},
-    {"hl": 0xC100, "d": 0xC2, "e": 0x00, "wram": {0xC100: b"\xFF" * 5 + b"\x00"}, "read": {0xC200: 6}},
-    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC}, hl=0xC100, d=0xC2, e=0x00, wram={0xC100: b"\x00"}, read={0xC200: 1}),
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC2, "e": 0x00, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, "read": {sym("wPlayerCardLocations"): 1}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC2, "e": 0x00, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01\x02\x00"}, "read": {sym("wPlayerCardLocations"): 3}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC2, "e": 0x00, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF" * 5 + b"\x00"}, "read": {sym("wPlayerCardLocations"): 6}},
+    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC}, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, d=0xC2, e=0x00, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, read={sym("wPlayerCardLocations"): 1}),
 ]
 # <<< factory CopyListFromHLToDE
 
@@ -49,14 +50,14 @@ CASES["CopyListFromHLToDE"] = [
 # >>> factory CalculateOnesAndTensDigits
 CONTRACT["CalculateOnesAndTensDigits"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["CalculateOnesAndTensDigits"] = [
-    {"a": 0, "wram": {0xCEB6: b"\xFF\xFF"}},
-    dict(POISON, wram={0xCEB6: b"\xFF\xFF"}),
-    {"a": 1, "wram": {0xCEB6: b"\xFF\xFF"}},
-    {"a": 9, "wram": {0xCEB6: b"\xFF\xFF"}},
-    {"a": 10, "wram": {0xCEB6: b"\xFF\xFF"}},
-    {"a": 19, "wram": {0xCEB6: b"\xFF\xFF"}},
-    {"a": 99, "wram": {0xCEB6: b"\xFF\xFF"}},
-    {"a": 255, "wram": {0xCEB6: b"\xFF\xFF"}},
+    {"a": 0, "wram": {sym("wDecimalDigitsSymbols"): b"\xFF\xFF"}},
+    dict(POISON, wram={sym("wDecimalDigitsSymbols"): b"\xFF\xFF"}),
+    {"a": 1, "wram": {sym("wDecimalDigitsSymbols"): b"\xFF\xFF"}},
+    {"a": 9, "wram": {sym("wDecimalDigitsSymbols"): b"\xFF\xFF"}},
+    {"a": 10, "wram": {sym("wDecimalDigitsSymbols"): b"\xFF\xFF"}},
+    {"a": 19, "wram": {sym("wDecimalDigitsSymbols"): b"\xFF\xFF"}},
+    {"a": 99, "wram": {sym("wDecimalDigitsSymbols"): b"\xFF\xFF"}},
+    {"a": 255, "wram": {sym("wDecimalDigitsSymbols"): b"\xFF\xFF"}},
 ]
 # <<< factory CalculateOnesAndTensDigits
 
@@ -66,11 +67,11 @@ CASES["CalculateOnesAndTensDigits"] = [
 # >>> factory InitCardSelectionParams
 CONTRACT["InitCardSelectionParams"] = {"compare": ("a", "c", "hl"), "preserve": ("c",)}
 CASES["InitCardSelectionParams"] = [
-    {"a": 0x00, "hl": 0xC100, "wram": {0xC100: b"\x00" * 9}, "read": {0xCEA3: 12, 0xFFB3: 1}},
-    dict(POISON, a=0x5A, hl=0xC100, wram={0xC100: bytes(range(1, 10))},
-         read={0xCEA3: 12, 0xFFB3: 1}),
-    {"a": 0xFF, "hl": 0xC1F8, "wram": {0xC1F8: b"\x11\x22\x33\x44\x55\x66\x77\x88\x99"},
-     "read": {0xCEA3: 12, 0xFFB3: 1}},
+    {"a": 0x00, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00" * 9}, "read": {sym("wCheckMenuCursorBlinkCounter"): 12, sym("hffb3"): 1}},
+    dict(POISON, a=0x5A, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(1, 10))},
+         read={sym("wCheckMenuCursorBlinkCounter"): 12, sym("hffb3"): 1}),
+    {"a": 0xFF, "hl": sym("wDecompressionSecondaryBufferStart") + 0x109, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x109: b"\x11\x22\x33\x44\x55\x66\x77\x88\x99"},
+     "read": {sym("wCheckMenuCursorBlinkCounter"): 12, sym("hffb3"): 1}},
 ]
 # <<< factory InitCardSelectionParams
 
@@ -78,32 +79,32 @@ CASES["InitCardSelectionParams"] = [
 # >>> factory ClearMemory_Bank2
 CONTRACT["ClearMemory_Bank2"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["ClearMemory_Bank2"] = [
-    {"hl": 0xC100, "wram": {0xC100: b"\xAA" * 0x100}},
-    dict(POISON, a=1, hl=0xC200, wram={0xC200: b"\xAA"}),
-    {"a": 1, "hl": 0xC300, "wram": {0xC300: b"\xAA"}},
-    {"a": 0xFF, "hl": 0xC400, "wram": {0xC400: b"\xAA" * 0xFF}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xAA" * 0x100}},
+    dict(POISON, a=1, hl=sym("wPlayerCardLocations"), wram={sym("wPlayerCardLocations"): b"\xAA"}),
+    {"a": 1, "hl": sym("wOpponentCardLocations"), "wram": {sym("wOpponentCardLocations"): b"\xAA"}},
+    {"a": 0xFF, "hl": sym("wBoosterCardsDrawn"), "wram": {sym("wBoosterCardsDrawn"): b"\xAA" * 0xFF}},
 ]
 # <<< factory ClearMemory_Bank2
 
 # >>> factory CheckIfHasOtherValidDecks
 CONTRACT["CheckIfHasOtherValidDecks"] = {"compare": ("f",), "preserve": ()}
 CASES["CheckIfHasOtherValidDecks"] = [
-    {"wram": {0xCEB2: b"\x00\x00\x00\x00"}},
-    dict(POISON, wram={0xCEB2: b"\x01\x01\x00\x00"}),
-    {"wram": {0xCEB2: b"\x01\x00\x00\x00"}},
-    {"wram": {0xCEB2: b"\x00\x01\x00\x00"}},
-    {"wram": {0xCEB2: b"\x01\x00\x01\x00"}},
-    {"wram": {0xCEB2: b"\x00\x00\x01\x01"}},
+    {"wram": {sym("wDeck1Valid"): b"\x00\x00\x00\x00"}},
+    dict(POISON, wram={sym("wDeck1Valid"): b"\x01\x01\x00\x00"}),
+    {"wram": {sym("wDeck1Valid"): b"\x01\x00\x00\x00"}},
+    {"wram": {sym("wDeck1Valid"): b"\x00\x01\x00\x00"}},
+    {"wram": {sym("wDeck1Valid"): b"\x01\x00\x01\x00"}},
+    {"wram": {sym("wDeck1Valid"): b"\x00\x00\x01\x01"}},
 ]
 # <<< factory CheckIfHasOtherValidDecks
 
 # >>> factory FillDEWithA
 CONTRACT["FillDEWithA"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "c", "d", "e", "hl")}
 CASES["FillDEWithA"] = [
-    {"a": 0x00, "b": 0x01, "d": 0xC1, "e": 0x00, "hl": 0xC200, "wram": {0xC100: b"\xFF"}, "read": {0xC100: 1}},
-    {"a": 0x7E, "b": 0x00, "d": 0xC2, "e": 0x00, "hl": 0xC300, "wram": {0xC200: b"\xFF" * 0x100}, "read": {0xC200: 0x100}},
-    {"a": 0xA5, "b": 0x05, "d": 0xC3, "e": 0x00, "hl": 0xC400, "wram": {0xC300: b"\x00" * 5}, "read": {0xC300: 5}},
-    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, wram={0xDDEE: b"\x00" * 0xBB}, read={0xDDEE: 0xBB}),
+    {"a": 0x00, "b": 0x01, "d": 0xC1, "e": 0x00, "hl": sym("wPlayerCardLocations"), "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF"}, "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 1}},
+    {"a": 0x7E, "b": 0x00, "d": 0xC2, "e": 0x00, "hl": sym("wOpponentCardLocations"), "wram": {sym("wPlayerCardLocations"): b"\xFF" * 0x100}, "read": {sym("wPlayerCardLocations"): 0x100}},
+    {"a": 0xA5, "b": 0x05, "d": 0xC3, "e": 0x00, "hl": sym("wBoosterCardsDrawn"), "wram": {sym("wOpponentCardLocations"): b"\x00" * 5}, "read": {sym("wOpponentCardLocations"): 5}},
+    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, wram={sym("wdded") + 1: b"\x00" * 0xBB}, read={sym("wdded") + 1: 0xBB}),
 ]
 # <<< factory FillDEWithA
 
@@ -128,92 +129,92 @@ CASES["CountNumberOfCardsOfType"] = [
 # >>> factory CopyNBytesFromHLToDE
 CONTRACT["CopyNBytesFromHLToDE"] = {"compare": ("d", "e", "hl"), "preserve": ()}
 CASES["CopyNBytesFromHLToDE"] = [
-    {"b": 1, "hl": 0xC100, "d": 0xC5, "e": 0x00, "wram": {0xC100: b"\x42"}, "read": {0xC500: 1}},
-    {"b": 3, "hl": 0xC100, "d": 0xC5, "e": 0x00, "wram": {0xC100: b"\x01\x02\x03"}, "read": {0xC500: 3}},
-    {"b": 0, "hl": 0xC100, "d": 0xC5, "e": 0x00, "wram": {0xC100: bytes(range(256))}, "read": {0xC500: 256}},
-    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, hl=0xC100, wram={0xC100: bytes(range(187))}, read={0xDDEE: 187}),
+    {"b": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC5, "e": 0x00, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x42"}, "read": {sym("wNameBuffer"): 1}},
+    {"b": 3, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC5, "e": 0x00, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01\x02\x03"}, "read": {sym("wNameBuffer"): 3}},
+    {"b": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC5, "e": 0x00, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(256))}, "read": {sym("wNameBuffer"): 256}},
+    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(187))}, read={sym("wdded") + 1: 187}),
 ]
 # <<< factory CopyNBytesFromHLToDE
 
 # >>> factory-cases-statics
-wTempCardCollection = 0xC000
+wTempCardCollection = sym("wTempCardCollection")
 
-sCardCollection = 0xA100
-sDeck1Cards = 0xA218
-sDeck2Cards = 0xA26C
-sDeck3Cards = 0xA2C0
-sDeck4Cards = 0xA314
-wTempCardCollection = 0xC000
+sCardCollection = sym("sCardCollection")
+sDeck1Cards = sym("sDeck1Cards")
+sDeck2Cards = sym("sDeck2Cards")
+sDeck3Cards = sym("sDeck3Cards")
+sDeck4Cards = sym("sDeck4Cards")
+wTempCardCollection = sym("wTempCardCollection")
 
-wCardListCursorPos = 0xCEA4
-wVisibleListCardIDs = 0xCEC4
+wCardListCursorPos = sym("wCardListCursorPos")
+wVisibleListCardIDs = sym("wVisibleListCardIDs")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wCardListCursorPos = 0xCEA4
-wCardListCursorXPos = 0xCEA5
-wCardListCursorYPos = 0xCEA6
-wCardListXSpacing = 0xCEA8
+wCardListCursorPos = sym("wCardListCursorPos")
+wCardListCursorXPos = sym("wCardListCursorXPos")
+wCardListCursorYPos = sym("wCardListCursorYPos")
+wCardListXSpacing = sym("wCardListXSpacing")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wMenuInputSFX = 0xCFE3
-wCheckMenuCursorBlinkCounter = 0xCEA3
-wVisibleCursorTile = 0xCEAA
-wCardListCursorPos = 0xCEA4
-wCardListCursorXPos = 0xCEA5
+wMenuInputSFX = sym("wMenuInputSFX")
+wCheckMenuCursorBlinkCounter = sym("wCheckMenuCursorBlinkCounter")
+wVisibleCursorTile = sym("wVisibleCursorTile")
+wCardListCursorPos = sym("wCardListCursorPos")
+wCardListCursorXPos = sym("wCardListCursorXPos")
 
-sCurrentlySelectedDeck = 0xB700
+sCurrentlySelectedDeck = sym("sCurrentlySelectedDeck")
 
-hDPadHeld = 0xFF8F
-hKeysPressed = 0xFF91
-wCardListCursorPos = 0xCEA4
-wCardListNumCursorPositions = 0xCEA9
-wCheckMenuCursorBlinkCounter = 0xCEA3
-wMenuInputSFX = 0xCFE3
-hffb3 = 0xFFB3
+hDPadHeld = sym("hDPadHeld")
+hKeysPressed = sym("hKeysPressed")
+wCardListCursorPos = sym("wCardListCursorPos")
+wCardListNumCursorPositions = sym("wCardListNumCursorPositions")
+wCheckMenuCursorBlinkCounter = sym("wCheckMenuCursorBlinkCounter")
+wMenuInputSFX = sym("wMenuInputSFX")
+hffb3 = sym("hffb3")
 
-hDPadHeld = 0xFF8F
-wCardListNumCursorPositions = 0xCEA9
-wCardListVisibleOffset = 0xCEA1
+hDPadHeld = sym("hDPadHeld")
+wCardListNumCursorPositions = sym("wCardListNumCursorPositions")
+wCardListVisibleOffset = sym("wCardListVisibleOffset")
 
-wDefaultText = 0xC590
-sPlayerName = 0xA010
+wDefaultText = sym("wDefaultText")
+sPlayerName = sym("sPlayerName")
 NAME_BUFFER_LENGTH = 0x10
-GENERIC_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1, wDefaultText: NAME_BUFFER_LENGTH}
+GENERIC_READ = {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("wCurTextTile"): 2, sym("wFontWidth"): 1, wDefaultText: NAME_BUFFER_LENGTH}
 GENERIC_VREAD = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-sCardCollection = 0xA100
-wTempCardCollection = 0xC000
+sCardCollection = sym("sCardCollection")
+wTempCardCollection = sym("wTempCardCollection")
 
-wCardFilterCounts = 0xCEBB
-wDefaultText = 0xC590
-wTotalCardCount = 0xCECC
+wCardFilterCounts = sym("wCardFilterCounts")
+wDefaultText = sym("wDefaultText")
+wTotalCardCount = sym("wTotalCardCount")
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-wCardListCoords = 0xCED0
-wNumVisibleCardListEntries = 0xCECB
+wCardListCoords = sym("wCardListCoords")
+wNumVisibleCardListEntries = sym("wNumVisibleCardListEntries")
 
-F9_wVisibleListCardIDs = 0xCEC4
-F9_wCardListCursorPos = 0xCEA4
-F9_wVBlankOAMCopyToggle = 0xCAC0
-F9_wLCDC = 0xCABB
+F9_wVisibleListCardIDs = sym("wUnavailableAlbumCardSets")
+F9_wCardListCursorPos = sym("wCardListCursorPos")
+F9_wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
+F9_wLCDC = sym("wLCDC")
 F9_rLCDC = 0xFF40
-F9_wLoadedCard1 = 0xCC24
+F9_wLoadedCard1 = sym("wLoadedCard1")
 
-wCardListCursorPos = 0xCEA4
-wCardListVisibleOffset = 0xCEA1
-wMenuInputSFX = 0xCFE3
-wTempCardListCursorPos = 0xCED4
+wCardListCursorPos = sym("wCardListCursorPos")
+wCardListVisibleOffset = sym("wCardListVisibleOffset")
+wMenuInputSFX = sym("wMenuInputSFX")
+wTempCardListCursorPos = sym("wTempCardListCursorPos")
 
-hWhoseTurn = 0xFF97
-wCurDeckCards = 0xCF17
-wDuelTempList = 0xC510
-wOpponentDeck = 0xC480
-hTempListPtr_ff99 = 0xFF99
+hWhoseTurn = sym("hWhoseTurn")
+wCurDeckCards = sym("wCurDeckCards")
+wDuelTempList = sym("wDuelTempList")
+wOpponentDeck = sym("wOpponentDeck")
+hTempListPtr_ff99 = sym("hTempListPtr_ff99")
 
-wConsole = 0xCAB4
+wConsole = sym("wConsole")
 V0_ROW2 = 0x9841
 V0_ROW3 = 0x9861
 V1_ROW2 = 0x9841
@@ -222,31 +223,31 @@ ICON_ROW0 = bytes([0xE4, 0xE5, 0xE0, 0xE1, 0xEC, 0xED, 0xE8, 0xE9, 0xF0, 0xF1, 0
 ICON_ROW1 = bytes([0xE6, 0xE7, 0xE2, 0xE3, 0xEE, 0xEF, 0xEA, 0xEB, 0xF2, 0xF3, 0xF6, 0xF7, 0xFA, 0xFB, 0xDE, 0xDF, 0xFE, 0xFF])
 ATTR_ROW = bytes([2, 2, 1, 1, 2, 2, 1, 1, 3, 3, 3, 3, 0, 0, 2, 2, 2, 2])
 
-wCurDeckCards = 0xCF17
-wUniqueDeckCardList = 0xCF68
-wNumUniqueCards = 0xCED9
+wCurDeckCards = sym("wCurDeckCards")
+wUniqueDeckCardList = sym("wUniqueDeckCardList")
+wNumUniqueCards = sym("wNumUniqueCards")
 
 
-hDPadHeld = 0xFF8F
-hKeysPressed = 0xFF91
-hffb3 = 0xFFB3
-wCardListCursorPos = 0xCEA4
-wCardListNumCursorPositions = 0xCEA9
-wCardListVisibleOffset = 0xCEA1
-wCheckMenuCursorBlinkCounter = 0xCEA3
-wCardListHandlerFunction = 0xCEAC
-wCardListUpdateFunction = 0xCECE
-wUnableToScrollDown = 0xCECD
-wced2 = 0xCED2
-wVisibleCursorTile = 0xCEAA
-wMenuInputSFX = 0xCFE3
+hDPadHeld = sym("hDPadHeld")
+hKeysPressed = sym("hKeysPressed")
+hffb3 = sym("hffb3")
+wCardListCursorPos = sym("wCardListCursorPos")
+wCardListNumCursorPositions = sym("wCardListNumCursorPositions")
+wCardListVisibleOffset = sym("wCardListVisibleOffset")
+wCheckMenuCursorBlinkCounter = sym("wCheckMenuCursorBlinkCounter")
+wCardListHandlerFunction = sym("wCardListHandlerFunction")
+wCardListUpdateFunction = sym("wCardListUpdateFunction")
+wUnableToScrollDown = sym("wUnableToScrollDown")
+wced2 = sym("wced2")
+wVisibleCursorTile = sym("wVisibleCursorTile")
+wMenuInputSFX = sym("wMenuInputSFX")
 
-wCurDeck_PCD = 0xCEB1
-wCurDeckName_PCD = 0xCFB9
-wDefaultText_PCD = 0xC590
+wCurDeck_PCD = sym("wCurDeck")
+wCurDeckName_PCD = sym("wCurDeckName")
+wDefaultText_PCD = sym("wCurDeckCardChanges")
 SETUP_PCD = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-wNumCardListEntries = 0xCFE6
+wNumCardListEntries = sym("wNumCardListEntries")
 
 # HandleDeckConfirmationMenu (deck_configuration.asm:2364). A seed address is
 # compared as well as written, so this lists only bytes the reference and the
@@ -257,8 +258,8 @@ wNumCardListEntries = 0xCFE6
 # is the bank the params table ($5EAF) lives in.
 HDCM_SEEDS = {
     wTotalCardCount: b"\x01",  # nonzero: takes the menu path, not the empty-deck tail
-    0xCFB9: b"\x00",  # wCurDeckName empty skips the deck-name print
-    0xCABB: b"\x00",
+    sym("wCurDeckName"): b"\x00",  # wCurDeckName empty skips the deck-name print
+    sym("wLCDC"): b"\x00",
     hWhoseTurn: b"\xC2",  # saved and restored around SortCurDeckCardsByID
     wCurDeckCards: b"\x01\x00",  # rewritten in place by the sort
     wOpponentDeck: b"\x99\x00",  # sort scratch, overwritten end to end
@@ -285,33 +286,33 @@ HDCM_READ = {
     hWhoseTurn: 1,
 }
 
-wTotalCardCount = 0xCECC
-wConsole = 0xCAB4
+wTotalCardCount = sym("wTotalCardCount")
+wConsole = sym("wConsole")
 
 HANDLE_SELECT_POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hDPadHeld_hsu = 0xFF8F
-wCardListNumCursorPositions_hsu = 0xCEA9
-wCardListVisibleOffset_hsu = 0xCEA1
-wCardListUpdateFunction_hsu = 0xCECE
-wNumCardListEntries_hsu = 0xCFE6
-wNumVisibleCardListEntries_hsu = 0xCECB
-wCardListCoords_hsu = 0xCED0
-wUnableToScrollDown_hsu = 0xCECD
+hDPadHeld_hsu = sym("hDPadHeld")
+wCardListNumCursorPositions_hsu = sym("wCardListNumCursorPositions")
+wCardListVisibleOffset_hsu = sym("wCardListVisibleOffset")
+wCardListUpdateFunction_hsu = sym("wCardListUpdateFunction")
+wNumCardListEntries_hsu = sym("wNumCardListEntries")
+wNumVisibleCardListEntries_hsu = sym("wNumVisibleCardListEntries")
+wCardListCoords_hsu = sym("wCardListCoords")
+wUnableToScrollDown_hsu = sym("wUnableToScrollDown")
 
-HPCS_SRAM = {0: {0xA100: b"\x00" * 0xFF, 0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xA010: bytes([0x81, 0x82, 0x00] + [0] * 13)}}
+HPCS_SRAM = {0: {sym("sCardAndDeckSaveData"): b"\x00" * 0xFF, sym("sDeck1Cards"): b"\x00", sym("sDeck2Cards"): b"\x00", sym("sDeck3Cards"): b"\x00", sym("sDeck4Cards"): b"\x00", sym("sPlayerName"): bytes([0x81, 0x82, 0x00] + [0] * 13)}}
 HPCS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 CHANGE_DECK_NAME_KEYS = [0x00, 0x41, 0x00, 0x02]
 CHANGE_DECK_NAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-CHANGE_DECK_NAME_READ = {0xCFB9: 22}
+CHANGE_DECK_NAME_READ = {sym("wCurDeckName"): 22}
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
 CONTRACT["IncrementDeckCardsInTempCollection"] = {"compare": (), "preserve": ()}
 CASES["IncrementDeckCardsInTempCollection"] = [
-    {"d": 0xC2, "e": 0x00, "wram": {0xC200: b"\x01\x02\x01\x00"}, "read": {0xC001: 2, 0xC002: 1}},
-    {"d": 0xC2, "e": 0x10, "wram": {0xC210: b"\x00"}, "read": {}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xDDEE: b"\xBB" * 60}, "read": {0xC0BB: 60}},
+    {"d": 0xC2, "e": 0x00, "wram": {sym("wPlayerCardLocations"): b"\x01\x02\x01\x00"}, "read": {sym("wDeckToBuild") + 1: 2, sym("wDeckToBuild") + 2: 1}},
+    {"d": 0xC2, "e": 0x10, "wram": {sym("wPlayerCardLocations") + 0x10: b"\x00"}, "read": {}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wdded") + 1: b"\xBB" * 60}, "read": {sym("wDeckToBuild") + 0xBB: 60}},
 ]
 # <<< factory IncrementDeckCardsInTempCollection
 
@@ -328,54 +329,54 @@ CASES["CreateCardCollectionListWithDeckCards"] = [
 # >>> factory GetSelectedVisibleCardID
 CONTRACT["GetSelectedVisibleCardID"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
 CASES["GetSelectedVisibleCardID"] = [
-    {"wram": {wCardListCursorPos: b"\x00", wVisibleListCardIDs: b"\x2A"}, "expect_regs": {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x2A, "hl": 0xCEC4}},
-    {"wram": {wCardListCursorPos: b"\x01", wVisibleListCardIDs: b"\x00\x7F"}, "expect_regs": {"a": 0x01, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x7F, "hl": 0xCEC5}},
-    dict(POISON, wram={wCardListCursorPos: b"\x02", wVisibleListCardIDs: b"\x00\x00\xEE"}, expect_regs={"a": 0x02, "f": 0x80, "b": 0xBB, "c": 0xCC, "d": 0x00, "e": 0xEE, "hl": 0xCEC6}),
+    {"wram": {wCardListCursorPos: b"\x00", wVisibleListCardIDs: b"\x2A"}, "expect_regs": {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x2A, "hl": sym("wUnavailableAlbumCardSets")}},
+    {"wram": {wCardListCursorPos: b"\x01", wVisibleListCardIDs: b"\x00\x7F"}, "expect_regs": {"a": 0x01, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x7F, "hl": sym("wUnavailableAlbumCardSets") + 1}},
+    dict(POISON, wram={wCardListCursorPos: b"\x02", wVisibleListCardIDs: b"\x00\x00\xEE"}, expect_regs={"a": 0x02, "f": 0x80, "b": 0xBB, "c": 0xCC, "d": 0x00, "e": 0xEE, "hl": sym("wUnavailableAlbumCardSets") + 2}),
 ]
 # <<< factory GetSelectedVisibleCardID
 
 # >>> factory CheckIfDeckHasCards
 CONTRACT["CheckIfDeckHasCards"] = {"compare": ("f",), "preserve": ()}
 CASES["CheckIfDeckHasCards"] = [
-    {"hl": 0xA200, "ramg": False, "sram": {0: {0xA218: b"\x00"}}},
-    {"hl": 0xA200, "ramg": False, "sram": {0: {0xA218: b"\x01"}}},
-    dict(POISON, hl=0xA200, ramg=False, sram={0: {0xA218: b"\x00"}}),
-    {"hl": 0xA200, "sram": {0: {0xA218: b"\xFF"}}},
+    {"hl": sym("sBuiltDecks"), "ramg": False, "sram": {0: {sym("sDeck1Cards"): b"\x00"}}},
+    {"hl": sym("sBuiltDecks"), "ramg": False, "sram": {0: {sym("sDeck1Cards"): b"\x01"}}},
+    dict(POISON, hl=sym("sBuiltDecks"), ramg=False, sram={0: {sym("sDeck1Cards"): b"\x00"}}),
+    {"hl": sym("sBuiltDecks"), "sram": {0: {sym("sDeck1Cards"): b"\xFF"}}},
 ]
 # <<< factory CheckIfDeckHasCards
 
 # >>> factory FillBGMapLineWithA
 CONTRACT["FillBGMapLineWithA"] = {"compare": (), "preserve": ()}
 CASES["FillBGMapLineWithA"] = [
-    {"a": 0x11, "b": 0x00, "c": 0x00, "wram": {0xCAB4: b"\x00"}, "vread": {0: {0x9800: 20}}},
-    {"a": 0x22, "b": 0x01, "c": 0x02, "wram": {0xCAB4: b"\x02"}, "vread": {0: {0x9841: 20}, 1: {0x9841: 20}}},
-    dict(POISON, a=0xAA, f=0xF0, b=0x03, c=0x04, d=0xDD, e=0xEE, hl=0x1234, wram={0xCAB4: b"\x02"}, vread={0: {0x9883: 20}, 1: {0x9883: 20}}),
+    {"a": 0x11, "b": 0x00, "c": 0x00, "wram": {sym("wConsole"): b"\x00"}, "vread": {0: {0x9800: 20}}},
+    {"a": 0x22, "b": 0x01, "c": 0x02, "wram": {sym("wConsole"): b"\x02"}, "vread": {0: {0x9841: 20}, 1: {0x9841: 20}}},
+    dict(POISON, a=0xAA, f=0xF0, b=0x03, c=0x04, d=0xDD, e=0xEE, hl=0x1234, wram={sym("wConsole"): b"\x02"}, vread={0: {0x9883: 20}, 1: {0x9883: 20}}),
 ]
 # <<< factory FillBGMapLineWithA
 
 # >>> factory OpenDeckConfigurationMenu
 CONTRACT["OpenDeckConfigurationMenu"] = {"compare": (), "preserve": ()};
-_DECK_CONFIG_HANDLER = {0xCFD4: b"\x80\x54"}
-_SEND_DECK_CONFIG_HANDLER = {0xCFD4: b"\x80\x54"}
+_DECK_CONFIG_HANDLER = {sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"}
+_SEND_DECK_CONFIG_HANDLER = {sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"}
 _MENU_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 CASES["OpenDeckConfigurationMenu"] = [
-    {"wram": {0xCE52: b"\xFF", 0xCEA3: b"\xFF", 0xCABB: b"\x00", **_DECK_CONFIG_HANDLER}, "setup": _MENU_SETUP, "keys": [0x00, 0x02], "read": {0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {0xCE52: b"\x01", 0xCEA3: b"\x7F", 0xCABB: b"\x00", **_SEND_DECK_CONFIG_HANDLER}, "setup": _MENU_SETUP, "keys": [0x00, 0x02], "read": {0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCE52: b"\xA5", 0xCEA3: b"\x12", 0xCABB: b"\x00", **_DECK_CONFIG_HANDLER}, setup=_MENU_SETUP, keys=[0x00, 0x02], read={0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wInPlayAreaCurPosition"): b"\xFF", sym("wCheckMenuCursorBlinkCounter"): b"\xFF", sym("wLCDC"): b"\x00", **_DECK_CONFIG_HANDLER}, "setup": _MENU_SETUP, "keys": [0x00, 0x02], "read": {sym("wInPlayAreaCurPosition"): 1, sym("wMenuInputTablePointer"): 2, sym("wDuelInitialPrizesUpperBitsSet"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {sym("wInPlayAreaCurPosition"): b"\x01", sym("wCheckMenuCursorBlinkCounter"): b"\x7F", sym("wLCDC"): b"\x00", **_SEND_DECK_CONFIG_HANDLER}, "setup": _MENU_SETUP, "keys": [0x00, 0x02], "read": {sym("wInPlayAreaCurPosition"): 1, sym("wMenuInputTablePointer"): 2, sym("wDuelInitialPrizesUpperBitsSet"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={sym("wInPlayAreaCurPosition"): b"\xA5", sym("wCheckMenuCursorBlinkCounter"): b"\x12", sym("wLCDC"): b"\x00", **_DECK_CONFIG_HANDLER}, setup=_MENU_SETUP, keys=[0x00, 0x02], read={sym("wInPlayAreaCurPosition"): 1, sym("wMenuInputTablePointer"): 2, sym("wDuelInitialPrizesUpperBitsSet"): 1, sym("wCheckMenuCursorBlinkCounter"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenDeckConfigurationMenu
 
 # >>> factory PrintTotalNumberOfCardsInCollection
 CONTRACT["PrintTotalNumberOfCardsInCollection"] = {"compare": (), "preserve": ()}
 CASES["PrintTotalNumberOfCardsInCollection"] = [
-    {"sram": {0: {0xA100: b"\x00" * 255}}, "read": {0xC000: 12, 0xCEB6: 5},
+    {"sram": {0: {sym("sCardAndDeckSaveData"): b"\x00" * 255}}, "read": {sym("wDeckToBuild"): 12, sym("wDecimalDigitsSymbols"): 5},
      "vread": {0: {0x980D: 12}}},
-    {"sram": {0: {0xA100: b"\x00\x01" + b"\x00" * 253}}, "read": {0xC000: 12, 0xCEB6: 5},
+    {"sram": {0: {sym("sCardAndDeckSaveData"): b"\x00\x01" + b"\x00" * 253}}, "read": {sym("wDeckToBuild"): 12, sym("wDecimalDigitsSymbols"): 5},
      "vread": {0: {0x980D: 12}}},
-    {"sram": {0: {0xA100: b"\x00\xff" + b"\x00" * 253}}, "read": {0xC000: 12, 0xCEB6: 5},
+    {"sram": {0: {sym("sCardAndDeckSaveData"): b"\x00\xff" + b"\x00" * 253}}, "read": {sym("wDeckToBuild"): 12, sym("wDecimalDigitsSymbols"): 5},
      "vread": {0: {0x980D: 12}}},
-    dict(POISON, sram={0: {0xA100: b"\x00\x7f" + b"\x00" * 253}}, read={0xC000: 12, 0xCEB6: 5},
+    dict(POISON, sram={0: {sym("sCardAndDeckSaveData"): b"\x00\x7f" + b"\x00" * 253}}, read={sym("wDeckToBuild"): 12, sym("wDecimalDigitsSymbols"): 5},
          vread={0: {0x980D: 12}}),
 ]
 # <<< factory PrintTotalNumberOfCardsInCollection
@@ -408,12 +409,12 @@ CASES["DrawListCursor"] = [
     {"a": 0x66,
      "wram": {wCardListCursorPos: b"\x03", wCardListCursorXPos: b"\x04",
               wCardListCursorYPos: b"\x05", wCardListXSpacing: b"\x02",
-              0xCEA7: b"\x00"},
+              sym("wCardListYSpacing"): b"\x00"},
      "vread": {0: {0x98AA: 1}}},
     dict(POISON,
          wram={wCardListCursorPos: b"\x04", wCardListCursorXPos: b"\x06",
                wCardListCursorYPos: b"\x07", wCardListXSpacing: b"\x03",
-               0xCEA7: b"\x00"},
+               sym("wCardListYSpacing"): b"\x00"},
          vread={0: {0x98F2: 1}}),
 ]
 # <<< factory DrawListCursor
@@ -421,10 +422,10 @@ CASES["DrawListCursor"] = [
 # >>> factory DrawHorizontalListCursor_Invisible
 CONTRACT["DrawHorizontalListCursor_Invisible"] = {"compare": ("b", "c"), "preserve": ()}
 CASES["DrawHorizontalListCursor_Invisible"] = [
-    {"wram": {0xCEAB: b"\x66", 0xCEA4: b"\x03", 0xCEA5: b"\x04", 0xCEA6: b"\x05", 0xCEA8: b"\x02"},
+    {"wram": {sym("wInvisibleCursorTile"): b"\x66", sym("wCardListCursorPos"): b"\x03", sym("wCardListCursorXPos"): b"\x04", sym("wCardListCursorYPos"): b"\x05", sym("wCardListXSpacing"): b"\x02"},
      "vread": {0: {0x98AA: 1}}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-     "wram": {0xCEAB: b"\x77", 0xCEA4: b"\x04", 0xCEA5: b"\x06", 0xCEA6: b"\x07", 0xCEA8: b"\x03"},
+     "wram": {sym("wInvisibleCursorTile"): b"\x77", sym("wCardListCursorPos"): b"\x04", sym("wCardListCursorXPos"): b"\x06", sym("wCardListCursorYPos"): b"\x07", sym("wCardListXSpacing"): b"\x03"},
      "vread": {0: {0x98FA: 1}}},
 ]
 # <<< factory DrawHorizontalListCursor_Invisible
@@ -432,11 +433,11 @@ CASES["DrawHorizontalListCursor_Invisible"] = [
 # >>> factory DrawHorizontalListCursor_Visible
 CONTRACT["DrawHorizontalListCursor_Visible"] = {"compare": ("b", "c"), "preserve": ()}
 CASES["DrawHorizontalListCursor_Visible"] = [
-    {"wram": {0xCEAA: b"\x66", wCardListCursorPos: b"\x03", wCardListCursorXPos: b"\x04",
+    {"wram": {sym("wVisibleCursorTile"): b"\x66", wCardListCursorPos: b"\x03", wCardListCursorXPos: b"\x04",
               wCardListCursorYPos: b"\x05", wCardListXSpacing: b"\x02"},
      "vread": {0: {0x98AA: 1}}},
     dict(POISON,
-         wram={0xCEAA: b"\x77", wCardListCursorPos: b"\x04", wCardListCursorXPos: b"\x06",
+         wram={sym("wVisibleCursorTile"): b"\x77", wCardListCursorPos: b"\x04", wCardListCursorXPos: b"\x06",
                wCardListCursorYPos: b"\x07", wCardListXSpacing: b"\x03"},
          vread={0: {0x98FA: 1}}),
 ]
@@ -445,11 +446,11 @@ CASES["DrawHorizontalListCursor_Visible"] = [
 # >>> factory IsCardInAnyDeck
 CONTRACT["IsCardInAnyDeck"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "c", "d", "e", "hl")}
 CASES["IsCardInAnyDeck"] = [
-    {"a": 0x01, "f": 0x00, "e": 0x42, "ramg": False, "sram": {0: {0xA218: b"\x00" * 60, 0xA26C: b"\x00" * 60, 0xA2C0: b"\x00\x00\x42" + b"\x00" * 57, 0xA314: b"\x00" * 60}},
+    {"a": 0x01, "f": 0x00, "e": 0x42, "ramg": False, "sram": {0: {sym("sDeck1Cards"): b"\x00" * 60, sym("sDeck2Cards"): b"\x00" * 60, sym("sDeck3Cards"): b"\x00\x00\x42" + b"\x00" * 57, sym("sDeck4Cards"): b"\x00" * 60}},
      "expect_regs": {"a": 0x01, "f": 0x00, "b": 0x3A, "c": 0x00, "d": 0x00, "e": 0x42, "hl": 0x0000}},
-    {"a": 0x00, "f": 0x00, "e": 0x7F, "ramg": False, "sram": {0: {0xA218: b"\x00" * 60, 0xA26C: b"\x00" * 60, 0xA2C0: b"\x00" * 60, 0xA314: b"\x00" * 59 + b"\x7F"}},
+    {"a": 0x00, "f": 0x00, "e": 0x7F, "ramg": False, "sram": {0: {sym("sDeck1Cards"): b"\x00" * 60, sym("sDeck2Cards"): b"\x00" * 60, sym("sDeck3Cards"): b"\x00" * 60, sym("sDeck4Cards"): b"\x00" * 59 + b"\x7F"}},
      "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x01, "c": 0x00, "d": 0x00, "e": 0x7F, "hl": 0x0000}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "ramg": False, "sram": {0: {0xA218: b"\x00" * 60, 0xA26C: b"\x00" * 60, 0xA2C0: b"\x00" * 60, 0xA314: b"\x00" * 60}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "ramg": False, "sram": {0: {sym("sDeck1Cards"): b"\x00" * 60, sym("sDeck2Cards"): b"\x00" * 60, sym("sDeck3Cards"): b"\x00" * 60, sym("sDeck4Cards"): b"\x00" * 60}},
      "expect_regs": {"a": 0xAA, "f": 0xD0, "b": 0x00, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}},
 ]
 # <<< factory IsCardInAnyDeck
@@ -457,10 +458,10 @@ CASES["IsCardInAnyDeck"] = [
 # >>> factory DrawListCursor_Invisible
 CONTRACT["DrawListCursor_Invisible"] = {"compare": ("b", "c"), "preserve": ()}
 CASES["DrawListCursor_Invisible"] = [
-    {"wram": {0xCEAB: b"\x66", 0xCEA4: b"\x03", 0xCEA5: b"\x04", 0xCEA6: b"\x05", 0xCEA7: b"\x00", 0xCEA8: b"\x02"},
+    {"wram": {sym("wInvisibleCursorTile"): b"\x66", sym("wCardListCursorPos"): b"\x03", sym("wCardListCursorXPos"): b"\x04", sym("wCardListCursorYPos"): b"\x05", sym("wCardListYSpacing"): b"\x00", sym("wCardListXSpacing"): b"\x02"},
      "vread": {0: {0x98AA: 1}}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-     "wram": {0xCEAB: b"\x77", 0xCEA4: b"\x04", 0xCEA5: b"\x06", 0xCEA6: b"\x07", 0xCEA7: b"\x00", 0xCEA8: b"\x03"},
+     "wram": {sym("wInvisibleCursorTile"): b"\x77", sym("wCardListCursorPos"): b"\x04", sym("wCardListCursorXPos"): b"\x06", sym("wCardListCursorYPos"): b"\x07", sym("wCardListYSpacing"): b"\x00", sym("wCardListXSpacing"): b"\x03"},
      "vread": {0: {0x98F2: 1}}},
 ]
 # <<< factory DrawListCursor_Invisible
@@ -468,10 +469,10 @@ CASES["DrawListCursor_Invisible"] = [
 # >>> factory DrawListCursor_Visible
 CONTRACT["DrawListCursor_Visible"] = {"compare": ("b", "c"), "preserve": ()}
 CASES["DrawListCursor_Visible"] = [
-    {"wram": {0xCEAA: b"\x66", 0xCEA4: b"\x03", 0xCEA5: b"\x04", 0xCEA6: b"\x05", 0xCEA7: b"\x00", 0xCEA8: b"\x02"},
+    {"wram": {sym("wVisibleCursorTile"): b"\x66", sym("wCardListCursorPos"): b"\x03", sym("wCardListCursorXPos"): b"\x04", sym("wCardListCursorYPos"): b"\x05", sym("wCardListYSpacing"): b"\x00", sym("wCardListXSpacing"): b"\x02"},
      "vread": {0: {0x98AA: 1}}},
     dict(POISON,
-         wram={0xCEAA: b"\x77", 0xCEA4: b"\x04", 0xCEA5: b"\x06", 0xCEA6: b"\x07", 0xCEA7: b"\x00", 0xCEA8: b"\x03"},
+         wram={sym("wVisibleCursorTile"): b"\x77", sym("wCardListCursorPos"): b"\x04", sym("wCardListCursorXPos"): b"\x06", sym("wCardListCursorYPos"): b"\x07", sym("wCardListYSpacing"): b"\x00", sym("wCardListXSpacing"): b"\x03"},
          vread={0: {0x98F2: 1}}),
 ]
 # <<< factory DrawListCursor_Visible
@@ -479,27 +480,27 @@ CASES["DrawListCursor_Visible"] = [
 # >>> factory CountNumberOfCardsForEachCardType
 CONTRACT["CountNumberOfCardsForEachCardType"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["CountNumberOfCardsForEachCardType"] = [
-    {"read": {0xCEBB: 9}},
-    dict(POISON, read={0xCEBB: 9}),
+    {"read": {sym("wCardFilterCounts"): 9}},
+    dict(POISON, read={sym("wCardFilterCounts"): 9}),
 ]
 # <<< factory CountNumberOfCardsForEachCardType
 
 # >>> factory CopyDeckName
 CONTRACT["CopyDeckName"] = {"compare": ("hl", "d", "e"), "preserve": (), "wram_out": True}
 CASES["CopyDeckName"] = [
-    {"hl": 0xA200, "rom_bank": 2, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "sram": {0: {0xA200: b"ABC\x00"}}, "wram": {0xC590: b"\x00" * 16}, "read": {0xC590: 12}},
-    dict(POISON, hl=0xA200, rom_bank=2, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], sram={0: {0xA200: b"AB\x00"}}, wram={0xC590: b"\x00" * 16}, read={0xC590: 12}),
+    {"hl": sym("sBuiltDecks"), "rom_bank": 2, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "sram": {0: {sym("sBuiltDecks"): b"ABC\x00"}}, "wram": {sym("wCurDeckCardChanges"): b"\x00" * 16}, "read": {sym("wCurDeckCardChanges"): 12}},
+    dict(POISON, hl=sym("sBuiltDecks"), rom_bank=2, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], sram={0: {sym("sBuiltDecks"): b"AB\x00"}}, wram={sym("wCurDeckCardChanges"): b"\x00" * 16}, read={sym("wCurDeckCardChanges"): 12}),
 ]
 # <<< factory CopyDeckName
 
 # >>> factory GetOwnedCardCount
 CONTRACT["GetOwnedCardCount"] = {"compare": ("a", "d", "e", "hl"), "preserve": ("e", "hl")}
 CASES["GetOwnedCardCount"] = [
-    {"e": 0x63, "wram": {0xCEDA: b"\x00"}},
-    dict(POISON, e=0x63, wram={0xCEDA: b"\x01\x02\x03\x00"}),
+    {"e": 0x63, "wram": {sym("wFilteredCardList"): b"\x00"}},
+    dict(POISON, e=0x63, wram={sym("wFilteredCardList"): b"\x01\x02\x03\x00"}),
     {"e": 0x02, "oracle": False,
      "why": "wOwnedCardsCountList (0xCF68) falls inside $CF00-$CFFF, the oracle's own reserved call frame, so the match branch's real count byte can never be seeded or read live; only the loop index (d) that locates card id 0x02 at position 1 is asserted.",
-     "wram": {0xCEDA: b"\x01\x02\x03\x00"},
+     "wram": {sym("wFilteredCardList"): b"\x01\x02\x03\x00"},
      "expect_regs": {"d": 0x01}},
 ]
 # <<< factory GetOwnedCardCount
@@ -508,9 +509,9 @@ CASES["GetOwnedCardCount"] = [
 CONTRACT["TallyCardsInCardFilterLists"] = {"compare": ("hl",), "preserve": ()}
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 CASES["TallyCardsInCardFilterLists"] = [
-    {"wram": {0xCEBB: b"\x01\x00\x00\x00\x00\x00\x00\x00\x00"}, "setup": SETUP_TEXT},
-    dict(POISON, wram={0xCEBB: b"\x01\x00\x00\x00\x00\x00\x00\x00\x00"}, setup=SETUP_TEXT),
-    {"wram": {0xCEBB: b"\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "setup": SETUP_TEXT},
+    {"wram": {sym("wCardFilterCounts"): b"\x01\x00\x00\x00\x00\x00\x00\x00\x00"}, "setup": SETUP_TEXT},
+    dict(POISON, wram={sym("wCardFilterCounts"): b"\x01\x00\x00\x00\x00\x00\x00\x00\x00"}, setup=SETUP_TEXT),
+    {"wram": {sym("wCardFilterCounts"): b"\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "setup": SETUP_TEXT},
 ]
 # <<< factory TallyCardsInCardFilterLists
 
@@ -525,8 +526,8 @@ CASES["RemoveCardFromDeck"] = [
 # >>> factory CheckIfCurrentDeckWasChanged
 CONTRACT["CheckIfCurrentDeckWasChanged"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["CheckIfCurrentDeckWasChanged"] = [
-    {"wram": {0xCECC: b"\x01"}},
-    dict(POISON, wram={0xCECC: b"\x01"}),
+    {"wram": {sym("wTotalCardCount"): b"\x01"}},
+    dict(POISON, wram={sym("wTotalCardCount"): b"\x01"}),
 ]
 # <<< factory CheckIfCurrentDeckWasChanged
 
@@ -534,12 +535,12 @@ CASES["CheckIfCurrentDeckWasChanged"] = [
 CONTRACT["CreateFilteredCardList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["CreateFilteredCardList"] = [
     {"a": 0x08, "f": 0x00, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566,
-     "wram": {0xC000: b"\x00" * 240},
+     "wram": {sym("wDeckToBuild"): b"\x00" * 240},
      "instruction_budget": 8000000, "cycle_budget": 32000000,
-     "read": {0xCEAE: 1}},
-    dict(POISON, a=0x08, wram={0xC000: b"\x00" * 240},
+     "read": {sym("wNumEntriesInCurFilter"): 1}},
+    dict(POISON, a=0x08, wram={sym("wDeckToBuild"): b"\x00" * 240},
          instruction_budget=8000000, cycle_budget=32000000,
-         read={0xCEAE: 1}),
+         read={sym("wNumEntriesInCurFilter"): 1}),
 ]
 # <<< factory CreateFilteredCardList
 
@@ -548,8 +549,8 @@ CONTRACT["ConfirmSelectionAndReturnCarry"] = {"compare": ("a", "e"), "preserve":
 CASES["ConfirmSelectionAndReturnCarry"] = [
     {
         "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-        "wram": {0xCEA4: b"\x05"},
-        "hram": {0xFFB3: b"\x07"},
+        "wram": {sym("wCardListCursorPos"): b"\x05"},
+        "hram": {sym("hffb3"): b"\x07"},
         "expect_regs": {"a": 0x07, "e": 0x05},
     },
 ]
@@ -558,8 +559,8 @@ CASES["ConfirmSelectionAndReturnCarry"] = [
 # >>> factory AddCardIDToVisibleList
 CONTRACT["AddCardIDToVisibleList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl"), "wram_out": True}
 CASES["AddCardIDToVisibleList"] = [
-    {"b": 2, "e": 0x2A, "wram": {0xCEC4: b"\x00" * 7, 0xCECB: b"\x05"}, "read": {0xCEC4: 7}},
-    dict(POISON, b=2, e=0x2A, wram={0xCEC4: b"\x00" * 7, 0xCECB: b"\x05"}, read={0xCEC4: 7}),
+    {"b": 2, "e": 0x2A, "wram": {sym("wUnavailableAlbumCardSets"): b"\x00" * 7, sym("wNumVisibleCardListEntries"): b"\x05"}, "read": {sym("wUnavailableAlbumCardSets"): 7}},
+    dict(POISON, b=2, e=0x2A, wram={sym("wUnavailableAlbumCardSets"): b"\x00" * 7, sym("wNumVisibleCardListEntries"): b"\x05"}, read={sym("wUnavailableAlbumCardSets"): 7}),
 ]
 # <<< factory AddCardIDToVisibleList
 
@@ -569,10 +570,10 @@ CASES["HandleCardSelectionCursorBlink"] = [
     {"wram": {wCheckMenuCursorBlinkCounter: b"\x01"},
      "read": {wCheckMenuCursorBlinkCounter: 1}},
     {"wram": {wCheckMenuCursorBlinkCounter: b"\xF0", wVisibleCursorTile: b"\x77",
-              0xCEAB: b"\x66", 0xCEA4: b"\x03", 0xCEA5: b"\x04", 0xCEA6: b"\x05", 0xCEA8: b"\x02"},
+              sym("wInvisibleCursorTile"): b"\x66", sym("wCardListCursorPos"): b"\x03", sym("wCardListCursorXPos"): b"\x04", sym("wCardListCursorYPos"): b"\x05", sym("wCardListXSpacing"): b"\x02"},
      "read": {wCheckMenuCursorBlinkCounter: 1}, "vread": {0: {0x98AA: 1}}},
     dict(POISON, wram={wCheckMenuCursorBlinkCounter: b"\x00", wVisibleCursorTile: b"\x77",
-                        0xCEAB: b"\x66", 0xCEA4: b"\x03", 0xCEA5: b"\x04", 0xCEA6: b"\x05", 0xCEA8: b"\x02"},
+                        sym("wInvisibleCursorTile"): b"\x66", sym("wCardListCursorPos"): b"\x03", sym("wCardListCursorXPos"): b"\x04", sym("wCardListCursorYPos"): b"\x05", sym("wCardListXSpacing"): b"\x02"},
          read={wCheckMenuCursorBlinkCounter: 1}, vread={0: {0x98AA: 1}}),
 ]
 # <<< factory HandleCardSelectionCursorBlink
@@ -623,10 +624,10 @@ CASES["PrintPlayersCardsText"] = [
 # >>> factory AddGiftCenterDeckCardsToCollection
 CONTRACT["AddGiftCenterDeckCardsToCollection"] = {"compare": (), "preserve": ()}
 CASES["AddGiftCenterDeckCardsToCollection"] = [
-    {"hl": 0xC300, "wram": {0xC300: b"\x05\x00"},
+    {"hl": sym("wOpponentCardLocations"), "wram": {sym("wOpponentCardLocations"): b"\x05\x00"},
      "sram": {0: {sCardCollection: b"\x00" * 255}},
      "read": {sCardCollection + 5: 1, wTempCardCollection + 5: 1}},
-    dict(POISON, hl=0xC300, wram={0xC300: b"\x05\x00"},
+    dict(POISON, hl=sym("wOpponentCardLocations"), wram={sym("wOpponentCardLocations"): b"\x05\x00"},
          sram={0: {sCardCollection: b"\x00" * 255}},
          read={sCardCollection + 5: 1, wTempCardCollection + 5: 1}),
 ]
@@ -635,10 +636,10 @@ CASES["AddGiftCenterDeckCardsToCollection"] = [
 # >>> factory ConvertToNumericalDigits
 CONTRACT["ConvertToNumericalDigits"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "c", "d", "e")}
 CASES["ConvertToNumericalDigits"] = [
-    {"a": 0x2A, "hl": 0xC500, "wram": {0xC500: b"\x00\x00\x00\x00"},
-     "expect": {0xC500: b"\x05\x24\x05\x22"}},
-    {"a": 17, "hl": 0xC500, "wram": {0xC500: b"\x00\x00\x00\x00"},
-     "expect": {0xC500: b"\x05\x21\x05\x27"}},
+    {"a": 0x2A, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x00\x00\x00\x00"},
+     "expect": {sym("wNameBuffer"): b"\x05\x24\x05\x22"}},
+    {"a": 17, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x00\x00\x00\x00"},
+     "expect": {sym("wNameBuffer"): b"\x05\x21\x05\x27"}},
     dict(POISON, a=17),
 ]
 # <<< factory ConvertToNumericalDigits
@@ -646,22 +647,22 @@ CASES["ConvertToNumericalDigits"] = [
 # >>> factory CopyListFromHLToDEInSRAM
 CONTRACT["CopyListFromHLToDEInSRAM"] = {"compare": ("f", "d", "e", "hl"), "preserve": ()}
 CASES["CopyListFromHLToDEInSRAM"] = [
-    {"hl": 0xC500, "d": 0xC6, "e": 0x00, "wram": {0xC500: b"\x41\x42\x00", 0xC600: b"\x00\x00\x00"},
-     "expect": {0xC600: b"\x41\x42\x00"}, "expect_regs": {"hl": 0xC503, "d": 0xC6, "e": 0x02}},
-    dict(POISON, hl=0xC500, d=0xC6, e=0x00, wram={0xC500: b"\x41\x42\x00", 0xC600: b"\x00\x00\x00"}),
+    {"hl": sym("wNameBuffer"), "d": 0xC6, "e": 0x00, "wram": {sym("wNameBuffer"): b"\x41\x42\x00", sym("wc600"): b"\x00\x00\x00"},
+     "expect": {sym("wc600"): b"\x41\x42\x00"}, "expect_regs": {"hl": sym("wNameBuffer") + 3, "d": 0xC6, "e": 0x02}},
+    dict(POISON, hl=sym("wNameBuffer"), d=0xC6, e=0x00, wram={sym("wNameBuffer"): b"\x41\x42\x00", sym("wc600"): b"\x00\x00\x00"}),
 ]
 # <<< factory CopyListFromHLToDEInSRAM
 
 # >>> factory PrintDeckName
 CONTRACT["PrintDeckName"] = {"compare": (), "preserve": ()}
 CASES["PrintDeckName"] = [
-    {"hl": 0xA200, "d": 0x01, "e": 0x08, "sram": {0: {0xA218: b"\x00"}},
+    {"hl": sym("sBuiltDecks"), "d": 0x01, "e": 0x08, "sram": {0: {sym("sDeck1Cards"): b"\x00"}},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    {"hl": 0xA200, "d": 0x01, "e": 0x08, "sram": {0: {0xA200: b"AB\x00", 0xA218: b"\x01"}},
-     "wram": {0xC590: b"\x00" * 16},
+    {"hl": sym("sBuiltDecks"), "d": 0x01, "e": 0x08, "sram": {0: {sym("sBuiltDecks"): b"AB\x00", sym("sDeck1Cards"): b"\x01"}},
+     "wram": {sym("wCurDeckCardChanges"): b"\x00" * 16},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "rom_bank": 2, "read": {0xC590: 8}},
-    dict(POISON, hl=0xA200, sram={0: {0xA218: b"\x00"}},
+     "rom_bank": 2, "read": {sym("wCurDeckCardChanges"): 8}},
+    dict(POISON, hl=sym("sBuiltDecks"), sram={0: {sym("sDeck1Cards"): b"\x00"}},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory PrintDeckName
@@ -669,21 +670,21 @@ CASES["PrintDeckName"] = [
 # >>> factory AppendOwnedCardCountNumber
 CONTRACT["AppendOwnedCardCountNumber"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["AppendOwnedCardCountNumber"] = [
-    {"hl": 0xC500, "e": 0x63, "wram": {0xC500: b"AB\x00\x00\x00\x00\x00", 0xCEDA: b"\x01\x02\x03\x00"},
-     "read": {0xC500: 7}},
-    dict(POISON, hl=0xC500, e=0x63, wram={0xC500: b"AB\x00\x00\x00\x00\x00", 0xCEDA: b"\x01\x02\x03\x00"},
-         read={0xC500: 7}),
+    {"hl": sym("wNameBuffer"), "e": 0x63, "wram": {sym("wNameBuffer"): b"AB\x00\x00\x00\x00\x00", sym("wFilteredCardList"): b"\x01\x02\x03\x00"},
+     "read": {sym("wNameBuffer"): 7}},
+    dict(POISON, hl=sym("wNameBuffer"), e=0x63, wram={sym("wNameBuffer"): b"AB\x00\x00\x00\x00\x00", sym("wFilteredCardList"): b"\x01\x02\x03\x00"},
+         read={sym("wNameBuffer"): 7}),
 ]
 # <<< factory AppendOwnedCardCountNumber
 
 # >>> factory PrintNumberValueInCursorYPos
 CONTRACT["PrintNumberValueInCursorYPos"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["PrintNumberValueInCursorYPos"] = [
-    {"a": 0x05, "wram": {0xCEA7: b"\x01", 0xCEA4: b"\x02", 0xCEA6: b"\x08"},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC590: 5},
+    {"a": 0x05, "wram": {sym("wCardListYSpacing"): b"\x01", sym("wCardListCursorPos"): b"\x02", sym("wCardListCursorYPos"): b"\x08"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("wCurDeckCardChanges"): 5},
      "vread": {0: {0x994E: 5}}},
-    dict(POISON, a=0x05, wram={0xCEA7: b"\x01", 0xCEA4: b"\x02", 0xCEA6: b"\x08"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC590: 5},
+    dict(POISON, a=0x05, wram={sym("wCardListYSpacing"): b"\x01", sym("wCardListCursorPos"): b"\x02", sym("wCardListCursorYPos"): b"\x08"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={sym("wCurDeckCardChanges"): 5},
          vread={0: {0x994E: 5}}),
 ]
 # <<< factory PrintNumberValueInCursorYPos
@@ -691,42 +692,42 @@ CASES["PrintNumberValueInCursorYPos"] = [
 # >>> factory AppendOwnedCardCountAndStorageCountNumbers
 CONTRACT["AppendOwnedCardCountAndStorageCountNumbers"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["AppendOwnedCardCountAndStorageCountNumbers"] = [
-    {"hl": 0xC500, "e": 0x63, "wram": {0xC500: b"AB\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xCEDA: b"\x01\x02\x03\x00"},
-     "read": {0xC500: 12}},
-    dict(POISON, hl=0xC500, e=0x63, wram={0xC500: b"AB\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xCEDA: b"\x01\x02\x03\x00"},
-         read={0xC500: 12}),
+    {"hl": sym("wNameBuffer"), "e": 0x63, "wram": {sym("wNameBuffer"): b"AB\x00\x00\x00\x00\x00\x00\x00\x00\x00", sym("wFilteredCardList"): b"\x01\x02\x03\x00"},
+     "read": {sym("wNameBuffer"): 12}},
+    dict(POISON, hl=sym("wNameBuffer"), e=0x63, wram={sym("wNameBuffer"): b"AB\x00\x00\x00\x00\x00\x00\x00\x00\x00", sym("wFilteredCardList"): b"\x01\x02\x03\x00"},
+         read={sym("wNameBuffer"): 12}),
 ]
 # <<< factory AppendOwnedCardCountAndStorageCountNumbers
 
 # >>> factory PrintCardTypeCounts
 CONTRACT["PrintCardTypeCounts"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["PrintCardTypeCounts"] = [
-    {"wram": {0xCEBB: bytes([1, 2, 3, 4, 5, 6, 7, 8, 9])},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC590: 37}},
-    dict(POISON, wram={0xCEBB: bytes([1, 2, 3, 4, 5, 6, 7, 8, 9])},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC590: 37}),
+    {"wram": {sym("wCardFilterCounts"): bytes([1, 2, 3, 4, 5, 6, 7, 8, 9])},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("wCurDeckCardChanges"): 37}},
+    dict(POISON, wram={sym("wCardFilterCounts"): bytes([1, 2, 3, 4, 5, 6, 7, 8, 9])},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={sym("wCurDeckCardChanges"): 37}),
 ]
 # <<< factory PrintCardTypeCounts
 
 # >>> factory AppendDeckName
 CONTRACT["AppendDeckName"] = {"compare": ("f",), "preserve": ()}
 CASES["AppendDeckName"] = [
-    {"hl": 0xA200, "ramg": False, "sram": {0: {0xA218: b"\x00"}}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, hl=0xA200, ramg=False, sram={0: {0xA218: b"\x00"}}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {"hl": sym("sBuiltDecks"), "ramg": False, "sram": {0: {sym("sDeck1Cards"): b"\x00"}}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, hl=sym("sBuiltDecks"), ramg=False, sram={0: {sym("sDeck1Cards"): b"\x00"}}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory AppendDeckName
 
 # >>> factory DrawDecksScreen
 CONTRACT["DrawDecksScreen"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DrawDecksScreen"] = [
-    {"a": 0x00, "sram": {0: {0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xB700: b"\x00"}},
+    {"a": 0x00, "sram": {0: {sym("sDeck1Cards"): b"\x00", sym("sDeck2Cards"): b"\x00", sym("sDeck3Cards"): b"\x00", sym("sDeck4Cards"): b"\x00", sym("sCurrentlySelectedDeck"): b"\x00"}},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "rom_bank": 2,
      "instruction_budget": 2000000, "cycle_budget": 8000000,
-     "read": {0xCEB2: 4}},
-    dict(POISON, a=0x00, sram={0: {0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xB700: b"\x00"}},
+     "read": {sym("wDeck1Valid"): 4}},
+    dict(POISON, a=0x00, sram={0: {sym("sDeck1Cards"): b"\x00", sym("sDeck2Cards"): b"\x00", sym("sDeck3Cards"): b"\x00", sym("sDeck4Cards"): b"\x00", sym("sCurrentlySelectedDeck"): b"\x00"}},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], rom_bank=2,
          instruction_budget=2000000, cycle_budget=8000000,
-         read={0xCEB2: 4}),
+         read={sym("wDeck1Valid"): 4}),
 ]
 # <<< factory DrawDecksScreen
 
@@ -753,13 +754,13 @@ CASES["RemoveCardFromDeckAndUpdateCount"] = [
 # >>> factory PrintCardSelectionList
 CONTRACT["PrintCardSelectionList"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["PrintCardSelectionList"] = [
-    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9833: 1, 0x9873: 1, 0x9864: 10, 0x98A4: 10}}},
-    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00\x01"}, "read": {0xCECD: 1}, "vread": {0: {0x9833: 1, 0x9873: 1, 0x9864: 10, 0x98A4: 10}}},
-    dict(POISON, wram={0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00\x01"}, read={0xCECD: 1}, vread={0: {0x9833: 1, 0x9873: 1, 0x9864: 10, 0x98A4: 10}}),
-    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x02",
-              0xCEDA: b"\x01\x02\x00"},
+    {"wram": {sym("wCardListCoords"): b"\x03\x04", sym("wCardListVisibleOffset"): b"\x00", sym("wNumVisibleCardListEntries"): b"\x00", sym("wFilteredCardList"): b"\x00"}, "read": {sym("wUnableToScrollDown"): 1}, "vread": {0: {0x9833: 1, 0x9873: 1, 0x9864: 10, 0x98A4: 10}}},
+    {"wram": {sym("wCardListCoords"): b"\x03\x04", sym("wCardListVisibleOffset"): b"\x01", sym("wNumVisibleCardListEntries"): b"\x00", sym("wFilteredCardList"): b"\x00\x01"}, "read": {sym("wUnableToScrollDown"): 1}, "vread": {0: {0x9833: 1, 0x9873: 1, 0x9864: 10, 0x98A4: 10}}},
+    dict(POISON, wram={sym("wCardListCoords"): b"\x03\x04", sym("wCardListVisibleOffset"): b"\x01", sym("wNumVisibleCardListEntries"): b"\x00", sym("wFilteredCardList"): b"\x00\x01"}, read={sym("wUnableToScrollDown"): 1}, vread={0: {0x9833: 1, 0x9873: 1, 0x9864: 10, 0x98A4: 10}}),
+    {"wram": {sym("wCardListCoords"): b"\x03\x04", sym("wCardListVisibleOffset"): b"\x00", sym("wNumVisibleCardListEntries"): b"\x02",
+              sym("wFilteredCardList"): b"\x01\x02\x00"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCECD: 1}, "vread": {0: {0x9864: 12, 0x98A4: 12}},
+     "read": {sym("wUnableToScrollDown"): 1}, "vread": {0: {0x9864: 12, 0x98A4: 12}},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory PrintCardSelectionList
@@ -767,13 +768,13 @@ CASES["PrintCardSelectionList"] = [
 # >>> factory PrintFilteredCardSelectionList
 CONTRACT["PrintFilteredCardSelectionList"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
 CASES["PrintFilteredCardSelectionList"] = [
-    {"a": 0x00, "f": 0x00, "wram": {0xC000: b"\x00" * 240, 0xCECB: b"\x00"}, "read": {0xCECB: 1}, "instruction_budget": 8000000, "cycle_budget": 32000000},
-    dict(POISON, a=0x00, wram={0xC000: b"\x00" * 240, 0xCECB: b"\x00"}, read={0xCECB: 1}, instruction_budget=8000000, cycle_budget=32000000),
-    {"a": 0x08, "f": 0x80, "wram": {0xC000: b"\x00" * 240, 0xCECB: b"\x00"}, "read": {0xCECB: 1}, "instruction_budget": 8000000, "cycle_budget": 32000000},
+    {"a": 0x00, "f": 0x00, "wram": {sym("wDeckToBuild"): b"\x00" * 240, sym("wNumVisibleCardListEntries"): b"\x00"}, "read": {sym("wNumVisibleCardListEntries"): 1}, "instruction_budget": 8000000, "cycle_budget": 32000000},
+    dict(POISON, a=0x00, wram={sym("wDeckToBuild"): b"\x00" * 240, sym("wNumVisibleCardListEntries"): b"\x00"}, read={sym("wNumVisibleCardListEntries"): 1}, instruction_budget=8000000, cycle_budget=32000000),
+    {"a": 0x08, "f": 0x80, "wram": {sym("wDeckToBuild"): b"\x00" * 240, sym("wNumVisibleCardListEntries"): b"\x00"}, "read": {sym("wNumVisibleCardListEntries"): 1}, "instruction_budget": 8000000, "cycle_budget": 32000000},
     {"a": 0x00, "f": 0x00,
-     "wram": {0xC000: b"\x00" * 240, 0xCECB: b"\x02", 0xCED0: b"\x03\x04",
-              0xCEA1: b"\x00", 0xCEDA: b"\x01\x02\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCECB: 1, 0xCECD: 1}, "vread": {0: {0x9864: 12, 0x98A4: 12}},
+     "wram": {sym("wDeckToBuild"): b"\x00" * 240, sym("wNumVisibleCardListEntries"): b"\x02", sym("wCardListCoords"): b"\x03\x04",
+              sym("wCardListVisibleOffset"): b"\x00", sym("wFilteredCardList"): b"\x01\x02\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("wNumVisibleCardListEntries"): 1, sym("wUnableToScrollDown"): 1}, "vread": {0: {0x9864: 12, 0x98A4: 12}},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory PrintFilteredCardSelectionList
@@ -781,11 +782,11 @@ CASES["PrintFilteredCardSelectionList"] = [
 # >>> factory PrintDeckBuildingCardList
 CONTRACT["PrintDeckBuildingCardList"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["PrintDeckBuildingCardList"] = [
-    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9853: 0, 0x9833: 0}}},
-    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9853: 0x0C, 0x9833: 0}}},
-    dict(POISON, wram={0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, read={0xCECD: 1}, vread={0: {0x9853: 0x0C, 0x9833: 0}}),
-    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x02", 0xCEDA: b"\x01\x02\x00"},
-     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCECD: 1}, "vread": {0: {0x9864: 12, 0x98A4: 12}},
+    {"wram": {sym("wCardListCoords"): b"\x03\x04", sym("wCardListVisibleOffset"): b"\x00", sym("wNumVisibleCardListEntries"): b"\x00", sym("wFilteredCardList"): b"\x00"}, "read": {sym("wUnableToScrollDown"): 1}, "vread": {0: {0x9853: 0, 0x9833: 0}}},
+    {"wram": {sym("wCardListCoords"): b"\x03\x04", sym("wCardListVisibleOffset"): b"\x01", sym("wNumVisibleCardListEntries"): b"\x00", sym("wFilteredCardList"): b"\x00"}, "read": {sym("wUnableToScrollDown"): 1}, "vread": {0: {0x9853: 0x0C, 0x9833: 0}}},
+    dict(POISON, wram={sym("wCardListCoords"): b"\x03\x04", sym("wCardListVisibleOffset"): b"\x01", sym("wNumVisibleCardListEntries"): b"\x00", sym("wFilteredCardList"): b"\x00"}, read={sym("wUnableToScrollDown"): 1}, vread={0: {0x9853: 0x0C, 0x9833: 0}}),
+    {"wram": {sym("wCardListCoords"): b"\x03\x04", sym("wCardListVisibleOffset"): b"\x00", sym("wNumVisibleCardListEntries"): b"\x02", sym("wFilteredCardList"): b"\x01\x02\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("wUnableToScrollDown"): 1}, "vread": {0: {0x9864: 12, 0x98A4: 12}},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory PrintDeckBuildingCardList
@@ -793,12 +794,12 @@ CASES["PrintDeckBuildingCardList"] = [
 # >>> factory PrintFilteredCardList
 CONTRACT["PrintFilteredCardList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f")}
 CASES["PrintFilteredCardList"] = [
-    {"a": 0x00, "wram": {0xC000: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, "sram": {0: {0xA100: b"\x00" * 0xFF}}, "read": {0xCECB: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, a=0x00, wram={0xC000: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, sram={0: {0xA100: b"\x00" * 0xFF}}, read={0xCECB: 1}, instruction_budget=2000000, cycle_budget=8000000),
+    {"a": 0x00, "wram": {sym("wDeckToBuild"): b"\x00", sym("wNumVisibleCardListEntries"): b"\x00", sym("wCardListCoords"): b"\x00\x00"}, "sram": {0: {sym("sCardAndDeckSaveData"): b"\x00" * 0xFF}}, "read": {sym("wNumVisibleCardListEntries"): 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, a=0x00, wram={sym("wDeckToBuild"): b"\x00", sym("wNumVisibleCardListEntries"): b"\x00", sym("wCardListCoords"): b"\x00\x00"}, sram={0: {sym("sCardAndDeckSaveData"): b"\x00" * 0xFF}}, read={sym("wNumVisibleCardListEntries"): 1}, instruction_budget=2000000, cycle_budget=8000000),
     # The live grass filter: CardTypeFilters[0] is $01, so filter index 0 lists
     # grass cards, not type $00 (fire).
     dict(_filtered_list_fixture(bank=2), **_FILTERED_LIST_REGS,
-         read={0xC000: 0x100, 0xCEC4: 0x10, 0xCEDA: 0x20, 0xCF68: 0x20, 0xC590: 0x20}),
+         read={sym("wDeckToBuild"): 0x100, sym("wUnavailableAlbumCardSets"): 0x10, sym("wFilteredCardList"): 0x20, sym("wCurDeckCardsEnd"): 0x20, sym("wCurDeckCardChanges"): 0x20}),
 ]
 # <<< factory PrintFilteredCardList
 
@@ -832,18 +833,18 @@ CASES["Func_9ced"] = [
 # >>> factory OpenCardPageFromCardList
 CONTRACT["OpenCardPageFromCardList"] = {"compare": (), "preserve": ()}
 CASES["OpenCardPageFromCardList"] = [
-    {"wram": {wCardListCursorPos: b"\x01", wCardListVisibleOffset: b"\x00", wCardListNumCursorPositions: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wTempCardListCursorPos: 1}, "expect": {wTempCardListCursorPos: b"\x01"}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wCardListCursorPos: b"\x01", wCardListVisibleOffset: b"\x00", wCardListNumCursorPositions: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wTempCardListCursorPos: 1}, "expect": {wTempCardListCursorPos: b"\x01"}}]
+    {"wram": {wCardListCursorPos: b"\x01", wCardListVisibleOffset: b"\x00", wCardListNumCursorPositions: b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wTempCardListCursorPos: 1}, "expect": {wTempCardListCursorPos: b"\x01"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wCardListCursorPos: b"\x01", wCardListVisibleOffset: b"\x00", wCardListNumCursorPositions: b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wTempCardListCursorPos: 1}, "expect": {wTempCardListCursorPos: b"\x01"}}]
 # <<< factory OpenCardPageFromCardList
 
 # >>> factory CheckIfThereAreAnyBasicCardsInDeck
 CONTRACT["CheckIfThereAreAnyBasicCardsInDeck"] = {"compare": ("a", "f", "e", "hl"), "preserve": ()}
 CASES["CheckIfThereAreAnyBasicCardsInDeck"] = [
-    {"wram": {0xCF17: b"\x00"}, "read": {0xCF17: 1}, "expect_regs": {"a": 0x00, "f": 0x80, "e": 0x00, "hl": 0xCF18}},
-    {"wram": {0xCF17: b"\x08\x00"}, "read": {0xCF17: 2}, "expect_regs": {"a": 0x00, "f": 0x90, "e": 0x08, "hl": 0xCF18}},
-    {"wram": {0xCF17: b"\x01\x00"}, "read": {0xCF17: 2}, "expect_regs": {"a": 0x00, "f": 0x80, "e": 0x00, "hl": 0xCF19}},
-    {"wram": {0xCF17: b"\x09\x00"}, "read": {0xCF17: 2}, "expect_regs": {"a": 0x00, "f": 0x80, "e": 0x00, "hl": 0xCF19}},
-    dict(POISON, wram={0xCF17: b"\x08\x00"}, read={0xCF17: 2}, expect_regs={"a": 0x00, "f": 0x90, "e": 0x08, "hl": 0xCF18}),
+    {"wram": {sym("wCurDeckCards"): b"\x00"}, "read": {sym("wCurDeckCards"): 1}, "expect_regs": {"a": 0x00, "f": 0x80, "e": 0x00, "hl": sym("wCurDeckCards") + 1}},
+    {"wram": {sym("wCurDeckCards"): b"\x08\x00"}, "read": {sym("wCurDeckCards"): 2}, "expect_regs": {"a": 0x00, "f": 0x90, "e": 0x08, "hl": sym("wCurDeckCards") + 1}},
+    {"wram": {sym("wCurDeckCards"): b"\x01\x00"}, "read": {sym("wCurDeckCards"): 2}, "expect_regs": {"a": 0x00, "f": 0x80, "e": 0x00, "hl": sym("wCurDeckCards") + 2}},
+    {"wram": {sym("wCurDeckCards"): b"\x09\x00"}, "read": {sym("wCurDeckCards"): 2}, "expect_regs": {"a": 0x00, "f": 0x80, "e": 0x00, "hl": sym("wCurDeckCards") + 2}},
+    dict(POISON, wram={sym("wCurDeckCards"): b"\x08\x00"}, read={sym("wCurDeckCards"): 2}, expect_regs={"a": 0x00, "f": 0x90, "e": 0x08, "hl": sym("wCurDeckCards") + 1}),
 ]
 # <<< factory CheckIfThereAreAnyBasicCardsInDeck
 
@@ -864,10 +865,10 @@ CASES["SortCurDeckCardsByID"] = [
 # >>> factory GetCardTypeIconPalette
 CONTRACT["GetCardTypeIconPalette"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "hl")}
 CASES["GetCardTypeIconPalette"] = [
-    {"a": 0xe0, "f": 0x00, "b": 0x12, "c": 0x34, "d": 0x56, "e": 0x78, "hl": 0xc100, "expect_regs": {"a": 0x01, "f": 0xc0, "b": 0x12, "c": 0x34, "d": 0x56, "e": 0x78, "hl": 0xc100}},
-    {"a": 0xf8, "f": 0xf0, "b": 0xaa, "c": 0xbb, "d": 0xcc, "e": 0xdd, "hl": 0xc200, "expect_regs": {"a": 0x00, "f": 0xc0, "b": 0xaa, "c": 0xbb, "d": 0xcc, "e": 0xdd, "hl": 0xc200}},
-    {"a": 0x01, "f": 0x10, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0xc300, "expect_regs": {"a": 0xff, "f": 0x80, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0xc300}},
-    {"a": 0x00, "f": 0xff, "b": 0x01, "c": 0x02, "d": 0x03, "e": 0x04, "hl": 0xc400, "expect_regs": {"a": 0xff, "f": 0x80, "b": 0x01, "c": 0x02, "d": 0x03, "e": 0x04, "hl": 0xc400}},
+    {"a": 0xe0, "f": 0x00, "b": 0x12, "c": 0x34, "d": 0x56, "e": 0x78, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "expect_regs": {"a": 0x01, "f": 0xc0, "b": 0x12, "c": 0x34, "d": 0x56, "e": 0x78, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11}},
+    {"a": 0xf8, "f": 0xf0, "b": 0xaa, "c": 0xbb, "d": 0xcc, "e": 0xdd, "hl": sym("wPlayerCardLocations"), "expect_regs": {"a": 0x00, "f": 0xc0, "b": 0xaa, "c": 0xbb, "d": 0xcc, "e": 0xdd, "hl": sym("wPlayerCardLocations")}},
+    {"a": 0x01, "f": 0x10, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": sym("wOpponentCardLocations"), "expect_regs": {"a": 0xff, "f": 0x80, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": sym("wOpponentCardLocations")}},
+    {"a": 0x00, "f": 0xff, "b": 0x01, "c": 0x02, "d": 0x03, "e": 0x04, "hl": sym("wBoosterCardsDrawn"), "expect_regs": {"a": 0xff, "f": 0x80, "b": 0x01, "c": 0x02, "d": 0x03, "e": 0x04, "hl": sym("wBoosterCardsDrawn")}},
     dict(POISON, expect_regs={"a": 0xff, "f": 0x80, "b": 0xbb, "c": 0xcc, "d": 0xdd, "e": 0xee, "hl": 0x1234}),
 ]
 # <<< factory GetCardTypeIconPalette
@@ -889,13 +890,13 @@ CASES["DrawCardTypeIcons"] = [
 # >>> factory PrintPlayersCardsHeaderInfo
 CONTRACT["PrintPlayersCardsHeaderInfo"] = {"compare": (), "preserve": ()}
 CASES["PrintPlayersCardsHeaderInfo"] = [
-    {"wram": {0xCAB4: b"\x00", 0xCAB6: b"\xFF", 0xCAC0: b"\x00", 0xCABB: b"\x00"},
-     "sram": {0: {0xA100: b"\x00" * 255, 0xA010: bytes([0x81, 0x82, 0x00] + [0] * 13)}},
-     "read": {0xCAB6: 1, 0xCAC0: 1, 0xCABB: 1},
+    {"wram": {sym("wConsole"): b"\x00", sym("wTileMapFill"): b"\xFF", sym("wVBlankOAMCopyToggle"): b"\x00", sym("wLCDC"): b"\x00"},
+     "sram": {0: {sym("sCardAndDeckSaveData"): b"\x00" * 255, sym("sPlayerName"): bytes([0x81, 0x82, 0x00] + [0] * 13)}},
+     "read": {sym("wTileMapFill"): 1, sym("wVBlankOAMCopyToggle"): 1, sym("wLCDC"): 1},
      "vread": {0: {0x9880: 20}}},
-    dict(POISON, wram={0xCAB4: b"\x00", 0xCAB6: b"\xFF", 0xCAC0: b"\x00", 0xCABB: b"\x00"},
-         sram={0: {0xA100: b"\x00\x01" + b"\x00" * 253, 0xA010: bytes([0x84, 0x85, 0x00] + [0] * 13)}},
-         read={0xCAB6: 1, 0xCAC0: 1, 0xCABB: 1},
+    dict(POISON, wram={sym("wConsole"): b"\x00", sym("wTileMapFill"): b"\xFF", sym("wVBlankOAMCopyToggle"): b"\x00", sym("wLCDC"): b"\x00"},
+         sram={0: {sym("sCardAndDeckSaveData"): b"\x00\x01" + b"\x00" * 253, sym("sPlayerName"): bytes([0x84, 0x85, 0x00] + [0] * 13)}},
+         read={sym("wTileMapFill"): 1, sym("wVBlankOAMCopyToggle"): 1, sym("wLCDC"): 1},
          vread={0: {0x9880: 20}}),
 ]
 # <<< factory PrintPlayersCardsHeaderInfo
@@ -903,16 +904,16 @@ CASES["PrintPlayersCardsHeaderInfo"] = [
 # >>> factory PrintConfirmationCardList
 CONTRACT["PrintConfirmationCardList"] = {"compare": (), "preserve": ()}
 CASES["PrintConfirmationCardList"] = [
-    {"a": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC100, "wram": {0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, "read": {0xCECD: 1}, "expect": {0xCECD: b"\x01"}},
-    dict(POISON, wram={0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, read={0xCECD: 1}, expect={0xCECD: b"\x01"}),
-    {"a": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC100,
-     "wram": {0xCECB: b"\x02", 0xCED0: b"\x05\x02", 0xCEA1: b"\x00",
-              0xCF68: b"\x01\x02\x00"},
+    {"a": 0x00, "d": 0x00, "e": 0x00, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wNumVisibleCardListEntries"): b"\x00", sym("wCardListCoords"): b"\x05\x02"}, "read": {sym("wUnableToScrollDown"): 1}, "expect": {sym("wUnableToScrollDown"): b"\x01"}},
+    dict(POISON, wram={sym("wNumVisibleCardListEntries"): b"\x00", sym("wCardListCoords"): b"\x05\x02"}, read={sym("wUnableToScrollDown"): 1}, expect={sym("wUnableToScrollDown"): b"\x01"}),
+    {"a": 0x00, "d": 0x00, "e": 0x00, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {sym("wNumVisibleCardListEntries"): b"\x02", sym("wCardListCoords"): b"\x05\x02", sym("wCardListVisibleOffset"): b"\x00",
+              sym("wCurDeckCardsEnd"): b"\x01\x02\x00"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCECD: 1}, "vread": {0: {0x98A2: 14, 0x98E2: 14}},
+     "read": {sym("wUnableToScrollDown"): 1}, "vread": {0: {0x98A2: 14, 0x98E2: 14}},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(_confirm_list_fixture(bank=2), **_CONFIRM_LIST_REGS,
-         read={0xCECD: 1, 0xC590: 0x20, 0xCEC4: 0x10, 0xFFAA: 4, 0xFFAD: 1},
+         read={sym("wUnableToScrollDown"): 1, sym("wCurDeckCardChanges"): 0x20, sym("wUnavailableAlbumCardSets"): 0x10, sym("hTextBGMap0Address"): 4, sym("hTextHorizontalAlign"): 1},
          vread={0: {0x9800: 0x400, 0x8800: 0x800}}),
 ]
 # <<< factory PrintConfirmationCardList
@@ -930,17 +931,17 @@ CASES["CreateCurDeckUniqueCardList"] = [
 # >>> factory TryAddCardToDeck
 CONTRACT["TryAddCardToDeck"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["TryAddCardToDeck"] = [
-    {"wram": {0xCECC: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}},
-    {"e": 0x01, "wram": {0xCECC: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}},
-    dict(POISON, e=0xE4, wram={0xCECC: b"\x00"}, expect_regs={"a": 0x00, "f": 0x90}),
+    {"wram": {sym("wTotalCardCount"): b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}},
+    {"e": 0x01, "wram": {sym("wTotalCardCount"): b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}},
+    dict(POISON, e=0xE4, wram={sym("wTotalCardCount"): b"\x00"}, expect_regs={"a": 0x00, "f": 0x90}),
 ]
 # <<< factory TryAddCardToDeck
 
 # >>> factory AddCardToDeckAndUpdateCount
 CONTRACT["AddCardToDeckAndUpdateCount"] = {"compare": ("a", "f", "e"), "preserve": ("e",)}
 CASES["AddCardToDeckAndUpdateCount"] = [
-    {"e": 0x01, "wram": {0xCECC: b"\x00", 0xCFD1: b"\x00"}},
-    dict(POISON, e=0x01, wram={0xCECC: b"\x00", 0xCFD1: b"\x00"}),
+    {"e": 0x01, "wram": {sym("wTotalCardCount"): b"\x00", sym("wMaxNumCardsAllowed"): b"\x00"}},
+    dict(POISON, e=0x01, wram={sym("wTotalCardCount"): b"\x00", sym("wMaxNumCardsAllowed"): b"\x00"}),
 ]
 # <<< factory AddCardToDeckAndUpdateCount
 
@@ -953,7 +954,7 @@ CASES["HandleDeckCardSelectionList"] = [
     dict(POISON, wram={hDPadHeld: b"\x00", hKeysPressed: b"\x00", wCardListCursorPos: b"\x03", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x09"}, read={hffb3: 1}),
     # Counter 0, no input: the period test passes on the pre-increment value and
     # the visible cursor lands in the BG map (deck_configuration.asm:1927-1935).
-    dict(_card_list_select_fixture(bank=2), **_CARD_LIST_SELECT_REGS, read={0xCEA3: 1, 0xFFB3: 1}),
+    dict(_card_list_select_fixture(bank=2), **_CARD_LIST_SELECT_REGS, read={sym("wCheckMenuCursorBlinkCounter"): 1, sym("hffb3"): 1}),
     # UP at the top of an unscrolled list: the cursor stays at 0 and the cursor
     # SFX is cancelled (.asm_9b5a), not left at 0xFF with the SFX armed.
     {"wram": {hDPadHeld: b"\x40", hKeysPressed: b"\x00", wCardListCursorPos: b"\x00", wCardListNumCursorPositions: b"\x04", wCardListVisibleOffset: b"\x00", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x05"}, "read": {hffb3: 1, wCardListCursorPos: 1, wMenuInputSFX: 1, wCheckMenuCursorBlinkCounter: 1}},
@@ -979,20 +980,20 @@ CASES["PrintCurDeckNumberAndName"] = [
 # >>> factory UpdateConfirmationCardScreen
 CONTRACT["UpdateConfirmationCardScreen"] = {"compare": (), "preserve": ()}
 CASES["UpdateConfirmationCardScreen"] = [
-    {"rom_bank": 2, "wram": {0xCEB1: b"\xFF", 0xCFB9: b"\x00", 0xC590: b"\x00" * 16, 0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, "setup": SETUP_PCD, "read": {0xC590: 1, 0xCECD: 1, 0xFFB0: 1}},
-    {"rom_bank": 2, "wram": {0xCEB1: b"\x00", 0xCFB9: b"AB\x00", 0xC590: b"\x00" * 16, 0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, "setup": SETUP_PCD, "read": {0xC590: 8, 0xCECD: 1, 0xFFB0: 1}},
-    dict(POISON, rom_bank=2, wram={0xCEB1: b"\xFF", 0xCFB9: b"\x00", 0xC590: b"\x00" * 16, 0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, setup=SETUP_PCD, read={0xC590: 1, 0xCECD: 1, 0xFFB0: 1}),
+    {"rom_bank": 2, "wram": {sym("wCurDeck"): b"\xFF", sym("wCurDeckName"): b"\x00", sym("wCurDeckCardChanges"): b"\x00" * 16, sym("wNumVisibleCardListEntries"): b"\x00", sym("wCardListCoords"): b"\x05\x02"}, "setup": SETUP_PCD, "read": {sym("wCurDeckCardChanges"): 1, sym("wUnableToScrollDown"): 1, sym("hffb0"): 1}},
+    {"rom_bank": 2, "wram": {sym("wCurDeck"): b"\x00", sym("wCurDeckName"): b"AB\x00", sym("wCurDeckCardChanges"): b"\x00" * 16, sym("wNumVisibleCardListEntries"): b"\x00", sym("wCardListCoords"): b"\x05\x02"}, "setup": SETUP_PCD, "read": {sym("wCurDeckCardChanges"): 8, sym("wUnableToScrollDown"): 1, sym("hffb0"): 1}},
+    dict(POISON, rom_bank=2, wram={sym("wCurDeck"): b"\xFF", sym("wCurDeckName"): b"\x00", sym("wCurDeckCardChanges"): b"\x00" * 16, sym("wNumVisibleCardListEntries"): b"\x00", sym("wCardListCoords"): b"\x05\x02"}, setup=SETUP_PCD, read={sym("wCurDeckCardChanges"): 1, sym("wUnableToScrollDown"): 1, sym("hffb0"): 1}),
 ]
 # <<< factory UpdateConfirmationCardScreen
 
 # >>> factory PrintSlashSixty
 CONTRACT["PrintSlashSixty"] = {"compare": (), "preserve": ()}
 CASES["PrintSlashSixty"] = [
-    {"d": 17, "e": 0, "read": {0xC590: 7}, "vread": {0: {0x9811: 3}},
+    {"d": 17, "e": 0, "read": {sym("wCurDeckCardChanges"): 7}, "vread": {0: {0x9811: 3}},
      "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}]},
-    {"d": 16, "e": 1, "read": {0xC590: 7}, "vread": {0: {0x9830: 3}},
+    {"d": 16, "e": 1, "read": {sym("wCurDeckCardChanges"): 7}, "vread": {0: {0x9830: 3}},
      "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}]},
-    dict(POISON, d=17, e=0, read={0xC590: 7}, vread={0: {0x9811: 3}},
+    dict(POISON, d=17, e=0, read={sym("wCurDeckCardChanges"): 7}, vread={0: {0x9811: 3}},
          setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}]),
 ]
 # <<< factory PrintSlashSixty
@@ -1000,15 +1001,15 @@ CASES["PrintSlashSixty"] = [
 # >>> factory ShowDeckInfoHeader
 CONTRACT["ShowDeckInfoHeader"] = {"compare": (), "preserve": ()}
 CASES["ShowDeckInfoHeader"] = [
-    {"wram": {0xCFB9: b"\x00", 0xCABB: b"\x00"},
+    {"wram": {sym("wCurDeckName"): b"\x00", sym("wLCDC"): b"\x00"},
      "sram": {0: {}}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "vread": {0: {0x9821: 4}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCFB9: b"\x01\x00", 0xCEB1: b"\x00", 0xCABB: b"\x00"},
-         sram={0: {0xB700: b"\x00"}},
+    dict(POISON, wram={sym("wCurDeckName"): b"\x01\x00", sym("wCurDeck"): b"\x00", sym("wLCDC"): b"\x00"},
+         sram={0: {sym("sCurrentlySelectedDeck"): b"\x00"}},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          vread={0: {0x9821: 4}}, instruction_budget=2000000, cycle_budget=8000000),
     dict(_deck_info_header_fixture(bank=2), **_DECK_INFO_HEADER_REGS,
-         read={0xC590: 0x20, 0xCE00: 0x40, 0xCEC0: 0x20, 0xFFAA: 4}),
+         read={sym("wCurDeckCardChanges"): 0x20, sym("wAIFirstAttackDamage"): 0x40, sym("wCardFilterCounts") + 5: 0x20, sym("hTextBGMap0Address"): 4}),
 ]
 # <<< factory ShowDeckInfoHeader
 
@@ -1023,23 +1024,23 @@ CASES["DrawCardTypeIconsAndPrintCardCounts"] = [
 # >>> factory ShowConfirmationCardScreen
 CONTRACT["ShowConfirmationCardScreen"] = {"compare": (), "preserve": ()}
 CASES["ShowConfirmationCardScreen"] = [
-    {"rom_bank": 2, "wram": {0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, "sram": {0: {}}, "setup": SETUP_PCD, "read": {0xCED0: 2}, "expect": {0xCED0: b"\x05\x03"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "rom_bank": 2, "wram": {0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, "sram": {0: {}}, "setup": SETUP_PCD, "read": {0xCED0: 2}, "expect": {0xCED0: b"\x05\x03"}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+    {"rom_bank": 2, "wram": {sym("wCurDeckName"): b"\x00", sym("wLCDC"): b"\x00", sym("wNumVisibleCardListEntries"): b"\x00", sym("wCardListCoords"): b"\x00\x00"}, "sram": {0: {}}, "setup": SETUP_PCD, "read": {sym("wCardListCoords"): 2}, "expect": {sym("wCardListCoords"): b"\x05\x03"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "rom_bank": 2, "wram": {sym("wCurDeckName"): b"\x00", sym("wLCDC"): b"\x00", sym("wNumVisibleCardListEntries"): b"\x00", sym("wCardListCoords"): b"\x00\x00"}, "sram": {0: {}}, "setup": SETUP_PCD, "read": {sym("wCardListCoords"): 2}, "expect": {sym("wCardListCoords"): b"\x05\x03"}, "instruction_budget": 2000000, "cycle_budget": 8000000}
 ]
 # <<< factory ShowConfirmationCardScreen
 
 # >>> factory ShowDeckInfoHeaderAndWaitForBButton
 CONTRACT["ShowDeckInfoHeaderAndWaitForBButton"] = {"compare": (), "preserve": ()}
 CASES["ShowDeckInfoHeaderAndWaitForBButton"] = [
-    {"wram": {0xCFB9: b"\x00", 0xCABB: b"\x00"},
+    {"wram": {sym("wCurDeckName"): b"\x00", sym("wLCDC"): b"\x00"},
      "sram": {0: {}},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x02],
      "vread": {0: {0x9821: 4}},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON,
-         wram={0xCFB9: b"\x01\x00", 0xCEB1: b"\x00", 0xCABB: b"\x00"},
-         sram={0: {0xB700: b"\x00"}},
+         wram={sym("wCurDeckName"): b"\x01\x00", sym("wCurDeck"): b"\x00", sym("wLCDC"): b"\x00"},
+         sram={0: {sym("sCurrentlySelectedDeck"): b"\x00"}},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x02],
          vread={0: {0x9821: 4}},
@@ -1053,7 +1054,7 @@ CASES["HandleDeckConfirmationMenu"] = [
     # Empty deck: the `jp z` hands the whole body to
     # ShowDeckInfoHeaderAndWaitForBButton, whose callee-`ret` returns straight
     # to this routine's caller.
-    {"wram": {wTotalCardCount: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00"},
+    {"wram": {wTotalCardCount: b"\x00", sym("wCurDeckName"): b"\x00", sym("wLCDC"): b"\x00"},
      "sram": {0: {}}, "keys": HDCM_KEYS, "rom_bank": 2, "setup": HDCM_SETUP,
      "vread": {0: {0x9821: 4}},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
@@ -1082,8 +1083,8 @@ CASES["HandleDeckConfirmationMenu"] = [
 # >>> factory ConfirmDeckConfiguration
 CONTRACT["ConfirmDeckConfiguration"] = {"compare": (), "preserve": ()}
 CASES["ConfirmDeckConfiguration"] = [
-    {"a": 0x00, "f": 0x00, "wram": {0xCECC: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\x33", 0xCAB4: b"\x00"}, "sram": {0: {}}, "keys": [0x00, 0x02], "rom_bank": 2, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCEA1: 1, 0xCED8: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, wram={0xCECC: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\x33", 0xCAB4: b"\x00"}, sram={0: {}}, keys=[0x00, 0x02], rom_bank=2, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCEA1: 1, 0xCED8: 1}, instruction_budget=20000000, cycle_budget=100000000),
+    {"a": 0x00, "f": 0x00, "wram": {sym("wTotalCardCount"): b"\x00", sym("wCurDeckName"): b"\x00", sym("wLCDC"): b"\x00", sym("wCardListVisibleOffset"): b"\x33", sym("wConsole"): b"\x00"}, "sram": {0: {}}, "keys": [0x00, 0x02], "rom_bank": 2, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("wCardListVisibleOffset"): 1, sym("wCardListVisibleOffsetBackup"): 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, wram={sym("wTotalCardCount"): b"\x00", sym("wCurDeckName"): b"\x00", sym("wLCDC"): b"\x00", sym("wCardListVisibleOffset"): b"\x33", sym("wConsole"): b"\x00"}, sram={0: {}}, keys=[0x00, 0x02], rom_bank=2, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={sym("wCardListVisibleOffset"): 1, sym("wCardListVisibleOffsetBackup"): 1}, instruction_budget=20000000, cycle_budget=100000000),
 ]
 # <<< factory ConfirmDeckConfiguration
 
@@ -1097,12 +1098,12 @@ CONTRACT["SaveDeckConfiguration"] = {"compare": ("a", "f"), "preserve": ()}
 # `add sp, $2` discards so the `ret` lands on the harness sentinel.
 CASES["SaveDeckConfiguration"] = [
     {"stack": [0],
-     "wram": {0xCECC: b"\x3B", 0xCD9A: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "wram": {sym("wTotalCardCount"): b"\x3B", sym("wDefaultYesOrNo"): b"\x01", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01],
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, stack=[0x1234],
-         wram={0xCECC: b"\x3B", 0xCD9A: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+         wram={sym("wTotalCardCount"): b"\x3B", sym("wDefaultYesOrNo"): b"\x01", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x01],
          instruction_budget=20000000, cycle_budget=80000000),
@@ -1123,31 +1124,31 @@ CONTRACT["DismantleDeck"] = {"compare": ("a",), "preserve": ()}
 # lands on the harness sentinel.
 CASES["DismantleDeck"] = [
     {"stack": [0],
-     "wram": {0xCD9A: b"\x01", 0xCEB1: b"\x00", 0xCEB2: b"\x01\x01\x00\x00",
-              0xCABB: b"\x80", 0xFF40: b"\x80"},
-     "sram": {0: {0xA100: b"\x00\x00\x00\x00",
-                  0xA200: b"\x41\x42" + b"\x00" * 14,
-                  0xA218: b"\x01\x02" + b"\x00" * 58}},
+     "wram": {sym("wDefaultYesOrNo"): b"\x01", sym("wCurDeck"): b"\x00", sym("wDeck1Valid"): b"\x01\x01\x00\x00",
+              sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
+     "sram": {0: {sym("sCardAndDeckSaveData"): b"\x00\x00\x00\x00",
+                  sym("sBuiltDecks"): b"\x41\x42" + b"\x00" * 14,
+                  sym("sDeck1Cards"): b"\x01\x02" + b"\x00" * 58}},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01],
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, stack=[0x1234],
-         wram={0xCD9A: b"\x01", 0xCEB1: b"\x00", 0xCEB2: b"\x01\x01\x00\x00",
-               0xCABB: b"\x80", 0xFF40: b"\x80"},
-         sram={0: {0xA100: b"\x00\x00\x00\x00",
-                   0xA200: b"\x41\x42" + b"\x00" * 14,
-                   0xA218: b"\x01\x02" + b"\x00" * 58}},
+         wram={sym("wDefaultYesOrNo"): b"\x01", sym("wCurDeck"): b"\x00", sym("wDeck1Valid"): b"\x01\x01\x00\x00",
+               sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
+         sram={0: {sym("sCardAndDeckSaveData"): b"\x00\x00\x00\x00",
+                   sym("sBuiltDecks"): b"\x41\x42" + b"\x00" * 14,
+                   sym("sDeck1Cards"): b"\x01\x02" + b"\x00" * 58}},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x01],
          instruction_budget=20000000, cycle_budget=80000000),
     # Empty deck name: `ld a, [hl] / or a / jr z` skips straight to
     # .done_dismantle, so SRAM is left untouched and a comes back 0.
     {"stack": [0],
-     "wram": {0xCD9A: b"\x01", 0xCEB1: b"\x00", 0xCEB2: b"\x01\x01\x00\x00",
-              0xCABB: b"\x80", 0xFF40: b"\x80"},
-     "sram": {0: {0xA100: b"\x00\x00\x00\x00",
-                  0xA200: b"\x00" * 16,
-                  0xA218: b"\x01\x02" + b"\x00" * 58}},
+     "wram": {sym("wDefaultYesOrNo"): b"\x01", sym("wCurDeck"): b"\x00", sym("wDeck1Valid"): b"\x01\x01\x00\x00",
+              sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
+     "sram": {0: {sym("sCardAndDeckSaveData"): b"\x00\x00\x00\x00",
+                  sym("sBuiltDecks"): b"\x00" * 16,
+                  sym("sDeck1Cards"): b"\x01\x02" + b"\x00" * 58}},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01],
      "instruction_budget": 20000000, "cycle_budget": 80000000},
@@ -1166,12 +1167,12 @@ CONTRACT["CancelDeckModifications"] = {"compare": ("a", "f"), "preserve": ()}
 # `add sp, $2` discards so the `ret` lands on the harness sentinel.
 CASES["CancelDeckModifications"] = [
     {"stack": [0],
-     "wram": {0xCECC: b"\x01", 0xCD9A: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "wram": {sym("wTotalCardCount"): b"\x01", sym("wDefaultYesOrNo"): b"\x01", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01],
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, stack=[0x1234],
-         wram={0xCECC: b"\x01", 0xCD9A: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+         wram={sym("wTotalCardCount"): b"\x01", sym("wDefaultYesOrNo"): b"\x01", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x01],
          instruction_budget=20000000, cycle_budget=80000000),
@@ -1193,23 +1194,23 @@ CASES["HandleSelectUpAndDownInList"] = [
 # >>> factory HandleDeckBuildScreen
 CONTRACT["HandleDeckBuildScreen"] = {"compare": (), "preserve": ()}
 CASES["HandleDeckBuildScreen"] = [
-    {"wram": {0xCABB: b"\x00", 0xCFD4: b"\x80\x54"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {wCardListVisibleOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCABB: b"\x00", 0xCFD4: b"\x80\x54"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={wCardListVisibleOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wLCDC"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {wCardListVisibleOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={sym("wLCDC"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={wCardListVisibleOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory HandleDeckBuildScreen
 
 # >>> factory HandlePlayersCardsScreen
 CONTRACT["HandlePlayersCardsScreen"] = {"compare": (), "preserve": ()}
 CASES["HandlePlayersCardsScreen"] = [
-    {"rom_bank": 2, "wram": {0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\xFF", 0xCED3: b"\xFF", 0xFFB3: b"\xFF"},
+    {"rom_bank": 2, "wram": {sym("wConsole"): b"\x00", sym("wLCDC"): b"\x00", sym("wCardListVisibleOffset"): b"\xFF", sym("wCurCardTypeFilter"): b"\xFF", sym("hffb3"): b"\xFF"},
      "sram": HPCS_SRAM, "setup": HPCS_SETUP, "keys": [0x00, 0x02],
-     "read": {0xCEA1: 1, 0xCED3: 1, 0xFFB3: 1},
-     "expect": {0xCEA1: b"\x00", 0xCED3: b"\x00", 0xFFB3: b"\xFF"},
+     "read": {sym("wCardListVisibleOffset"): 1, sym("wCurCardTypeFilter"): 1, sym("hffb3"): 1},
+     "expect": {sym("wCardListVisibleOffset"): b"\x00", sym("wCurCardTypeFilter"): b"\x00", sym("hffb3"): b"\xFF"},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, rom_bank=2, wram={0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\xFF", 0xCED3: b"\xFF", 0xFFB3: b"\xFF"},
+    dict(POISON, rom_bank=2, wram={sym("wConsole"): b"\x00", sym("wLCDC"): b"\x00", sym("wCardListVisibleOffset"): b"\xFF", sym("wCurCardTypeFilter"): b"\xFF", sym("hffb3"): b"\xFF"},
          sram=HPCS_SRAM, setup=HPCS_SETUP, keys=[0x00, 0x02],
-         read={0xCEA1: 1, 0xCED3: 1, 0xFFB3: 1},
-         expect={0xCEA1: b"\x00", 0xCED3: b"\x00", 0xFFB3: b"\xFF"},
+         read={sym("wCardListVisibleOffset"): 1, sym("wCurCardTypeFilter"): 1, sym("hffb3"): 1},
+         expect={sym("wCardListVisibleOffset"): b"\x00", sym("wCurCardTypeFilter"): b"\x00", sym("hffb3"): b"\xFF"},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory HandlePlayersCardsScreen
@@ -1217,20 +1218,20 @@ CASES["HandlePlayersCardsScreen"] = [
 # >>> factory HandleSendDeckConfigurationMenu
 CONTRACT["HandleSendDeckConfigurationMenu"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HandleSendDeckConfigurationMenu"] = [
-    {"wram": {0xCE52: b"\x02", 0xCABB: b"\x00"},
+    {"wram": {sym("wInPlayAreaCurPosition"): b"\x02", sym("wLCDC"): b"\x00"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01], "rom_bank": 2,
-     "read": {0xCE55: 1, 0xCED6: 1},
+     "read": {sym("wDuelInitialPrizesUpperBitsSet"): 1, sym("wced6"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {0xCE52: b"\x01", 0xCABB: b"\x00", 0xCF17: b"\x00"},
+    {"wram": {sym("wInPlayAreaCurPosition"): b"\x01", sym("wLCDC"): b"\x00", sym("wCurDeckCards"): b"\x00"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01], "rom_bank": 2,
-     "read": {0xCE55: 1, 0xCED6: 1, 0xCF17: 1},
+     "read": {sym("wDuelInitialPrizesUpperBitsSet"): 1, sym("wced6"): 1, sym("wCurDeckCards"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCE52: b"\x02", 0xCABB: b"\x00"},
+    dict(POISON, wram={sym("wInPlayAreaCurPosition"): b"\x02", sym("wLCDC"): b"\x00"},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x01], rom_bank=2,
-         read={0xCE55: 1, 0xCED6: 1},
+         read={sym("wDuelInitialPrizesUpperBitsSet"): 1, sym("wced6"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory HandleSendDeckConfigurationMenu
@@ -1238,15 +1239,15 @@ CASES["HandleSendDeckConfigurationMenu"] = [
 # >>> factory PrepareToBuildDeckConfigurationToSend
 CONTRACT["PrepareToBuildDeckConfigurationToSend"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PrepareToBuildDeckConfigurationToSend"] = [
-    {"wram": {0xCABB: b"\x80", 0xFF40: b"\x80"},
+    {"wram": {sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x02, 0x10, 0x10, 0x01], "rom_bank": 2,
-     "read": {0xCEB1: 1, 0xCF17: 0x51, 0xCFB9: 0x15},
+     "read": {sym("wCurDeck"): 1, sym("wCurDeckCards"): 0x51, sym("wCurDeckName"): 0x15},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCABB: b"\x80", 0xFF40: b"\x80"},
+    dict(POISON, wram={sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x02, 0x10, 0x10, 0x01], rom_bank=2,
-         read={0xCEB1: 1, 0xCF17: 0x51, 0xCFB9: 0x15},
+         read={sym("wCurDeck"): 1, sym("wCurDeckCards"): 0x51, sym("wCurDeckName"): 0x15},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PrepareToBuildDeckConfigurationToSend
@@ -1254,16 +1255,16 @@ CASES["PrepareToBuildDeckConfigurationToSend"] = [
 # >>> factory ChangeDeckName
 CONTRACT["ChangeDeckName"] = {"compare": (), "preserve": ()}
 CASES["ChangeDeckName"] = [
-    {"wram": {0xCEB1: b"\x00", 0xCFB9: b"\x00" * 22, 0xFF90: b"\x00", 0xCABB: b"\x00"},
-     "sram": {0: {0xB701: b"\x01\x00"}},
+    {"wram": {sym("wCurDeck"): b"\x00", sym("wCurDeckName"): b"\x00" * 22, sym("hKeysHeld"): b"\x00", sym("wLCDC"): b"\x00"},
+     "sram": {0: {sym("sUnnamedDeckCounter"): b"\x01\x00"}},
      "keys": CHANGE_DECK_NAME_KEYS, "setup": CHANGE_DECK_NAME_SETUP,
-     "read": CHANGE_DECK_NAME_READ, "sread": {0: {0xB701: 2}},
+     "read": CHANGE_DECK_NAME_READ, "sread": {0: {sym("sUnnamedDeckCounter"): 2}},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON,
-         wram={0xCEB1: b"\x02", 0xCFB9: b"\x00" * 22, 0xFF90: b"\x00", 0xCABB: b"\x00"},
-         sram={0: {0xB701: b"\xE7\x03"}},
+         wram={sym("wCurDeck"): b"\x02", sym("wCurDeckName"): b"\x00" * 22, sym("hKeysHeld"): b"\x00", sym("wLCDC"): b"\x00"},
+         sram={0: {sym("sUnnamedDeckCounter"): b"\xE7\x03"}},
          keys=CHANGE_DECK_NAME_KEYS, setup=CHANGE_DECK_NAME_SETUP,
-         read=CHANGE_DECK_NAME_READ, sread={0: {0xB701: 2}},
+         read=CHANGE_DECK_NAME_READ, sread={0: {sym("sUnnamedDeckCounter"): 2}},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ChangeDeckName
@@ -1271,13 +1272,13 @@ CASES["ChangeDeckName"] = [
 # >>> factory HandleDeckConfigurationMenu
 CONTRACT["HandleDeckConfigurationMenu"] = {"compare": (), "preserve": ()}
 CASES["HandleDeckConfigurationMenu"] = [
-    {"wram": {0xCABB: b"\x00", 0xCED4: b"\x12", 0xCED3: b"\x00", 0xCFD4: b"\x80\x54"},
+    {"wram": {sym("wLCDC"): b"\x00", sym("wTempCardListCursorPos"): b"\x12", sym("wCurCardTypeFilter"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"},
      "sram": {0: {}}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "keys": [0x00, 0x02], "rom_bank": 2, "read": {0xCEA4: 1, 0xCED6: 1},
+     "keys": [0x00, 0x02], "rom_bank": 2, "read": {sym("wCardListCursorPos"): 1, sym("wced6"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCABB: b"\x00", 0xCED4: b"\x12", 0xCED3: b"\x00", 0xCFD4: b"\x80\x54"},
+    dict(POISON, wram={sym("wLCDC"): b"\x00", sym("wTempCardListCursorPos"): b"\x12", sym("wCurCardTypeFilter"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"},
          sram={0: {}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         keys=[0x00, 0x02], rom_bank=2, read={0xCEA4: 1, 0xCED6: 1},
+         keys=[0x00, 0x02], rom_bank=2, read={sym("wCardListCursorPos"): 1, sym("wced6"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory HandleDeckConfigurationMenu
@@ -1287,13 +1288,13 @@ CONTRACT["ModifyDeckConfiguration"] = {"compare": (), "preserve": ()}
 CASES["ModifyDeckConfiguration"] = [
     # deck-explore 105873: the routine unwinds into HandleDeckBuildScreen.skip_draw,
     # whose loop re-opens the configuration menu, so its handler has to be seeded.
-    {"stack": [0], "wram": {0xCABB: b"\x00", 0xCED4: b"\x12", 0xCED3: b"\x00"},
+    {"stack": [0], "wram": {sym("wLCDC"): b"\x00", sym("wTempCardListCursorPos"): b"\x12", sym("wCurCardTypeFilter"): b"\x00"},
      "sram": {0: {}}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "keys": [0x00, 0x02], "rom_bank": 2, "read": {0xCEA4: 1},
+     "keys": [0x00, 0x02], "rom_bank": 2, "read": {sym("wCardListCursorPos"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, stack=[0x1234], wram={0xCABB: b"\x00", 0xCED4: b"\x12", 0xCED3: b"\x00"},
+    dict(POISON, stack=[0x1234], wram={sym("wLCDC"): b"\x00", sym("wTempCardListCursorPos"): b"\x12", sym("wCurCardTypeFilter"): b"\x00"},
          sram={0: {}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         keys=[0x00, 0x02], rom_bank=2, read={0xCEA4: 1},
+         keys=[0x00, 0x02], rom_bank=2, read={sym("wCardListCursorPos"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ModifyDeckConfiguration
@@ -1302,20 +1303,20 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-completion ModifyDeckConfiguration
 for _record in SCHEMA2_CASES["ModifyDeckConfiguration"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x5358, "bank": 2,
+    _record["completion"] = {"mode": "entry", "pc": sym("HandleDeckBuildScreen.skip_draw"), "bank": sym_bank("HandleDeckBuildScreen.skip_draw"),
                              "routine": "HandleDeckBuildScreen_SkipDraw"}
 # <<< factory-completion ModifyDeckConfiguration
 
 for _record in SCHEMA2_CASES["OpenDeckConfigurationMenu"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x5480, "bank": 2,
+    _record["completion"] = {"mode": "entry", "pc": sym("HandleDeckConfigurationMenu"), "bank": sym_bank("HandleDeckConfigurationMenu"),
                              "routine": "HandleDeckConfigurationMenu"}
 
 for _record in SCHEMA2_CASES["HandleDeckBuildScreen"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x5480, "bank": 2,
+    _record["completion"] = {"mode": "entry", "pc": sym("HandleDeckConfigurationMenu"), "bank": sym_bank("HandleDeckConfigurationMenu"),
                              "routine": "HandleDeckConfigurationMenu"}
 
 for _record in SCHEMA2_CASES["HandleDeckConfigurationMenu"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x5461, "bank": 2,
+    _record["completion"] = {"mode": "entry", "pc": sym("OpenDeckConfigurationMenu"), "bank": sym_bank("OpenDeckConfigurationMenu"),
                              "routine": "OpenDeckConfigurationMenu"}
 
 MUTATIONS = {}
@@ -1684,7 +1685,7 @@ MUTATIONS["ChangeDeckName"] = {"source_symbol": "ChangeDeckName", "before": "voi
 # <<< factory-mutation ChangeDeckName
 # >>> factory-completion ChangeDeckName
 for _rec in SCHEMA2_CASES["ChangeDeckName"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x55BC, "bank": 2}
+    _rec["completion"] = {"mode": "pre-ret", "pc": sym("ChangeDeckName") + 3, "bank": sym_bank("ChangeDeckName")}
 # <<< factory-completion ChangeDeckName
 # >>> factory-mutation HandleDeckConfigurationMenu
 MUTATIONS["HandleDeckConfigurationMenu"] = {"source_symbol": "HandleDeckConfigurationMenu", "before": "\t\twced6 = selected_item;", "after": "\t\twced6 = (uint8_t)(selected_item + 1u);", "case_ids": ["HandleDeckConfigurationMenu-0", "HandleDeckConfigurationMenu-1"]}

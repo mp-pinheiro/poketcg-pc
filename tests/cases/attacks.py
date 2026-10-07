@@ -1,11 +1,12 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import attack_score_smog_fixture as _attack_score_smog_fixture, ATTACK_SCORE_SMOG_REGS as _ATTACK_SCORE_SMOG_REGS, attack_score_selfdestruct_fixture as _attack_score_selfdestruct_fixture, ATTACK_SCORE_SELFDESTRUCT_REGS as _ATTACK_SCORE_SELFDESTRUCT_REGS
 from tests.cases._fixtures import ai_attack_fixture as _ai_attack_fixture, AI_ATTACK_REGS as _AI_ATTACK_REGS, ai_attack_score_fixture as _ai_attack_score_fixture, AI_ATTACK_SCORE_REGS as _AI_ATTACK_SCORE_REGS
 """Oracle-diff cases for engine/duel/ai/attacks.asm."""
 
-wAIScore = 0xCDBE
-wPlayAreaAIScore = 0xCDBF
-wTempPlayAreaAIScore = 0xCDDD
-wTempAIScore = 0xCDE3
+wAIScore = sym("wAIScore")
+wPlayAreaAIScore = sym("wPlayAreaAIScore")
+wTempPlayAreaAIScore = sym("wTempPlayAreaAIScore")
+wTempAIScore = sym("wTempAIScore")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -57,35 +58,35 @@ MUTATIONS = {
 }
 
 # >>> factory-cases-statics
-hWhoseTurn = 0xFF97
-wSelectedAttack = 0xCCC6
-wAIScore = 0xCDBE
+hWhoseTurn = sym("hWhoseTurn")
+wSelectedAttack = sym("wSelectedAttack")
+wAIScore = sym("wAIScore")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wAIBarrierFlagCounter = 0xCDA7
-wAIExecuteProcessedAttack = 0xCDD9
-wAIPlusPowerAttack = 0xCDD6
-wAIRetreatScore = 0xCDB4
-wDamage = 0xCCB9
-wFirstAttackAIScore = 0xCDBF
-wPreviousAIFlags = 0xCE20
-wSelectedAttack = 0xCCC6
-hTempPlayAreaLocation_ff9d = 0xFF9D
+wAIBarrierFlagCounter = sym("wAIBarrierFlagCounter")
+wAIExecuteProcessedAttack = sym("wAIExecuteProcessedAttack")
+wAIPlusPowerAttack = sym("wAIPlusPowerAttack")
+wAIRetreatScore = sym("wAIRetreatScore")
+wDamage = sym("wDamage")
+wFirstAttackAIScore = sym("wFirstAttackAIScore")
+wPreviousAIFlags = sym("wPreviousAIFlags")
+wSelectedAttack = sym("wSelectedAttack")
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
 
-wAIBarrierFlagCounter = 0xCDA7
-wAIExecuteProcessedAttack = 0xCDD9
-wAIRetreatScore = 0xCDB4
+wAIBarrierFlagCounter = sym("wAIBarrierFlagCounter")
+wAIExecuteProcessedAttack = sym("wAIExecuteProcessedAttack")
+wAIRetreatScore = sym("wAIRetreatScore")
 # <<< factory-cases-statics
 
 # >>> factory GetAIScoreOfAttack
 CONTRACT["GetAIScoreOfAttack"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["GetAIScoreOfAttack"] = [
-    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2E8: b"\x05", wSelectedAttack: b"\x00", wAIScore: b"\x99"}, "expect": {wSelectedAttack: b"\x01", wAIScore: b"\x00"}, "read": {wSelectedAttack: 1, wAIScore: 1}},
-    {"a": 0x5A, "wram": {hWhoseTurn: b"\xC2", 0xC2E8: b"\x05", wSelectedAttack: b"\x00", wAIScore: b"\x12"}, "expect": {wSelectedAttack: b"\x5A", wAIScore: b"\x00"}, "read": {wSelectedAttack: 1, wAIScore: 1}},
-    dict(POISON, a=0xEE, wram={hWhoseTurn: b"\xC2", 0xC2E8: b"\x05", wSelectedAttack: b"\x00", wAIScore: b"\x44"}, expect={wSelectedAttack: b"\xEE", wAIScore: b"\x00"}, read={wSelectedAttack: 1, wAIScore: 1}),
+    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCardSubstatus2"): b"\x05", wSelectedAttack: b"\x00", wAIScore: b"\x99"}, "expect": {wSelectedAttack: b"\x01", wAIScore: b"\x00"}, "read": {wSelectedAttack: 1, wAIScore: 1}},
+    {"a": 0x5A, "wram": {hWhoseTurn: b"\xC2", sym("wPlayerArenaCardSubstatus2"): b"\x05", wSelectedAttack: b"\x00", wAIScore: b"\x12"}, "expect": {wSelectedAttack: b"\x5A", wAIScore: b"\x00"}, "read": {wSelectedAttack: 1, wAIScore: 1}},
+    dict(POISON, a=0xEE, wram={hWhoseTurn: b"\xC2", sym("wPlayerArenaCardSubstatus2"): b"\x05", wSelectedAttack: b"\x00", wAIScore: b"\x44"}, expect={wSelectedAttack: b"\xEE", wAIScore: b"\x00"}, read={wSelectedAttack: 1, wAIScore: 1}),
     dict(_ai_attack_score_fixture(bank=5), **_AI_ATTACK_SCORE_REGS),
-    dict(_attack_score_smog_fixture(vram=False, bank=5), **_ATTACK_SCORE_SMOG_REGS, read={0xCC1C: 8, 0xCDB5: 3, 0xCDBE: 1, 0xCC23: 1, 0xCDB8: 6, 0xCACA: 3, 0xFF9D: 1}),
-    dict(_attack_score_selfdestruct_fixture(vram=False, bank=5), **_ATTACK_SCORE_SELFDESTRUCT_REGS, read={0xCC1C: 8, 0xCDB5: 3, 0xCDBE: 1, 0xCC23: 1, 0xCDB8: 6, 0xCACA: 3, 0xFF9D: 1}),
+    dict(_attack_score_smog_fixture(vram=False, bank=5), **_ATTACK_SCORE_SMOG_REGS, read={sym("wAttachedEnergies") + 1: 8, sym("wAIDuelVarsEnd"): 3, sym("wAIScore"): 1, sym("wTotalAttachedEnergies"): 1, sym("wTempCardRetreatCost"): 6, sym("wRNG1"): 3, sym("hTempPlayAreaLocation_ff9d"): 1}),
+    dict(_attack_score_selfdestruct_fixture(vram=False, bank=5), **_ATTACK_SCORE_SELFDESTRUCT_REGS, read={sym("wAttachedEnergies") + 1: 8, sym("wAIDuelVarsEnd"): 3, sym("wAIScore"): 1, sym("wTotalAttachedEnergies"): 1, sym("wTempCardRetreatCost"): 6, sym("wRNG1"): 3, sym("hTempPlayAreaLocation_ff9d"): 1}),
 ]
 # <<< factory GetAIScoreOfAttack
 

@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/duel/animations/screen_effects.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -14,13 +15,13 @@ CASES["DecrementScreenAnimDuration"] = [
 	# entry carry passes through untouched (0 -> 0xff) -> f=0x70
 	{"f": 0x10},
 	# boundary 1 -> 0: Z set, H clear; poison proves a/b/c/d/e/hl preserved and C carried -> f=0xd0
-	dict(POISON, wram={0xD4BB: b"\x01"}),
+	dict(POISON, wram={sym("wScreenAnimDuration"): b"\x01"}),
 	# half-borrow boundary 0x10 -> 0x0f; entry Z/N/H bits must not leak into f -> f=0x60
-	{"f": 0xE0, "wram": {0xD4BB: b"\x10"}},
+	{"f": 0xE0, "wram": {sym("wScreenAnimDuration"): b"\x10"}},
 	# plain decrement, no flags produced by dec -> f=0x40
-	{"wram": {0xD4BB: b"\xff"}},
+	{"wram": {sym("wScreenAnimDuration"): b"\xff"}},
 	# 2 -> 1: result nonzero, no half-borrow -> f=0x40
-	{"wram": {0xD4BB: b"\x02"}},
+	{"wram": {sym("wScreenAnimDuration"): b"\x02"}},
 ]
 # <<< factory DecrementScreenAnimDuration
 
@@ -28,47 +29,47 @@ CASES["DecrementScreenAnimDuration"] = [
 CONTRACT["UpdateShakeOffset"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
 CASES["UpdateShakeOffset"] = [
 	{},
-	{"wram": {0xD4BB: b"\x00", 0xD4BC: b"\x00\xC1", 0xC100: b"\x15\x02"}, "read": {0xD4BC: 2, 0xC100: 1}},
-	{"wram": {0xD4BB: b"\x15", 0xD4BC: b"\x00\xC1", 0xC100: b"\x15\x02"}, "read": {0xD4BC: 2, 0xC100: 1}},
-	{"wram": {0xD4BB: b"\x20", 0xD4BC: b"\x00\xC1", 0xC100: b"\x15\x02"}, "read": {0xD4BC: 2, 0xC100: 1}},
-	dict(POISON, wram={0xD4BB: b"\x01", 0xD4BC: b"\x00\xC1", 0xC100: b"\x01\xFF"}, read={0xD4BC: 2, 0xC100: 1}),
+	{"wram": {sym("wScreenAnimDuration"): b"\x00", sym("wScreenShakeOffsetsPtr"): b"\x00\xC1", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x15\x02"}, "read": {sym("wScreenShakeOffsetsPtr"): 2, sym("wDecompressionSecondaryBufferStart") + 0x11: 1}},
+	{"wram": {sym("wScreenAnimDuration"): b"\x15", sym("wScreenShakeOffsetsPtr"): b"\x00\xC1", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x15\x02"}, "read": {sym("wScreenShakeOffsetsPtr"): 2, sym("wDecompressionSecondaryBufferStart") + 0x11: 1}},
+	{"wram": {sym("wScreenAnimDuration"): b"\x20", sym("wScreenShakeOffsetsPtr"): b"\x00\xC1", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x15\x02"}, "read": {sym("wScreenShakeOffsetsPtr"): 2, sym("wDecompressionSecondaryBufferStart") + 0x11: 1}},
+	dict(POISON, wram={sym("wScreenAnimDuration"): b"\x01", sym("wScreenShakeOffsetsPtr"): b"\x00\xC1", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01\xFF"}, read={sym("wScreenShakeOffsetsPtr"): 2, sym("wDecompressionSecondaryBufferStart") + 0x11: 1}),
 ]
 # <<< factory UpdateShakeOffset
 
 # >>> factory-cases-statics
-wActiveScreenAnim = 0xD42A
-wScreenAnimUpdatePtr = 0xD4B9
-hSCX = 0xFF92
+wActiveScreenAnim = sym("wActiveScreenAnim")
+wScreenAnimUpdatePtr = sym("wScreenAnimUpdatePtr")
+hSCX = sym("hSCX")
 rSCX = 0xFF43
-hSCY = 0xFF93
+hSCY = sym("hSCY")
 rSTAT = 0xFF41
 rIE = 0xFFFF
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wScreenAnimDuration = 0xD4BB
-wScreenAnimUpdatePtr = 0xD4B9
+wScreenAnimDuration = sym("wScreenAnimDuration")
+wScreenAnimUpdatePtr = sym("wScreenAnimUpdatePtr")
 
-wDuelAnimDamage = 0xD4B1
-WD4C0 = 0xD4C0
-WDUEL_ANIM_RETURN_BANK = 0xD4BE
+wDuelAnimDamage = sym("wDuelAnimDamage")
+WD4C0 = sym("wd4c0")
+WDUEL_ANIM_RETURN_BANK = sym("wDuelAnimReturnBank")
 
-wAnimationsDisabled = 0xD421
-wTempAnimation = 0xD422
-wScreenShakeOffsetsPtr = 0xD4BC
-wTempWhiteFlashBGP = 0xD4BC
-wBGP = 0xCABC
-wLCDCFunctionTrampoline = 0xCACD
-wBackgroundPalettesCGB = 0xCAF0
-wTempBackgroundPalettesCGB = 0xD297
-wBGScrollMod = 0xD666
-wApplyBGScroll = 0xD667
+wAnimationsDisabled = sym("wAnimationsDisabled")
+wTempAnimation = sym("wTempAnimation")
+wScreenShakeOffsetsPtr = sym("wScreenShakeOffsetsPtr")
+wTempWhiteFlashBGP = sym("wTempWhiteFlashBGP")
+wBGP = sym("wBGP")
+wLCDCFunctionTrampoline = sym("wLCDCFunctionTrampoline")
+wBackgroundPalettesCGB = sym("wBackgroundPalettesCGB")
+wTempBackgroundPalettesCGB = sym("wTempBackgroundPalettesCGB")
+wBGScrollMod = sym("wBGScrollMod")
+wApplyBGScroll = sym("wApplyBGScroll")
 # <<< factory-cases-statics
 
 # >>> factory DefaultScreenAnimationUpdate
 CONTRACT["DefaultScreenAnimationUpdate"] = {"compare": (), "preserve": ()}
 CASES["DefaultScreenAnimationUpdate"] = [
-    {"wram": {0xD42A: b"\x00", 0xD4B9: b"\x00\x00"}, "hram": {0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, "expect": {0xD42A: b"\xFF", 0xD4B9: b"\xBC\x4C", 0xFF92: b"\x00", 0xFF93: b"\x00", 0xFF41: b"\xBF", 0xFF43: b"\x00", 0xFFFF: b"\xFD"}},
-    dict(POISON, wram={0xD42A: b"\x12", 0xD4B9: b"\x34\x56"}, hram={0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, expect={0xD42A: b"\xFF", 0xD4B9: b"\xBC\x4C", 0xFF92: b"\x00", 0xFF93: b"\x00", 0xFF41: b"\xBF", 0xFF43: b"\x00", 0xFFFF: b"\xFD"}),
+    {"wram": {sym("wActiveScreenAnim"): b"\x00", sym("wScreenAnimUpdatePtr"): b"\x00\x00"}, "hram": {0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, "expect": {sym("wActiveScreenAnim"): b"\xFF", sym("wScreenAnimUpdatePtr"): b"\xBC\x4C", sym("hSCX"): b"\x00", sym("hSCY"): b"\x00", 0xFF41: b"\xBF", 0xFF43: b"\x00", 0xFFFF: b"\xFD"}},
+    dict(POISON, wram={sym("wActiveScreenAnim"): b"\x12", sym("wScreenAnimUpdatePtr"): b"\x34\x56"}, hram={0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, expect={sym("wActiveScreenAnim"): b"\xFF", sym("wScreenAnimUpdatePtr"): b"\xBC\x4C", sym("hSCX"): b"\x00", sym("hSCY"): b"\x00", 0xFF41: b"\xBF", 0xFF43: b"\x00", 0xFFFF: b"\xFD"}),
 ]
 # <<< factory DefaultScreenAnimationUpdate
 
@@ -83,17 +84,17 @@ CASES["DoScreenAnimationUpdate"] = [
 # >>> factory LoadDefaultScreenAnimationUpdateWhenFinished
 CONTRACT["LoadDefaultScreenAnimationUpdateWhenFinished"] = {"compare": (), "preserve": ()}
 CASES["LoadDefaultScreenAnimationUpdateWhenFinished"] = [
-    {"wram": {0xD4BB: b"\x00", 0xD42A: b"\x00", 0xD4B9: b"\x00\x00"}, "hram": {0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, "read": {0xD42A: 1, 0xD4B9: 2, 0xFF92: 1, 0xFF93: 1, 0xFF41: 1, 0xFF43: 1, 0xFFFF: 1}},
-    dict(POISON, wram={0xD4BB: b"\x01", 0xD42A: b"\x12", 0xD4B9: b"\x34\x56"}, hram={0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, read={0xD42A: 1, 0xD4B9: 2, 0xFF92: 1, 0xFF93: 1, 0xFF41: 1, 0xFF43: 1, 0xFFFF: 1}),
+    {"wram": {sym("wScreenAnimDuration"): b"\x00", sym("wActiveScreenAnim"): b"\x00", sym("wScreenAnimUpdatePtr"): b"\x00\x00"}, "hram": {0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, "read": {sym("wActiveScreenAnim"): 1, sym("wScreenAnimUpdatePtr"): 2, sym("hSCX"): 1, sym("hSCY"): 1, 0xFF41: 1, 0xFF43: 1, 0xFFFF: 1}},
+    dict(POISON, wram={sym("wScreenAnimDuration"): b"\x01", sym("wActiveScreenAnim"): b"\x12", sym("wScreenAnimUpdatePtr"): b"\x34\x56"}, hram={0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, read={sym("wActiveScreenAnim"): 1, sym("wScreenAnimUpdatePtr"): 2, sym("hSCX"): 1, sym("hSCY"): 1, 0xFF41: 1, 0xFF43: 1, 0xFFFF: 1}),
 ]
 # <<< factory LoadDefaultScreenAnimationUpdateWhenFinished
 
 # >>> factory ShakeScreenX
 CONTRACT["ShakeScreenX"] = {"compare": (), "preserve": ()}
 CASES["ShakeScreenX"] = [
-    {"wram": {0xD4B9: b"\x00\x00", 0xD4BC: b"\x00\x00"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+    {"wram": {sym("wScreenAnimUpdatePtr"): b"\x00\x00", sym("wScreenShakeOffsetsPtr"): b"\x00\x00"}, "read": {sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-     "wram": {0xD4B9: b"\x56\x34", 0xD4BC: b"\x78\x9A"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+     "wram": {sym("wScreenAnimUpdatePtr"): b"\x56\x34", sym("wScreenShakeOffsetsPtr"): b"\x78\x9A"}, "read": {sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}},
 ]
 # <<< factory ShakeScreenX
 
@@ -104,11 +105,11 @@ CONTRACT["Func_1ce03"] = {"compare": ("a", "f"), "preserve": ()}
 # (wTxRam2 receives the damage, hl parked as the caller leaves it), $9B is one
 # of the empty DuelAnim15x routines. The return bank ($CE21) is the caller's.
 CASES["Func_1ce03"] = [
-    {"a": 0x98, "wram": {WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06", 0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2EF: b"\x01", 0xC400: b"\x08", 0xC200: b"\x10", 0xCABB: b"\x00", 0xC2C8: b"\x28"},
+    {"a": 0x98, "wram": {WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06", sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wBoosterCardsDrawn"): b"\x08", sym("wPlayerCardLocations"): b"\x10", sym("wLCDC"): b"\x00", sym("wPlayerArenaCardHP"): b"\x28"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {WD4C0: 1}, "vread": {0: {0x9800: 0x400}},
      "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, a=0x97, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06", 0xCCB8: b"\x00", 0xCCC4: b"\x08", 0xCE7F: b"\x14\x00", 0xCAD3: b"\x48\x03", 0xCE3F: b"\xAA\x55"},
-         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={WD4C0: 1, 0xCE3F: 2}, vread={0: {0x9800: 0x400}},
+    dict(POISON, a=0x97, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06", sym("wLoadedAttackAnimation"): b"\x00", sym("wTempNonTurnDuelistCardID"): b"\x08", sym("wDamageAnimAmount"): b"\x14\x00", sym("wDoFrameFunction"): b"\x48\x03", sym("wTxRam2"): b"\xAA\x55"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={WD4C0: 1, sym("wTxRam2"): 2}, vread={0: {0x9800: 0x400}},
          instruction_budget=4000000, cycle_budget=16000000),
     dict(POISON, a=0x9B, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06"}, read={WD4C0: 1}),
 ]
@@ -117,63 +118,63 @@ CASES["Func_1ce03"] = [
 # >>> factory ShakeScreenX_Big
 CONTRACT["ShakeScreenX_Big"] = {"compare": (), "preserve": ()}
 CASES["ShakeScreenX_Big"] = [
-    {"wram": {0xD4B9: b"\x00\x00", 0xD4BC: b"\x00\x00"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+    {"wram": {sym("wScreenAnimUpdatePtr"): b"\x00\x00", sym("wScreenShakeOffsetsPtr"): b"\x00\x00"}, "read": {sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-     "wram": {0xD4B9: b"\x56\x78", 0xD4BC: b"\x9A\xBC"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+     "wram": {sym("wScreenAnimUpdatePtr"): b"\x56\x78", sym("wScreenShakeOffsetsPtr"): b"\x9A\xBC"}, "read": {sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}},
 ]
 # <<< factory ShakeScreenX_Big
 
 # >>> factory ShakeScreenX_Small
 CONTRACT["ShakeScreenX_Small"] = {"compare": (), "preserve": ()}
 CASES["ShakeScreenX_Small"] = [
-    {"wram": {0xD4B9: b"\x00\x00", 0xD4BC: b"\x00\x00"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+    {"wram": {sym("wScreenAnimUpdatePtr"): b"\x00\x00", sym("wScreenShakeOffsetsPtr"): b"\x00\x00"}, "read": {sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-     "wram": {0xD4B9: b"\x56\x78", 0xD4BC: b"\x9A\xBC"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+     "wram": {sym("wScreenAnimUpdatePtr"): b"\x56\x78", sym("wScreenShakeOffsetsPtr"): b"\x9A\xBC"}, "read": {sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}},
 ]
 # <<< factory ShakeScreenX_Small
 
 # >>> factory DistortScreen
 CONTRACT["DistortScreen"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DistortScreen"] = [
-    {"wram": {0xD4BB: b"\x03"},
-     "read": {0xD4B9: 2, 0xD667: 1, 0xCACE: 2, 0xD666: 1, 0xD4BB: 1}},
-    dict(POISON, wram={0xD4BB: b"\x10"},
-         read={0xD4B9: 2, 0xD667: 1, 0xCACE: 2, 0xD666: 1, 0xD4BB: 1}),
+    {"wram": {sym("wScreenAnimDuration"): b"\x03"},
+     "read": {sym("wScreenAnimUpdatePtr"): 2, sym("wApplyBGScroll"): 1, sym("wLCDCFunctionTrampoline") + 1: 2, sym("wBGScrollMod"): 1, sym("wScreenAnimDuration"): 1}},
+    dict(POISON, wram={sym("wScreenAnimDuration"): b"\x10"},
+         read={sym("wScreenAnimUpdatePtr"): 2, sym("wApplyBGScroll"): 1, sym("wLCDCFunctionTrampoline") + 1: 2, sym("wBGScrollMod"): 1, sym("wScreenAnimDuration"): 1}),
 ]
 # <<< factory DistortScreen
 
 # >>> factory WhiteFlashScreen
 CONTRACT["WhiteFlashScreen"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["WhiteFlashScreen"] = [
-    {"wram": {0xD4BB: b"\x00", 0xCABC: b"\x11"},
-     "read": {0xD4B9: 2, 0xD4BC: 1, 0xCAF0: 8, 0xD297: 8, 0xD4BB: 1}},
-    dict(POISON, wram={0xD4BB: b"\x05", 0xCABC: b"\x22"},
-         read={0xD4B9: 2, 0xD4BC: 1, 0xCAF0: 8, 0xD297: 8, 0xD4BB: 1}),
+    {"wram": {sym("wScreenAnimDuration"): b"\x00", sym("wBGP"): b"\x11"},
+     "read": {sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 1, sym("wBackgroundPalettesCGB"): 8, sym("wTempBackgroundPalettesCGB"): 8, sym("wScreenAnimDuration"): 1}},
+    dict(POISON, wram={sym("wScreenAnimDuration"): b"\x05", sym("wBGP"): b"\x22"},
+         read={sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 1, sym("wBackgroundPalettesCGB"): 8, sym("wTempBackgroundPalettesCGB"): 8, sym("wScreenAnimDuration"): 1}),
 ]
 # <<< factory WhiteFlashScreen
 
 # >>> factory ShakeScreenY
 CONTRACT["ShakeScreenY"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ShakeScreenY"] = [
-    {"hl": 0x4D61, "wram": {0xD4BC: b"\x00\x00", 0xD4B9: b"\x00\x00"},
-     "expect": {0xD4BC: b"\x61\x4D", 0xD4B9: b"\x2B\x4D"}},
-    dict(POISON, wram={0xD4BC: b"\x00\x00", 0xD4B9: b"\x00\x00"}),
+    {"hl": 0x4D61, "wram": {sym("wScreenShakeOffsetsPtr"): b"\x00\x00", sym("wScreenAnimUpdatePtr"): b"\x00\x00"},
+     "expect": {sym("wScreenShakeOffsetsPtr"): b"\x61\x4D", sym("wScreenAnimUpdatePtr"): b"\x2B\x4D"}},
+    dict(POISON, wram={sym("wScreenShakeOffsetsPtr"): b"\x00\x00", sym("wScreenAnimUpdatePtr"): b"\x00\x00"}),
 ]
 # <<< factory ShakeScreenY
 
 # >>> factory ShakeScreenY_Big
 CONTRACT["ShakeScreenY_Big"] = {"compare": (), "preserve": ()}
 CASES["ShakeScreenY_Big"] = [
-    {"read": {0xD4B9: 2, 0xD4BC: 2}},
-    dict(POISON, read={0xD4B9: 2, 0xD4BC: 2}),
+    {"read": {sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}},
+    dict(POISON, read={sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}),
 ]
 # <<< factory ShakeScreenY_Big
 
 # >>> factory ShakeScreenY_Small
 CONTRACT["ShakeScreenY_Small"] = {"compare": (), "preserve": ()}
 CASES["ShakeScreenY_Small"] = [
-    {"read": {0xD4B9: 2, 0xD4BC: 2}},
-    dict(POISON, read={0xD4B9: 2, 0xD4BC: 2}),
+    {"read": {sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}},
+    dict(POISON, read={sym("wScreenAnimUpdatePtr"): 2, sym("wScreenShakeOffsetsPtr"): 2}),
 ]
 # <<< factory ShakeScreenY_Small
 

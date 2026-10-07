@@ -1,9 +1,10 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wEventVars = 0xD3D2
-wLoadedEventBits = 0xD3D1
-wDefaultSong = 0xD111
+wEventVars = sym("wEventVars")
+wLoadedEventBits = sym("wLoadedEventBits")
+wDefaultSong = sym("wDefaultSong")
 EVENT_BYTE = wEventVars + 0x10
 
 
@@ -56,14 +57,14 @@ CASES["Preload_ChallengeHallNPCs1"] = [
 # >>> factory Preload_ChallengeHallLobbyRonald1
 CONTRACT["Preload_ChallengeHallLobbyRonald1"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["Preload_ChallengeHallLobbyRonald1"] = [
-    {"wram": {wEventVars: bytes(64), 0xD334: b"\x08"}},
-    {"wram": {wEventVars: bytes(64), 0xD3E5: b"\x10", 0xD334: b"\x08"}},
-    dict(POISON, wram={wEventVars: bytes(64), 0xD3E5: b"\x10", 0xD334: b"\x08"}),
+    {"wram": {wEventVars: bytes(64), sym("wPlayerDirection"): b"\x08"}},
+    {"wram": {wEventVars: bytes(64), sym("wEventVars") + 0x13: b"\x10", sym("wPlayerDirection"): b"\x08"}},
+    dict(POISON, wram={wEventVars: bytes(64), sym("wEventVars") + 0x13: b"\x10", sym("wPlayerDirection"): b"\x08"}),
 ]
 # <<< factory Preload_ChallengeHallLobbyRonald1
 
 # >>> factory-cases-statics
-TABLE_ADDR = 0xC500
+TABLE_ADDR = sym("wNameBuffer")
 def table_row(state, result, event, convo):
     return bytes([state, result, event, convo])
 # <<< factory-cases-statics
@@ -74,13 +75,13 @@ CASES["SetRonaldChallengeHallLobbyState"] = [
     {"hl": TABLE_ADDR, "d": 0x00, "e": 0x01,
      "wram": {TABLE_ADDR: table_row(0x01, 0x00, 0x50, 0x01) + table_row(0x03, 0x03, 0x51, 0x02)
               + table_row(0x00, 0x00, 0x52, 0x03) + table_row(0x07, 0x00, 0x53, 0x04),
-              0xD3E6: b"\x00", 0xD3E7: b"\x00"},
-     "read": {0xD3E6: 1, 0xD3E7: 1}},
+              sym("wEventVars") + 0x14: b"\x00", sym("wEventVars") + 0x15: b"\x00"},
+     "read": {sym("wEventVars") + 0x14: 1, sym("wEventVars") + 0x15: 1}},
     dict(POISON, hl=TABLE_ADDR, d=0xFF, e=0xFF,
          wram={TABLE_ADDR: table_row(0x01, 0x00, 0x50, 0x01) + table_row(0x03, 0x03, 0x51, 0x02)
                + table_row(0x00, 0x00, 0x52, 0x03) + table_row(0x07, 0x00, 0x53, 0x04),
-               0xD3E6: b"\x00", 0xD3E7: b"\x00"},
-         read={0xD3E6: 1, 0xD3E7: 1}),
+               sym("wEventVars") + 0x14: b"\x00", sym("wEventVars") + 0x15: b"\x00"},
+         read={sym("wEventVars") + 0x14: 1, sym("wEventVars") + 0x15: 1}),
 ]
 # <<< factory SetRonaldChallengeHallLobbyState
 

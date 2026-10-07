@@ -1,9 +1,10 @@
 """Oracle-diff cases for poketcg/src/engine/gfx/sprite_vblank.asm."""
+from tests.cases._symbols import WRAMX_START, sym
 
-SRC = 0xC100
-DST = 0xC500
-BOUNDARY_SRC = 0xCEFE
-BOUNDARY_DST = 0xDFFE
+SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
+DST = sym("wNameBuffer")
+BOUNDARY_SRC = sym("wFilteredCardList") + 0x24
+BOUNDARY_DST = WRAMX_START + 0xFFE
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -42,9 +43,9 @@ MUTATIONS = {
 }
 
 # >>> factory-cases-statics
-VBLANK_TRAMPOLINE_FN = 0xCAD1
-VBLANK_TRAMPOLINE_BACKUP = 0xCE8D
-VBLANK_OAM_COPY_TOGGLE = 0xCAC0
+VBLANK_TRAMPOLINE_FN = sym("wVBlankFunctionTrampoline") + 1
+VBLANK_TRAMPOLINE_BACKUP = sym("wVBlankFunctionTrampolineBackup")
+VBLANK_OAM_COPY_TOGGLE = sym("wVBlankOAMCopyToggle")
 # <<< factory-cases-statics
 
 # >>> factory SetSpriteAnimationsAsVBlankFunction

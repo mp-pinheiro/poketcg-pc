@@ -217,7 +217,7 @@ MUTATIONS = {
         'case_ids': [   'HandleCardAlbumCardPage-0',
                         'HandleCardAlbumCardPage-1',
                         'HandleCardAlbumCardPage-2'],
-        'source': 'src/profiles/extended/home/card_album.c'},
+        'source': 'src/home/card_album.c'},
     'CreateCardSetListAndInitListCoords': {   'source_symbol': 'CreateCardSetListAndInitListCoords',
         'before': '\tgb_write8(wCardListCoords_ADDR, 0x04u);\n'
                   '\tgb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x02u);',
@@ -225,7 +225,7 @@ MUTATIONS = {
                  '\tgb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x02u);',
         'case_ids': [   'CreateCardSetListAndInitListCoords-0',
                         'CreateCardSetListAndInitListCoords-1'],
-        'source': 'src/profiles/extended/home/card_album.c'},
+        'source': 'src/home/card_album.c'},
     'CardAlbum': {   'source_symbol': 'CardAlbum',
         'before': '\t(void)DrawWideTextBox_PrintText(ViewWhichCardFileText);',
         'after': '\t(void)DrawWideTextBox_PrintText(EmptyPromotionalCardText);',

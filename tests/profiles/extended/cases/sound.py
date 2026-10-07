@@ -116,7 +116,7 @@ MUTATIONS = {
         'before': '\tPlaySFX(SFX_DENIED);',
         'after': '\tPlaySFX(0u);',
         'case_ids': ['PlaySFX_InvalidChoice-0'],
-        'source': 'src/profiles/extended/home/sound.c',
+        'source': 'src/home/sound.c',
     },
     'PlaySFX': {
         'source_symbol': 'PlaySFX',

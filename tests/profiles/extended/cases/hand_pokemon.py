@@ -10,8 +10,6 @@ _EVOLUTION_AI_INFO = Fixture("ai-decide-evolution-fighting-carriers", directory=
 _EVOLUTION_AI_INFO_25303 = Fixture("ai-decide-evolution-fighting-carriers-25303", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
-    case["read"][0xCC00] = 0xBD
-    case["read"][0xCCBE] = 0x42
     return case
 
 
@@ -1878,7 +1876,7 @@ MUTATIONS = {
                   ': 0u)};',
         'after': '\t\t\treturn (AIDecidePlayPokemonCardResult){last, 0x10u};',
         'case_ids': ['AIDecidePlayPokemonCard-0', 'AIDecidePlayPokemonCard-1'],
-        'source': 'src/profiles/extended/home/hand_pokemon.c'},
+        'source': 'src/home/hand_pokemon.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

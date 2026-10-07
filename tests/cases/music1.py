@@ -1,4 +1,5 @@
 """Oracle-diff cases for music1.asm (bank $3d) -- audio music engine."""
+from tests.cases._symbols import STACK_CANARY, sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -12,984 +13,984 @@ CASES["Music1_EmptyFunc"] = [{}, POISON]
 
 CONTRACT["Music1_f404e"] = {"compare": (), "preserve": ()}
 CASES["Music1_f404e"] = [
-    {"a": 0x42, "read": {0xDDF0: 1}},
-    dict(POISON, read={0xDDF0: 1}),
+    {"a": 0x42, "read": {sym("wddf0"): 1}},
+    dict(POISON, read={sym("wddf0"): 1}),
 ]
 
 CONTRACT["Music1_f4066"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4066"] = [
-    {"wram": {0xDDF2: b"\x00"}},
-    {"wram": {0xDDF2: b"\x01"}},
-    {"wram": {0xDDF2: b"\xFF"}},
-    dict(POISON, wram={0xDDF2: b"\x05"}),
+    {"wram": {sym("wddf2"): b"\x00"}},
+    {"wram": {sym("wddf2"): b"\x01"}},
+    {"wram": {sym("wddf2"): b"\xFF"}},
+    dict(POISON, wram={sym("wddf2"): b"\x05"}),
 ]
 
 CONTRACT["Music1_f406f"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
 CASES["Music1_f406f"] = [
-    {"a": 0x00, "read": {0xDDF1: 1}},
-    {"a": 0x07, "read": {0xDDF1: 1}},
-    {"a": 0x77, "read": {0xDDF1: 1}},
-    {"a": 0xFF, "read": {0xDDF1: 1}},
-    dict(POISON, read={0xDDF1: 1}),
+    {"a": 0x00, "read": {sym("wMusicPanning"): 1}},
+    {"a": 0x07, "read": {sym("wMusicPanning"): 1}},
+    {"a": 0x77, "read": {sym("wMusicPanning"): 1}},
+    {"a": 0xFF, "read": {sym("wMusicPanning"): 1}},
+    dict(POISON, read={sym("wMusicPanning"): 1}),
 ]
 
 CONTRACT["Music1_PlaySong"] = {"compare": ("hl",), "preserve": ("hl",)}
 CASES["Music1_PlaySong"] = [
-    {"a": 0x00, "read": {0xDD80: 1}},
-    {"a": 0x1E, "read": {0xDD80: 1}},
-    {"a": 0x1F, "read": {0xDD80: 1}},
-    {"a": 0xFF, "read": {0xDD80: 1}},
-    dict(POISON, read={0xDD80: 1}),
+    {"a": 0x00, "read": {sym("wCurSongID"): 1}},
+    {"a": 0x1E, "read": {sym("wCurSongID"): 1}},
+    {"a": 0x1F, "read": {sym("wCurSongID"): 1}},
+    {"a": 0xFF, "read": {sym("wCurSongID"): 1}},
+    dict(POISON, read={sym("wCurSongID"): 1}),
 ]
 
 CONTRACT["Music1_PlaySFX"] = {"compare": ("b", "c", "hl"), "preserve": ("b", "c", "hl")}
 CASES["Music1_PlaySFX"] = [
-    {"a": 0x00, "read": {0xDD83: 1, 0xDD82: 1}},
-    {"a": 0x01, "read": {0xDD83: 1, 0xDD82: 1}},
-    {"a": 0x01, "wram": {0xDD83: b"\x0A", 0xDD82: b"\x05"}},
-    {"a": 0x01, "wram": {0xDD83: b"\x05", 0xDD82: b"\x80"}},
-    dict(POISON, read={0xDD83: 1, 0xDD82: 1}),
+    {"a": 0x00, "read": {sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}},
+    {"a": 0x01, "read": {sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}},
+    {"a": 0x01, "wram": {sym("wSfxPriority"): b"\x0A", sym("wCurSfxID"): b"\x05"}},
+    {"a": 0x01, "wram": {sym("wSfxPriority"): b"\x05", sym("wCurSfxID"): b"\x80"}},
+    dict(POISON, read={sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}),
 ]
 
 CONTRACT["Music1_AssertSongFinished"] = {"compare": ("a",), "preserve": ()}
 CASES["Music1_AssertSongFinished"] = [
-    {"wram": {0xDD80: b"\x80"}},
-    {"wram": {0xDD80: b"\x00"}},
-    {"wram": {0xDD80: b"\x7F"}},
-    dict(POISON, wram={0xDD80: b"\xFF"}),
+    {"wram": {sym("wCurSongID"): b"\x80"}},
+    {"wram": {sym("wCurSongID"): b"\x00"}},
+    {"wram": {sym("wCurSongID"): b"\x7F"}},
+    dict(POISON, wram={sym("wCurSongID"): b"\xFF"}),
 ]
 
 CONTRACT["Music1_AssertSFXFinished"] = {"compare": ("a",), "preserve": ()}
 CASES["Music1_AssertSFXFinished"] = [
-    {"wram": {0xDD82: b"\x80"}},
-    {"wram": {0xDD82: b"\x00"}},
-    dict(POISON, wram={0xDD82: b"\x55"}),
+    {"wram": {sym("wCurSfxID"): b"\x80"}},
+    {"wram": {sym("wCurSfxID"): b"\x00"}},
+    dict(POISON, wram={sym("wCurSfxID"): b"\x55"}),
 ]
 
 CONTRACT["Music1_CheckForEndOfSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_CheckForEndOfSong"] = [
-    {"wram": {0xDD8D: b"\x01\x01\x01\x01"}},
-    {"wram": {0xDD8D: b"\x00\x00\x00\x00", 0xDD80: b"\x05"}},
-    {"wram": {0xDD8D: b"\x00\x00\x00\x01", 0xDD80: b"\x05"}},
-    dict(POISON, wram={0xDD8D: b"\x00\x00\x00\x00", 0xDD80: b"\x05"}),
+    {"wram": {sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"}},
+    {"wram": {sym("wMusicIsPlaying"): b"\x00\x00\x00\x00", sym("wCurSongID"): b"\x05"}},
+    {"wram": {sym("wMusicIsPlaying"): b"\x00\x00\x00\x01", sym("wCurSongID"): b"\x05"}},
+    dict(POISON, wram={sym("wMusicIsPlaying"): b"\x00\x00\x00\x00", sym("wCurSongID"): b"\x05"}),
 ]
 
 CONTRACT["Music1_f4980"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4980"] = [
-    {"wram": {0xDD8C: b"\x00"}},
-    {"wram": {0xDD8C: b"\x0F"}},
-    dict(POISON, wram={0xDD8C: b"\x00"}),
+    {"wram": {sym("wdd8c"): b"\x00"}},
+    {"wram": {sym("wdd8c"): b"\x0F"}},
+    dict(POISON, wram={sym("wdd8c"): b"\x00"}),
 ]
 
 CONTRACT["Music1_CopyData"] = {"compare": ("hl", "d", "e"), "preserve": ()}
 CASES["Music1_CopyData"] = [
-    {"a": 0, "hl": 0xC100, "d": 0xC2, "e": 0x00, "read": {0xC200: 0}},
-    {"a": 5, "hl": 0xC100, "d": 0xC2, "e": 0x00,
-     "wram": {0xC100: b"\x01\x02\x03\x04\x05"}, "read": {0xC200: 5}},
-    dict(POISON, a=3, hl=0xC100, d=0xC2, e=0x00,
-         wram={0xC100: b"\xAA\xBB\xCC"}, read={0xC200: 3}),
+    {"a": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC2, "e": 0x00, "read": {sym("wPlayerCardLocations"): 0}},
+    {"a": 5, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC2, "e": 0x00,
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01\x02\x03\x04\x05"}, "read": {sym("wPlayerCardLocations"): 5}},
+    dict(POISON, a=3, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, d=0xC2, e=0x00,
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xAA\xBB\xCC"}, read={sym("wPlayerCardLocations"): 3}),
 ]
 
 CONTRACT["Music1_Init"] = {"compare": (), "preserve": ()}
 CASES["Music1_Init"] = [
-    {"read": {0xDD80: 1, 0xDD82: 1, 0xDD8D: 4, 0xDD91: 4, 0xDDB3: 4,
-              0xDDCB: 4, 0xDDBF: 4, 0xDDF1: 1, 0xDDF3: 8, 0xDDF0: 1,
-              0xDDF2: 1, 0xDD8C: 1, 0xDD84: 1, 0xDD81: 1, 0xDDEF: 1}},
-    dict(POISON, read={0xDD80: 1, 0xDD82: 1, 0xDD8D: 4, 0xDD91: 4,
-                       0xDDB3: 4, 0xDDCB: 4, 0xDDBF: 4, 0xDDF1: 1,
-                       0xDDF3: 8, 0xDDF0: 1, 0xDDF2: 1, 0xDD8C: 1,
-                       0xDD84: 1, 0xDD81: 1, 0xDDEF: 1}),
+    {"read": {sym("wCurSongID"): 1, sym("wCurSfxID"): 1, sym("wMusicIsPlaying"): 4, sym("wMusicTie"): 4, sym("wddb3"): 4,
+              sym("wMusicPitchOffset"): 4, sym("wMusicCutoff"): 4, sym("wMusicPanning"): 1, sym("wMusicChannelStackPointers"): 8, sym("wddf0"): 1,
+              sym("wddf2"): 1, sym("wdd8c"): 1, sym("wMusicStereoPanning"): 1, sym("wCurSongBank"): 1, sym("wddef"): 1}},
+    dict(POISON, read={sym("wCurSongID"): 1, sym("wCurSfxID"): 1, sym("wMusicIsPlaying"): 4, sym("wMusicTie"): 4,
+                       sym("wddb3"): 4, sym("wMusicPitchOffset"): 4, sym("wMusicCutoff"): 4, sym("wMusicPanning"): 1,
+                       sym("wMusicChannelStackPointers"): 8, sym("wddf0"): 1, sym("wddf2"): 1, sym("wdd8c"): 1,
+                       sym("wMusicStereoPanning"): 1, sym("wCurSongBank"): 1, sym("wddef"): 1}),
 ]
 
 CONTRACT["Music1_StopAllChannels"] = {"compare": (), "preserve": ()}
 CASES["Music1_StopAllChannels"] = [
-    {"wram": {0xDD8C: b"\x00"}, "read": {0xDD8D: 4}},
-    {"wram": {0xDD8C: b"\x0F"}, "read": {0xDD8D: 4}},
-    {"wram": {0xDD8C: b"\x05"}, "read": {0xDD8D: 4}},
-    dict(POISON, wram={0xDD8C: b"\x00"}, read={0xDD8D: 4}),
+    {"wram": {sym("wdd8c"): b"\x00"}, "read": {sym("wMusicIsPlaying"): 4}},
+    {"wram": {sym("wdd8c"): b"\x0F"}, "read": {sym("wMusicIsPlaying"): 4}},
+    {"wram": {sym("wdd8c"): b"\x05"}, "read": {sym("wMusicIsPlaying"): 4}},
+    dict(POISON, wram={sym("wdd8c"): b"\x00"}, read={sym("wMusicIsPlaying"): 4}),
 ]
 
 CONTRACT["Music1_BeginSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_BeginSong"] = [
-    {"a": 0x00, "read": {0xDD81: 1, 0xDD95: 8, 0xDD9D: 8, 0xDDBB: 4,
-                          0xDD8D: 4, 0xDD91: 4, 0xDDEA: 4, 0xDDBF: 4,
-                          0xDDDF: 4, 0xDDCB: 4, 0xDDF3: 8, 0xDDC7: 4,
-                          0xDDF2: 1}},
-    {"a": 0x01, "read": {0xDD81: 1, 0xDD95: 8, 0xDD8D: 4, 0xDDF2: 1}},
-    dict(POISON, a=0x01, read={0xDD81: 1, 0xDD95: 8, 0xDD8D: 4, 0xDDF2: 1}),
+    {"a": 0x00, "read": {sym("wCurSongBank"): 1, sym("wMusicChannelPointers"): 8, sym("wMusicMainLoopStart"): 8, sym("wddbb"): 4,
+                          sym("wMusicIsPlaying"): 4, sym("wMusicTie"): 4, sym("wMusicFrequencyOffset"): 4, sym("wMusicCutoff"): 4,
+                          sym("wMusicVibratoDelay"): 4, sym("wMusicPitchOffset"): 4, sym("wMusicChannelStackPointers"): 8, sym("wMusicEcho"): 4,
+                          sym("wddf2"): 1}},
+    {"a": 0x01, "read": {sym("wCurSongBank"): 1, sym("wMusicChannelPointers"): 8, sym("wMusicIsPlaying"): 4, sym("wddf2"): 1}},
+    dict(POISON, a=0x01, read={sym("wCurSongBank"): 1, sym("wMusicChannelPointers"): 8, sym("wMusicIsPlaying"): 4, sym("wddf2"): 1}),
 ]
 
 # -- Stack helpers --------------------------------------------------------
 
 CONTRACT["Music1_GetChannelStackPointer"] = {"compare": ("hl", "c"), "preserve": ("c",)}
 CASES["Music1_GetChannelStackPointer"] = [
-    {"c": 0, "wram": {0xDDF3: b"\x00\xC1"}, "read": {0xDDF3: 8}},
-    {"c": 1, "wram": {0xDDF3: b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4"}, "read": {0xDDF3: 8}},
-    {"c": 3, "wram": {0xDDF3: b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4"},
-     "read": {0xDDF3: 8}},
-    dict(POISON, b=0, c=2, wram={0xDDF3: b"\x34\x12\x78\x56\xBC\x9A\xF0\xDE"},
-         read={0xDDF3: 8}),
+    {"c": 0, "wram": {sym("wMusicChannelStackPointers"): b"\x00\xC1"}, "read": {sym("wMusicChannelStackPointers"): 8}},
+    {"c": 1, "wram": {sym("wMusicChannelStackPointers"): b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4"}, "read": {sym("wMusicChannelStackPointers"): 8}},
+    {"c": 3, "wram": {sym("wMusicChannelStackPointers"): b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4"},
+     "read": {sym("wMusicChannelStackPointers"): 8}},
+    dict(POISON, b=0, c=2, wram={sym("wMusicChannelStackPointers"): b"\x34\x12\x78\x56\xBC\x9A\xF0\xDE"},
+         read={sym("wMusicChannelStackPointers"): 8}),
 ]
 
 CONTRACT["Music1_SetChannelStackPointer"] = {"compare": ("c",), "preserve": ("c",)}
 CASES["Music1_SetChannelStackPointer"] = [
-    {"c": 0, "hl": 0xC100, "read": {0xDDF3: 2}},
-    {"c": 2, "hl": 0xC200, "read": {0xDDF3: 8}},
-    {"c": 3, "hl": 0xC300,
-     "wram": {0xDDF3: b"\x00\x00\x00\x00\x00\x00\x00\x00"},
-     "read": {0xDDF3: 8}},
-    dict(POISON, b=0, c=1, hl=0xC1FF, read={0xDDF3: 8}),
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "read": {sym("wMusicChannelStackPointers"): 2}},
+    {"c": 2, "hl": sym("wPlayerCardLocations"), "read": {sym("wMusicChannelStackPointers"): 8}},
+    {"c": 3, "hl": sym("wOpponentCardLocations"),
+     "wram": {sym("wMusicChannelStackPointers"): b"\x00\x00\x00\x00\x00\x00\x00\x00"},
+     "read": {sym("wMusicChannelStackPointers"): 8}},
+    dict(POISON, b=0, c=1, hl=sym("wDecompressionSecondaryBufferStart") + 0x110, read={sym("wMusicChannelStackPointers"): 8}),
 ]
 
 # -- Channel output routines ----------------------------------------------
 
 CONTRACT["Music1_f4714"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4714"] = [
-    {"wram": {0xDD8C: b"\x00", 0xDDB7: b"\x00", 0xDD91: b"\x00"},
-     "read": {0xDD91: 1}},
-    {"wram": {0xDD8C: b"\x01", 0xDDB7: b"\x00"},
-     "read": {0xDD91: 1, 0xDDB7: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDB7: b"\x10", 0xDD91: b"\x80",
-              0xDDE7: b"\x77", 0xDD86: b"\xC0", 0xDDA5: b"\x2C", 0xDDA6: b"\x80"},
-     "read": {0xDD91: 1, 0xDDB7: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDB7: b"\x10", 0xDD91: b"\x02",
-              0xDDE7: b"\x55", 0xDD86: b"\x40", 0xDDA5: b"\x9C", 0xDDA6: b"\x00"},
-     "read": {0xDD91: 1, 0xDDB7: 1}},
-    dict(POISON, wram={0xDD8C: b"\x00", 0xDDB7: b"\x10", 0xDD91: b"\x03",
-                       0xDDE7: b"\x33", 0xDD86: b"\x80", 0xDDA5: b"\x2C",
-                       0xDDA6: b"\x80"},
-         read={0xDD91: 1, 0xDDB7: 1}),
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb7"): b"\x00", sym("wMusicTie"): b"\x00"},
+     "read": {sym("wMusicTie"): 1}},
+    {"wram": {sym("wdd8c"): b"\x01", sym("wddb7"): b"\x00"},
+     "read": {sym("wMusicTie"): 1, sym("wddb7"): 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb7"): b"\x10", sym("wMusicTie"): b"\x80",
+              sym("wMusicVolume"): b"\x77", sym("wMusicDuty1"): b"\xC0", sym("wMusicCh1CurPitch"): b"\x2C", sym("wMusicCh1CurOctave"): b"\x80"},
+     "read": {sym("wMusicTie"): 1, sym("wddb7"): 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb7"): b"\x10", sym("wMusicTie"): b"\x02",
+              sym("wMusicVolume"): b"\x55", sym("wMusicDuty1"): b"\x40", sym("wMusicCh1CurPitch"): b"\x9C", sym("wMusicCh1CurOctave"): b"\x00"},
+     "read": {sym("wMusicTie"): 1, sym("wddb7"): 1}},
+    dict(POISON, wram={sym("wdd8c"): b"\x00", sym("wddb7"): b"\x10", sym("wMusicTie"): b"\x03",
+                       sym("wMusicVolume"): b"\x33", sym("wMusicDuty1"): b"\x80", sym("wMusicCh1CurPitch"): b"\x2C",
+                       sym("wMusicCh1CurOctave"): b"\x80"},
+         read={sym("wMusicTie"): 1, sym("wddb7"): 1}),
 ]
 
 CONTRACT["Music1_f475a"] = {"compare": (), "preserve": ()}
 CASES["Music1_f475a"] = [
-    {"wram": {0xDD8C: b"\x00", 0xDDB8: b"\x00", 0xDD92: b"\x00"},
-     "read": {0xDD92: 1}},
-    {"wram": {0xDD8C: b"\x02", 0xDDB8: b"\x00"},
-     "read": {0xDD92: 1, 0xDDB8: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDB8: b"\x10", 0xDD92: b"\x80",
-              0xDDE8: b"\x77", 0xDD87: b"\xC0", 0xDDA7: b"\x2C", 0xDDA8: b"\x80"},
-     "read": {0xDD92: 1, 0xDDB8: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDB8: b"\x10", 0xDD92: b"\x02",
-              0xDDE8: b"\x55", 0xDD87: b"\x40", 0xDDA7: b"\x9C", 0xDDA8: b"\x00"},
-     "read": {0xDD92: 1, 0xDDB8: 1}},
-    dict(POISON, wram={0xDD8C: b"\x00", 0xDDB8: b"\x10", 0xDD92: b"\x03",
-                       0xDDE8: b"\x33", 0xDD87: b"\x80", 0xDDA7: b"\x2C",
-                       0xDDA8: b"\x80"},
-         read={0xDD92: 1, 0xDDB8: 1}),
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb8"): b"\x00", sym("wMusicTie") + 1: b"\x00"},
+     "read": {sym("wMusicTie") + 1: 1}},
+    {"wram": {sym("wdd8c"): b"\x02", sym("wddb8"): b"\x00"},
+     "read": {sym("wMusicTie") + 1: 1, sym("wddb8"): 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb8"): b"\x10", sym("wMusicTie") + 1: b"\x80",
+              sym("wMusicVolume") + 1: b"\x77", sym("wMusicDuty2"): b"\xC0", sym("wMusicCh2CurPitch"): b"\x2C", sym("wMusicCh2CurOctave"): b"\x80"},
+     "read": {sym("wMusicTie") + 1: 1, sym("wddb8"): 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb8"): b"\x10", sym("wMusicTie") + 1: b"\x02",
+              sym("wMusicVolume") + 1: b"\x55", sym("wMusicDuty2"): b"\x40", sym("wMusicCh2CurPitch"): b"\x9C", sym("wMusicCh2CurOctave"): b"\x00"},
+     "read": {sym("wMusicTie") + 1: 1, sym("wddb8"): 1}},
+    dict(POISON, wram={sym("wdd8c"): b"\x00", sym("wddb8"): b"\x10", sym("wMusicTie") + 1: b"\x03",
+                       sym("wMusicVolume") + 1: b"\x33", sym("wMusicDuty2"): b"\x80", sym("wMusicCh2CurPitch"): b"\x2C",
+                       sym("wMusicCh2CurOctave"): b"\x80"},
+         read={sym("wMusicTie") + 1: 1, sym("wddb8"): 1}),
 ]
 
 CONTRACT["Music1_f479c"] = {"compare": (), "preserve": ()}
 CASES["Music1_f479c"] = [
-    {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x00", 0xDD93: b"\x00"},
-     "read": {0xDD93: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x00",
-              0xDD91: b"\x55", 0xDD93: b"\x01"},
-     "read": {0xDD91: 1, 0xDD93: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x01",
-              0xDD91: b"\x55", 0xDD93: b"\x01"},
-     "read": {0xDD91: 1, 0xDD93: 1, 0xDD8B: 1}},
-    {"wram": {0xDD8C: b"\x04", 0xDDB9: b"\x00"},
-     "read": {0xDD93: 1, 0xDDB9: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x10", 0xDD93: b"\x80",
-              0xDD8B: b"\x00", 0xDDE9: b"\x77", 0xDDA9: b"\x2C", 0xDDAA: b"\x80"},
-     "read": {0xDD93: 1, 0xDDB9: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x10", 0xDD93: b"\x02",
-              0xDD8B: b"\x00", 0xDDE9: b"\x55", 0xDDA9: b"\x9C", 0xDDAA: b"\x00"},
-     "read": {0xDD93: 1, 0xDDB9: 1}},
-    dict(POISON, wram={0xDD8C: b"\x00", 0xDDB9: b"\x10", 0xDD93: b"\x03",
-                       0xDD8B: b"\x00", 0xDDE9: b"\x33", 0xDDA9: b"\x2C",
-                       0xDDAA: b"\x80"},
-         read={0xDD93: 1, 0xDDB9: 1}),
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb9"): b"\x00", sym("wMusicWaveChange"): b"\x00", sym("wMusicTie") + 2: b"\x00"},
+     "read": {sym("wMusicTie") + 2: 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb9"): b"\x00", sym("wMusicWaveChange"): b"\x00",
+              sym("wMusicTie"): b"\x55", sym("wMusicTie") + 2: b"\x01"},
+     "read": {sym("wMusicTie"): 1, sym("wMusicTie") + 2: 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb9"): b"\x00", sym("wMusicWaveChange"): b"\x01",
+              sym("wMusicTie"): b"\x55", sym("wMusicTie") + 2: b"\x01"},
+     "read": {sym("wMusicTie"): 1, sym("wMusicTie") + 2: 1, sym("wMusicWaveChange"): 1}},
+    {"wram": {sym("wdd8c"): b"\x04", sym("wddb9"): b"\x00"},
+     "read": {sym("wMusicTie") + 2: 1, sym("wddb9"): 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb9"): b"\x10", sym("wMusicTie") + 2: b"\x80",
+              sym("wMusicWaveChange"): b"\x00", sym("wMusicVolume") + 2: b"\x77", sym("wMusicCh3CurPitch"): b"\x2C", sym("wMusicCh3CurOctave"): b"\x80"},
+     "read": {sym("wMusicTie") + 2: 1, sym("wddb9"): 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddb9"): b"\x10", sym("wMusicTie") + 2: b"\x02",
+              sym("wMusicWaveChange"): b"\x00", sym("wMusicVolume") + 2: b"\x55", sym("wMusicCh3CurPitch"): b"\x9C", sym("wMusicCh3CurOctave"): b"\x00"},
+     "read": {sym("wMusicTie") + 2: 1, sym("wddb9"): 1}},
+    dict(POISON, wram={sym("wdd8c"): b"\x00", sym("wddb9"): b"\x10", sym("wMusicTie") + 2: b"\x03",
+                       sym("wMusicWaveChange"): b"\x00", sym("wMusicVolume") + 2: b"\x33", sym("wMusicCh3CurPitch"): b"\x2C",
+                       sym("wMusicCh3CurOctave"): b"\x80"},
+         read={sym("wMusicTie") + 2: 1, sym("wddb9"): 1}),
 ]
 
 CONTRACT["Music1_f480a"] = {"compare": (), "preserve": ()}
 CASES["Music1_f480a"] = [
-    {"wram": {0xDD8C: b"\x00", 0xDDBA: b"\x00"},
-     "read": {0xDDEF: 1, 0xDDAB: 4}},
-    {"wram": {0xDD8C: b"\x08", 0xDDBA: b"\x05"},
-     "read": {0xDDBA: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDBA: b"\x01", 0xDDAB: b"\x01\x02\x03\x04"},
-     "read": {0xDDAB: 4}},
-    dict(POISON, wram={0xDD8C: b"\x00", 0xDDBA: b"\xA5",
-                       0xDDAB: b"\xAA\xBB\xCC\xDD"},
-         read={0xDDAB: 4}),
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddba"): b"\x00"},
+     "read": {sym("wddef"): 1, sym("wddab"): 4}},
+    {"wram": {sym("wdd8c"): b"\x08", sym("wddba"): b"\x05"},
+     "read": {sym("wddba"): 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wddba"): b"\x01", sym("wddab"): b"\x01\x02\x03\x04"},
+     "read": {sym("wddab"): 4}},
+    dict(POISON, wram={sym("wdd8c"): b"\x00", sym("wddba"): b"\xA5",
+                       sym("wddab"): b"\xAA\xBB\xCC\xDD"},
+         read={sym("wddab"): 4}),
 ]
 
 CONTRACT["Music1_f4839"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4839"] = [
-    {"wram": {0xDD8C: b"\x08", 0xDDEF: b"\x01"},
-     "read": {0xDDEF: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDED: b"\x00\xC1",
-              0xDDEF: b"\x01", 0xC100: b"\x03"},
-     "read": {0xDDED: 2, 0xDDEF: 1}},
-    {"wram": {0xDD8C: b"\x00", 0xDDED: b"\x00\xC1",
-              0xDDEF: b"\x01", 0xC100: b"\xFF"},
-     "read": {0xDDED: 2, 0xDDEF: 1}},
-    dict(POISON, wram={0xDD8C: b"\x00", 0xDDED: b"\x50\xC1",
-                       0xDDEF: b"\x01", 0xC150: b"\x07"},
-         read={0xDDED: 2, 0xDDEF: 1}),
+    {"wram": {sym("wdd8c"): b"\x08", sym("wddef"): b"\x01"},
+     "read": {sym("wddef"): 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wdded"): b"\x00\xC1",
+              sym("wddef"): b"\x01", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x03"},
+     "read": {sym("wdded"): 2, sym("wddef"): 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wdded"): b"\x00\xC1",
+              sym("wddef"): b"\x01", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF"},
+     "read": {sym("wdded"): 2, sym("wddef"): 1}},
+    dict(POISON, wram={sym("wdd8c"): b"\x00", sym("wdded"): b"\x50\xC1",
+                       sym("wddef"): b"\x01", sym("wDecompressionSecondaryBufferStart") + 0x61: b"\x07"},
+         read={sym("wdded"): 2, sym("wddef"): 1}),
 ]
 
 CONTRACT["Music1_LoadWaveInstrument"] = {"compare": (), "preserve": ()}
 CASES["Music1_LoadWaveInstrument"] = [
-    {"wram": {0xDD8A: b"\x00", 0xDD8B: b"\x01"},
-     "read": {0xDD8B: 1}},
-    {"wram": {0xDD8A: b"\x01", 0xDD8B: b"\x01"},
-     "read": {0xDD8B: 1}},
-    dict(POISON, wram={0xDD8A: b"\x02", 0xDD8B: b"\x01"},
-         read={0xDD8B: 1}),
+    {"wram": {sym("wMusicWave"): b"\x00", sym("wMusicWaveChange"): b"\x01"},
+     "read": {sym("wMusicWaveChange"): 1}},
+    {"wram": {sym("wMusicWave"): b"\x01", sym("wMusicWaveChange"): b"\x01"},
+     "read": {sym("wMusicWaveChange"): 1}},
+    dict(POISON, wram={sym("wMusicWave"): b"\x02", sym("wMusicWaveChange"): b"\x01"},
+         read={sym("wMusicWaveChange"): 1}),
 ]
 
 # -- Vibrato --------------------------------------------------------------
 
 CONTRACT["Music1_UpdateVibrato"] = {"compare": ("d", "e", "c"), "preserve": ("c",)}
 CASES["Music1_UpdateVibrato"] = [
-    {"c": 0, "wram": {0xDDDF: b"\x00", 0xDDA5: b"\x2C\x00"},
-     "read": {0xDDA5: 2}},
-    {"c": 1, "wram": {0xDDE0: b"\x00", 0xDDA7: b"\x2C\x00"},
-     "read": {0xDDA7: 2}},
-    {"c": 0, "wram": {0xDDDF: b"\x05", 0xDDE3: b"\x04",
-                       0xDDD3: b"\x00", 0xDDDB: b"\x00",
-                       0xDDA5: b"\x2C\x00"},
-     "read": {0xDDA5: 2, 0xDDE3: 1, 0xDDDB: 1}},
-    dict(POISON, b=0, c=2, wram={0xDDE1: b"\x00", 0xDDA9: b"\x2C\x00"},
-         read={0xDDA9: 2}),
-    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
-                       0xDDD3: b"\x01", 0xDDDB: b"\x01",
-                       0xDDA5: b"\x2C\x00"},
-     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
-    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
-                       0xDDD3: b"\x01", 0xDDDB: b"\x05",
-                       0xDDA5: b"\x2C\x00"},
-     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
-    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
-                       0xDDD3: b"\x01", 0xDDDB: b"\x00",
-                       0xDDA5: b"\xFF\x0C"},
-     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
-    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
-                       0xDDD3: b"\x02", 0xDDDB: b"\x0C",
-                       0xDDA5: b"\x2C\x00"},
-     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
-    {"c": 0, "wram": {0xDDDF: b"\x01", 0xDDE3: b"\x01",
-                       0xDDD3: b"\x01", 0xDDDB: b"\x08",
-                       0xDDA5: b"\x2C\x00"},
-     "read": {0xDDA5: 2, 0xDDD3: 1, 0xDDDB: 1}},
-    {"c": 1, "wram": {0xDDE0: b"\x01", 0xDDE4: b"\x01",
-                       0xDDD4: b"\x01", 0xDDDC: b"\x05",
-                       0xDDA7: b"\x00\x01"},
-     "read": {0xDDA7: 2, 0xDDD4: 1, 0xDDDC: 1}},
+    {"c": 0, "wram": {sym("wMusicVibratoDelay"): b"\x00", sym("wMusicCh1CurPitch"): b"\x2C\x00"},
+     "read": {sym("wMusicCh1CurPitch"): 2}},
+    {"c": 1, "wram": {sym("wMusicVibratoDelay") + 1: b"\x00", sym("wMusicCh2CurPitch"): b"\x2C\x00"},
+     "read": {sym("wMusicCh2CurPitch"): 2}},
+    {"c": 0, "wram": {sym("wMusicVibratoDelay"): b"\x05", sym("wdde3"): b"\x04",
+                       sym("wMusicVibratoType"): b"\x00", sym("wdddb"): b"\x00",
+                       sym("wMusicCh1CurPitch"): b"\x2C\x00"},
+     "read": {sym("wMusicCh1CurPitch"): 2, sym("wdde3"): 1, sym("wdddb"): 1}},
+    dict(POISON, b=0, c=2, wram={sym("wMusicVibratoDelay") + 2: b"\x00", sym("wMusicCh3CurPitch"): b"\x2C\x00"},
+         read={sym("wMusicCh3CurPitch"): 2}),
+    {"c": 0, "wram": {sym("wMusicVibratoDelay"): b"\x01", sym("wdde3"): b"\x01",
+                       sym("wMusicVibratoType"): b"\x01", sym("wdddb"): b"\x01",
+                       sym("wMusicCh1CurPitch"): b"\x2C\x00"},
+     "read": {sym("wMusicCh1CurPitch"): 2, sym("wMusicVibratoType"): 1, sym("wdddb"): 1}},
+    {"c": 0, "wram": {sym("wMusicVibratoDelay"): b"\x01", sym("wdde3"): b"\x01",
+                       sym("wMusicVibratoType"): b"\x01", sym("wdddb"): b"\x05",
+                       sym("wMusicCh1CurPitch"): b"\x2C\x00"},
+     "read": {sym("wMusicCh1CurPitch"): 2, sym("wMusicVibratoType"): 1, sym("wdddb"): 1}},
+    {"c": 0, "wram": {sym("wMusicVibratoDelay"): b"\x01", sym("wdde3"): b"\x01",
+                       sym("wMusicVibratoType"): b"\x01", sym("wdddb"): b"\x00",
+                       sym("wMusicCh1CurPitch"): b"\xFF\x0C"},
+     "read": {sym("wMusicCh1CurPitch"): 2, sym("wMusicVibratoType"): 1, sym("wdddb"): 1}},
+    {"c": 0, "wram": {sym("wMusicVibratoDelay"): b"\x01", sym("wdde3"): b"\x01",
+                       sym("wMusicVibratoType"): b"\x02", sym("wdddb"): b"\x0C",
+                       sym("wMusicCh1CurPitch"): b"\x2C\x00"},
+     "read": {sym("wMusicCh1CurPitch"): 2, sym("wMusicVibratoType"): 1, sym("wdddb"): 1}},
+    {"c": 0, "wram": {sym("wMusicVibratoDelay"): b"\x01", sym("wdde3"): b"\x01",
+                       sym("wMusicVibratoType"): b"\x01", sym("wdddb"): b"\x08",
+                       sym("wMusicCh1CurPitch"): b"\x2C\x00"},
+     "read": {sym("wMusicCh1CurPitch"): 2, sym("wMusicVibratoType"): 1, sym("wdddb"): 1}},
+    {"c": 1, "wram": {sym("wMusicVibratoDelay") + 1: b"\x01", sym("wdde3") + 1: b"\x01",
+                       sym("wMusicVibratoType") + 1: b"\x01", sym("wdddb") + 1: b"\x05",
+                       sym("wMusicCh2CurPitch"): b"\x00\x01"},
+     "read": {sym("wMusicCh2CurPitch"): 2, sym("wMusicVibratoType") + 1: 1, sym("wdddb") + 1: 1}},
 ]
 
 CONTRACT["Music1_f490b"] = {"compare": (), "preserve": ()}
 CASES["Music1_f490b"] = [
-    {"a": 0, "wram": {0xDDDF: b"\x00", 0xDD8C: b"\x00",
-                       0xDDA5: b"\x2C\x00"}},
-    {"a": 0, "wram": {0xDDDF: b"\x01", 0xDD8C: b"\x01"},
-     "read": {0xDDA5: 2}},
-    {"a": 0, "wram": {0xDDDF: b"\x01", 0xDD8C: b"\x00",
-                       0xDDA5: b"\x9C\x00"}},
-    {"a": 1, "wram": {0xDDE0: b"\x00", 0xDD8C: b"\x00",
-                       0xDDA7: b"\x2C\x00"}},
-    {"a": 1, "wram": {0xDDE0: b"\x01", 0xDD8C: b"\x02"},
-     "read": {0xDDA7: 2}},
-    {"a": 1, "wram": {0xDDE0: b"\x01", 0xDD8C: b"\x00",
-                       0xDDA7: b"\x9C\x00"}},
-    {"a": 2, "wram": {0xDDE1: b"\x00", 0xDD8C: b"\x00",
-                       0xDDA9: b"\x2C\x00"}},
-    {"a": 2, "wram": {0xDDE1: b"\x01", 0xDD8C: b"\x04"},
-     "read": {0xDDA9: 2}},
-    {"a": 2, "wram": {0xDDE1: b"\x01", 0xDD8C: b"\x00",
-                       0xDDA9: b"\x9C\x00"}},
-    {"a": 3, "wram": {0xDD8C: b"\x00", 0xDDA5: b"\x2C\x00"}},
-    dict(POISON, a=0, wram={0xDDDF: b"\x01", 0xDD8C: b"\x00",
-                             0xDDA5: b"\x06\x03"}),
+    {"a": 0, "wram": {sym("wMusicVibratoDelay"): b"\x00", sym("wdd8c"): b"\x00",
+                       sym("wMusicCh1CurPitch"): b"\x2C\x00"}},
+    {"a": 0, "wram": {sym("wMusicVibratoDelay"): b"\x01", sym("wdd8c"): b"\x01"},
+     "read": {sym("wMusicCh1CurPitch"): 2}},
+    {"a": 0, "wram": {sym("wMusicVibratoDelay"): b"\x01", sym("wdd8c"): b"\x00",
+                       sym("wMusicCh1CurPitch"): b"\x9C\x00"}},
+    {"a": 1, "wram": {sym("wMusicVibratoDelay") + 1: b"\x00", sym("wdd8c"): b"\x00",
+                       sym("wMusicCh2CurPitch"): b"\x2C\x00"}},
+    {"a": 1, "wram": {sym("wMusicVibratoDelay") + 1: b"\x01", sym("wdd8c"): b"\x02"},
+     "read": {sym("wMusicCh2CurPitch"): 2}},
+    {"a": 1, "wram": {sym("wMusicVibratoDelay") + 1: b"\x01", sym("wdd8c"): b"\x00",
+                       sym("wMusicCh2CurPitch"): b"\x9C\x00"}},
+    {"a": 2, "wram": {sym("wMusicVibratoDelay") + 2: b"\x00", sym("wdd8c"): b"\x00",
+                       sym("wMusicCh3CurPitch"): b"\x2C\x00"}},
+    {"a": 2, "wram": {sym("wMusicVibratoDelay") + 2: b"\x01", sym("wdd8c"): b"\x04"},
+     "read": {sym("wMusicCh3CurPitch"): 2}},
+    {"a": 2, "wram": {sym("wMusicVibratoDelay") + 2: b"\x01", sym("wdd8c"): b"\x00",
+                       sym("wMusicCh3CurPitch"): b"\x9C\x00"}},
+    {"a": 3, "wram": {sym("wdd8c"): b"\x00", sym("wMusicCh1CurPitch"): b"\x2C\x00"}},
+    dict(POISON, a=0, wram={sym("wMusicVibratoDelay"): b"\x01", sym("wdd8c"): b"\x00",
+                             sym("wMusicCh1CurPitch"): b"\x06\x03"}),
 ]
 
 CONTRACT["Music1_f4967"] = {"compare": ("d", "e", "c"), "preserve": ("c",)}
 CASES["Music1_f4967"] = [
-    {"c": 0, "d": 0x00, "e": 0x2C, "wram": {0xDDEA: b"\x00"}},
-    {"c": 0, "d": 0x00, "e": 0x2C, "wram": {0xDDEA: b"\x10"}},
-    {"c": 0, "d": 0x03, "e": 0x00, "wram": {0xDDEA: b"\x80"}},
-    {"c": 1, "d": 0x00, "e": 0x2C, "wram": {0xDDEB: b"\x20"}},
-    dict(POISON, b=0, c=2, d=0x03, e=0x00, wram={0xDDEC: b"\xFF"}),
+    {"c": 0, "d": 0x00, "e": 0x2C, "wram": {sym("wMusicFrequencyOffset"): b"\x00"}},
+    {"c": 0, "d": 0x00, "e": 0x2C, "wram": {sym("wMusicFrequencyOffset"): b"\x10"}},
+    {"c": 0, "d": 0x03, "e": 0x00, "wram": {sym("wMusicFrequencyOffset"): b"\x80"}},
+    {"c": 1, "d": 0x00, "e": 0x2C, "wram": {sym("wMusicFrequencyOffset") + 1: b"\x20"}},
+    dict(POISON, b=0, c=2, d=0x03, e=0x00, wram={sym("wMusicFrequencyOffset") + 2: b"\xFF"}),
 ]
 
 CONTRACT["Music1_f485a"] = {"compare": (), "preserve": ()}
 CASES["Music1_f485a"] = [
-    {"a": 0, "wram": {0xDDDF: b"\x00", 0xDD8C: b"\x00",
-                       0xDDA5: b"\x2C\x00"}},
-    {"a": 1, "wram": {0xDDE0: b"\x00", 0xDD8C: b"\x00",
-                       0xDDA7: b"\x2C\x00"}},
-    dict(POISON, a=0, wram={0xDDDF: b"\x01", 0xDD8C: b"\x00",
-                             0xDDA5: b"\x9C\x00"}),
+    {"a": 0, "wram": {sym("wMusicVibratoDelay"): b"\x00", sym("wdd8c"): b"\x00",
+                       sym("wMusicCh1CurPitch"): b"\x2C\x00"}},
+    {"a": 1, "wram": {sym("wMusicVibratoDelay") + 1: b"\x00", sym("wdd8c"): b"\x00",
+                       sym("wMusicCh2CurPitch"): b"\x2C\x00"}},
+    dict(POISON, a=0, wram={sym("wMusicVibratoDelay"): b"\x01", sym("wdd8c"): b"\x00",
+                             sym("wMusicCh1CurPitch"): b"\x9C\x00"}),
 ]
 
 # -- Panning / output select ----------------------------------------------
 
 CONTRACT["Music1_f4866"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4866"] = [
-    {"wram": {0xDDF1: b"\x77", 0xDD8C: b"\x00", 0xDD84: b"\xFF",
-              0xDDF0: b"\x00"}},
-    {"wram": {0xDDF1: b"\x77", 0xDD8C: b"\x0F", 0xDD84: b"\xFF",
-              0xDD85: b"\xFF", 0xDDF0: b"\x00"}},
-    {"wram": {0xDDF1: b"\x77", 0xDD8C: b"\x03", 0xDD84: b"\xCC",
-              0xDD85: b"\x33", 0xDDF0: b"\xFF"}},
-    dict(POISON, wram={0xDDF1: b"\x77", 0xDD8C: b"\x05", 0xDD84: b"\xAA",
-                       0xDD85: b"\x55", 0xDDF0: b"\x0F"}),
+    {"wram": {sym("wMusicPanning"): b"\x77", sym("wdd8c"): b"\x00", sym("wMusicStereoPanning"): b"\xFF",
+              sym("wddf0"): b"\x00"}},
+    {"wram": {sym("wMusicPanning"): b"\x77", sym("wdd8c"): b"\x0F", sym("wMusicStereoPanning"): b"\xFF",
+              sym("wdd85"): b"\xFF", sym("wddf0"): b"\x00"}},
+    {"wram": {sym("wMusicPanning"): b"\x77", sym("wdd8c"): b"\x03", sym("wMusicStereoPanning"): b"\xCC",
+              sym("wdd85"): b"\x33", sym("wddf0"): b"\xFF"}},
+    dict(POISON, wram={sym("wMusicPanning"): b"\x77", sym("wdd8c"): b"\x05", sym("wMusicStereoPanning"): b"\xAA",
+                       sym("wdd85"): b"\x55", sym("wddf0"): b"\x0F"}),
 ]
 
 # -- Channel updaters -----------------------------------------------------
 
 CONTRACT["Music1_UpdateChannel1"] = {"compare": (), "preserve": ()}
 CASES["Music1_UpdateChannel1"] = [
-    {"wram": {0xDD8D: b"\x00", 0xDD8C: b"\x00",
-              0xDD95: b"\x00\xC1",
-              0xDDB7: b"\x00", 0xDDBB: b"\x01", 0xDDDF: b"\x00",
-              0xDDA5: b"\x2C\x00"}},
-    {"wram": {0xDD8D: b"\x01", 0xDD8C: b"\x00",
-              0xDDBB: b"\x01", 0xDDDF: b"\x00",
-              0xDDB7: b"\x10", 0xDDC3: b"\x01",
-              0xDD95: b"\x00\xC1",
-              0xDDE7: b"\x77", 0xDD86: b"\xC0",
-              0xDDA5: b"\x9C\x00", 0xDDA6: b"\x00"}},
-    dict(POISON, wram={0xDD8D: b"\x01", 0xDD8C: b"\x00",
-                       0xDDBB: b"\x01", 0xDDDF: b"\x00",
-                       0xDD95: b"\x00\xC1",
-                       0xDDB7: b"\x00", 0xDDC3: b"\x01",
-                       0xDDA5: b"\x2C\x00"}),
+    {"wram": {sym("wMusicIsPlaying"): b"\x00", sym("wdd8c"): b"\x00",
+              sym("wMusicChannelPointers"): b"\x00\xC1",
+              sym("wddb7"): b"\x00", sym("wddbb"): b"\x01", sym("wMusicVibratoDelay"): b"\x00",
+              sym("wMusicCh1CurPitch"): b"\x2C\x00"}},
+    {"wram": {sym("wMusicIsPlaying"): b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddbb"): b"\x01", sym("wMusicVibratoDelay"): b"\x00",
+              sym("wddb7"): b"\x10", sym("wddc3"): b"\x01",
+              sym("wMusicChannelPointers"): b"\x00\xC1",
+              sym("wMusicVolume"): b"\x77", sym("wMusicDuty1"): b"\xC0",
+              sym("wMusicCh1CurPitch"): b"\x9C\x00", sym("wMusicCh1CurOctave"): b"\x00"}},
+    dict(POISON, wram={sym("wMusicIsPlaying"): b"\x01", sym("wdd8c"): b"\x00",
+                       sym("wddbb"): b"\x01", sym("wMusicVibratoDelay"): b"\x00",
+                       sym("wMusicChannelPointers"): b"\x00\xC1",
+                       sym("wddb7"): b"\x00", sym("wddc3"): b"\x01",
+                       sym("wMusicCh1CurPitch"): b"\x2C\x00"}),
     # echo counter wraps $00 -> $FF; music1.asm:392-395 decrements
     # unconditionally, with no zero guard before the store.
-    {"wram": {0xDD8D: b"\x01", 0xDD8C: b"\x00",
-              0xDDB7: b"\x10", 0xDDBB: b"\x05",
-              0xDDC3: b"\x00", 0xDDDF: b"\x00"}},
+    {"wram": {sym("wMusicIsPlaying"): b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddb7"): b"\x10", sym("wddbb"): b"\x05",
+              sym("wddc3"): b"\x00", sym("wMusicVibratoDelay"): b"\x00"}},
 ]
 
 CONTRACT["Music1_UpdateChannel2"] = {"compare": (), "preserve": ()}
 CASES["Music1_UpdateChannel2"] = [
-    {"wram": {0xDD8E: b"\x00", 0xDD8C: b"\x00",
-              0xDD97: b"\x00\xC1",
-              0xDDB8: b"\x00", 0xDDBC: b"\x01", 0xDDE0: b"\x00",
-              0xDDA7: b"\x2C\x00"}},
-    {"wram": {0xDD8E: b"\x01", 0xDD8C: b"\x00",
-              0xDDBC: b"\x01", 0xDDE0: b"\x00",
-              0xDDB8: b"\x10", 0xDDC4: b"\x01",
-              0xDD97: b"\x00\xC1",
-              0xDDE8: b"\x77", 0xDD87: b"\xC0",
-              0xDDA7: b"\x9C\x00", 0xDDA8: b"\x00"}},
-    dict(POISON, wram={0xDD8E: b"\x01", 0xDD8C: b"\x00",
-                       0xDDBC: b"\x01", 0xDDE0: b"\x00",
-                       0xDD97: b"\x00\xC1",
-                       0xDDB8: b"\x00", 0xDDC4: b"\x01",
-                       0xDDA7: b"\x2C\x00"}),
+    {"wram": {sym("wMusicIsPlaying") + 1: b"\x00", sym("wdd8c"): b"\x00",
+              sym("wMusicChannelPointers") + 2: b"\x00\xC1",
+              sym("wddb8"): b"\x00", sym("wddbb") + 1: b"\x01", sym("wMusicVibratoDelay") + 1: b"\x00",
+              sym("wMusicCh2CurPitch"): b"\x2C\x00"}},
+    {"wram": {sym("wMusicIsPlaying") + 1: b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddbb") + 1: b"\x01", sym("wMusicVibratoDelay") + 1: b"\x00",
+              sym("wddb8"): b"\x10", sym("wddc3") + 1: b"\x01",
+              sym("wMusicChannelPointers") + 2: b"\x00\xC1",
+              sym("wMusicVolume") + 1: b"\x77", sym("wMusicDuty2"): b"\xC0",
+              sym("wMusicCh2CurPitch"): b"\x9C\x00", sym("wMusicCh2CurOctave"): b"\x00"}},
+    dict(POISON, wram={sym("wMusicIsPlaying") + 1: b"\x01", sym("wdd8c"): b"\x00",
+                       sym("wddbb") + 1: b"\x01", sym("wMusicVibratoDelay") + 1: b"\x00",
+                       sym("wMusicChannelPointers") + 2: b"\x00\xC1",
+                       sym("wddb8"): b"\x00", sym("wddc3") + 1: b"\x01",
+                       sym("wMusicCh2CurPitch"): b"\x2C\x00"}),
     # echo counter wraps $00 -> $FF (music1.asm:445-448).
-    {"wram": {0xDD8E: b"\x01", 0xDD8C: b"\x00",
-              0xDDB8: b"\x10", 0xDDBC: b"\x05",
-              0xDDC4: b"\x00", 0xDDE0: b"\x00"}},
+    {"wram": {sym("wMusicIsPlaying") + 1: b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddb8"): b"\x10", sym("wddbb") + 1: b"\x05",
+              sym("wddc3") + 1: b"\x00", sym("wMusicVibratoDelay") + 1: b"\x00"}},
 ]
 
 CONTRACT["Music1_UpdateChannel3"] = {"compare": (), "preserve": ()}
 CASES["Music1_UpdateChannel3"] = [
-    {"wram": {0xDD8F: b"\x00", 0xDD8C: b"\x00",
-              0xDD99: b"\x00\xC1",
-              0xDDB9: b"\x00", 0xDDBD: b"\x01", 0xDDE1: b"\x00",
-              0xDDA9: b"\x2C\x00", 0xDD8B: b"\x00"}},
-    {"wram": {0xDD8F: b"\x01", 0xDD8C: b"\x00",
-              0xDDBD: b"\x01", 0xDDE1: b"\x00",
-              0xDDB9: b"\x10", 0xDDC5: b"\x01",
-              0xDD99: b"\x00\xC1",
-              0xDDE9: b"\x77", 0xDDA9: b"\x9C\x00", 0xDDAA: b"\x00",
-              0xDD8B: b"\x00"}},
-    dict(POISON, wram={0xDD8F: b"\x01", 0xDD8C: b"\x00",
-                       0xDDBD: b"\x01", 0xDDE1: b"\x00",
-                       0xDD99: b"\x00\xC1",
-                       0xDDB9: b"\x00", 0xDDC5: b"\x01",
-                       0xDDA9: b"\x2C\x00", 0xDD8B: b"\x00"}),
+    {"wram": {sym("wMusicIsPlaying") + 2: b"\x00", sym("wdd8c"): b"\x00",
+              sym("wMusicChannelPointers") + 4: b"\x00\xC1",
+              sym("wddb9"): b"\x00", sym("wddbb") + 2: b"\x01", sym("wMusicVibratoDelay") + 2: b"\x00",
+              sym("wMusicCh3CurPitch"): b"\x2C\x00", sym("wMusicWaveChange"): b"\x00"}},
+    {"wram": {sym("wMusicIsPlaying") + 2: b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddbb") + 2: b"\x01", sym("wMusicVibratoDelay") + 2: b"\x00",
+              sym("wddb9"): b"\x10", sym("wddc3") + 2: b"\x01",
+              sym("wMusicChannelPointers") + 4: b"\x00\xC1",
+              sym("wMusicVolume") + 2: b"\x77", sym("wMusicCh3CurPitch"): b"\x9C\x00", sym("wMusicCh3CurOctave"): b"\x00",
+              sym("wMusicWaveChange"): b"\x00"}},
+    dict(POISON, wram={sym("wMusicIsPlaying") + 2: b"\x01", sym("wdd8c"): b"\x00",
+                       sym("wddbb") + 2: b"\x01", sym("wMusicVibratoDelay") + 2: b"\x00",
+                       sym("wMusicChannelPointers") + 4: b"\x00\xC1",
+                       sym("wddb9"): b"\x00", sym("wddc3") + 2: b"\x01",
+                       sym("wMusicCh3CurPitch"): b"\x2C\x00", sym("wMusicWaveChange"): b"\x00"}),
     # echo counter wraps $00 -> $FF (music1.asm:498-501).
-    {"wram": {0xDD8F: b"\x01", 0xDD8C: b"\x00",
-              0xDDB9: b"\x10", 0xDDBD: b"\x05",
-              0xDDC5: b"\x00", 0xDDE1: b"\x00"}},
+    {"wram": {sym("wMusicIsPlaying") + 2: b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddb9"): b"\x10", sym("wddbb") + 2: b"\x05",
+              sym("wddc3") + 2: b"\x00", sym("wMusicVibratoDelay") + 2: b"\x00"}},
 ]
 
 CONTRACT["Music1_UpdateChannel4"] = {"compare": (), "preserve": ()}
 CASES["Music1_UpdateChannel4"] = [
-    {"wram": {0xDD90: b"\x00", 0xDD8C: b"\x00",
-              0xDD9B: b"\x00\xC1",
-              0xDDBA: b"\x00", 0xDDBE: b"\x01", 0xDDEF: b"\x00"}},
-    {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00",
-              0xDDBE: b"\x01", 0xDDEF: b"\x00",
-              0xDDAF: b"\x05",
-              0xDD9B: b"\x00\xC1",
-              0xDDBA: b"\x01",
-              0xDDED: b"\x00\xC1",
-              0xDDAB: b"\x01\x02\x03\x04"}},
-    dict(POISON, wram={0xDD90: b"\x01", 0xDD8C: b"\x00",
-                       0xDDBE: b"\x01", 0xDDEF: b"\x00",
-                       0xDD9B: b"\x00\xC1",
-                       0xDDBA: b"\x00"}),
+    {"wram": {sym("wMusicIsPlaying") + 3: b"\x00", sym("wdd8c"): b"\x00",
+              sym("wMusicChannelPointers") + 6: b"\x00\xC1",
+              sym("wddba"): b"\x00", sym("wddbb") + 3: b"\x01", sym("wddef"): b"\x00"}},
+    {"wram": {sym("wMusicIsPlaying") + 3: b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddbb") + 3: b"\x01", sym("wddef"): b"\x00",
+              sym("wMusicOctave"): b"\x05",
+              sym("wMusicChannelPointers") + 6: b"\x00\xC1",
+              sym("wddba"): b"\x01",
+              sym("wdded"): b"\x00\xC1",
+              sym("wddab"): b"\x01\x02\x03\x04"}},
+    dict(POISON, wram={sym("wMusicIsPlaying") + 3: b"\x01", sym("wdd8c"): b"\x00",
+                       sym("wddbb") + 3: b"\x01", sym("wddef"): b"\x00",
+                       sym("wMusicChannelPointers") + 6: b"\x00\xC1",
+                       sym("wddba"): b"\x00"}),
     # channel 4 has no echo counter: wddc3+3 must never move, unlike
     # channels 1-3 (music1.asm:540-577 has no wddc3 reference at all).
-    {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00",
-              0xDDBA: b"\x10", 0xDDBE: b"\x05",
-              0xDDEF: b"\x00", 0xDDC6: b"\x42"}},
+    {"wram": {sym("wMusicIsPlaying") + 3: b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddba"): b"\x10", sym("wddbb") + 3: b"\x05",
+              sym("wddef"): b"\x00", sym("wddc3") + 3: b"\x42"}},
     # music1.asm:1122-1127 (Music1_end): the popped stream pointer is
     # discarded via `pop hl; ret`, never stored to wMusicChannelPointers.
     # A note whose stream immediately hits an end command ($DA) must leave
     # wMusicChannelPointers at the command byte's own address, not the
     # post-increment position past it.
-    {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00",
-              0xDDBE: b"\x01", 0xDDEF: b"\x00",
-              0xDD9B: b"\x00\xC3",
-              0xC300: b"\xDA"}},
+    {"wram": {sym("wMusicIsPlaying") + 3: b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddbb") + 3: b"\x01", sym("wddef"): b"\x00",
+              sym("wMusicChannelPointers") + 6: b"\x00\xC3",
+              sym("wOpponentCardLocations"): b"\xDA"}},
     # channel 4 never reaches Music1_f485a/UpdateVibrato (music1.asm:
     # 559-564): a nonzero vibrato delay must not advance wdde3+3.
-    {"wram": {0xDD90: b"\x01", 0xDD8C: b"\x00",
-              0xDDBE: b"\x05", 0xDDEF: b"\x00",
-              0xDDE2: b"\x05", 0xDDE6: b"\x33"}},
+    {"wram": {sym("wMusicIsPlaying") + 3: b"\x01", sym("wdd8c"): b"\x00",
+              sym("wddbb") + 3: b"\x05", sym("wddef"): b"\x00",
+              sym("wMusicVibratoDelay") + 3: b"\x05", sym("wdde3") + 3: b"\x33"}},
 ]
 
 # -- Pause / Resume / Backup / LoadBackup ---------------------------------
 
 CONTRACT["Music1_PauseSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_PauseSong"] = [
-    {"wram": {0xDD80: b"\x80", 0xDD81: b"\x3D", 0xDD8C: b"\x00",
-              0xDD8D: b"\x00\x00\x00\x00"}},
-    dict(POISON, wram={0xDD80: b"\x80", 0xDD81: b"\x3D", 0xDD8C: b"\x0F",
-                       0xDD8D: b"\x01\x01\x01\x01"}),
+    {"wram": {sym("wCurSongID"): b"\x80", sym("wCurSongBank"): b"\x3D", sym("wdd8c"): b"\x00",
+              sym("wMusicIsPlaying"): b"\x00\x00\x00\x00"}},
+    dict(POISON, wram={sym("wCurSongID"): b"\x80", sym("wCurSongBank"): b"\x3D", sym("wdd8c"): b"\x0F",
+                       sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"}),
 ]
 
 CONTRACT["Music1_ResumeSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_ResumeSong"] = [
-    {"wram": {0xDD80: b"\x80", 0xDD81: b"\x3D", 0xDD8C: b"\x00",
-              0xDE55: b"\x80", 0xDE56: b"\x3D",
-              0xDD8D: b"\x00\x00\x00\x00"}},
-    dict(POISON, wram={0xDD80: b"\x80", 0xDD81: b"\x3D", 0xDD8C: b"\x0F",
-                       0xDE55: b"\x81", 0xDE56: b"\x3E",
-                       0xDD8D: b"\x01\x01\x01\x01"}),
+    {"wram": {sym("wCurSongID"): b"\x80", sym("wCurSongBank"): b"\x3D", sym("wdd8c"): b"\x00",
+              sym("wCurSongIDBackup"): b"\x80", sym("wCurSongBankBackup"): b"\x3D",
+              sym("wMusicIsPlaying"): b"\x00\x00\x00\x00"}},
+    dict(POISON, wram={sym("wCurSongID"): b"\x80", sym("wCurSongBank"): b"\x3D", sym("wdd8c"): b"\x0F",
+                       sym("wCurSongIDBackup"): b"\x81", sym("wCurSongBankBackup"): b"\x3E",
+                       sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"}),
 ]
 
 CONTRACT["Music1_BackupSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_BackupSong"] = [
-    {"wram": {0xDD80: b"\x05", 0xDD81: b"\x3D",
-              0xDD84: b"\xFF", 0xDD86: b"\x01\x02\x03\x04",
-              0xDD8A: b"\x03", 0xDD8B: b"\x00",
-              0xDD8D: b"\x01\x01\x01\x01",
-              0xDD91: b"\x01\x01\x01\x01",
-              0xDD95: b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4",
-              0xDD9D: b"\x00\xD1\x00\xD2\x00\xD3\x00\xD4",
-              0xDDAB: b"\xAA\xBB",
-              0xDDAF: b"\x02\x02\x02\x02",
-              0xDDB3: b"\x03\x03\x03\x03",
-              0xDDB7: b"\x10\x10\x10\x10",
-              0xDDBB: b"\x04\x04\x04\x04",
-              0xDDBF: b"\x05\x05\x05\x05",
-              0xDDC3: b"\x06\x06\x06\x06",
-              0xDDC7: b"\x07\x07\x07\x07",
-              0xDDCB: b"\x08\x08\x08\x08",
-              0xDDCF: b"\x09\x09\x09\x09",
-              0xDDD7: b"\x0A\x0A\x0A\x0A",
-              0xDDDF: b"\x0B\x0B\x0B\x0B",
-              0xDDE7: b"\x77\x77\x77",
-              0xDDEA: b"\x00\x00\x00",
-              0xDDED: b"\x50\xC1",
-              0xDDF3: b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4",
-              0xDDFB: b"\x00" * 48},
-     "read": {0xDE55: 2}},
-    dict(POISON, wram={0xDD80: b"\x05", 0xDD81: b"\x3E",
-                       0xDD84: b"\xAA", 0xDD86: b"\x40\x00\x80\xC0",
-                       0xDD8A: b"\x00", 0xDD8B: b"\x01",
-                       0xDD8D: b"\x00\x00\x00\x01",
-                       0xDD91: b"\x00\x00\x00\x01",
-                       0xDD95: b"\x00\x00\x00\x00\x00\x00\x00\x00",
-                       0xDD9D: b"\x00\x00\x00\x00\x00\x00\x00\x00",
-                       0xDDAB: b"\x00\x00",
-                       0xDDAF: b"\x00\x00\x00\x00",
-                       0xDDB3: b"\x00\x00\x00\x00",
-                       0xDDB7: b"\x00\x00\x00\x00",
-                       0xDDBB: b"\x00\x00\x00\x00",
-                       0xDDBF: b"\x00\x00\x00\x00",
-                       0xDDC3: b"\x00\x00\x00\x00",
-                       0xDDC7: b"\x00\x00\x00\x00",
-                       0xDDCB: b"\x00\x00\x00\x00",
-                       0xDDCF: b"\x00\x00\x00\x00",
-                       0xDDD7: b"\x00\x00\x00\x00",
-                       0xDDDF: b"\x00\x00\x00\x00",
-                       0xDDE7: b"\x00\x00\x00",
-                       0xDDEA: b"\x00\x00\x00",
-                       0xDDED: b"\x00\x00",
-                       0xDDF3: b"\x00\x00\x00\x00\x00\x00\x00\x00",
-                       0xDDFB: b"\x00" * 48}),
+    {"wram": {sym("wCurSongID"): b"\x05", sym("wCurSongBank"): b"\x3D",
+              sym("wMusicStereoPanning"): b"\xFF", sym("wMusicDuty1"): b"\x01\x02\x03\x04",
+              sym("wMusicWave"): b"\x03", sym("wMusicWaveChange"): b"\x00",
+              sym("wMusicIsPlaying"): b"\x01\x01\x01\x01",
+              sym("wMusicTie"): b"\x01\x01\x01\x01",
+              sym("wMusicChannelPointers"): b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4",
+              sym("wMusicMainLoopStart"): b"\x00\xD1\x00\xD2\x00\xD3\x00\xD4",
+              sym("wddab"): b"\xAA\xBB",
+              sym("wMusicOctave"): b"\x02\x02\x02\x02",
+              sym("wddb3"): b"\x03\x03\x03\x03",
+              sym("wddb7"): b"\x10\x10\x10\x10",
+              sym("wddbb"): b"\x04\x04\x04\x04",
+              sym("wMusicCutoff"): b"\x05\x05\x05\x05",
+              sym("wddc3"): b"\x06\x06\x06\x06",
+              sym("wMusicEcho"): b"\x07\x07\x07\x07",
+              sym("wMusicPitchOffset"): b"\x08\x08\x08\x08",
+              sym("wMusicSpeed"): b"\x09\x09\x09\x09",
+              sym("wMusicVibratoType2"): b"\x0A\x0A\x0A\x0A",
+              sym("wMusicVibratoDelay"): b"\x0B\x0B\x0B\x0B",
+              sym("wMusicVolume"): b"\x77\x77\x77",
+              sym("wMusicFrequencyOffset"): b"\x00\x00\x00",
+              sym("wdded"): b"\x50\xC1",
+              sym("wMusicChannelStackPointers"): b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4",
+              sym("wMusicCh1Stack"): b"\x00" * 48},
+     "read": {sym("wCurSongIDBackup"): 2}},
+    dict(POISON, wram={sym("wCurSongID"): b"\x05", sym("wCurSongBank"): b"\x3E",
+                       sym("wMusicStereoPanning"): b"\xAA", sym("wMusicDuty1"): b"\x40\x00\x80\xC0",
+                       sym("wMusicWave"): b"\x00", sym("wMusicWaveChange"): b"\x01",
+                       sym("wMusicIsPlaying"): b"\x00\x00\x00\x01",
+                       sym("wMusicTie"): b"\x00\x00\x00\x01",
+                       sym("wMusicChannelPointers"): b"\x00\x00\x00\x00\x00\x00\x00\x00",
+                       sym("wMusicMainLoopStart"): b"\x00\x00\x00\x00\x00\x00\x00\x00",
+                       sym("wddab"): b"\x00\x00",
+                       sym("wMusicOctave"): b"\x00\x00\x00\x00",
+                       sym("wddb3"): b"\x00\x00\x00\x00",
+                       sym("wddb7"): b"\x00\x00\x00\x00",
+                       sym("wddbb"): b"\x00\x00\x00\x00",
+                       sym("wMusicCutoff"): b"\x00\x00\x00\x00",
+                       sym("wddc3"): b"\x00\x00\x00\x00",
+                       sym("wMusicEcho"): b"\x00\x00\x00\x00",
+                       sym("wMusicPitchOffset"): b"\x00\x00\x00\x00",
+                       sym("wMusicSpeed"): b"\x00\x00\x00\x00",
+                       sym("wMusicVibratoType2"): b"\x00\x00\x00\x00",
+                       sym("wMusicVibratoDelay"): b"\x00\x00\x00\x00",
+                       sym("wMusicVolume"): b"\x00\x00\x00",
+                       sym("wMusicFrequencyOffset"): b"\x00\x00\x00",
+                       sym("wdded"): b"\x00\x00",
+                       sym("wMusicChannelStackPointers"): b"\x00\x00\x00\x00\x00\x00\x00\x00",
+                       sym("wMusicCh1Stack"): b"\x00" * 48}),
 ]
 
 CONTRACT["Music1_LoadBackup"] = {"compare": (), "preserve": ()}
 CASES["Music1_LoadBackup"] = [
-    {"wram": {0xDD80: b"\x80", 0xDD81: b"\x3D",
-              0xDE55: b"\x05", 0xDE56: b"\x3E",
-              0xDE57: b"\xFF",
-              0xDE58: b"\x01\x02\x03\x04",
-              0xDE5C: b"\x03", 0xDE5D: b"\x00",
-              0xDE5E: b"\x01\x01\x01\x01",
-              0xDE62: b"\x01\x01\x01\x01",
-              0xDE66: b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4",
-              0xDE6E: b"\x00\xD1\x00\xD2\x00\xD3\x00\xD4",
-              0xDE76: b"\xAA", 0xDE77: b"\xBB",
-              0xDE78: b"\x02\x02\x02\x02",
-              0xDE7C: b"\x03\x03\x03\x03",
-              0xDE80: b"\x10\x10\x10\x10",
-              0xDE84: b"\x04\x04\x04\x04",
-              0xDE88: b"\x05\x05\x05\x05",
-              0xDE8C: b"\x06\x06\x06\x06",
-              0xDE90: b"\x07\x07\x07\x07",
-              0xDE94: b"\x08\x08\x08\x08",
-              0xDE98: b"\x09\x09\x09\x09",
-              0xDE9C: b"\x0A\x0A\x0A\x0A",
-              0xDEA0: b"\x0B\x0B\x0B\x0B",
-              0xDEA4: b"\x77\x77\x77",
-              0xDEA7: b"\x00\x00\x00",
-              0xDEAA: b"\x50\xC1",
-              0xDEAC: b"\x00",
-              0xDEAD: b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4",
-              0xDEB5: b"\x00" * 48}},
-    dict(POISON, wram={0xDD80: b"\x80", 0xDD81: b"\x3D",
-                       0xDE55: b"\x00", 0xDE56: b"\x3D",
-                       0xDE57: b"\xAA",
-                       0xDE58: b"\x40\x00\x80\xC0",
-                       0xDE5C: b"\x00", 0xDE5D: b"\x01",
-                       0xDE5E: b"\x00\x00\x00\x01",
-                       0xDE62: b"\x00\x00\x00\x01",
-                       0xDE66: b"\x00\x00\x00\x00\x00\x00\x00\x00",
-                       0xDE6E: b"\x00\x00\x00\x00\x00\x00\x00\x00",
-                       0xDE76: b"\x00", 0xDE77: b"\x00",
-                       0xDE78: b"\x00\x00\x00\x00",
-                       0xDE7C: b"\x00\x00\x00\x00",
-                       0xDE80: b"\x00\x00\x00\x00",
-                       0xDE84: b"\x00\x00\x00\x00",
-                       0xDE88: b"\x00\x00\x00\x00",
-                       0xDE8C: b"\x00\x00\x00\x00",
-                       0xDE90: b"\x00\x00\x00\x00",
-                       0xDE94: b"\x00\x00\x00\x00",
-                       0xDE98: b"\x00\x00\x00\x00",
-                       0xDE9C: b"\x00\x00\x00\x00",
-                       0xDEA0: b"\x00\x00\x00\x00",
-                       0xDEA4: b"\x00\x00\x00",
-                       0xDEA7: b"\x00\x00\x00",
-                       0xDEAA: b"\x00\x00",
-                       0xDEAC: b"\x00",
-                       0xDEAD: b"\x00\x00\x00\x00\x00\x00\x00\x00",
-                       0xDEB5: b"\x00" * 48}),
+    {"wram": {sym("wCurSongID"): b"\x80", sym("wCurSongBank"): b"\x3D",
+              sym("wCurSongIDBackup"): b"\x05", sym("wCurSongBankBackup"): b"\x3E",
+              sym("wMusicStereoPanningBackup"): b"\xFF",
+              sym("wMusicDuty1Backup"): b"\x01\x02\x03\x04",
+              sym("wMusicWaveBackup"): b"\x03", sym("wMusicWaveChangeBackup"): b"\x00",
+              sym("wMusicIsPlayingBackup"): b"\x01\x01\x01\x01",
+              sym("wMusicTieBackup"): b"\x01\x01\x01\x01",
+              sym("wMusicChannelPointersBackup"): b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4",
+              sym("wMusicMainLoopStartBackup"): b"\x00\xD1\x00\xD2\x00\xD3\x00\xD4",
+              sym("wde76"): b"\xAA", sym("wde77"): b"\xBB",
+              sym("wMusicOctaveBackup"): b"\x02\x02\x02\x02",
+              sym("wde7c"): b"\x03\x03\x03\x03",
+              sym("wde80"): b"\x10\x10\x10\x10",
+              sym("wde84"): b"\x04\x04\x04\x04",
+              sym("wMusicCutoffBackup"): b"\x05\x05\x05\x05",
+              sym("wde8c"): b"\x06\x06\x06\x06",
+              sym("wMusicEchoBackup"): b"\x07\x07\x07\x07",
+              sym("wMusicPitchOffsetBackup"): b"\x08\x08\x08\x08",
+              sym("wMusicSpeedBackup"): b"\x09\x09\x09\x09",
+              sym("wMusicVibratoType2Backup"): b"\x0A\x0A\x0A\x0A",
+              sym("wMusicVibratoDelayBackup"): b"\x0B\x0B\x0B\x0B",
+              sym("wMusicVolumeBackup"): b"\x77\x77\x77",
+              sym("wMusicFrequencyOffsetBackup"): b"\x00\x00\x00",
+              sym("wdeaa"): b"\x50\xC1",
+              sym("wdeac"): b"\x00",
+              sym("wMusicChannelStackPointersBackup"): b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4",
+              sym("wMusicCh1StackBackup"): b"\x00" * 48}},
+    dict(POISON, wram={sym("wCurSongID"): b"\x80", sym("wCurSongBank"): b"\x3D",
+                       sym("wCurSongIDBackup"): b"\x00", sym("wCurSongBankBackup"): b"\x3D",
+                       sym("wMusicStereoPanningBackup"): b"\xAA",
+                       sym("wMusicDuty1Backup"): b"\x40\x00\x80\xC0",
+                       sym("wMusicWaveBackup"): b"\x00", sym("wMusicWaveChangeBackup"): b"\x01",
+                       sym("wMusicIsPlayingBackup"): b"\x00\x00\x00\x01",
+                       sym("wMusicTieBackup"): b"\x00\x00\x00\x01",
+                       sym("wMusicChannelPointersBackup"): b"\x00\x00\x00\x00\x00\x00\x00\x00",
+                       sym("wMusicMainLoopStartBackup"): b"\x00\x00\x00\x00\x00\x00\x00\x00",
+                       sym("wde76"): b"\x00", sym("wde77"): b"\x00",
+                       sym("wMusicOctaveBackup"): b"\x00\x00\x00\x00",
+                       sym("wde7c"): b"\x00\x00\x00\x00",
+                       sym("wde80"): b"\x00\x00\x00\x00",
+                       sym("wde84"): b"\x00\x00\x00\x00",
+                       sym("wMusicCutoffBackup"): b"\x00\x00\x00\x00",
+                       sym("wde8c"): b"\x00\x00\x00\x00",
+                       sym("wMusicEchoBackup"): b"\x00\x00\x00\x00",
+                       sym("wMusicPitchOffsetBackup"): b"\x00\x00\x00\x00",
+                       sym("wMusicSpeedBackup"): b"\x00\x00\x00\x00",
+                       sym("wMusicVibratoType2Backup"): b"\x00\x00\x00\x00",
+                       sym("wMusicVibratoDelayBackup"): b"\x00\x00\x00\x00",
+                       sym("wMusicVolumeBackup"): b"\x00\x00\x00",
+                       sym("wMusicFrequencyOffsetBackup"): b"\x00\x00\x00",
+                       sym("wdeaa"): b"\x00\x00",
+                       sym("wdeac"): b"\x00",
+                       sym("wMusicChannelStackPointersBackup"): b"\x00\x00\x00\x00\x00\x00\x00\x00",
+                       sym("wMusicCh1StackBackup"): b"\x00" * 48}),
 ]
 
 # -- High-level -----------------------------------------------------------
 
 CONTRACT["Music1_CheckForNewSound"] = {"compare": (), "preserve": ()}
 CASES["Music1_CheckForNewSound"] = [
-    {"wram": {0xDD80: b"\x80", 0xDD82: b"\x80"}},
-    {"wram": {0xDD80: b"\x00", 0xDD82: b"\x80",
-              0xDD81: b"\x3D",
-              0xDD8D: b"\x00\x00\x00\x00"},
-     "read": {0xDD80: 1}},
-    dict(POISON, wram={0xDD80: b"\x05", 0xDD82: b"\x00",
-                       0xDD81: b"\x3D",
-                       0xDD8D: b"\x00\x00\x00\x00"},
-         read={0xDD80: 1, 0xDD82: 1}),
+    {"wram": {sym("wCurSongID"): b"\x80", sym("wCurSfxID"): b"\x80"}},
+    {"wram": {sym("wCurSongID"): b"\x00", sym("wCurSfxID"): b"\x80",
+              sym("wCurSongBank"): b"\x3D",
+              sym("wMusicIsPlaying"): b"\x00\x00\x00\x00"},
+     "read": {sym("wCurSongID"): 1}},
+    dict(POISON, wram={sym("wCurSongID"): b"\x05", sym("wCurSfxID"): b"\x00",
+                       sym("wCurSongBank"): b"\x3D",
+                       sym("wMusicIsPlaying"): b"\x00\x00\x00\x00"},
+         read={sym("wCurSongID"): 1, sym("wCurSfxID"): 1}),
 ]
 
 CONTRACT["Music1_Update"] = {"compare": (), "preserve": ()}
 CASES["Music1_Update"] = [
-    {"wram": {0xDD81: b"\x3D", 0xDDF2: b"\x01",
-              0xDD8C: b"\x0F", 0xDD80: b"\x80",
-              0xDD82: b"\x80"},
-     "read": {0xDD8D: 4}},
-    {"wram": {0xDD81: b"\x3D", 0xDDF2: b"\x00",
-              0xDD8C: b"\x00", 0xDD80: b"\x80",
-              0xDD82: b"\x80",
-              0xDD8D: b"\x00\x00\x00\x00",
-              0xDDBB: b"\x01\x01\x01\x01",
-              0xDDB7: b"\x00\x00\x00\x00",
-              0xDDEF: b"\x00",
-              0xDD95: b"\x00\xC1\x00\xC1\x00\xC1\x00\xC1",
-              0xDDDF: b"\x00\x00\x00\x00",
-              0xDDA5: b"\x2C\x00",
-              0xDDA7: b"\x2C\x00",
-              0xDDA9: b"\x2C\x00",
-              0xDDF1: b"\x77",
-              0xDD84: b"\xFF", 0xDD85: b"\x00",
-              0xDDF0: b"\x00"},
-     "read": {0xDD8D: 4}},
-    dict(POISON, wram={0xDD81: b"\x3D", 0xDDF2: b"\x01",
-                       0xDD8C: b"\x0F", 0xDD80: b"\x80",
-                       0xDD82: b"\x80"},
-         read={0xDD8D: 4}),
+    {"wram": {sym("wCurSongBank"): b"\x3D", sym("wddf2"): b"\x01",
+              sym("wdd8c"): b"\x0F", sym("wCurSongID"): b"\x80",
+              sym("wCurSfxID"): b"\x80"},
+     "read": {sym("wMusicIsPlaying"): 4}},
+    {"wram": {sym("wCurSongBank"): b"\x3D", sym("wddf2"): b"\x00",
+              sym("wdd8c"): b"\x00", sym("wCurSongID"): b"\x80",
+              sym("wCurSfxID"): b"\x80",
+              sym("wMusicIsPlaying"): b"\x00\x00\x00\x00",
+              sym("wddbb"): b"\x01\x01\x01\x01",
+              sym("wddb7"): b"\x00\x00\x00\x00",
+              sym("wddef"): b"\x00",
+              sym("wMusicChannelPointers"): b"\x00\xC1\x00\xC1\x00\xC1\x00\xC1",
+              sym("wMusicVibratoDelay"): b"\x00\x00\x00\x00",
+              sym("wMusicCh1CurPitch"): b"\x2C\x00",
+              sym("wMusicCh2CurPitch"): b"\x2C\x00",
+              sym("wMusicCh3CurPitch"): b"\x2C\x00",
+              sym("wMusicPanning"): b"\x77",
+              sym("wMusicStereoPanning"): b"\xFF", sym("wdd85"): b"\x00",
+              sym("wddf0"): b"\x00"},
+     "read": {sym("wMusicIsPlaying"): 4}},
+    dict(POISON, wram={sym("wCurSongBank"): b"\x3D", sym("wddf2"): b"\x01",
+                       sym("wdd8c"): b"\x0F", sym("wCurSongID"): b"\x80",
+                       sym("wCurSfxID"): b"\x80"},
+         read={sym("wMusicIsPlaying"): 4}),
     # wCurSongBank ($DD81) = $3E banks in the music2 driver, and music1.asm's
     # `call Music1_UpdateChannel1` then resolves to 3e:40e9's copy instead of
     # 3d's. Every other case here sets $3D, so the whole music2 dispatch was
     # unobserved; the reference takes it on 208 of its 2,001 audio ticks over
     # the boot timeline.
-    {"wram": {0xDD81: b"\x3E", 0xDDF2: b"\x00",
-              0xDD8C: b"\x00", 0xDD80: b"\x80",
-              0xDD82: b"\x80",
-              0xDD8D: b"\x01\x01\x01\x01",
-              0xDDBB: b"\x01\x01\x01\x01",
-              0xDDB7: b"\x00\x00\x00\x00",
-              0xDDEF: b"\x00",
-              0xDD95: b"\x00\xC1\x00\xC1\x00\xC1\x00\xC1",
-              0xDDDF: b"\x00\x00\x00\x00",
-              0xDDA5: b"\x2C\x00",
-              0xDDA7: b"\x2C\x00",
-              0xDDA9: b"\x2C\x00",
-              0xDDF1: b"\x77",
-              0xDD84: b"\xFF", 0xDD85: b"\x00",
-              0xDDF0: b"\x00"},
-     "read": {0xDD8D: 4, 0xDDBB: 4, 0xDDC3: 4}},
+    {"wram": {sym("wCurSongBank"): b"\x3E", sym("wddf2"): b"\x00",
+              sym("wdd8c"): b"\x00", sym("wCurSongID"): b"\x80",
+              sym("wCurSfxID"): b"\x80",
+              sym("wMusicIsPlaying"): b"\x01\x01\x01\x01",
+              sym("wddbb"): b"\x01\x01\x01\x01",
+              sym("wddb7"): b"\x00\x00\x00\x00",
+              sym("wddef"): b"\x00",
+              sym("wMusicChannelPointers"): b"\x00\xC1\x00\xC1\x00\xC1\x00\xC1",
+              sym("wMusicVibratoDelay"): b"\x00\x00\x00\x00",
+              sym("wMusicCh1CurPitch"): b"\x2C\x00",
+              sym("wMusicCh2CurPitch"): b"\x2C\x00",
+              sym("wMusicCh3CurPitch"): b"\x2C\x00",
+              sym("wMusicPanning"): b"\x77",
+              sym("wMusicStereoPanning"): b"\xFF", sym("wdd85"): b"\x00",
+              sym("wddf0"): b"\x00"},
+     "read": {sym("wMusicIsPlaying"): 4, sym("wddbb"): 4, sym("wddc3"): 4}},
 ]
 # >>> factory _PauseSong
 CONTRACT["_PauseSong"] = {"compare": (), "preserve": ()}
-CASES["_PauseSong"] = [{}, dict(POISON, wram={0xC100: b"\x00"})]
+CASES["_PauseSong"] = [{}, dict(POISON, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"})]
 # <<< factory _PauseSong
 
 # >>> factory _ResumeSong
 CONTRACT["_ResumeSong"] = {"compare": (), "preserve": ()}
-CASES["_ResumeSong"] = [{}, dict(POISON, wram={0xC101: b"\x00"})]
+CASES["_ResumeSong"] = [{}, dict(POISON, wram={sym("wDecompressionSecondaryBufferStart") + 0x12: b"\x00"})]
 # <<< factory _ResumeSong
 
 # >>> factory Music1_f400c
 CONTRACT["Music1_f400c"] = {"compare": (), "preserve": ()}
 CASES["Music1_f400c"] = [
-    {"a": 0x42, "read": {0xDDF0: 1}},
-    dict(POISON, read={0xDDF0: 1}, wram={0xC103: b"\x00"}),
+    {"a": 0x42, "read": {sym("wddf0"): 1}},
+    dict(POISON, read={sym("wddf0"): 1}, wram={sym("wDecompressionSecondaryBufferStart") + 0x14: b"\x00"}),
 ]
 # <<< factory Music1_f400c
 
 # >>> factory Music1_f4018
 CONTRACT["Music1_f4018"] = {"compare": ("b", "c"), "preserve": ("b", "c")};
 CASES["Music1_f4018"] = [
-    {"a": 0x00, "read": {0xDDF1: 1}},
-    {"a": 0x07, "read": {0xDDF1: 1}},
-    {"a": 0x77, "read": {0xDDF1: 1}},
-    dict(POISON, read={0xDDF1: 1}),
+    {"a": 0x00, "read": {sym("wMusicPanning"): 1}},
+    {"a": 0x07, "read": {sym("wMusicPanning"): 1}},
+    {"a": 0x77, "read": {sym("wMusicPanning"): 1}},
+    dict(POISON, read={sym("wMusicPanning"): 1}),
 ]
 # <<< factory Music1_f4018
 
 # >>> factory _AssertSFXFinished
 CONTRACT["_AssertSFXFinished"] = {"compare": ("a",), "preserve": ()}
 CASES["_AssertSFXFinished"] = [
-    {"wram": {0xDD82: b"\x80"}},
-    {"wram": {0xDD82: b"\x00"}},
-    dict(POISON, wram={0xDD82: b"\x55"}),
+    {"wram": {sym("wCurSfxID"): b"\x80"}},
+    {"wram": {sym("wCurSfxID"): b"\x00"}},
+    dict(POISON, wram={sym("wCurSfxID"): b"\x55"}),
 ]
 # <<< factory _AssertSFXFinished
 
 # >>> factory _AssertSongFinished
 CONTRACT["_AssertSongFinished"] = {"compare": ("a",), "preserve": ()}
 CASES["_AssertSongFinished"] = [
-    {"wram": {0xDD80: b"\x80"}},
-    {"wram": {0xDD80: b"\x00"}},
-    {"wram": {0xDD80: b"\x7F"}},
-    dict(POISON, wram={0xDD80: b"\xFF"}),
+    {"wram": {sym("wCurSongID"): b"\x80"}},
+    {"wram": {sym("wCurSongID"): b"\x00"}},
+    {"wram": {sym("wCurSongID"): b"\x7F"}},
+    dict(POISON, wram={sym("wCurSongID"): b"\xFF"}),
 ]
 # <<< factory _AssertSongFinished
 
 # >>> factory _PlaySFX
 CONTRACT["_PlaySFX"] = {"compare": ("b", "c", "hl"), "preserve": ("b", "c", "hl")}
 CASES["_PlaySFX"] = [
-    {"a": 0x00, "read": {0xDD83: 1, 0xDD82: 1}},
-    {"a": 0x01, "read": {0xDD83: 1, 0xDD82: 1}},
-    {"a": 0x01, "wram": {0xDD83: b"\x0A", 0xDD82: b"\x05"}},
-    {"a": 0x01, "wram": {0xDD83: b"\x05", 0xDD82: b"\x80"}},
-    dict(POISON, read={0xDD83: 1, 0xDD82: 1}),
+    {"a": 0x00, "read": {sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}},
+    {"a": 0x01, "read": {sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}},
+    {"a": 0x01, "wram": {sym("wSfxPriority"): b"\x0A", sym("wCurSfxID"): b"\x05"}},
+    {"a": 0x01, "wram": {sym("wSfxPriority"): b"\x05", sym("wCurSfxID"): b"\x80"}},
+    dict(POISON, read={sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}),
 ]
 # <<< factory _PlaySFX
 
 # >>> factory _PlaySong
 CONTRACT["_PlaySong"] = {"compare": ("hl",), "preserve": ("hl",)}
 CASES["_PlaySong"] = [
-    {"a": 0x00, "read": {0xDD80: 1}},
-    {"a": 0x1E, "read": {0xDD80: 1}},
-    {"a": 0x1F, "read": {0xDD80: 1}},
-    {"a": 0xFF, "read": {0xDD80: 1}},
-    dict(POISON, read={0xDD80: 1}),
+    {"a": 0x00, "read": {sym("wCurSongID"): 1}},
+    {"a": 0x1E, "read": {sym("wCurSongID"): 1}},
+    {"a": 0x1F, "read": {sym("wCurSongID"): 1}},
+    {"a": 0xFF, "read": {sym("wCurSongID"): 1}},
+    dict(POISON, read={sym("wCurSongID"): 1}),
 ]
 # <<< factory _PlaySong
 
 # >>> factory _SetupSound
 CONTRACT["_SetupSound"] = {"compare": (), "preserve": ()}
 CASES["_SetupSound"] = [
-    {"read": {0xDD80: 1, 0xDD82: 1, 0xDD8D: 4, 0xDD91: 4, 0xDDB3: 4,
-              0xDDCB: 4, 0xDDBF: 4, 0xDDF1: 1, 0xDDF3: 8, 0xDDF0: 1,
-              0xDDF2: 1, 0xDD8C: 1, 0xDD84: 1, 0xDD81: 1, 0xDDEF: 1}},
-    dict(POISON, read={0xDD80: 1, 0xDD82: 1, 0xDD8D: 4, 0xDD91: 4,
-                       0xDDB3: 4, 0xDDCB: 4, 0xDDBF: 4, 0xDDF1: 1,
-                       0xDDF3: 8, 0xDDF0: 1, 0xDDF2: 1, 0xDD8C: 1,
-                       0xDD84: 1, 0xDD81: 1, 0xDDEF: 1}),
+    {"read": {sym("wCurSongID"): 1, sym("wCurSfxID"): 1, sym("wMusicIsPlaying"): 4, sym("wMusicTie"): 4, sym("wddb3"): 4,
+              sym("wMusicPitchOffset"): 4, sym("wMusicCutoff"): 4, sym("wMusicPanning"): 1, sym("wMusicChannelStackPointers"): 8, sym("wddf0"): 1,
+              sym("wddf2"): 1, sym("wdd8c"): 1, sym("wMusicStereoPanning"): 1, sym("wCurSongBank"): 1, sym("wddef"): 1}},
+    dict(POISON, read={sym("wCurSongID"): 1, sym("wCurSfxID"): 1, sym("wMusicIsPlaying"): 4, sym("wMusicTie"): 4,
+                       sym("wddb3"): 4, sym("wMusicPitchOffset"): 4, sym("wMusicCutoff"): 4, sym("wMusicPanning"): 1,
+                       sym("wMusicChannelStackPointers"): 8, sym("wddf0"): 1, sym("wddf2"): 1, sym("wdd8c"): 1,
+                       sym("wMusicStereoPanning"): 1, sym("wCurSongBank"): 1, sym("wddef"): 1}),
 ]
 # <<< factory _SetupSound
 
 # >>> factory SoundTimerHandler
 CONTRACT["SoundTimerHandler"] = {"compare": (), "preserve": ()}
 CASES["SoundTimerHandler"] = [
-    {"wram": {0xDD80: b"\x00", 0xDD82: b"\x80"}, "read": {0xDD80: 1}},
-    dict(POISON, wram={0xDD80: b"\x00", 0xDD82: b"\x80"}, read={0xDD80: 1}),
+    {"wram": {sym("wCurSongID"): b"\x00", sym("wCurSfxID"): b"\x80"}, "read": {sym("wCurSongID"): 1}},
+    dict(POISON, wram={sym("wCurSongID"): b"\x00", sym("wCurSfxID"): b"\x80"}, read={sym("wCurSongID"): 1}),
 ]
 # <<< factory SoundTimerHandler
 
 # >>> factory Music1_f4015
 CONTRACT["Music1_f4015"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4015"] = [
-    {"wram": {0xDDF2: b"\x00"}, "expect": {0xDDF2: b"\x01"}},
-    {"wram": {0xDDF2: b"\x01"}, "expect": {0xDDF2: b"\x00"}},
-    dict(POISON, wram={0xDDF2: b"\x05"}, expect={0xDDF2: b"\x04"}),
+    {"wram": {sym("wddf2"): b"\x00"}, "expect": {sym("wddf2"): b"\x01"}},
+    {"wram": {sym("wddf2"): b"\x01"}, "expect": {sym("wddf2"): b"\x00"}},
+    dict(POISON, wram={sym("wddf2"): b"\x05"}, expect={sym("wddf2"): b"\x04"}),
 ]
 # <<< factory Music1_f4015
 
 # >>> factory Music1_duty
 CONTRACT["Music1_duty"] = {"compare": (), "preserve": ()}
 CASES["Music1_duty"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDD86: 1}},
-    {"c": 1, "stack": [0xC100], "wram": {0xC100: b"\x3F\xFF"}, "read": {0xDD87: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\x80\xFF"}, "read": {0xDD89: 1}},
-    dict(POISON, b=0, c=2, stack=[0xC100], wram={0xC100: b"\xFF\xFF"},
-         read={0xDD88: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"}, "read": {sym("wMusicDuty1"): 1}},
+    {"c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x3F\xFF"}, "read": {sym("wMusicDuty2"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x80\xFF"}, "read": {sym("wMusicDuty2") + 2: 1}},
+    dict(POISON, b=0, c=2, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"},
+         read={sym("wMusicDuty2") + 1: 1}),
 ]
 # <<< factory Music1_duty
 
 # >>> factory Music1_speed
 CONTRACT["Music1_speed"] = {"compare": (), "preserve": ()}
 CASES["Music1_speed"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDCF: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDCF: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDD2: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
-         read={0xDDD0: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x40\xFF"}, "read": {sym("wMusicSpeed"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF"}, "read": {sym("wMusicSpeed"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"}, "read": {sym("wMusicSpeed") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x7F\xFF"},
+         read={sym("wMusicSpeed") + 1: 1}),
 ]
 # <<< factory Music1_speed
 
 # >>> factory Music1_inc_octave
 CONTRACT["Music1_inc_octave"] = {"compare": (), "preserve": ()}
 CASES["Music1_inc_octave"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDAF: b"\x00"},
-     "read": {0xDDAF: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDAF: b"\xFF"},
-     "read": {0xDDAF: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDB2: b"\x07"},
-     "read": {0xDDB2: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\xFF", 0xDDB0: b"\x10"},
-         read={0xDDB0: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicOctave"): b"\x00"},
+     "read": {sym("wMusicOctave"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicOctave"): b"\xFF"},
+     "read": {sym("wMusicOctave"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicOctave") + 3: b"\x07"},
+     "read": {sym("wMusicOctave") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicOctave") + 1: b"\x10"},
+         read={sym("wMusicOctave") + 1: 1}),
 ]
 # <<< factory Music1_inc_octave
 
 # >>> factory Music1_dec_octave
 CONTRACT["Music1_dec_octave"] = {"compare": (), "preserve": ()}
 CASES["Music1_dec_octave"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDAF: b"\x01"},
-     "read": {0xDDAF: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDAF: b"\x00"},
-     "read": {0xDDAF: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDB2: b"\x07"},
-     "read": {0xDDB2: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\xFF", 0xDDB0: b"\x10"},
-         read={0xDDB0: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicOctave"): b"\x01"},
+     "read": {sym("wMusicOctave"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicOctave"): b"\x00"},
+     "read": {sym("wMusicOctave"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicOctave") + 3: b"\x07"},
+     "read": {sym("wMusicOctave") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicOctave") + 1: b"\x10"},
+         read={sym("wMusicOctave") + 1: 1}),
 ]
 # <<< factory Music1_dec_octave
 
 # >>> factory Music1_tie
 CONTRACT["Music1_tie"] = {"compare": (), "preserve": ()}
 CASES["Music1_tie"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDD91: b"\x00"},
-     "read": {0xDD91: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDD94: b"\xFF"},
-     "read": {0xDD94: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\xFF", 0xDD92: b"\x7F"},
-         read={0xDD92: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicTie"): b"\x00"},
+     "read": {sym("wMusicTie"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicTie") + 3: b"\xFF"},
+     "read": {sym("wMusicTie") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicTie") + 1: b"\x7F"},
+         read={sym("wMusicTie") + 1: 1}),
 ]
 # <<< factory Music1_tie
 
 # >>> factory Music1_stereo_panning
 CONTRACT["Music1_stereo_panning"] = {"compare": (), "preserve": ()}
 CASES["Music1_stereo_panning"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x11\xFF", 0xDD84: b"\x00"},
-     "read": {0xDD84: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF", 0xDD84: b"\xFF"},
-     "read": {0xDD84: 1}},
-    {"c": 1, "stack": [0xC100], "wram": {0xC100: b"\x11\xFF", 0xDD84: b"\x00"},
-     "read": {0xDD84: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\x81\xFF", 0xDD84: b"\x00"},
-     "read": {0xDD84: 1}},
-    dict(POISON, b=0, c=2, stack=[0xC100], wram={0xC100: b"\x11\xFF", 0xDD84: b"\xAA"},
-         read={0xDD84: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x11\xFF", sym("wMusicStereoPanning"): b"\x00"},
+     "read": {sym("wMusicStereoPanning"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF", sym("wMusicStereoPanning"): b"\xFF"},
+     "read": {sym("wMusicStereoPanning"): 1}},
+    {"c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x11\xFF", sym("wMusicStereoPanning"): b"\x00"},
+     "read": {sym("wMusicStereoPanning"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x81\xFF", sym("wMusicStereoPanning"): b"\x00"},
+     "read": {sym("wMusicStereoPanning"): 1}},
+    dict(POISON, b=0, c=2, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x11\xFF", sym("wMusicStereoPanning"): b"\xAA"},
+         read={sym("wMusicStereoPanning"): 1}),
 ]
 # <<< factory Music1_stereo_panning
 
 # >>> factory Music1_MainLoop
 CONTRACT["Music1_MainLoop"] = {"compare": (), "preserve": ()}
 CASES["Music1_MainLoop"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF"}, "read": {0xDD9D: 2}},
-    {"c": 3, "stack": [0xC200], "wram": {0xC200: b"\xFF"}, "read": {0xDDA3: 2}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\xFF"},
-         read={0xDD9F: 2}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF"}, "read": {sym("wMusicMainLoopStart"): 2}},
+    {"c": 3, "stack": [sym("wPlayerCardLocations")], "wram": {sym("wPlayerCardLocations"): b"\xFF"}, "read": {sym("wMusicMainLoopStart") + 6: 2}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF"},
+         read={sym("wMusicMainLoopStart") + 2: 2}),
 ]
 # <<< factory Music1_MainLoop
 
 # >>> factory Music1_Loop
 CONTRACT["Music1_Loop"] = {"compare": (), "preserve": ()}
 CASES["Music1_Loop"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xC100: b"\x03\xFF", 0xDDF3: b"\x00\xC2"},
-     "read": {0xC200: 3, 0xDDF3: 2}},
-    {"c": 1, "stack": [0xC100],
-     "wram": {0xC100: b"\x01\xFF", 0xDDF5: b"\x00\xC3"},
-     "read": {0xC300: 3, 0xDDF5: 2}},
-    dict(POISON, b=0, c=2, stack=[0xC100],
-         wram={0xC100: b"\xFF\xFF", 0xDDF7: b"\x10\xC2"},
-         read={0xC210: 3, 0xDDF7: 2}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x03\xFF", sym("wMusicChannelStackPointers"): b"\x00\xC2"},
+     "read": {sym("wPlayerCardLocations"): 3, sym("wMusicChannelStackPointers"): 2}},
+    {"c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01\xFF", sym("wMusicChannelStackPointers") + 2: b"\x00\xC3"},
+     "read": {sym("wOpponentCardLocations"): 3, sym("wMusicChannelStackPointers") + 2: 2}},
+    dict(POISON, b=0, c=2, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11],
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF", sym("wMusicChannelStackPointers") + 4: b"\x10\xC2"},
+         read={sym("wPlayerCardLocations") + 0x10: 3, sym("wMusicChannelStackPointers") + 4: 2}),
 ]
 # <<< factory Music1_Loop
 
 # >>> factory Music1_call
 CONTRACT["Music1_call"] = {"compare": (), "preserve": ()}
 CASES["Music1_call"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xC100: b"\x00\xC2", 0xC200: b"\xFF", 0xDDF3: b"\x00\xC3"},
-     "read": {0xC300: 2, 0xDDF3: 2}},
-    {"c": 1, "stack": [0xC110],
-     "wram": {0xC110: b"\x00\xC2", 0xC200: b"\xFF", 0xDDF5: b"\x20\xC3"},
-     "read": {0xC320: 2, 0xDDF5: 2}},
-    dict(POISON, b=0, c=3, stack=[0xC100],
-         wram={0xC100: b"\x00\xC2", 0xC200: b"\xFF", 0xDDF9: b"\x40\xC3"},
-         read={0xC340: 2, 0xDDF9: 2}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xC2", sym("wPlayerCardLocations"): b"\xFF", sym("wMusicChannelStackPointers"): b"\x00\xC3"},
+     "read": {sym("wOpponentCardLocations"): 2, sym("wMusicChannelStackPointers"): 2}},
+    {"c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x21],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x21: b"\x00\xC2", sym("wPlayerCardLocations"): b"\xFF", sym("wMusicChannelStackPointers") + 2: b"\x20\xC3"},
+     "read": {sym("wOpponentCardLocations") + 0x20: 2, sym("wMusicChannelStackPointers") + 2: 2}},
+    dict(POISON, b=0, c=3, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11],
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xC2", sym("wPlayerCardLocations"): b"\xFF", sym("wMusicChannelStackPointers") + 6: b"\x40\xC3"},
+         read={sym("wOpponentPrizeCards") + 4: 2, sym("wMusicChannelStackPointers") + 6: 2}),
 ]
 # <<< factory Music1_call
 
 # >>> factory Music1_ret
 CONTRACT["Music1_ret"] = {"compare": (), "preserve": ()}
 CASES["Music1_ret"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xDDF3: b"\x02\xC3", 0xC300: b"\x00\xC2", 0xC202: b"\xFF"},
-     "read": {0xDDF3: 2}},
-    {"c": 1, "stack": [0xC100],
-     "wram": {0xDDF5: b"\x22\xC3", 0xC320: b"\x00\xC2", 0xC202: b"\xFF"},
-     "read": {0xDDF5: 2}},
-    dict(POISON, b=0, c=3, stack=[0xC100],
-         wram={0xDDF9: b"\x42\xC3", 0xC340: b"\x00\xC2", 0xC202: b"\xFF"},
-         read={0xDDF9: 2}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wMusicChannelStackPointers"): b"\x02\xC3", sym("wOpponentCardLocations"): b"\x00\xC2", sym("wPlayerCardLocations") + 2: b"\xFF"},
+     "read": {sym("wMusicChannelStackPointers"): 2}},
+    {"c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wMusicChannelStackPointers") + 2: b"\x22\xC3", sym("wOpponentCardLocations") + 0x20: b"\x00\xC2", sym("wPlayerCardLocations") + 2: b"\xFF"},
+     "read": {sym("wMusicChannelStackPointers") + 2: 2}},
+    dict(POISON, b=0, c=3, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11],
+         wram={sym("wMusicChannelStackPointers") + 6: b"\x42\xC3", sym("wOpponentPrizeCards") + 4: b"\x00\xC2", sym("wPlayerCardLocations") + 2: b"\xFF"},
+         read={sym("wMusicChannelStackPointers") + 6: 2}),
 ]
 # <<< factory Music1_ret
 
 # >>> factory Music1_frequency_offset
 CONTRACT["Music1_frequency_offset"] = {"compare": (), "preserve": ()}
 CASES["Music1_frequency_offset"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDEA: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDEA: 1}},
-    {"c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDEC: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
-         read={0xDDEB: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x40\xFF"}, "read": {sym("wMusicFrequencyOffset"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF"}, "read": {sym("wMusicFrequencyOffset"): 1}},
+    {"c": 2, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"}, "read": {sym("wMusicFrequencyOffset") + 2: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x7F\xFF"},
+         read={sym("wMusicFrequencyOffset") + 1: 1}),
 ]
 # <<< factory Music1_frequency_offset
 
 # >>> factory Music1_volume
 CONTRACT["Music1_volume"] = {"compare": (), "preserve": ()}
 CASES["Music1_volume"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x7F\xFF"}, "read": {0xDDE7: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDE7: 1}},
-    {"c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDE9: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x11\xFF"},
-         read={0xDDE8: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x7F\xFF"}, "read": {sym("wMusicVolume"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF"}, "read": {sym("wMusicVolume"): 1}},
+    {"c": 2, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"}, "read": {sym("wMusicVolume") + 2: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x11\xFF"},
+         read={sym("wMusicVolume") + 1: 1}),
 ]
 # <<< factory Music1_volume
 
 # >>> factory Music1_wave
 CONTRACT["Music1_wave"] = {"compare": (), "preserve": ()}
 CASES["Music1_wave"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x05\xFF", 0xDD8A: b"\x00\x00"},
-     "read": {0xDD8A: 2}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF", 0xDD8A: b"\xFF\xFF"},
-     "read": {0xDD8A: 2}},
-    dict(POISON, b=0, c=2, stack=[0xC100],
-         wram={0xC100: b"\xFF\xFF", 0xDD8A: b"\x00\x00"}, read={0xDD8A: 2}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x05\xFF", sym("wMusicWave"): b"\x00\x00"},
+     "read": {sym("wMusicWave"): 2}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF", sym("wMusicWave"): b"\xFF\xFF"},
+     "read": {sym("wMusicWave"): 2}},
+    dict(POISON, b=0, c=2, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11],
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF", sym("wMusicWave"): b"\x00\x00"}, read={sym("wMusicWave"): 2}),
 ]
 # <<< factory Music1_wave
 
 # >>> factory Music1_cutoff
 CONTRACT["Music1_cutoff"] = {"compare": (), "preserve": ()}
 CASES["Music1_cutoff"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDBF: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDBF: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDC2: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
-         read={0xDDC0: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x40\xFF"}, "read": {sym("wMusicCutoff"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF"}, "read": {sym("wMusicCutoff"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"}, "read": {sym("wMusicCutoff") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x7F\xFF"},
+         read={sym("wMusicCutoff") + 1: 1}),
 ]
 # <<< factory Music1_cutoff
 
 # >>> factory Music1_echo
 CONTRACT["Music1_echo"] = {"compare": (), "preserve": ()}
 CASES["Music1_echo"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDC7: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDC7: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDCA: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
-         read={0xDDC8: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x40\xFF"}, "read": {sym("wMusicEcho"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF"}, "read": {sym("wMusicEcho"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"}, "read": {sym("wMusicEcho") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x7F\xFF"},
+         read={sym("wMusicEcho") + 1: 1}),
 ]
 # <<< factory Music1_echo
 
 # >>> factory Music1_vibrato_type
 CONTRACT["Music1_vibrato_type"] = {"compare": (), "preserve": ()}
 CASES["Music1_vibrato_type"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"},
-     "read": {0xDDD3: 1, 0xDDD7: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"},
-     "read": {0xDDD3: 1, 0xDDD7: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"},
-     "read": {0xDDD6: 1, 0xDDDA: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
-         read={0xDDD4: 1, 0xDDD8: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x40\xFF"},
+     "read": {sym("wMusicVibratoType"): 1, sym("wMusicVibratoType2"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF"},
+     "read": {sym("wMusicVibratoType"): 1, sym("wMusicVibratoType2"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"},
+     "read": {sym("wMusicVibratoType") + 3: 1, sym("wMusicVibratoType2") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x7F\xFF"},
+         read={sym("wMusicVibratoType") + 1: 1, sym("wMusicVibratoType2") + 1: 1}),
 ]
 # <<< factory Music1_vibrato_type
 
 # >>> factory Music1_vibrato_delay
 CONTRACT["Music1_vibrato_delay"] = {"compare": (), "preserve": ()}
 CASES["Music1_vibrato_delay"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDDF: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDDF: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDE2: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
-         read={0xDDE0: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x40\xFF"}, "read": {sym("wMusicVibratoDelay"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF"}, "read": {sym("wMusicVibratoDelay"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"}, "read": {sym("wMusicVibratoDelay") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x7F\xFF"},
+         read={sym("wMusicVibratoDelay") + 1: 1}),
 ]
 # <<< factory Music1_vibrato_delay
 
 # >>> factory Music1_pitch_offset
 CONTRACT["Music1_pitch_offset"] = {"compare": (), "preserve": ()}
 CASES["Music1_pitch_offset"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF", 0xDDCB: b"\x00"},
-     "read": {0xDDCB: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF", 0xDDCB: b"\xAA"},
-     "read": {0xDDCB: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF", 0xDDCE: b"\x00"},
-     "read": {0xDDCE: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF", 0xDDCC: b"\x11"},
-         read={0xDDCC: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x40\xFF", sym("wMusicPitchOffset"): b"\x00"},
+     "read": {sym("wMusicPitchOffset"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF", sym("wMusicPitchOffset"): b"\xAA"},
+     "read": {sym("wMusicPitchOffset"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF", sym("wMusicPitchOffset") + 3: b"\x00"},
+     "read": {sym("wMusicPitchOffset") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x7F\xFF", sym("wMusicPitchOffset") + 1: b"\x11"},
+         read={sym("wMusicPitchOffset") + 1: 1}),
 ]
 # <<< factory Music1_pitch_offset
 
 # >>> factory Music1_adjust_pitch_offset
 CONTRACT["Music1_adjust_pitch_offset"] = {"compare": (), "preserve": ()}
 CASES["Music1_adjust_pitch_offset"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x05\xFF", 0xDDCB: b"\x10"},
-     "read": {0xDDCB: 1}},
-    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x02\xFF", 0xDDCB: b"\xFF"},
-     "read": {0xDDCB: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF", 0xDDCE: b"\x7F"},
-     "read": {0xDDCE: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x11\xFF", 0xDDCC: b"\x22"},
-         read={0xDDCC: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x05\xFF", sym("wMusicPitchOffset"): b"\x10"},
+     "read": {sym("wMusicPitchOffset"): 1}},
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x02\xFF", sym("wMusicPitchOffset"): b"\xFF"},
+     "read": {sym("wMusicPitchOffset"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\xFF", sym("wMusicPitchOffset") + 3: b"\x7F"},
+     "read": {sym("wMusicPitchOffset") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x11\xFF", sym("wMusicPitchOffset") + 1: b"\x22"},
+         read={sym("wMusicPitchOffset") + 1: 1}),
 ]
 # <<< factory Music1_adjust_pitch_offset
 
 # >>> factory Music1_end
 CONTRACT["Music1_end"] = {"compare": (), "preserve": ()}
 CASES["Music1_end"] = [
-    {"c": 0, "stack": [0xC100], "wram": {0xDD8D: b"\x01"}, "read": {0xDD8D: 1}},
-    {"c": 3, "stack": [0xC100], "wram": {0xDD90: b"\xFF"}, "read": {0xDD90: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xDD8E: b"\x7F"},
-         read={0xDD8E: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wMusicIsPlaying"): b"\x01"}, "read": {sym("wMusicIsPlaying"): 1}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wMusicIsPlaying") + 3: b"\xFF"}, "read": {sym("wMusicIsPlaying") + 3: 1}},
+    dict(POISON, b=0, c=1, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wMusicIsPlaying") + 1: b"\x7F"},
+         read={sym("wMusicIsPlaying") + 1: 1}),
 ]
 # <<< factory Music1_end
 
@@ -1000,15 +1001,15 @@ CASES["Music1_end"] = [
 # through the channel stack pointer without executing any command.
 CONTRACT["Music1_EndLoop"] = {"compare": (), "preserve": ()}
 CASES["Music1_EndLoop"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xC100: b"\xFF", 0xDDF3: b"\x03\xC2", 0xC200: b"\x00\xC3\x01"},
-     "read": {0xDDF3: 2, 0xC202: 1}},
-    {"c": 1, "stack": [0xC100],
-     "wram": {0xC100: b"\xFF", 0xDDF5: b"\x03\xC2", 0xC200: b"\x00\xC3\x01"},
-     "read": {0xDDF5: 2, 0xC202: 1}},
-    dict(POISON, b=0, c=2, stack=[0xC100],
-         wram={0xC100: b"\xFF", 0xDDF7: b"\x13\xC2", 0xC210: b"\x00\xC3\x01"},
-         read={0xDDF7: 2, 0xC212: 1}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicChannelStackPointers"): b"\x03\xC2", sym("wPlayerCardLocations"): b"\x00\xC3\x01"},
+     "read": {sym("wMusicChannelStackPointers"): 2, sym("wPlayerCardLocations") + 2: 1}},
+    {"c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicChannelStackPointers") + 2: b"\x03\xC2", sym("wPlayerCardLocations"): b"\x00\xC3\x01"},
+     "read": {sym("wMusicChannelStackPointers") + 2: 2, sym("wPlayerCardLocations") + 2: 1}},
+    dict(POISON, b=0, c=2, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11],
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF", sym("wMusicChannelStackPointers") + 4: b"\x13\xC2", sym("wPlayerCardLocations") + 0x10: b"\x00\xC3\x01"},
+         read={sym("wMusicChannelStackPointers") + 4: 2, sym("wPlayerCardLocations") + 0x12: 1}),
 ]
 # <<< factory Music1_EndLoop
 
@@ -1016,16 +1017,16 @@ CASES["Music1_EndLoop"] = [
 # The octave value comes from the command byte in `a` ($D1-$D6), not the stream.
 CONTRACT["Music1_octave"] = {"compare": (), "preserve": ()}
 CASES["Music1_octave"] = [
-    {"a": 0xD1, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
-     "read": {0xDDAF: 1}},
-    {"a": 0xD6, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
-     "read": {0xDDAF: 1}},
-    {"a": 0xD3, "c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
-     "read": {0xDDB1: 1}},
-    {"a": 0xD1, "c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
-     "read": {0xDDB1: 1}},
-    dict(POISON, a=0xD4, b=0, c=3, stack=[0xC100], wram={0xC100: b"\xFF"},
-         read={0xDDB2: 1}),
+    {"a": 0xD1, "c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF"},
+     "read": {sym("wMusicOctave"): 1}},
+    {"a": 0xD6, "c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF"},
+     "read": {sym("wMusicOctave"): 1}},
+    {"a": 0xD3, "c": 2, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF"},
+     "read": {sym("wMusicOctave") + 2: 1}},
+    {"a": 0xD1, "c": 2, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF"},
+     "read": {sym("wMusicOctave") + 2: 1}},
+    dict(POISON, a=0xD4, b=0, c=3, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11], wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF"},
+         read={sym("wMusicOctave") + 3: 1}),
 ]
 # <<< factory Music1_octave
 
@@ -1035,36 +1036,36 @@ CASES["Music1_octave"] = [
 # volume byte lands only if the resume address was read correctly.
 CONTRACT["Music1_EndMainLoop"] = {"compare": (), "preserve": ()}
 CASES["Music1_EndMainLoop"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xDD9D: b"\x10\xC1", 0xC110: b"\xE6\x5A\xFF",
-              0xDDE7: b"\x00\x00\x00\x00", 0xDD8D: b"\x01\x01\x01\x01"},
-     "read": {0xDDE7: 4, 0xDD8D: 4}},
-    {"c": 1, "stack": [0xC100],
-     "wram": {0xDD9F: b"\x18\xC1", 0xC118: b"\xE6\x77\xFF",
-              0xDDE7: b"\x00\x00\x00\x00", 0xDD8D: b"\x01\x01\x01\x01"},
-     "read": {0xDDE7: 4, 0xDD8D: 4}},
-    dict(POISON, b=0, c=0, stack=[0xC100],
-         wram={0xDD9D: b"\x10\xC1", 0xC110: b"\xE6\xA5\xFF",
-               0xDDE7: b"\xFF\xFF\xFF\xFF", 0xDD8D: b"\x01\x01\x01\x01"},
-         read={0xDDE7: 4, 0xDD8D: 4}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wMusicMainLoopStart"): b"\x10\xC1", sym("wDecompressionSecondaryBufferStart") + 0x21: b"\xE6\x5A\xFF",
+              sym("wMusicVolume"): b"\x00\x00\x00\x00", sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"},
+     "read": {sym("wMusicVolume"): 4, sym("wMusicIsPlaying"): 4}},
+    {"c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wMusicMainLoopStart") + 2: b"\x18\xC1", sym("wDecompressionSecondaryBufferStart") + 0x29: b"\xE6\x77\xFF",
+              sym("wMusicVolume"): b"\x00\x00\x00\x00", sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"},
+     "read": {sym("wMusicVolume"): 4, sym("wMusicIsPlaying"): 4}},
+    dict(POISON, b=0, c=0, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11],
+         wram={sym("wMusicMainLoopStart"): b"\x10\xC1", sym("wDecompressionSecondaryBufferStart") + 0x21: b"\xE6\xA5\xFF",
+               sym("wMusicVolume"): b"\xFF\xFF\xFF\xFF", sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"},
+         read={sym("wMusicVolume"): 4, sym("wMusicIsPlaying"): 4}),
 ]
 # <<< factory Music1_EndMainLoop
 
 # >>> factory Music1_jp
 CONTRACT["Music1_jp"] = {"compare": (), "preserve": ()}
 CASES["Music1_jp"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xC100: b"\x10\xC1", 0xC110: b"\xE6\x5A\xFF",
-              0xDDE7: b"\x00\x00\x00\x00", 0xDD8D: b"\x01\x01\x01\x01"},
-     "read": {0xDDE7: 4, 0xDD8D: 4}},
-    {"c": 1, "stack": [0xC100],
-     "wram": {0xC100: b"\x18\xC1", 0xC118: b"\xE6\x77\xFF",
-              0xDDE7: b"\x00\x00\x00\x00", 0xDD8D: b"\x01\x01\x01\x01"},
-     "read": {0xDDE7: 4, 0xDD8D: 4}},
-    dict(POISON, b=0, c=0, stack=[0xC100],
-         wram={0xC100: b"\x10\xC1", 0xC110: b"\xE6\xA5\xFF",
-               0xDDE7: b"\xFF\xFF\xFF\xFF", 0xDD8D: b"\x01\x01\x01\x01"},
-         read={0xDDE7: 4, 0xDD8D: 4}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x10\xC1", sym("wDecompressionSecondaryBufferStart") + 0x21: b"\xE6\x5A\xFF",
+              sym("wMusicVolume"): b"\x00\x00\x00\x00", sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"},
+     "read": {sym("wMusicVolume"): 4, sym("wMusicIsPlaying"): 4}},
+    {"c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x18\xC1", sym("wDecompressionSecondaryBufferStart") + 0x29: b"\xE6\x77\xFF",
+              sym("wMusicVolume"): b"\x00\x00\x00\x00", sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"},
+     "read": {sym("wMusicVolume"): 4, sym("wMusicIsPlaying"): 4}},
+    dict(POISON, b=0, c=0, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11],
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x10\xC1", sym("wDecompressionSecondaryBufferStart") + 0x21: b"\xE6\xA5\xFF",
+               sym("wMusicVolume"): b"\xFF\xFF\xFF\xFF", sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"},
+         read={sym("wMusicVolume"): 4, sym("wMusicIsPlaying"): 4}),
 ]
 # <<< factory Music1_jp
 
@@ -1073,134 +1074,134 @@ CASES["Music1_jp"] = [
 # Every stream ends in $FF (index 47 -> end) so the dispatcher loop terminates.
 # Case 6 uses $DA, which is index 10 -> end: the pre-2026-08-26 mapping ran an
 # inc_octave there instead, so that case pins the table alignment.
-_PNN_IDLE = {0xDD8D: b"\x01\x01\x01\x01"}
+_PNN_IDLE = {sym("wMusicIsPlaying"): b"\x01\x01\x01\x01"}
 # A cmd below $D0 is a note: high nibble selects the instrument, low nibble the
 # duration index. Its operand byte is peeked, never consumed, so the stream
 # pointer stored to wMusicChannelPointers is the operand's own address.
-_NOTE_SEED = {0xDDCF: b"\x03\x03\x03\x03", 0xDD91: b"\x00\x00\x00\x00",
-              0xDDBF: b"\x08\x08\x08\x08", 0xDDAF: b"\x00\x00\x00\x00",
-              0xDDCB: b"\x00\x00\x00\x00", 0xDDEA: b"\x00\x00\x00\x00",
-              0xDDD7: b"\x11\x22\x33\x44"}
-_NOTE_READ = {0xDD84: 1, 0xDD91: 4, 0xDD95: 8, 0xDDA5: 8, 0xDDAB: 4,
-              0xDDB7: 4, 0xDDBB: 4, 0xDDC3: 4, 0xDDD3: 4, 0xDDDB: 4,
-              0xDDE3: 4, 0xDDED: 2, 0xDDEF: 1}
+_NOTE_SEED = {sym("wMusicSpeed"): b"\x03\x03\x03\x03", sym("wMusicTie"): b"\x00\x00\x00\x00",
+              sym("wMusicCutoff"): b"\x08\x08\x08\x08", sym("wMusicOctave"): b"\x00\x00\x00\x00",
+              sym("wMusicPitchOffset"): b"\x00\x00\x00\x00", sym("wMusicFrequencyOffset"): b"\x00\x00\x00\x00",
+              sym("wMusicVibratoType2"): b"\x11\x22\x33\x44"}
+_NOTE_READ = {sym("wMusicStereoPanning"): 1, sym("wMusicTie"): 4, sym("wMusicChannelPointers"): 8, sym("wMusicCh1CurPitch"): 8, sym("wddab"): 4,
+              sym("wddb7"): 4, sym("wddbb"): 4, sym("wddc3"): 4, sym("wMusicVibratoType"): 4, sym("wdddb"): 4,
+              sym("wdde3"): 4, sym("wdded"): 2, sym("wddef"): 1}
 CONTRACT["Music1_PlayNextNote"] = {"compare": (), "preserve": ()}
 CASES["Music1_PlayNextNote"] = [
     # $D0 speed
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xD0\x2A\xFF", 0xDDCF: b"\x00\x00\x00\x00"},
-     "read": {0xDDCF: 4, 0xDD8D: 4}},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xD0\x2A\xFF", sym("wMusicSpeed"): b"\x00\x00\x00\x00"},
+     "read": {sym("wMusicSpeed"): 4, sym("wMusicIsPlaying"): 4}},
     # $D3 octave: (cmd & 7) - 1
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xD3\xFF", 0xDDAF: b"\x00\x00\x00\x00"},
-     "read": {0xDDAF: 4, 0xDD8D: 4}},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xD3\xFF", sym("wMusicOctave"): b"\x00\x00\x00\x00"},
+     "read": {sym("wMusicOctave"): 4, sym("wMusicIsPlaying"): 4}},
     # $D3 octave on channel 2, which gets the decrement back
-    {"c": 2, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xD3\xFF", 0xDDAF: b"\x00\x00\x00\x00"},
-     "read": {0xDDAF: 4, 0xDD8D: 4}},
+    {"c": 2, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xD3\xFF", sym("wMusicOctave"): b"\x00\x00\x00\x00"},
+     "read": {sym("wMusicOctave"): 4, sym("wMusicIsPlaying"): 4}},
     # $D7 inc_octave
-    {"c": 1, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xD7\xFF", 0xDDAF: b"\x05\x05\x05\x05"},
-     "read": {0xDDAF: 4, 0xDD8D: 4}},
+    {"c": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xD7\xFF", sym("wMusicOctave"): b"\x05\x05\x05\x05"},
+     "read": {sym("wMusicOctave"): 4, sym("wMusicIsPlaying"): 4}},
     # $D8 dec_octave
-    {"c": 1, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xD8\xFF", 0xDDAF: b"\x05\x05\x05\x05"},
-     "read": {0xDDAF: 4, 0xDD8D: 4}},
+    {"c": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xD8\xFF", sym("wMusicOctave"): b"\x05\x05\x05\x05"},
+     "read": {sym("wMusicOctave"): 4, sym("wMusicIsPlaying"): 4}},
     # $D9 tie
-    {"c": 3, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xD9\xFF", 0xDD91: b"\x00\x00\x00\x00"},
-     "read": {0xDD91: 4, 0xDD8D: 4}},
+    {"c": 3, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xD9\xFF", sym("wMusicTie"): b"\x00\x00\x00\x00"},
+     "read": {sym("wMusicTie"): 4, sym("wMusicIsPlaying"): 4}},
     # $DA end
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xDA", 0xDDAF: b"\x07\x07\x07\x07"},
-     "read": {0xDD8D: 4, 0xDDAF: 4}},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xDA", sym("wMusicOctave"): b"\x07\x07\x07\x07"},
+     "read": {sym("wMusicIsPlaying"): 4, sym("wMusicOctave"): 4}},
     # $DC stereo_panning, rotated once for channel 1
-    {"c": 1, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xDC\x35\xFF", 0xDD84: b"\x00"},
-     "read": {0xDD84: 1, 0xDD8D: 4}},
+    {"c": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xDC\x35\xFF", sym("wMusicStereoPanning"): b"\x00"},
+     "read": {sym("wMusicStereoPanning"): 1, sym("wMusicIsPlaying"): 4}},
     # $DD MainLoop records the byte before the continuation
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xDD\xFF",
-                                0xDD9D: b"\x00\x00\x00\x00\x00\x00\x00\x00"},
-     "read": {0xDD9D: 8, 0xDD8D: 4}},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xDD\xFF",
+                                sym("wMusicMainLoopStart"): b"\x00\x00\x00\x00\x00\x00\x00\x00"},
+     "read": {sym("wMusicMainLoopStart"): 8, sym("wMusicIsPlaying"): 4}},
     # every one-operand writer in a single stream
-    {"c": 2, "hl": 0xC100,
+    {"c": 2, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
      "wram": {**_PNN_IDLE, 
-         0xC100: b"\xE4\x11\xE5\xC3\xE6\x5A\xE7\x77\xE8\x33\xE9\x22"
+         sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xE4\x11\xE5\xC3\xE6\x5A\xE7\x77\xE8\x33\xE9\x22"
                  b"\xEA\x44\xEB\x66\xEC\x88\xED\x02\xFF"},
-     "read": {0xDD86: 4, 0xDD8A: 1, 0xDD8B: 1, 0xDD8D: 4, 0xDDBF: 4,
-              0xDDC7: 4, 0xDDCB: 4, 0xDDD3: 4, 0xDDD7: 4, 0xDDDF: 4,
-              0xDDE7: 4, 0xDDEA: 4}},
-    dict(POISON, b=0, c=1, hl=0xC100,
-         wram={**_PNN_IDLE, 0xC100: b"\xD0\x2A\xE6\x5A\xFF",
-                                 0xDDCF: b"\xFF\xFF\xFF\xFF",
-                                 0xDDE7: b"\xFF\xFF\xFF\xFF"},
-         read={0xDDCF: 4, 0xDDE7: 4, 0xDD8D: 4}),
+     "read": {sym("wMusicDuty1"): 4, sym("wMusicWave"): 1, sym("wMusicWaveChange"): 1, sym("wMusicIsPlaying"): 4, sym("wMusicCutoff"): 4,
+              sym("wMusicEcho"): 4, sym("wMusicPitchOffset"): 4, sym("wMusicVibratoType"): 4, sym("wMusicVibratoType2"): 4, sym("wMusicVibratoDelay"): 4,
+              sym("wMusicVolume"): 4, sym("wMusicFrequencyOffset"): 4}},
+    dict(POISON, b=0, c=1, hl=sym("wDecompressionSecondaryBufferStart") + 0x11,
+         wram={**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xD0\x2A\xE6\x5A\xFF",
+                                 sym("wMusicSpeed"): b"\xFF\xFF\xFF\xFF",
+                                 sym("wMusicVolume"): b"\xFF\xFF\xFF\xFF"},
+         read={sym("wMusicSpeed"): 4, sym("wMusicVolume"): 4, sym("wMusicIsPlaying"): 4}),
     # instrument 0 takes neither lookup but still stores the stream pointer
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x05\x40"},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x05\x40"},
      "read": _NOTE_READ},
     # pitch lookup with a non-zero octave and pitch offset
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
-              0xDDAF: b"\x02\x02\x02\x02", 0xDDCB: b"\x01\x01\x01\x01"},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x35\x40",
+              sym("wMusicOctave"): b"\x02\x02\x02\x02", sym("wMusicPitchOffset"): b"\x01\x01\x01\x01"},
      "read": _NOTE_READ},
     # operand $D9 skips the cutoff scaling, so cutoff 2 must not be applied
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\xD9",
-              0xDDBF: b"\x02\x02\x02\x02"},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x35\xD9",
+              sym("wMusicCutoff"): b"\x02\x02\x02\x02"},
      "read": _NOTE_READ},
     # cutoff 0 is not a skip: the counter wraps to 256 additions
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
-              0xDDBF: b"\x00\x00\x00\x00"},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x35\x40",
+              sym("wMusicCutoff"): b"\x00\x00\x00\x00"},
      "read": _NOTE_READ},
     # cutoff above 8 also scales
-    {"c": 1, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
-              0xDDBF: b"\x09\x09\x09\x09", 0xDDAF: b"\x01\x01\x01\x01"},
+    {"c": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x35\x40",
+              sym("wMusicCutoff"): b"\x09\x09\x09\x09", sym("wMusicOctave"): b"\x01\x01\x01\x01"},
      "read": _NOTE_READ},
     # channel 3 takes the noise-instrument table
-    {"c": 3, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
-              0xDDAF: b"\x01\x01\x01\x01", 0xDD84: b"\x00"},
+    {"c": 3, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x35\x40",
+              sym("wMusicOctave"): b"\x01\x01\x01\x01", sym("wMusicStereoPanning"): b"\x00"},
      "read": _NOTE_READ},
     # a tie already latched at $80 skips the vibrato/flag reset
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
-              0xDD91: b"\x80\x80\x80\x80"},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x35\x40",
+              sym("wMusicTie"): b"\x80\x80\x80\x80"},
      "read": _NOTE_READ},
     # a negative frequency offset subtracts ~fo rather than negating it
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
-              0xDDEA: b"\x80\x80\x80\x80"},
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x35\x40",
+              sym("wMusicFrequencyOffset"): b"\x80\x80\x80\x80"},
      "read": _NOTE_READ},
-    dict(POISON, b=0, c=2, hl=0xC100,
-         wram={**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x7A\x40",
-               0xDDAF: b"\x03\x03\x03\x03"},
+    dict(POISON, b=0, c=2, hl=sym("wDecompressionSecondaryBufferStart") + 0x11,
+         wram={**_PNN_IDLE, **_NOTE_SEED, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x7A\x40",
+               sym("wMusicOctave"): b"\x03\x03\x03\x03"},
          read=_NOTE_READ),
     # $E2 call pushes the raw operand address, not operand+2
     # (music1.asm:976-992: the popped stream pointer is stored unmodified,
     # before it is used to read the 2-byte target).
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xE2\x00\xC2", 0xC200: b"\xFF",
-              0xDDF3: b"\x00\xC3"},
-     "read": {0xC300: 2}},
-    dict(POISON, b=0, c=1, hl=0xC110,
-         wram={**_PNN_IDLE, 0xC110: b"\xE2\x00\xC2", 0xC200: b"\xFF",
-               0xDDF5: b"\x00\xC3"},
-         read={0xC300: 2}),
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xE2\x00\xC2", sym("wPlayerCardLocations"): b"\xFF",
+              sym("wMusicChannelStackPointers"): b"\x00\xC3"},
+     "read": {sym("wOpponentCardLocations"): 2}},
+    dict(POISON, b=0, c=1, hl=sym("wDecompressionSecondaryBufferStart") + 0x21,
+         wram={**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x21: b"\xE2\x00\xC2", sym("wPlayerCardLocations"): b"\xFF",
+               sym("wMusicChannelStackPointers") + 2: b"\x00\xC3"},
+         read={sym("wOpponentCardLocations"): 2}),
     # $E3 ret resumes at the popped stack value + 2, not the raw value
     # (music1.asm:994-1005 `inc de` twice after the pop): landing on $DA
     # (end) at the +2 target rather than $D7 (inc_octave) at the raw one.
-    {"c": 0, "hl": 0xC100,
-     "wram": {**_PNN_IDLE, 0xC100: b"\xE3", 0xDDAF: b"\x05\x05\x05\x05",
-              0xDDF3: b"\x00\xC3", 0xC2FE: b"\x50\xC1",
-              0xC150: b"\xD7\xFF", 0xC152: b"\xDA"}},
-    dict(POISON, b=0, c=1, hl=0xC100,
-         wram={**_PNN_IDLE, 0xC100: b"\xE3", 0xDDAF: b"\x05\x05\x05\x05",
-               0xDDF5: b"\x00\xC3", 0xC2FE: b"\x50\xC1",
-               0xC150: b"\xD7\xFF", 0xC152: b"\xDA"}),
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xE3", sym("wMusicOctave"): b"\x05\x05\x05\x05",
+              sym("wMusicChannelStackPointers"): b"\x00\xC3", sym("wPlayerArenaCardLastTurnEffect") + 6: b"\x50\xC1",
+              sym("wDecompressionSecondaryBufferStart") + 0x61: b"\xD7\xFF", sym("wDecompressionSecondaryBufferStart") + 0x63: b"\xDA"}},
+    dict(POISON, b=0, c=1, hl=sym("wDecompressionSecondaryBufferStart") + 0x11,
+         wram={**_PNN_IDLE, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xE3", sym("wMusicOctave"): b"\x05\x05\x05\x05",
+               sym("wMusicChannelStackPointers") + 2: b"\x00\xC3", sym("wPlayerArenaCardLastTurnEffect") + 6: b"\x50\xC1",
+               sym("wDecompressionSecondaryBufferStart") + 0x61: b"\xD7\xFF", sym("wDecompressionSecondaryBufferStart") + 0x63: b"\xDA"}),
 ]
 # <<< factory Music1_PlayNextNote
 
@@ -1213,34 +1214,34 @@ CASES["Music1_PlayNextNote"] = [
 # stores to wMusicChannelPointers.
 CONTRACT["Music1_note"] = {"compare": (), "preserve": ()}
 CASES["Music1_note"] = [
-    {"a": 0x05, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x0500],
-     "wram": {**_NOTE_SEED, 0xC200: b"\x40"}, "read": _NOTE_READ},
-    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
-     "wram": {**_NOTE_SEED, 0xC200: b"\x40",
-              0xDDAF: b"\x02\x02\x02\x02", 0xDDCB: b"\x01\x01\x01\x01"},
+    {"a": 0x05, "b": 0, "c": 0, "hl": sym("wPlayerCardLocations"), "stack": [sym("wPlayerCardLocations"), 0x0500],
+     "wram": {**_NOTE_SEED, sym("wPlayerCardLocations"): b"\x40"}, "read": _NOTE_READ},
+    {"a": 0x35, "b": 0, "c": 0, "hl": sym("wPlayerCardLocations"), "stack": [sym("wPlayerCardLocations"), 0x3500],
+     "wram": {**_NOTE_SEED, sym("wPlayerCardLocations"): b"\x40",
+              sym("wMusicOctave"): b"\x02\x02\x02\x02", sym("wMusicPitchOffset"): b"\x01\x01\x01\x01"},
      "read": _NOTE_READ},
-    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
-     "wram": {**_NOTE_SEED, 0xC200: b"\xD9", 0xDDBF: b"\x02\x02\x02\x02"},
+    {"a": 0x35, "b": 0, "c": 0, "hl": sym("wPlayerCardLocations"), "stack": [sym("wPlayerCardLocations"), 0x3500],
+     "wram": {**_NOTE_SEED, sym("wPlayerCardLocations"): b"\xD9", sym("wMusicCutoff"): b"\x02\x02\x02\x02"},
      "read": _NOTE_READ},
-    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
-     "wram": {**_NOTE_SEED, 0xC200: b"\x40", 0xDDBF: b"\x00\x00\x00\x00"},
+    {"a": 0x35, "b": 0, "c": 0, "hl": sym("wPlayerCardLocations"), "stack": [sym("wPlayerCardLocations"), 0x3500],
+     "wram": {**_NOTE_SEED, sym("wPlayerCardLocations"): b"\x40", sym("wMusicCutoff"): b"\x00\x00\x00\x00"},
      "read": _NOTE_READ},
-    {"a": 0x35, "b": 0, "c": 1, "hl": 0xC200, "stack": [0xC200, 0x3500],
-     "wram": {**_NOTE_SEED, 0xC200: b"\x40", 0xDDBF: b"\x09\x09\x09\x09",
-              0xDDAF: b"\x01\x01\x01\x01"},
+    {"a": 0x35, "b": 0, "c": 1, "hl": sym("wPlayerCardLocations"), "stack": [sym("wPlayerCardLocations"), 0x3500],
+     "wram": {**_NOTE_SEED, sym("wPlayerCardLocations"): b"\x40", sym("wMusicCutoff"): b"\x09\x09\x09\x09",
+              sym("wMusicOctave"): b"\x01\x01\x01\x01"},
      "read": _NOTE_READ},
-    {"a": 0x35, "b": 0, "c": 3, "hl": 0xC200, "stack": [0xC200, 0x3500],
-     "wram": {**_NOTE_SEED, 0xC200: b"\x40",
-              0xDDAF: b"\x01\x01\x01\x01", 0xDD84: b"\x00"},
+    {"a": 0x35, "b": 0, "c": 3, "hl": sym("wPlayerCardLocations"), "stack": [sym("wPlayerCardLocations"), 0x3500],
+     "wram": {**_NOTE_SEED, sym("wPlayerCardLocations"): b"\x40",
+              sym("wMusicOctave"): b"\x01\x01\x01\x01", sym("wMusicStereoPanning"): b"\x00"},
      "read": _NOTE_READ},
-    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
-     "wram": {**_NOTE_SEED, 0xC200: b"\x40", 0xDD91: b"\x80\x80\x80\x80"},
+    {"a": 0x35, "b": 0, "c": 0, "hl": sym("wPlayerCardLocations"), "stack": [sym("wPlayerCardLocations"), 0x3500],
+     "wram": {**_NOTE_SEED, sym("wPlayerCardLocations"): b"\x40", sym("wMusicTie"): b"\x80\x80\x80\x80"},
      "read": _NOTE_READ},
-    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
-     "wram": {**_NOTE_SEED, 0xC200: b"\x40", 0xDDEA: b"\x80\x80\x80\x80"},
+    {"a": 0x35, "b": 0, "c": 0, "hl": sym("wPlayerCardLocations"), "stack": [sym("wPlayerCardLocations"), 0x3500],
+     "wram": {**_NOTE_SEED, sym("wPlayerCardLocations"): b"\x40", sym("wMusicFrequencyOffset"): b"\x80\x80\x80\x80"},
      "read": _NOTE_READ},
-    dict(POISON, a=0x7A, b=0, c=2, hl=0xC200, stack=[0xC200, 0x7A00],
-         wram={**_NOTE_SEED, 0xC200: b"\x40", 0xDDAF: b"\x03\x03\x03\x03"},
+    dict(POISON, a=0x7A, b=0, c=2, hl=sym("wPlayerCardLocations"), stack=[sym("wPlayerCardLocations"), 0x7A00],
+         wram={**_NOTE_SEED, sym("wPlayerCardLocations"): b"\x40", sym("wMusicOctave"): b"\x03\x03\x03\x03"},
          read=_NOTE_READ),
 ]
 # <<< factory Music1_note
@@ -1248,18 +1249,18 @@ CASES["Music1_note"] = [
 # >>> factory Music1_PlayNextNote_pop
 CONTRACT["Music1_PlayNextNote_pop"] = {"compare": (), "preserve": ()}
 CASES["Music1_PlayNextNote_pop"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xC100: b"\xD0\x2A\xFF", 0xDD8D: b"\x01\x01\x01\x01",
-              0xDDCF: b"\x00\x00\x00\x00"},
-     "read": {0xDDCF: 4, 0xDD8D: 4}},
-    {"c": 1, "stack": [0xC200],
-     "wram": {0xC200: b"\xD0\x35\xFF", 0xDD8D: b"\x01\x01\x01\x01",
-              0xDDCF: b"\x00\x00\x00\x00"},
-     "read": {0xDDCF: 4, 0xDD8D: 4}},
-    dict(POISON, b=0, c=0, stack=[0xC300],
-         wram={0xC300: b"\xD0\x2A\xFF", 0xDD8D: b"\x01\x01\x01\x01",
-               0xDDCF: b"\xFF\xFF\xFF\xFF"},
-         read={0xDDCF: 4, 0xDD8D: 4}),
+    {"c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xD0\x2A\xFF", sym("wMusicIsPlaying"): b"\x01\x01\x01\x01",
+              sym("wMusicSpeed"): b"\x00\x00\x00\x00"},
+     "read": {sym("wMusicSpeed"): 4, sym("wMusicIsPlaying"): 4}},
+    {"c": 1, "stack": [sym("wPlayerCardLocations")],
+     "wram": {sym("wPlayerCardLocations"): b"\xD0\x35\xFF", sym("wMusicIsPlaying"): b"\x01\x01\x01\x01",
+              sym("wMusicSpeed"): b"\x00\x00\x00\x00"},
+     "read": {sym("wMusicSpeed"): 4, sym("wMusicIsPlaying"): 4}},
+    dict(POISON, b=0, c=0, stack=[sym("wOpponentCardLocations")],
+         wram={sym("wOpponentCardLocations"): b"\xD0\x2A\xFF", sym("wMusicIsPlaying"): b"\x01\x01\x01\x01",
+               sym("wMusicSpeed"): b"\xFF\xFF\xFF\xFF"},
+         read={sym("wMusicSpeed"): 4, sym("wMusicIsPlaying"): 4}),
 ]
 # <<< factory Music1_PlayNextNote_pop
 
@@ -1392,51 +1393,51 @@ MUTATIONS["Music1_UpdateVibrato"] = {"source_symbol": "Music1_UpdateVibrato", "b
 MUTATIONS["Music1_f479c"] = {"source_symbol": "Music1_f479c", "before": "\t\t\twMusicTie_PTR[0] = 0;\n\t\t\tgb_write8(APU_AUD3ENA, 0);", "after": "\t\t\twMusicTie_PTR[2] = 0;\n\t\t\tgb_write8(APU_AUD3ENA, 0);", "case_ids": ["Music1_f479c-1"]}
 MUTATIONS["Music1_CheckForNewSound"] = {"source_symbol": "Music1_CheckForNewSound", "before": "\t\twCurSongID = (uint8_t)(wCurSongID | 0x80u);", "after": "\t\twCurSongID = (uint8_t)(wCurSongID | 0x40u);", "case_ids": ["Music1_CheckForNewSound-1"]}
 for _rec in SCHEMA2_CASES["Music1_BackupSong"]:
-    _rec.setdefault("bus", {}).update({0xDE55: 1, 0xDE56: 1, 0xDE57: 1, 0xDE5C: 1, 0xDE5D: 1, 0xDE76: 1, 0xDE77: 1, 0xDEAC: 1})
+    _rec.setdefault("bus", {}).update({sym("wCurSongIDBackup"): 1, sym("wCurSongBankBackup"): 1, sym("wMusicStereoPanningBackup"): 1, sym("wMusicWaveBackup"): 1, sym("wMusicWaveChangeBackup"): 1, sym("wde76"): 1, sym("wde77"): 1, sym("wdeac"): 1})
 for _rec in SCHEMA2_CASES["Music1_LoadBackup"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 1, 0xDD81: 1, 0xDD84: 1, 0xDD8A: 1, 0xDD8B: 1, 0xDDAB: 1, 0xDDAC: 1, 0xDDEF: 1})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 1, sym("wCurSongBank"): 1, sym("wMusicStereoPanning"): 1, sym("wMusicWave"): 1, sym("wMusicWaveChange"): 1, sym("wddab"): 1, sym("wddac"): 1, sym("wddef"): 1})
 for _rec in SCHEMA2_CASES["Music1_f404e"]:
-    _rec.setdefault("bus", {}).update({0xDDF0: 1})
+    _rec.setdefault("bus", {}).update({sym("wddf0"): 1})
 for _rec in SCHEMA2_CASES["Music1_f4066"]:
-    _rec.setdefault("bus", {}).update({0xDDF2: 1})
+    _rec.setdefault("bus", {}).update({sym("wddf2"): 1})
 for _rec in SCHEMA2_CASES["Music1_f480a"]:
-    _rec.setdefault("bus", {}).update({0xDDEF: 1})
+    _rec.setdefault("bus", {}).update({sym("wddef"): 1})
 for _rec in SCHEMA2_CASES["Music1_f485a"]:
-    _rec.setdefault("bus", {}).update({0xDDDF: 1, 0xDDE0: 1, 0xDDE1: 1})
+    _rec.setdefault("bus", {}).update({sym("wMusicVibratoDelay"): 1, sym("wMusicVibratoDelay") + 1: 1, sym("wMusicVibratoDelay") + 2: 1})
 for _rec in SCHEMA2_CASES["Music1_f490b"]:
-    _rec.setdefault("bus", {}).update({0xDDDF: 1, 0xDDE0: 1, 0xDDE1: 1})
+    _rec.setdefault("bus", {}).update({sym("wMusicVibratoDelay"): 1, sym("wMusicVibratoDelay") + 1: 1, sym("wMusicVibratoDelay") + 2: 1})
 for _rec in SCHEMA2_CASES["Music1_BackupSong"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_EmptyFunc"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_LoadBackup"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_UpdateChannel1"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_UpdateChannel2"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_UpdateChannel3"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_UpdateChannel4"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_f404e"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_f4066"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_f4714"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_f475a"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_f480a"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_f485a"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_f4866"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_f490b"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["Music1_f4980"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 MUTATIONS["Music1_AssertSFXFinished"] = {
     "source_symbol": "Music1_AssertSFXFinished",
     "before": "\treturn (wCurSfxID != 0x80) ? 1 : 0;",
@@ -1588,7 +1589,7 @@ MUTATIONS["Music1_f4066"] = {
     "case_ids": ["Music1_f4066-0"],
 }
 for _rec in SCHEMA2_CASES["Music1_BackupSong"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Music1_BackupSong"] = {
     "source_symbol": "Music1_BackupSong",
     "before": "void Music1_BackupSong(void)\n{",
@@ -1596,7 +1597,7 @@ MUTATIONS["Music1_BackupSong"] = {
     "case_ids": ["Music1_BackupSong-0"],
 }
 for _rec in SCHEMA2_CASES["Music1_LoadBackup"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Music1_LoadBackup"] = {
     "source_symbol": "Music1_LoadBackup",
     "before": "void Music1_LoadBackup(void)\n{",
@@ -1604,7 +1605,7 @@ MUTATIONS["Music1_LoadBackup"] = {
     "case_ids": ["Music1_LoadBackup-0"],
 }
 for _rec in SCHEMA2_CASES["Music1_f480a"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Music1_f480a"] = {
     "source_symbol": "Music1_f480a",
     "before": "void Music1_f480a(void)\n{",
@@ -1612,7 +1613,7 @@ MUTATIONS["Music1_f480a"] = {
     "case_ids": ["Music1_f480a-0"],
 }
 for _rec in SCHEMA2_CASES["Music1_f485a"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Music1_f485a"] = {
     "source_symbol": "Music1_f485a",
     "before": "void Music1_f485a(uint8_t ch)\n{",
@@ -1620,7 +1621,7 @@ MUTATIONS["Music1_f485a"] = {
     "case_ids": ["Music1_f485a-0"],
 }
 for _rec in SCHEMA2_CASES["Music1_f4866"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Music1_f4866"] = {
     "source_symbol": "Music1_f4866",
     "before": "void Music1_f4866(void)\n{",
@@ -1628,7 +1629,7 @@ MUTATIONS["Music1_f4866"] = {
     "case_ids": ["Music1_f4866-0"],
 }
 for _rec in SCHEMA2_CASES["Music1_f490b"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Music1_f490b"] = {
     "source_symbol": "Music1_f490b",
     "before": "void Music1_f490b(uint8_t ch, uint16_t de)\n{",
@@ -1636,7 +1637,7 @@ MUTATIONS["Music1_f490b"] = {
     "case_ids": ["Music1_f490b-0"],
 }
 for _rec in SCHEMA2_CASES["Music1_f4980"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Music1_f4980"] = {
     "source_symbol": "Music1_f4980",
     "before": "void Music1_f4980(void)\n{",
@@ -1644,7 +1645,7 @@ MUTATIONS["Music1_f4980"] = {
     "case_ids": ["Music1_f4980-0"],
 }
 for _rec in SCHEMA2_CASES["Music1_EmptyFunc"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Music1_EmptyFunc"] = {
     "source_symbol": "Music1_EmptyFunc",
     "before": "void Music1_EmptyFunc(void)          { g_rom_bank = MUSIC1_BANK; }",

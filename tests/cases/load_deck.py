@@ -1,13 +1,14 @@
 """Oracle-diff cases for poketcg/src/home/load_deck.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
+hWhoseTurn = sym("hWhoseTurn")
 PLAYER_TURN = 0xC2
 OPPONENT_TURN = 0xC3
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC480
-wDeckName = 0xCCE9
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wOpponentDeck")
+wDeckName = sym("wDeckName")
 
 CONTRACT = {
     "LoadDeck": {"compare": ("f", "hl"), "preserve": ("hl",)},

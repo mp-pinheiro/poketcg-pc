@@ -60,13 +60,13 @@ MUTATIONS = {
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(LightningClubLobbyAfterDuelTable + 1u));',
         'case_ids': ['LightningClubLobbyAfterDuel-0'],
-        'source': 'src/profiles/extended/home/lightning_club_lobby.c'},
+        'source': 'src/home/lightning_club_lobby.c'},
     'Preload_ImakuniInLightningClubLobby': {   'source_symbol': 'Preload_ImakuniInLightningClubLobby',
         'before': '\tif (room != IMAKUNI_LIGHTNING_CLUB)',
         'after': '\tif (room == IMAKUNI_LIGHTNING_CLUB)',
         'case_ids': [   'Preload_ImakuniInLightningClubLobby-0',
                         'Preload_ImakuniInLightningClubLobby-1'],
-        'source': 'src/profiles/extended/home/lightning_club_lobby.c'},
+        'source': 'src/home/lightning_club_lobby.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

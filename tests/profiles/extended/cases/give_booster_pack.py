@@ -62,13 +62,13 @@ MUTATIONS = {
         'before': 'void _PauseMenu_Exit(void)\n{\n}',
         'after': 'void _PauseMenu_Exit(void)\n{\n\tgb_write8(0xC000, 0x01);\n}',
         'case_ids': ['_PauseMenu_Exit-0', '_PauseMenu_Exit-1'],
-        'source': 'src/profiles/extended/home/give_booster_pack.c'},
+        'source': 'src/home/give_booster_pack.c'},
     'GiveBoosterPack': {   'source_symbol': 'GiveBoosterPack',
         'before': '\twTxRam3 = scene;\n\tgb_write8((uint16_t)(wTxRam3_ADDR + 1u), 0u);',
         'after': '\twTxRam3 = (uint8_t)(scene + 1u);\n'
                  '\tgb_write8((uint16_t)(wTxRam3_ADDR + 1u), 0u);',
         'case_ids': ['GiveBoosterPack-0', 'GiveBoosterPack-1', 'GiveBoosterPack-3'],
-        'source': 'src/profiles/extended/home/give_booster_pack.c'},
+        'source': 'src/home/give_booster_pack.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

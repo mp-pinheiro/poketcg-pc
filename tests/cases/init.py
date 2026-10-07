@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/duel/ai/init.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,7 +8,7 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-WAIDUELVARS_START = 0xCDA5
+WAIDUELVARS_START = sym("wAIDuelVars")
 WAIDUELVARS_SIZE = 0x10
 # <<< factory-cases-statics
 
@@ -25,12 +26,12 @@ CASES["InitAITurnVars"] = [
     {
         "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
         "wram": {
-            0xCDA6: b"\x05", 0xCE20: b"\xAA", 0xCDDB: b"\xBB", 0xCDDC: b"\xCC",
-            0xCE03: b"\xDD", 0xCC10: b"\xFF", 0xCC11: b"\x00", 0xCDA7: b"\x05",
+            sym("wAIPokedexCounter"): b"\x05", sym("wPreviousAIFlags"): b"\xAA", sym("wAITriedAttack"): b"\xBB", sym("wUnused_cddc"): b"\xCC",
+            sym("wAIRetreatedThisTurn"): b"\xDD", sym("wPlayerAttackingAttackIndex"): b"\xFF", sym("wPlayerAttackingCardIndex"): b"\x00", sym("wAIBarrierFlagCounter"): b"\x05",
         },
         "expect": {
-            0xCDA6: b"\x06", 0xCE20: b"\x00", 0xCDDB: b"\x00", 0xCDDC: b"\x00",
-            0xCE03: b"\x00", 0xCDA7: b"\x00",
+            sym("wAIPokedexCounter"): b"\x06", sym("wPreviousAIFlags"): b"\x00", sym("wAITriedAttack"): b"\x00", sym("wUnused_cddc"): b"\x00",
+            sym("wAIRetreatedThisTurn"): b"\x00", sym("wAIBarrierFlagCounter"): b"\x00",
         },
     },
 ]

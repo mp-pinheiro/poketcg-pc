@@ -1,3 +1,4 @@
+from tests.cases._symbols import sym, sym_bank
 from tests.cases._duel_setup import (
     DUEL_CYCLE_BUDGET, DUEL_ENTRY_SP, DUEL_INSTRUCTION_BUDGET, DUEL_KEYS,
     DUEL_SETUP, DUEL_WRAM)
@@ -6,22 +7,22 @@ AI01_PLAY_DEFAULT = Fixture("ai-duel-01-playdefaultsong-entry")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-W_PERMISSION_MAP = 0xD133
+W_PERMISSION_MAP = sym("wBoosterViableCardList")
 PERMISSIONS = bytes((i * 3 + 7) & 0xFF for i in range(256))
 READ_MAP = {W_PERMISSION_MAP: 256}
-NPC_BASE = 0xD34A
+NPC_BASE = sym("wLoadedNPC1ID")
 NPC_DATA = bytes((i * 5 + 1) & 0xFF for i in range(96))
 NPC_READ = {NPC_BASE: 96}
 
-hBankROM = 0xFF80
-wLoadedNPCTempIndex = 0xD3AA
-wTempNPC = 0xD3AB
-wTempPointerBank = 0xD4C6
-wRonaldIsInMap = 0xD3B8
-wOverworldMapSelection = 0xD32E
-wDefaultSong = 0xD111
-wSongOverride = 0xD112
-wCurSongID = 0xDD80
+hBankROM = sym("hBankROM")
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wTempNPC = sym("wTempNPC")
+wTempPointerBank = sym("wTempPointerBank")
+wRonaldIsInMap = sym("wRonaldIsInMap")
+wOverworldMapSelection = sym("wOverworldMapSelection")
+wDefaultSong = sym("wDefaultSong")
+wSongOverride = sym("wSongOverride")
+wCurSongID = sym("wCurSongID")
 NUM_SONGS = 0x1F
 OWMAP_ISHIHARAS_HOUSE = 0x02
 OWMAP_CHALLENGE_HALL = 0x0B
@@ -36,8 +37,8 @@ def npc_table(ids):
     return bytes(entries)
 
 
-CG_SRC = 0xC100
-CG_DST = 0xC500
+CG_SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
+CG_DST = sym("wNameBuffer")
 CG_PAT = bytes((i * 11 + 5) & 0xFF for i in range(300))
 
 CONTRACT = {
@@ -131,7 +132,7 @@ CASES = {
     "GetNextNPCMovementByte": [
         {"b": 0, "c": 0, "read": {hBankROM: 1}},
         dict(POISON, b=0xC1, c=0x00,
-             wram={hBankROM: b"\x09", 0xC100: b"\x42"}, read={hBankROM: 1}),
+             wram={hBankROM: b"\x09", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x42"}, read={hBankROM: 1}),
         # Real bank switch: bc=$4000 is read under bank 3's ROM image.
         {"b": 0x40, "c": 0x00, "wram": {hBankROM: b"\x05"}, "read": {hBankROM: 1}},
     ],
@@ -163,14 +164,14 @@ CASES = {
 }
 # >>> factory HandleMapWarp
 
-wWarpCurMap = 0xD32F
-wWarpPlayerXCoord = 0xD330
-wWarpPlayerYCoord = 0xD331
-wWarpPlayerDirection = 0xD334
-wWarpTempMap = 0xD0BB
-wWarpTempPlayerXCoord = 0xD0BC
-wWarpTempPlayerYCoord = 0xD0BD
-wWarpTempPlayerDirection = 0xD0BE
+wWarpCurMap = sym("wCurMap")
+wWarpPlayerXCoord = sym("wPlayerXCoord")
+wWarpPlayerYCoord = sym("wPlayerYCoord")
+wWarpPlayerDirection = sym("wPlayerDirection")
+wWarpTempMap = sym("wTempMap")
+wWarpTempPlayerXCoord = sym("wTempPlayerXCoord")
+wWarpTempPlayerYCoord = sym("wTempPlayerYCoord")
+wWarpTempPlayerDirection = sym("wTempPlayerDirection")
 WARP_READ = {wWarpTempMap: 1, wWarpTempPlayerXCoord: 1, wWarpTempPlayerYCoord: 1,
              wWarpTempPlayerDirection: 1}
 
@@ -191,34 +192,34 @@ CASES["HandleMapWarp"] = [
 # <<< factory HandleMapWarp
 
 # >>> factory-cases-statics
-sReceivedLegendaryCards = 0xA00A
+sReceivedLegendaryCards = sym("sReceivedLegendaryCards")
 
-wOverworldNPCFlags = 0xD0C1
-hBankROM = 0xFF80
-wSCXBuffer = 0xD235
-wSCYBuffer = 0xD236
-wSCX = 0xD0B6
-wSCY = 0xD0B7
-
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
-          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-sPlayerInChallengeMachine = 0xBA44
-wDefaultSong = 0xD111
-wRonaldIsInMap = 0xD3B8
-wCurSongID = 0xDD80
-
-wActiveGameEvent = 0xD0C2
-wDuelResult = 0xD0C3
-wDuelTheme = 0xCC1A
-wSongOverride = 0xD112
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+hBankROM = sym("hBankROM")
+wSCXBuffer = sym("wSCXBuffer")
+wSCYBuffer = sym("wSCYBuffer")
+wSCX = sym("wSCX")
+wSCY = sym("wSCY")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-sCurrentDuel = 0xBC00
-sPlayerInChallengeMachine = 0xBA44
-wSongOverride = 0xD112
+sPlayerInChallengeMachine = sym("sPlayerInChallengeMachine")
+wDefaultSong = sym("wDefaultSong")
+wRonaldIsInMap = sym("wRonaldIsInMap")
+wCurSongID = sym("wCurSongID")
 
-wGameEvent = 0xD0B5
+wActiveGameEvent = sym("wActiveGameEvent")
+wDuelResult = sym("wDuelResult")
+wDuelTheme = sym("wDuelTheme")
+wSongOverride = sym("wSongOverride")
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+sCurrentDuel = sym("sCurrentDuel")
+sPlayerInChallengeMachine = sym("sPlayerInChallengeMachine")
+wSongOverride = sym("wSongOverride")
+
+wGameEvent = sym("wGameEvent")
 # <<< factory-cases-statics
 
 # >>> factory GetReceivedLegendaryCards
@@ -244,19 +245,19 @@ CASES["OverworldDoFrameFunction"] = [
 CONTRACT["GameEvent_Duel"] = {"compare": (), "preserve": ()}
 CASES["GameEvent_Duel"] = [
     {"keys": list(DUEL_KEYS), "entry_sp": DUEL_ENTRY_SP,
-     "wram": {**DUEL_WRAM, 0xCC19: b"\x01", 0xD0C2: b"\x00", 0xD112: b"\xAA"},
+     "wram": {**DUEL_WRAM, sym("wNPCDuelDeckID"): b"\x01", sym("wActiveGameEvent"): b"\x00", sym("wSongOverride"): b"\xAA"},
      "setup": DUEL_SETUP,
-     "sram": {0: {0xBA44: b"\xAA", 0xB700: b"\x00", 0xA218: b"\x08" * 60}},
-     "read": {0xD0C2: 1, 0xD112: 1},
-     "sread": {0: {0xBA44: 1}},
+     "sram": {0: {sym("sChallengeMachineStart"): b"\xAA", sym("sCurrentlySelectedDeck"): b"\x00", sym("sDeck1Cards"): b"\x08" * 60}},
+     "read": {sym("wActiveGameEvent"): 1, sym("wSongOverride"): 1},
+     "sread": {0: {sym("sChallengeMachineStart"): 1}},
      "instruction_budget": DUEL_INSTRUCTION_BUDGET,
      "cycle_budget": DUEL_CYCLE_BUDGET},
     dict(POISON, keys=list(DUEL_KEYS), entry_sp=DUEL_ENTRY_SP,
-         wram={**DUEL_WRAM, 0xCC19: b"\x01", 0xD0C2: b"\x00", 0xD112: b"\xAA"},
+         wram={**DUEL_WRAM, sym("wNPCDuelDeckID"): b"\x01", sym("wActiveGameEvent"): b"\x00", sym("wSongOverride"): b"\xAA"},
          setup=DUEL_SETUP,
-         sram={0: {0xBA44: b"\xAA", 0xB700: b"\x00", 0xA218: b"\x08" * 60}},
-         read={0xD0C2: 1, 0xD112: 1},
-         sread={0: {0xBA44: 1}},
+         sram={0: {sym("sChallengeMachineStart"): b"\xAA", sym("sCurrentlySelectedDeck"): b"\x00", sym("sDeck1Cards"): b"\x08" * 60}},
+         read={sym("wActiveGameEvent"): 1, sym("wSongOverride"): 1},
+         sread={0: {sym("sChallengeMachineStart"): 1}},
          instruction_budget=DUEL_INSTRUCTION_BUDGET,
          cycle_budget=DUEL_CYCLE_BUDGET),
 ]
@@ -273,24 +274,24 @@ CASES["GameEvent_ChallengeMachine"] = [
 # >>> factory GameEvent_GiftCenter
 CONTRACT["GameEvent_GiftCenter"] = {"compare": (), "preserve": ()}
 CASES["GameEvent_GiftCenter"] = [
-    {"evidence": "primary", "wram": {0xD0C2: b"\xff", 0xD10E: b"\x02", 0xDD80: b"\xff"},
-     "read": {0xD0C2: 1, 0xD10E: 1, 0xDD80: 1},
+    {"evidence": "primary", "wram": {sym("wActiveGameEvent"): b"\xff", sym("wGiftCenterChoice"): b"\x02", sym("wCurSongID"): b"\xff"},
+     "read": {sym("wActiveGameEvent"): 1, sym("wGiftCenterChoice"): 1, sym("wCurSongID"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, evidence="primary",
-         wram={0xD0C2: b"\xff", 0xD10E: b"\x02", 0xDD80: b"\xff"},
-         read={0xD0C2: 1, 0xD10E: 1, 0xDD80: 1},
+         wram={sym("wActiveGameEvent"): b"\xff", sym("wGiftCenterChoice"): b"\x02", sym("wCurSongID"): b"\xff"},
+         read={sym("wActiveGameEvent"): 1, sym("wGiftCenterChoice"): 1, sym("wCurSongID"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory GameEvent_GiftCenter
 
 # >>> factory GameEvent_Credits
 CONTRACT["GameEvent_Credits"] = {"compare": (), "preserve": ()}
-_CREDITS_READ = {0xD324: 1, 0xDD80: 1, 0xD3BB: 10, 0xCAD3: 2, 0xD648: 1, 0xD657: 1, 0xFF41: 1, 0xFF45: 1}
+_CREDITS_READ = {sym("wOWMapEvents") + 1: 1, sym("wCurSongID"): 1, sym("wMastersBeatenList"): 10, sym("wDoFrameFunction"): 2, sym("wd648"): 1, sym("wd657"): 1, 0xFF41: 1, 0xFF45: 1}
 CASES["GameEvent_Credits"] = [
-    {"wram": {0xDD80: b"\x7F", 0xD324: b"\xFF", 0xD3BB: b"\x00" * 10, 0xCABB: b"\xC3", 0xFF40: b"\xC3"},
+    {"wram": {sym("wCurSongID"): b"\x7F", sym("wOWMapEvents") + 1: b"\xFF", sym("wMastersBeatenList"): b"\x00" * 10, sym("wLCDC"): b"\xC3", 0xFF40: b"\xC3"},
      "read": _CREDITS_READ, "ramg": True, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xDD80: b"\x7F", 0xD324: b"\xFF", 0xD3BB: b"\x03\x07\x00" + b"\x00" * 7, 0xCABB: b"\xC3", 0xFF40: b"\xC3"},
+    dict(POISON, wram={sym("wCurSongID"): b"\x7F", sym("wOWMapEvents") + 1: b"\xFF", sym("wMastersBeatenList"): b"\x03\x07\x00" + b"\x00" * 7, sym("wLCDC"): b"\xC3", 0xFF40: b"\xC3"},
          read=_CREDITS_READ, ramg=True, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          instruction_budget=20000000, cycle_budget=80000000),
 ]
@@ -307,7 +308,7 @@ CASES["GameEvent_BattleCenter"] = [
 # >>> factory GameEvent_ContinueDuel
 CONTRACT["GameEvent_ContinueDuel"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["GameEvent_ContinueDuel"] = [
-    {"wram": {0xCABB: b"\x00", 0xCC07: b"\xA5", wSongOverride: b"\x55"},
+    {"wram": {sym("wLCDC"): b"\x00", sym("wDuelFinished"): b"\xA5", wSongOverride: b"\x55"},
      "sram": {0: {sCurrentDuel: b"\x00", sPlayerInChallengeMachine: b"\x00"}},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01],
@@ -316,7 +317,7 @@ CASES["GameEvent_ContinueDuel"] = [
      "expect_regs": {"a": 0x00, "f": 0x10},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON,
-         wram={0xCABB: b"\x00", 0xCC07: b"\xA5", wSongOverride: b"\xAA"},
+         wram={sym("wLCDC"): b"\x00", sym("wDuelFinished"): b"\xA5", wSongOverride: b"\xAA"},
          sram={0: {sCurrentDuel: b"\x00", sPlayerInChallengeMachine: b"\x01"}},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x01],
@@ -341,9 +342,9 @@ CONTRACT["ExecuteGameEvent"] = {"compare": (), "preserve": ()}
 # does not return under any seed. The budget bounds both lanes at the same
 # frame; the completion pc below is where the reference is captured.
 CASES["ExecuteGameEvent"] = [
-    {"wram": {0xCAC4: b"\x00"}, "read": {0xCAC4: 1}, "expect": {0xCAC4: b"\x01"},
+    {"wram": {sym("wPlayTimeCounterEnable"): b"\x00"}, "read": {sym("wPlayTimeCounterEnable"): 1}, "expect": {sym("wPlayTimeCounterEnable"): b"\x01"},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCAC4: b"\x00"}, read={0xCAC4: 1}, expect={0xCAC4: b"\x01"},
+    dict(POISON, wram={sym("wPlayTimeCounterEnable"): b"\x00"}, read={sym("wPlayTimeCounterEnable"): 1}, expect={sym("wPlayTimeCounterEnable"): b"\x01"},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ExecuteGameEvent
@@ -388,7 +389,7 @@ for _record in SCHEMA2_CASES["GameEvent_Duel"]:
     # GameEvent_Duel's own `ret` (00:38DA) needs the duel to finish, and the
     # duel stops at an interactive arena choice no 16-frame input can pass, so
     # both lanes stop where the setup reaches that choice instead.
-    _record["completion"] = {"mode": "entry", "pc": 0x4CD5, "bank": 1,
+    _record["completion"] = {"mode": "entry", "pc": sym("ChooseInitialArenaAndBenchPokemon"), "bank": sym_bank("ChooseInitialArenaAndBenchPokemon"),
                              "routine": "ChooseInitialArenaAndBenchPokemon"}
 # <<< factory-completion GameEvent_Duel
 # >>> factory-mutation GameEvent_ChallengeMachine
@@ -396,7 +397,7 @@ MUTATIONS["GameEvent_ChallengeMachine"] = {"source_symbol": "GameEvent_Challenge
 # <<< factory-mutation GameEvent_ChallengeMachine
 # >>> factory-completion GameEvent_ChallengeMachine
 for _record in SCHEMA2_CASES["GameEvent_ChallengeMachine"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x71D3, "bank": 4,
+    _record["completion"] = {"mode": "entry", "pc": sym("ChallengeMachine_Start"), "bank": sym_bank("ChallengeMachine_Start"),
                              "routine": "ChallengeMachine_Start"}
 # <<< factory-completion GameEvent_ChallengeMachine
 # >>> factory-mutation GameEvent_GiftCenter
@@ -404,7 +405,7 @@ MUTATIONS["GameEvent_GiftCenter"] = {"source_symbol": "GameEvent_GiftCenter", "b
 # <<< factory-mutation GameEvent_GiftCenter
 # >>> factory-completion GameEvent_GiftCenter
 for _record in SCHEMA2_CASES["GameEvent_GiftCenter"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x7177, "bank": 2,
+    _record["completion"] = {"mode": "entry", "pc": sym("HandleGiftCenter"), "bank": sym_bank("HandleGiftCenter"),
                              "routine": "HandleGiftCenter"}
 # <<< factory-completion GameEvent_GiftCenter
 # >>> factory-mutation GameEvent_Credits
@@ -412,14 +413,14 @@ MUTATIONS["GameEvent_Credits"] = {"source_symbol": "GameEvent_Credits", "before"
 # <<< factory-mutation GameEvent_Credits
 # >>> factory-completion GameEvent_Credits
 for _record in SCHEMA2_CASES["GameEvent_Credits"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x4031, "bank": 4, "routine": "FlashWhiteScreen"}
+    _record["completion"] = {"mode": "entry", "pc": sym("FlashWhiteScreen"), "bank": sym_bank("FlashWhiteScreen"), "routine": "FlashWhiteScreen"}
 # <<< factory-completion GameEvent_Credits
 # >>> factory-mutation GameEvent_BattleCenter
 MUTATIONS["GameEvent_BattleCenter"] = {"source_symbol": "GameEvent_BattleCenter", "before": "uint8_t GameEvent_BattleCenter(void)\n{\n\twActiveGameEvent = GAME_EVENT_BATTLE_CENTER;", "after": "uint8_t GameEvent_BattleCenter(void)\n{\n\twActiveGameEvent = 0u;", "case_ids": ["GameEvent_BattleCenter-0", "GameEvent_BattleCenter-1"]}
 # <<< factory-mutation GameEvent_BattleCenter
 # >>> factory-completion GameEvent_BattleCenter
 for _record in SCHEMA2_CASES["GameEvent_BattleCenter"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x758F, "bank": 1,
+    _record["completion"] = {"mode": "entry", "pc": sym("SetUpAndStartLinkDuel"), "bank": sym_bank("SetUpAndStartLinkDuel"),
                              "routine": "SetUpAndStartLinkDuel"}
 # <<< factory-completion GameEvent_BattleCenter
 # >>> factory-mutation GameEvent_ContinueDuel
@@ -433,7 +434,7 @@ MUTATIONS["ExecuteGameEvent"] = {"source_symbol": "ExecuteGameEvent", "before": 
 # <<< factory-mutation ExecuteGameEvent
 # >>> factory-completion ExecuteGameEvent
 for _record in SCHEMA2_CASES["ExecuteGameEvent"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x08E1, "bank": 32}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("DecompressData.loop") + 1, "bank": 32}
 # <<< factory-completion ExecuteGameEvent
 MUTATIONS["CopyGfxDataFromTempBank"] = {
     "source_symbol": "CopyGfxDataFromTempBank",

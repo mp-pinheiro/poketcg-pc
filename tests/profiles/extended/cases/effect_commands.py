@@ -495,12 +495,12 @@ MUTATIONS = {
                         'CheckMatchingCommand-2',
                         'CheckMatchingCommand-4',
                         'CheckMatchingCommand-5'],
-        'source': 'src/profiles/extended/home/effect_commands.c'},
+        'source': 'src/home/effect_commands.c'},
     'TryExecuteEffectCommandFunction': {   'source_symbol': 'TryExecuteEffectCommandFunction',
         'before': '\tfunction(&state);',
         'after': '\tstate.d = (uint8_t)(state.d + 1u);\n\tfunction(&state);',
         'case_ids': ['TryExecuteEffectCommandFunction-3'],
-        'source': 'src/profiles/extended/home/effect_commands.c'},
+        'source': 'src/home/effect_commands.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

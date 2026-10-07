@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/home/division.asm."""
+from tests.cases._symbols import data, sym
 
 CONTRACT = {
     "DivideBCbyDE": {
@@ -26,18 +27,18 @@ CASES = {
         _case(0xFFFF, 0x0000),
         # Exact division: 1000 / 10 = 100 remainder 0. The loop counter the asm
         # parks in hffb6 (division.asm:8,28) reads 1 afterwards; observe it.
-        _case(1000, 10, read={0xFFB6: 1}),
+        _case(1000, 10, read={sym("hffb6"): 1}),
         # With a remainder: 1000 / 7 = 142 remainder 6.
-        _case(1000, 7, read={0xFFB6: 1}),
+        _case(1000, 7, read={sym("hffb6"): 1}),
         # bc < de: quotient 0, remainder = dividend.
         _case(5, 100),
-        _case(0xFFFE, 0xFFFF),
+        _case(data(0xFFFE), 0xFFFF),
         _case(0xFFFF, 0x0001),
         _case(0xFFFF, 0xFFFF),
         # Divisor above $8000 drives the remainder to its maximum ($7FFF)
         # before the final shift, the one place a 17th bit could go missing.
         _case(0xFFFF, 0x8000),
-        _case(0xFFFF, 0xC000),
+        _case(0xFFFF, data(0xC000)),
         _case(0x8000, 0x8001),
         _case(1, 1),
         _case(0x0000, 0x0001),
@@ -46,9 +47,9 @@ CASES = {
         _case(10000, 100, a=0xAA, f=0xF0, hl=0x1234),
         _case(10000, 100, a=0xAA, f=0x00, hl=0x1234),
         # Divisor with a zero low byte, exercising the `sbc d` path alone.
-        _case(0xABCD, 0x0100),
+        _case(data(0xABCD), 0x0100),
         # Divisor with a zero high byte and a borrow out of the low byte.
-        _case(0xABCD, 0x00FF),
+        _case(data(0xABCD), 0x00FF),
     ],
 }
 SCHEMA2_CASES = {
@@ -58,7 +59,7 @@ SCHEMA2_CASES = {
             "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": {r: 0 for r in POISON},
-            "bus": {0xFFB6: 1},
+            "bus": {sym("hffb6"): 1},
             "seeds": {},
             "setup": [],
             "input_events": [],
@@ -72,7 +73,7 @@ SCHEMA2_CASES = {
             "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON),
-            "bus": {0xFFB6: 1},
+            "bus": {sym("hffb6"): 1},
             "seeds": {},
             "setup": [],
             "input_events": [],
@@ -86,7 +87,7 @@ SCHEMA2_CASES = {
             "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": _case(0x1234, 0),
-            "bus": {0xFFB6: 1},
+            "bus": {sym("hffb6"): 1},
             "seeds": {},
             "setup": [],
             "input_events": [],
@@ -100,7 +101,7 @@ SCHEMA2_CASES = {
             "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": _case(1000, 10),
-            "bus": {0xFFB6: 1},
+            "bus": {sym("hffb6"): 1},
             "seeds": {},
             "setup": [],
             "input_events": [],

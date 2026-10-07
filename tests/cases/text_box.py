@@ -1,6 +1,7 @@
 """Oracle-diff cases for poketcg/src/home/text_box.asm."""
+from tests.cases._symbols import sym
 
-SRC = 0xC100
+SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
 DST = 0x9800
 PAT = bytes((i * 29 + 3) & 0xFF for i in range(260))
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -27,7 +28,7 @@ CASES = {
         # deck-explore 105873: with the LCD on the copy runs through
         # HblankCopyDataDEtoHL, whose exit a is the STAT mode it waited for.
         {"c": 2, "d": SRC >> 8, "e": SRC & 0xff, "hl": DST,
-         "wram": {SRC: PAT[:2], 0xCD3B: b"\x80"}, "read": {DST: 2}},
+         "wram": {SRC: PAT[:2], sym("wListFunctionPointer") + 0x1E: b"\x80"}, "read": {DST: 2}},
         dict(POISON, c=1, d=SRC >> 8, e=SRC & 0xff, hl=DST,
              wram={SRC: PAT[:1]}, read={DST: 1}),
         {"c": 0, "d": SRC >> 8, "e": SRC & 0xff, "hl": DST,
@@ -59,9 +60,9 @@ CASES = {
     # covered -- the asm routes it to DrawRegularTextBoxSGB, which is dropped per #2,
     # so this port folds SGB into DMG and a case there would diverge by design.
     "DrawRegularTextBox": [
-        {"b": 4, "c": 3, "d": 0, "e": 0, "hl": DST, "wram": {0xCAB4: b"\x00"},
+        {"b": 4, "c": 3, "d": 0, "e": 0, "hl": DST, "wram": {sym("wConsole"): b"\x00"},
          "read": {DST: 96}, "vread": {0: {DST: 96}, 1: {DST: 96}}},
-        dict(POISON, b=4, c=3, d=0, e=0, hl=DST, wram={0xCAB4: b"\x02", 0xccf3: b"\x03"},
+        dict(POISON, b=4, c=3, d=0, e=0, hl=DST, wram={sym("wConsole"): b"\x02", sym("wTextBoxFrameType"): b"\x03"},
              read={DST: 96}, vread={0: {DST: 96}, 1: {DST: 96}}),
     ],
     "DrawRegularTextBoxDMG": [
@@ -74,7 +75,7 @@ CASES = {
     ],
     "DrawRegularTextBoxCGB": [
         {"b": 4, "c": 3, "d": 0, "e": 0, "hl": DST,
-         "wram": {0xccf3: b"\x03"}, "read": {DST: 96}},
+         "wram": {sym("wTextBoxFrameType"): b"\x03"}, "read": {DST: 96}},
     ],
     # The body rows write TILES to VRAM bank 0 and ATTRIBUTES to bank 1, and the
     # routine restores bank 0 before returning -- so a plain `read` sees only the
@@ -84,17 +85,17 @@ CASES = {
     # with wTextBoxFrameType, so a port that fills the middle with the frame type
     # differs on every interior column.
     "ContinueDrawingTextBoxCGB": [
-        {"b": 4, "c": 3, "hl": DST, "wram": {0xccf3: b"\x03"},
+        {"b": 4, "c": 3, "hl": DST, "wram": {sym("wTextBoxFrameType"): b"\x03"},
          "read": {DST: 64}, "vread": {0: {DST: 64}, 1: {DST: 64}}},
-        dict(POISON, b=6, c=4, hl=DST, wram={0xccf3: b"\x05"},
+        dict(POISON, b=6, c=4, hl=DST, wram={sym("wTextBoxFrameType"): b"\x05"},
              read={DST: 96}, vread={0: {DST: 96}, 1: {DST: 96}}),
     ],
     "CopyCurrentLineTilesAndAttrCGB": [
         {"b": 4, "a": 0x1c, "d": 0x18, "e": 0x19, "hl": DST,
-         "wram": {0xccf3: b"\x03"}, "read": {DST: 32}},
+         "wram": {sym("wTextBoxFrameType"): b"\x03"}, "read": {DST: 32}},
     ],
     "CopyCurrentLineAttrCGB": [
-        {"b": 4, "hl": DST, "wram": {0xccf3: b"\x03"}, "read": {DST: 32}},
+        {"b": 4, "hl": DST, "wram": {sym("wTextBoxFrameType"): b"\x03"}, "read": {DST: 32}},
     ],
 
 }
@@ -107,13 +108,13 @@ CASES.update({
     "DrawLabeledTextBox": [
         {"hl": 0, "b": 20, "c": 6, "d": 0, "e": 0,
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         "wram": {0xCAB4: b"\x00", 0xCABB: b"\x00", 0xFF97: b"\x00"},
-         "sram": {0: {0xA010: b"\x41\x42\x00"}},
-         "read": {0x9800: 192, 0xFFAA: 2, 0xFFA9: 1, 0xFFB0: 1, 0xC000: 8}},
+         "wram": {sym("wConsole"): b"\x00", sym("wLCDC"): b"\x00", sym("hWhoseTurn"): b"\x00"},
+         "sram": {0: {sym("sPlayerName"): b"\x41\x42\x00"}},
+         "read": {0x9800: 192, sym("hTextBGMap0Address"): 2, sym("hffa9"): 1, sym("hffb0"): 1, sym("wDeckToBuild"): 8}},
         dict(POISON, hl=0, b=20, c=6, d=0, e=0,
              setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-             wram={0xCAB4: b"\x02", 0xCCF3: b"\x03", 0xCABB: b"\x00", 0xFF97: b"\x00"},
-             sram={0: {0xA010: b"\x41\x42\x00"}},
+             wram={sym("wConsole"): b"\x02", sym("wTextBoxFrameType"): b"\x03", sym("wLCDC"): b"\x00", sym("hWhoseTurn"): b"\x00"},
+             sram={0: {sym("sPlayerName"): b"\x41\x42\x00"}},
              read={0x9800: 192},
              vread={0: {0x9800: 192}, 1: {0x9800: 192}}),
     ],

@@ -1,3 +1,4 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import ai_play_pokemon_fixture as _ai_play_pokemon_fixture, AI_PLAY_POKEMON_REGS as _AI_PLAY_POKEMON_REGS, ai_evolution_fixture as _ai_evolution_fixture, AI_EVOLUTION_REGS as _AI_EVOLUTION_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/hand_pokemon.asm."""
 
@@ -8,21 +9,21 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wOpponentDeckID = 0xCC0E
-wLoadedCard2ID = 0xCC6C
-wTotalAttachedEnergies = 0xCC23
-hTempPlayAreaLocation_ff9d = 0xFF9D
-wAIScore = 0xCDBE
+wOpponentDeckID = sym("wOpponentDeckID")
+wLoadedCard2ID = sym("wLoadedCard2ID")
+wTotalAttachedEnergies = sym("wTotalAttachedEnergies")
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
+wAIScore = sym("wAIScore")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
-wPlayerDuelVariables = 0xC200
-wOpponentDuelVariables = 0xC300
-wLoadedCard1ID = 0xCC2B
-wAIScore = 0xCDBE
+hWhoseTurn = sym("hWhoseTurn")
+wPlayerDuelVariables = sym("wPlayerDuelVariables")
+wOpponentDuelVariables = sym("wOpponentDuelVariables")
+wLoadedCard1ID = sym("wLoadedCard1ID")
+wAIScore = sym("wAIScore")
 
-wDuelTempList = 0xC510
-hWhoseTurn = 0xFF97
+wDuelTempList = sym("wDuelTempList")
+hWhoseTurn = sym("hWhoseTurn")
 # <<< factory-cases-statics
 
 # >>> factory AIDecideSpecialEvolutions
@@ -58,8 +59,8 @@ CASES["AIDecidePlayLegendaryBirds"] = [
 # >>> factory AIDecidePlayPokemonCard
 CONTRACT["AIDecidePlayPokemonCard"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecidePlayPokemonCard"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 1, 0xCEDA: 1}, "expect": {0xC510: b"\xFF", 0xCEDA: b"\xFF"}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00"}, read={0xC510: 1, 0xCEDA: 1}, expect={0xC510: b"\xFF", 0xCEDA: b"\xFF"}),
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"}, "read": {sym("wDuelTempList"): 1, sym("wFilteredCardList"): 1}, "expect": {sym("wDuelTempList"): b"\xFF", sym("wFilteredCardList"): b"\xFF"}},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"}, read={sym("wDuelTempList"): 1, sym("wFilteredCardList"): 1}, expect={sym("wDuelTempList"): b"\xFF", sym("wFilteredCardList"): b"\xFF"}),
     dict(_ai_play_pokemon_fixture(bank=5), **_AI_PLAY_POKEMON_REGS),
 ]
 # <<< factory AIDecidePlayPokemonCard

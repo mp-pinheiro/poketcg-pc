@@ -1,3 +1,4 @@
+from tests.cases._symbols import data, sym, sym_bank
 from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS, move_step_fixture as _move_step_fixture, MOVE_STEP_REGS as _MOVE_STEP_REGS
 from tests.cases._fixtures import (FIND_NPC_REGS, MAP_SCRIPT_REGS, find_npc_fixture,
                                    map_script_fixture)
@@ -10,11 +11,11 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory Func_c6cc
-wPlayerXCoordPixels = 0xD332
-wPlayerYCoordPixels = 0xD333
-wPlayerSpriteIndex = 0xD336
-wWhichSprite = 0xD4CF
-wSpriteAnimScratch = 0xD4D0
+wPlayerXCoordPixels = sym("wPlayerXCoordPixels")
+wPlayerYCoordPixels = sym("wPlayerYCoordPixels")
+wPlayerSpriteIndex = sym("wPlayerSpriteIndex")
+wWhichSprite = sym("wWhichSprite")
+wSpriteAnimScratch = sym("wSprite1Enabled")
 CONTRACT["Func_c6cc"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_c6cc"] = [
 	{"a": 0, "wram": {wPlayerXCoordPixels: b"\x00"}},
@@ -51,9 +52,9 @@ CASES["Func_c6f7"] = [
 # >>> factory SetOverworldNPCFlags
 CONTRACT["SetOverworldNPCFlags"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["SetOverworldNPCFlags"] = [
-    {"wram": {0xD0C1: b"\x00"}},
-    dict(POISON, a=0x0F, wram={0xD0C1: b"\xF0"}),
-    {"a": 0x00, "wram": {0xD0C1: b"\x80"}},
+    {"wram": {sym("wOverworldNPCFlags"): b"\x00"}},
+    dict(POISON, a=0x0F, wram={sym("wOverworldNPCFlags"): b"\xF0"}),
+    {"a": 0x00, "wram": {sym("wOverworldNPCFlags"): b"\x80"}},
 ]
 # <<< factory SetOverworldNPCFlags
 
@@ -61,11 +62,11 @@ CASES["SetOverworldNPCFlags"] = [
 CONTRACT["Func_c158"] = {"compare": ("a",), "preserve": ()}
 CASES["Func_c158"] = [
 	{},  # all-zero: wActiveGameEvent=0 -> cp/r nz early return
-	{"wram": {0xD0C2: b"\x01", 0xD3AB: b"\x00", 0xD0C4: b"\x42", 0xD0C5: b"\x0c", 0xD3AA: b"\x01"},
-	 "read": {0xD0C2: 1, 0xD0C4: 1}},  # duel event: wTempNPC <- wNPCDuelist before FindLoadedNPC
-	{"wram": {0xD0C2: b"\x02", 0xD3AB: b"\x77"}, "read": {0xD0C2: 1}},  # not duel -> early return, wTempNPC untouched
-	dict(POISON, wram={0xD0C2: b"\x01", 0xD3AB: b"\x33", 0xD0C4: b"\x21", 0xD0C5: b"\x06"},
-	     read={0xD0C2: 1, 0xD0C4: 1}),
+	{"wram": {sym("wActiveGameEvent"): b"\x01", sym("wTempNPC"): b"\x00", sym("wNPCDuelist"): b"\x42", sym("wNPCDuelistDirection"): b"\x0c", sym("wLoadedNPCTempIndex"): b"\x01"},
+	 "read": {sym("wActiveGameEvent"): 1, sym("wNPCDuelist"): 1}},  # duel event: wTempNPC <- wNPCDuelist before FindLoadedNPC
+	{"wram": {sym("wActiveGameEvent"): b"\x02", sym("wTempNPC"): b"\x77"}, "read": {sym("wActiveGameEvent"): 1}},  # not duel -> early return, wTempNPC untouched
+	dict(POISON, wram={sym("wActiveGameEvent"): b"\x01", sym("wTempNPC"): b"\x33", sym("wNPCDuelist"): b"\x21", sym("wNPCDuelistDirection"): b"\x06"},
+	     read={sym("wActiveGameEvent"): 1, sym("wNPCDuelist"): 1}),
 ]
 # <<< factory Func_c158
 
@@ -73,10 +74,10 @@ CASES["Func_c158"] = [
 CONTRACT["Func_c184"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_c184"] = [
 	{},  # all-zero: wCurMap=0 -> OWMODE_MAP written to both mode bytes
-	{"wram": {0xD0BF: b"\x5a", 0xD0C0: b"\xa5"}, "read": {0xD32F: 1}},  # wCurMap=0 overwrites both with 00
-	{"wram": {0xD32F: b"\x01", 0xD0BF: b"\x00", 0xD0C0: b"\x00"}, "read": {0xD32F: 1}},  # first nonzero map id
-	{"wram": {0xD32F: b"\xff", 0xD0BF: b"\x00", 0xD0C0: b"\x00"}, "read": {0xD32F: 1}},
-	dict(POISON, wram={0xD32F: b"\x02", 0xD0BF: b"\x00", 0xD0C0: b"\x00"}, read={0xD32F: 1}),
+	{"wram": {sym("wOverworldMode"): b"\x5a", sym("wOverworldModeBackup"): b"\xa5"}, "read": {sym("wCurMap"): 1}},  # wCurMap=0 overwrites both with 00
+	{"wram": {sym("wCurMap"): b"\x01", sym("wOverworldMode"): b"\x00", sym("wOverworldModeBackup"): b"\x00"}, "read": {sym("wCurMap"): 1}},  # first nonzero map id
+	{"wram": {sym("wCurMap"): b"\xff", sym("wOverworldMode"): b"\x00", sym("wOverworldModeBackup"): b"\x00"}, "read": {sym("wCurMap"): 1}},
+	dict(POISON, wram={sym("wCurMap"): b"\x02", sym("wOverworldMode"): b"\x00", sym("wOverworldModeBackup"): b"\x00"}, read={sym("wCurMap"): 1}),
 ]
 # <<< factory Func_c184
 
@@ -94,68 +95,68 @@ CASES["WhiteOutDMGPals"] = [
 CONTRACT["Func_c1f8"] = {"compare": (), "preserve": ()}
 CASES["Func_c1f8"] = [
     {"wram": {
-        0xD0B8: b"\x00",
-        0xD0B9: b"\x00",
-        0xD0BA: b"\x00",
-        0xD11B: b"\x00",
-        0xD0C2: b"\x00",
-        0xD111: b"\x00",
-        0xD112: b"\x00",
-        0xD3B8: b"\x00",
-        0xD421: b"\x00",
-        0xCE47: b"\x00",
+        sym("wSelectedPauseMenuItem"): b"\x00",
+        sym("wSelectedPCMenuItem"): b"\x00",
+        sym("wSelectedGiftCenterMenuItem"): b"\x00",
+        sym("wConfigCursorYPos"): b"\x00",
+        sym("wActiveGameEvent"): b"\x00",
+        sym("wDefaultSong"): b"\x00",
+        sym("wSongOverride"): b"\x00",
+        sym("wRonaldIsInMap"): b"\x00",
+        sym("wAnimationsDisabled"): b"\x00",
+        sym("wTextSpeed"): b"\x00",
     },
-     "sram": {0: {0xA007: b"\x00", 0xA006: b"\x00"}}},
+     "sram": {0: {sym("sAnimationsDisabled"): b"\x00", sym("sTextSpeed"): b"\x00"}}},
     dict(POISON,
          wram={
-             0xD0B8: b"\x11",
-             0xD0B9: b"\x22",
-             0xD0BA: b"\x33",
-             0xD11B: b"\x44",
-             0xD0C2: b"\x55",
-             0xD111: b"\x66",
-             0xD112: b"\x77",
-             0xD3B8: b"\x88",
-             0xD421: b"\x99",
-             0xCE47: b"\xAA",
+             sym("wSelectedPauseMenuItem"): b"\x11",
+             sym("wSelectedPCMenuItem"): b"\x22",
+             sym("wSelectedGiftCenterMenuItem"): b"\x33",
+             sym("wConfigCursorYPos"): b"\x44",
+             sym("wActiveGameEvent"): b"\x55",
+             sym("wDefaultSong"): b"\x66",
+             sym("wSongOverride"): b"\x77",
+             sym("wRonaldIsInMap"): b"\x88",
+             sym("wAnimationsDisabled"): b"\x99",
+             sym("wTextSpeed"): b"\xAA",
          },
-         sram={0: {0xA007: b"\x01", 0xA006: b"\x02"}}),
+         sram={0: {sym("sAnimationsDisabled"): b"\x01", sym("sTextSpeed"): b"\x02"}}),
     {"ramg": False,
      "wram": {
-         0xD0B8: b"\xFF",
-         0xD0B9: b"\xFE",
-         0xD0BA: b"\xFD",
-         0xD11B: b"\xFC",
-         0xD0C2: b"\xFB",
-         0xD111: b"\xFA",
-         0xD112: b"\xF9",
-         0xD3B8: b"\xF8",
-         0xD421: b"\xF7",
-         0xCE47: b"\xF6",
+         sym("wSelectedPauseMenuItem"): b"\xFF",
+         sym("wSelectedPCMenuItem"): b"\xFE",
+         sym("wSelectedGiftCenterMenuItem"): b"\xFD",
+         sym("wConfigCursorYPos"): b"\xFC",
+         sym("wActiveGameEvent"): b"\xFB",
+         sym("wDefaultSong"): b"\xFA",
+         sym("wSongOverride"): b"\xF9",
+         sym("wRonaldIsInMap"): b"\xF8",
+         sym("wAnimationsDisabled"): b"\xF7",
+         sym("wTextSpeed"): b"\xF6",
      },
-     "sram": {0: {0xA007: b"\xA5", 0xA006: b"\x5A"}}},
+     "sram": {0: {sym("sAnimationsDisabled"): b"\xA5", sym("sTextSpeed"): b"\x5A"}}},
 ]
 # <<< factory Func_c1f8
 
 # >>> factory BackupPlayerPosition
 CONTRACT["BackupPlayerPosition"] = {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
 CASES["BackupPlayerPosition"] = [
-    {"wram": {0xD32F: b"\x00", 0xD330: b"\x00", 0xD331: b"\x00", 0xD334: b"\x00",
-              0xD0BB: b"\x00", 0xD0BC: b"\x00", 0xD0BD: b"\x00", 0xD0BE: b"\x00"}},
+    {"wram": {sym("wCurMap"): b"\x00", sym("wPlayerXCoord"): b"\x00", sym("wPlayerYCoord"): b"\x00", sym("wPlayerDirection"): b"\x00",
+              sym("wTempMap"): b"\x00", sym("wTempPlayerXCoord"): b"\x00", sym("wTempPlayerYCoord"): b"\x00", sym("wTempPlayerDirection"): b"\x00"}},
     dict(POISON,
-         wram={0xD32F: b"\x12", 0xD330: b"\x34", 0xD331: b"\x56", 0xD334: b"\x78",
-               0xD0BB: b"\xA1", 0xD0BC: b"\xA2", 0xD0BD: b"\xA3", 0xD0BE: b"\xA4"}),
-    {"wram": {0xD32F: b"\xFF", 0xD330: b"\x80", 0xD331: b"\x01", 0xD334: b"\xFE",
-              0xD0BB: b"\x00", 0xD0BC: b"\x00", 0xD0BD: b"\x00", 0xD0BE: b"\x00"}},
+         wram={sym("wCurMap"): b"\x12", sym("wPlayerXCoord"): b"\x34", sym("wPlayerYCoord"): b"\x56", sym("wPlayerDirection"): b"\x78",
+               sym("wTempMap"): b"\xA1", sym("wTempPlayerXCoord"): b"\xA2", sym("wTempPlayerYCoord"): b"\xA3", sym("wTempPlayerDirection"): b"\xA4"}),
+    {"wram": {sym("wCurMap"): b"\xFF", sym("wPlayerXCoord"): b"\x80", sym("wPlayerYCoord"): b"\x01", sym("wPlayerDirection"): b"\xFE",
+              sym("wTempMap"): b"\x00", sym("wTempPlayerXCoord"): b"\x00", sym("wTempPlayerYCoord"): b"\x00", sym("wTempPlayerDirection"): b"\x00"}},
 ]
 # <<< factory BackupPlayerPosition
 
 # >>> factory Func_c469
 CONTRACT["Func_c469"] = {"compare": (), "preserve": ()}
 CASES["Func_c469"] = [
-    {"wram": {0xD235: b"\x00", 0xD236: b"\x00"}, "read": {0xD233: 1, 0xD234: 1}},
-    {"wram": {0xD235: b"\x01", 0xD236: b"\x01"}, "read": {0xD233: 1, 0xD234: 1}},
-    dict(POISON, wram={0xD235: b"\xAA", 0xD236: b"\x55"}, read={0xD233: 1, 0xD234: 1}),
+    {"wram": {sym("wSCXBuffer"): b"\x00", sym("wSCYBuffer"): b"\x00"}, "read": {sym("wd233"): 1, sym("wd234"): 1}},
+    {"wram": {sym("wSCXBuffer"): b"\x01", sym("wSCYBuffer"): b"\x01"}, "read": {sym("wd233"): 1, sym("wd234"): 1}},
+    dict(POISON, wram={sym("wSCXBuffer"): b"\xAA", sym("wSCYBuffer"): b"\x55"}, read={sym("wd233"): 1, sym("wd234"): 1}),
 ]
 # <<< factory Func_c469
 
@@ -164,9 +165,9 @@ CASES["Func_c469"] = [
 # >>> factory SetScreenScroll
 CONTRACT["SetScreenScroll"] = {"compare": (), "preserve": ()}
 CASES["SetScreenScroll"] = [
-    {"wram": {0xD0B6: b"\x00", 0xD0B7: b"\x00"}, "read": {0xFF92: 1, 0xFF93: 1}},
-    {"wram": {0xD0B6: b"\x01", 0xD0B7: b"\x02"}, "read": {0xFF92: 1, 0xFF93: 1}},
-    dict(POISON, wram={0xD0B6: b"\xAA", 0xD0B7: b"\x55"}, read={0xFF92: 1, 0xFF93: 1}),
+    {"wram": {sym("wSCX"): b"\x00", sym("wSCY"): b"\x00"}, "read": {sym("hSCX"): 1, sym("hSCY"): 1}},
+    {"wram": {sym("wSCX"): b"\x01", sym("wSCY"): b"\x02"}, "read": {sym("hSCX"): 1, sym("hSCY"): 1}},
+    dict(POISON, wram={sym("wSCX"): b"\xAA", sym("wSCY"): b"\x55"}, read={sym("hSCX"): 1, sym("hSCY"): 1}),
 ]
 # <<< factory SetScreenScroll
 
@@ -176,8 +177,8 @@ CASES["SetScreenScroll"] = [
 # >>> factory SetScreenScrollWram
 CONTRACT["SetScreenScrollWram"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
 CASES["SetScreenScrollWram"] = [
-	{"wram": {0xD235: b"\x12", 0xD236: b"\x34", 0xD0B6: b"\xAA", 0xD0B7: b"\xBB"}},
-	dict(POISON, wram={0xD235: b"\x56", 0xD236: b"\x78", 0xD0B6: b"\xCC", 0xD0B7: b"\xDD"}),
+	{"wram": {sym("wSCXBuffer"): b"\x12", sym("wSCYBuffer"): b"\x34", sym("wSCX"): b"\xAA", sym("wSCY"): b"\xBB"}},
+	dict(POISON, wram={sym("wSCXBuffer"): b"\x56", sym("wSCYBuffer"): b"\x78", sym("wSCX"): b"\xCC", sym("wSCY"): b"\xDD"}),
 ]
 # <<< factory SetScreenScrollWram
 
@@ -185,131 +186,131 @@ CASES["SetScreenScrollWram"] = [
 # >>> factory Func_c70d
 CONTRACT["Func_c70d"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_c70d"] = [
-    {"wram": {0xD32F: b"\x00", 0xD0BB: b"\x00", 0xD0B4: b"\x00"}, "read": {0xD32F: 1, 0xD0BB: 1}},
-    {"wram": {0xD32F: b"\x01", 0xD0BB: b"\x00", 0xD0B4: b"\x00"}, "read": {0xD32F: 1, 0xD0BB: 1}},
-    dict(POISON, wram={0xD32F: b"\x00", 0xD0BB: b"\x01", 0xD0B4: b"\x00"}, read={0xD32F: 1, 0xD0BB: 1}),
+    {"wram": {sym("wCurMap"): b"\x00", sym("wTempMap"): b"\x00", sym("wOverworldTransition"): b"\x00"}, "read": {sym("wCurMap"): 1, sym("wTempMap"): 1}},
+    {"wram": {sym("wCurMap"): b"\x01", sym("wTempMap"): b"\x00", sym("wOverworldTransition"): b"\x00"}, "read": {sym("wCurMap"): 1, sym("wTempMap"): 1}},
+    dict(POISON, wram={sym("wCurMap"): b"\x00", sym("wTempMap"): b"\x01", sym("wOverworldTransition"): b"\x00"}, read={sym("wCurMap"): 1, sym("wTempMap"): 1}),
 ]
 # <<< factory Func_c70d
 
 # >>> factory Func_c430
 CONTRACT["Func_c430"] = {"compare": (), "preserve": ()}
 CASES["Func_c430"] = [
-    {"wram": {0xD235: b"\x50", 0xD236: b"\x40", 0xD237: b"\x04", 0xD238: b"\x03"},
-     "read": {0xD235: 1, 0xD236: 1}},
-    {"wram": {0xD235: b"\x20", 0xD236: b"\x20", 0xD237: b"\x08", 0xD238: b"\x08"},
-     "read": {0xD235: 1, 0xD236: 1}},
-    {"wram": {0xD235: b"\xB1", 0xD236: b"\xB9", 0xD237: b"\x01", 0xD238: b"\x01"},
-     "read": {0xD235: 1, 0xD236: 1}},
-    dict(POISON, wram={0xD235: b"\x80", 0xD236: b"\x90", 0xD237: b"\x10", 0xD238: b"\x02"},
-         read={0xD235: 1, 0xD236: 1}),
+    {"wram": {sym("wSCXBuffer"): b"\x50", sym("wSCYBuffer"): b"\x40", sym("wd237"): b"\x04", sym("wd238"): b"\x03"},
+     "read": {sym("wSCXBuffer"): 1, sym("wSCYBuffer"): 1}},
+    {"wram": {sym("wSCXBuffer"): b"\x20", sym("wSCYBuffer"): b"\x20", sym("wd237"): b"\x08", sym("wd238"): b"\x08"},
+     "read": {sym("wSCXBuffer"): 1, sym("wSCYBuffer"): 1}},
+    {"wram": {sym("wSCXBuffer"): b"\xB1", sym("wSCYBuffer"): b"\xB9", sym("wd237"): b"\x01", sym("wd238"): b"\x01"},
+     "read": {sym("wSCXBuffer"): 1, sym("wSCYBuffer"): 1}},
+    dict(POISON, wram={sym("wSCXBuffer"): b"\x80", sym("wSCYBuffer"): b"\x90", sym("wd237"): b"\x10", sym("wd238"): b"\x02"},
+         read={sym("wSCXBuffer"): 1, sym("wSCYBuffer"): 1}),
 ]
 # <<< factory Func_c430
 
 # >>> factory-cases-statics
-wSCXBuffer = 0xD235
-wSCYBuffer = 0xD236
-wd237 = 0xD237
-wd238 = 0xD238
+wSCXBuffer = sym("wSCXBuffer")
+wSCYBuffer = sym("wSCYBuffer")
+wd237 = sym("wd237")
+wd238 = sym("wd238")
 
-wPermissionMap = 0xD133
+wPermissionMap = sym("wPermissionMap")
 
-wPlayerXCoord = 0xD330
-wPlayerYCoord = 0xD331
-
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wOBP0 = 0xCABD
-wOBP0Backup = 0xD10C
-wOBP1 = 0xCABE
-wOBP1Backup = 0xD10D
-wObjectPalettesCGB = 0xCB30
-wObjectPalettesCGBBackup = 0xD0CC
-
-wPlayerCurrentlyMoving = 0xD335
-wPlayerXCoord = 0xD330
-wPlayerYCoord = 0xD331
-wd338 = 0xD338
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-
-wPlayerDirection = 0xD334
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-
-wPlayerXCoord = 0xD330
-wPlayerYCoord = 0xD331
-wPlayerDirection = 0xD334
-wPlayerCurrentlyMoving = 0xD335
-wd338 = 0xD338
-wWhichSprite = 0xD4CF
-wSpriteAnimBuffer = 0xD4D0
-wPermissionMap = 0xD133
-
-wd339 = 0xD339
-wd33a = 0xD33A
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-
-wOWMapEvents = 0xD323
-wCurMap = 0xD32F
-
-hSCX = 0xFF92
-hSCY = 0xFF93
-
-wPlayerXCoord = 0xD330
-wPlayerYCoord = 0xD331
-wPlayerXCoordPixels = 0xD332
-wPlayerYCoordPixels = 0xD333
-
-wPlayerDirection = 0xD334
-wPlayerSpriteIndex = 0xD336
-wPlayerSpriteBaseAnimation = 0xD337
-wWhichSprite = 0xD4CF
+wPlayerXCoord = sym("wPlayerXCoord")
+wPlayerYCoord = sym("wPlayerYCoord")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wOBP0 = sym("wOBP0")
+wOBP0Backup = sym("wOBP0Backup")
+wOBP1 = sym("wOBP1")
+wOBP1Backup = sym("wOBP1Backup")
+wObjectPalettesCGB = sym("wObjectPalettesCGB")
+wObjectPalettesCGBBackup = sym("wObjectPalettesCGBBackup")
 
-wDoFrameFunction = 0xCAD3
+wPlayerCurrentlyMoving = sym("wPlayerCurrentlyMoving")
+wPlayerXCoord = sym("wPlayerXCoord")
+wPlayerYCoord = sym("wPlayerYCoord")
+wd338 = sym("wd338")
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wBGMapBank = 0xD23D
-wBGMapHeight = 0xD130
-wBGMapPermissionDataPtr = 0xD23A
-wBGMapWidth = 0xD12F
-wDecompressionSecondaryBuffer = 0xC000
+wPlayerDirection = sym("wPlayerDirection")
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wBGMapPermissionDataPtr = 0xD23A
-wPermissionMap = 0xD133
+wPlayerXCoord = sym("wPlayerXCoord")
+wPlayerYCoord = sym("wPlayerYCoord")
+wPlayerDirection = sym("wPlayerDirection")
+wPlayerCurrentlyMoving = sym("wPlayerCurrentlyMoving")
+wd338 = sym("wd338")
+wWhichSprite = sym("wWhichSprite")
+wSpriteAnimBuffer = sym("wSpriteAnimBuffer")
+wPermissionMap = sym("wPermissionMap")
 
-hBankROM = 0xFF80
+wd339 = sym("wd339")
+wd33a = sym("wd33a")
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wOverworldMapSelection_A = 0xD32E
-wTempMap_A = 0xD0BB
-wTempPlayerXCoord_A = 0xD0BC
-wTempPlayerYCoord_A = 0xD0BD
-wTempPlayerDirection_A = 0xD0BE
-wPlayTimeCounter_A = 0xCAC5
-wOWMapEvents_A = 0xD323
-wMastersBeatenList_A = 0xD3BB
-hBankROM_A = 0xFF80
+wOWMapEvents = sym("wOWMapEvents")
+wCurMap = sym("wCurMap")
 
-wCurMap_A = 0xD32F
-wPlayerSpriteIndex_A = 0xD336
-wWhichSprite_A = 0xD4CF
-wPlayerXCoordPixels_A = 0xD332
-wPlayerYCoordPixels_A = 0xD333
-wSCXBuffer_A = 0xD235
-wSCYBuffer_A = 0xD236
+hSCX = sym("hSCX")
+hSCY = sym("hSCY")
 
-wVBlankOAMCopyToggle = 0xCAC0
+wPlayerXCoord = sym("wPlayerXCoord")
+wPlayerYCoord = sym("wPlayerYCoord")
+wPlayerXCoordPixels = sym("wPlayerXCoordPixels")
+wPlayerYCoordPixels = sym("wPlayerYCoordPixels")
 
-hCurMenuItem = 0xFFB1
-wCurMenuItem = 0xCD10
-wSelectedPauseMenuItem = 0xD0B8
+wPlayerDirection = sym("wPlayerDirection")
+wPlayerSpriteIndex = sym("wPlayerSpriteIndex")
+wPlayerSpriteBaseAnimation = sym("wPlayerSpriteBaseAnimation")
+wWhichSprite = sym("wWhichSprite")
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wDoFrameFunction = sym("wDoFrameFunction")
+
+wBGMapBank = sym("wBGMapBank")
+wBGMapHeight = sym("wBGMapHeight")
+wBGMapPermissionDataPtr = sym("wBGMapPermissionDataPtr")
+wBGMapWidth = sym("wBGMapWidth")
+wDecompressionSecondaryBuffer = sym("wDecompressionSecondaryBuffer")
+
+wBGMapPermissionDataPtr = sym("wBGMapPermissionDataPtr")
+wPermissionMap = sym("wPermissionMap")
+
+hBankROM = sym("hBankROM")
+
+wOverworldMapSelection_A = sym("wOverworldMapSelection")
+wTempMap_A = sym("wTempMap")
+wTempPlayerXCoord_A = sym("wTempPlayerXCoord")
+wTempPlayerYCoord_A = sym("wTempPlayerYCoord")
+wTempPlayerDirection_A = sym("wTempPlayerDirection")
+wPlayTimeCounter_A = sym("wPlayTimeCounter")
+wOWMapEvents_A = sym("wOWMapEvents")
+wMastersBeatenList_A = sym("wMastersBeatenList")
+hBankROM_A = sym("hBankROM")
+
+wCurMap_A = sym("wCurMap")
+wPlayerSpriteIndex_A = sym("wPlayerSpriteIndex")
+wWhichSprite_A = sym("wWhichSprite")
+wPlayerXCoordPixels_A = sym("wPlayerXCoordPixels")
+wPlayerYCoordPixels_A = sym("wPlayerYCoordPixels")
+wSCXBuffer_A = sym("wSCXBuffer")
+wSCYBuffer_A = sym("wSCYBuffer")
+
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
+
+hCurMenuItem = sym("hCurMenuItem")
+wCurMenuItem = sym("wCurMenuItem")
+wSelectedPauseMenuItem = sym("wSelectedPauseMenuItem")
 
 def menu_state(default_yes=0):
-    return {0xCABB: b"\x00", 0xCD0F: b"\x05", 0xCD10: b"\x01", 0xCD11: b"\x02", 0xCD12: b"\x00", 0xCD14: b"\x02", 0xCD98: b"\x02", 0xCD9A: bytes([default_yes]), 0xD133: b"\x00" * 0x100}
+    return {sym("wLCDC"): b"\x00", sym("wCursorBlinkCounter"): b"\x05", sym("wCurMenuItem"): b"\x01", sym("wMenuCursorXOffset"): b"\x02", sym("wMenuCursorYOffset"): b"\x00", sym("wNumMenuItems"): b"\x02", sym("wLeftmostItemCursorX"): b"\x02", sym("wDefaultYesOrNo"): bytes([default_yes]), sym("wBoosterViableCardList"): b"\x00" * 0x100}
 
 SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-wMedalScreenYOffset = 0xD114
+wMedalScreenYOffset = sym("wMedalScreenYOffset")
 
-wOverworldNPCFlags = 0xD0C1
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
 
-wd3b9 = 0xD3B9
+wd3b9 = sym("wd3b9")
 
 # overworld.asm:1264 (PCMenu_ReadMail). This is a bare farcall wrapper around
 # the already-ported _PCMenu_ReadMail, so it inherits that routine's measured
@@ -317,43 +318,43 @@ wd3b9 = 0xD3B9
 # menu loop always lets real frames elapse (CopyDMAFunction has to be installed
 # because InitMenuScreen sets wVBlankOAMCopyToggle), and B has to arrive as an
 # edge on hKeysPressed rather than being held from the first instruction.
-wd291 = 0xD291
-hKeysPressed = 0xFF91
-hDPadHeld = 0xFF8F
-wLCDC = 0xCABB
-wPCPackSelection = 0xD11D
-wPCPacks = 0xD11E
+wd291 = sym("wd291")
+hKeysPressed = sym("hKeysPressed")
+hDPadHeld = sym("hDPadHeld")
+wLCDC = sym("wLCDC")
+wPCPackSelection = sym("wPCPackSelection")
+wPCPacks = sym("wPCPacks")
 READ_MAIL_KEYS = [0x00, 0x02]
 # A menu screen load plus the mail screen's frame loop.
 READ_MAIL_INSTRUCTIONS = 60000000
 READ_MAIL_CYCLES = 240000000
 
-PAUSE_CARD_SRAM = {0: {0xA100: b"\x00" * 0xFF, 0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xA010: bytes([0x81, 0x82, 0x00] + [0] * 13)}}
+PAUSE_CARD_SRAM = {0: {sym("sCardAndDeckSaveData"): b"\x00" * 0xFF, sym("sDeck1Cards"): b"\x00", sym("sDeck2Cards"): b"\x00", sym("sDeck3Cards"): b"\x00", sym("sDeck4Cards"): b"\x00", sym("sPlayerName"): bytes([0x81, 0x82, 0x00] + [0] * 13)}}
 
-wNextScript = 0xD0C6
+wNextScript = sym("wNextScript")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wScriptNPC = 0xD3B6
-wLoadedNPCTempIndex = 0xD3AA
-wOverworldMode = 0xD0BF
-wNextScript = 0xD0C6
-wPlayerDirection = 0xD334
-wOverworldNPCFlags = 0xD0C1
-LOADED_NPCS = 0xD34A
+wScriptNPC = sym("wScriptNPC")
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wOverworldMode = sym("wOverworldMode")
+wNextScript = sym("wNextScript")
+wPlayerDirection = sym("wPlayerDirection")
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+LOADED_NPCS = sym("wLoadedNPC1ID")
 
-hKeysPressed = 0xFF91
-wPlayerCurrentlyMoving = 0xD335
-wPlayerSpriteIndex = 0xD336
-wWhichSprite = 0xD4CF
+hKeysPressed = sym("hKeysPressed")
+wPlayerCurrentlyMoving = sym("wPlayerCurrentlyMoving")
+wPlayerSpriteIndex = sym("wPlayerSpriteIndex")
+wWhichSprite = sym("wWhichSprite")
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
 CONTRACT["Func_c41c"] = {"compare": (), "preserve": ()}
 CASES["Func_c41c"] = [
-	{"wram": {0xD332: b"\x40", 0xD333: b"\x40", wd237: b"\x00", wd238: b"\x00"}, "read": {wSCXBuffer: 1, wSCYBuffer: 1}},
-	{"wram": {0xD332: b"\x90", 0xD333: b"\xA0", wd237: b"\x10", wd238: b"\x10"}, "read": {wSCXBuffer: 1, wSCYBuffer: 1}},
-	{"wram": {0xD332: b"\x00", 0xD333: b"\x01", wd237: b"\x10", wd238: b"\x04"}, "read": {wSCXBuffer: 1, wSCYBuffer: 1}},
-	dict(POISON, wram={0xD332: b"\xAA", 0xD333: b"\x55", wd237: b"\x10", wd238: b"\x04"}, read={wSCXBuffer: 1, wSCYBuffer: 1}),
+	{"wram": {sym("wPlayerXCoordPixels"): b"\x40", sym("wPlayerYCoordPixels"): b"\x40", wd237: b"\x00", wd238: b"\x00"}, "read": {wSCXBuffer: 1, wSCYBuffer: 1}},
+	{"wram": {sym("wPlayerXCoordPixels"): b"\x90", sym("wPlayerYCoordPixels"): b"\xA0", wd237: b"\x10", wd238: b"\x10"}, "read": {wSCXBuffer: 1, wSCYBuffer: 1}},
+	{"wram": {sym("wPlayerXCoordPixels"): b"\x00", sym("wPlayerYCoordPixels"): b"\x01", wd237: b"\x10", wd238: b"\x04"}, "read": {wSCXBuffer: 1, wSCYBuffer: 1}},
+	dict(POISON, wram={sym("wPlayerXCoordPixels"): b"\xAA", sym("wPlayerYCoordPixels"): b"\x55", wd237: b"\x10", wd238: b"\x04"}, read={wSCXBuffer: 1, wSCYBuffer: 1}),
 ]
 # <<< factory Func_c41c
 
@@ -381,10 +382,10 @@ CASES["GetDirectionFromDPad"] = [
 # >>> factory Func_c694
 CONTRACT["Func_c694"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_c694"] = [
-    {"a": 0x00, "c": 0x01, "wram": {0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x10", 0xD237: b"\x00", 0xD238: b"\x00"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}},
-    {"a": 0x01, "c": 0x03, "wram": {0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x00", 0xD338: b"\x03", 0xD237: b"\x02", 0xD238: b"\x03"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}},
-    {"a": 0x03, "c": 0x02, "wram": {0xD332: b"\x80", 0xD333: b"\x80", 0xD335: b"\x04", 0xD338: b"\x01", 0xD237: b"\x10", 0xD238: b"\x10"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}},
-    dict(POISON, a=0x02, c=0x01, wram={0xD332: b"\x40", 0xD333: b"\x40", 0xD335: b"\x00", 0xD338: b"\x01", 0xD237: b"\x00", 0xD238: b"\x00"}, read={0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}),
+    {"a": 0x00, "c": 0x01, "wram": {sym("wPlayerXCoordPixels"): b"\x20", sym("wPlayerYCoordPixels"): b"\x30", sym("wPlayerCurrentlyMoving"): b"\x01", sym("wd338"): b"\x10", sym("wd237"): b"\x00", sym("wd238"): b"\x00"}, "read": {sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1, sym("wLoadedNPC8CoordX"): 1, sym("wLoadedNPC8CoordY"): 1}},
+    {"a": 0x01, "c": 0x03, "wram": {sym("wPlayerXCoordPixels"): b"\x20", sym("wPlayerYCoordPixels"): b"\x30", sym("wPlayerCurrentlyMoving"): b"\x00", sym("wd338"): b"\x03", sym("wd237"): b"\x02", sym("wd238"): b"\x03"}, "read": {sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1}},
+    {"a": 0x03, "c": 0x02, "wram": {sym("wPlayerXCoordPixels"): b"\x80", sym("wPlayerYCoordPixels"): b"\x80", sym("wPlayerCurrentlyMoving"): b"\x04", sym("wd338"): b"\x01", sym("wd237"): b"\x10", sym("wd238"): b"\x10"}, "read": {sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1}},
+    dict(POISON, a=0x02, c=0x01, wram={sym("wPlayerXCoordPixels"): b"\x40", sym("wPlayerYCoordPixels"): b"\x40", sym("wPlayerCurrentlyMoving"): b"\x00", sym("wd338"): b"\x01", sym("wd237"): b"\x00", sym("wd238"): b"\x00"}, read={sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1}),
 ]
 # <<< factory Func_c694
 
@@ -419,28 +420,28 @@ CASES["AttemptPlayerMovement"] = [
 # >>> factory FindPlayerMovementFromDirection
 CONTRACT["FindPlayerMovementFromDirection"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
 CASES["FindPlayerMovementFromDirection"] = [
-    {"wram": {wPlayerDirection: b"\x00", 0xD330: b"\x10", 0xD331: b"\x20"}},
-    {"wram": {wPlayerDirection: b"\x01", 0xD330: b"\x10", 0xD331: b"\x20"}},
-    {"wram": {wPlayerDirection: b"\x02", 0xD330: b"\x10", 0xD331: b"\x20"}},
-    {"wram": {wPlayerDirection: b"\x03", 0xD330: b"\x10", 0xD331: b"\x20"}},
-    dict(POISON, wram={wPlayerDirection: b"\x01", 0xD330: b"\xF0", 0xD331: b"\x01"}),
+    {"wram": {wPlayerDirection: b"\x00", sym("wPlayerXCoord"): b"\x10", sym("wPlayerYCoord"): b"\x20"}},
+    {"wram": {wPlayerDirection: b"\x01", sym("wPlayerXCoord"): b"\x10", sym("wPlayerYCoord"): b"\x20"}},
+    {"wram": {wPlayerDirection: b"\x02", sym("wPlayerXCoord"): b"\x10", sym("wPlayerYCoord"): b"\x20"}},
+    {"wram": {wPlayerDirection: b"\x03", sym("wPlayerXCoord"): b"\x10", sym("wPlayerYCoord"): b"\x20"}},
+    dict(POISON, wram={wPlayerDirection: b"\x01", sym("wPlayerXCoord"): b"\xF0", sym("wPlayerYCoord"): b"\x01"}),
 ]
 # <<< factory FindPlayerMovementFromDirection
 
 # >>> factory Func_c1a0
 CONTRACT["Func_c1a0"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e")}
 CASES["Func_c1a0"] = [
-    {"hl": 0x5678, "read": {0xCAD3: 2}},
-    dict(POISON, read={0xCAD3: 2}),
+    {"hl": 0x5678, "read": {sym("wDoFrameFunction"): 2}},
+    dict(POISON, read={sym("wDoFrameFunction"): 2}),
 ]
 # <<< factory Func_c1a0
 
 # >>> factory PauseMenu_Exit
 CONTRACT["PauseMenu_Exit"] = {"compare": (), "preserve": ()}
 CASES["PauseMenu_Exit"] = [
-    {"read": {0xD0BF: 1}},
+    {"read": {sym("wOverworldMode"): 1}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-     "read": {0xD0BF: 1}},
+     "read": {sym("wOverworldMode"): 1}},
 ]
 # <<< factory PauseMenu_Exit
 
@@ -455,10 +456,10 @@ CASES["AttemptPlayerMovementFromDirection"] = [
 # >>> factory Func_c687
 CONTRACT["Func_c687"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_c687"] = [
-    {"b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {wd339: b"\x00", wd33a: b"\x01", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x10", 0xD237: b"\x00", 0xD238: b"\x00"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}},
-    {"b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {wd339: b"\x01", wd33a: b"\x03", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x00", 0xD338: b"\x03", 0xD237: b"\x02", 0xD238: b"\x03"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}},
-    {"b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {wd339: b"\x03", wd33a: b"\x02", 0xD332: b"\x80", 0xD333: b"\x80", 0xD335: b"\x04", 0xD338: b"\x01", 0xD237: b"\x10", 0xD238: b"\x10"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}},
-    dict(POISON, wram={wd339: b"\x02", wd33a: b"\x01", 0xD332: b"\x40", 0xD333: b"\x40", 0xD335: b"\x00", 0xD338: b"\x01", 0xD237: b"\x00", 0xD238: b"\x00"}, read={0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}),
+    {"b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {wd339: b"\x00", wd33a: b"\x01", sym("wPlayerXCoordPixels"): b"\x20", sym("wPlayerYCoordPixels"): b"\x30", sym("wPlayerCurrentlyMoving"): b"\x01", sym("wd338"): b"\x10", sym("wd237"): b"\x00", sym("wd238"): b"\x00"}, "read": {sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1, sym("wLoadedNPC8CoordX"): 1, sym("wLoadedNPC8CoordY"): 1}},
+    {"b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {wd339: b"\x01", wd33a: b"\x03", sym("wPlayerXCoordPixels"): b"\x20", sym("wPlayerYCoordPixels"): b"\x30", sym("wPlayerCurrentlyMoving"): b"\x00", sym("wd338"): b"\x03", sym("wd237"): b"\x02", sym("wd238"): b"\x03"}, "read": {sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1}},
+    {"b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {wd339: b"\x03", wd33a: b"\x02", sym("wPlayerXCoordPixels"): b"\x80", sym("wPlayerYCoordPixels"): b"\x80", sym("wPlayerCurrentlyMoving"): b"\x04", sym("wd338"): b"\x01", sym("wd237"): b"\x10", sym("wd238"): b"\x10"}, "read": {sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1}},
+    dict(POISON, wram={wd339: b"\x02", wd33a: b"\x01", sym("wPlayerXCoordPixels"): b"\x40", sym("wPlayerYCoordPixels"): b"\x40", sym("wPlayerCurrentlyMoving"): b"\x00", sym("wd338"): b"\x01", sym("wd237"): b"\x00", sym("wd238"): b"\x00"}, read={sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1}),
 ]
 # <<< factory Func_c687
 
@@ -501,10 +502,10 @@ CASES["RestoreObjectPalettes"] = [
 # >>> factory Func_c3ff
 CONTRACT["Func_c3ff"] = {"compare": (), "preserve": ()}
 CASES["Func_c3ff"] = [
-	{"wram": {0xD12F: b"\x14", 0xD130: b"\x12", 0xD332: b"\x40", 0xD333: b"\x40"}, "read": {0xD237: 1, 0xD238: 1, 0xD233: 1, 0xD234: 1, 0xD235: 1, 0xD236: 1, 0xD0B6: 1, 0xD0B7: 1, 0xFF92: 1, 0xFF93: 1}},
-	{"wram": {0xD12F: b"\x28", 0xD130: b"\x24", 0xD332: b"\x90", 0xD333: b"\xA0"}, "read": {0xD237: 1, 0xD238: 1, 0xD233: 1, 0xD234: 1, 0xD235: 1, 0xD236: 1, 0xD0B6: 1, 0xD0B7: 1, 0xFF92: 1, 0xFF93: 1}},
-	{"wram": {0xD12F: b"\x1E", 0xD130: b"\x20", 0xD332: b"\x00", 0xD333: b"\x01"}, "read": {0xD237: 1, 0xD238: 1, 0xD233: 1, 0xD234: 1, 0xD235: 1, 0xD236: 1, 0xD0B6: 1, 0xD0B7: 1, 0xFF92: 1, 0xFF93: 1}},
-	dict(POISON, wram={0xD12F: b"\xAA", 0xD130: b"\x55", 0xD332: b"\xAA", 0xD333: b"\x55"}, read={0xD237: 1, 0xD238: 1, 0xD233: 1, 0xD234: 1, 0xD235: 1, 0xD236: 1, 0xD0B6: 1, 0xD0B7: 1, 0xFF92: 1, 0xFF93: 1}),
+	{"wram": {sym("wBGMapWidth"): b"\x14", sym("wBGMapHeight"): b"\x12", sym("wPlayerXCoordPixels"): b"\x40", sym("wPlayerYCoordPixels"): b"\x40"}, "read": {sym("wd237"): 1, sym("wd238"): 1, sym("wd233"): 1, sym("wd234"): 1, sym("wSCXBuffer"): 1, sym("wSCYBuffer"): 1, sym("wSCX"): 1, sym("wSCY"): 1, sym("hSCX"): 1, sym("hSCY"): 1}},
+	{"wram": {sym("wBGMapWidth"): b"\x28", sym("wBGMapHeight"): b"\x24", sym("wPlayerXCoordPixels"): b"\x90", sym("wPlayerYCoordPixels"): b"\xA0"}, "read": {sym("wd237"): 1, sym("wd238"): 1, sym("wd233"): 1, sym("wd234"): 1, sym("wSCXBuffer"): 1, sym("wSCYBuffer"): 1, sym("wSCX"): 1, sym("wSCY"): 1, sym("hSCX"): 1, sym("hSCY"): 1}},
+	{"wram": {sym("wBGMapWidth"): b"\x1E", sym("wBGMapHeight"): b"\x20", sym("wPlayerXCoordPixels"): b"\x00", sym("wPlayerYCoordPixels"): b"\x01"}, "read": {sym("wd237"): 1, sym("wd238"): 1, sym("wd233"): 1, sym("wd234"): 1, sym("wSCXBuffer"): 1, sym("wSCYBuffer"): 1, sym("wSCX"): 1, sym("wSCY"): 1, sym("hSCX"): 1, sym("hSCY"): 1}},
+	dict(POISON, wram={sym("wBGMapWidth"): b"\xAA", sym("wBGMapHeight"): b"\x55", sym("wPlayerXCoordPixels"): b"\xAA", sym("wPlayerYCoordPixels"): b"\x55"}, read={sym("wd237"): 1, sym("wd238"): 1, sym("wd233"): 1, sym("wd234"): 1, sym("wSCXBuffer"): 1, sym("wSCYBuffer"): 1, sym("wSCX"): 1, sym("wSCY"): 1, sym("hSCX"): 1, sym("hSCY"): 1}),
 ]
 # <<< factory Func_c3ff
 
@@ -557,21 +558,21 @@ CASES["UpdatePlayerSprite"] = [
 # >>> factory UpdatePlayerDirection
 CONTRACT["UpdatePlayerDirection"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
 CASES["UpdatePlayerDirection"] = [
-    {"a": 0x01, "wram": {0xD334: b"\x00", 0xD336: b"\x07", 0xD337: b"\x10", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
-    {"a": 0x03, "wram": {0xD334: b"\x00", 0xD336: b"\x0B", 0xD337: b"\x20", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
-    {"a": 0xFF, "wram": {0xD334: b"\x00", 0xD336: b"\x42", 0xD337: b"\x01", 0xD4CF: b"\xAA"}, "read": {0xD334: 1, 0xD4CF: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD334: b"\x00", 0xD336: b"\x0B", 0xD337: b"\x20", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}}
+    {"a": 0x01, "wram": {sym("wPlayerDirection"): b"\x00", sym("wPlayerSpriteIndex"): b"\x07", sym("wPlayerSpriteBaseAnimation"): b"\x10", sym("wWhichSprite"): b"\x00"}, "read": {sym("wPlayerDirection"): 1, sym("wWhichSprite"): 1}},
+    {"a": 0x03, "wram": {sym("wPlayerDirection"): b"\x00", sym("wPlayerSpriteIndex"): b"\x0B", sym("wPlayerSpriteBaseAnimation"): b"\x20", sym("wWhichSprite"): b"\x00"}, "read": {sym("wPlayerDirection"): 1, sym("wWhichSprite"): 1}},
+    {"a": 0xFF, "wram": {sym("wPlayerDirection"): b"\x00", sym("wPlayerSpriteIndex"): b"\x42", sym("wPlayerSpriteBaseAnimation"): b"\x01", sym("wWhichSprite"): b"\xAA"}, "read": {sym("wPlayerDirection"): 1, sym("wWhichSprite"): 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wPlayerDirection"): b"\x00", sym("wPlayerSpriteIndex"): b"\x0B", sym("wPlayerSpriteBaseAnimation"): b"\x20", sym("wWhichSprite"): b"\x00"}, "read": {sym("wPlayerDirection"): 1, sym("wWhichSprite"): 1}}
 ]
 # <<< factory UpdatePlayerDirection
 
 # >>> factory UpdatePlayerDirectionFromDPad
 CONTRACT["UpdatePlayerDirectionFromDPad"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
 CASES["UpdatePlayerDirectionFromDPad"] = [
-    {"a": 0x00, "wram": {0xD334: b"\x00", 0xD336: b"\x07", 0xD337: b"\x10", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
-    {"a": 0x10, "wram": {0xD334: b"\x00", 0xD336: b"\x0B", 0xD337: b"\x20", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
-    {"a": 0x20, "wram": {0xD334: b"\x00", 0xD336: b"\x42", 0xD337: b"\x01", 0xD4CF: b"\xAA"}, "read": {0xD334: 1, 0xD4CF: 1}},
-    {"a": 0x40, "wram": {0xD334: b"\x00", 0xD336: b"\x0B", 0xD337: b"\x20", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD334: b"\x00", 0xD336: b"\x42", 0xD337: b"\x01", 0xD4CF: b"\xAA"}, "read": {0xD334: 1, 0xD4CF: 1}},
+    {"a": 0x00, "wram": {sym("wPlayerDirection"): b"\x00", sym("wPlayerSpriteIndex"): b"\x07", sym("wPlayerSpriteBaseAnimation"): b"\x10", sym("wWhichSprite"): b"\x00"}, "read": {sym("wPlayerDirection"): 1, sym("wWhichSprite"): 1}},
+    {"a": 0x10, "wram": {sym("wPlayerDirection"): b"\x00", sym("wPlayerSpriteIndex"): b"\x0B", sym("wPlayerSpriteBaseAnimation"): b"\x20", sym("wWhichSprite"): b"\x00"}, "read": {sym("wPlayerDirection"): 1, sym("wWhichSprite"): 1}},
+    {"a": 0x20, "wram": {sym("wPlayerDirection"): b"\x00", sym("wPlayerSpriteIndex"): b"\x42", sym("wPlayerSpriteBaseAnimation"): b"\x01", sym("wWhichSprite"): b"\xAA"}, "read": {sym("wPlayerDirection"): 1, sym("wWhichSprite"): 1}},
+    {"a": 0x40, "wram": {sym("wPlayerDirection"): b"\x00", sym("wPlayerSpriteIndex"): b"\x0B", sym("wPlayerSpriteBaseAnimation"): b"\x20", sym("wWhichSprite"): b"\x00"}, "read": {sym("wPlayerDirection"): 1, sym("wWhichSprite"): 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wPlayerDirection"): b"\x00", sym("wPlayerSpriteIndex"): b"\x42", sym("wPlayerSpriteBaseAnimation"): b"\x01", sym("wWhichSprite"): b"\xAA"}, "read": {sym("wPlayerDirection"): 1, sym("wWhichSprite"): 1}},
 ]
 # <<< factory UpdatePlayerDirectionFromDPad
 
@@ -586,30 +587,30 @@ CASES["SetOverworldDoFrameFunction"] = [
 # >>> factory Func_c3ee
 CONTRACT["Func_c3ee"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["Func_c3ee"] = [
-    {"wram": {0xD133: b"\xFF" * 256}, "read": {0xD133: 256}},
-    dict(POISON, wram={0xD133: b"\xFF" * 256}, read={0xD133: 256}),
+    {"wram": {sym("wBoosterViableCardList"): b"\xFF" * 256}, "read": {sym("wBoosterViableCardList"): 256}},
+    dict(POISON, wram={sym("wBoosterViableCardList"): b"\xFF" * 256}, read={sym("wBoosterViableCardList"): 256}),
 ]
 # <<< factory Func_c3ee
 
 # >>> factory Func_c66c
 CONTRACT["Func_c66c"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["Func_c66c"] = [
-    {"wram": {0xFF90: b"\x00", 0xD334: b"\x00", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x10", 0xD237: b"\x00", 0xD238: b"\x00"},
-     "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}},
-    dict(POISON, wram={0xFF90: b"\x02", 0xD334: b"\x00", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x01", 0xD237: b"\x00", 0xD238: b"\x00"},
-         read={0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}),
-    {"wram": {0xFF90: b"\x02", 0xD334: b"\x00", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x02", 0xD237: b"\x00", 0xD238: b"\x00"},
-     "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}},
+    {"wram": {sym("hKeysHeld"): b"\x00", sym("wPlayerDirection"): b"\x00", sym("wPlayerXCoordPixels"): b"\x20", sym("wPlayerYCoordPixels"): b"\x30", sym("wPlayerCurrentlyMoving"): b"\x01", sym("wd338"): b"\x10", sym("wd237"): b"\x00", sym("wd238"): b"\x00"},
+     "read": {sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1, sym("wLoadedNPC8CoordX"): 1, sym("wLoadedNPC8CoordY"): 1}},
+    dict(POISON, wram={sym("hKeysHeld"): b"\x02", sym("wPlayerDirection"): b"\x00", sym("wPlayerXCoordPixels"): b"\x20", sym("wPlayerYCoordPixels"): b"\x30", sym("wPlayerCurrentlyMoving"): b"\x01", sym("wd338"): b"\x01", sym("wd237"): b"\x00", sym("wd238"): b"\x00"},
+         read={sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1, sym("wLoadedNPC8CoordX"): 1, sym("wLoadedNPC8CoordY"): 1}),
+    {"wram": {sym("hKeysHeld"): b"\x02", sym("wPlayerDirection"): b"\x00", sym("wPlayerXCoordPixels"): b"\x20", sym("wPlayerYCoordPixels"): b"\x30", sym("wPlayerCurrentlyMoving"): b"\x01", sym("wd338"): b"\x02", sym("wd237"): b"\x00", sym("wd238"): b"\x00"},
+     "read": {sym("wPlayerXCoordPixels"): 1, sym("wPlayerYCoordPixels"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wd233"): 1, sym("wd234"): 1, sym("wLoadedNPC8CoordX"): 1, sym("wLoadedNPC8CoordY"): 1}},
 ]
 # <<< factory Func_c66c
 
 # >>> factory Func_c4b9
 CONTRACT["Func_c4b9"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["Func_c4b9"] = [
-    {"wram": {0xCAB4: b"\x00", 0xD32F: b"\x00", 0xD0BE: b"\x05"},
-     "read": {0xD4CA: 1, 0xD4CB: 1, 0xD337: 1, 0xD336: 1, 0xD334: 1, 0xD335: 1, 0xD338: 1}},
-    dict(POISON, wram={0xCAB4: b"\x00", 0xD32F: b"\x00", 0xD0BE: b"\x05"},
-         read={0xD4CA: 1, 0xD4CB: 1, 0xD337: 1, 0xD336: 1, 0xD334: 1, 0xD335: 1, 0xD338: 1}),
+    {"wram": {sym("wConsole"): b"\x00", sym("wCurMap"): b"\x00", sym("wTempPlayerDirection"): b"\x05"},
+     "read": {sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1, sym("wPlayerSpriteBaseAnimation"): 1, sym("wPlayerSpriteIndex"): 1, sym("wPlayerDirection"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1}},
+    dict(POISON, wram={sym("wConsole"): b"\x00", sym("wCurMap"): b"\x00", sym("wTempPlayerDirection"): b"\x05"},
+         read={sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1, sym("wPlayerSpriteBaseAnimation"): 1, sym("wPlayerSpriteIndex"): 1, sym("wPlayerDirection"): 1, sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1}),
 ]
 # <<< factory Func_c4b9
 
@@ -617,12 +618,12 @@ CASES["Func_c4b9"] = [
 CONTRACT["DecompressPermissionMap"] = {"compare": ("hl", "d", "e"), "preserve": ()}
 CASES["DecompressPermissionMap"] = [
     {"hl": 0x1234, "wram": {wBGMapPermissionDataPtr: b"\x00\x00"}},
-    {"hl": 0xC300, "wram": {
+    {"hl": sym("wOpponentCardLocations"), "wram": {
         wBGMapPermissionDataPtr: b"\x01\x00",
         wBGMapBank: b"\x00",
         wBGMapHeight: b"\x01",
         wBGMapWidth: b"\x01",
-    }, "read": {wBGMapPermissionDataPtr: 2, wDecompressionSecondaryBuffer: 0x10, 0xC300: 0x10}},
+    }, "read": {wBGMapPermissionDataPtr: 2, wDecompressionSecondaryBuffer: 0x10, sym("wOpponentCardLocations"): 0x10}},
     dict(POISON, hl=0x1234, wram={wBGMapPermissionDataPtr: b"\x00\x00"}),
 ]
 # <<< factory DecompressPermissionMap
@@ -638,10 +639,10 @@ CASES["LoadPermissionMap"] = [
 # >>> factory Func_c1ed
 CONTRACT["Func_c1ed"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["Func_c1ed"] = [
-    {"wram": {hBankROM: b"\x03"}, "sram": {0: {0xB800: bytes([0xAB]) * 256}},
-     "read": {0xD32E: 1}, "instruction_budget": 500000, "cycle_budget": 4000000},
-    dict(POISON, wram={hBankROM: b"\x03"}, sram={0: {0xB800: bytes([0xAB]) * 256}},
-         read={0xD32E: 1}, instruction_budget=500000, cycle_budget=4000000),
+    {"wram": {hBankROM: b"\x03"}, "sram": {0: {sym("sGeneralSaveData"): bytes([0xAB]) * 256}},
+     "read": {sym("wOverworldMapSelection"): 1}, "instruction_budget": 500000, "cycle_budget": 4000000},
+    dict(POISON, wram={hBankROM: b"\x03"}, sram={0: {sym("sGeneralSaveData"): bytes([0xAB]) * 256}},
+         read={sym("wOverworldMapSelection"): 1}, instruction_budget=500000, cycle_budget=4000000),
 ]
 # <<< factory Func_c1ed
 
@@ -652,18 +653,18 @@ CASES["Func_c1b1"] = [
               wTempPlayerXCoord_A: b"\xFF", wTempPlayerYCoord_A: b"\xFF", wTempPlayerDirection_A: b"\xFF",
               wPlayTimeCounter_A: b"\xFF\xFF\xFF\xFF\xFF", wOWMapEvents_A: bytes([0xFF] * 11),
               wMastersBeatenList_A: bytes([0xFF] * 10)},
-     "sram": {0: {0xBA44: b"\xFF\xFF\xFF\xFF\xFF\xFF"}},
+     "sram": {0: {sym("sChallengeMachineStart"): b"\xFF\xFF\xFF\xFF\xFF\xFF"}},
      "read": {wOverworldMapSelection_A: 1, wTempMap_A: 1, wTempPlayerXCoord_A: 1, wTempPlayerYCoord_A: 1,
               wTempPlayerDirection_A: 1, wPlayTimeCounter_A: 5, wOWMapEvents_A: 11, wMastersBeatenList_A: 10},
-     "sread": {0: {0xBA44: 6}}, "instruction_budget": 500000, "cycle_budget": 4000000},
+     "sread": {0: {sym("sChallengeMachineStart"): 6}}, "instruction_budget": 500000, "cycle_budget": 4000000},
     dict(POISON, wram={hBankROM_A: b"\x03", wOverworldMapSelection_A: b"\x00", wTempMap_A: b"\xFF",
               wTempPlayerXCoord_A: b"\xFF", wTempPlayerYCoord_A: b"\xFF", wTempPlayerDirection_A: b"\xFF",
               wPlayTimeCounter_A: b"\xFF\xFF\xFF\xFF\xFF", wOWMapEvents_A: bytes([0xFF] * 11),
               wMastersBeatenList_A: bytes([0xFF] * 10)},
-         sram={0: {0xBA44: b"\xFF\xFF\xFF\xFF\xFF\xFF"}},
+         sram={0: {sym("sChallengeMachineStart"): b"\xFF\xFF\xFF\xFF\xFF\xFF"}},
          read={wOverworldMapSelection_A: 1, wTempMap_A: 1, wTempPlayerXCoord_A: 1, wTempPlayerYCoord_A: 1,
               wTempPlayerDirection_A: 1, wPlayTimeCounter_A: 5, wOWMapEvents_A: 11, wMastersBeatenList_A: 10},
-         sread={0: {0xBA44: 6}}, instruction_budget=500000, cycle_budget=4000000),
+         sread={0: {sym("sChallengeMachineStart"): 6}}, instruction_budget=500000, cycle_budget=4000000),
 ]
 # <<< factory Func_c1b1
 
@@ -675,7 +676,7 @@ CASES["Func_c554"] = [
     dict(POISON, wram={wCurMap_A: b"\x05", wPlayerSpriteIndex_A: b"\x00",
                        wPlayerXCoordPixels_A: b"\x20", wPlayerYCoordPixels_A: b"\x30",
                        wSCXBuffer_A: b"\x04", wSCYBuffer_A: b"\x08"},
-         read={wWhichSprite_A: 1, 0xD4D2: 2}),
+         read={wWhichSprite_A: 1, sym("wSprite1CoordX"): 2}),
 ]
 # <<< factory Func_c554
 
@@ -696,44 +697,44 @@ CASES["Func_c280"] = [
 # >>> factory UpdateOverworldMap
 CONTRACT["UpdateOverworldMap"] = {"compare": (), "preserve": ()}
 CASES["UpdateOverworldMap"] = [
-    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "hram": {0xFF91: b"\x00"}, "wram": {0xD336: b"\x12", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, "read": {0xD4CF: 1}},
-    {"hram": {0xFF91: b"\x00"}, "wram": {0xD336: b"\x34", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, "read": {0xD4CF: 1}},
-    dict(POISON, hram={0xFF91: b"\x00"}, wram={0xD336: b"\x56", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, read={0xD4CF: 1}),
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "hram": {sym("hKeysPressed"): b"\x00"}, "wram": {sym("wPlayerSpriteIndex"): b"\x12", sym("wOverworldMapPlayerAnimationState"): b"\x00", sym("wWhichSprite"): b"\x00"}, "read": {sym("wWhichSprite"): 1}},
+    {"hram": {sym("hKeysPressed"): b"\x00"}, "wram": {sym("wPlayerSpriteIndex"): b"\x34", sym("wOverworldMapPlayerAnimationState"): b"\x00", sym("wWhichSprite"): b"\x00"}, "read": {sym("wWhichSprite"): 1}},
+    dict(POISON, hram={sym("hKeysPressed"): b"\x00"}, wram={sym("wPlayerSpriteIndex"): b"\x56", sym("wOverworldMapPlayerAnimationState"): b"\x00", sym("wWhichSprite"): b"\x00"}, read={sym("wWhichSprite"): 1}),
 ]
 # <<< factory UpdateOverworldMap
 
 # >>> factory DisplayPauseMenu
 CONTRACT["DisplayPauseMenu"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DisplayPauseMenu"] = [
-    {"wram": {wSelectedPauseMenuItem: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCurMenuItem: 1, hCurMenuItem: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {wSelectedPauseMenuItem: b"\x05", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCurMenuItem: 1, hCurMenuItem: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={wSelectedPauseMenuItem: b"\x02", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCurMenuItem: 1, hCurMenuItem: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {wSelectedPauseMenuItem: b"\x00", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCurMenuItem: 1, hCurMenuItem: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wSelectedPauseMenuItem: b"\x05", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCurMenuItem: 1, hCurMenuItem: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wSelectedPauseMenuItem: b"\x02", sym("wLCDC"): b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCurMenuItem: 1, hCurMenuItem: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory DisplayPauseMenu
 
 # >>> factory Func_c8ed
 CONTRACT["Func_c8ed"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_c8ed"] = [
-    {"hl": 0x0000, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": menu_state(0), "read": {0xD3B9: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"hl": 0x0001, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {**menu_state(0), 0xD3B9: b"\xAA\xAA"}, "read": {0xD3B9: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hl=0x1234, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={**menu_state(1), 0xD3B9: b"\xAA\xAA"}, read={0xD3B9: 2}, instruction_budget=2000000, cycle_budget=8000000),
+    {"hl": 0x0000, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": menu_state(0), "read": {sym("wd3b9"): 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"hl": 0x0001, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {**menu_state(0), sym("wd3b9"): b"\xAA\xAA"}, "read": {sym("wd3b9"): 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0x1234, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={**menu_state(1), sym("wd3b9"): b"\xAA\xAA"}, read={sym("wd3b9"): 2}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory Func_c8ed
 
 # >>> factory PauseMenu_Diary
 CONTRACT["PauseMenu_Diary"] = {"compare": (), "preserve": ()}
 CASES["PauseMenu_Diary"] = [
-    {"keys": [0x00, 0x01], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD291: b"\x5A"}, "read": {0xD291: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, keys=[0x00, 0x01], setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xD291: b"\x5A"}, read={0xD291: 1}, instruction_budget=20000000, cycle_budget=100000000),
+    {"keys": [0x00, 0x01], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wd291"): b"\x5A"}, "read": {sym("wd291"): 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x01], setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("wd291"): b"\x5A"}, read={sym("wd291"): 1}, instruction_budget=20000000, cycle_budget=100000000),
 ]
 # <<< factory PauseMenu_Diary
 
 # >>> factory DisplayPCMenu
 CONTRACT["DisplayPCMenu"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DisplayPCMenu"] = [
-    {"wram": {0xD0B9: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCD10: 1, 0xFFB1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {0xD0B9: b"\x04", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCD10: 1, 0xFFB1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xD0B9: b"\x02", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCD10: 1, 0xFFB1: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wSelectedPCMenuItem"): b"\x00", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("wCurMenuItem"): 1, sym("hCurMenuItem"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {sym("wSelectedPCMenuItem"): b"\x04", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("wCurMenuItem"): 1, sym("hCurMenuItem"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={sym("wSelectedPCMenuItem"): b"\x02", sym("wLCDC"): b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={sym("wCurMenuItem"): 1, sym("hCurMenuItem"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory DisplayPCMenu
 
@@ -741,13 +742,13 @@ CASES["DisplayPCMenu"] = [
 CONTRACT["Func_c268"] = {"compare": (), "preserve": ()}
 CASES["Func_c268"] = [
     {"setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7f}],
-     "wram": {0xFFAA: b"\x00", 0xFFAB: b"\x98"},
-     "read": {0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1},
+     "wram": {sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"},
+     "read": {sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON,
          setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7f}],
-         wram={0xFFAA: b"\x00", 0xFFAB: b"\x98"},
-         read={0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1},
+         wram={sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"},
+         read={sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1},
          instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory Func_c268
@@ -755,43 +756,43 @@ CASES["Func_c268"] = [
 # >>> factory PauseMenu_Status
 CONTRACT["PauseMenu_Status"] = {"compare": (), "preserve": ()}
 CASES["PauseMenu_Status"] = [
-    {"keys": [0x00, 0x01], "setup": SETUP, "wram": {0xCABB: b"\x00", 0xD291: b"\x5A"}, "read": {0xD291: 1, wMedalScreenYOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, keys=[0x00, 0x01], setup=SETUP, wram={0xCABB: b"\x00", 0xD291: b"\x5A"}, read={0xD291: 1, wMedalScreenYOffset: 1}, instruction_budget=20000000, cycle_budget=100000000),
+    {"keys": [0x00, 0x01], "setup": SETUP, "wram": {sym("wLCDC"): b"\x00", sym("wd291"): b"\x5A"}, "read": {sym("wd291"): 1, wMedalScreenYOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x01], setup=SETUP, wram={sym("wLCDC"): b"\x00", sym("wd291"): b"\x5A"}, read={sym("wd291"): 1, wMedalScreenYOffset: 1}, instruction_budget=20000000, cycle_budget=100000000),
 ]
 # <<< factory PauseMenu_Status
 
 # >>> factory Func_c258
 CONTRACT["Func_c258"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_c258"] = [
-    {"f": 0x00, "wram": {0xFFB0: b"\x00", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"f": 0xF0, "wram": {0xFFB0: b"\x01", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, f=0x0F, wram={0xFFB0: b"\xEE", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, instruction_budget=2000000, cycle_budget=8000000),
+    {"f": 0x00, "wram": {sym("hffb0"): b"\x00", sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"f": 0xF0, "wram": {sym("hffb0"): b"\x01", sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, f=0x0F, wram={sym("hffb0"): b"\xEE", sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory Func_c258
 
 # >>> factory Func_c251
 CONTRACT["Func_c251"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_c251"] = [
-    {"f": 0x00, "wram": {0xFFB0: b"\x00", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"f": 0xF0, "wram": {0xFFB0: b"\x01", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, f=0x0F, wram={0xFFB0: b"\xEE", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, instruction_budget=2000000, cycle_budget=8000000)
+    {"f": 0x00, "wram": {sym("hffb0"): b"\x00", sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"f": 0xF0, "wram": {sym("hffb0"): b"\x01", sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, f=0x0F, wram={sym("hffb0"): b"\xEE", sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1}, instruction_budget=2000000, cycle_budget=8000000)
 ]
 # <<< factory Func_c251
 
 # >>> factory Func_c241
 CONTRACT["Func_c241"] = {"compare": ("f",), "preserve": ()}
 CASES["Func_c241"] = [
-    {"f": 0x00, "wram": {0xFFB0: b"\x00", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {0xCD04: 1, 0xFFA8: 1, 0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xFFB0: b"\xEE", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xCD04: 1, 0xFFA8: 1, 0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, instruction_budget=2000000, cycle_budget=8000000),
+    {"f": 0x00, "wram": {sym("hffb0"): b"\x00", sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {sym("wcd04"): 1, sym("hffa8"): 1, sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={sym("hffb0"): b"\xEE", sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\x98"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={sym("wcd04"): 1, sym("hffa8"): 1, sym("wc600") + 0x30: 1, sym("wc700") + 0x30: 1, sym("wc800") + 0x30: 1, sym("wc900"): 1, sym("hffa9"): 1}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory Func_c241
 
 # >>> factory CloseTextBox
 CONTRACT["CloseTextBox"] = {"compare": ("hl",), "preserve": ("hl",)}
 CASES["CloseTextBox"] = [
-    {"hl": 0x4567, "wram": {wOverworldNPCFlags: b"\x01", 0xD133: b"\x00" * 0x100}, "read": {wOverworldNPCFlags: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, hl=0x1357, wram={wOverworldNPCFlags: b"\xFF", 0xD133: b"\xFF" * 0x100}, read={wOverworldNPCFlags: 1}, instruction_budget=20000000, cycle_budget=80000000),
-    {"hl": 0x2468, "wram": {wOverworldNPCFlags: b"\x00", 0xD133: b"\x00" * 0x100}, "read": {wOverworldNPCFlags: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"hl": 0x4567, "wram": {wOverworldNPCFlags: b"\x01", sym("wBoosterViableCardList"): b"\x00" * 0x100}, "read": {wOverworldNPCFlags: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, hl=0x1357, wram={wOverworldNPCFlags: b"\xFF", sym("wBoosterViableCardList"): b"\xFF" * 0x100}, read={wOverworldNPCFlags: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"hl": 0x2468, "wram": {wOverworldNPCFlags: b"\x00", sym("wBoosterViableCardList"): b"\x00" * 0x100}, "read": {wOverworldNPCFlags: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory CloseTextBox
 
@@ -807,20 +808,20 @@ CASES["Func_c891"] = [
 # >>> factory ReturnToOverworld
 CONTRACT["ReturnToOverworld"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["ReturnToOverworld"] = [
-    {"wram": {0xD0C1: b"\xFF", 0xD10F: b"\x00\x00", 0xD111: b"\x37"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {0xD0C1: b"\x80", 0xD10F: b"\x00\x00", 0xD111: b"\xA5"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xD0C1: b"\x55", 0xD10F: b"\x00\x00", 0xD111: b"\x00"}, read={0xFF97: 1, 0xD0C1: 1, 0xD111: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wOverworldNPCFlags"): b"\xFF", sym("wReloadOverworldCallbackPtr"): b"\x00\x00", sym("wDefaultSong"): b"\x37"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wDefaultSong"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {sym("wOverworldNPCFlags"): b"\x80", sym("wReloadOverworldCallbackPtr"): b"\x00\x00", sym("wDefaultSong"): b"\xA5"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wDefaultSong"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={sym("wOverworldNPCFlags"): b"\x55", sym("wReloadOverworldCallbackPtr"): b"\x00\x00", sym("wDefaultSong"): b"\x00"}, read={sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wDefaultSong"): 1}, instruction_budget=20000000, cycle_budget=80000000),
     # wReloadOverworldCallbackPtr set: the pause menu redraw runs through CallHL2.
-    {"setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0C1: b"\x80", 0xD10F: b"\x97\x47", 0xD111: b"\xA5", 0xD0B8: b"\x03"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD111: 1, 0xC600: 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wOverworldNPCFlags"): b"\x80", sym("wReloadOverworldCallbackPtr"): b"\x97\x47", sym("wDefaultSong"): b"\xA5", sym("wSelectedPauseMenuItem"): b"\x03"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory ReturnToOverworld
 
 # >>> factory CloseAdvancedDialogueBox
 CONTRACT["CloseAdvancedDialogueBox"] = {"compare": (), "preserve": ()}
 CASES["CloseAdvancedDialogueBox"] = [
-	{"wram": {0xD0C1: b"\x00", 0xD0C0: b"\x00", 0xD0BF: b"\x00"}, "read": {0xD0C1: 1, 0xD0BF: 1}},
-	{"wram": {0xD0C1: b"\x00", 0xD0C0: b"\x5A", 0xD0BF: b"\x00"}, "read": {0xD0C1: 1, 0xD0BF: 1}},
-	dict(POISON, wram={0xD0C1: b"\x00", 0xD0C0: b"\xA5", 0xD0BF: b"\x11"}, read={0xD0C1: 1, 0xD0BF: 1}),
+	{"wram": {sym("wOverworldNPCFlags"): b"\x00", sym("wOverworldModeBackup"): b"\x00", sym("wOverworldMode"): b"\x00"}, "read": {sym("wOverworldNPCFlags"): 1, sym("wOverworldMode"): 1}},
+	{"wram": {sym("wOverworldNPCFlags"): b"\x00", sym("wOverworldModeBackup"): b"\x5A", sym("wOverworldMode"): b"\x00"}, "read": {sym("wOverworldNPCFlags"): 1, sym("wOverworldMode"): 1}},
+	dict(POISON, wram={sym("wOverworldNPCFlags"): b"\x00", sym("wOverworldModeBackup"): b"\xA5", sym("wOverworldMode"): b"\x11"}, read={sym("wOverworldNPCFlags"): 1, sym("wOverworldMode"): 1}),
 ]
 # <<< factory CloseAdvancedDialogueBox
 
@@ -836,9 +837,9 @@ CASES["Func_c8ba"] = [
 # >>> factory ReturnToOverworldNoCallback
 CONTRACT["ReturnToOverworldNoCallback"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["ReturnToOverworldNoCallback"] = [
-    {"wram": {0xD0C1: b"\xFF", 0xD10F: b"\x12\x34", 0xD111: b"\x37"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {0xD0C1: b"\x80", 0xD10F: b"\xAB\xCD", 0xD111: b"\xA5"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xD0C1: b"\x55", 0xD10F: b"\xFE\xED", 0xD111: b"\x00"}, read={0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wOverworldNPCFlags"): b"\xFF", sym("wReloadOverworldCallbackPtr"): b"\x12\x34", sym("wDefaultSong"): b"\x37"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {sym("wOverworldNPCFlags"): b"\x80", sym("wReloadOverworldCallbackPtr"): b"\xAB\xCD", sym("wDefaultSong"): b"\xA5"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={sym("wOverworldNPCFlags"): b"\x55", sym("wReloadOverworldCallbackPtr"): b"\xFE\xED", sym("wDefaultSong"): b"\x00"}, read={sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ReturnToOverworldNoCallback
 
@@ -847,9 +848,9 @@ CONTRACT["ReturnToOverworldWithCallback"] = {"compare": ("a", "b", "c", "d", "e"
 CASES["ReturnToOverworldWithCallback"] = [
     # The game passes exactly two callbacks (overworld.asm: PauseMenu and PCMenu),
     # both menu redraws, so a case needs the text setup a menu draw relies on.
-    {"hl": 0x4797, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0C1: b"\xFF", 0xD10F: b"\x00\x00", 0xD111: b"\x37", 0xD0B8: b"\x02"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1, 0xC600: 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"hl": 0x484E, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0C1: b"\x80", 0xD10F: b"\x12\x34", 0xD111: b"\xA5", 0xD0B9: b"\x01"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1, 0xC600: 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, hl=0x4797, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xD0C1: b"\x55", 0xD10F: b"\xFE\xED", 0xD111: b"\x00", 0xD0B8: b"\x05"}, read={0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1, 0xC600: 0x400}, instruction_budget=20000000, cycle_budget=80000000),
+    {"hl": 0x4797, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wOverworldNPCFlags"): b"\xFF", sym("wReloadOverworldCallbackPtr"): b"\x00\x00", sym("wDefaultSong"): b"\x37", sym("wSelectedPauseMenuItem"): b"\x02"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"hl": 0x484E, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wOverworldNPCFlags"): b"\x80", sym("wReloadOverworldCallbackPtr"): b"\x12\x34", sym("wDefaultSong"): b"\xA5", sym("wSelectedPCMenuItem"): b"\x01"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, hl=0x4797, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("wOverworldNPCFlags"): b"\x55", sym("wReloadOverworldCallbackPtr"): b"\xFE\xED", sym("wDefaultSong"): b"\x00", sym("wSelectedPauseMenuItem"): b"\x05"}, read={sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ReturnToOverworldWithCallback
 
@@ -859,45 +860,45 @@ CASES["FindNPCOrObject"] = [
     # water-club 91959: the live entry whose `.set_mode` exit carries the Z the
     # callee left set, which `scf` preserves and the port used to drop.
     dict(find_npc_fixture(vram=False, bank=3), **FIND_NPC_REGS),
-    {"keys": [0x00], "wram": {0xD3B6: b"\x00", 0xD0BF: b"\x55", 0xD334: b"\x00", 0xD330: b"\x00", 0xD331: b"\x00"}, "read": {0xD3B6: 1, 0xD0BF: 1}},
-    dict(POISON, keys=[0x00], wram={0xD3B6: b"\x00", 0xD0BF: b"\x55", 0xD334: b"\x00", 0xD330: b"\x00", 0xD331: b"\x00"}, read={0xD3B6: 1, 0xD0BF: 1}),
+    {"keys": [0x00], "wram": {sym("wScriptNPC"): b"\x00", sym("wOverworldMode"): b"\x55", sym("wPlayerDirection"): b"\x00", sym("wPlayerXCoord"): b"\x00", sym("wPlayerYCoord"): b"\x00"}, "read": {sym("wScriptNPC"): 1, sym("wOverworldMode"): 1}},
+    dict(POISON, keys=[0x00], wram={sym("wScriptNPC"): b"\x00", sym("wOverworldMode"): b"\x55", sym("wPlayerDirection"): b"\x00", sym("wPlayerXCoord"): b"\x00", sym("wPlayerYCoord"): b"\x00"}, read={sym("wScriptNPC"): 1, sym("wOverworldMode"): 1}),
 ]
 # <<< factory FindNPCOrObject
 
 # >>> factory Func_c6dc
 CONTRACT["Func_c6dc"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
 CASES["Func_c6dc"] = [
-    {"hl": 0x1234, "wram": {0xD335: b"\x03", 0xD0BF: b"\x00"}, "read": {0xD335: 1, 0xD0BF: 1}},
-    {"hl": 0xC100, "wram": {0xD335: b"\xFF", 0xD0BF: b"\x01"}, "read": {0xD335: 1, 0xD0BF: 1}},
-    {"hl": 0xC200, "wram": {0xD335: b"\x00", 0xD0BF: b"\x02"}, "read": {0xD335: 1, 0xD0BF: 1}},
-    dict(POISON, hl=0xC300, wram={0xD335: b"\x03", 0xD0BF: b"\x00"}, read={0xD335: 1, 0xD0BF: 1}),
-    dict(POISON, hl=0xC400, wram={0xD335: b"\xFF", 0xD0BF: b"\x01"}, read={0xD335: 1, 0xD0BF: 1}),
+    {"hl": 0x1234, "wram": {sym("wPlayerCurrentlyMoving"): b"\x03", sym("wOverworldMode"): b"\x00"}, "read": {sym("wPlayerCurrentlyMoving"): 1, sym("wOverworldMode"): 1}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wPlayerCurrentlyMoving"): b"\xFF", sym("wOverworldMode"): b"\x01"}, "read": {sym("wPlayerCurrentlyMoving"): 1, sym("wOverworldMode"): 1}},
+    {"hl": sym("wPlayerCardLocations"), "wram": {sym("wPlayerCurrentlyMoving"): b"\x00", sym("wOverworldMode"): b"\x02"}, "read": {sym("wPlayerCurrentlyMoving"): 1, sym("wOverworldMode"): 1}},
+    dict(POISON, hl=sym("wOpponentCardLocations"), wram={sym("wPlayerCurrentlyMoving"): b"\x03", sym("wOverworldMode"): b"\x00"}, read={sym("wPlayerCurrentlyMoving"): 1, sym("wOverworldMode"): 1}),
+    dict(POISON, hl=sym("wBoosterCardsDrawn"), wram={sym("wPlayerCurrentlyMoving"): b"\xFF", sym("wOverworldMode"): b"\x01"}, read={sym("wPlayerCurrentlyMoving"): 1, sym("wOverworldMode"): 1}),
 ]
 # <<< factory Func_c6dc
 
 # >>> factory HandlePlayerMoveModeInput
 CONTRACT["HandlePlayerMoveModeInput"] = {"compare": (), "preserve": ()}
 CASES["HandlePlayerMoveModeInput"] = [
-    {"wram": {0xFF90: b"\x00", 0xFF91: b"\x00"}},
-    {"wram": {0xFF90: b"\x00", 0xFF91: b"\x01", 0xD3B6: b"\x5A"}, "read": {0xD3B6: 1}},
-    dict(POISON, wram={0xFF90: b"\x00", 0xFF91: b"\x01", 0xD3B6: b"\x5A"}, read={0xD3B6: 1}),
-    {"wram": {0xFF90: b"\x10", 0xFF91: b"\x00"}, "read": {0xD335: 1}},
+    {"wram": {sym("hKeysHeld"): b"\x00", sym("hKeysPressed"): b"\x00"}},
+    {"wram": {sym("hKeysHeld"): b"\x00", sym("hKeysPressed"): b"\x01", sym("wScriptNPC"): b"\x5A"}, "read": {sym("wScriptNPC"): 1}},
+    dict(POISON, wram={sym("hKeysHeld"): b"\x00", sym("hKeysPressed"): b"\x01", sym("wScriptNPC"): b"\x5A"}, read={sym("wScriptNPC"): 1}),
+    {"wram": {sym("hKeysHeld"): b"\x10", sym("hKeysPressed"): b"\x00"}, "read": {sym("wPlayerCurrentlyMoving"): 1}},
 ]
 # <<< factory HandlePlayerMoveModeInput
 
 # >>> factory PCMenu_Glossary
 CONTRACT["PCMenu_Glossary"] = {"compare": (), "preserve": ()}
 CASES["PCMenu_Glossary"] = [
-    {"keys": [0x00, 0x02], "setup": SETUP, "wram": {0xCABB: b"\x00", 0xD291: b"\x5A"}, "read": {0xD291: 1, 0xCE55: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, keys=[0x00, 0x02], setup=SETUP, wram={0xCABB: b"\x00", 0xD291: b"\x5A"}, read={0xD291: 1, 0xCE55: 1}, instruction_budget=20000000, cycle_budget=100000000),
+    {"keys": [0x00, 0x02], "setup": SETUP, "wram": {sym("wLCDC"): b"\x00", sym("wd291"): b"\x5A"}, "read": {sym("wd291"): 1, sym("wDuelInitialPrizesUpperBitsSet"): 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x02], setup=SETUP, wram={sym("wLCDC"): b"\x00", sym("wd291"): b"\x5A"}, read={sym("wd291"): 1, sym("wDuelInitialPrizesUpperBitsSet"): 1}, instruction_budget=20000000, cycle_budget=100000000),
 ]
 # <<< factory PCMenu_Glossary
 
 # >>> factory Func_c17a
 CONTRACT["Func_c17a"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["Func_c17a"] = [
-    {"hl": 0x0000, "wram": {0xD0BF: b"\x03"}, "read": {0xD0BF: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD0BF: b"\x03"}, "read": {0xD0BF: 1}},
+    {"hl": 0x0000, "wram": {sym("wOverworldMode"): b"\x03"}, "read": {sym("wOverworldMode"): 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wOverworldMode"): b"\x03"}, "read": {sym("wOverworldMode"): 1}},
     dict(map_script_fixture(vram=False, bank=3), **MAP_SCRIPT_REGS),
 ]
 # <<< factory Func_c17a
@@ -905,17 +906,17 @@ CASES["Func_c17a"] = [
 # >>> factory Func_c53d
 CONTRACT["Func_c53d"] = {"compare": ("b", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
 CASES["Func_c53d"] = [
-	{"wram": {0xD335: b"\x00", 0xD336: b"\x00"}, "read": {0xD4CF: 1}},
-	{"wram": {0xD335: b"\x00", 0xD336: b"\xA5"}, "read": {0xD4CF: 1}},
-	{"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD335: b"\x00", 0xD336: b"\x5A"}, "read": {0xD4CF: 1}},
+	{"wram": {sym("wPlayerCurrentlyMoving"): b"\x00", sym("wPlayerSpriteIndex"): b"\x00"}, "read": {sym("wWhichSprite"): 1}},
+	{"wram": {sym("wPlayerCurrentlyMoving"): b"\x00", sym("wPlayerSpriteIndex"): b"\xA5"}, "read": {sym("wWhichSprite"): 1}},
+	{"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wPlayerCurrentlyMoving"): b"\x00", sym("wPlayerSpriteIndex"): b"\x5A"}, "read": {sym("wWhichSprite"): 1}},
 ]
 # <<< factory Func_c53d
 
 # >>> factory PCMenu_CardAlbum
 CONTRACT["PCMenu_CardAlbum"] = {"compare": (), "preserve": ()}
 CASES["PCMenu_CardAlbum"] = [
-    {"keys": [0x00, 0x02], "setup": SETUP, "wram": {0xFF92: b"\x55", 0xFF93: b"\x66", 0xFFB1: b"\xFF", 0xCABB: b"\x00"}, "read": {0xFF92: 1, 0xFF93: 1, 0xCABB: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, keys=[0x00, 0x02], setup=SETUP, wram={0xFF92: b"\x55", 0xFF93: b"\x66", 0xFFB1: b"\xFF", 0xCABB: b"\x00"}, read={0xFF92: 1, 0xFF93: 1, 0xCABB: 1}, instruction_budget=20000000, cycle_budget=100000000),
+    {"keys": [0x00, 0x02], "setup": SETUP, "wram": {sym("hSCX"): b"\x55", sym("hSCY"): b"\x66", sym("hCurMenuItem"): b"\xFF", sym("wLCDC"): b"\x00"}, "read": {sym("hSCX"): 1, sym("hSCY"): 1, sym("wLCDC"): 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x02], setup=SETUP, wram={sym("hSCX"): b"\x55", sym("hSCY"): b"\x66", sym("hCurMenuItem"): b"\xFF", sym("wLCDC"): b"\x00"}, read={sym("hSCX"): 1, sym("hSCY"): 1, sym("wLCDC"): 1}, instruction_budget=20000000, cycle_budget=100000000),
 ]
 # <<< factory PCMenu_CardAlbum
 
@@ -925,16 +926,16 @@ CASES["PauseMenu_Config"] = [
     {
         "keys": [0x00, 0x02],
         "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-        "wram": {0xCABB: b"\x00", 0xC510: b"\xff", 0xD291: b"\x5a", 0xCD08: b"\x00"},
-        "read": {0xD11A: 1, 0xD291: 1, 0xCD08: 1},
+        "wram": {sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xff", sym("wd291"): b"\x5a", sym("wLineSeparation"): b"\x00"},
+        "read": {sym("wConfigExitSettingsCursorPos"): 1, sym("wd291"): 1, sym("wLineSeparation"): 1},
         "instruction_budget": 20000000,
         "cycle_budget": 80000000,
     },
     dict(POISON,
          keys=[0x00, 0x02],
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         wram={0xCABB: b"\x00", 0xC510: b"\xff", 0xD291: b"\x5a", 0xCD08: b"\x00"},
-         read={0xD11A: 1, 0xD291: 1, 0xCD08: 1},
+         wram={sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xff", sym("wd291"): b"\x5a", sym("wLineSeparation"): b"\x00"},
+         read={sym("wConfigExitSettingsCursorPos"): 1, sym("wd291"): 1, sym("wLineSeparation"): 1},
          instruction_budget=20000000,
          cycle_budget=80000000),
 ]
@@ -987,14 +988,14 @@ CONTRACT["Func_c2a3"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b"
 # it is neither seeded nor observed.
 CASES["Func_c2a3"] = [
     {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566,
-     "wram": {0xCABB: b"\x80", 0xFF40: b"\x80", 0xD0C1: b"\x00"},
-     "read": {0xD0C1: 1},
+     "wram": {sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("wOverworldNPCFlags"): b"\x00"},
+     "read": {sym("wOverworldNPCFlags"): 1},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01],
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON,
-         wram={0xCABB: b"\x80", 0xFF40: b"\x80", 0xD0C1: b"\x01"},
-         read={0xD0C1: 1},
+         wram={sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("wOverworldNPCFlags"): b"\x01"},
+         read={sym("wOverworldNPCFlags"): 1},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x01],
          instruction_budget=20000000, cycle_budget=80000000),
@@ -1005,14 +1006,14 @@ CASES["Func_c2a3"] = [
 CONTRACT["PauseMenu_Card"] = {"compare": (), "preserve": ()}
 CASES["PauseMenu_Card"] = [
     {"keys": [0x00, 0x02], "setup": SETUP,
-     "wram": {hSCX: b"\x55", hSCY: b"\x66", 0xCABB: b"\x00",
-               0xCEA1: b"\xFF", 0xCED3: b"\xFF", 0xFFB3: b"\xFF"},
+     "wram": {hSCX: b"\x55", hSCY: b"\x66", sym("wLCDC"): b"\x00",
+               sym("wCardListVisibleOffset"): b"\xFF", sym("wCurCardTypeFilter"): b"\xFF", sym("hffb3"): b"\xFF"},
      "sram": PAUSE_CARD_SRAM,
      "read": {hSCX: 1, hSCY: 1},
      "instruction_budget": 20000000, "cycle_budget": 100000000},
     dict(POISON, keys=[0x00, 0x02], setup=SETUP,
-         wram={hSCX: b"\x55", hSCY: b"\x66", 0xCABB: b"\x00",
-               0xCEA1: b"\xFF", 0xCED3: b"\xFF", 0xFFB3: b"\xFF"},
+         wram={hSCX: b"\x55", hSCY: b"\x66", sym("wLCDC"): b"\x00",
+               sym("wCardListVisibleOffset"): b"\xFF", sym("wCurCardTypeFilter"): b"\xFF", sym("hffb3"): b"\xFF"},
          sram=PAUSE_CARD_SRAM, read={hSCX: 1, hSCY: 1},
          instruction_budget=20000000, cycle_budget=100000000),
 ]
@@ -1021,8 +1022,8 @@ CASES["PauseMenu_Card"] = [
 # >>> factory EnterScript
 CONTRACT["EnterScript"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
 CASES["EnterScript"] = [
-    {"wram": {wNextScript: b"\x00\xC0", 0xC000: b"\xC9"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={wNextScript: b"\x00\xC0", 0xC000: b"\xC9"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {wNextScript: b"\x00\xC0", sym("wDeckToBuild"): b"\xC9"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wNextScript: b"\x00\xC0", sym("wDeckToBuild"): b"\xC9"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory EnterScript
 
@@ -1031,15 +1032,15 @@ CONTRACT["SetScriptData"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": 
 CASES["SetScriptData"] = [
 	{"hl": 0x0000, "wram": {wScriptNPC: b"\x00", wLoadedNPCTempIndex: b"\xA5", wOverworldMode: b"\x00", wNextScript: b"\x12\x34", wPlayerDirection: b"\x00", wOverworldNPCFlags: b"\x00", LOADED_NPCS: b"\x4A" + b"\x00" * 95}},
 	dict(POISON, hl=0x1234, wram={wScriptNPC: b"\x00", wLoadedNPCTempIndex: b"\xEE", wOverworldMode: b"\xA5", wNextScript: b"\xAA\x55", wPlayerDirection: b"\x02", wOverworldNPCFlags: b"\x04", LOADED_NPCS: b"\x4A" + b"\x00" * 95}),
-	{"hl": 0xBEEF, "wram": {wScriptNPC: b"\x01", wLoadedNPCTempIndex: b"\xFE", wOverworldMode: b"\x01", wNextScript: b"\xFE\xED", wPlayerDirection: b"\x03", wOverworldNPCFlags: b"\x80", LOADED_NPCS: b"\x00" * 12 + b"\x4A" + b"\x00" * 83}},
+	{"hl": data(0xBEEF), "wram": {wScriptNPC: b"\x01", wLoadedNPCTempIndex: b"\xFE", wOverworldMode: b"\x01", wNextScript: b"\xFE\xED", wPlayerDirection: b"\x03", wOverworldNPCFlags: b"\x80", LOADED_NPCS: b"\x00" * 12 + b"\x4A" + b"\x00" * 83}},
 ]
 # <<< factory SetScriptData
 
 # >>> factory PauseMenu_Deck
 CONTRACT["PauseMenu_Deck"] = {"compare": (), "preserve": ()}
 CASES["PauseMenu_Deck"] = [
-    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF92: b"\x55", 0xFF93: b"\x66", 0xCEB1: b"\x00", 0xCABB: b"\x00"}, "read": {0xFF92: 1, 0xFF93: 1, 0xCEB1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF92: b"\x55", 0xFF93: b"\x66", 0xCEB1: b"\x00", 0xCABB: b"\x00"}, read={0xFF92: 1, 0xFF93: 1, 0xCEB1: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("hSCX"): b"\x55", sym("hSCY"): b"\x66", sym("wCurDeck"): b"\x00", sym("wLCDC"): b"\x00"}, "read": {sym("hSCX"): 1, sym("hSCY"): 1, sym("wCurDeck"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("hSCX"): b"\x55", sym("hSCY"): b"\x66", sym("wCurDeck"): b"\x00", sym("wLCDC"): b"\x00"}, read={sym("hSCX"): 1, sym("hSCY"): 1, sym("wCurDeck"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PauseMenu_Deck
 
@@ -1049,24 +1050,24 @@ CASES["PauseMenu"] = [
     {
         "keys": [0x00, 0x02],
         "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-        "wram": {0xD0B8: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"},
-        "read": {0xD0B8: 1},
+        "wram": {sym("wSelectedPauseMenuItem"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
+        "read": {sym("wSelectedPauseMenuItem"): 1},
         "instruction_budget": 20000000,
         "cycle_budget": 80000000,
     },
     {
         "keys": [0x00, 0x02],
         "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-        "wram": {0xD0B8: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x80"},
-        "read": {0xD0B8: 1},
+        "wram": {sym("wSelectedPauseMenuItem"): b"\x05", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
+        "read": {sym("wSelectedPauseMenuItem"): 1},
         "instruction_budget": 20000000,
         "cycle_budget": 80000000,
     },
     dict(POISON,
          keys=[0x00, 0x02],
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         wram={0xD0B8: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"},
-         read={0xD0B8: 1},
+         wram={sym("wSelectedPauseMenuItem"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
+         read={sym("wSelectedPauseMenuItem"): 1},
          instruction_budget=20000000,
          cycle_budget=80000000),
 ]
@@ -1075,23 +1076,23 @@ CASES["PauseMenu"] = [
 # >>> factory OpenPauseMenu
 CONTRACT["OpenPauseMenu"] = {"compare": (), "preserve": ()}
 CASES["OpenPauseMenu"] = [
-    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0B8: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xD0B8: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xD0B8: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xD0B8: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wSelectedPauseMenuItem"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "read": {sym("wSelectedPauseMenuItem"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("wSelectedPauseMenuItem"): b"\x05", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, read={sym("wSelectedPauseMenuItem"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenPauseMenu
 
 # >>> factory HandlePlayerMoveMode
 CONTRACT["HandlePlayerMoveMode"] = {"compare": (), "preserve": ()}
 _MOVE_STEP = _move_step_fixture(vram=False, bank=3)
-_MOVE_STEP["wram"] = {**_MOVE_STEP["wram"], 0xFF8F: b"\x00", 0xFF90: b"\x80", 0xFF91: b"\x00"}
-_MOVE_STEP["read"] = {**_MOVE_STEP["read"], 0xD335: 1, 0xD338: 1, 0xD4DE: 2}
+_MOVE_STEP["wram"] = {**_MOVE_STEP["wram"], sym("hDPadHeld"): b"\x00", sym("hKeysHeld"): b"\x80", sym("hKeysPressed"): b"\x00"}
+_MOVE_STEP["read"] = {**_MOVE_STEP["read"], sym("wPlayerCurrentlyMoving"): 1, sym("wd338"): 1, sym("wSprite1Counter"): 2}
 CASES["HandlePlayerMoveMode"] = [
     {"wram": {wPlayerSpriteIndex: b"\x12", wPlayerCurrentlyMoving: b"\x00", hKeysPressed: b"\x00"}, "read": {wWhichSprite: 1}},
-    {"keys": [0x08, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {wPlayerSpriteIndex: b"\x34", wPlayerCurrentlyMoving: b"\x00", 0xCABB: b"\x00"}, "read": {wWhichSprite: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x08, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {wPlayerSpriteIndex: b"\x34", wPlayerCurrentlyMoving: b"\x00", sym("wLCDC"): b"\x00"}, "read": {wWhichSprite: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"wram": {wPlayerSpriteIndex: b"\x56", wPlayerCurrentlyMoving: b"\x10", hKeysPressed: b"\x00"}, "read": {wWhichSprite: 1}},
-    {"wram": {wPlayerSpriteIndex: b"\x78", wPlayerCurrentlyMoving: b"\x01", hKeysPressed: b"\x00", 0xD0BF: b"\x00"}, "read": {wWhichSprite: 1}},
-    {"wram": {wPlayerSpriteIndex: b"\xBC", wPlayerCurrentlyMoving: b"\x02", hKeysPressed: b"\x00", 0xD0BF: b"\x00"}, "read": {wWhichSprite: 1}},
-    dict(POISON, wram={wPlayerSpriteIndex: b"\x9A", wPlayerCurrentlyMoving: b"\x03", hKeysPressed: b"\x00", 0xD0BF: b"\x00"}, read={wWhichSprite: 1}),
+    {"wram": {wPlayerSpriteIndex: b"\x78", wPlayerCurrentlyMoving: b"\x01", hKeysPressed: b"\x00", sym("wOverworldMode"): b"\x00"}, "read": {wWhichSprite: 1}},
+    {"wram": {wPlayerSpriteIndex: b"\xBC", wPlayerCurrentlyMoving: b"\x02", hKeysPressed: b"\x00", sym("wOverworldMode"): b"\x00"}, "read": {wWhichSprite: 1}},
+    dict(POISON, wram={wPlayerSpriteIndex: b"\x9A", wPlayerCurrentlyMoving: b"\x03", hKeysPressed: b"\x00", sym("wOverworldMode"): b"\x00"}, read={wWhichSprite: 1}),
     # The joypad is read, not polled: DOWN held as the frame had it.
     dict(_MOVE_STEP, **_MOVE_STEP_REGS),
 ]
@@ -1100,35 +1101,35 @@ CASES["HandlePlayerMoveMode"] = [
 # >>> factory CallHandlePlayerMoveMode
 CONTRACT["CallHandlePlayerMoveMode"] = {"compare": (), "preserve": ()}
 CASES["CallHandlePlayerMoveMode"] = [
-	{"wram": {0xD335: b"\x10", 0xD336: b"\x5A"}, "read": {0xD4CF: 1}},
-	dict(POISON, wram={0xD335: b"\x10", 0xD336: b"\xC3"}, read={0xD4CF: 1}),
+	{"wram": {sym("wPlayerCurrentlyMoving"): b"\x10", sym("wPlayerSpriteIndex"): b"\x5A"}, "read": {sym("wWhichSprite"): 1}},
+	dict(POISON, wram={sym("wPlayerCurrentlyMoving"): b"\x10", sym("wPlayerSpriteIndex"): b"\xC3"}, read={sym("wWhichSprite"): 1}),
 ]
 # <<< factory CallHandlePlayerMoveMode
 
 # >>> factory HandleOverworldMode
 CONTRACT["HandleOverworldMode"] = {"compare": (), "preserve": ()}
 CASES["HandleOverworldMode"] = [
-    {"wram": {0xD0BF: b"\x00", 0xD336: b"\x12", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, "expect": {0xD4CF: b"\x12"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"wram": {0xD0BF: b"\x01", 0xD335: b"\x10", 0xD336: b"\x34", 0xD4CF: b"\x00"}, "expect": {0xD4CF: b"\x34"}},
-    {"hl": 0x0000, "wram": {0xD0BF: b"\x02", 0xD3B6: b"\x00", 0xD3AA: b"\xA5", 0xD0C1: b"\x00", 0xD0C6: b"\x12\x34", 0xD334: b"\x00", 0xD34A: b"\x4A" + b"\x00" * 95}, "expect": {0xD0BF: b"\x03"}},
-    {"wram": {0xD0BF: b"\x03", 0xD0C6: b"\x00\xC0", 0xC000: b"\xC9"}},
-    dict(POISON, wram={0xD0BF: b"\x80", 0xD336: b"\x56", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, expect={0xD4CF: b"\x56"}, instruction_budget=2000000, cycle_budget=8000000),
+    {"wram": {sym("wOverworldMode"): b"\x00", sym("wPlayerSpriteIndex"): b"\x12", sym("wOverworldMapPlayerAnimationState"): b"\x00", sym("wWhichSprite"): b"\x00"}, "expect": {sym("wWhichSprite"): b"\x12"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"wram": {sym("wOverworldMode"): b"\x01", sym("wPlayerCurrentlyMoving"): b"\x10", sym("wPlayerSpriteIndex"): b"\x34", sym("wWhichSprite"): b"\x00"}, "expect": {sym("wWhichSprite"): b"\x34"}},
+    {"hl": 0x0000, "wram": {sym("wOverworldMode"): b"\x02", sym("wScriptNPC"): b"\x00", sym("wLoadedNPCTempIndex"): b"\xA5", sym("wOverworldNPCFlags"): b"\x00", sym("wNextScript"): b"\x12\x34", sym("wPlayerDirection"): b"\x00", sym("wLoadedNPC1ID"): b"\x4A" + b"\x00" * 95}, "expect": {sym("wOverworldMode"): b"\x03"}},
+    {"wram": {sym("wOverworldMode"): b"\x03", sym("wNextScript"): b"\x00\xC0", sym("wDeckToBuild"): b"\xC9"}},
+    dict(POISON, wram={sym("wOverworldMode"): b"\x80", sym("wPlayerSpriteIndex"): b"\x56", sym("wOverworldMapPlayerAnimationState"): b"\x00", sym("wWhichSprite"): b"\x00"}, expect={sym("wWhichSprite"): b"\x56"}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory HandleOverworldMode
 
 # >>> factory LoadMap
 CONTRACT["LoadMap"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["LoadMap"] = [
-	{"wram": {0xD0BB: b"\x01", 0xD0BC: b"\x0E", 0xD0BD: b"\x1B", 0xD0BE: b"\x02"}, "keys": [0x80], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xD0B5: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-	dict(POISON, wram={0xD0BB: b"\x01", 0xD0BC: b"\x0E", 0xD0BD: b"\x1B", 0xD0BE: b"\x02"}, keys=[0x80], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xD0B5: 1}, instruction_budget=20000000, cycle_budget=80000000),
+	{"wram": {sym("wTempMap"): b"\x01", sym("wTempPlayerXCoord"): b"\x0E", sym("wTempPlayerYCoord"): b"\x1B", sym("wTempPlayerDirection"): b"\x02"}, "keys": [0x80], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("wGameEvent"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+	dict(POISON, wram={sym("wTempMap"): b"\x01", sym("wTempPlayerXCoord"): b"\x0E", sym("wTempPlayerYCoord"): b"\x1B", sym("wTempPlayerDirection"): b"\x02"}, keys=[0x80], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={sym("wGameEvent"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory LoadMap
 
 # >>> factory PCMenu_Print
 CONTRACT["PCMenu_Print"] = {"compare": (), "preserve": ()}
 CASES["PCMenu_Print"] = [
-    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xFF92: b"\x55", 0xFF93: b"\x66"}, "read": {0xFF92: 1, 0xFF93: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xFF92: b"\x55", 0xFF93: b"\x66"}, read={0xFF92: 1, 0xFF93: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("hSCX"): b"\x55", sym("hSCY"): b"\x66"}, "read": {sym("hSCX"): 1, sym("hSCY"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("hSCX"): b"\x55", sym("hSCY"): b"\x66"}, read={sym("hSCX"): 1, sym("hSCY"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PCMenu_Print
 
@@ -1137,8 +1138,8 @@ CONTRACT["PCMenu"] = {"compare": (), "preserve": ()}
 CASES["PCMenu"] = [
     # B cancels the menu at once, so the routine runs to its `ret`: the on/off
     # texts, the menu draw, the NPC flags and the song override reset.
-    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD0B9: b"\x00", 0xD112: b"\x09", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xD0B9: 1, 0xD112: 1, 0xD0BF: 3, 0xC600: 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xD0B9: b"\x03", 0xD112: b"\x09", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xD0B9: 1, 0xD112: 1, 0xD0BF: 3, 0xC600: 0x400}, instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wSelectedPCMenuItem"): b"\x00", sym("wSongOverride"): b"\x09", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "read": {sym("wSelectedPCMenuItem"): 1, sym("wSongOverride"): 1, sym("wOverworldMode"): 3, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("wSelectedPCMenuItem"): b"\x03", sym("wSongOverride"): b"\x09", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, read={sym("wSelectedPCMenuItem"): 1, sym("wSongOverride"): 1, sym("wOverworldMode"): 3, sym("wc600"): 0x400}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PCMenu
 
@@ -1151,13 +1152,13 @@ from tests.cases._schema_migration import legacy_to_schema
 # SetNextNPCAndScript loads it. Event 0 returns at once. The battle and gift
 # centers open link sessions that never return without a peer, so they stay
 # uncovered here.
-_C141_EVENT = 0xD0C2
-_C141_READ = {0xD000: 0x400, _C141_EVENT: 1}
+_C141_EVENT = sym("wActiveGameEvent")
+_C141_READ = {sym("wNamingScreenDestPointer"): 0x400, _C141_EVENT: 1}
 # Only the flags survive the map-script jump (see CallMapScriptPointerIfExists).
 CONTRACT["Func_c141"] = {"compare": ("f",), "preserve": ()}
 CASES["Func_c141"] = [
     dict(after_duel_fixture(vram=False), read=_C141_READ, **AFTER_DUEL_REGS),
-    dict(after_duel_fixture(vram=False, **{"D0C2": b"\x00"}), read=_C141_READ, **POISON),
+    dict(after_duel_fixture(vram=False, changes={sym("wActiveGameEvent"): b"\x00"}), read=_C141_READ, **POISON),
     dict(POISON, wram={_C141_EVENT: b"\x00"}, read={_C141_EVENT: 1}),
 ]
 # <<< factory Func_c141
@@ -1484,7 +1485,7 @@ MUTATIONS["SetScriptData"] = {"source_symbol": "SetScriptData", "before": "SetSc
 # <<< factory-mutation SetScriptData
 # >>> factory-completion SetScriptData
 for _record in SCHEMA2_CASES["SetScriptData"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x410A, "bank": 3}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("EnterScript"), "bank": sym_bank("EnterScript")}
 # <<< factory-completion SetScriptData
 # >>> factory-mutation PauseMenu_Deck
 MUTATIONS["PauseMenu_Deck"] = {"source_symbol": "PauseMenu_Deck", "before": "void PauseMenu_Deck(void)\n{\n\thSCX = 0u;", "after": "void PauseMenu_Deck(void)\n{\n\thSCX = 1u;", "case_ids": ["PauseMenu_Deck-0", "PauseMenu_Deck-1"]}
@@ -1509,14 +1510,14 @@ MUTATIONS["LoadMap"] = {"source_symbol": "LoadMap", "before": "\twGameEvent = GA
 # <<< factory-mutation LoadMap
 # >>> factory-completion LoadMap
 for _record in SCHEMA2_CASES["LoadMap"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x3D1D}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("DrawSpriteAnimationFrame.finishYPosition") + 4}
 # <<< factory-completion LoadMap
 # >>> factory-mutation PCMenu_Print
 MUTATIONS["PCMenu_Print"] = {"source_symbol": "PCMenu_Print", "before": "void PCMenu_Print(void)\n{\n\thSCX = 0u;", "after": "void PCMenu_Print(void)\n{\n\thSCX = 1u;", "case_ids": ["PCMenu_Print-0", "PCMenu_Print-1"]}
 # <<< factory-mutation PCMenu_Print
 # >>> factory-completion PCMenu_Print
 for _record in SCHEMA2_CASES["PCMenu_Print"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x056F}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("DoFrame.done") + 2}
 # <<< factory-completion PCMenu_Print
 # >>> factory-mutation PCMenu
 MUTATIONS["PCMenu"] = {"source_symbol": "PCMenu", "before": "\tFunc_c891(TurnedPCOffText);", "after": "\tFunc_c891(TurnedPCOnText);", "case_ids": ["PCMenu-0", "PCMenu-1"]}

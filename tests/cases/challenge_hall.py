@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/challenge_hall.asm."""
+from tests.cases._symbols import sym
 
 POISON = {
     "a": 0xAA,
@@ -12,7 +13,7 @@ POISON = {
 
 from tests.cases._schema_migration import legacy_to_schema
 
-FLAGS = 0xD698
+FLAGS = sym("wd698")
 
 CONTRACT = {
     "Func_f5db": {
@@ -85,8 +86,8 @@ CONTRACT["ChallengeHallAfterDuel"] = {
     "wram_out": True,
 }
 CASES["ChallengeHallAfterDuel"] = [
-    {"wram": {0xD0C3: b"\x00", 0xD3AB: b"\x00"}, "read": {0xD3AB: 1}},
-    dict(POISON, wram={0xD0C3: b"\x01", 0xD3AB: b"\x00"}, read={0xD3AB: 1}),
+    {"wram": {sym("wDuelResult"): b"\x00", sym("wTempNPC"): b"\x00"}, "read": {sym("wTempNPC"): 1}},
+    dict(POISON, wram={sym("wDuelResult"): b"\x01", sym("wTempNPC"): b"\x00"}, read={sym("wTempNPC"): 1}),
 ]
 # <<< factory ChallengeHallAfterDuel
 
@@ -96,18 +97,18 @@ CONTRACT["ChallengeHallLoadMap"] = {
     "preserve": (),
 }
 CASES["ChallengeHallLoadMap"] = [
-    {"wram": {0xD3E2: b"\x00", 0xD3AB: b"\x00"}},
-    {"wram": {0xD3E2: b"\x02", 0xD3AB: b"\x00", 0xD34A: b"\x00" * 96}},
-    dict(POISON, wram={0xD3E2: b"\x02", 0xD3AB: b"\x00", 0xD34A: b"\x00" * 96}),
+    {"wram": {sym("wEventVars") + 0x10: b"\x00", sym("wTempNPC"): b"\x00"}},
+    {"wram": {sym("wEventVars") + 0x10: b"\x02", sym("wTempNPC"): b"\x00", sym("wLoadedNPC1ID"): b"\x00" * 96}},
+    dict(POISON, wram={sym("wEventVars") + 0x10: b"\x02", sym("wTempNPC"): b"\x00", sym("wLoadedNPC1ID"): b"\x00" * 96}),
 ]
 # <<< factory ChallengeHallLoadMap
 
 # >>> factory Preload_Guide
 CONTRACT["Preload_Guide"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["Preload_Guide"] = [
-    {"wram": {0xD3E2: b"\x00", 0xD3AC: b"\x55\x66"}},
-    {"wram": {0xD3E2: b"\x80", 0xD3AC: b"\x55\x66"}},
-    dict(POISON, wram={0xD3E2: b"\x80", 0xD3AC: b"\x55\x66"}),
+    {"wram": {sym("wEventVars") + 0x10: b"\x00", sym("wLoadNPCXPos"): b"\x55\x66"}},
+    {"wram": {sym("wEventVars") + 0x10: b"\x80", sym("wLoadNPCXPos"): b"\x55\x66"}},
+    dict(POISON, wram={sym("wEventVars") + 0x10: b"\x80", sym("wLoadNPCXPos"): b"\x55\x66"}),
 ]
 # <<< factory Preload_Guide
 
@@ -118,9 +119,9 @@ CONTRACT["Preload_ChallengeHallOpponent"] = {
     "wram_out": True,
 }
 CASES["Preload_ChallengeHallOpponent"] = [
-    {"wram": {0xD3E2: b"\x80", 0xD3AB: b"\x00"}},
-    {"wram": {0xD3E2: b"\x82", 0xD3AB: b"\x00", 0xD3E7: b"\x00"}},
-    dict(POISON, wram={0xD3E2: b"\x82", 0xD3AB: b"\x00", 0xD3E7: b"\x00"}),
+    {"wram": {sym("wEventVars") + 0x10: b"\x80", sym("wTempNPC"): b"\x00"}},
+    {"wram": {sym("wEventVars") + 0x10: b"\x82", sym("wTempNPC"): b"\x00", sym("wEventVars") + 0x15: b"\x00"}},
+    dict(POISON, wram={sym("wEventVars") + 0x10: b"\x82", sym("wTempNPC"): b"\x00", sym("wEventVars") + 0x15: b"\x00"}),
 ]
 # <<< factory Preload_ChallengeHallOpponent
 
@@ -128,37 +129,37 @@ CONTRACT["Func_f580"] = {"compare": ("a",), "preserve": (), "wram_out": True}
 CASES["Func_f580"] = [
     {
         "wram": {
-            0xD3E2: b"\x10",
-            0xD3AB: b"\x00",
-            0xD696: b"\x00",
-            0xD698: b"\x00\x00\x00\x00",
+            sym("wEventVars") + 0x10: b"\x10",
+            sym("wTempNPC"): b"\x00",
+            sym("wChallengeHallNPC"): b"\x00",
+            sym("wd698"): b"\x00\x00\x00\x00",
         },
-        "read": {0xD3E2: 1, 0xD3AB: 1, 0xD696: 1, 0xD698: 4},
+        "read": {sym("wEventVars") + 0x10: 1, sym("wTempNPC"): 1, sym("wChallengeHallNPC"): 1, sym("wd698"): 4},
     },
     {
         "wram": {
-            0xD3E2: b"\x2c",
-            0xD3AB: b"\x00",
-            0xD696: b"\x00",
-            0xD698: b"\x00\x00\x00\x00",
+            sym("wEventVars") + 0x10: b"\x2c",
+            sym("wTempNPC"): b"\x00",
+            sym("wChallengeHallNPC"): b"\x00",
+            sym("wd698"): b"\x00\x00\x00\x00",
         },
-        "read": {0xD3E2: 1, 0xD3AB: 1, 0xD696: 1, 0xD698: 4},
+        "read": {sym("wEventVars") + 0x10: 1, sym("wTempNPC"): 1, sym("wChallengeHallNPC"): 1, sym("wd698"): 4},
     },
     dict(
         POISON,
         wram={
-            0xD3E2: b"\x30",
-            0xD3AB: b"\x00",
-            0xD696: b"\x00",
-            0xD698: b"\x00\x00\x00\x00",
+            sym("wEventVars") + 0x10: b"\x30",
+            sym("wTempNPC"): b"\x00",
+            sym("wChallengeHallNPC"): b"\x00",
+            sym("wd698"): b"\x00\x00\x00\x00",
         },
-        read={0xD3E2: 1, 0xD3AB: 1, 0xD696: 1, 0xD698: 4},
+        read={sym("wEventVars") + 0x10: 1, sym("wTempNPC"): 1, sym("wChallengeHallNPC"): 1, sym("wd698"): 4},
     ),
 ]
 CONTRACT["Func_f602"] = {"compare": ("a", "f"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_f602"] = [
-    {"wram": {0xD3E2: b"\x02"}, "read": {0xD3E2: 1}},
-    dict(POISON, wram={0xD3E2: b"\x02"}, read={0xD3E2: 1}),
+    {"wram": {sym("wEventVars") + 0x10: b"\x02"}, "read": {sym("wEventVars") + 0x10: 1}},
+    dict(POISON, wram={sym("wEventVars") + 0x10: b"\x02"}, read={sym("wEventVars") + 0x10: 1}),
 ]
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

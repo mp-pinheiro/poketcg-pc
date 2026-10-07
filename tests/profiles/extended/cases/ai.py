@@ -172,7 +172,7 @@ MUTATIONS = {
         'before': '\t\t\twIsPracticeDuel = 1;',
         'after': '\t\t\twIsPracticeDuel = 0;',
         'case_ids': ['LoadOpponentDeck-1', 'LoadOpponentDeck-4'],
-        'source': 'src/profiles/extended/home/ai.c'},
+        'source': 'src/home/ai.c'},
     'AIDoAction': {   'source_symbol': 'AIDoAction',
         'before': '\t\tcase AIACTION_DO_TURN:\n'
                   '\t\t\tif (sam && sam_scripted())\n'
@@ -192,7 +192,7 @@ MUTATIONS = {
                  '\tuint8_t result = AIDoAction(0x03u);\n'
                  '\thTempPlayAreaLocation_ff9d = (uint8_t)(result ^ 0xFFu);',
         'case_ids': ['AIDoAction_ForcedSwitch-0'],
-        'source': 'src/profiles/extended/home/ai.c'},
+        'source': 'src/home/ai.c'},
     'AIDoAction_KOSwitch': {   'source_symbol': 'AIDoAction_KOSwitch',
         'before': 'uint8_t AIDoAction_KOSwitch(void)\n'
                   '{\n'
@@ -203,24 +203,24 @@ MUTATIONS = {
                  '\tuint8_t result = AIDoAction(AIACTION_KO_SWITCH);\n'
                  '\thTemp_ffa0 = (uint8_t)(result ^ 0xFFu);',
         'case_ids': ['AIDoAction_KOSwitch-0'],
-        'source': 'src/profiles/extended/home/ai.c'},
+        'source': 'src/home/ai.c'},
     'AIDoAction_StartDuel': {   'source_symbol': 'AIDoAction_StartDuel',
         'before': 'uint8_t AIDoAction_StartDuel(void)\n{\n\treturn AIDoAction(0x02u);',
         'after': 'uint8_t AIDoAction_StartDuel(void)\n{\n\treturn AIDoAction(0x01u);',
         'case_ids': ['AIDoAction_StartDuel-0'],
-        'source': 'src/profiles/extended/home/ai.c'},
+        'source': 'src/home/ai.c'},
     'AIDoAction_TakePrize': {   'source_symbol': 'AIDoAction_TakePrize',
         'before': 'uint8_t AIDoAction_TakePrize(void)\n'
                   '{\n'
                   '\treturn AIDoAction(AIACTION_TAKE_PRIZE);',
         'after': 'uint8_t AIDoAction_TakePrize(void)\n{\n\treturn AIDoAction(0x03u);',
         'case_ids': ['AIDoAction_TakePrize-0'],
-        'source': 'src/profiles/extended/home/ai.c'},
+        'source': 'src/home/ai.c'},
     'AIDoAction_Turn': {   'source_symbol': 'AIDoAction_Turn',
         'before': 'uint8_t AIDoAction_Turn(void)\n{\n\treturn AIDoAction(AIACTION_DO_TURN);',
         'after': 'uint8_t AIDoAction_Turn(void)\n{\n\treturn AIDoAction(AIACTION_KO_SWITCH);',
         'case_ids': ['AIDoAction_Turn-0'],
-        'source': 'src/profiles/extended/home/ai.c'},
+        'source': 'src/home/ai.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

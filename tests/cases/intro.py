@@ -1,8 +1,9 @@
+from tests.cases._symbols import sym, sym_bank
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-W_TITLE_SCREEN_SPRITES = 0xD629
-W_SPRITE_ANIM_BUFFER = 0xD4D0
+W_TITLE_SCREEN_SPRITES = sym("wTitleScreenSprites")
+W_SPRITE_ANIM_BUFFER = sym("wSprite1Enabled")
 READS = {
     W_TITLE_SCREEN_SPRITES: 7,
     W_SPRITE_ANIM_BUFFER + 1: 1,
@@ -35,10 +36,10 @@ CASES = {
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wd317 = 0xD317
-wSequenceCmdPtr = 0xD631
-wSequenceDelay = 0xD633
-wIntroSequencePalsNeedUpdate = 0xD634
+wd317 = sym("wd317")
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
+wSequenceDelay = sym("wSequenceDelay")
+wIntroSequencePalsNeedUpdate = sym("wIntroSequencePalsNeedUpdate")
 # <<< factory-cases-statics
 
 # >>> factory PlayIntroSequence
@@ -65,5 +66,5 @@ MUTATIONS["PlayIntroSequence"] = {"source_symbol": "PlayIntroSequence", "before"
 # <<< factory-mutation PlayIntroSequence
 # >>> factory-completion PlayIntroSequence
 for _record in SCHEMA2_CASES["PlayIntroSequence"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x5364, "bank": 7}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("PlayIntroSequence.loop_cmds"), "bank": sym_bank("PlayIntroSequence.loop_cmds")}
 # <<< factory-completion PlayIntroSequence

@@ -966,8 +966,6 @@ _EARTHQUAKE = Fixture(
     lcdc=0xCABB,
 )
 _EARTHQUAKE_CASE = _EARTHQUAKE.case(vram=False)
-_EARTHQUAKE_CASE["read"][0xCC00] = 0xBD
-_EARTHQUAKE_CASE["read"][0xCCBE] = 0x42
 CASES['HandleSpecialAIAttacks'] = [
     dict(_SPECIAL.case(vram=False), **_SPECIAL.regs),
     dict(_EARTHQUAKE_CASE, **_EARTHQUAKE.regs),
@@ -981,14 +979,14 @@ MUTATIONS = {
                         'CheckIfAnyBasicPokemonInDeck-2',
                         'CheckIfAnyBasicPokemonInDeck-3',
                         'CheckIfAnyBasicPokemonInDeck-5'],
-        'source': 'src/profiles/extended/home/special_attacks.c'},
+        'source': 'src/home/special_attacks.c'},
     'CheckWhetherToSwitchToFirstAttack': {   'source_symbol': 'CheckWhetherToSwitchToFirstAttack',
         'before': '\tif (first_score < 0x50u) {\n\t\twSelectedAttack = SECOND_ATTACK;',
         'after': '\tif (first_score < 0x50u) {\n\t\twSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;',
         'case_ids': [   'CheckWhetherToSwitchToFirstAttack-0',
                         'CheckWhetherToSwitchToFirstAttack-1',
                         'CheckWhetherToSwitchToFirstAttack-2'],
-        'source': 'src/profiles/extended/home/special_attacks.c'},
+        'source': 'src/home/special_attacks.c'},
     'HandleSpecialAIAttacks': {   'source_symbol': 'HandleSpecialAIAttacks',
         'before': '\t\t\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(e + DUELVARS_ARENA_CARD_HP));\n',
         'after': '\t\t\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(e + DUELVARS_ARENA_CARD_HP));\n'

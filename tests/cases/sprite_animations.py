@@ -1,21 +1,22 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-SPRITE_BUFFER = 0xD4D0
-CACHE = 0xD5D8
-CACHE_SIZE = 0xD618
-W_WHICH_SPRITE = 0xD4CF
-OAM = 0xCA00
-OAM_OFFSET = 0xCAB5
-OAM_TOGGLE = 0xCAC0
-H_BANK = 0xFF80
-CUR_ATTR = 0xD5D0
-CUR_X = 0xD5D1
-CUR_Y = 0xD5D2
-CUR_TILE = 0xD5D3
-CUR_FRAME_BANK = 0xD5D6
-WHICH_FRAME = 0xD4CA
-TEMP_POINTER = 0xD4C4
-LOADED_FRAME = 0xD23E
+SPRITE_BUFFER = sym("wSprite1Enabled")
+CACHE = sym("wSpriteVRAM1Valid")
+CACHE_SIZE = sym("wSpriteVRAMBufferSize")
+W_WHICH_SPRITE = sym("wWhichSprite")
+OAM = sym("wOAM")
+OAM_OFFSET = sym("wOAMOffset")
+OAM_TOGGLE = sym("wVBlankOAMCopyToggle")
+H_BANK = sym("hBankROM")
+CUR_ATTR = sym("wCurrSpriteAttributes")
+CUR_X = sym("wCurrSpriteXPos")
+CUR_Y = sym("wCurrSpriteYPos")
+CUR_TILE = sym("wCurrSpriteTileID")
+CUR_FRAME_BANK = sym("wCurrSpriteFrameBank")
+WHICH_FRAME = sym("wTempBoosterChances")
+TEMP_POINTER = sym("wTempPointer")
+LOADED_FRAME = sym("wDecompressionBuffer")
 
 CONTRACT = {
     "_ClearSpriteAnimations": {
@@ -110,8 +111,8 @@ CONTRACT = {
 
 
 def entry(base, enabled=1, anim=0, counter=1, frame_bank=0, frame_ptr=0,
-          flags=0, x=0, y=0, tile=0, bank=4, anim_ptr=0xC200,
-          offset_ptr=0xC300):
+          flags=0, x=0, y=0, tile=0, bank=4, anim_ptr=sym("wPlayerCardLocations"),
+          offset_ptr=sym("wOpponentCardLocations")):
     data = bytearray(16)
     data[0] = enabled
     data[1] = 0
@@ -127,11 +128,11 @@ def entry(base, enabled=1, anim=0, counter=1, frame_bank=0, frame_ptr=0,
     data[14] = counter
     data[15] = flags
     return {base: bytes(data)}
-def frame_fixture(base=0xC100, entry_base=SPRITE_BUFFER, frame_ptr=0xC300,
+def frame_fixture(base=sym("wDecompressionSecondaryBufferStart") + 0x11, entry_base=SPRITE_BUFFER, frame_ptr=sym("wOpponentCardLocations"),
                    frame=(0, 1, 2, 3), flags=0, counter=1):
     state = entry(entry_base, counter=counter, flags=flags, offset_ptr=frame_ptr)
-    state.update({base: bytes(frame), 0xC200: bytes((0, 0, 0)) + b"\x00" * 29,
-                  0xC220: frame_ptr.to_bytes(2, "little"),
+    state.update({base: bytes(frame), sym("wPlayerCardLocations"): bytes((0, 0, 0)) + b"\x00" * 29,
+                  sym("wPlayerCardLocations") + 0x20: frame_ptr.to_bytes(2, "little"),
                   frame_ptr: bytes(frame),
                   H_BANK: b"\x04"})
     return state
@@ -144,10 +145,10 @@ CASES = {
                    CACHE_SIZE: 1, W_WHICH_SPRITE: 1, OAM: 160, OAM_OFFSET: 1,
                    OAM_TOGGLE: 1}},
         dict(POISON, wram={SPRITE_BUFFER: b"\xa5" * 256, CACHE: b"\xa5" * 64,
-                           CACHE_SIZE: b"\xa5", 0xD5D7: b"\x01"},
+                           CACHE_SIZE: b"\xa5", sym("wAllSpriteAnimationsDisabled"): b"\x01"},
              read={SPRITE_BUFFER: 256, CACHE: 64, CACHE_SIZE: 1, OAM: 160,
                    OAM_OFFSET: 1, OAM_TOGGLE: 1}),
-        {"wram": {0xD5D7: b"\x01", SPRITE_BUFFER: b"\xaa" * 256,
+        {"wram": {sym("wAllSpriteAnimationsDisabled"): b"\x01", SPRITE_BUFFER: b"\xaa" * 256,
                    CACHE: b"\xaa" * 64, CACHE_SIZE: b"\xaa"},
          "read": {SPRITE_BUFFER: 256, CACHE: 64, CACHE_SIZE: 1}},
     ],
@@ -156,13 +157,13 @@ CASES = {
          "read": {SPRITE_BUFFER: 16, CACHE_SIZE: 1}},
         dict(POISON, a=7, f=0, wram={H_BANK: b"\x04", CACHE_SIZE: b"\x00"},
              read={SPRITE_BUFFER: 16, CACHE_SIZE: 1}),
-        {"a": 1, "f": 0xF0, "wram": {0xD5D7: b"\x01"}},
+        {"a": 1, "f": 0xF0, "wram": {sym("wAllSpriteAnimationsDisabled"): b"\x01"}},
     ],
     "FillNewSpriteAnimBufferEntry": [
-        {"hl": 0xC100, "wram": {0xC100: b"\xaa" * 16, CUR_TILE: b"\x12"},
-         "read": {0xC0FF: 1, 0xC100: 16, 0xC110: 1}},
-        dict(POISON, hl=0xC1F8, wram={0xC1F8: b"\x55" * 16, CUR_TILE: b"\x34"},
-             read={0xC1F0: 8, 0xC1F8: 16, 0xC208: 1}),
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xaa" * 16, CUR_TILE: b"\x12"},
+         "read": {sym("wDecompressionSecondaryBufferStart") + 0x10: 1, sym("wDecompressionSecondaryBufferStart") + 0x11: 16, sym("wDecompressionSecondaryBufferStart") + 0x21: 1}},
+        dict(POISON, hl=sym("wDecompressionSecondaryBufferStart") + 0x109, wram={sym("wDecompressionSecondaryBufferStart") + 0x109: b"\x55" * 16, CUR_TILE: b"\x34"},
+             read={sym("wDecompressionSecondaryBufferStart") + 0x101: 8, sym("wDecompressionSecondaryBufferStart") + 0x109: 16, sym("wPlayerCardLocations") + 8: 1}),
     ],
     "DisableCurSpriteAnim": [
         {"wram": {W_WHICH_SPRITE: b"\x00", SPRITE_BUFFER: b"\x01"},
@@ -174,7 +175,7 @@ CASES = {
         {"a": 0, "wram": {SPRITE_BUFFER: b"\x01"}, "read": {SPRITE_BUFFER: 1}},
         dict(POISON, a=0xff, wram={SPRITE_BUFFER + 15 * 16: b"\x01"},
              read={SPRITE_BUFFER + 15 * 16: 1}),
-        {"a": 3, "wram": {0xD5D7: b"\x01", SPRITE_BUFFER + 48: b"\x01"},
+        {"a": 3, "wram": {sym("wAllSpriteAnimationsDisabled"): b"\x01", SPRITE_BUFFER + 48: b"\x01"},
          "read": {SPRITE_BUFFER + 48: 1}},
     ],
     "GetSpriteAnimCounter": [
@@ -186,14 +187,14 @@ CASES = {
          OAM: 160, OAM_OFFSET: 1, OAM_TOGGLE: 1}},
         dict(POISON, wram={SPRITE_BUFFER: b"\x00" * 256},
              read={SPRITE_BUFFER: 256, OAM: 160, OAM_OFFSET: 1, OAM_TOGGLE: 1}),
-        {"wram": {0xD5D7: b"\x01", SPRITE_BUFFER: b"\x11" * 256},
+        {"wram": {sym("wAllSpriteAnimationsDisabled"): b"\x01", SPRITE_BUFFER: b"\x11" * 256},
          "read": {SPRITE_BUFFER: 256, OAM_TOGGLE: 1}},
     ],
     "LoadSpriteDataForAnimationFrame": [
         {"hl": SPRITE_BUFFER, "wram": {**entry(SPRITE_BUFFER, frame_bank=0, x=2, y=3, tile=4)}},
         dict(POISON, hl=SPRITE_BUFFER, wram={**entry(SPRITE_BUFFER, frame_bank=0, x=0xff, y=0, tile=9)}),
-        {"hl": SPRITE_BUFFER, "wram": {**entry(SPRITE_BUFFER, frame_bank=1, frame_ptr=0xC300),
-         H_BANK: b"\x04", 0xC300: b"\x01\x00\x00\x01"},
+        {"hl": SPRITE_BUFFER, "wram": {**entry(SPRITE_BUFFER, frame_bank=1, frame_ptr=sym("wOpponentCardLocations")),
+         H_BANK: b"\x04", sym("wOpponentCardLocations"): b"\x01\x00\x00\x01"},
          "read": {OAM: 160, OAM_OFFSET: 1, CUR_ATTR: 1, CUR_X: 1, CUR_Y: 1,
                   CUR_TILE: 1, CUR_FRAME_BANK: 1}},
     ],
@@ -209,20 +210,20 @@ CASES = {
     "StartNewSpriteAnimation": [
         {"a": 0, "wram": {SPRITE_BUFFER: bytes((1, 0)) + b"\x00" * 14}},
         dict(POISON, a=7, wram={SPRITE_BUFFER: bytes((1, 0)) + b"\x00" * 14,
-             H_BANK: b"\x04", 0xC200: b"\x00" * 35, 0xC300: b"\x00\x01\x00\x00"},
+             H_BANK: b"\x04", sym("wPlayerCardLocations"): b"\x00" * 35, sym("wOpponentCardLocations"): b"\x00\x01\x00\x00"},
              read={SPRITE_BUFFER: 16}),
     ],
     "StartSpriteAnimation": [
         {"a": 0, "wram": {H_BANK: b"\x04", SPRITE_BUFFER: bytes(16),
-         0xC200: b"\x00" * 35, 0xC300: b"\x00\x01\x00\x00"}, "read": {SPRITE_BUFFER: 16}},
+         sym("wPlayerCardLocations"): b"\x00" * 35, sym("wOpponentCardLocations"): b"\x00\x01\x00\x00"}, "read": {SPRITE_BUFFER: 16}},
         dict(POISON, a=7, wram={H_BANK: b"\x04", SPRITE_BUFFER: bytes(16),
-             0xC200: b"\x00" * 35, 0xC300: b"\x00\x01\xff\x01"}, read={SPRITE_BUFFER: 16}),
+             sym("wPlayerCardLocations"): b"\x00" * 35, sym("wOpponentCardLocations"): b"\x00\x01\xff\x01"}, read={SPRITE_BUFFER: 16}),
     ],
     "Func_12ac9": [
         {"a": 0, "c": 0, "wram": {H_BANK: b"\x04", SPRITE_BUFFER: bytes(16),
-         0xC200: b"\x00" * 35, 0xC300: b"\x00\x01\x00\x00"}},
+         sym("wPlayerCardLocations"): b"\x00" * 35, sym("wOpponentCardLocations"): b"\x00\x01\x00\x00"}},
         dict(POISON, a=7, c=1, wram={H_BANK: b"\x04", SPRITE_BUFFER: bytes(16),
-             0xC200: b"\x00" * 35, 0xC300: b"\xff\x01\x00\x00"}, read={SPRITE_BUFFER: 16}),
+             sym("wPlayerCardLocations"): b"\x00" * 35, sym("wOpponentCardLocations"): b"\xff\x01\x00\x00"}, read={SPRITE_BUFFER: 16}),
     ],
     "LoadSpriteAnimPointers": [
         {"a": 0, "wram": {H_BANK: b"\x04", W_WHICH_SPRITE: b"\x00"}, "read": {SPRITE_BUFFER: 16}},
@@ -230,33 +231,33 @@ CASES = {
              read={SPRITE_BUFFER + 15 * 16: 16, TEMP_POINTER: 3}),
     ],
     "HandleAnimationFrame": [
-        {"hl": SPRITE_BUFFER, "wram": {**frame_fixture(), 0xC300: b"\x00\x01\x02\x03",
-         0xC220: b"\x00\xC3"}, "read": {SPRITE_BUFFER: 16, LOADED_FRAME: 4, H_BANK: 1}},
+        {"hl": SPRITE_BUFFER, "wram": {**frame_fixture(), sym("wOpponentCardLocations"): b"\x00\x01\x02\x03",
+         sym("wPlayerCardLocations") + 0x20: b"\x00\xC3"}, "read": {SPRITE_BUFFER: 16, LOADED_FRAME: 4, H_BANK: 1}},
         dict(POISON, hl=SPRITE_BUFFER, wram={**frame_fixture(frame=(0, 2, 0xff, 1), flags=3, counter=1),
-             0xC300: b"\x00\x01\xff\x01", 0xC220: b"\x00\xC3"},
+             sym("wOpponentCardLocations"): b"\x00\x01\xff\x01", sym("wPlayerCardLocations") + 0x20: b"\x00\xC3"},
              read={SPRITE_BUFFER: 16, LOADED_FRAME: 4, H_BANK: 1}),
-        {"hl": SPRITE_BUFFER, "wram": {**frame_fixture(flags=1), 0xC300: b"\x00\x01\x02\x03",
-         0xC220: b"\x00\xC3"}, "read": {SPRITE_BUFFER: 16, LOADED_FRAME: 4, H_BANK: 1}},
-        {"hl": SPRITE_BUFFER, "wram": {**frame_fixture(flags=2), 0xC300: b"\x00\x01\x02\x03",
-         0xC220: b"\x00\xC3"}, "read": {SPRITE_BUFFER: 16, LOADED_FRAME: 4, H_BANK: 1}},
+        {"hl": SPRITE_BUFFER, "wram": {**frame_fixture(flags=1), sym("wOpponentCardLocations"): b"\x00\x01\x02\x03",
+         sym("wPlayerCardLocations") + 0x20: b"\x00\xC3"}, "read": {SPRITE_BUFFER: 16, LOADED_FRAME: 4, H_BANK: 1}},
+        {"hl": SPRITE_BUFFER, "wram": {**frame_fixture(flags=2), sym("wOpponentCardLocations"): b"\x00\x01\x02\x03",
+         sym("wPlayerCardLocations") + 0x20: b"\x00\xC3"}, "read": {SPRITE_BUFFER: 16, LOADED_FRAME: 4, H_BANK: 1}},
         dict(POISON, hl=SPRITE_BUFFER,
-             wram={**frame_fixture(frame=(0, 0xff, 4, 5)), 0xC300: b"\x00\xff\x04\x05",
-                   0xC220: b"\x00\xC3"},
+             wram={**frame_fixture(frame=(0, 0xff, 4, 5)), sym("wOpponentCardLocations"): b"\x00\xff\x04\x05",
+                   sym("wPlayerCardLocations") + 0x20: b"\x00\xC3"},
              read={SPRITE_BUFFER: 16, LOADED_FRAME: 4, H_BANK: 1}),
     ],
     "GetAnimFramePointerFromOffset": [
         {"a": 0, "hl": SPRITE_BUFFER,
-         "wram": {**entry(SPRITE_BUFFER, bank=1, anim_ptr=0xC300),
-                  H_BANK: b"\x04", 0xC300: bytes((0, 0x80, 0xC3)),
-                  0xC380: b"\xab\xcd"},
+         "wram": {**entry(SPRITE_BUFFER, bank=1, anim_ptr=sym("wOpponentCardLocations")),
+                  H_BANK: b"\x04", sym("wOpponentCardLocations"): bytes((0, 0x80, 0xC3)),
+                  sym("wOpponentDeckCards") + 2: b"\xab\xcd"},
          "read": {WHICH_FRAME: 1, TEMP_POINTER: 3, SPRITE_BUFFER + 11: 3}},
         dict(POISON, a=0xff, hl=SPRITE_BUFFER + 15 * 16,
-             wram={**entry(SPRITE_BUFFER + 15 * 16, bank=1, anim_ptr=0xC300),
-                   H_BANK: b"\x04", 0xC300: bytes((0, 0x80, 0xC3)), 0xC380: b"\x11\x22"},
+             wram={**entry(SPRITE_BUFFER + 15 * 16, bank=1, anim_ptr=sym("wOpponentCardLocations")),
+                   H_BANK: b"\x04", sym("wOpponentCardLocations"): bytes((0, 0x80, 0xC3)), sym("wOpponentDeckCards") + 2: b"\x11\x22"},
              read={WHICH_FRAME: 1, SPRITE_BUFFER + 15 * 16 + 11: 3}),
     ],
     "SetAnimationCounterAndLoop": [
-        {"a": 0, "hl": SPRITE_BUFFER, "wram": {**entry(SPRITE_BUFFER, counter=0, anim_ptr=0xC2FD)},
+        {"a": 0, "hl": SPRITE_BUFFER, "wram": {**entry(SPRITE_BUFFER, counter=0, anim_ptr=sym("wPlayerArenaCardLastTurnEffect") + 5)},
          "read": {SPRITE_BUFFER + 9: 2, SPRITE_BUFFER + 14: 1}},
         dict(POISON, a=1, hl=SPRITE_BUFFER + 15 * 16, wram={**entry(SPRITE_BUFFER + 15 * 16, counter=0)},
              read={SPRITE_BUFFER + 15 * 16 + 14: 1}),
@@ -264,14 +265,14 @@ CASES = {
     ],
     "Func_12ba7": [
         {"ramg": False, "wram": {SPRITE_BUFFER: bytes(range(256)), CACHE: bytes(range(64)), CACHE_SIZE: b"\x10"},
-         "sread": {0: {0xB900: 321}}},
+         "sread": {0: {sym("sGeneralSaveDataEnd"): 321}}},
         dict(POISON, ramg=False, wram={SPRITE_BUFFER: b"\xa5" * 256, CACHE: b"\x5a" * 64,
-             CACHE_SIZE: b"\xff"}, sread={2: {0xB900: 321}}),
+             CACHE_SIZE: b"\xff"}, sread={2: {sym("sAlbumProgress") + 2: 321}}),
     ],
     "Func_12bcd": [
-        {"ramg": False, "sram": {0: {0xB900: bytes(range(256)) + bytes(range(64)) + b"\x10"}},
+        {"ramg": False, "sram": {0: {sym("sGeneralSaveDataEnd"): bytes(range(256)) + bytes(range(64)) + b"\x10"}},
          "read": {SPRITE_BUFFER: 256, CACHE: 64, CACHE_SIZE: 1}},
-        dict(POISON, ramg=False, sram={1: {0xB900: b"\x5a" * 321}},
+        dict(POISON, ramg=False, sram={1: {sym("sGfxBuffer5") + 0x500: b"\x5a" * 321}},
              read={SPRITE_BUFFER: 256, CACHE: 64, CACHE_SIZE: 1}),
     ],
     "ClearSpriteVRAMBuffer": [
@@ -321,7 +322,7 @@ MUTATIONS["HandleAnimationFrame"] = {
     "case_ids": ["HandleAnimationFrame-0"],
 }
 for _rec in SCHEMA2_CASES["_HandleAllSpriteAnimations"]:
-    _rec.setdefault("bus", {}).update({0xD4CF: 1, 0xD5D0: 1, 0xD5D1: 1, 0xD5D2: 1, 0xD5D3: 1, 0xD5D6: 1})
+    _rec.setdefault("bus", {}).update({sym("wWhichSprite"): 1, sym("wCurrSpriteAttributes"): 1, sym("wCurrSpriteXPos"): 1, sym("wCurrSpriteYPos"): 1, sym("wCurrSpriteTileID"): 1, sym("wCurrSpriteFrameBank"): 1})
 MUTATIONS["ClearSpriteVRAMBuffer"] = {
     "source_symbol": "ClearSpriteVRAMBuffer",
     "before": "\t\tgb_write8((uint16_t)(wSpriteVRAMBuffer_ADDR + i), 0);",

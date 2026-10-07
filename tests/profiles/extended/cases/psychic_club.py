@@ -79,17 +79,17 @@ MUTATIONS = {
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(PsychicClubAfterDuelTable + 1u));',
         'case_ids': ['PsychicClubAfterDuel-0'],
-        'source': 'src/profiles/extended/home/psychic_club.c'},
+        'source': 'src/home/psychic_club.c'},
     'Preload_Murray2': {   'source_symbol': 'Preload_Murray2',
         'before': 'uint8_t f = 0x40u;',
         'after': 'uint8_t f = 0x00u;',
         'case_ids': ['Preload_Murray2-0'],
-        'source': 'src/profiles/extended/home/psychic_club.c'},
+        'source': 'src/home/psychic_club.c'},
     'Preload_Murray1': {   'source_symbol': 'Preload_Murray1',
         'before': 'uint8_t old_c = (uint8_t)(r.f & 0x10u);',
         'after': 'uint8_t old_c = 0u;',
         'case_ids': ['Preload_Murray1-0'],
-        'source': 'src/profiles/extended/home/psychic_club.c'},
+        'source': 'src/home/psychic_club.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

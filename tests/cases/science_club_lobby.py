@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/science_club_lobby.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,16 +8,16 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wDuelResult = 0xD0C3
-wNPCDuelist = 0xD0C4
-wTempNPC = 0xD3AB
-wLoadedNPCs = 0xD34A
-wLoadedNPCTempIndex = 0xD3AA
-wScriptNPC = 0xD3B6
-wPlayerDirection = 0xD334
-wOverworldNPCFlags = 0xD0C1
-wNextScript = 0xD0C6
-wOverworldMode = 0xD0BF
+wDuelResult = sym("wDuelResult")
+wNPCDuelist = sym("wNPCDuelist")
+wTempNPC = sym("wTempNPC")
+wLoadedNPCs = sym("wLoadedNPCs")
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wScriptNPC = sym("wScriptNPC")
+wPlayerDirection = sym("wPlayerDirection")
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+wNextScript = sym("wNextScript")
+wOverworldMode = sym("wOverworldMode")
 # <<< factory-cases-statics
 
 # >>> factory ScienceClubLobbyAfterDuel
@@ -43,11 +44,11 @@ CASES["ScienceClubLobbyAfterDuel"] = [
 # >>> factory Preload_ImakuniInScienceClubLobby
 CONTRACT["Preload_ImakuniInScienceClubLobby"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["Preload_ImakuniInScienceClubLobby"] = [
-    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x00", 0xD3DD: b"\x04"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
-    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x00", 0xD3DD: b"\x08"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
-    {"wram": {0xD3D4: b"\x80", 0xD411: b"\x10", 0xD3DD: b"\x04"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
-    {"wram": {0xD3D4: b"\x00", 0xD411: b"\x00", 0xD3DD: b"\x04"}, "read": {0xD3D4: 1, 0xD3DD: 1}},
-    dict(POISON, wram={0xD3D4: b"\x40", 0xD411: b"\x00", 0xD3DD: b"\x04"}, read={0xD3D4: 1, 0xD3DD: 1}),
+    {"wram": {sym("wEventVars") + 2: b"\x80", sym("wEventVars") + 0x3F: b"\x00", sym("wEventVars") + 0xB: b"\x04"}, "read": {sym("wEventVars") + 2: 1, sym("wEventVars") + 0xB: 1}},
+    {"wram": {sym("wEventVars") + 2: b"\x80", sym("wEventVars") + 0x3F: b"\x00", sym("wEventVars") + 0xB: b"\x08"}, "read": {sym("wEventVars") + 2: 1, sym("wEventVars") + 0xB: 1}},
+    {"wram": {sym("wEventVars") + 2: b"\x80", sym("wEventVars") + 0x3F: b"\x10", sym("wEventVars") + 0xB: b"\x04"}, "read": {sym("wEventVars") + 2: 1, sym("wEventVars") + 0xB: 1}},
+    {"wram": {sym("wEventVars") + 2: b"\x00", sym("wEventVars") + 0x3F: b"\x00", sym("wEventVars") + 0xB: b"\x04"}, "read": {sym("wEventVars") + 2: 1, sym("wEventVars") + 0xB: 1}},
+    dict(POISON, wram={sym("wEventVars") + 2: b"\x40", sym("wEventVars") + 0x3F: b"\x00", sym("wEventVars") + 0xB: b"\x04"}, read={sym("wEventVars") + 2: 1, sym("wEventVars") + 0xB: 1}),
 ]
 # <<< factory Preload_ImakuniInScienceClubLobby
 
@@ -66,8 +67,8 @@ from tests.cases._schema_migration import legacy_to_schema
 # hence new_r1 & 3 = feedback | ((ctr ^ r1) & 1) << 1, which the seeds below
 # pick directly. Index 0 must be c=3: narrowing `& 0x03` to `& 0x01` is
 # invisible at c=0 and c=1.
-_SPECS2_TXRAM2 = 0xCE3F
-_SPECS2_RNG = 0xCACA  # wRNG1, wRNG2, wRNGCounter
+_SPECS2_TXRAM2 = sym("wTxRam2")
+_SPECS2_RNG = sym("wRNG1")  # wRNG1, wRNG2, wRNGCounter
 CONTRACT["Script_Specs2"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["Script_Specs2"] = [
     # c=3 -- table entry 0x2B; must be index 0 so the mask mutation reds
@@ -96,7 +97,7 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-completion Script_Specs2
 # The routine ends at its `rst $20`; legacy_to_schema always emits "return".
 for _rec in SCHEMA2_CASES["Script_Specs2"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x6BDD}
+    _rec["completion"] = {"mode": "pre-ret", "pc": sym("Script_Specs2") + 0x18}
 # <<< factory-completion Script_Specs2
 
 MUTATIONS = {}

@@ -7896,8 +7896,6 @@ CASES['AIDecide_ProfessorOak'].append(
     dict(_PROFESSOR_OAK.case(vram=False), **_PROFESSOR_OAK.regs)
 )
 _EXTENDED_FIXES_PROFESSOR_OAK_CASE = _EXTENDED_FIXES_PROFESSOR_OAK.case(vram=False)
-_EXTENDED_FIXES_PROFESSOR_OAK_CASE['read'][0xCC00] = 0xBD
-_EXTENDED_FIXES_PROFESSOR_OAK_CASE['read'][0xCCBE] = 0x42
 _EXTENDED_FIXES_PROFESSOR_OAK_CASE['read'][0xCD8F] = 0x20
 CASES['AIDecide_ProfessorOak'].append(
     dict(_EXTENDED_FIXES_PROFESSOR_OAK_CASE, **_EXTENDED_FIXES_PROFESSOR_OAK.regs)
@@ -7948,7 +7946,7 @@ MUTATIONS = {
         'before': '\t*hl = (uint16_t)(*hl - 1u);',
         'after': '\t*hl = (uint16_t)(*hl - 2u);',
         'case_ids': ['RemoveCardFromList-0', 'RemoveCardFromList-1', 'RemoveCardFromList-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'FindDuplicateCards': {   'source_symbol': 'FindDuplicateCards',
         'before': 'return (FindDupResult){0xFFu, 0x90u, outer, d};',
         'after': 'return (FindDupResult){0xFFu, 0x10u, outer, d};',
@@ -7958,7 +7956,7 @@ MUTATIONS = {
         'before': '\tRemoveCardFromList(&p);',
         'after': '\tp = hl; RemoveCardFromList(&p);',
         'case_ids': ['FindAndRemoveCardFromList-1', 'FindAndRemoveCardFromList-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'PickPokedexCards': {   'source_symbol': 'PickPokedexCards',
         'before': 'return (PickPokedexResult){0xFFu, 0x90u, (uint8_t)((wce1a_ADDR + out) >> 8)};',
         'after': 'return (PickPokedexResult){0xFFu, 0x10u, (uint8_t)((wce1a_ADDR + out) >> 8)};',
@@ -7977,28 +7975,28 @@ MUTATIONS = {
         'after': '\tif (hand_count < 7u)\n'
                  '\t\treturn (AIDecideParameterResult){hand_count, 0x00u, d};',
         'case_ids': ['AIDecide_Lass-3'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_Recycle': {   'source_symbol': 'AIDecide_Recycle',
         'before': '\tif (discard.f & 0x10u)\n'
                   '\t\treturn (AIDecideParameterResult){discard.a, or_a_flags(discard.a), 0xC5u};',
         'after': '\tif (discard.f & 0x10u)\n'
                  '\t\treturn (AIDecideParameterResult){discard.a, 0x00u, 0xC5u};',
         'case_ids': ['AIDecide_Recycle-0', 'AIDecide_Recycle-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_Imakuni': {   'source_symbol': 'AIDecide_Imakuni',
         'before': '\t\treturn (AIDecideParameterResult){status, 0x00u, d};\n'
                   '\treturn (AIDecideParameterResult){status, 0x10u, d};',
         'after': '\t\treturn (AIDecideParameterResult){status, 0x00u, d};\n'
                  '\treturn (AIDecideParameterResult){status, 0x00u, d};',
         'case_ids': ['AIDecide_Imakuni-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_PokemonFlute': {   'source_symbol': 'AIDecide_PokemonFlute',
         'before': 'uint8_t count = GetNonTurnDuelistVariable(0xEFu).a;\n\tif (count >= 6u)',
         'after': 'uint8_t count = GetNonTurnDuelistVariable(0xEFu).a;\n\tif (count > 6u)',
         'case_ids': [   'AIDecide_PokemonFlute-0',
                         'AIDecide_PokemonFlute-1',
                         'AIDecide_PokemonFlute-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_ClefairyDollOrMysteriousFossil': {   'source_symbol': 'AIDecide_ClefairyDollOrMysteriousFossil',
         'before': '\twce06 = count;',
         'after': '\twce06 = (uint8_t)(count + 1u);',
@@ -8010,14 +8008,14 @@ MUTATIONS = {
         'after': '\treturn (AIDecideParameterResult){(uint8_t)(remaining + 1u), '
                  'cp_flags(remaining, DECK_SIZE - 9u), d};',
         'case_ids': ['AIDecide_Bill-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_Gambler': {   'source_symbol': 'AIDecide_Gambler',
         'before': '\t\treturn (AIDecideParameterResult){remaining, (uint8_t)((remaining == '
                   'DECK_SIZE - 4u ? 0x80u : 0u) | 0x10u), d};',
         'after': '\t\treturn (AIDecideParameterResult){remaining, (uint8_t)((remaining == '
                  'DECK_SIZE - 4u ? 0x80u : 0u) | 0x00u), d};',
         'case_ids': ['AIDecide_Gambler-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_Revive': {   'source_symbol': 'AIDecide_Revive',
         'before': 'if (card == 0x88u || card == 0x87u)',
         'after': 'if (card == 0x88u)',
@@ -8027,7 +8025,7 @@ MUTATIONS = {
         'before': '\tif (hand < 6u)',
         'after': '\tif (hand < 7u)',
         'case_ids': ['AIDecide_ImposterProfessorOak-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_Pokedex': {   'source_symbol': 'AIDecide_Pokedex',
         'before': '(wanted == 0u && type >= TYPE_ENERGY)',
         'after': '(wanted == 0u && type < TYPE_ENERGY)',
@@ -8058,7 +8056,7 @@ MUTATIONS = {
         'before': '\t\tuint8_t f = (r.a == 0u) ? 0x80u : 0u;',
         'after': '\t\tuint8_t f = (r.a == 0u) ? 0x80u : 0x40u;',
         'case_ids': ['AIDecide_PokemonTrader_LegendaryMoltres-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_PokemonTrader_StrangePower': {   'source_symbol': 'AIDecide_PokemonTrader_StrangePower',
         'before': '\tLookForCardIDToTradeWithDifferentHandCardResult r = '
                   'LookForCardIDToTradeWithDifferentHandCard(MR_MIME, MR_MIME);\n'
@@ -8069,7 +8067,7 @@ MUTATIONS = {
                  '\tif (!(r.f & 0x10u)) {\n'
                  '\t\tuint8_t f = (r.a == 0u) ? 0x80u : 0x40u;',
         'case_ids': ['AIDecide_PokemonTrader_StrangePower-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_PokemonTrader_LegendaryArticuno': {   'source_symbol': 'AIDecide_PokemonTrader_LegendaryArticuno',
         'before': '\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(CHANSEY);',
         'after': '\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DITTO);',
@@ -8087,17 +8085,17 @@ MUTATIONS = {
                  '\tif (!(loc.f & 0x10u)) {\n'
                  '\t\tuint8_t f = (loc.a == 0u) ? 0x80u : 0x40u;',
         'case_ids': ['AIDecide_ComputerSearch_FireCharge-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_ComputerSearch_Anger': {   'source_symbol': 'AIDecide_ComputerSearch_Anger',
         'before': '\treturn (AIDecide_ComputerSearch_AngerResult){wce06, 0x90u, d};',
         'after': '\treturn (AIDecide_ComputerSearch_AngerResult){wce06, 0x00u, d};',
         'case_ids': ['AIDecide_ComputerSearch_Anger-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_ComputerSearch_WondersOfScience': {   'source_symbol': 'AIDecide_ComputerSearch_WondersOfScience',
         'before': '\treturn (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x90u, d};',
         'after': '\treturn (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x00u, d};',
         'case_ids': ['AIDecide_ComputerSearch_WondersOfScience-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_ComputerSearch_RockCrusher': {   'source_symbol': 'AIDecide_ComputerSearch_RockCrusher',
         'before': '\t\t\t\tif (gb_read8(wce1b_ADDR) != 0xFFu)\n'
                   '\t\t\t\t\treturn (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x10u, d};\n'
@@ -8106,7 +8104,7 @@ MUTATIONS = {
                  '\t\t\t\t\treturn (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x00u, d};\n'
                  '\t\t\t\tcontinue;',
         'case_ids': ['AIDecide_ComputerSearch_RockCrusher-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_ComputerSearch': {   'source_symbol': 'AIDecide_ComputerSearch',
         'before': '\tif (deck_id == FIRE_CHARGE_DECK_ID) {',
         'after': '\tif (deck_id == ANGER_DECK_ID) {',
@@ -8118,17 +8116,17 @@ MUTATIONS = {
         'after': '\t\tLookForCardIDInHandListResult h = '
                  'LookForCardIDInHandList_Bank8(ARTICUNO_LV37);',
         'case_ids': ['AIDecide_PokemonTrader_LegendaryRonald-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_PokemonTrader_SoundOfTheWaves': {   'source_symbol': 'AIDecide_PokemonTrader_SoundOfTheWaves',
         'before': '\t\th = CheckIfHasCardIDInHand(TENTACOOL);',
         'after': '\t\th = CheckIfHasCardIDInHand(SEADRA);',
         'case_ids': ['AIDecide_PokemonTrader_SoundOfTheWaves-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_PokemonTrader_LegendaryDragonite': {   'source_symbol': 'AIDecide_PokemonTrader_LegendaryDragonite',
         'before': '\t\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DRAGONAIR);',
         'after': '\t\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(GYARADOS);',
         'case_ids': ['AIDecide_PokemonTrader_LegendaryDragonite-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_Pokeball': {   'source_symbol': 'AIDecide_Pokeball',
         'before': '\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, CHANSEY);',
         'after': '\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, TAUROS);',
@@ -8156,7 +8154,7 @@ MUTATIONS = {
         'after': 'a = 0u;\n\tif (r2.f & 0x10u) goto find_duplicates;\n\n\treturn',
         'case_ids': [   'AIDecide_PokemonTrader_FlowerGarden-0',
                         'AIDecide_PokemonTrader_FlowerGarden-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_PokemonTrader_PowerGenerator': {   'source_symbol': 'AIDecide_PokemonTrader_PowerGenerator',
         'before': 'a = r16.a;',
         'after': 'a = 0xFFu;',
@@ -8168,7 +8166,7 @@ MUTATIONS = {
                   ': 0x00u), d};',
         'after': 'return (AIDecide_PokemonTraderResult){deck_id, 0xFFu, d};',
         'case_ids': ['AIDecide_PokemonTrader-0', 'AIDecide_PokemonTrader-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_EnergySearch': {   'source_symbol': 'AIDecide_EnergySearch',
         'before': '\t\treturn (AIDecideEnergySearchResult){scan.a,\n'
                   '\t\t\t(uint8_t)(scan.a == 0u ? 0x80u : 0x00u), scan.d};',
@@ -8190,7 +8188,7 @@ MUTATIONS = {
                  '\tuint8_t card = wAITrainerCardParameter;\n'
                  '\thTempCardIndex_ff9f = card;',
         'case_ids': ['AIPlay_Pokeball-0', 'AIPlay_Pokeball-1', 'AIPlay_Pokeball-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Recycle': {   'source_symbol': 'AIPlay_Recycle',
         'before': 'AIDecideResult AIPlay_Recycle(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8199,7 +8197,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = wAITrainerCardParameter;',
         'case_ids': ['AIPlay_Recycle-0', 'AIPlay_Recycle-1', 'AIPlay_Recycle-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Bill': {   'source_symbol': 'AIPlay_Bill',
         'before': 'AIDecideResult AIPlay_Bill(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8208,7 +8206,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_Bill-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Defender': {   'source_symbol': 'AIPlay_Defender',
         'before': 'AIDecideResult AIPlay_Defender(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8217,7 +8215,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_Defender-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Imakuni': {   'source_symbol': 'AIPlay_Imakuni',
         'before': 'AIDecideResult AIPlay_Imakuni(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8226,7 +8224,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_Imakuni-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_FullHeal': {   'source_symbol': 'AIPlay_FullHeal',
         'before': 'AIDecideResult AIPlay_FullHeal(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8235,7 +8233,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_FullHeal-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_ClefairyDollOrMysteriousFossil': {   'source_symbol': 'AIPlay_ClefairyDollOrMysteriousFossil',
         'before': 'AIDecideResult AIPlay_ClefairyDollOrMysteriousFossil(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8244,7 +8242,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_ClefairyDollOrMysteriousFossil-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_ImposterProfessorOak': {   'source_symbol': 'AIPlay_ImposterProfessorOak',
         'before': 'AIDecideResult AIPlay_ImposterProfessorOak(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8253,7 +8251,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_ImposterProfessorOak-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_PokemonCenter': {   'source_symbol': 'AIPlay_PokemonCenter',
         'before': 'AIDecideResult AIPlay_PokemonCenter(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8262,7 +8260,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_PokemonCenter-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_GustOfWind': {   'source_symbol': 'AIDecide_GustOfWind',
         'before': '\tif (bench_count == 0u)\n'
                   '\t\treturn (AIDecideGustOfWindResult){0u, 0x80u, d, e};',
@@ -8276,7 +8274,7 @@ MUTATIONS = {
         'after': '\t\treturn (AIDecide_SwitchResult){0u, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) '
                  '? 0u : 0x10u)), d};',
         'case_ids': ['AIDecide_Switch-0', 'AIDecide_Switch-1', 'AIDecide_Switch-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_SuperEnergyRemoval': {   'source_symbol': 'AIDecide_SuperEnergyRemoval',
         'before': '\t\tuint8_t card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + '
                   'own)).a;\n'
@@ -8287,7 +8285,7 @@ MUTATIONS = {
                  '\t\tif (card == 0xFFu)\n'
                  '\t\t\treturn (AIDecideParameterResult){0xFFu, 0x80u, d};',
         'case_ids': ['AIDecide_SuperEnergyRemoval-0', 'AIDecide_SuperEnergyRemoval-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_ScoopUp': {   'source_symbol': 'AIDecide_ScoopUp',
         'before': '\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;\n'
                   '\tDuelistVarResult count = '
@@ -8316,12 +8314,12 @@ MUTATIONS = {
                  '\t\tif (wTotalAttachedEnergies != 0u) {\n'
                  '\t\t\tPickEnergyResult pick = PickAttachedEnergyCardToRemove(PLAY_AREA_ARENA);',
         'case_ids': ['AIDecide_EnergyRemoval-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_PokemonCenter': {   'source_symbol': 'AIDecide_PokemonCenter',
         'before': '\t\twce06 = (uint8_t)(wce06 + hp_counters);',
         'after': '\t\twce06 = (uint8_t)(wce06 + hp_counters + 1u);',
         'case_ids': ['AIDecide_PokemonCenter-0', 'AIDecide_PokemonCenter-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_PlusPower': {   'source_symbol': 'AIPlay_PlusPower',
         'before': 'AIDecideResult AIPlay_PlusPower(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8332,7 +8330,7 @@ MUTATIONS = {
                  '\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_PLUSPOWER);\n'
                  '\twAIPlusPowerAttack = wAITrainerCardToPlay;',
         'case_ids': ['AIPlay_PlusPower-0', 'AIPlay_PlusPower-1', 'AIPlay_PlusPower-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Potion': {   'source_symbol': 'AIPlay_Potion',
         'before': 'AIDecideResult AIPlay_Potion(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8343,7 +8341,7 @@ MUTATIONS = {
                  '\tuint8_t card = wAITrainerCardParameter;\n'
                  '\thTempCardIndex_ff9f = card;',
         'case_ids': ['AIPlay_Potion-0', 'AIPlay_Potion-1', 'AIPlay_Potion-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_GustOfWind': {   'source_symbol': 'AIPlay_GustOfWind',
         'before': 'AIDecideResult AIPlay_GustOfWind(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8354,14 +8352,14 @@ MUTATIONS = {
                  '\tuint8_t flags = wCurrentAIFlags;\n'
                  '\tflags |= 0u;',
         'case_ids': ['AIPlay_GustOfWind-0', 'AIPlay_GustOfWind-1', 'AIPlay_GustOfWind-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Switch': {   'source_symbol': 'AIPlay_Switch',
         'before': 'AIDecideResult AIPlay_Switch(uint8_t d, uint8_t e)\n'
                   '{\n'
                   '\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | AI_FLAG_USED_SWITCH);',
         'after': 'AIDecideResult AIPlay_Switch(uint8_t d, uint8_t e)\n{\n\twCurrentAIFlags = 0u;',
         'case_ids': ['AIPlay_Switch-0', 'AIPlay_Switch-1', 'AIPlay_Switch-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Maintenance': {   'source_symbol': 'AIPlay_Maintenance',
         'before': 'AIDecideResult AIPlay_Maintenance(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8370,7 +8368,7 @@ MUTATIONS = {
                  '{\n'
                  '\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);',
         'case_ids': ['AIPlay_Maintenance-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_ComputerSearch': {   'source_symbol': 'AIPlay_ComputerSearch',
         'before': 'AIDecideResult AIPlay_ComputerSearch(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8383,7 +8381,7 @@ MUTATIONS = {
         'case_ids': [   'AIPlay_ComputerSearch-0',
                         'AIPlay_ComputerSearch-1',
                         'AIPlay_ComputerSearch-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_ItemFinder': {   'source_symbol': 'AIPlay_ItemFinder',
         'before': 'AIDecideResult AIPlay_ItemFinder(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8394,7 +8392,7 @@ MUTATIONS = {
                  '\tuint8_t flags = wCurrentAIFlags;\n'
                  '\tflags |= 0u;',
         'case_ids': ['AIPlay_ItemFinder-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Pokedex': {   'source_symbol': 'AIPlay_Pokedex',
         'before': 'AIDecideResult AIPlay_Pokedex(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8403,7 +8401,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = 0u;',
         'case_ids': ['AIPlay_Pokedex-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Gambler': {   'source_symbol': 'AIPlay_Gambler',
         'before': 'AIDecideResult AIPlay_Gambler(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8412,7 +8410,7 @@ MUTATIONS = {
                  '{\n'
                  '\twCurrentAIFlags = wCurrentAIFlags;',
         'case_ids': ['AIPlay_Gambler-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_EnergyRetrieval': {   'source_symbol': 'AIPlay_EnergyRetrieval',
         'before': 'AIDecideResult AIPlay_EnergyRetrieval(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8421,7 +8419,7 @@ MUTATIONS = {
                  '{\n'
                  '\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);',
         'case_ids': ['AIPlay_EnergyRetrieval-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_SuperEnergyRemoval': {   'source_symbol': 'AIPlay_SuperEnergyRemoval',
         'before': 'AIDecideResult AIPlay_SuperEnergyRemoval(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8432,7 +8430,7 @@ MUTATIONS = {
         'case_ids': [   'AIPlay_SuperEnergyRemoval-0',
                         'AIPlay_SuperEnergyRemoval-1',
                         'AIPlay_SuperEnergyRemoval-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_EnergySearch': {   'source_symbol': 'AIPlay_EnergySearch',
         'before': 'AIDecideResult AIPlay_EnergySearch(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8441,7 +8439,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = wAITrainerCardParameter;',
         'case_ids': ['AIPlay_EnergySearch-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_ScoopUp': {   'source_symbol': 'AIPlay_ScoopUp',
         'before': 'AIDecideResult AIPlay_ScoopUp(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8450,7 +8448,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = 0u;',
         'case_ids': ['AIPlay_ScoopUp-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_PokemonBreeder': {   'source_symbol': 'AIPlay_PokemonBreeder',
         'before': 'AIDecideResult AIPlay_PokemonBreeder(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8459,7 +8457,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_PokemonBreeder-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_PokemonFlute': {   'source_symbol': 'AIPlay_PokemonFlute',
         'before': 'AIDecideResult AIPlay_PokemonFlute(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8470,7 +8468,7 @@ MUTATIONS = {
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);\n'
                  '\thTemp_ffa0 = wAITrainerCardParameter;',
         'case_ids': ['AIPlay_PokemonFlute-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_ProfessorOak': {   'source_symbol': 'AIPlay_ProfessorOak',
         'before': 'AIDecideResult AIPlay_ProfessorOak(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8484,7 +8482,7 @@ MUTATIONS = {
                  '\tflags = (uint8_t)(flags | AI_FLAG_MODIFIED_HAND);\n'
                  '\twCurrentAIFlags = flags;',
         'case_ids': ['AIPlay_ProfessorOak-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_PokemonTrader': {   'source_symbol': 'AIPlay_PokemonTrader',
         'before': 'AIMakeDecisionResult AIPlay_PokemonTrader(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8493,7 +8491,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = wAITrainerCardParameter;',
         'case_ids': ['AIPlay_PokemonTrader-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_EnergyRemoval': {   'source_symbol': 'AIPlay_EnergyRemoval',
         'before': 'AIDecideResult AIPlay_EnergyRemoval(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8502,7 +8500,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_EnergyRemoval-0', 'AIPlay_EnergyRemoval-1', 'AIPlay_EnergyRemoval-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_Potion_Phase10': {   'source_symbol': 'AIDecide_Potion_Phase10',
         'before': '\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;\n'
                   '\tCheckIfDefendingPokemonCanKnockOutResult ko = '
@@ -8515,7 +8513,7 @@ MUTATIONS = {
                  '\td = ko.d;\n'
                  '\tuint8_t e;',
         'case_ids': ['AIDecide_Potion_Phase10-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_SuperPotion': {   'source_symbol': 'AIPlay_SuperPotion',
         'before': 'AIDecideResult AIPlay_SuperPotion(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8526,7 +8524,7 @@ MUTATIONS = {
                  '\tuint8_t card = wAITrainerCardParameter;\n'
                  '\thTempCardIndex_ff9f = card;',
         'case_ids': ['AIPlay_SuperPotion-0', 'AIPlay_SuperPotion-1', 'AIPlay_SuperPotion-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_Potion_Phase07': {   'source_symbol': 'AIDecide_Potion_Phase07',
         'before': '\tAIDecideWhetherToRetreatResult retreat = AIDecideWhetherToRetreat(d);\n'
                   '\td = retreat.d;\n'
@@ -8538,7 +8536,7 @@ MUTATIONS = {
                  '\tif ((retreat.f & 0x10u) != 0u)\n'
                  '\t\treturn (AIDecidePotionPhase07Result)',
         'case_ids': ['AIDecide_Potion_Phase07-0', 'AIDecide_Potion_Phase07-1'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Revive': {   'source_symbol': 'AIPlay_Revive',
         'before': 'AIDecideResult AIPlay_Revive(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8549,7 +8547,7 @@ MUTATIONS = {
                  '\thTempCardIndex_ff9f = wAITrainerCardParameter;\n'
                  '\thTemp_ffa0 = wAITrainerCardParameter;',
         'case_ids': ['AIPlay_Revive-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_Lass': {   'source_symbol': 'AIPlay_Lass',
         'before': 'AIDecideResult AIPlay_Lass(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8558,7 +8556,7 @@ MUTATIONS = {
                  '{\n'
                  '\twCurrentAIFlags = (uint8_t)(wCurrentAIFlags | 0u);',
         'case_ids': ['AIPlay_Lass-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIPlay_MrFuji': {   'source_symbol': 'AIPlay_MrFuji',
         'before': 'AIDecideResult AIPlay_MrFuji(uint8_t d, uint8_t e)\n'
                   '{\n'
@@ -8567,7 +8565,7 @@ MUTATIONS = {
                  '{\n'
                  '\thTempCardIndex_ff9f = (uint8_t)(wAITrainerCardToPlay + 1u);',
         'case_ids': ['AIPlay_MrFuji-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
     'AIDecide_ProfessorOak': {   'source_symbol': 'AIDecide_ProfessorOak',
         'before': '\t\t\twce06 = (uint8_t)(wce06 + 10u);',
         'after': '\t\t\twce06 = (uint8_t)(wce06 + 20u);',
@@ -8581,7 +8579,7 @@ MUTATIONS = {
                  '{\n'
                  '\twCurrentAIFlags = wCurrentAIFlags;',
         'case_ids': ['AIPlay_SuperEnergyRetrieval-0'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+        'source': 'src/home/trainer_cards.c'},
 }
 
 _POKEDEX_CASE = _POKEDEX.case()
@@ -8598,8 +8596,6 @@ _FULL_HEAL_STATE = Fixture(
 
 def _full_heal_case(status):
     case = dict(_FULL_HEAL_STATE.case(vram=False), **_FULL_HEAL_STATE.regs)
-    case["read"][0xCC00] = 0xBD
-    case["read"][0xCCBE] = 0x42
     case["wram"][0xC2F0] = bytes([status])
     return case
 

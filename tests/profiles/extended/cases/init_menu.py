@@ -166,12 +166,12 @@ MUTATIONS = {
         'before': 'if (!(wLCDC & LCDC_ON)) {',
         'after': 'if ((wLCDC & LCDC_ON)) {',
         'case_ids': ['InitMenuScreen-0', 'InitMenuScreen-1', 'InitMenuScreen-2'],
-        'source': 'src/profiles/extended/home/init_menu.c'},
+        'source': 'src/home/init_menu.c'},
     'FlashWhiteScreen': {   'source_symbol': 'FlashWhiteScreen',
         'before': '\tCopyPalsToSRAMBuffer();',
         'after': '\t;',
         'case_ids': ['FlashWhiteScreen-0'],
-        'source': 'src/profiles/extended/home/init_menu.c'},
+        'source': 'src/home/init_menu.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

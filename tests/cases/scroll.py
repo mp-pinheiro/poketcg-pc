@@ -1,21 +1,22 @@
 """Oracle-diff cases for scroll.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wd64b = 0xD64B
-wd651 = 0xD651
-wd657 = 0xD657
-wd658 = 0xD658
-wd659 = 0xD659
-wd65f = 0xD65F
-wd665 = 0xD665
-wVBlankCounter = 0xCAB8
-wBGScrollMod = 0xD666
+wd64b = sym("wd64b")
+wd651 = sym("wd651")
+wd657 = sym("wd657")
+wd658 = sym("wd658")
+wd659 = sym("wd659")
+wd65f = sym("wd65f")
+wd665 = sym("wd665")
+wVBlankCounter = sym("wVBlankCounter")
+wBGScrollMod = sym("wBGScrollMod")
 rLY = 0xFF44
 rSCX = 0xFF43
-hSCX = 0xFF92
-wApplyBGScroll = 0xD667
-wNextScrollLY = 0xD668
+hSCX = sym("hSCX")
+wApplyBGScroll = sym("wApplyBGScroll")
+wNextScrollLY = sym("wNextScrollLY")
 
 rLCDC = 0xFF40
 rSTAT = 0xFF41

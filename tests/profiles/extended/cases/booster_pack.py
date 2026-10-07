@@ -43,7 +43,7 @@ MUTATIONS = {
         'before': 'void _OpenBoosterPack(void)\n{\n\thWhoseTurn = PLAYER_TURN;',
         'after': 'void _OpenBoosterPack(void)\n{\n\thWhoseTurn = (uint8_t)(PLAYER_TURN + 1u);',
         'case_ids': ['_OpenBoosterPack-0', '_OpenBoosterPack-1'],
-        'source': 'src/profiles/extended/home/booster_pack.c'},
+        'source': 'src/home/booster_pack.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

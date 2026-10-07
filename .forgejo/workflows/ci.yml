@@ -56,6 +56,8 @@ jobs:
           fi
       - name: Lint probe adapters
         run: python3 tools/lint_adapters.py
+      - name: Lint case literals
+        run: python3 tools/lint_case_literals.py
       - name: Lint factory blocks
         run: python3 tools/factory_blocks.py lint
       - name: Run tooling tests

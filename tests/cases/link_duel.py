@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/link/link_duel.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,8 +10,8 @@ CASES = {}
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wDuelResult = 0xD0C3
-WRAM_LCD_SHADOW = 0xCABB
+wDuelResult = sym("wDuelResult")
+WRAM_LCD_SHADOW = sym("wLCDC")
 SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 

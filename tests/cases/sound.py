@@ -8,6 +8,7 @@ $a800) so there is no reserved-WRAM collision to worry about. Source `hl`
 points into the default-active ROM bank 1 ($4000-$7fff); the routine never
 bank-switches itself, so both sides read the same real ROM bytes there.
 """
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -22,34 +23,34 @@ CASES = {
     "Func_37c5": [
         # All-zero: carry_in clear (f=0), a=0.
         {"hl": 0x4000, "d": 0xA8, "e": 0x00, "ramg": True,
-         "sread": {0: {0xA800: SREAD_LEN}}},
+         "sread": {0: {sym("sSavedDeck15Cards"): SREAD_LEN}}},
         # Same source/dest, carry_in SET this time -- proves the entry carry
         # (undocumented but real, threaded with no reset anywhere in the
         # routine) actually reaches the computed tile data.
         {"hl": 0x4000, "d": 0xAC, "e": 0x00, "f": 0x10, "ramg": True,
-         "sread": {0: {0xAC00: SREAD_LEN}}},
+         "sread": {0: {sym("sSavedDeck27Cards") + 0x10: SREAD_LEN}}},
         # Different source region and a nonzero starting accumulator.
         {"hl": 0x4200, "d": 0xB0, "e": 0x00, "a": 0x5A, "ramg": True,
-         "sread": {0: {0xB000: SREAD_LEN}}},
+         "sread": {0: {sym("sSavedDeck39Cards") + 0x20: SREAD_LEN}}},
         dict(POISON, hl=0x4100, d=0xA8, e=0x00, ramg=True,
-             sread={0: {0xA800: SREAD_LEN}}),
+             sread={0: {sym("sSavedDeck15Cards"): SREAD_LEN}}),
     ],
     "Func_37a5": [
         # hl's top 3 bits select the CardGraphics bank offset (0 here); the
         # low bits get <<3'd and normalized into $4000-$7fff for Func_37c5.
         {"hl": 0x02A7, "d": 0xA8, "e": 0x00, "ramg": True,
-         "sread": {0: {0xA800: SREAD_LEN}}},
+         "sread": {0: {sym("sSavedDeck15Cards"): SREAD_LEN}}},
         {"hl": 0x1800, "d": 0xA0, "e": 0x00, "ramg": True,
-         "sread": {0: {0xA000: SREAD_LEN}}},
+         "sread": {0: {sym("s0a000"): SREAD_LEN}}},
         dict(POISON, hl=0x1234, d=0xA8, e=0x00, ramg=True,
-             sread={0: {0xA800: SREAD_LEN}}),
+             sread={0: {sym("sSavedDeck15Cards"): SREAD_LEN}}),
     ],
 }
 
 # Audio wrapper CONTRACT + CASES — home/sound.asm farcall trampolines
 # Wrappers dissolve to direct C calls into Music1_* routines.
 # CONTRACT matches the underlying Music1_* routine.
-wCurSongID = 0xDD80
+wCurSongID = sym("wCurSongID")
 
 CONTRACT.update({
     "SetupSound": {"compare": (), "preserve": ()},
@@ -82,17 +83,17 @@ CASES.update({
         dict(POISON, wram={wCurSongID: b"\x80"}),
     ],
     "AssertSFXFinished": [
-        {"wram": {0xDD82: b"\x80"}},
-        {"wram": {0xDD82: b"\x00"}},
-        dict(POISON, wram={0xDD82: b"\x80"}),
+        {"wram": {sym("wCurSfxID"): b"\x80"}},
+        {"wram": {sym("wCurSfxID"): b"\x00"}},
+        dict(POISON, wram={sym("wCurSfxID"): b"\x80"}),
     ],
     "PlaySFX_InvalidChoice": [
-        {"read": {0xDD82: 1, 0xDD83: 1}},
+        {"read": {sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}},
     ],
     "PlaySFX": [
-        {"a": 0, "read": {0xDD82: 1, 0xDD83: 1}},
-        {"a": 1, "read": {0xDD82: 1, 0xDD83: 1}},
-        dict(POISON, a=5, read={0xDD82: 1, 0xDD83: 1}),
+        {"a": 0, "read": {sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}},
+        {"a": 1, "read": {sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}},
+        dict(POISON, a=5, read={sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}),
     ],
     "PauseSong": [
         {"wram": {wCurSongID: b"\x01"}, "read": {wCurSongID: 1}},
@@ -113,9 +114,9 @@ MUTATIONS = {
     },
 }
 for _rec in SCHEMA2_CASES["PauseSong"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 for _rec in SCHEMA2_CASES["StopMusic"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 MUTATIONS["Func_37a5"] = {
     "source_symbol": "Func_37a5",
     "before": "\tshifted = (uint16_t)((shifted & (uint16_t)~0x8000u) | 0x4000u);",

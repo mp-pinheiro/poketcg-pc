@@ -576,7 +576,7 @@ MUTATIONS = {
         'after': 'for (uint8_t i = 0; i < QUEUE_LENGTH; i++)\n'
                  '        write((uint16_t)(QUEUE_ADDR + i), 0xfe);',
         'case_ids': ['_ResetAnimationQueue-0', '_ResetAnimationQueue-1'],
-        'source': 'src/profiles/extended/home/duel_animation_core.c'},
+        'source': 'src/home/duel_animation_core.c'},
     'PlayLoadedDuelAnimation': {   'source_symbol': 'PlayLoadedDuelAnimation',
         'before': '    ClearSpriteVRAMBuffer();\n    ZeroObjectPositions();\n    write(wVBlankOAMCopyToggle_ADDR, 1u);',
         'after': '    ZeroObjectPositions();\n    write(wVBlankOAMCopyToggle_ADDR, 1u);',
@@ -586,19 +586,19 @@ MUTATIONS = {
         'before': 'if (next != cur) {',
         'after': 'if (next == cur) {',
         'case_ids': ['LoadDuelAnimationToBuffer-0', 'LoadDuelAnimationToBuffer-zero'],
-        'source': 'src/profiles/extended/home/duel_animation_core.c'},
+        'source': 'src/home/duel_animation_core.c'},
     '_UpdateQueuedAnimations': {   'source_symbol': '_UpdateQueuedAnimations',
         'before': '        uint16_t hl = CallScreenAnimationUpdate();\n'
                   '        active = read(wActiveScreenAnim_ADDR);',
         'after': '        uint16_t hl = (uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u);\n'
                  '        active = read(wActiveScreenAnim_ADDR);',
         'case_ids': ['_UpdateQueuedAnimations-3'],
-        'source': 'src/profiles/extended/home/duel_animation_core.c'},
+        'source': 'src/home/duel_animation_core.c'},
     'ClearAndDisableQueuedAnimations': {   'source_symbol': 'ClearAndDisableQueuedAnimations',
         'before': '    write(wd4c0_ADDR, 0xff);\n    if (read(wActiveScreenAnim_ADDR) != 0xff)',
         'after': '    write(wd4c0_ADDR, 0x00);\n    if (read(wActiveScreenAnim_ADDR) != 0xff)',
         'case_ids': ['ClearAndDisableQueuedAnimations-0', 'ClearAndDisableQueuedAnimations-zero'],
-        'source': 'src/profiles/extended/home/duel_animation_core.c'},
+        'source': 'src/home/duel_animation_core.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

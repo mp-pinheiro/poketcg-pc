@@ -1,10 +1,11 @@
 """Oracle-diff cases for duel animation command routines."""
+from tests.cases._symbols import sym
 
-wDuelAnimLocationParam = 0xD4B0
-wDuelAnimationScreen = 0xD4AE
-wDuelAnimSetScreen = 0xD4B3
-wDuelType = 0xCC09
-wWhoseTurn = 0xCC05
+wDuelAnimLocationParam = sym("wDuelAnimLocationParam")
+wDuelAnimationScreen = sym("wDuelAnimationScreen")
+wDuelAnimSetScreen = sym("wDuelAnimSetScreen")
+wDuelType = sym("wDuelType")
+wWhoseTurn = sym("wWhoseTurn")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -17,7 +18,7 @@ from tests.cases._fixtures import attack_animation_commands_fixture as _attack_a
 from tests.cases._fixtures import animation_next_command_fixture as _animation_next_command_fixture, ANIMATION_NEXT_COMMAND_REGS as _ANIMATION_NEXT_COMMAND_REGS
 
 CONTRACT["AnimationCommand_AnimEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
-CASES["AnimationCommand_AnimEnd"] = [{"wram": {0xC100: b"\x00"}}, dict(POISON, wram={0xC100: b"\xAA"})]
+CASES["AnimationCommand_AnimEnd"] = [{"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}}, dict(POISON, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xAA"})]
 # <<< factory AnimationCommand_AnimEnd
 
 
@@ -31,25 +32,25 @@ CONTRACT["UpdateDuelAnimationScreen"] = {
 CASES["UpdateDuelAnimationScreen"] = [
     {"wram": {wDuelAnimSetScreen: b"\x00"},
      "read": {wDuelAnimationScreen: 1}},
-    {"hl": 0xC100, "wram": {wDuelAnimSetScreen: b"\x01"},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {wDuelAnimSetScreen: b"\x01"},
      "read": {wDuelAnimationScreen: 1}},
-    {"hl": 0xC101, "wram": {wDuelAnimSetScreen: b"\x02"},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x12, "wram": {wDuelAnimSetScreen: b"\x02"},
      "read": {wDuelAnimationScreen: 0}},
-    dict(POISON, hl=0xC102, wram={wDuelAnimSetScreen: b"\xFF"},
+    dict(POISON, hl=sym("wDecompressionSecondaryBufferStart") + 0x13, wram={wDuelAnimSetScreen: b"\xFF"},
          read={wDuelAnimationScreen: 0}),
-    {"hl": 0xC200,
+    {"hl": sym("wPlayerCardLocations"),
      "wram": {wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x00",
               wWhoseTurn: b"\xC2", wDuelType: b"\x00"},
      "read": {wDuelAnimationScreen: 1}},
-    {"hl": 0xC201,
+    {"hl": sym("wPlayerCardLocations") + 1,
      "wram": {wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x80",
               wWhoseTurn: b"\xC2", wDuelType: b"\x00"},
      "read": {wDuelAnimationScreen: 1}},
-    {"hl": 0xC202,
+    {"hl": sym("wPlayerCardLocations") + 2,
      "wram": {wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x00",
               wWhoseTurn: b"\xC3", wDuelType: b"\x00"},
      "read": {wDuelAnimationScreen: 1}},
-    dict(POISON, hl=0xC203,
+    dict(POISON, hl=sym("wPlayerCardLocations") + 3,
          wram={wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x80",
                wWhoseTurn: b"\xC3", wDuelType: b"\x01"},
          read={wDuelAnimationScreen: 1}),
@@ -60,9 +61,9 @@ CASES["UpdateDuelAnimationScreen"] = [
 # >>> factory DuelAnim153
 CONTRACT["DuelAnim153"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["DuelAnim153"] = [
-    {"wram": {0xC100: b"\x00\x00"}},
-    dict(POISON, wram={0xC100: b"\x5A\xA5"}),
-    {"a": 1, "hl": 0xC100, "wram": {0xC100: b"\xFF\xFF"}},
+    {"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\x00"}},
+    dict(POISON, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x5A\xA5"}),
+    {"a": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\xFF"}},
 ]
 # <<< factory DuelAnim153
 
@@ -76,35 +77,35 @@ CASES["AnimationCommand_AnimEnd2"] = [
 
 # >>> factory DuelAnim154
 CONTRACT["DuelAnim154"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
-CASES["DuelAnim154"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
+CASES["DuelAnim154"] = [{}, dict(POISON), {"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}}]
 # <<< factory DuelAnim154
 
 # >>> factory DuelAnim155
 CONTRACT["DuelAnim155"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
-CASES["DuelAnim155"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
+CASES["DuelAnim155"] = [{}, dict(POISON), {"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}}]
 # <<< factory DuelAnim155
 
 # >>> factory DuelAnim156
 CONTRACT["DuelAnim156"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
-CASES["DuelAnim156"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
+CASES["DuelAnim156"] = [{}, dict(POISON), {"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}}]
 # <<< factory DuelAnim156
 
 # >>> factory-cases-statics
-wDamageAnimEffectiveness = 0xCE81
-wNoDamageOrEffect = 0xCCC7
+wDamageAnimEffectiveness = sym("wDamageAnimEffectiveness")
+wNoDamageOrEffect = sym("wNoDamageOrEffect")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wDamageAnimAmount = 0xCE7F
-wLoadedAttackAnimation = 0xCCB8
-wTempNonTurnDuelistCardID = 0xCCC4
-wTxRam2 = 0xCE3F
+wDamageAnimAmount = sym("wDamageAnimAmount")
+wLoadedAttackAnimation = sym("wLoadedAttackAnimation")
+wTempNonTurnDuelistCardID = sym("wTempNonTurnDuelistCardID")
+wTxRam2 = sym("wTxRam2")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wDuelDisplayedScreen = 0xCAC2
-hWhoseTurn = 0xFF97
+wDuelDisplayedScreen = sym("wDuelDisplayedScreen")
+hWhoseTurn = sym("hWhoseTurn")
 HUD_TILE = 0x996F
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
@@ -127,7 +128,7 @@ CASES["GetDamageText"] = [
 CONTRACT["PlayAttackAnimationCommands_NextCommand"] = {"compare": ("b", "c", "d", "e"), "preserve": ()}
 CASES["PlayAttackAnimationCommands_NextCommand"] = [
     # dome-2 693453: the first command of Peal of Thunder's list, run to the end.
-    dict(_animation_next_command_fixture(vram=False, bank=6), **_ANIMATION_NEXT_COMMAND_REGS, read={0xD4AE: 8}),
+    dict(_animation_next_command_fixture(vram=False, bank=6), **_ANIMATION_NEXT_COMMAND_REGS, read={sym("wDuelAnimationScreen"): 8}),
     dict(POISON, a=8),
     dict(POISON, a=9),
     dict(POISON, a=10),
@@ -138,15 +139,15 @@ CASES["PlayAttackAnimationCommands_NextCommand"] = [
 
 # >>> factory DuelAnim157
 CONTRACT["DuelAnim157"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
-CASES["DuelAnim157"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
+CASES["DuelAnim157"] = [{}, dict(POISON), {"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}}]
 # <<< factory DuelAnim157
 
 # >>> factory PrintDamageText
 CONTRACT["PrintDamageText"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["PrintDamageText"] = [
-    {"hl": 0xC100, "wram": {wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", 0xCAD3: b"\x48\x03", wTxRam2: b"\xAA\x55"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wTxRam2: 2}, "instruction_budget": 1000000, "cycle_budget": 4000000},
-    dict(POISON, wram={wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", 0xCAD3: b"\x48\x03", wTxRam2: b"\x12\x34"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wTxRam2: 2}, instruction_budget=1000000, cycle_budget=4000000),
-    {"b": 1, "c": 2, "d": 3, "e": 4, "hl": 0xC101, "wram": {wLoadedAttackAnimation: b"\x79", wTxRam2: b"\xAA\x55"}, "read": {wTxRam2: 2}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", sym("wDoFrameFunction"): b"\x48\x03", wTxRam2: b"\xAA\x55"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wTxRam2: 2}, "instruction_budget": 1000000, "cycle_budget": 4000000},
+    dict(POISON, wram={wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", sym("wDoFrameFunction"): b"\x48\x03", wTxRam2: b"\x12\x34"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wTxRam2: 2}, instruction_budget=1000000, cycle_budget=4000000),
+    {"b": 1, "c": 2, "d": 3, "e": 4, "hl": sym("wDecompressionSecondaryBufferStart") + 0x12, "wram": {wLoadedAttackAnimation: b"\x79", wTxRam2: b"\xAA\x55"}, "read": {wTxRam2: 2}},
     dict(POISON, wram={wLoadedAttackAnimation: b"\x86", wTxRam2: b"\x12\x34"}, read={wTxRam2: 2}),
 ]
 # <<< factory PrintDamageText
@@ -155,31 +156,31 @@ CASES["PrintDamageText"] = [
 CONTRACT["UpdateMainSceneHUD"] = {"compare": (), "preserve": ()}
 CASES["UpdateMainSceneHUD"] = [
     {"wram": {wDuelDisplayedScreen: b"\x00"}},
-    {"wram": {wDuelDisplayedScreen: b"\x01", hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, "vread": {0: {HUD_TILE: 1}}},
-    dict(POISON, wram={wDuelDisplayedScreen: b"\x01", hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, vread={0: {HUD_TILE: 1}}),
+    {"wram": {wDuelDisplayedScreen: b"\x01", hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\xFF", sym("wOpponentArenaCard"): b"\xFF", sym("wPlayerDuelistType"): b"\x00", sym("wPlayerArenaCardStatus"): b"\x00", sym("wOpponentDuelistType"): b"\x00", sym("wOpponentArenaCardStatus"): b"\x00", sym("wPlayerPrizes"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x00", sym("wOpponentPrizes"): b"\x00", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x00"}, "vread": {0: {HUD_TILE: 1}}},
+    dict(POISON, wram={wDuelDisplayedScreen: b"\x01", hWhoseTurn: b"\xC2", sym("wPlayerArenaCard"): b"\xFF", sym("wOpponentArenaCard"): b"\xFF", sym("wPlayerDuelistType"): b"\x00", sym("wPlayerArenaCardStatus"): b"\x00", sym("wOpponentDuelistType"): b"\x00", sym("wOpponentArenaCardStatus"): b"\x00", sym("wPlayerPrizes"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x00", sym("wOpponentPrizes"): b"\x00", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x00"}, vread={0: {HUD_TILE: 1}}),
 ]
 # <<< factory UpdateMainSceneHUD
 
 # >>> factory SetScreenForDuelAnimation
 CONTRACT["SetScreenForDuelAnimation"] = {"compare": (), "preserve": ()}
 CASES["SetScreenForDuelAnimation"] = [
-    {"hl": 0xC100, "wram": {wDuelAnimSetScreen: b"\x00", wDuelDisplayedScreen: b"\x00"}, "read": {wDuelDisplayedScreen: 0}},
-    {"hl": 0xC101, "wram": {wDuelAnimSetScreen: b"\x01", wDuelDisplayedScreen: b"\x01"}, "read": {wDuelAnimationScreen: 0}},
-    {"hl": 0xC102, "wram": {wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x00", wWhoseTurn: b"\xC2", wDuelType: b"\x00", wDuelDisplayedScreen: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wDuelDisplayedScreen: 4}, "instruction_budget": 60000000, "cycle_budget": 240000000},
-    dict(POISON, hl=0xC103, wram={wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x00", wWhoseTurn: b"\xC2", wDuelType: b"\x00", wDuelDisplayedScreen: b"\x00", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wDuelDisplayedScreen: 4}, instruction_budget=60000000, cycle_budget=240000000),
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {wDuelAnimSetScreen: b"\x00", wDuelDisplayedScreen: b"\x00"}, "read": {wDuelDisplayedScreen: 0}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x12, "wram": {wDuelAnimSetScreen: b"\x01", wDuelDisplayedScreen: b"\x01"}, "read": {wDuelAnimationScreen: 0}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x13, "wram": {wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x00", wWhoseTurn: b"\xC2", wDuelType: b"\x00", wDuelDisplayedScreen: b"\x00", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wDuelDisplayedScreen: 4}, "instruction_budget": 60000000, "cycle_budget": 240000000},
+    dict(POISON, hl=sym("wDecompressionSecondaryBufferStart") + 0x14, wram={wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x00", wWhoseTurn: b"\xC2", wDuelType: b"\x00", wDuelDisplayedScreen: b"\x00", sym("wLCDC"): b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wDuelDisplayedScreen: 4}, instruction_budget=60000000, cycle_budget=240000000),
 ]
 # <<< factory SetScreenForDuelAnimation
 
 
 # >>> factory AnimationCommand_AnimNormal
-wDamageAnimPlayAreaLocation = 0xCE82
+wDamageAnimPlayAreaLocation = sym("wDamageAnimPlayAreaLocation")
 # de points at the animation id; the chain then reads a terminating END (0).
-_hWhoseTurn = 0xFF97
-_wDuelAnimDuelistSide = 0xD4AF
-_wDuelAnimDamage = 0xD4B1
-_wDuelAnimEffectiveness = 0xD4B3
-_wDuelDisplayedScreen = 0xCAC2
-_STREAM = 0xC100
+_hWhoseTurn = sym("hWhoseTurn")
+_wDuelAnimDuelistSide = sym("wDuelAnimDuelistSide")
+_wDuelAnimDamage = sym("wDuelAnimDamage")
+_wDuelAnimEffectiveness = sym("wDuelAnimEffectiveness")
+_wDuelDisplayedScreen = sym("wDuelDisplayedScreen")
+_STREAM = sym("wDecompressionSecondaryBufferStart") + 0x11
 CONTRACT["AnimationCommand_AnimNormal"] = {"compare": ("d", "e"), "preserve": ()}
 CASES["AnimationCommand_AnimNormal"] = [
     # plain id -> played as-is
@@ -263,11 +264,11 @@ CONTRACT["PlayAttackAnimationCommands"] = {"compare": ("b", "c", "d", "e"), "pre
 CASES["PlayAttackAnimationCommands"] = [
     # dome-2 693453: Peal of Thunder's play-area animation; the command list ends
     # with a small shake, so bc leaves as ($63, $61).
-    dict(_attack_animation_commands_fixture(vram=False, bank=6), **_ATTACK_ANIMATION_COMMANDS_REGS, read={0xD4AE: 8}),
-    {"d": 0xC1, "e": 0x22, "wram": {0xCCB8: b"\x00", 0xD4AE: b"\xA1", 0xD4B0: b"\xB2", 0xD4B3: b"\xC3"}, "read": {0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}},
-    dict(POISON, wram={0xCCB8: b"\x00", 0xD4AE: b"\xA1", 0xD4B0: b"\xB2", 0xD4B3: b"\xC3"}, read={0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}),
-    {"d": 0xC1, "e": 0x24, "wram": {0xCCB8: b"\x8F", 0xFF80: b"\x06"}, "read": {0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}},
-    dict(POISON, wram={0xCCB8: b"\x8F", 0xFF80: b"\x06"}, read={0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}),
+    dict(_attack_animation_commands_fixture(vram=False, bank=6), **_ATTACK_ANIMATION_COMMANDS_REGS, read={sym("wDuelAnimationScreen"): 8}),
+    {"d": 0xC1, "e": 0x22, "wram": {sym("wLoadedAttackAnimation"): b"\x00", sym("wDuelAnimationScreen"): b"\xA1", sym("wDuelAnimLocationParam"): b"\xB2", sym("wDuelAnimEffectiveness"): b"\xC3"}, "read": {sym("wDuelAnimationScreen"): 1, sym("wDuelAnimLocationParam"): 1, sym("wDuelAnimEffectiveness"): 1}},
+    dict(POISON, wram={sym("wLoadedAttackAnimation"): b"\x00", sym("wDuelAnimationScreen"): b"\xA1", sym("wDuelAnimLocationParam"): b"\xB2", sym("wDuelAnimEffectiveness"): b"\xC3"}, read={sym("wDuelAnimationScreen"): 1, sym("wDuelAnimLocationParam"): 1, sym("wDuelAnimEffectiveness"): 1}),
+    {"d": 0xC1, "e": 0x24, "wram": {sym("wLoadedAttackAnimation"): b"\x8F", sym("hBankROM"): b"\x06"}, "read": {sym("wDuelAnimationScreen"): 1, sym("wDuelAnimLocationParam"): 1, sym("wDuelAnimEffectiveness"): 1}},
+    dict(POISON, wram={sym("wLoadedAttackAnimation"): b"\x8F", sym("hBankROM"): b"\x06"}, read={sym("wDuelAnimationScreen"): 1, sym("wDuelAnimLocationParam"): 1, sym("wDuelAnimEffectiveness"): 1}),
 ]
 # <<< factory PlayAttackAnimationCommands
 

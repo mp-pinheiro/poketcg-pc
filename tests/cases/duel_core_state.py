@@ -1,17 +1,18 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-H_WHOSE_TURN = 0xFF97
-W_WHOSE_TURN = 0xCC05
-PLAYER = 0xC200
-OPPONENT = 0xC300
-INITIAL_PRIZES = 0xCC08
-ALREADY_PLAYED = 0xCC0B
-CONFUSION_CHECK = 0xCC0C
-SAND_ATTACK_CHECK = 0xCC0D
-NUMBER_PRIZES = 0xCCC8
-PLAYER_DECK = 0xC400
-OPPONENT_DECK = 0xC480
+H_WHOSE_TURN = sym("hWhoseTurn")
+W_WHOSE_TURN = sym("wWhoseTurn")
+PLAYER = sym("wPlayerCardLocations")
+OPPONENT = sym("wOpponentCardLocations")
+INITIAL_PRIZES = sym("wDuelInitialPrizes")
+ALREADY_PLAYED = sym("wAlreadyPlayedEnergy")
+CONFUSION_CHECK = sym("wConfusionRetreatCheckWasUnsuccessful")
+SAND_ATTACK_CHECK = sym("wDuelistType")
+NUMBER_PRIZES = sym("wNumberPrizeCardsToTake")
+PLAYER_DECK = sym("wBoosterCardsDrawn")
+OPPONENT_DECK = sym("wOpponentDeck")
 PRIZES = 0xEC
 
 CONTRACT = {

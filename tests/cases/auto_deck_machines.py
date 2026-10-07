@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/auto_deck_machines.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,15 +8,15 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wCurAutoDeckMachine_A = 0xD0A9
-sAutoDecks_A = 0xA350
-wDismantledDeckName_A = 0xD089
-wAutoDeckMachineTextDescriptions_A = 0xD0AA
+wCurAutoDeckMachine_A = sym("wCurAutoDeckMachine")
+sAutoDecks_A = sym("sSavedDeck1")
+wDismantledDeckName_A = sym("wDismantledDeckName")
+wAutoDeckMachineTextDescriptions_A = sym("wAutoDeckMachineTextDescriptions")
 
-hBankSRAM = 0xFF81
-wTempBankSRAM = 0xD0A4
-wMachineDeckPtrs = 0xD00D
-wSelectedDeckMachineEntry = 0xD088
+hBankSRAM = sym("hBankSRAM")
+wTempBankSRAM = sym("wTempBankSRAM")
+wMachineDeckPtrs = sym("wMachineDeckPtrs")
+wSelectedDeckMachineEntry = sym("wSelectedDeckMachineEntry")
 # <<< factory-cases-statics
 
 # >>> factory ReadAutoDeckConfiguration
@@ -38,10 +39,10 @@ CASES["ReadAutoDeckConfiguration"] = [
 CONTRACT["CheckWhichDecksToDismantleToBuildSavedDeck"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["CheckWhichDecksToDismantleToBuildSavedDeck"] = [
     {"wram": {hBankSRAM: b"\x00", wTempBankSRAM: b"\x00", wSelectedDeckMachineEntry: b"\x00",
-              wMachineDeckPtrs: b"\xE8\xC0", 0xC000: b"\x00", 0xC100: b"\x00"},
+              wMachineDeckPtrs: b"\xE8\xC0", sym("wDeckToBuild"): b"\x00", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"},
      "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, wram={hBankSRAM: b"\x00", wTempBankSRAM: b"\x00", wSelectedDeckMachineEntry: b"\x00",
-                       wMachineDeckPtrs: b"\xE8\xC0", 0xC000: b"\x00", 0xC100: b"\x00"},
+                       wMachineDeckPtrs: b"\xE8\xC0", sym("wDeckToBuild"): b"\x00", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"},
          sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory CheckWhichDecksToDismantleToBuildSavedDeck

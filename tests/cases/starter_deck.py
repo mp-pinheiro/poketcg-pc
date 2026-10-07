@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/starter_deck.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -23,52 +24,52 @@ CASES["CopyDeckNameAndCards"] = [
     # real SRAM address; hWhoseTurn=PLAYER_TURN so LoadDeck fills wPlayerDeck.
     # Destination is seeded across the whole 84-byte slot plus 4 trailing
     # guard bytes.
-    dict(POISON, a=5, hl=0xA400,
-         wram={0xFF97: bytes((0xC2,))},
-         sram={0: {0xA400: bytes((i * 2 + 9) & 0xFF for i in range(88))}}),
+    dict(POISON, a=5, hl=sym("sSavedDeck3") + 8,
+         wram={sym("hWhoseTurn"): bytes((0xC2,))},
+         sram={0: {sym("sSavedDeck3") + 8: bytes((i * 2 + 9) & 0xFF for i in range(88))}}),
     # Valid deck id: the full 24-byte name field plus 60-byte card array
     # actually land in SRAM. The 88-byte seed (84 payload + 4 trailing guard
     # bytes) catches both an under-write and an overflow past
     # DECK_NAME_SIZE+DECK_SIZE.
-    {"a": 12, "hl": 0xA200,
-     "wram": {0xFF97: bytes((0xC2,))},
-     "sram": {0: {0xA200: bytes((i * 3 + 1) & 0xFF for i in range(88))}}},
+    {"a": 12, "hl": sym("sBuiltDecks"),
+     "wram": {sym("hWhoseTurn"): bytes((0xC2,))},
+     "sram": {0: {sym("sBuiltDecks"): bytes((i * 3 + 1) & 0xFF for i in range(88))}}},
     # Invalid deck id (57 = the DeckPointers NULL terminator,
     # poketcg/src/data/decks.asm:58): LoadDeck's carry must skip both copy
     # loops entirely, leaving the destination exactly as seeded.
-    {"a": 57, "hl": 0xA800,
-     "wram": {0xFF97: bytes((0xC2,))},
-     "sram": {0: {0xA800: bytes((i * 5 + 3) & 0xFF for i in range(88))}}},
+    {"a": 57, "hl": sym("sSavedDeck15Cards"),
+     "wram": {sym("hWhoseTurn"): bytes((0xC2,))},
+     "sram": {0: {sym("sSavedDeck15Cards"): bytes((i * 5 + 3) & 0xFF for i in range(88))}}},
     # SRAM latch starts disabled: the routine's own EnableSRAM must still
     # make the write land, or the seeded bytes read back untouched.
-    {"a": 20, "hl": 0xA600, "ramg": False,
-     "wram": {0xFF97: bytes((0xC2,))},
-     "sram": {0: {0xA600: bytes((i * 7 + 2) & 0xFF for i in range(88))}}},
+    {"a": 20, "hl": sym("sSavedDeck9") + 0x10, "ramg": False,
+     "wram": {sym("hWhoseTurn"): bytes((0xC2,))},
+     "sram": {0: {sym("sSavedDeck9") + 0x10: bytes((i * 7 + 2) & 0xFF for i in range(88))}}},
 ]
 # <<< factory CopyDeckNameAndCards
 
 # >>> factory-cases-statics
-hWhoseTurn = 0xFF97
-sAnimationsDisabled = 0xA007
-sCardAndDeckSaveData = 0xA100
-sCardCollection = 0xA100
-sCardPopNameList = 0xBB00
-sCurrentDuel = 0xBC00
-sPrinterContrastLevel = 0xA003
-sReceivedLegendaryCards = 0xA00A
-sSavedDeck1 = 0xA350
-sSavedDeck2 = 0xA3A4
-sSavedDeck3 = 0xA3F8
-sSkipDelayAllowed = 0xA009
-sTextSpeed = 0xA006
-sTotalCardPopsDone = 0xA005
-wTextSpeed = 0xCE47
+hWhoseTurn = sym("hWhoseTurn")
+sAnimationsDisabled = sym("sAnimationsDisabled")
+sCardAndDeckSaveData = sym("sCardAndDeckSaveData")
+sCardCollection = sym("sCardCollection")
+sCardPopNameList = sym("sCardPopNameList")
+sCurrentDuel = sym("sCurrentDuel")
+sPrinterContrastLevel = sym("sPrinterContrastLevel")
+sReceivedLegendaryCards = sym("sReceivedLegendaryCards")
+sSavedDeck1 = sym("sSavedDeck1")
+sSavedDeck2 = sym("sSavedDeck2")
+sSavedDeck3 = sym("sSavedDeck3")
+sSkipDelayAllowed = sym("sSkipDelayAllowed")
+sTextSpeed = sym("sTextSpeed")
+sTotalCardPopsDone = sym("sTotalCardPopsDone")
+wTextSpeed = sym("wTextSpeed")
 
-hWhoseTurn = 0xFF97
-sCardCollection = 0xA100
-sDeck1 = 0xA200
-wOpponentDeck = 0xC480
-wPlayerDeck = 0xC400
+hWhoseTurn = sym("hWhoseTurn")
+sCardCollection = sym("sCardCollection")
+sDeck1 = sym("sDeck1")
+wOpponentDeck = sym("wOpponentDeck")
+wPlayerDeck = sym("wPlayerDeck")
 # <<< factory-cases-statics
 
 # >>> factory InitSaveData
@@ -78,12 +79,12 @@ CASES["InitSaveData"] = [
      "sram": {0: {sCardAndDeckSaveData: bytes([0xAA] * 32), sCardCollection: bytes([0x11] * 256),
                   sCurrentDuel: b"\xAA\xBB\xCC", sCardPopNameList: bytes([0x22] * 256),
                   sPrinterContrastLevel: b"\xFF", sTextSpeed: b"\xFF", sAnimationsDisabled: b"\xFF",
-                  sSkipDelayAllowed: b"\xFF", 0xA004: b"\xFF", sTotalCardPopsDone: b"\xFF",
+                  sSkipDelayAllowed: b"\xFF", sym("s0a004"): b"\xFF", sTotalCardPopsDone: b"\xFF",
                   sReceivedLegendaryCards: b"\xFF"}},
      "read": {hWhoseTurn: 1, wTextSpeed: 1},
      "sread": {0: {sCardAndDeckSaveData: 32, sCardCollection: 256, sSavedDeck1: 32, sSavedDeck2: 32,
                    sSavedDeck3: 32, sCurrentDuel: 3, sCardPopNameList: 256, sPrinterContrastLevel: 1,
-                   sTextSpeed: 1, sAnimationsDisabled: 1, sSkipDelayAllowed: 1, 0xA004: 1,
+                   sTextSpeed: 1, sAnimationsDisabled: 1, sSkipDelayAllowed: 1, sym("s0a004"): 1,
                    sTotalCardPopsDone: 1, sReceivedLegendaryCards: 1}},
      "vread": {0: {0x9380: 32}}},
     dict(POISON, wram={hWhoseTurn: b"\xFF"},
@@ -92,7 +93,7 @@ CASES["InitSaveData"] = [
          read={hWhoseTurn: 1, wTextSpeed: 1},
          sread={0: {sCardAndDeckSaveData: 32, sCardCollection: 256, sSavedDeck1: 32, sSavedDeck2: 32,
                     sSavedDeck3: 32, sCurrentDuel: 3, sCardPopNameList: 256, sPrinterContrastLevel: 1,
-                    sTextSpeed: 1, sAnimationsDisabled: 1, sSkipDelayAllowed: 1, 0xA004: 1,
+                    sTextSpeed: 1, sAnimationsDisabled: 1, sSkipDelayAllowed: 1, sym("s0a004"): 1,
                     sTotalCardPopsDone: 1, sReceivedLegendaryCards: 1}},
          vread={0: {0x9380: 32}}),
 ]

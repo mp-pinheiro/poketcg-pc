@@ -255,7 +255,7 @@ int main(void)
 	long romb = -1; /* -1 = retain reset/default mapper state for home-bank calls */
 	long ramb = -1;
 	long vramb = -1;
-	long keys = 0; /* hKeysHeld bit layout; applied after every seed, like ramg */
+	long keys = 0;
 	long frame_budget = 0;
 	long repeat = 1;
 	char stop_routine[MAX_NAME] = "";
@@ -265,8 +265,6 @@ int main(void)
 	 * every seed and before the routine under test, exactly as the oracle does. */
 	struct { char fn[MAX_NAME]; ProbeState st; } setups[MAX_SETUPS];
 	size_t nsetups = 0;
-	/* Per-frame key timeline, mirroring the reference's `input_events`. Parsed
-	 * here and armed alongside the scalar `keys` seed below. */
 	uint8_t key_events[MEM_KEY_TIMELINE_MAX];
 	uint8_t nkey_events = 0;
 
@@ -348,7 +346,6 @@ int main(void)
 			} else if (strcmp(key, "keys") == 0) {
 				keys = jnum();
 			} else if (strcmp(key, "input_events") == 0) {
-				/* [{"keys": n}, ...], one entry per reference frame. */
 				need('[');
 				if (!eat(']')) {
 					do {
@@ -647,13 +644,6 @@ int main(void)
 		g_vram_bank = (uint8_t)vramb;
 	if (ramg >= 0)
 		g_sram_enabled = ramg;
-	g_keys = (uint8_t)keys;
-	/* hKeysHeld is written exactly once per ReadJoypad, by SaveButtonsHeld, and
-	 * nowhere else in the tree -- the one unambiguous "a poll just completed"
-	 * marker. SGB packet sends drive JOYP directly and never touch it, so they
-	 * cannot advance the cycle. Inert unless the case declared >1 entry. */
-	gb_keys_arm_timeline(key_events, nkey_events, hKeysHeld_ADDR);
-
 	for (size_t i = 0; i < nsetups; i++) {
 		ProbeFn pre = probe_lookup(setups[i].fn);
 
@@ -663,6 +653,9 @@ int main(void)
 		}
 		pre(&setups[i].st);
 	}
+
+	g_keys = (uint8_t)keys;
+	gb_keys_arm_timeline(key_events, nkey_events, hKeysHeld_ADDR);
 
 	if (stop_routine[0]) {
 		void *target = dlsym(RTLD_DEFAULT, stop_routine);

@@ -7,15 +7,16 @@ covered by substatus). GetArenaCardColor -- the a=PLAY_AREA_ARENA(0)
 specialization -- ports cleanly now that CheckIsIncapableOfUsingPkmnPower
 (substatus.asm:502) has landed with no remaining unported dependency.
 """
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
+hWhoseTurn = sym("hWhoseTurn")
 PLAYER_TURN = 0xC2
-wPlayerDeck = 0xC400
-wPlayerArenaCard = 0xC2BB   # DUELVARS_ARENA_CARD ($BB); bench1 at +1, etc.
-wChangedWeakness = 0xC2E9   # DUELVARS_ARENA_CARD_CHANGED_WEAKNESS
-wChangedResistance = 0xC2EA
+wPlayerDeck = sym("wPlayerDeck")
+wPlayerArenaCard = sym("wPlayerArenaCard")   # DUELVARS_ARENA_CARD ($BB); bench1 at +1, etc.
+wChangedWeakness = sym("wPlayerArenaCardChangedWeakness")   # DUELVARS_ARENA_CARD_CHANGED_WEAKNESS
+wChangedResistance = sym("wPlayerArenaCardChangedResistance")
 CONTRACT = {
     "GetCardWeakness": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
     "GetArenaCardWeakness": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
@@ -28,12 +29,12 @@ CONTRACT = {
     "HandleEnergyBurn": {"compare": (), "preserve": ()},
 }
 
-wChangedType = 0xC2D4       # DUELVARS_ARENA_CARD_CHANGED_TYPE
-wArenaCardStatus = 0xC2F0   # DUELVARS_ARENA_CARD_STATUS
-wBench = 0xC2BC             # DUELVARS_BENCH
+wChangedType = sym("wPlayerArenaCardChangedType")       # DUELVARS_ARENA_CARD_CHANGED_TYPE
+wArenaCardStatus = sym("wPlayerArenaCardStatus")   # DUELVARS_ARENA_CARD_STATUS
+wBench = sym("wPlayerBench")             # DUELVARS_BENCH
 CHARIZARD = 0x32
-wAttachedEnergies_ADDR = 0xCC1B
-wTotalAttachedEnergies_ADDR = 0xCC23
+wAttachedEnergies_ADDR = sym("wAttachedEnergies")
+wTotalAttachedEnergies_ADDR = sym("wTotalAttachedEnergies")
 RECYCLE = 0xE4              # a real TYPE_TRAINER card (ai_trainer_card_logic.asm)
 
 
@@ -89,7 +90,7 @@ CASES = {
         # returns the changed type's low nibble directly.
         {"wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wChangedType: b"\x83",
                   wArenaCardStatus: b"\x00", wPlayerArenaCard: b"\xff",
-                  wBench: b"\xff", 0xC3BB: b"\xff", 0xC3BC: b"\xff"}},
+                  wBench: b"\xff", sym("wOpponentArenaCard"): b"\xff", sym("wOpponentBench"): b"\xff"}},
         dict(POISON, wram={**arena(0x40, idx=3), wChangedType: b"\x00"}),
     ],
     "GetPlayAreaCardColor": [
@@ -99,7 +100,7 @@ CASES = {
         {"a": 0, "wram": {**arena(RECYCLE), wChangedType: b"\x00"}},
         {"a": 0, "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wChangedType: b"\x83",
                           wArenaCardStatus: b"\x00", wPlayerArenaCard: b"\xff",
-                          wBench: b"\xff", 0xC3BB: b"\xff", 0xC3BC: b"\xff"}},
+                          wBench: b"\xff", sym("wOpponentArenaCard"): b"\xff", sym("wOpponentBench"): b"\xff"}},
         {"a": 0, "wram": {**arena(8), wChangedType: b"\x80", wArenaCardStatus: b"\x01"}},
         dict(POISON, a=0, wram={**arena(0x40, idx=3), wChangedType: b"\x00"}),
     ],
@@ -112,14 +113,14 @@ CASES = {
         {"wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: bytes((5,)),
                   wPlayerDeck + 5: bytes((CHARIZARD,)),
                   wChangedType: b"\x00", wArenaCardStatus: b"\x00",
-                  wBench: b"\xff", 0xC3BB: b"\xff", 0xC3BC: b"\xff",
+                  wBench: b"\xff", sym("wOpponentArenaCard"): b"\xff", sym("wOpponentBench"): b"\xff",
                   wAttachedEnergies_ADDR: b"\x01\x02\x03\x04\x05\x06",
                   wTotalAttachedEnergies_ADDR: b"\x07"},
          "read": {wAttachedEnergies_ADDR: 6}},
         {"wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: bytes((7,)),
                   wPlayerDeck + 7: bytes((CHARIZARD,)),
                   wChangedType: b"\x00", wArenaCardStatus: b"\x00",
-                  wBench: b"\xff", 0xC3BB: b"\xff", 0xC3BC: b"\xff",
+                  wBench: b"\xff", sym("wOpponentArenaCard"): b"\xff", sym("wOpponentBench"): b"\xff",
                   wAttachedEnergies_ADDR: b"\x02\x03\x01\x00\x00\x00",
                   wTotalAttachedEnergies_ADDR: b"\x06"},
          "read": {wAttachedEnergies_ADDR: 6}},

@@ -12,8 +12,9 @@ SafeCopyDataHLtoDE (already landed in bg_map.c/empty_screen.c) through the
 JPHblankCopyDataHLtoDE alias, so nothing left blocks them even though
 WriteOneDigitBCDNumber does not yet exist in C.
 """
+from tests.cases._symbols import data, sym
 
-DEST = 0xC300
+DEST = sym("wOpponentCardLocations")
 FILL = b"\xff" * 7  # seven bytes: the seventh proves de stops after five digits
 
 CONTRACT = {
@@ -58,7 +59,7 @@ def case(hl, **kw):
     return dict(POISON, hl=hl, d=DEST >> 8, e=DEST & 0xFF, wram={DEST: FILL}, **kw)
 
 
-BCD_DST = 0xC110
+BCD_DST = sym("wDecompressionSecondaryBufferStart") + 0x21
 
 
 def bcd_case(a, **kw):
@@ -69,7 +70,7 @@ def bcd2_case(a, **kw):
     return dict(POISON, a=a, hl=BCD_DST, wram={BCD_DST: b"\xff\xff"}, read={BCD_DST: 2}, **kw)
 
 
-WSTR = 0xCAA0
+WSTR = sym("wStringBuffer")
 BGMAP0 = 0x9800
 
 
@@ -115,7 +116,7 @@ CASES = {
         case(9999),  # "09999": every place but the first at its maximum digit
         case(65535),
         # de advanced by five, read back without seeding the buffer first.
-        dict(POISON, hl=54321, d=DEST >> 8, e=DEST & 0xFF, read={DEST: 6}),
+        dict(POISON, hl=data(54321), d=DEST >> 8, e=DEST & 0xFF, read={DEST: 6}),
     ],
     "WriteBCDDigitInTextFormat": [
         {},
@@ -141,7 +142,7 @@ CASES = {
     ],
     "WriteFourDigitBCDNumber": [
         {},
-        four_digit_case(0xAAAA, 7, 4),
+        four_digit_case(data(0xAAAA), 7, 4),
         four_digit_case(0x9999, 27, 62),
     ],
     "WriteOneDigitBCDNumber": [
@@ -156,7 +157,7 @@ CASES = {
     ],
     "WriteTwoByteNumber": [
         {},
-        two_byte_case(54321, 7, 4),
+        two_byte_case(data(54321), 7, 4),
         two_byte_case(65535, 27, 62),
     ],
 }

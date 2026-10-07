@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/sequences/intro_sequence_commands.asm."""
+from tests.cases._symbols import sym
 
 from tests.cases._fixtures import TITLE_ORB_REGS, title_orb_fixture
 
@@ -11,27 +12,27 @@ CASES = {}
 # >>> factory AnimateRandomTitleScreenOrb
 CONTRACT["AnimateRandomTitleScreenOrb"] = {"compare": ("a", "b"), "preserve": ("b",)}
 CASES["AnimateRandomTitleScreenOrb"] = [
-    {"wram": {0xD635: b"\x01", 0xCAB4: b"\x00"}, "read": {0xD4CF: 1}},
-    {"wram": {0xD635: b"\x3F", 0xCAB4: b"\x00"}, "read": {0xD4CF: 1}},
-    {"wram": {0xD635: b"\xFF", 0xCAB4: b"\x00"}, "read": {0xD4CF: 1}},
-    {"wram": {0xD635: b"\x01", 0xCAB4: b"\x02", 0xD629: b"\x00\x01\x02\x03\x04\x05\x06"},
-     "read": {0xD4CF: 1}},
-    dict(POISON, wram={0xD635: b"\x3F", 0xCAB4: b"\x02", 0xD629: b"\x06\x05\x04\x03\x02\x01\x00"},
-         read={0xD4CF: 1}),
+    {"wram": {sym("wTitleScreenOrbCounter"): b"\x01", sym("wConsole"): b"\x00"}, "read": {sym("wWhichSprite"): 1}},
+    {"wram": {sym("wTitleScreenOrbCounter"): b"\x3F", sym("wConsole"): b"\x00"}, "read": {sym("wWhichSprite"): 1}},
+    {"wram": {sym("wTitleScreenOrbCounter"): b"\xFF", sym("wConsole"): b"\x00"}, "read": {sym("wWhichSprite"): 1}},
+    {"wram": {sym("wTitleScreenOrbCounter"): b"\x01", sym("wConsole"): b"\x02", sym("wTitleScreenSprites"): b"\x00\x01\x02\x03\x04\x05\x06"},
+     "read": {sym("wWhichSprite"): 1}},
+    dict(POISON, wram={sym("wTitleScreenOrbCounter"): b"\x3F", sym("wConsole"): b"\x02", sym("wTitleScreenSprites"): b"\x06\x05\x04\x03\x02\x01\x00"},
+         read={sym("wWhichSprite"): 1}),
     dict(title_orb_fixture(vram=False, bank=7), **TITLE_ORB_REGS),
 ]
 # <<< factory AnimateRandomTitleScreenOrb
 
 # >>> factory-cases-statics
-wSequenceCmdPtr = 0xD631
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
 
-wSequenceCmdPtr = 0xD631
-wIntroSequencePalsNeedUpdate = 0xD634
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
+wIntroSequencePalsNeedUpdate = sym("wIntroSequencePalsNeedUpdate")
 
-wSequenceDelay = 0xD633
-wSequenceCmdPtr = 0xD631
+wSequenceDelay = sym("wSequenceDelay")
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
 
-wIntroSequencePalsNeedUpdate = 0xD634
+wIntroSequencePalsNeedUpdate = sym("wIntroSequencePalsNeedUpdate")
 # <<< factory-cases-statics
 
 # >>> factory AdvanceIntroSequenceCmdPtr
@@ -66,57 +67,57 @@ CASES["AdvanceIntroSequenceCmdPtrBy4"] = [
 # >>> factory IntroSequenceEmptyFunc
 CONTRACT["IntroSequenceEmptyFunc"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["IntroSequenceEmptyFunc"] = [
-    {"wram": {0xC500: b"\x00"}, "expect": {0xC500: b"\x00"}},
-    dict(POISON, wram={0xC500: b"\x00"}, expect={0xC500: b"\x00"}),
+    {"wram": {sym("wNameBuffer"): b"\x00"}, "expect": {sym("wNameBuffer"): b"\x00"}},
+    dict(POISON, wram={sym("wNameBuffer"): b"\x00"}, expect={sym("wNameBuffer"): b"\x00"}),
 ]
 # <<< factory IntroSequenceEmptyFunc
 
 # >>> factory IntroSequenceCmd_FadeIn
 CONTRACT["IntroSequenceCmd_FadeIn"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["IntroSequenceCmd_FadeIn"] = [
-    {"wram": {0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
-    {"wram": {0xD631: b"\x00\x05"}, "read": {0xD631: 2}},
-    dict(POISON, wram={0xD631: b"\x00\x00"}, read={0xD631: 2}),
+    {"wram": {sym("wSequenceCmdPtr"): b"\x00\x00"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    {"wram": {sym("wSequenceCmdPtr"): b"\x00\x05"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    dict(POISON, wram={sym("wSequenceCmdPtr"): b"\x00\x00"}, read={sym("wSequenceCmdPtr"): 2}),
 ]
 # <<< factory IntroSequenceCmd_FadeIn
 
 # >>> factory IntroSequenceCmd_WaitSFX
 CONTRACT["IntroSequenceCmd_WaitSFX"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["IntroSequenceCmd_WaitSFX"] = [
-    {"wram": {0xDD82: b"\x80", 0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
-    {"wram": {0xDD82: b"\x05", 0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
-    dict(POISON, wram={0xDD82: b"\x80", 0xD631: b"\x00\x00"}, read={0xD631: 2}),
+    {"wram": {sym("wCurSfxID"): b"\x80", sym("wSequenceCmdPtr"): b"\x00\x00"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    {"wram": {sym("wCurSfxID"): b"\x05", sym("wSequenceCmdPtr"): b"\x00\x00"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    dict(POISON, wram={sym("wCurSfxID"): b"\x80", sym("wSequenceCmdPtr"): b"\x00\x00"}, read={sym("wSequenceCmdPtr"): 2}),
 ]
 # <<< factory IntroSequenceCmd_WaitSFX
 
 # >>> factory IntroSequenceCmd_WaitOrbsAnimation
 CONTRACT["IntroSequenceCmd_WaitOrbsAnimation"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["IntroSequenceCmd_WaitOrbsAnimation"] = [
-    {"wram": {0xD629: bytes([0,1,2,3,4,5,6]), 0xD4D0 + 0*16 + 14: b"\x05"}},
-    dict(POISON, wram={0xD629: bytes([0,1,2,3,4,5,6]),
-         0xD4D0 + 0*16 + 14: b"\xFF", 0xD4D0 + 1*16 + 14: b"\xFF", 0xD4D0 + 2*16 + 14: b"\xFF",
-         0xD4D0 + 3*16 + 14: b"\xFF", 0xD4D0 + 4*16 + 14: b"\xFF", 0xD4D0 + 5*16 + 14: b"\xFF",
-         0xD4D0 + 6*16 + 14: b"\xFF"}),
-    {"wram": {0xD629: bytes([0,1,2,3,4,5,6]),
-        0xD4D0 + 0*16 + 14: b"\xFF", 0xD4D0 + 1*16 + 14: b"\xFF", 0xD4D0 + 2*16 + 14: b"\xFF",
-        0xD4D0 + 3*16 + 14: b"\xFF", 0xD4D0 + 4*16 + 14: b"\xFF", 0xD4D0 + 5*16 + 14: b"\xFF",
-        0xD4D0 + 6*16 + 14: b"\x00"}},
+    {"wram": {sym("wTitleScreenSprites"): bytes([0,1,2,3,4,5,6]), sym("wSprite1Enabled") + 0*16 + 14: b"\x05"}},
+    dict(POISON, wram={sym("wTitleScreenSprites"): bytes([0,1,2,3,4,5,6]),
+         sym("wSprite1Enabled") + 0*16 + 14: b"\xFF", sym("wSprite1Enabled") + 1*16 + 14: b"\xFF", sym("wSprite1Enabled") + 2*16 + 14: b"\xFF",
+         sym("wSprite1Enabled") + 3*16 + 14: b"\xFF", sym("wSprite1Enabled") + 4*16 + 14: b"\xFF", sym("wSprite1Enabled") + 5*16 + 14: b"\xFF",
+         sym("wSprite1Enabled") + 6*16 + 14: b"\xFF"}),
+    {"wram": {sym("wTitleScreenSprites"): bytes([0,1,2,3,4,5,6]),
+        sym("wSprite1Enabled") + 0*16 + 14: b"\xFF", sym("wSprite1Enabled") + 1*16 + 14: b"\xFF", sym("wSprite1Enabled") + 2*16 + 14: b"\xFF",
+        sym("wSprite1Enabled") + 3*16 + 14: b"\xFF", sym("wSprite1Enabled") + 4*16 + 14: b"\xFF", sym("wSprite1Enabled") + 5*16 + 14: b"\xFF",
+        sym("wSprite1Enabled") + 6*16 + 14: b"\x00"}},
 ]
 # <<< factory IntroSequenceCmd_WaitOrbsAnimation
 
 # >>> factory IntroSequenceCmd_SetOrbsAnimations
 CONTRACT["IntroSequenceCmd_SetOrbsAnimations"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b",), "wram_out": True}
 CASES["IntroSequenceCmd_SetOrbsAnimations"] = [
-    {"b": 0xC5, "c": 0x00, "wram": {0xD629: bytes([0,1,2,3,4,5,6]), 0xC500: bytes([0,0,0,0,0,0,0])}},
-    dict(POISON, b=0xC5, c=0x00, wram={0xD629: bytes([0,1,2,3,4,5,6]), 0xC500: bytes([0,0,0,0,0,0,0])}),
+    {"b": 0xC5, "c": 0x00, "wram": {sym("wTitleScreenSprites"): bytes([0,1,2,3,4,5,6]), sym("wNameBuffer"): bytes([0,0,0,0,0,0,0])}},
+    dict(POISON, b=0xC5, c=0x00, wram={sym("wTitleScreenSprites"): bytes([0,1,2,3,4,5,6]), sym("wNameBuffer"): bytes([0,0,0,0,0,0,0])}),
 ]
 # <<< factory IntroSequenceCmd_SetOrbsAnimations
 
 # >>> factory IntroSequenceCmd_SetOrbsCoordinates
 CONTRACT["IntroSequenceCmd_SetOrbsCoordinates"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b",), "wram_out": True}
 CASES["IntroSequenceCmd_SetOrbsCoordinates"] = [
-    {"b": 0xC5, "c": 0x00, "wram": {0xD629: bytes([0,1,2,3,4,5,6]), 0xC500: bytes(range(1, 15))}},
-    dict(POISON, b=0xC5, c=0x00, wram={0xD629: bytes([0,1,2,3,4,5,6]), 0xC500: bytes(range(1, 15))}),
+    {"b": 0xC5, "c": 0x00, "wram": {sym("wTitleScreenSprites"): bytes([0,1,2,3,4,5,6]), sym("wNameBuffer"): bytes(range(1, 15))}},
+    dict(POISON, b=0xC5, c=0x00, wram={sym("wTitleScreenSprites"): bytes([0,1,2,3,4,5,6]), sym("wNameBuffer"): bytes(range(1, 15))}),
 ]
 # <<< factory IntroSequenceCmd_SetOrbsCoordinates
 
@@ -144,11 +145,11 @@ CASES["IntroSequenceCmd_FadeOut"] = [
 # >>> factory AdvanceIntroSequenceCmdPtrBy3
 CONTRACT["AdvanceIntroSequenceCmdPtrBy3"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["AdvanceIntroSequenceCmdPtrBy3"] = [
-    {"wram": {0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
-    {"wram": {0xD631: b"\x10\x20"}, "read": {0xD631: 2}},
-    {"wram": {0xD631: b"\xFD\xFF"}, "read": {0xD631: 2}},
-    dict(POISON, wram={0xD631: b"\x00\x00"}, read={0xD631: 2}),
-    {"wram": {0xD631: b"\xFF\xFF"}, "read": {0xD631: 2}},
+    {"wram": {sym("wSequenceCmdPtr"): b"\x00\x00"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    {"wram": {sym("wSequenceCmdPtr"): b"\x10\x20"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    {"wram": {sym("wSequenceCmdPtr"): b"\xFD\xFF"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    dict(POISON, wram={sym("wSequenceCmdPtr"): b"\x00\x00"}, read={sym("wSequenceCmdPtr"): 2}),
+    {"wram": {sym("wSequenceCmdPtr"): b"\xFF\xFF"}, "read": {sym("wSequenceCmdPtr"): 2}},
 ]
 # <<< factory AdvanceIntroSequenceCmdPtrBy3
 
@@ -164,9 +165,9 @@ CASES["IntroSequenceCmd_Wait"] = [
 # >>> factory IntroSequenceCmd_PlaySFX
 CONTRACT["IntroSequenceCmd_PlaySFX"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["IntroSequenceCmd_PlaySFX"] = [
-    {"c": 0x00, "wram": {0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
-    {"c": 0x7F, "wram": {0xD631: b"\x00\x05"}, "read": {0xD631: 2}},
-    dict(POISON, c=0xCC, wram={0xD631: b"\x00\x00"}, read={0xD631: 2}),
+    {"c": 0x00, "wram": {sym("wSequenceCmdPtr"): b"\x00\x00"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    {"c": 0x7F, "wram": {sym("wSequenceCmdPtr"): b"\x00\x05"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    dict(POISON, c=0xCC, wram={sym("wSequenceCmdPtr"): b"\x00\x00"}, read={sym("wSequenceCmdPtr"): 2}),
 ]
 # <<< factory IntroSequenceCmd_PlaySFX
 
@@ -188,12 +189,12 @@ CASES["LoadOpeningScene"] = [
 CONTRACT["LoadOpeningSceneAndUpdateSGBBorder"] = {"compare": ("b", "c", "d", "e"), "preserve": ()}
 CASES["LoadOpeningSceneAndUpdateSGBBorder"] = [
     {"a": 0x00, "b": 0x00, "c": 0x00,
-     "wram": {0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xAA"},
-     "expect": {0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+     "wram": {sym("wConsole"): b"\x01", sym("wTempSGBPacket"): b"\x00\x00\x00\x00\x00\x00\x00\x00", sym("wIntroSequencePalsNeedUpdate"): b"\xAA"},
+     "expect": {sym("wTempSGBPacket"): b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, a=0x01, b=0x00, c=0x00,
-         wram={0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xFF"},
-         expect={0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+         wram={sym("wConsole"): b"\x01", sym("wTempSGBPacket"): b"\x00\x00\x00\x00\x00\x00\x00\x00", sym("wIntroSequencePalsNeedUpdate"): b"\xFF"},
+         expect={sym("wTempSGBPacket"): b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
          instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory LoadOpeningSceneAndUpdateSGBBorder
@@ -201,11 +202,11 @@ CASES["LoadOpeningSceneAndUpdateSGBBorder"] = [
 # >>> factory IntroSequenceCmd_LoadCharizardScene
 CONTRACT["IntroSequenceCmd_LoadCharizardScene"] = {"compare": ("b", "c", "d", "e"), "preserve": ()}
 CASES["IntroSequenceCmd_LoadCharizardScene"] = [
-    {"wram": {0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xAA"},
-     "expect": {0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+    {"wram": {sym("wConsole"): b"\x01", sym("wTempSGBPacket"): b"\x00\x00\x00\x00\x00\x00\x00\x00", sym("wIntroSequencePalsNeedUpdate"): b"\xAA"},
+     "expect": {sym("wTempSGBPacket"): b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xFF"},
-         expect={0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+    dict(POISON, wram={sym("wConsole"): b"\x01", sym("wTempSGBPacket"): b"\x00\x00\x00\x00\x00\x00\x00\x00", sym("wIntroSequencePalsNeedUpdate"): b"\xFF"},
+         expect={sym("wTempSGBPacket"): b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
          instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory IntroSequenceCmd_LoadCharizardScene
@@ -213,19 +214,19 @@ CASES["IntroSequenceCmd_LoadCharizardScene"] = [
 # >>> factory IntroSequenceCmd_LoadTitleScreenScene
 CONTRACT["IntroSequenceCmd_LoadTitleScreenScene"] = {"compare": ("f",), "preserve": ()}
 CASES["IntroSequenceCmd_LoadTitleScreenScene"] = [
-    {"wram": {0xD634: b"\xAA"}, "expect": {0xD634: b"\x00"}, "expect_regs": {"f": 0x10}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xD634: b"\xFF"}, expect={0xD634: b"\x00"}, expect_regs={"f": 0x10}, instruction_budget=2000000, cycle_budget=8000000),
+    {"wram": {sym("wIntroSequencePalsNeedUpdate"): b"\xAA"}, "expect": {sym("wIntroSequencePalsNeedUpdate"): b"\x00"}, "expect_regs": {"f": 0x10}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={sym("wIntroSequencePalsNeedUpdate"): b"\xFF"}, expect={sym("wIntroSequencePalsNeedUpdate"): b"\x00"}, expect_regs={"f": 0x10}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory IntroSequenceCmd_LoadTitleScreenScene
 
 # >>> factory IntroSequenceCmd_LoadAerodactylScene
 CONTRACT["IntroSequenceCmd_LoadAerodactylScene"] = {"compare": ("b", "c", "d", "e"), "preserve": ()}
 CASES["IntroSequenceCmd_LoadAerodactylScene"] = [
-    {"wram": {0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xAA"},
-     "expect": {0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+    {"wram": {sym("wConsole"): b"\x01", sym("wTempSGBPacket"): b"\x00\x00\x00\x00\x00\x00\x00\x00", sym("wIntroSequencePalsNeedUpdate"): b"\xAA"},
+     "expect": {sym("wTempSGBPacket"): b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xFF"},
-         expect={0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+    dict(POISON, wram={sym("wConsole"): b"\x01", sym("wTempSGBPacket"): b"\x00\x00\x00\x00\x00\x00\x00\x00", sym("wIntroSequencePalsNeedUpdate"): b"\xFF"},
+         expect={sym("wTempSGBPacket"): b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
          instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory IntroSequenceCmd_LoadAerodactylScene
@@ -233,11 +234,11 @@ CASES["IntroSequenceCmd_LoadAerodactylScene"] = [
 # >>> factory IntroSequenceCmd_LoadScytherScene
 CONTRACT["IntroSequenceCmd_LoadScytherScene"] = {"compare": ("b", "c", "d", "e"), "preserve": ()}
 CASES["IntroSequenceCmd_LoadScytherScene"] = [
-    {"wram": {0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xAA"},
-     "expect": {0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+    {"wram": {sym("wConsole"): b"\x01", sym("wTempSGBPacket"): b"\x00\x00\x00\x00\x00\x00\x00\x00", sym("wIntroSequencePalsNeedUpdate"): b"\xAA"},
+     "expect": {sym("wTempSGBPacket"): b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xFF"},
-         expect={0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+    dict(POISON, wram={sym("wConsole"): b"\x01", sym("wTempSGBPacket"): b"\x00\x00\x00\x00\x00\x00\x00\x00", sym("wIntroSequencePalsNeedUpdate"): b"\xFF"},
+         expect={sym("wTempSGBPacket"): b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
          instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory IntroSequenceCmd_LoadScytherScene
@@ -246,13 +247,13 @@ CASES["IntroSequenceCmd_LoadScytherScene"] = [
 CONTRACT["ExecuteIntroSequenceCmd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["ExecuteIntroSequenceCmd"] = [
     {"a": 0x11, "f": 0x22, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x7788,
-     "wram": {0xD633: b"\x01"}, "expect": {0xD633: b"\x00"},
+     "wram": {sym("wSequenceDelay"): b"\x01"}, "expect": {sym("wSequenceDelay"): b"\x00"},
      "expect_regs": {"a": 0x00, "f": 0xD0, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x7788}},
     {"a": 0x11, "f": 0x22, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x7788,
-     "wram": {0xD633: b"\xff"}, "expect": {0xD633: b"\xff"},
+     "wram": {sym("wSequenceDelay"): b"\xff"}, "expect": {sym("wSequenceDelay"): b"\xff"},
      "expect_regs": {"a": 0xFF, "f": 0xC0, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x7788}},
-    dict(POISON, wram={0xD631: b"\x00\xc5", 0xD633: b"\x00", 0xC500: b"\x60\x54\x01\x00"},
-         expect={0xD631: b"\x03\xc5", 0xD633: b"\x00"},
+    dict(POISON, wram={sym("wSequenceCmdPtr"): b"\x00\xc5", sym("wSequenceDelay"): b"\x00", sym("wNameBuffer"): b"\x60\x54\x01\x00"},
+         expect={sym("wSequenceCmdPtr"): b"\x03\xc5", sym("wSequenceDelay"): b"\x00"},
          expect_regs={"a": 0x00, "f": 0xD0, "b": 0x00, "c": 0x01, "d": 0x54, "e": 0x60, "hl": 0x5460}),
 ]
 # <<< factory ExecuteIntroSequenceCmd

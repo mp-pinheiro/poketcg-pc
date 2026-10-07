@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/unused_save_validation.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,15 +10,15 @@ CASES = {}
 # >>> factory StubbedUnusedSaveDataValidation
 CONTRACT["StubbedUnusedSaveDataValidation"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["StubbedUnusedSaveDataValidation"] = [
-    {"wram": {0xC100: b"\x00"}, "read": {0xC100: 1}},
-    dict(POISON, wram={0xC100: b"\xAB"}, read={0xC100: 1}),
+    {"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 1}},
+    dict(POISON, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xAB"}, read={sym("wDecompressionSecondaryBufferStart") + 0x11: 1}),
 ]
 # <<< factory StubbedUnusedSaveDataValidation
 
 # >>> factory UnusedCalculateSaveDataValidationByte
-hBankSRAM = 0xFF81
-sCardCollection = 0xA100
-sUnusedSaveDataValidationByte = 0xA00B
+hBankSRAM = sym("hBankSRAM")
+sCardCollection = sym("sCardCollection")
+sUnusedSaveDataValidationByte = sym("sUnusedSaveDataValidationByte")
 SAVE_VALIDATION_RANGE = 0x250
 _CHECKSUM_PATTERN = bytes((i * 37 + 5) & 0xFF for i in range(SAVE_VALIDATION_RANGE))
 _CHECKSUM_PATTERN_2 = bytes((i * 91 + 13) & 0xFF for i in range(SAVE_VALIDATION_RANGE))
@@ -36,8 +37,8 @@ CASES["UnusedCalculateSaveDataValidationByte"] = [
 
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hBankSRAM = 0xFF81
-wTileMapFill = 0xCAB6
+hBankSRAM = sym("hBankSRAM")
+wTileMapFill = sym("wTileMapFill")
 # <<< factory-cases-statics
 
 # >>> factory UnusedSaveDataValidation

@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/home/math.asm."""
+from tests.cases._symbols import SRAM_START, WRAMX_START, WRAM_START
 
 CONTRACT = {
     "ATimes10": {
@@ -26,8 +27,8 @@ CASES = {
 }
 
 STATE = {
-    "wram": [[0xC000, 4096], [0xD000, 4096]],
-    "sram": [[bank, addr, 4096] for bank in range(4) for addr in (0xA000, 0xB000)],
+    "wram": [[WRAM_START, 4096], [WRAMX_START, 4096]],
+    "sram": [[bank, addr, 4096] for bank in range(4) for addr in (SRAM_START, SRAM_START + 0x1000)],
     "vram": [[bank, addr, 4096] for bank in range(2) for addr in (0x8000, 0x9000)],
 }
 SCHEMA2_CASES = {

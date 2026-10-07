@@ -1,19 +1,20 @@
-BGP = 0xCABC
-OBP0 = 0xCABD
-OBP1 = 0xCABE
-LCDC = 0xCABB
-CONSOLE = 0xCAB4
-PALETTE = 0xD293
+from tests.cases._symbols import STACK_CANARY, sym
+BGP = sym("wBGP")
+OBP0 = sym("wOBP0")
+OBP1 = sym("wOBP1")
+LCDC = sym("wLCDC")
+CONSOLE = sym("wConsole")
+PALETTE = sym("wConsolePaletteData")
 RLCDC = 0xFF40
-TEMP_BGP = 0xD294
-TEMP_OBP0 = 0xD295
-TEMP_OBP1 = 0xD296
-BG_PALS = 0xCAF0
-OBJ_PALS = 0xCB30
-TEMP_BG_PALS = 0xD297
-TEMP_OBJ_PALS = 0xD2D7
-VBLANK = 0xCAB8
-WD317 = 0xD317
+TEMP_BGP = sym("wTempBGP")
+TEMP_OBP0 = sym("wTempOBP0")
+TEMP_OBP1 = sym("wTempOBP1")
+BG_PALS = sym("wBackgroundPalettesCGB")
+OBJ_PALS = sym("wObjectPalettesCGB")
+TEMP_BG_PALS = sym("wTempBackgroundPalettesCGB")
+TEMP_OBJ_PALS = sym("wTempObjectPalettesCGB")
+VBLANK = sym("wVBlankCounter")
+WD317 = sym("wd317")
 
 CONTRACT = {
     "LoadConsolePaletteData": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
@@ -137,11 +138,11 @@ CASES = {
     # in hffb6/hffb7; a colour already at its target skips the block. Reading
     # both bytes is what separates a port that fades in C locals from the asm.
     "FadePalIntoAnother.GetFadedColor": [
-        {"b": 0, "c": 0, "d": 0, "e": 0, "read": {0xFFB6: 2}},
-        dict(POISON, b=0, c=0, d=0, e=0, read={0xFFB6: 2}),
-        {"b": 0x7C, "c": 0x1F, "d": 0x7C, "e": 0x1F, "read": {0xFFB6: 2}},
-        {"b": 0, "c": 0, "d": 0x7C, "e": 0xFF, "read": {0xFFB6: 2}},
-        {"b": 0x04, "c": 0x21, "d": 0x08, "e": 0xA5, "read": {0xFFB6: 2}},
+        {"b": 0, "c": 0, "d": 0, "e": 0, "read": {sym("hffb6"): 2}},
+        dict(POISON, b=0, c=0, d=0, e=0, read={sym("hffb6"): 2}),
+        {"b": 0x7C, "c": 0x1F, "d": 0x7C, "e": 0x1F, "read": {sym("hffb6"): 2}},
+        {"b": 0, "c": 0, "d": 0x7C, "e": 0xFF, "read": {sym("hffb6"): 2}},
+        {"b": 0x04, "c": 0x21, "d": 0x08, "e": 0xA5, "read": {sym("hffb6"): 2}},
     ],
     "FadePalIntoAnother.FadeColor": [
         {"a": 0, "hl": 0}, {"a": 31, "hl": 0}, {"a": 0, "hl": 31},
@@ -158,30 +159,30 @@ CASES = {
                     BG_PALS: bytes(range(64)), OBJ_PALS: bytes(range(64, 128)),
                     TEMP_BGP: b"\xE4", TEMP_OBP0: b"\x1B", TEMP_OBP1: b"\xB4",
                     TEMP_BG_PALS: bytes(range(64)), TEMP_OBJ_PALS: bytes(range(64, 128)),
-                    0xA000: b"\xFF"},
+                    sym("s0a000"): b"\xFF"},
          "read": {LCDC: 1, RLCDC: 1, VBLANK: 1, BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 64, OBJ_PALS: 64,
-                  TEMP_BGP: 1, TEMP_OBP0: 1, TEMP_OBP1: 1, TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64, 0xA000: 1}},
+                  TEMP_BGP: 1, TEMP_OBP0: 1, TEMP_OBP1: 1, TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64, sym("s0a000"): 1}},
     ],
     "CopyPalsToSRAMBuffer": [
-        {"wram": {0xFF81: b"\x03", **PALETTE_SEED}, "ramg": False,
-         "sram": {1: {0xA800: bytes(131)}}, "oracle": False,
+        {"wram": {sym("hBankSRAM"): b"\x03", **PALETTE_SEED}, "ramg": False,
+         "sram": {1: {sym("sGfxBuffer2"): bytes(131)}}, "oracle": False,
          "why": "The 131-byte bank-1 palette save is outside ordinary oracle readback",
-         "expect": {0xFF81: b"\x03", 0xA000: b"\xFF"},
-         "expect_sram": {1: {0xA800: SRAM_PALETTE}},
-         "read": {0xFF81: 1}},
-        dict(POISON, wram={0xFF81: b"\x03", **PALETTE_SEED}, ramg=False,
-             sram={1: {0xA800: bytes(131)}}, read={0xFF81: 1}),
+         "expect": {sym("hBankSRAM"): b"\x03", sym("s0a000"): b"\xFF"},
+         "expect_sram": {1: {sym("sGfxBuffer2"): SRAM_PALETTE}},
+         "read": {sym("hBankSRAM"): 1}},
+        dict(POISON, wram={sym("hBankSRAM"): b"\x03", **PALETTE_SEED}, ramg=False,
+             sram={1: {sym("sGfxBuffer2"): bytes(131)}}, read={sym("hBankSRAM"): 1}),
     ],
     "LoadPalsFromSRAMBuffer": [
-        {"wram": {0xFF81: b"\x03", **PALETTE_SEED}, "ramg": False,
-         "sram": {1: {0xA800: SRAM_PALETTE}},
+        {"wram": {sym("hBankSRAM"): b"\x03", **PALETTE_SEED}, "ramg": False,
+         "sram": {1: {sym("sGfxBuffer2"): SRAM_PALETTE}},
          "expect": {BGP: b"\xE4", OBP0: b"\x1B", OBP1: b"\xB4"},
-         "sread": {1: {0xA000: 1}},
-         "read": {BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 128, 0xFF81: 1}},
-        dict(POISON, wram={0xFF81: b"\x03", **PALETTE_SEED}, ramg=False,
-             sram={1: {0xA800: bytes(reversed(SRAM_PALETTE))}},
-             sread={1: {0xA000: 1}},
-             read={BGP: 1, BG_PALS: 128, 0xFF81: 1}),
+         "sread": {1: {sym("sGfxBuffer0"): 1}},
+         "read": {BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 128, sym("hBankSRAM"): 1}},
+        dict(POISON, wram={sym("hBankSRAM"): b"\x03", **PALETTE_SEED}, ramg=False,
+             sram={1: {sym("sGfxBuffer2"): bytes(reversed(SRAM_PALETTE))}},
+             sread={1: {sym("sGfxBuffer0"): 1}},
+             read={BGP: 1, BG_PALS: 128, sym("hBankSRAM"): 1}),
     ],
     "Func_10d74": [
         {"b": 0, "wram": {WD317: b"\x00", **PALETTE_SEED}, "read": {WD317: 1, BG_PALS: 64}},
@@ -329,7 +330,7 @@ MUTATIONS["SetWhitePalettes"] = {
     "case_ids": ["SetWhitePalettes-0"],
 }
 for _rec in SCHEMA2_CASES["CopyPalsToSRAMBuffer"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["CopyPalsToSRAMBuffer"] = {
     "source_symbol": "CopyPalsToSRAMBuffer",
     "before": "void CopyPalsToSRAMBuffer(void)\n{",

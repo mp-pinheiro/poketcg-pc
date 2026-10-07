@@ -1,9 +1,10 @@
 """Oracle-diff cases for engine/overworld/map_events.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wOWMapEvents = 0xD323
+wOWMapEvents = sym("wOWMapEvents")
 GUARD_LOW = wOWMapEvents - 1
 GUARD_HIGH = wOWMapEvents + 11
 
@@ -34,25 +35,25 @@ CASES = {
 }
 
 # >>> factory-cases-statics
-wBGMapBank = 0xD23D
-wBGMapHeight = 0xD130
-wBGMapPermissionDataPtr = 0xD23A
-wBGMapWidth = 0xD12F
-wConsole = 0xCAB4
-wCurTilemap = 0xD131
-wOWMapEvents = 0xD323
-wPermissionMap = 0xD133
+wBGMapBank = sym("wBGMapBank")
+wBGMapHeight = sym("wBGMapHeight")
+wBGMapPermissionDataPtr = sym("wBGMapPermissionDataPtr")
+wBGMapWidth = sym("wBGMapWidth")
+wConsole = sym("wConsole")
+wCurTilemap = sym("wCurTilemap")
+wOWMapEvents = sym("wOWMapEvents")
+wPermissionMap = sym("wPermissionMap")
 
-wOWMapEvents = 0xD323
-wWriteBGMapToSRAM = 0xD292
-wCurTilemap = 0xD131
-wConsole = 0xCAB4
-wPermissionMap = 0xD133
+wOWMapEvents = sym("wOWMapEvents")
+wWriteBGMapToSRAM = sym("wWriteBGMapToSRAM")
+wCurTilemap = sym("wCurTilemap")
+wConsole = sym("wConsole")
+wPermissionMap = sym("wPermissionMap")
 
-wWriteBGMapToSRAM = 0xD292
-wOWMapEvents = 0xD323
-wCurTilemap = 0xD131
-wConsole = 0xCAB4
+wWriteBGMapToSRAM = sym("wWriteBGMapToSRAM")
+wOWMapEvents = sym("wOWMapEvents")
+wCurTilemap = sym("wCurTilemap")
+wConsole = sym("wConsole")
 # <<< factory-cases-statics
 
 # >>> factory SetOWMapEvent_SRAMOrVRAM

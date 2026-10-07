@@ -100,12 +100,12 @@ MUTATIONS = {
         'before': '\twWhichBGPalIndex = wd291;\n\tuint8_t pal = wCurMapPalette;',
         'after': '\twWhichBGPalIndex = (uint8_t)(wd291 + 1u);\n\tuint8_t pal = wCurMapPalette;',
         'case_ids': ['LoadMapTilesAndPals-0', 'LoadMapTilesAndPals-1'],
-        'source': 'src/profiles/extended/home/load_overworld.c'},
+        'source': 'src/home/load_overworld.c'},
     'ReloadMapAfterTextClose': {   'source_symbol': 'ReloadMapAfterTextClose',
         'before': '\tFunc_c3ee();',
         'after': '\tFunc_c3ff();',
         'case_ids': ['ReloadMapAfterTextClose-1'],
-        'source': 'src/profiles/extended/home/load_overworld.c'},
+        'source': 'src/home/load_overworld.c'},
     'LoadMapGfxAndPermissions': {   'source_symbol': 'LoadMapGfxAndPermissions',
         'before': 'void LoadMapGfxAndPermissions(void)\n'
                   '{\n'
@@ -118,7 +118,7 @@ MUTATIONS = {
         'case_ids': [   'LoadMapGfxAndPermissions-0',
                         'LoadMapGfxAndPermissions-1',
                         'LoadMapGfxAndPermissions-2'],
-        'source': 'src/profiles/extended/home/load_overworld.c'},
+        'source': 'src/home/load_overworld.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

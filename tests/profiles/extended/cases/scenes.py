@@ -119,7 +119,7 @@ MUTATIONS = {
         'before': '\twCurTilemap = saved_tilemap;\n\treturn wCurTilemap;',
         'after': '\twCurTilemap = 0u;\n\treturn wCurTilemap;',
         'case_ids': ['LoadBoosterGfx-0', 'LoadBoosterGfx-1'],
-        'source': 'src/profiles/extended/home/scenes.c'},
+        'source': 'src/home/scenes.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

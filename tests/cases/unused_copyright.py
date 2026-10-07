@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/unused_copyright.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,14 +10,14 @@ CASES = {}
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 FRAME_SETUP = [{"fn": "CopyDMAFunction"}]
-SCREEN_READ = {0xD61C: 2}
+SCREEN_READ = {sym("wSceneBaseX"): 2}
 # <<< factory-cases-statics
 
 # >>> factory UnusedCopyrightScreen
 CONTRACT["UnusedCopyrightScreen"] = {"compare": (), "preserve": ()}
 CASES["UnusedCopyrightScreen"] = [
-    {"keys": [0x00, 0x01], "wram": {0xCAB4: b"\x00", 0xCABB: b"\x00", 0xFF40: b"\x00"}, "setup": FRAME_SETUP, "read": SCREEN_READ, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xCAB4: b"\x00", 0xCABB: b"\x00", 0xFF40: b"\x00"}, setup=FRAME_SETUP, read=SCREEN_READ, instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x01], "wram": {sym("wConsole"): b"\x00", sym("wLCDC"): b"\x00", 0xFF40: b"\x00"}, "setup": FRAME_SETUP, "read": SCREEN_READ, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={sym("wConsole"): b"\x00", sym("wLCDC"): b"\x00", 0xFF40: b"\x00"}, setup=FRAME_SETUP, read=SCREEN_READ, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory UnusedCopyrightScreen
 

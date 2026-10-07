@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/fire_club_lobby.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,48 +10,48 @@ CASES = {}
 # >>> factory FindExtraInteractableObjects
 CONTRACT["FindExtraInteractableObjects"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["FindExtraInteractableObjects"] = [
-    {"hl": 0xC500, "wram": {0xC500: b"\x00"}},
-    {"hl": 0xC500, "wram": {
-        0xC500: b"\xAA\x00\x00\x00\x00" + b"\x05\x06\x00\xBC\x9A" + b"\x00",
-        0xD330: b"\x05", 0xD331: b"\x06", 0xD334: b"\x00"}},
-    dict(POISON, hl=0x1234, wram={0xD330: b"\x05", 0xD331: b"\x06", 0xD334: b"\x00"}),
+    {"hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x00"}},
+    {"hl": sym("wNameBuffer"), "wram": {
+        sym("wNameBuffer"): b"\xAA\x00\x00\x00\x00" + b"\x05\x06\x00\xBC\x9A" + b"\x00",
+        sym("wPlayerXCoord"): b"\x05", sym("wPlayerYCoord"): b"\x06", sym("wPlayerDirection"): b"\x00"}},
+    dict(POISON, hl=0x1234, wram={sym("wPlayerXCoord"): b"\x05", sym("wPlayerYCoord"): b"\x06", sym("wPlayerDirection"): b"\x00"}),
 ]
 # <<< factory FindExtraInteractableObjects
 
 # >>> factory FireClubPressedA
 CONTRACT["FireClubPressedA"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["FireClubPressedA"] = [
-    {"wram": {0xD330: b"\x10", 0xD331: b"\x02", 0xD334: b"\x00"}, "rom_bank": 3},
-    {"wram": {0xD330: b"\x63", 0xD331: b"\x02", 0xD334: b"\x00"}, "rom_bank": 3},
-    dict(POISON, wram={0xD330: b"\x10", 0xD331: b"\x02", 0xD334: b"\x00"}, rom_bank=3),
+    {"wram": {sym("wPlayerXCoord"): b"\x10", sym("wPlayerYCoord"): b"\x02", sym("wPlayerDirection"): b"\x00"}, "rom_bank": 3},
+    {"wram": {sym("wPlayerXCoord"): b"\x63", sym("wPlayerYCoord"): b"\x02", sym("wPlayerDirection"): b"\x00"}, "rom_bank": 3},
+    dict(POISON, wram={sym("wPlayerXCoord"): b"\x10", sym("wPlayerYCoord"): b"\x02", sym("wPlayerDirection"): b"\x00"}, rom_bank=3),
 ]
 # <<< factory FireClubPressedA
 
 # >>> factory FireClubLobbyAfterDuel
 CONTRACT["FireClubLobbyAfterDuel"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
 CASES["FireClubLobbyAfterDuel"] = [
-    {"wram": {0xD0C3: b"\x00", 0xD0C4: b"\x19"}, "rom_bank": 3},
-    {"wram": {0xD0C3: b"\x01", 0xD0C4: b"\x19"}, "rom_bank": 3},
-    dict(POISON, wram={0xD0C3: b"\x00", 0xD0C4: b"\x19"}, rom_bank=3),
+    {"wram": {sym("wDuelResult"): b"\x00", sym("wNPCDuelist"): b"\x19"}, "rom_bank": 3},
+    {"wram": {sym("wDuelResult"): b"\x01", sym("wNPCDuelist"): b"\x19"}, "rom_bank": 3},
+    dict(POISON, wram={sym("wDuelResult"): b"\x00", sym("wNPCDuelist"): b"\x19"}, rom_bank=3),
 ]
 # <<< factory FireClubLobbyAfterDuel
 
 # >>> factory Preload_Lad2
 CONTRACT["Preload_Lad2"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Preload_Lad2"] = [
-    {"wram": {0xD3D8: b"\x00"}},
-    {"wram": {0xD3D8: b"\x04"}},
-    dict(POISON, wram={0xD3D8: b"\x08"}),
+    {"wram": {sym("wEventVars") + 6: b"\x00"}},
+    {"wram": {sym("wEventVars") + 6: b"\x04"}},
+    dict(POISON, wram={sym("wEventVars") + 6: b"\x08"}),
 ]
 # <<< factory Preload_Lad2
 
 # >>> factory Preload_JessicaInFireClubLobby
 CONTRACT["Preload_JessicaInFireClubLobby"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Preload_JessicaInFireClubLobby"] = [
-    {"wram": {0xD3D8: b"\x00"}},
-    {"wram": {0xD3D8: b"\x10"}},
-    {"wram": {0xD3D8: b"\x80"}},
-    dict(POISON, wram={0xD3D8: b"\x90"}),
+    {"wram": {sym("wEventVars") + 6: b"\x00"}},
+    {"wram": {sym("wEventVars") + 6: b"\x10"}},
+    {"wram": {sym("wEventVars") + 6: b"\x80"}},
+    dict(POISON, wram={sym("wEventVars") + 6: b"\x90"}),
 ]
 # <<< factory Preload_JessicaInFireClubLobby
 

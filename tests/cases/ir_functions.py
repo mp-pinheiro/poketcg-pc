@@ -1,9 +1,10 @@
 """Oracle-diff cases for poketcg/src/engine/link/ir_functions.asm."""
+from tests.cases._symbols import STACK_TOP, sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wCurSongID = 0xDD80
+wCurSongID = sym("wCurSongID")
 
 CONTRACT = {
     "PlayCardPopSong": {"compare": ("hl",), "preserve": ("hl",)},
@@ -21,13 +22,13 @@ CASES = {
 }
 
 # >>> factory InitIRCommunications
-wOwnIRCommunicationParams = 0xC5EB
-wIRCommunicationErrorCode = 0xC5EA
-hWhoseTurn = 0xFF97
-wNameBuffer = 0xC500
-wOpponentName = 0xCC16
-wDefaultText = 0xC590
-sPlayerName = 0xA010
+wOwnIRCommunicationParams = sym("wOwnIRCommunicationParams")
+wIRCommunicationErrorCode = sym("wIRCommunicationErrorCode")
+hWhoseTurn = sym("hWhoseTurn")
+wNameBuffer = sym("wNameBuffer")
+wOpponentName = sym("wOpponentName")
+wDefaultText = sym("wDefaultText")
+sPlayerName = sym("sPlayerName")
 NAME_BUFFER_LENGTH = 0x10
 
 CONTRACT["InitIRCommunications"] = {"compare": (), "preserve": ()}
@@ -66,11 +67,11 @@ CASES["InitIRCommunications"] = [
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
-WRAM_SEED = {0xCAB4: b"\x00", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00"}
-SCENE_READ = {0xCAB4: 1, 0xCABC: 1, 0xD131: 1, 0xD291: 1, 0xD61C: 1, 0xD61D: 1, 0xD620: 2, 0xD622: 2}
-TEXT_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+WRAM_SEED = {sym("wConsole"): b"\x00", sym("wCurDeckCardChanges"): b"\x00", sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x00", sym("wAllSpriteAnimationsDisabled"): b"\x00"}
+SCENE_READ = {sym("wConsole"): 1, sym("wBGP"): 1, sym("wCurTilemap"): 1, sym("wd291"): 1, sym("wSceneBaseX"): 1, sym("wSceneBaseY"): 1, sym("wSceneSGBPacketPtr"): 2, sym("wSceneSGBRoutinePtr"): 2}
+TEXT_READ = {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("wCurTextTile"): 2, sym("wFontWidth"): 1}
 
-wCurSongID = 0xDD80
+wCurSongID = sym("wCurSongID")
 # <<< factory-cases-statics
 
 # >>> factory LoadLinkConnectingScene
@@ -84,89 +85,89 @@ CASES["LoadLinkConnectingScene"] = [
 # >>> factory ClearRPAndRestoreVBlankFunction
 CONTRACT["ClearRPAndRestoreVBlankFunction"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
 CASES["ClearRPAndRestoreVBlankFunction"] = [
-    {"a": 0x42, "wram": {0xCE8D: b"\x34\x12", 0xFF56: b"\x01"}, "read": {0xFF56: 1, 0xCAD1: 2}},
-    dict(POISON, wram={0xCE8D: b"\x78\x56", 0xFF56: b"\x01"}, read={0xFF56: 1, 0xCAD1: 2}),
-    {"a": 0x00, "wram": {0xCE8D: b"\x00\x00"}, "read": {0xFF56: 1, 0xCAD1: 2}},
+    {"a": 0x42, "wram": {sym("wVBlankFunctionTrampolineBackup"): b"\x34\x12", 0xFF56: b"\x01"}, "read": {0xFF56: 1, sym("wVBlankFunctionTrampoline") + 1: 2}},
+    dict(POISON, wram={sym("wVBlankFunctionTrampolineBackup"): b"\x78\x56", 0xFF56: b"\x01"}, read={0xFF56: 1, sym("wVBlankFunctionTrampoline") + 1: 2}),
+    {"a": 0x00, "wram": {sym("wVBlankFunctionTrampolineBackup"): b"\x00\x00"}, "read": {0xFF56: 1, sym("wVBlankFunctionTrampoline") + 1: 2}},
 ]
 # <<< factory ClearRPAndRestoreVBlankFunction
 
 # >>> factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain
 CONTRACT["LoadLinkNotConnectedSceneAndAskWhetherToTryAgain"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["LoadLinkNotConnectedSceneAndAskWhetherToTryAgain"] = [
-    {"hl": 0x0000,"wram": {**WRAM_SEED, 0xCABB: b"\x00"},"sram": {0: {}},"setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],"keys": [0x00, 0x01],"read": {**SCENE_READ, **TEXT_READ},"instruction_budget": 20000000,"cycle_budget": 80000000},
-    dict(POISON, hl=0x0000, wram={**WRAM_SEED, 0xCABB: b"\x00"}, sram={0: {}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], read={**SCENE_READ, **TEXT_READ}, instruction_budget=20000000, cycle_budget=80000000),
+    {"hl": 0x0000,"wram": {**WRAM_SEED, sym("wLCDC"): b"\x00"},"sram": {0: {}},"setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],"keys": [0x00, 0x01],"read": {**SCENE_READ, **TEXT_READ},"instruction_budget": 20000000,"cycle_budget": 80000000},
+    dict(POISON, hl=0x0000, wram={**WRAM_SEED, sym("wLCDC"): b"\x00"}, sram={0: {}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], read={**SCENE_READ, **TEXT_READ}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory LoadLinkNotConnectedSceneAndAskWhetherToTryAgain
 
 # >>> factory SetIRCommunicationErrorCode_NoError
 CONTRACT["SetIRCommunicationErrorCode_NoError"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["SetIRCommunicationErrorCode_NoError"] = [
-    {"oracle": False, "evidence": "primary", "why": "The deterministic native CGB infrared peer drives the receive request; clearing the own-communication parameter and the error return are asserted.", "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0x81, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF"}, "read": {0xC5EB: 1}, "expect": {0xC5EB: b"\x00"}, "expect_regs": {"a": 0xFF, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The deterministic native CGB infrared peer drives the receive request with poisoned registers; clearing the own-communication parameter and the error return are asserted.", keys=0x81, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC5EB: b"\xFF"}, read={0xC5EB: 1}, expect={0xC5EB: b"\x00"}, expect_regs={"a": 0xFF, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The deterministic native CGB infrared peer drives the receive request; clearing the own-communication parameter and the error return are asserted.", "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0x81, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", sym("wOwnIRCommunicationParams"): b"\xFF"}, "read": {sym("wOwnIRCommunicationParams"): 1}, "expect": {sym("wOwnIRCommunicationParams"): b"\x00"}, "expect_regs": {"a": 0xFF, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic native CGB infrared peer drives the receive request with poisoned registers; clearing the own-communication parameter and the error return are asserted.", keys=0x81, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", sym("wOwnIRCommunicationParams"): b"\xFF"}, read={sym("wOwnIRCommunicationParams"): 1}, expect={sym("wOwnIRCommunicationParams"): b"\x00"}, expect_regs={"a": 0xFF, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory SetIRCommunicationErrorCode_NoError
 
 # >>> factory SetIRCommunicationErrorCode_Error
 CONTRACT["SetIRCommunicationErrorCode_Error"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["SetIRCommunicationErrorCode_Error"] = [
-    {"oracle": False, "evidence": "primary", "why": "Infrared peer hardware is unavailable to the reference runner; the native peer path verifies the error-code write and communication shutdown.", "keys": 0x81, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "read": {0xC5EA: 1}, "expect": {0xC5EA: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="Infrared peer hardware is unavailable to the reference runner; the native peer path verifies the error-code write and communication shutdown with poisoned registers.", keys=0x81, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, read={0xC5EA: 1}, expect={0xC5EA: b"\x01"}, expect_regs={"a": 0x01, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "Infrared peer hardware is unavailable to the reference runner; the native peer path verifies the error-code write and communication shutdown.", "keys": 0x81, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "read": {sym("wIRCommunicationErrorCode"): 1}, "expect": {sym("wIRCommunicationErrorCode"): b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="Infrared peer hardware is unavailable to the reference runner; the native peer path verifies the error-code write and communication shutdown with poisoned registers.", keys=0x81, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, read={sym("wIRCommunicationErrorCode"): 1}, expect={sym("wIRCommunicationErrorCode"): b"\x01"}, expect_regs={"a": 0x01, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory SetIRCommunicationErrorCode_Error
 
 # >>> factory TryReceiveCardOrDeckConfigurationThroughIR
 CONTRACT["TryReceiveCardOrDeckConfigurationThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["TryReceiveCardOrDeckConfigurationThroughIR"] = [
-    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer supplies the request and then the receive-command frame; the communication error byte and carry return are asserted.", "a": 0x02, "keys": 0x81, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC510: b"\xFF", 0xC5EA: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "read": {0xC510: 1, 0xC5EA: 1}, "expect": {0xC510: b"\x00", 0xC5EA: b"\xFF"}, "expect_regs": {"a": 0x00, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer supplies the request and then the receive-command frame; the communication error byte and carry return are asserted with poisoned registers.", keys=0x81, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xC510: b"\xFF", 0xC5EA: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], read={0xC510: 1, 0xC5EA: 1}, expect={0xC510: b"\x00", 0xC5EA: b"\xFF"}, expect_regs={"a": 0x00, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer supplies the request and then the receive-command frame; the communication error byte and carry return are asserted.", "a": 0x02, "keys": 0x81, "ir_peer": True, "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", sym("wDuelTempList"): b"\xFF", sym("wIRCommunicationErrorCode"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "read": {sym("wDuelTempList"): 1, sym("wIRCommunicationErrorCode"): 1}, "expect": {sym("wDuelTempList"): b"\x00", sym("wIRCommunicationErrorCode"): b"\xFF"}, "expect_regs": {"a": 0x00, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer supplies the request and then the receive-command frame; the communication error byte and carry return are asserted with poisoned registers.", keys=0x81, ir_peer=True, wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", sym("wDuelTempList"): b"\xFF", sym("wIRCommunicationErrorCode"): b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], read={sym("wDuelTempList"): 1, sym("wIRCommunicationErrorCode"): 1}, expect={sym("wDuelTempList"): b"\x00", sym("wIRCommunicationErrorCode"): b"\xFF"}, expect_regs={"a": 0x00, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory TryReceiveCardOrDeckConfigurationThroughIR
 
 # >>> factory ExchangeIRCommunicationParameters
 CONTRACT["ExchangeIRCommunicationParameters"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["ExchangeIRCommunicationParameters"] = [
-    {"oracle": False, "evidence": "primary", "why": "The deterministic native CGB infrared peer drives the parameter exchange into its communication-error path; the received parameter block and carry return are asserted.", "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0x80, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "read": {0xC5EF: 4}, "expect": {0xC5EF: b"\x00\x00\x00\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The deterministic native CGB infrared peer drives the parameter exchange into its communication-error path with poisoned registers; the received parameter block and carry return are asserted.", keys=0x80, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, read={0xC5EF: 4}, expect={0xC5EF: b"\x00\x00\x00\x00"}, expect_regs={"a": 0x00, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The deterministic native CGB infrared peer drives the parameter exchange into its communication-error path; the received parameter block and carry return are asserted.", "a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0x80, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "read": {sym("wOtherIRCommunicationParams"): 4}, "expect": {sym("wOtherIRCommunicationParams"): b"\x00\x00\x00\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic native CGB infrared peer drives the parameter exchange into its communication-error path with poisoned registers; the received parameter block and carry return are asserted.", keys=0x80, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, read={sym("wOtherIRCommunicationParams"): 4}, expect={sym("wOtherIRCommunicationParams"): b"\x00\x00\x00\x00"}, expect_regs={"a": 0x00, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ExchangeIRCommunicationParameters
 
 # >>> factory _ReceiveCard
 CONTRACT["_ReceiveCard"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["_ReceiveCard"] = [
-    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block is observed.", "keys": [0x82, 0x10, 0x01], "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4}, "expect": {wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block is observed.", keys=[0x82, 0x10, 0x01], wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4}, expect={wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block is observed.", "keys": [0x82, 0x10, 0x01], "wram": {sym("wConsole"): b"\x02", sym("wCurDeckCardChanges"): b"\x00", sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x00", sym("wAllSpriteAnimationsDisabled"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4}, "expect": {wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block is observed.", keys=[0x82, 0x10, 0x01], wram={sym("wConsole"): b"\x02", sym("wCurDeckCardChanges"): b"\x00", sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x00", sym("wAllSpriteAnimationsDisabled"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4}, expect={wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _ReceiveCard
 
 # >>> factory _ReceiveDeckConfiguration
 CONTRACT["_ReceiveDeckConfiguration"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["_ReceiveDeckConfiguration"] = [
-    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block is observed.", "keys": [0x82, 0x10, 0x01], "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4}, "expect": {wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block is observed.", keys=[0x82, 0x10, 0x01], wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4}, expect={wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block is observed.", "keys": [0x82, 0x10, 0x01], "wram": {sym("wConsole"): b"\x02", sym("wCurDeckCardChanges"): b"\x00", sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x00", sym("wAllSpriteAnimationsDisabled"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4}, "expect": {wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block is observed.", keys=[0x82, 0x10, 0x01], wram={sym("wConsole"): b"\x02", sym("wCurDeckCardChanges"): b"\x00", sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x00", sym("wAllSpriteAnimationsDisabled"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4}, expect={wOwnIRCommunicationParams: b"\x02\x4F\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _ReceiveDeckConfiguration
 
 # >>> factory PrepareSendCardOrDeckConfigurationThroughIR
 CONTRACT["PrepareSendCardOrDeckConfigurationThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PrepareSendCardOrDeckConfigurationThroughIR"] = [
-    {"keys": 0x02, "sram": {0: {}}, "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=0x02, sram={0: {}}, wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": 0x02, "sram": {0: {}}, "wram": {sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=0x02, sram={0: {}}, wram={sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PrepareSendCardOrDeckConfigurationThroughIR
 
 # >>> factory _SendCard
 CONTRACT["_SendCard"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["_SendCard"] = [
-    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block and the card-pop song are observed.", "keys": [0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], "entry_sp": 0xDCBE, "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4, wCurSongID: 1}, "expect": {wOwnIRCommunicationParams: b"\x02\x50\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block and the card-pop song are observed.", keys=[0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], entry_sp=0xDCBE, wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4, wCurSongID: 1}, expect={wOwnIRCommunicationParams: b"\x02\x50\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block and the card-pop song are observed.", "keys": [0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], "entry_sp": STACK_TOP - 2, "wram": {sym("wConsole"): b"\x02", sym("wCurDeckCardChanges"): b"\x00", sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x00", sym("wAllSpriteAnimationsDisabled"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4, wCurSongID: 1}, "expect": {wOwnIRCommunicationParams: b"\x02\x50\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block and the card-pop song are observed.", keys=[0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], entry_sp=STACK_TOP - 2, wram={sym("wConsole"): b"\x02", sym("wCurDeckCardChanges"): b"\x00", sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x00", sym("wAllSpriteAnimationsDisabled"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4, wCurSongID: 1}, expect={wOwnIRCommunicationParams: b"\x02\x50\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _SendCard
 
 # >>> factory _SendDeckConfiguration
 CONTRACT["_SendDeckConfiguration"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["_SendDeckConfiguration"] = [
-    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block and the card-pop song are observed.", "keys": [0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], "entry_sp": 0xDCBE, "wram": {0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4, wCurSongID: 1}, "expect": {wOwnIRCommunicationParams: b"\x03\x50\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block and the card-pop song are observed.", keys=[0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], entry_sp=0xDCBE, wram={0xCAB4: b"\x02", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4, wCurSongID: 1}, expect={wOwnIRCommunicationParams: b"\x03\x50\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit; the own communication parameter block and the card-pop song are observed.", "keys": [0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], "entry_sp": STACK_TOP - 2, "wram": {sym("wConsole"): b"\x02", sym("wCurDeckCardChanges"): b"\x00", sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x00", sym("wAllSpriteAnimationsDisabled"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wOwnIRCommunicationParams: 4, wCurSongID: 1}, "expect": {wOwnIRCommunicationParams: b"\x03\x50\x4B\x31"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The disconnected CGB infrared path deterministically cancels the send with B, reaches the retry screen and returns through its no-retry carry exit with poisoned registers; the own communication parameter block and the card-pop song are observed.", keys=[0x02, 0x00, 0x01, 0x00, 0x10, 0x00, 0x01], entry_sp=STACK_TOP - 2, wram={sym("wConsole"): b"\x02", sym("wCurDeckCardChanges"): b"\x00", sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x00", sym("wAllSpriteAnimationsDisabled"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", wOwnIRCommunicationParams: b"\xFF\xFF\xFF\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wOwnIRCommunicationParams: 4, wCurSongID: 1}, expect={wOwnIRCommunicationParams: b"\x03\x50\x4B\x31"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _SendDeckConfiguration
 

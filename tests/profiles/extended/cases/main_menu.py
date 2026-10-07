@@ -108,7 +108,7 @@ MUTATIONS = {
         'before': 'uint8_t MainMenu_ContinueDuel(void)\n{\n\tPlaySong(MUSIC_STOP);',
         'after': 'uint8_t MainMenu_ContinueDuel(void)\n{\n\tPlaySong(0x01u);',
         'case_ids': ['MainMenu_ContinueDuel-0', 'MainMenu_ContinueDuel-1'],
-        'source': 'src/profiles/extended/home/main_menu.c'},
+        'source': 'src/home/main_menu.c'},
     '_GameLoop': {   'source_symbol': '_GameLoop',
         'before': '\t\tZeroObjectPositions();\n'
                   '\t\twVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);',

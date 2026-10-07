@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/scenes.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -13,25 +14,25 @@ CASES["SetBoosterLogoOAM"] = [
 	{"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE,
 	 "hl": 0x1234,
 	 "wram": {
-		 0xCAB4: b"\x02",
-		 0xCAC0: b"\x7F",
-		 0xD4CA: b"\x55",
-		 0xD4CB: b"\x66",
-		 0xD61C: b"\x20",
-		 0xD61D: b"\x30",
-		 0xFF92: b"\x04",
-		 0xFF93: b"\x08",
+		 sym("wConsole"): b"\x02",
+		 sym("wVBlankOAMCopyToggle"): b"\x7F",
+		 sym("wTempBoosterChances"): b"\x55",
+		 sym("wWhichBGPalIndex"): b"\x66",
+		 sym("wSceneBaseX"): b"\x20",
+		 sym("wSceneBaseY"): b"\x30",
+		 sym("hSCX"): b"\x04",
+		 sym("hSCY"): b"\x08",
 	 },
-	 "read": {0xC000: 0x100}},
+	 "read": {sym("wDeckToBuild"): 0x100}},
 	{"wram": {
-		 0xCAB4: b"\x01",
-		 0xCAC0: b"\xFF",
-		 0xD4CA: b"\xA5",
-		 0xD4CB: b"\xA6",
-		 0xD61C: b"\x40",
-		 0xD61D: b"\x40",
-		 0xFF92: b"\x10",
-		 0xFF93: b"\x20",
+		 sym("wConsole"): b"\x01",
+		 sym("wVBlankOAMCopyToggle"): b"\xFF",
+		 sym("wTempBoosterChances"): b"\xA5",
+		 sym("wWhichBGPalIndex"): b"\xA6",
+		 sym("wSceneBaseX"): b"\x40",
+		 sym("wSceneBaseY"): b"\x40",
+		 sym("hSCX"): b"\x10",
+		 sym("hSCY"): b"\x20",
 	 }}
 ]
 # <<< factory SetBoosterLogoOAM
@@ -39,40 +40,40 @@ CASES["SetBoosterLogoOAM"] = [
 # >>> factory _DrawPortrait
 CONTRACT["_DrawPortrait"] = {"compare": (), "preserve": ()}
 CASES["_DrawPortrait"] = [
-	{"wram": {0xD131: b"\x62", 0xD291: b"\x19", 0xD61E: b"\x00"}, "read": {0xD131: 1, 0xD239: 1, 0xD4CA: 1, 0xD4CB: 1, 0xD291: 1, 0xD61E: 1}},
-	dict(POISON, wram={0xD131: b"\x00", 0xD291: b"\x2A", 0xD61E: b"\x02"}, read={0xD131: 1, 0xD239: 1, 0xD4CA: 1, 0xD4CB: 1, 0xD291: 1, 0xD61E: 1}),
-	{"wram": {0xD131: b"\x62", 0xD291: b"\x19", 0xD61E: b"\x29"}, "read": {0xD131: 1, 0xD239: 1, 0xD4CA: 1, 0xD4CB: 1, 0xD291: 1, 0xD61E: 1}},
-	{"wram": {0xD131: b"\x62", 0xD291: b"\x19", 0xD61E: b"\x2A"}, "read": {0xD131: 1, 0xD239: 1, 0xD4CA: 1, 0xD4CB: 1, 0xD291: 1, 0xD61E: 1}},
+	{"wram": {sym("wCurTilemap"): b"\x62", sym("wd291"): b"\x19", sym("wCurPortrait"): b"\x00"}, "read": {sym("wCurTilemap"): 1, sym("wCurTileset"): 1, sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1, sym("wd291"): 1, sym("wCurPortrait"): 1}},
+	dict(POISON, wram={sym("wCurTilemap"): b"\x00", sym("wd291"): b"\x2A", sym("wCurPortrait"): b"\x02"}, read={sym("wCurTilemap"): 1, sym("wCurTileset"): 1, sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1, sym("wd291"): 1, sym("wCurPortrait"): 1}),
+	{"wram": {sym("wCurTilemap"): b"\x62", sym("wd291"): b"\x19", sym("wCurPortrait"): b"\x29"}, "read": {sym("wCurTilemap"): 1, sym("wCurTileset"): 1, sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1, sym("wd291"): 1, sym("wCurPortrait"): 1}},
+	{"wram": {sym("wCurTilemap"): b"\x62", sym("wd291"): b"\x19", sym("wCurPortrait"): b"\x2A"}, "read": {sym("wCurTilemap"): 1, sym("wCurTileset"): 1, sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1, sym("wd291"): 1, sym("wCurPortrait"): 1}},
 ]
 # <<< factory _DrawPortrait
 
 # >>> factory LoadScene_LoadSGBPacket
 CONTRACT["LoadScene_LoadSGBPacket"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["LoadScene_LoadSGBPacket"] = [
-    {"a": 0x11, "f": 0x00, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x2468, "wram": {0xCAB4: b"\x00", 0xD620: b"\x00\x00"}, "read": {0xCAB4: 1, 0xD620: 2}},
-    {"a": 0x66, "f": 0x10, "b": 0x77, "c": 0x88, "d": 0x99, "e": 0xAA, "hl": 0x1357, "wram": {0xCAB4: b"\x02", 0xD620: b"\x00\x00"}, "read": {0xCAB4: 1}},
-    dict(POISON, wram={0xCAB4: b"\x01", 0xD620: b"\x00\x00"}, read={0xCAB4: 1, 0xD620: 2}),
+    {"a": 0x11, "f": 0x00, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x2468, "wram": {sym("wConsole"): b"\x00", sym("wSceneSGBPacketPtr"): b"\x00\x00"}, "read": {sym("wConsole"): 1, sym("wSceneSGBPacketPtr"): 2}},
+    {"a": 0x66, "f": 0x10, "b": 0x77, "c": 0x88, "d": 0x99, "e": 0xAA, "hl": 0x1357, "wram": {sym("wConsole"): b"\x02", sym("wSceneSGBPacketPtr"): b"\x00\x00"}, "read": {sym("wConsole"): 1}},
+    dict(POISON, wram={sym("wConsole"): b"\x01", sym("wSceneSGBPacketPtr"): b"\x00\x00"}, read={sym("wConsole"): 1, sym("wSceneSGBPacketPtr"): 2}),
 ]
 # <<< factory LoadScene_LoadSGBPacket
 
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wConsole = 0xCAB4
-wSceneSGBPacketPtr = 0xD620
+wConsole = sym("wConsole")
+wSceneSGBPacketPtr = sym("wSceneSGBPacketPtr")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wSceneBaseX = 0xD61C
-wSceneBaseY = 0xD61D
-wSceneSGBPacketPtr = 0xD620
-wSceneSGBRoutinePtr = 0xD622
-wConsole = 0xCAB4
-wCurTilemap = 0xD131
-wBGP = 0xCABC
-wd291 = 0xD291
-wAllSpriteAnimationsDisabled = 0xD5D7
+wSceneBaseX = sym("wSceneBaseX")
+wSceneBaseY = sym("wSceneBaseY")
+wSceneSGBPacketPtr = sym("wSceneSGBPacketPtr")
+wSceneSGBRoutinePtr = sym("wSceneSGBRoutinePtr")
+wConsole = sym("wConsole")
+wCurTilemap = sym("wCurTilemap")
+wBGP = sym("wBGP")
+wd291 = sym("wd291")
+wAllSpriteAnimationsDisabled = sym("wAllSpriteAnimationsDisabled")
 
-wCurTilemap = 0xD131
+wCurTilemap = sym("wCurTilemap")
 # <<< factory-cases-statics
 
 # >>> factory LoadScene_LoadCompressedSGBPacket

@@ -397,7 +397,7 @@ MUTATIONS = {
         'after': '((status & (DOUBLE_POISONED & (POISONED ^ 0xFFu))) ? 10u : 20u)',
         'case_ids': [   'CalculateDamage_VersusDefendingPokemon-4',
                         'CalculateDamage_VersusDefendingPokemon-1'],
-        'source': 'src/profiles/extended/home/damage_calculation.c'},
+        'source': 'src/home/damage_calculation.c'},
     'CalculateDamage_FromDefendingPokemon': {   'source_symbol': 'CalculateDamage_FromDefendingPokemon',
         'before': '    if (damage & (1u << (UNAFFECTED_BY_WEAKNESS_RESISTANCE_F + 8u))) {\n'
                   '        damage = (uint16_t)(damage & ~(uint16_t)(1u << '
@@ -417,7 +417,7 @@ MUTATIONS = {
         'case_ids': [   'EstimateDamage_VersusDefendingCard-0',
                         'EstimateDamage_VersusDefendingCard-1',
                         'EstimateDamage_VersusDefendingCard-3'],
-        'source': 'src/profiles/extended/home/damage_calculation.c'},
+        'source': 'src/home/damage_calculation.c'},
     'EstimateDamage_FromDefendingPokemon': {   'source_symbol': 'EstimateDamage_FromDefendingPokemon',
         'before': '\tgb_write8(wAIMinDamage_ADDR, damage);\n'
                   '\tgb_write8(wAIMaxDamage_ADDR, damage);\n'
@@ -428,7 +428,7 @@ MUTATIONS = {
         'case_ids': [   'EstimateDamage_FromDefendingPokemon-0',
                         'EstimateDamage_FromDefendingPokemon-1',
                         'EstimateDamage_FromDefendingPokemon-3'],
-        'source': 'src/profiles/extended/home/damage_calculation.c'},
+        'source': 'src/home/damage_calculation.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

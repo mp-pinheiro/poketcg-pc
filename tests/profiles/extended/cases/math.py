@@ -23,7 +23,7 @@ MUTATIONS = {
         'before': 'a = (uint8_t)(a + e);',
         'after': 'a = (uint8_t)(a + (uint8_t)(e + 1u));',
         'case_ids': ['ATimes10-zero', 'ATimes10-poison-25', 'ATimes10-wrap'],
-        'source': 'src/profiles/extended/home/math.c'},
+        'source': 'src/home/math.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

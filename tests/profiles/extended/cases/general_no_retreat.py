@@ -11,8 +11,6 @@ _AI_MAIN = Fixture("ai-duel-fire-charge-aimainturnlogic-entry",
 
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
-    case["read"][0xCC00] = 0xBD
-    case["read"][0xCCBE] = 0x42
     return case
 
 
@@ -41,7 +39,7 @@ MUTATIONS = {
                  '{\n'
                  '\tuint8_t unused = 0u;',
         'case_ids': ['AIDoTurn_GeneralNoRetreat-0', 'AIDoTurn_GeneralNoRetreat-1'],
-        'source': 'src/profiles/extended/home/general_no_retreat.c'},
+        'source': 'src/home/general_no_retreat.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

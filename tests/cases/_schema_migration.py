@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from tests.cases._symbols import sym
+
 
 _REGISTERS = ("a", "f", "b", "c", "d", "e", "hl", "sp")
 _SETUP_REGISTERS = frozenset(("a", "f", "b", "c", "d", "e", "hl"))
@@ -172,14 +174,11 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
             if "vram" in legacy:
                 seeds["vram"] = _banked(legacy["vram"])
             default_ram_bank = next(reversed(seeds.get("sram", {})), 0)
-            ram_bank = _seed_byte(seeds["wram"], 0xFF81, default_ram_bank)
-            vram_bank = _seed_byte(seeds["wram"], 0xFF82, 0) & 1
+            ram_bank = _seed_byte(seeds["wram"], sym("hBankSRAM"), default_ram_bank)
+            vram_bank = _seed_byte(seeds["wram"], sym("hBankVRAM"), 0) & 1
             ram_enable = bool(legacy.get("ramg", bool(seeds.get("sram"))))
             keys = legacy.get("keys")
             if isinstance(keys, (list, tuple)):
-                # A per-frame timeline; the last entry stays held. Needed by any
-                # routine whose wait loop reads edge-triggered hKeysPressed after
-                # the frame on which a permanently held button became new.
                 if not keys or len(keys) > 16:
                     raise ValueError(
                         f"legacy case {function}[{index}].keys must hold 1..16 frames")

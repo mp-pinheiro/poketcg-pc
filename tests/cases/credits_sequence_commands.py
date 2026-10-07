@@ -1,5 +1,6 @@
-wSequenceCmdPtr = 0xD631
-wSequenceDelay = 0xD633
+from tests.cases._symbols import sym
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
+wSequenceDelay = sym("wSequenceDelay")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -105,8 +106,8 @@ CASES["AdvanceCreditsSequenceCmdPtrBy4"] = [
 # wSequenceDelay = 0xD633 (given). SEQ_AREA is a diff-only watch window around the
 # sequence-variable block: AdvanceCreditsSequenceCmdPtrBy3's pointer advance lands
 # in WRAM near wSequenceDelay, so the window catches advance-corrupting mutations.
-wSequenceDelay = 0xD633
-SEQ_AREA = 0xD600
+wSequenceDelay = sym("wSequenceDelay")
+SEQ_AREA = sym("wSpriteVRAM11Valid")
 SEQ_AREA_LEN = 0x80
 CONTRACT["CreditsSequenceCmd_Wait"] = {"compare": (), "preserve": ()}
 CASES["CreditsSequenceCmd_Wait"] = [
@@ -121,8 +122,8 @@ CASES["CreditsSequenceCmd_Wait"] = [
 # >>> factory CreditsSequenceCmd_DisableLCD
 # No register inputs are consumed and no register outputs survive the tail jump,
 # so the cases watch the sequence-variable window the callee advances.
-wSequenceDelay = 0xD633
-SEQ_AREA = 0xD600
+wSequenceDelay = sym("wSequenceDelay")
+SEQ_AREA = sym("wSpriteVRAM11Valid")
 SEQ_AREA_LEN = 0x80
 CONTRACT["CreditsSequenceCmd_DisableLCD"] = {"compare": (), "preserve": ()}
 CASES["CreditsSequenceCmd_DisableLCD"] = [
@@ -133,26 +134,26 @@ CASES["CreditsSequenceCmd_DisableLCD"] = [
 
 
 # >>> factory-cases-statics
-wd647 = 0xD647
-wd648 = 0xD648
-wd649 = 0xD649
-wd64a = 0xD64A
-wSequenceDelay = 0xD633
+wd647 = sym("wd647")
+wd648 = sym("wd648")
+wd649 = sym("wd649")
+wd64a = sym("wd64a")
+wSequenceDelay = sym("wSequenceDelay")
 
-BGP = 0xCABC
-OBP0 = 0xCABD
-OBP1 = 0xCABE
-LCDC = 0xCABB
+BGP = sym("wBGP")
+OBP0 = sym("wOBP0")
+OBP1 = sym("wOBP1")
+LCDC = sym("wLCDC")
 RLCDC = 0xFF40
-VBLANK = 0xCAB8
-BG_PALS = 0xCAF0
-OBJ_PALS = 0xCB30
-TEMP_BGP = 0xD294
-TEMP_OBP0 = 0xD295
-TEMP_OBP1 = 0xD296
-TEMP_BG_PALS = 0xD297
-TEMP_OBJ_PALS = 0xD2D7
-SEQ_AREA = 0xD600
+VBLANK = sym("wVBlankCounter")
+BG_PALS = sym("wBackgroundPalettesCGB")
+OBJ_PALS = sym("wObjectPalettesCGB")
+TEMP_BGP = sym("wTempBGP")
+TEMP_OBP0 = sym("wTempOBP0")
+TEMP_OBP1 = sym("wTempOBP1")
+TEMP_BG_PALS = sym("wTempBackgroundPalettesCGB")
+TEMP_OBJ_PALS = sym("wTempObjectPalettesCGB")
+SEQ_AREA = sym("wSpriteVRAM11Valid")
 SEQ_AREA_LEN = 0x80
 PALETTE_SEED = {
     BGP: b"\xE4", OBP0: b"\x1B", OBP1: b"\xB4",
@@ -161,49 +162,49 @@ PALETTE_SEED = {
     TEMP_BG_PALS: bytes(reversed(range(64))), TEMP_OBJ_PALS: bytes(reversed(range(64, 128))),
 }
 
-wLineSeparation = 0xCD08
-wSequenceCmdPtr = 0xD631
+wLineSeparation = sym("wLineSeparation")
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
 
-wd647 = 0xD647
-wd648 = 0xD648
-wd649 = 0xD649
-wd64a = 0xD64A
-wSequenceCmdPtr = 0xD631
+wd647 = sym("wd647")
+wd648 = sym("wd648")
+wd649 = sym("wd649")
+wd64a = sym("wd64a")
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wLineSeparation = 0xCD08
-wSequenceCmdPtr = 0xD631
+wLineSeparation = sym("wLineSeparation")
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
-CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
-PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+CACHE_READ = {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("wCurTextTile"): 2, sym("wFontWidth"): 1}
+PLACEMENT_READ = {sym("hTextBGMap0Address"): 2, sym("hTextHorizontalAlign"): 1}
 VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 BOX_READ = {0x9800: 0x400}
 
-wSequenceCmdPtr = 0xD631
-hSCX = 0xFF92
-hSCY = 0xFF93
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
+hSCX = sym("hSCX")
+hSCY = sym("hSCY")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wCurMap = 0xD32F
-wWhichOBP = 0xD4CA
-wWhichOBPalIndex = 0xD4CB
+wCurMap = sym("wCurMap")
+wWhichOBP = sym("wWhichOBP")
+wWhichOBPalIndex = sym("wWhichOBPalIndex")
 
-hSCX = 0xFF92
-hSCY = 0xFF93
-wLoadNPCXPos = 0xD3AC
-wLoadNPCYPos = 0xD3AD
-wLoadNPCDirection = 0xD3AE
-wSpriteAnimBuffer = 0xD4D0
+hSCX = sym("hSCX")
+hSCY = sym("hSCY")
+wLoadNPCXPos = sym("wLoadNPCXPos")
+wLoadNPCYPos = sym("wLoadNPCYPos")
+wLoadNPCDirection = sym("wLoadNPCDirection")
+wSpriteAnimBuffer = sym("wSpriteAnimBuffer")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wMastersBeatenList = 0xD3BB
-wMastersBeatenListNext = 0xD3BC
-wSequenceCmdPtr = 0xD631
-wCurMap = 0xD32F
-wLoadNPCXPos = 0xD3AC
-wLoadNPCYPos = 0xD3AD
-wLoadNPCDirection = 0xD3AE
-wSpriteAnimBuffer = 0xD4D0
+wMastersBeatenList = sym("wMastersBeatenList")
+wMastersBeatenListNext = sym("wMastersBeatenList") + 1
+wSequenceCmdPtr = sym("wSequenceCmdPtr")
+wCurMap = sym("wCurMap")
+wLoadNPCXPos = sym("wLoadNPCXPos")
+wLoadNPCYPos = sym("wLoadNPCYPos")
+wLoadNPCDirection = sym("wLoadNPCDirection")
+wSpriteAnimBuffer = sym("wSpriteAnimBuffer")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
@@ -261,16 +262,16 @@ CASES["CreditsSequenceCmd_InitOverlay"] = [
 # >>> factory CreditsSequenceCmd_InitVolcanoSprite
 CONTRACT["CreditsSequenceCmd_InitVolcanoSprite"] = {"compare": (), "preserve": ()}
 CASES["CreditsSequenceCmd_InitVolcanoSprite"] = [
-    {"f": 0x00, "wram": {0xD631: b"\x00\x40"}, "expect": {0xD631: b"\x02\x40"}},
-    dict(POISON, wram={0xD631: b"\xFE\xFF"}, expect={0xD631: b"\x00\x00"}),
+    {"f": 0x00, "wram": {sym("wSequenceCmdPtr"): b"\x00\x40"}, "expect": {sym("wSequenceCmdPtr"): b"\x02\x40"}},
+    dict(POISON, wram={sym("wSequenceCmdPtr"): b"\xFE\xFF"}, expect={sym("wSequenceCmdPtr"): b"\x00\x00"}),
 ]
 # <<< factory CreditsSequenceCmd_InitVolcanoSprite
 
 # >>> factory CreditsSequenceCmd_DrawRectangle
 CONTRACT["CreditsSequenceCmd_DrawRectangle"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["CreditsSequenceCmd_DrawRectangle"] = [
-    {"b": 0x01, "c": 0x02, "wram": {0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
-    dict(POISON, b=0x01, c=0x02, wram={0xD631: b"\x00\x00"}, read={0xD631: 2}),
+    {"b": 0x01, "c": 0x02, "wram": {sym("wSequenceCmdPtr"): b"\x00\x00"}, "read": {sym("wSequenceCmdPtr"): 2}},
+    dict(POISON, b=0x01, c=0x02, wram={sym("wSequenceCmdPtr"): b"\x00\x00"}, read={sym("wSequenceCmdPtr"): 2}),
 ]
 # <<< factory CreditsSequenceCmd_DrawRectangle
 

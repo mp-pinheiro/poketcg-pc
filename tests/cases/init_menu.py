@@ -1,21 +1,22 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-TILE_MAP_FILL = 0xCAB6
-LCDC = 0xCABB
-VBLANK_OAM_TOGGLE = 0xCAC0
-H_BANK_SRAM = 0xFF81
-H_SCX = 0xFF92
-H_SCY = 0xFF93
+TILE_MAP_FILL = sym("wTileMapFill")
+LCDC = sym("wLCDC")
+VBLANK_OAM_TOGGLE = sym("wVBlankOAMCopyToggle")
+H_BANK_SRAM = sym("hBankSRAM")
+H_SCX = sym("hSCX")
+H_SCY = sym("hSCY")
 R_SCX = 0xFF43
 R_SCY = 0xFF42
 R_LCDC = 0xFF40
-BGP = 0xCABC
-OBP0 = 0xCABD
-OBP1 = 0xCABE
-BG_PALS = 0xCAF0
-OBJ_PALS = 0xCB30
-SRAM_PALS = 0xA800
+BGP = sym("wBGP")
+OBP0 = sym("wOBP0")
+OBP1 = sym("wOBP1")
+BG_PALS = sym("wBackgroundPalettesCGB")
+OBJ_PALS = sym("wObjectPalettesCGB")
+SRAM_PALS = sym("sSavedDeck15Cards")
 
 SRAM_PALETTE = b"\x11\x22\x33" + bytes(range(128))
 

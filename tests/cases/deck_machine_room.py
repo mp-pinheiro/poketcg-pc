@@ -1,18 +1,19 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import club_map_name_fixture as _club_map_name_fixture, CLUB_MAP_NAME_REGS as _CLUB_MAP_NAME_REGS
 POISON={"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234}
-wTxRam2=0xCE3F;wMultichoiceTextboxResult_ChooseDeckToDuelAgainst=0xD695;wLoadedEventBits=0xD3D1;wEventVars=0xD3D2;EVENT_AARON_BOOSTER_REWARD=wEventVars+0x1A
+wTxRam2=sym("wTxRam2");wMultichoiceTextboxResult_ChooseDeckToDuelAgainst=sym("wMultichoiceTextboxResult_ChooseDeckToDuelAgainst");wLoadedEventBits=sym("wLoadedEventBits");wEventVars=sym("wEventVars");EVENT_AARON_BOOSTER_REWARD=wEventVars+0x1A
 CONTRACT={"Func_d96c":{"compare":("a","b","c","d","e","hl"),"preserve":("d","e")}}
 CASES={"Func_d96c":[{"a":0,"wram":{wTxRam2:b"\xff\xff\xff\xff"},"read":{wTxRam2:4}},{"a":2,"wram":{wTxRam2:b"\xff\xff\xff\xff"},"read":{wTxRam2:4}},dict(POISON,a=2,wram={wTxRam2:b"\xff\xff\xff\xff"},read={wTxRam2:4}),{"a":9,"wram":{wTxRam2:b"\xff\xff\xff\xff"},"read":{wTxRam2:4}},dict(POISON,a=0xFF,wram={wTxRam2:b"\xff\xff\xff\xff"},read={wTxRam2:4}),dict(_club_map_name_fixture(vram=False, bank=3), **_CLUB_MAP_NAME_REGS)]}
 # >>> factory-cases-statics
-wOWMapEvents = 0xD323
-wWriteBGMapToSRAM = 0xD292
+wOWMapEvents = sym("wOWMapEvents")
+wWriteBGMapToSRAM = sym("wWriteBGMapToSRAM")
 
-wDuelResult = 0xCC08
-wNPCDuelist = 0xCC07
+wDuelResult = sym("wDuelInitialPrizes")
+wNPCDuelist = sym("wDuelFinished")
 
-wEventVars = 0xD3D2
-wLCDC = 0xCABB
-wTxRam2 = 0xCE3F
+wEventVars = sym("wEventVars")
+wLCDC = sym("wLCDC")
+wTxRam2 = sym("wTxRam2")
 POISON={"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234}
 # <<< factory-cases-statics
 
@@ -179,14 +180,14 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES=legacy_to_schema(CASES,CONTRACT)
 # >>> factory-completion deck-machine script entries
 for _fn, _pc in (
-        ("Script_d93f", 0x5944),
-        ("Script_d995", 0x599A),
-        ("Script_d9c2", 0x59C7),
-        ("Script_d9ef", 0x59F4),
-        ("Script_da1c", 0x5A21),
-        ("Script_da49", 0x5A4E),
-        ("Script_da76", 0x5A7B),
-        ("Script_daa3", 0x5AA8),
+        ("Script_d93f", sym("Script_d93f") + 5),
+        ("Script_d995", sym("Script_d995") + 5),
+        ("Script_d9c2", sym("Script_d9c2") + 5),
+        ("Script_d9ef", sym("Script_d9ef") + 5),
+        ("Script_da1c", sym("Script_da1c") + 5),
+        ("Script_da49", sym("Script_da49") + 5),
+        ("Script_da76", sym("Script_da76") + 5),
+        ("Script_daa3", sym("Script_daa3") + 5),
 ):
     for _rec in SCHEMA2_CASES[_fn]:
         _rec["completion"] = {"mode": "pre-ret", "pc": _pc}
@@ -196,7 +197,7 @@ for _fn, _pc in (
 # routine's code ends there. legacy_to_schema always emits completion "return",
 # so the split is applied after migration.
 for _rec in SCHEMA2_CASES["Script_BeatAaron"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x590B}
+    _rec["completion"] = {"mode": "pre-ret", "pc": sym("Script_BeatAaron") + 8}
 # <<< factory-completion Script_BeatAaron
 MUTATIONS={"Func_d96c":{"source_symbol":"Func_d96c","before":"gb_write8((uint16_t)(wTxRam2_b_ADDR+1u),hi);","after":"","case_ids":["Func_d96c-1","Func_d96c-2","Func_d96c-3","Func_d96c-5"]}}
 # >>> factory-mutation DeckMachineRoomCloseTextBox

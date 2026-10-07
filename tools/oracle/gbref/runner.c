@@ -16,12 +16,16 @@ static void service_pending_interrupt(GBContext *ctx) {
     if (ctx->halted && pending) ctx->halted = 0;
     ctx->stopped = 0;
 }
+static void seed_call_environment_hardware(GBContext *ctx) {
+    gb_write8(ctx, 0xff40, 0);
+    gb_write8(ctx, 0xff0f, 0);
+}
+
 static void seed_call_environment(GBContext *ctx, uint16_t trampoline, uint16_t noop) {
     gb_write8(ctx, trampoline, 0xc3);
     gb_write8(ctx, (uint16_t)(trampoline + 1u), (uint8_t)noop);
     gb_write8(ctx, (uint16_t)(trampoline + 2u), (uint8_t)(noop >> 8));
-    gb_write8(ctx, 0xff40, 0);
-    gb_write8(ctx, 0xff0f, 0);
+    seed_call_environment_hardware(ctx);
 }
 
 
@@ -250,15 +254,7 @@ static int parse_stack_words(const char *json, uint16_t *words, size_t cap,
 
 #define MAX_INPUT_EVENTS 16
 
-/* One entry per rendered frame, cycled. The ROM's own key handling is edge
- * triggered: hKeysPressed holds what became newly pressed this frame, so a
- * button held from the first instruction is new exactly once, and a wait loop
- * that starts after that frame never sees it. Cycling a release/press pair
- * reproduces a human tapping the button, which lands an edge inside any wait
- * however many frames of text or animation precede it. A single-entry array
- * cycles onto itself and therefore still means held for the whole run. */
-static int parse_input_keys(const char *json, uint8_t *buttons, uint8_t *dpad,
-                            size_t cap, size_t *count) {
+static int parse_input_keys(const char *json, uint8_t *keys_out, size_t cap, size_t *count) {
     const char *p = NULL;
     int state = json_array_start(json, "input_events", &p);
     if (state == 0) { *count = 0; return 1; }
@@ -277,8 +273,7 @@ static int parse_input_keys(const char *json, uint8_t *buttons, uint8_t *dpad,
         object[length] = '\0';
         uint64_t keys = 0;
         if (json_number(object, "keys", &keys) != 1 || keys > 0xff) return 0;
-        buttons[used] = (uint8_t)(~keys & 0x0f);
-        dpad[used] = (uint8_t)(~(keys >> 4) & 0x0f);
+        keys_out[used] = (uint8_t)keys;
         used++;
         p = skip_json_ws(end + 1);
         if (*p == ',') { p++; continue; }
@@ -378,8 +373,14 @@ static void print_bus_spans(const GBContext *ctx, const uint16_t *bus_addresses,
                             const uint16_t *bus_sizes, size_t bus_count) {
     for (size_t i = 0; i < bus_count; i++) {
         for (uint32_t j = 0; j < bus_sizes[i]; j++) {
-            uint8_t value = gb_read8((GBContext *)ctx,
-                                     (uint16_t)(bus_addresses[i] + j));
+            uint16_t address = (uint16_t)(bus_addresses[i] + j);
+            uint8_t value;
+            if (address >= 0x8000u && address < 0xA000u)
+                value = ctx->vram[(size_t)ctx->vram_bank * 0x2000u + (address - 0x8000u)];
+            else if (address >= 0xFE00u && address < 0xFEA0u)
+                value = ctx->oam[address - 0xFE00u];
+            else
+                value = gb_read8((GBContext *)ctx, address);
             printf("%02x", value);
         }
     }
@@ -538,13 +539,19 @@ int main(int argc, char **argv) {
     int mapper_vram_state = json_number(request, "vram_bank", &mapper_vram_bank);
     int mapper_enable_state = json_number(request, "ram_enable", &mapper_ram_enable);
     int mapper_hbank_state = json_number(request, "hbank_rom", &mapper_hbank_rom);
-    uint64_t vblank_trampoline = 0xcad0, vblank_noop = 0x0348;
-    json_number(request, "vblank_trampoline", &vblank_trampoline);
-    json_number(request, "vblank_noop", &vblank_noop);
+    uint64_t vblank_trampoline = 0, vblank_noop = 0;
+    int vblank_trampoline_state = json_number(request, "vblank_trampoline", &vblank_trampoline);
+    int vblank_noop_state = json_number(request, "vblank_noop", &vblank_noop);
+    uint64_t joypad_poll_pc = 0;
+    int joypad_poll_state = json_number(request, "joypad_poll_pc", &joypad_poll_pc);
+    uint64_t setup_sp = 0;
+    int setup_sp_state = json_number(request, "setup_sp", &setup_sp);
+    uint64_t post_call_pc = 0;
+    int post_call_pc_state = json_number(request, "post_call_pc", &post_call_pc);
     if (mapper_mode_state == 0) mapper_mode_state = 1;
     SetupCall setup_calls[256];
     size_t setup_count = 0;
-    uint8_t input_buttons[MAX_INPUT_EVENTS], input_dpad[MAX_INPUT_EVENTS];
+    uint8_t input_keys[MAX_INPUT_EVENTS];
     size_t input_count = 0;
     uint16_t stack_words[MAX_STACK_WORDS];
     size_t stack_count = 0;
@@ -555,8 +562,7 @@ int main(int argc, char **argv) {
     int stack_state = parse_stack_words(request, stack_words, MAX_STACK_WORDS,
                                         &stack_count);
     int setup_state = parse_setup(request, setup_calls, 256, &setup_count);
-    int input_state = parse_input_keys(request, input_buttons, input_dpad,
-                                       MAX_INPUT_EVENTS, &input_count);
+    int input_state = parse_input_keys(request, input_keys, MAX_INPUT_EVENTS, &input_count);
     if (!setup_state || !input_state) {
         free(request);
         fail("SCHEMA", "setup and input_events must be bounded arrays");
@@ -587,6 +593,15 @@ int main(int argc, char **argv) {
         entry_state != 1 || entry > 0xffff ||
         entry_sp_state < 0 || (entry_sp_state == 1 &&
                                (entry_sp < 2 || entry_sp > 0xfffd)) ||
+        setup_sp_state < 0 || (setup_sp_state == 1 &&
+                               (setup_sp < 2 || setup_sp > 0xfffd)) ||
+        post_call_pc_state < 0 || post_call_pc > 0xfffe ||
+        (post_call_state == 1 && entry_sp_state == 1 && post_call_pc_state != 1) ||
+        joypad_poll_state < 0 || joypad_poll_pc > 0x3fff ||
+        (input_count > 0 && joypad_poll_state != 1) ||
+        vblank_trampoline_state < 0 || vblank_noop_state < 0 ||
+        vblank_trampoline_state != vblank_noop_state ||
+        vblank_trampoline > 0xfffd || vblank_noop > 0xffff ||
         repeat_state < 0 || repeat == 0 || repeat > 1000000u ||
         (repeat != 1 && !tick_mode) ||
         instruction_budget == 0 || cycle_budget == 0 ||
@@ -624,7 +639,10 @@ int main(int argc, char **argv) {
         fail("ARTIFACT", "runtime rejected ROM");
     }
     gb_context_reset(ctx, true);
-    seed_call_environment(ctx, (uint16_t)vblank_trampoline, (uint16_t)vblank_noop);
+    if (vblank_trampoline_state == 1)
+        seed_call_environment(ctx, (uint16_t)vblank_trampoline, (uint16_t)vblank_noop);
+    else
+        seed_call_environment_hardware(ctx);
     if (strcmp(mapper_mode, "seeded") == 0) {
         seed_mapper_shadows(ctx, mapper_rom_bank, mapper_ram_bank, mapper_ram_enable);
     } else {
@@ -633,10 +651,6 @@ int main(int argc, char **argv) {
         gb_write8(ctx, 0xFF82, 0);
     }
     gb_write8(ctx, 0xFF4F, (uint8_t)mapper_vram_bank);
-    ctx->sp = 0xfffe;
-    gb_push16(ctx, 0xfea0);
-    ctx->pc = (uint16_t)entry;
-    set_call_registers(ctx, reg_a, reg_f, reg_b, reg_c, reg_d, reg_e, reg_hl);
     if (seed_wram_state == 1 && !apply_seed_spans(ctx, seed_wram)) {
         gb_context_destroy(ctx);
         free(rom);
@@ -657,19 +671,20 @@ int main(int argc, char **argv) {
     uint64_t steps = 0;
     uint64_t cycles = 0;
     size_t input_index = 0;
-    uint64_t frame_cycles = 0;
-    g_joypad_buttons = input_count ? input_buttons[0] : 0xff;
-    g_joypad_dpad = input_count ? input_dpad[0] : 0xff;
+    g_joypad_buttons = 0xff;
+    g_joypad_dpad = 0xff;
+    uint16_t setup_top = setup_sp_state == 1 ? (uint16_t)(setup_sp + 2u) : 0xfffe;
+    uint16_t setup_return = setup_sp_state == 1 ? 0x3f80 : 0xfea0;
     for (size_t i = 0; i < setup_count; i++) {
         SetupCall *call = &setup_calls[i];
         seed_mapper_shadows(ctx, call->rom_bank, mapper_ram_bank, mapper_ram_enable);
-        ctx->sp = 0xfffe;
-        gb_push16(ctx, 0xfea0);
+        ctx->sp = setup_top;
+        gb_push16(ctx, setup_return);
         ctx->pc = (uint16_t)call->entry;
         set_call_registers(ctx, call->a, call->f, call->b, call->c,
                            call->d, call->e, call->hl);
         uint64_t setup_steps = 0, setup_cycles = 0;
-        while (ctx->pc != 0xfea0) {
+        while (ctx->pc != setup_return) {
             if (setup_steps >= instruction_budget || setup_cycles >= cycle_budget) {
                 gb_context_destroy(ctx);
                 free(rom);
@@ -688,12 +703,23 @@ int main(int argc, char **argv) {
             setup_cycles += delta;
         }
     }
-    if (post_call_state == 1) {
+    uint16_t frame_top = entry_sp_state == 1 ? (uint16_t)(entry_sp + 2u) : 0xfffe;
+    uint16_t return_pc = entry_sp_state == 1
+                             ? (post_call_state == 1 ? (uint16_t)post_call_pc : 0x3f80)
+                             : 0xfea0;
+    uint16_t done_pc = post_call_state == 1 ? (uint16_t)(return_pc + 1u) : return_pc;
+    if (post_call_state == 1 && entry_sp_state == 1) {
+        gb_write8(ctx, (uint16_t)post_call_pc, (uint8_t)post_call_byte);
+    } else if (post_call_state == 1) {
         ctx->oracle_post_call_byte = (uint8_t)post_call_byte;
         ctx->oracle_post_call_byte_valid = 1;
     }
+    if (input_count) {
+        g_joypad_buttons = (uint8_t)(~input_keys[0] & 0x0f);
+        g_joypad_dpad = (uint8_t)(~(input_keys[0] >> 4) & 0x0f);
+    }
     ctx->oracle_ir_peer = (uint8_t)ir_peer;
-    ctx->oracle_ir_rx_byte = (input_count && g_joypad_buttons == 0x0E) ? 0 : 0x33;
+    ctx->oracle_ir_rx_byte = (input_count && (input_keys[0] & 0x0f) == 0x01) ? 0 : 0x33;
     if (strcmp(mapper_mode, "seeded") == 0)
         seed_mapper_shadows(ctx, mapper_rom_bank, mapper_ram_bank, mapper_ram_enable);
     /* seed_mapper_shadows ties hBankROM to rom_bank, which is right for paging
@@ -711,11 +737,8 @@ int main(int argc, char **argv) {
         gb_write8(ctx, 0xffff, (uint8_t)(gb_read8(ctx, 0xffff) | 0x01));
         ctx->ime = 1;
     }
-    if (entry_sp_state == 1)
-        ctx->sp = (uint16_t)(entry_sp + 2u);
-    else
-        ctx->sp = 0xfffe;
-    gb_push16(ctx, entry_sp_state == 1 ? 0x3f80 : 0xfea0);
+    ctx->sp = frame_top;
+    gb_push16(ctx, return_pc);
     /* Sentinel first, so it stays the deepest word: the routine's final `ret`
      * must still land on it after popping every caller-pushed save below. */
     for (size_t i = 0; i < stack_count; i++)
@@ -724,8 +747,8 @@ int main(int argc, char **argv) {
     set_call_registers(ctx, reg_a, reg_f, reg_b, reg_c, reg_d, reg_e, reg_hl);
     for (uint64_t iteration = 0; iteration < repeat; iteration++) {
     if (iteration) {
-        ctx->sp = 0xfffe;
-        gb_push16(ctx, 0xfea0);
+        ctx->sp = frame_top;
+        gb_push16(ctx, return_pc);
         ctx->pc = (uint16_t)entry;
         steps = 0;
         cycles = 0;
@@ -733,11 +756,7 @@ int main(int argc, char **argv) {
     while (strcmp(completion, "event") == 0
                ? ((gb_read8(ctx, (uint16_t)event_addr) & (uint8_t)event_mask)
                   != (uint8_t)event_value)
-               : ctx->pc != (strcmp(completion, "pre-ret") == 0
-                              ? stop_pc
-                              : (post_call_state == 1
-                                 ? (entry_sp_state == 1 ? 0xcff1 : 0xfea1)
-                                 : (entry_sp_state == 1 ? 0x3f80 : 0xfea0)))) {
+               : ctx->pc != (strcmp(completion, "pre-ret") == 0 ? stop_pc : done_pc)) {
         if (steps >= instruction_budget || cycles >= cycle_budget) {
             if (tick_mode)
                 printf("],\"tick\":%" PRIu64 ",", iteration);
@@ -773,6 +792,7 @@ int main(int argc, char **argv) {
         }
         uint32_t before = ctx->cycles;
         service_pending_interrupt(ctx);
+        uint16_t pc_before = ctx->pc;
         gb_debug_step(ctx, GB_EXECUTION_INTERPRETER);
         uint32_t delta = ctx->cycles - before;
         if (delta == 0) {
@@ -782,37 +802,14 @@ int main(int argc, char **argv) {
         }
         steps++;
         cycles += delta;
-
-        /*
-         * gb_tick stops execution at the rendered-frame boundary so the
-         * scheduler can publish VBlank and service the ROM's own ISR.  A
-         * call-level runner has no outer frame scheduler, therefore retire
-         * that boundary here after the instruction has completed.  IF/IE and
-         * HALT state are intentionally left intact; the next debug step
-         * observes the pending interrupt through the normal GBRT path.
-         *
-         * With the LCD disabled the PPU publishes no frames at all, so the
-         * input timeline has to be driven by elapsed time instead. Without
-         * that, a routine polling the joypad with the screen off - DoFrame's
-         * game_paused_loop, say - never observes a second key state and spins
-         * until its budget dies. One DMG frame is 70224 cycles.
-         */
-        frame_cycles += delta;
-        int vblank_boundary = gb_frame_complete(ctx);
-        int boundary = vblank_boundary;
-        if (vblank_boundary) {
+        if (input_count && pc_before == (uint16_t)joypad_poll_pc &&
+            ctx->pc == (uint16_t)(joypad_poll_pc + 1u)) {
+            ctx->a = input_keys[input_index];
+            ctx->c = input_keys[input_index];
+            input_index = (input_index + 1) % input_count;
+        }
+        if (gb_frame_complete(ctx))
             gb_reset_frame(ctx);
-        } else if (!(gb_read8(ctx, 0xff40) & 0x80) && frame_cycles >= 70224u) {
-            boundary = 1;
-        }
-        if (boundary) {
-            frame_cycles = 0;
-            if (input_count > 1) {
-                input_index = (input_index + 1) % input_count;
-                g_joypad_buttons = input_buttons[input_index];
-                g_joypad_dpad = input_dpad[input_index];
-            }
-        }
     }
     if (tick_mode)
         print_tick(ctx, iteration, bus_addresses, bus_sizes, bus_count);

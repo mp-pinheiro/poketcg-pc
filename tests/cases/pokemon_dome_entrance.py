@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/pokemon_dome_entrance.asm."""
+from tests.cases._symbols import sym
 from tests.cases._fixtures import dome_ronald_fixture as _dome_ronald_fixture, DOME_RONALD_REGS as _DOME_RONALD_REGS
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -8,17 +9,17 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wOWMapEvents = 0xD323
-wWriteBGMapToSRAM = 0xD292
-wCurTilemap = 0xD131
-wConsole = 0xCAB4
-wPermissionMap = 0xD133
+wOWMapEvents = sym("wOWMapEvents")
+wWriteBGMapToSRAM = sym("wWriteBGMapToSRAM")
+wCurTilemap = sym("wCurTilemap")
+wConsole = sym("wConsole")
+wPermissionMap = sym("wPermissionMap")
 # <<< factory-cases-statics
 # >>> factory PokemonDomeEntranceLoadMap
-wEventVarByte_Dome = 0xD3E9
-wEventVarByte_NPC = 0xD3EA
-wReceivedLegendary = 0xD3D8
-wEventVarByte_Ronald = 0xD3EB
+wEventVarByte_Dome = sym("wEventVars") + 0x17
+wEventVarByte_NPC = sym("wEventVars") + 0x18
+wReceivedLegendary = sym("wEventVars") + 6
+wEventVarByte_Ronald = sym("wEventVars") + 0x19
 CONTRACT["PokemonDomeEntranceLoadMap"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["PokemonDomeEntranceLoadMap"] = [
     {"wram": {wEventVarByte_Dome: b"\xFF", wEventVarByte_NPC: b"\xFF", wEventVarByte_Ronald: b"\xFF", wReceivedLegendary: b"\x00"}},
@@ -46,18 +47,18 @@ CASES["PokemonDomeEntranceCloseTextBox"] = [
 # there (the split applied after migration, below). Compared: a and f at the
 # rst (`xor a`), the medal count and its successor written to wTxRam3 and
 # wTxRam3_b, and EVENT_MEDAL_COUNT's byte refreshed by TryGiveMedalPCPacks.
-wTxRam3 = 0xCE43
-wEventVarByte_MedalCount = 0xD3DC
+wTxRam3 = sym("wTxRam3")
+wEventVarByte_MedalCount = sym("wEventVars") + 0xA
 CONTRACT["Script_f631.ows_f63c"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Script_f631.ows_f63c"] = [
     # ronald-3 632724: the live entry, five medals (Mitch, Gene, Amy, Isaac, Ken poked).
     dict(_dome_ronald_fixture(vram=False, bank=3), **_DOME_RONALD_REGS,
          read={wTxRam3: 4, wEventVarByte_MedalCount: 1}),
     # No medals at all: the count and its successor are 0 and 1.
-    dict(_dome_ronald_fixture(vram=False, bank=3, **{"D3D2": b"\x00"}), **_DOME_RONALD_REGS,
+    dict(_dome_ronald_fixture(vram=False, bank=3, changes={sym("wEventVars"): b"\x00"}), **_DOME_RONALD_REGS,
          read={wTxRam3: 4, wEventVarByte_MedalCount: 1}),
     # Eight medals: the count refresh gives every pack, and the successor is 9.
-    dict(_dome_ronald_fixture(vram=False, bank=3, **{"D3D2": b"\xff"}), **_DOME_RONALD_REGS,
+    dict(_dome_ronald_fixture(vram=False, bank=3, changes={sym("wEventVars"): b"\xff"}), **_DOME_RONALD_REGS,
          read={wTxRam3: 4, wEventVarByte_MedalCount: 1}),
 ]
 # <<< factory Script_f631.ows_f63c
@@ -74,11 +75,11 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-completion Script_f631.ows_f63c
 for _rec in SCHEMA2_CASES["Script_f631.ows_f63c"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x7651}
+    _rec["completion"] = {"mode": "pre-ret", "pc": sym("Script_f631.ows_f63c") + 0x15}
 # <<< factory-completion Script_f631.ows_f63c
 # >>> factory-completion Script_f631
 for _rec in SCHEMA2_CASES["Script_f631"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x7631}
+    _rec["completion"] = {"mode": "pre-ret", "pc": sym("Script_f631")}
 # <<< factory-completion Script_f631
 
 MUTATIONS = {}

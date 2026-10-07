@@ -1,9 +1,10 @@
 """Oracle-diff cases for poketcg/src/home/time.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wPlayTimeCounterEnable = 0xCAC4
-wConsole = 0xCAB4
+wPlayTimeCounterEnable = sym("wPlayTimeCounterEnable")
+wConsole = sym("wConsole")
 rTMA = 0xFF06
 rTAC = 0xFF07
 
@@ -43,9 +44,9 @@ CASES = {
     ],
 }
 # >>> factory-cases-statics
-hBankROM_A = 0xFF80
-wReentrancyFlag_A = 0xCABA
-wTimerCounter_A = 0xCAC3
+hBankROM_A = sym("hBankROM")
+wReentrancyFlag_A = sym("wReentrancyFlag")
+wTimerCounter_A = sym("wTimerCounter")
 # <<< factory-cases-statics
 
 # >>> factory TimerHandler

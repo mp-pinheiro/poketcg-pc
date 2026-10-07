@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/input_name.asm."""
+from tests.cases._symbols import data, sym
 
 from tests.cases._fixtures import (NAME_CURSOR_REGS, NAME_FINAL_REGS, NAME_INPUT_REGS,
                                    name_cursor_fixture, name_final_fixture,
@@ -14,13 +15,13 @@ CASES = {}
 CONTRACT["DeckNamingScreen_GetCharInfoFromPos"] = {"compare": ("hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
 CASES["DeckNamingScreen_GetCharInfoFromPos"] = [
 	{},
-	{"hl": 0x0001, "wram": {0xCEA9: b"\x05"}},
-	{"hl": 0x0100, "wram": {0xCEA9: b"\x06"}},
-	{"hl": 0x0105, "wram": {0xCEA9: b"\x05"}},
-	{"hl": 0x2A03, "wram": {0xCEA9: b"\x06"}},
-	{"hl": 0x3400, "wram": {0xCEA9: b"\x05"}},
-	{"hl": 0x34FC, "wram": {0xCEA9: b"\x05"}},
-	dict(POISON, hl=0x0203, wram={0xCEA9: b"\x06"}),
+	{"hl": 0x0001, "wram": {sym("wCardListNumCursorPositions"): b"\x05"}},
+	{"hl": 0x0100, "wram": {sym("wCardListNumCursorPositions"): b"\x06"}},
+	{"hl": 0x0105, "wram": {sym("wCardListNumCursorPositions"): b"\x05"}},
+	{"hl": 0x2A03, "wram": {sym("wCardListNumCursorPositions"): b"\x06"}},
+	{"hl": 0x3400, "wram": {sym("wCardListNumCursorPositions"): b"\x05"}},
+	{"hl": 0x34FC, "wram": {sym("wCardListNumCursorPositions"): b"\x05"}},
+	dict(POISON, hl=0x0203, wram={sym("wCardListNumCursorPositions"): b"\x06"}),
 ]
 # <<< factory DeckNamingScreen_GetCharInfoFromPos
 
@@ -28,11 +29,11 @@ CASES["DeckNamingScreen_GetCharInfoFromPos"] = [
 CONTRACT["ClearMemory_Bank6"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["ClearMemory_Bank6"] = [
     {},  # all-zero entry: a=0 acts as 256 writes at $0000-$00ff (bus drops them)
-    {"a": 0, "hl": 0xC100, "wram": {0xC100: b"\xff" * 0x100}},  # count 0 = maximum (256)
-    {"a": 1, "hl": 0xC100, "wram": {0xC100: b"\xff" * 0x04}},   # count 1
-    {"a": 2, "hl": 0xC100, "wram": {0xC100: b"\xaa" * 0x08}},
-    {"a": 0x0C, "hl": 0xC500, "wram": {0xC500: b"\xff" * 0x10}},  # wNameBuffer, MAX_PLAYER_NAME_LENGTH bytes
-    dict(POISON, a=5, hl=0xC400, wram={0xC400: b"\x99" * 0x10}),
+    {"a": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xff" * 0x100}},  # count 0 = maximum (256)
+    {"a": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xff" * 0x04}},   # count 1
+    {"a": 2, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xaa" * 0x08}},
+    {"a": 0x0C, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\xff" * 0x10}},  # wNameBuffer, MAX_PLAYER_NAME_LENGTH bytes
+    dict(POISON, a=5, hl=sym("wBoosterCardsDrawn"), wram={sym("wBoosterCardsDrawn"): b"\x99" * 0x10}),
 ]
 # <<< factory ClearMemory_Bank6
 
@@ -40,9 +41,9 @@ CASES["ClearMemory_Bank6"] = [
 CONTRACT["DrawTextboxForKeyboard"] = {"compare": ("hl",), "preserve": ()}
 CASES["DrawTextboxForKeyboard"] = [
     {"vread": {0: {0x9800: 0x200, 0x9C00: 0x200}}},  # all-zero entry: a=0, hl=0, text read from ROM $0000
-    {"a": 0, "hl": 0xC100, "wram": {0xC100: b"\x50\x00"}, "vread": {0: {0x9800: 0x200, 0x9C00: 0x200}}},
-    {"a": 1, "hl": 0xC100, "wram": {0xC100: b"\x41\x42\x43\x50\x00"}, "vread": {0: {0x9800: 0x200, 0x9C00: 0x200}}},
-    dict(POISON, a=0, hl=0xC100, wram={0xC100: b"\x00"}, vread={0: {0x9800: 0x200, 0x9C00: 0x200}}),
+    {"a": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x50\x00"}, "vread": {0: {0x9800: 0x200, 0x9C00: 0x200}}},
+    {"a": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x41\x42\x43\x50\x00"}, "vread": {0: {0x9800: 0x200, 0x9C00: 0x200}}},
+    dict(POISON, a=0, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}, vread={0: {0x9800: 0x200, 0x9C00: 0x200}}),
 ]
 # <<< factory DrawTextboxForKeyboard
 
@@ -56,64 +57,64 @@ CASES["TransformCharacter"] = [
 	# is case-controlled; the walk is terminator-driven, so there are no counted-loop
 	# boundaries to cover (the len-1 offset wraparound is covered by the C's 8-bit
 	# cast, exercised whenever the frame length is 1).
-	{"hl": 0xC100},  # all-zero: zero table -> immediate terminator
-	{"hl": 0xC100, "wram": {0xC100: bytes([0x41, 0x0E, 0x12, 0x34, 0x00])}},  # match on first entry
-	{"hl": 0xC100, "wram": {0xC100: bytes([0x99, 0x88, 0x77, 0x66, 0x05, 0x07, 0xAA, 0xBB, 0x00, 0x00, 0x00, 0x00])}},  # skip one entry, match on second
-	{"hl": 0xC100, "wram": {0xC100: bytes([0x05, 0x11, 0x00, 0x00, 0x00])}},  # index matches, set does not -> skip, then terminator
-	{"hl": 0xC104, "wram": {0xC100: bytes([0xFF, 0xEE, 0xDD, 0xCC, 0x00, 0x00])}},  # walk starts mid-table, terminator first
-	{"hl": 0xC100, "wram": {0xC100: bytes([0x41, 0x00, 0x12, 0x34, 0x00])}},  # matched set byte 0 -> success with Z set
-	dict(POISON, hl=0xC100, wram={0xC100: bytes([0x41, 0x0E, 0x12, 0x34, 0x00])}),
+	{"hl": sym("wDecompressionSecondaryBufferStart") + 0x11},  # all-zero: zero table -> immediate terminator
+	{"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes([0x41, 0x0E, 0x12, 0x34, 0x00])}},  # match on first entry
+	{"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes([0x99, 0x88, 0x77, 0x66, 0x05, 0x07, 0xAA, 0xBB, 0x00, 0x00, 0x00, 0x00])}},  # skip one entry, match on second
+	{"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes([0x05, 0x11, 0x00, 0x00, 0x00])}},  # index matches, set does not -> skip, then terminator
+	{"hl": sym("wDecompressionSecondaryBufferStart") + 0x15, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes([0xFF, 0xEE, 0xDD, 0xCC, 0x00, 0x00])}},  # walk starts mid-table, terminator first
+	{"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes([0x41, 0x00, 0x12, 0x34, 0x00])}},  # matched set byte 0 -> success with Z set
+	dict(POISON, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: bytes([0x41, 0x0E, 0x12, 0x34, 0x00])}),
 ]
 # <<< factory TransformCharacter
 
 # >>> factory PlayerNamingScreen_GetCharInfoFromPos
 CONTRACT["PlayerNamingScreen_GetCharInfoFromPos"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
 CASES["PlayerNamingScreen_GetCharInfoFromPos"] = [
-    {"wram": {0xCEA9: b"\x00"}},
-    {"hl": 0x0100, "wram": {0xCEA9: b"\x01"}},
-    {"hl": 0x0101, "wram": {0xCEA9: b"\x06"}},
-    dict(POISON, hl=0x0203, wram={0xCEA9: b"\x05"}),
-    {"hl": 0xFF00, "wram": {0xCEA9: b"\x06"}},
-    {"hl": 0xFFFF, "wram": {0xCEA9: b"\x06"}},
+    {"wram": {sym("wCardListNumCursorPositions"): b"\x00"}},
+    {"hl": 0x0100, "wram": {sym("wCardListNumCursorPositions"): b"\x01"}},
+    {"hl": 0x0101, "wram": {sym("wCardListNumCursorPositions"): b"\x06"}},
+    dict(POISON, hl=0x0203, wram={sym("wCardListNumCursorPositions"): b"\x05"}),
+    {"hl": 0xFF00, "wram": {sym("wCardListNumCursorPositions"): b"\x06"}},
+    {"hl": 0xFFFF, "wram": {sym("wCardListNumCursorPositions"): b"\x06"}},
 ]
 # <<< factory PlayerNamingScreen_GetCharInfoFromPos
 
 # >>> factory PlaySFXConfirmOrCancel_Bank6
 CONTRACT["PlaySFXConfirmOrCancel_Bank6"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")};
 CASES["PlaySFXConfirmOrCancel_Bank6"] = [
-    {"a": 0, "read": {0xDD82: 1, 0xDD83: 1}},
-    dict(POISON, a=0xFF, read={0xDD82: 1, 0xDD83: 1}),
-    {"a": 1, "read": {0xDD82: 1, 0xDD83: 1}},
+    {"a": 0, "read": {sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}},
+    dict(POISON, a=0xFF, read={sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}),
+    {"a": 1, "read": {sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}},
 ]
 # <<< factory PlaySFXConfirmOrCancel_Bank6
 
 # >>> factory PlayerNamingScreen_AdjustCursorPosition
 CONTRACT["PlayerNamingScreen_AdjustCursorPosition"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["PlayerNamingScreen_AdjustCursorPosition"] = [
-    {"a": 0, "wram": {0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\x00", 0xD004: b"\x02", 0xD007: b"\x00"}, "expect_wram": {0xCA00: b"\x00\x00\x00\x00", 0xCAB5: b"\x00"}},
-    {"a": 1, "wram": {0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\xFF", 0xD004: b"\x02", 0xD007: b"\x00"}, "expect_wram": {0xCA00: b"\x08\x18\x00\x00", 0xCAB5: b"\x04"}},
-    dict(POISON, wram={0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\xFF", 0xD004: b"\x02", 0xD007: b"\x00"}, expect_wram={0xCA00: b"\x08\x18\x00\x00", 0xCAB5: b"\x04"}),
+    {"a": 0, "wram": {sym("wOAM"): b"\xAA\xBB\xCC\xDD", sym("wOAMOffset"): b"\x00", sym("wInvisibleCursorTile"): b"\x00", sym("wNamingScreenBufferMaxLength"): b"\x02", sym("wNamingScreenNamePosition"): b"\x00"}, "expect_wram": {sym("wOAM"): b"\x00\x00\x00\x00", sym("wOAMOffset"): b"\x00"}},
+    {"a": 1, "wram": {sym("wOAM"): b"\xAA\xBB\xCC\xDD", sym("wOAMOffset"): b"\x00", sym("wInvisibleCursorTile"): b"\xFF", sym("wNamingScreenBufferMaxLength"): b"\x02", sym("wNamingScreenNamePosition"): b"\x00"}, "expect_wram": {sym("wOAM"): b"\x08\x18\x00\x00", sym("wOAMOffset"): b"\x04"}},
+    dict(POISON, wram={sym("wOAM"): b"\xAA\xBB\xCC\xDD", sym("wOAMOffset"): b"\x00", sym("wInvisibleCursorTile"): b"\xFF", sym("wNamingScreenBufferMaxLength"): b"\x02", sym("wNamingScreenNamePosition"): b"\x00"}, expect_wram={sym("wOAM"): b"\x08\x18\x00\x00", sym("wOAMOffset"): b"\x04"}),
 ]
 # <<< factory PlayerNamingScreen_AdjustCursorPosition
 
 # >>> factory DeckNamingScreen_AdjustCursorPosition
 CONTRACT["DeckNamingScreen_AdjustCursorPosition"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["DeckNamingScreen_AdjustCursorPosition"] = [
-    {"a": 0, "wram": {0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\x00", 0xD004: b"\x02", 0xD007: b"\x02"}, "expect_wram": {0xCA00: b"\x00\x00\x00\x00", 0xCAB5: b"\x00"}},
-    {"a": 1, "wram": {0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\xFF", 0xD004: b"\x02", 0xD007: b"\x02"}, "expect_wram": {0xCA00: b"\x18\x10\x00\x00", 0xCAB5: b"\x04"}},
-    dict(POISON, wram={0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\xFF", 0xD004: b"\x02", 0xD007: b"\x02"}, expect_wram={0xCA00: b"\x18\x10\x00\x00", 0xCAB5: b"\x04"}),
+    {"a": 0, "wram": {sym("wOAM"): b"\xAA\xBB\xCC\xDD", sym("wOAMOffset"): b"\x00", sym("wInvisibleCursorTile"): b"\x00", sym("wNamingScreenBufferMaxLength"): b"\x02", sym("wNamingScreenNamePosition"): b"\x02"}, "expect_wram": {sym("wOAM"): b"\x00\x00\x00\x00", sym("wOAMOffset"): b"\x00"}},
+    {"a": 1, "wram": {sym("wOAM"): b"\xAA\xBB\xCC\xDD", sym("wOAMOffset"): b"\x00", sym("wInvisibleCursorTile"): b"\xFF", sym("wNamingScreenBufferMaxLength"): b"\x02", sym("wNamingScreenNamePosition"): b"\x02"}, "expect_wram": {sym("wOAM"): b"\x18\x10\x00\x00", sym("wOAMOffset"): b"\x04"}},
+    dict(POISON, wram={sym("wOAM"): b"\xAA\xBB\xCC\xDD", sym("wOAMOffset"): b"\x00", sym("wInvisibleCursorTile"): b"\xFF", sym("wNamingScreenBufferMaxLength"): b"\x02", sym("wNamingScreenNamePosition"): b"\x02"}, expect_wram={sym("wOAM"): b"\x18\x10\x00\x00", sym("wOAMOffset"): b"\x04"}),
 ]
 # <<< factory DeckNamingScreen_AdjustCursorPosition
 
 # >>> factory PlayerNamingScreen_DrawCursor
 CONTRACT["PlayerNamingScreen_DrawCursor"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d",)}
 CASES["PlayerNamingScreen_DrawCursor"] = [
-    {"a": 0x17, "wram": {0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"},
+    {"a": 0x17, "wram": {sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x00"},
      "expect_regs": {"a": 0x17, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0x00, "e": 0x17, "hl": 0x6BB0}},
-    {"a": 0x23, "wram": {0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"},
+    {"a": 0x23, "wram": {sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x00"},
      "expect_regs": {"a": 0x23, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0x00, "e": 0x23, "hl": 0x6BB0}},
     dict(POISON, a=0x17,
-         wram={0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"},
+         wram={sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x00"},
          expect_regs={"a": 0x17, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0xDD, "e": 0x17, "hl": 0x6BB0}),
     # The live entry: the LCD is on, so the map byte is staged and the tail's
     # `or a` sees WriteByteToBGMap0's 0, not the cursor tile it was given.
@@ -127,85 +128,85 @@ CASES["PlayerNamingScreen_DrawCursor"] = [
 # >>> factory DeckNamingScreen_DrawCursor
 CONTRACT["DeckNamingScreen_DrawCursor"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d",)}
 CASES["DeckNamingScreen_DrawCursor"] = [
-    {"a": 0x11, "d": 0x22, "wram": {0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x05"},
+    {"a": 0x11, "d": 0x22, "wram": {sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x05"},
      "expect_regs": {"a": 0x11, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0x22, "e": 0x11}},
-    {"a": 0x37, "d": 0x44, "wram": {0xD006: b"\x01", 0xCEA4: b"\x00", 0xCEA9: b"\x05"},
+    {"a": 0x37, "d": 0x44, "wram": {sym("wNamingScreenCursorX"): b"\x01", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x05"},
      "expect_regs": {"a": 0x37, "f": 0x00, "b": 0x01, "c": 0x0E, "d": 0x44, "e": 0x37}},
     dict(POISON, a=0x11,
-         wram={0xD006: b"\x00", 0xCEA4: b"\x01", 0xCEA9: b"\x05"},
+         wram={sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x01", sym("wCardListNumCursorPositions"): b"\x05"},
          expect_regs={"a": 0x11, "f": 0x00, "b": 0x01, "c": 0x06, "d": 0xDD, "e": 0x11}),
     # LCD on (wLCDC bit 7): the same tail hands back the map writer's 0.
-    {"a": 0x11, "d": 0x22, "wram": {0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x05",
-                                    0xCABB: b"\x80"}},
+    {"a": 0x11, "d": 0x22, "wram": {sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x05",
+                                    sym("wLCDC"): b"\x80"}},
 ]
 # <<< factory DeckNamingScreen_DrawCursor
 
 # >>> factory DeckNamingScreen_DrawInvisibleCursor
 CONTRACT["DeckNamingScreen_DrawInvisibleCursor"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d",)}
 CASES["DeckNamingScreen_DrawInvisibleCursor"] = [
-    {"d": 0x22, "wram": {0xCEAB: b"\x11", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x05"},
+    {"d": 0x22, "wram": {sym("wInvisibleCursorTile"): b"\x11", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x05"},
      "expect_regs": {"a": 0x11, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0x22, "e": 0x11}},
-    dict(POISON, wram={0xCEAB: b"\x37\x44"[:1], 0xD006: b"\x01", 0xCEA4: b"\x00", 0xCEA9: b"\x05"}),
+    dict(POISON, wram={sym("wInvisibleCursorTile"): b"\x37\x44"[:1], sym("wNamingScreenCursorX"): b"\x01", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x05"}),
 ]
 # <<< factory DeckNamingScreen_DrawInvisibleCursor
 
 # >>> factory DeckNamingScreen_DrawVisibleCursor
 CONTRACT["DeckNamingScreen_DrawVisibleCursor"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d",)}
 CASES["DeckNamingScreen_DrawVisibleCursor"] = [
-    {"d": 0x22, "wram": {0xCEAA: b"\x11", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x05"},
+    {"d": 0x22, "wram": {sym("wVisibleCursorTile"): b"\x11", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x05"},
      "expect_regs": {"a": 0x11, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0x22, "e": 0x11}},
-    dict(POISON, wram={0xCEAA: b"\x37", 0xD006: b"\x01", 0xCEA4: b"\x00", 0xCEA9: b"\x05"}),
+    dict(POISON, wram={sym("wVisibleCursorTile"): b"\x37", sym("wNamingScreenCursorX"): b"\x01", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x05"}),
 ]
 # <<< factory DeckNamingScreen_DrawVisibleCursor
 
 # >>> factory PlayerNamingScreen_DrawInvisibleCursor
 CONTRACT["PlayerNamingScreen_DrawInvisibleCursor"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d",)}
 CASES["PlayerNamingScreen_DrawInvisibleCursor"] = [
-    {"wram": {0xCEAB: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"},
+    {"wram": {sym("wInvisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x00"},
      "expect_regs": {"a": 0x17, "f": 0x00, "b": 0x01, "c": 0x04, "e": 0x17, "hl": 0x6BB0}},
-    dict(POISON, wram={0xCEAB: b"\x23", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}),
+    dict(POISON, wram={sym("wInvisibleCursorTile"): b"\x23", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x00"}),
 ]
 # <<< factory PlayerNamingScreen_DrawInvisibleCursor
 
 # >>> factory PlayerNamingScreen_DrawVisibleCursor
 CONTRACT["PlayerNamingScreen_DrawVisibleCursor"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d",)}
 CASES["PlayerNamingScreen_DrawVisibleCursor"] = [
-    {"wram": {0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"},
+    {"wram": {sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x00"},
      "expect_regs": {"a": 0x17, "f": 0x00, "b": 0x01, "c": 0x04, "e": 0x17, "hl": 0x6BB0}},
-    dict(POISON, wram={0xCEAA: b"\x23", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}),
+    dict(POISON, wram={sym("wVisibleCursorTile"): b"\x23", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x00"}),
 ]
 # <<< factory PlayerNamingScreen_DrawVisibleCursor
 
 # >>> factory PlayerNamingScreen_CheckButtonState
 CONTRACT["PlayerNamingScreen_CheckButtonState"] = {"compare": ("a",), "preserve": ()}
 CASES["PlayerNamingScreen_CheckButtonState"] = [
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x00",
-              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}},
-    {"wram": {0xFF8F: b"\x10", 0xFF91: b"\x00", 0xCEA3: b"\x00",
-              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x02", 0xCEA9: b"\x06"}},
-    dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x00",
-                       0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}),
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x00"}},
+    {"wram": {sym("hDPadHeld"): b"\x10", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x06"}},
+    dict(POISON, wram={sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x00",
+                       sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x00"}),
     # A press: `and PAD_A` leaves a=1; the push af/pop af sandwich returns it
     # with carry. B press: a=MENU_CANCEL, f gains Z from `and PAD_A`.
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCEA3: b"\x11",
-              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
-     "read": {0xCFE3: 1}},
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCEA3: b"\x11",
-              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
-     "read": {0xCFE3: 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x01", sym("wCheckMenuCursorBlinkCounter"): b"\x11",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x03", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x06"},
+     "read": {sym("wMenuInputSFX"): 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x02", sym("wCheckMenuCursorBlinkCounter"): b"\x11",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x03", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x06"},
+     "read": {sym("wMenuInputSFX"): 1}},
     # Blink early exit: a is the OLD counter masked, not the raw byte.
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x11",
-              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
-     "read": {0xCEA3: 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x11",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x03", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x06"},
+     "read": {sym("wCheckMenuCursorBlinkCounter"): 1}},
     # Blink phase: `bit B_CURSOR_BLINK_PERIOD, [hl]` on the incremented counter.
     # $00 -> $01 draws the visible tile (a sprite lands in wOAM slot 0);
     # $10 -> $11 draws the invisible one (ZeroObjectPositions, no sprite).
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x00", 0xCEAB: b"\x00",
-              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
-     "read": {0xCEA3: 1, 0xCA00: 4, 0xCAB5: 1}},
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x10", 0xCEAB: b"\x00",
-              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x06"},
-     "read": {0xCEA3: 1, 0xCA00: 4, 0xCAB5: 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x00", sym("wInvisibleCursorTile"): b"\x00",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x03", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x06"},
+     "read": {sym("wCheckMenuCursorBlinkCounter"): 1, sym("wOAM"): 4, sym("wOAMOffset"): 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x10", sym("wInvisibleCursorTile"): b"\x00",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x03", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x06"},
+     "read": {sym("wCheckMenuCursorBlinkCounter"): 1, sym("wOAM"): 4, sym("wOAMOffset"): 1}},
 ]
 # <<< factory PlayerNamingScreen_CheckButtonState
 
@@ -219,50 +220,50 @@ CASES["PlayerNamingScreen_CheckButtonState"] = [
 # cursor-redraw chain; cases 5/6 take the A/B path, which skips the blink
 # entirely and reports the visible tile.
 CONTRACT["DeckNamingScreen_CheckButtonState"] = {"compare": ("a",), "preserve": ()}
-_DECK_BTN_READ = {0xD006: 1, 0xCEA4: 1, 0xCEA3: 1, 0xCFE3: 1}
+_DECK_BTN_READ = {sym("wNamingScreenCursorX"): 1, sym("wCardListCursorPos"): 1, sym("wCheckMenuCursorBlinkCounter"): 1, sym("wMenuInputSFX"): 1}
 CASES["DeckNamingScreen_CheckButtonState"] = [
-    {"wram": {0xFF8F: b"\x40", 0xFF91: b"\x00", 0xCEA3: b"\x01",
-              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x01", 0xCEA9: b"\x05",
-              0xD005: b"\x06"},
+    {"wram": {sym("hDPadHeld"): b"\x40", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x01",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x01", sym("wCardListNumCursorPositions"): b"\x05",
+              sym("wNamingScreenNumColumns"): b"\x06"},
      "read": _DECK_BTN_READ},
-    dict(POISON, wram={0xFF8F: b"\x40", 0xFF91: b"\x00", 0xCEA3: b"\x01",
-                       0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x01", 0xCEA9: b"\x05",
-                       0xD005: b"\x06"},
+    dict(POISON, wram={sym("hDPadHeld"): b"\x40", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x01",
+                       sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x01", sym("wCardListNumCursorPositions"): b"\x05",
+                       sym("wNamingScreenNumColumns"): b"\x06"},
          read=_DECK_BTN_READ),
-    {"wram": {0xFF8F: b"\x40", 0xFF91: b"\x00", 0xCEA3: b"\x01",
-              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x05",
-              0xD005: b"\x06"},
+    {"wram": {sym("hDPadHeld"): b"\x40", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x01",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCardListNumCursorPositions"): b"\x05",
+              sym("wNamingScreenNumColumns"): b"\x06"},
      "read": _DECK_BTN_READ},
-    {"wram": {0xFF8F: b"\x80", 0xFF91: b"\x00", 0xCEA3: b"\x01",
-              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x04", 0xCEA9: b"\x05",
-              0xD005: b"\x06"},
+    {"wram": {sym("hDPadHeld"): b"\x80", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x01",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x04", sym("wCardListNumCursorPositions"): b"\x05",
+              sym("wNamingScreenNumColumns"): b"\x06"},
      "read": _DECK_BTN_READ},
-    {"wram": {0xFF8F: b"\x20", 0xFF91: b"\x00", 0xCEA3: b"\x01",
-              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x02", 0xCEA9: b"\x05",
-              0xD005: b"\x06"},
+    {"wram": {sym("hDPadHeld"): b"\x20", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x01",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x05",
+              sym("wNamingScreenNumColumns"): b"\x06"},
      "read": _DECK_BTN_READ},
-    {"wram": {0xFF8F: b"\x10", 0xFF91: b"\x00", 0xCEA3: b"\x01",
-              0xCEAA: b"\x17", 0xD006: b"\x02", 0xCEA4: b"\x02", 0xCEA9: b"\x05",
-              0xD005: b"\x06"},
+    {"wram": {sym("hDPadHeld"): b"\x10", sym("hKeysPressed"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x01",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x02", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x05",
+              sym("wNamingScreenNumColumns"): b"\x06"},
      "read": _DECK_BTN_READ},
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCEA3: b"\x11",
-              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x05",
-              0xD005: b"\x06"},
-     "read": {0xCFE3: 1}},
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCEA3: b"\x11",
-              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x05",
-              0xD005: b"\x06"},
-     "read": {0xCFE3: 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x01", sym("wCheckMenuCursorBlinkCounter"): b"\x11",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x03", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x05",
+              sym("wNamingScreenNumColumns"): b"\x06"},
+     "read": {sym("wMenuInputSFX"): 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x02", sym("wCheckMenuCursorBlinkCounter"): b"\x11",
+              sym("wVisibleCursorTile"): b"\x17", sym("wNamingScreenCursorX"): b"\x03", sym("wCardListCursorPos"): b"\x02", sym("wCardListNumCursorPositions"): b"\x05",
+              sym("wNamingScreenNumColumns"): b"\x06"},
+     "read": {sym("wMenuInputSFX"): 1}},
 ]
 # <<< factory DeckNamingScreen_CheckButtonState
 
 # >>> factory PrintPlayerNameFromInput
 CONTRACT["PrintPlayerNameFromInput"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["PrintPlayerNameFromInput"] = [
-    {"wram": {0xD007: b"\x00\x00", 0xD004: b"\x14"}, "rom_bank": 6,
+    {"wram": {sym("wNamingScreenNamePosition"): b"\x00\x00", sym("wNamingScreenBufferMaxLength"): b"\x14"}, "rom_bank": 6,
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "vread": {0: {0x9800: 11}}},
-    dict(POISON, wram={0xD007: b"\x00\x00", 0xD004: b"\x14"}, rom_bank=6,
+    dict(POISON, wram={sym("wNamingScreenNamePosition"): b"\x00\x00", sym("wNamingScreenBufferMaxLength"): b"\x14"}, rom_bank=6,
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          vread={0: {0x9800: 11}}),
 ]
@@ -271,10 +272,10 @@ CASES["PrintPlayerNameFromInput"] = [
 # >>> factory DrawPlayerNamingScreenBG
 CONTRACT["DrawPlayerNamingScreenBG"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DrawPlayerNamingScreenBG"] = [
-    {"wram": {0xD002: b"\x00\x00", 0xD007: b"\x00\x00", 0xD004: b"\x14"}, "rom_bank": 6,
+    {"wram": {sym("wNamingScreenQuestionPointer"): b"\x00\x00", sym("wNamingScreenNamePosition"): b"\x00\x00", sym("wNamingScreenBufferMaxLength"): b"\x14"}, "rom_bank": 6,
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "vread": {0: {0x9882: 32}}},
-    dict(POISON, wram={0xD002: b"\x00\x00", 0xD007: b"\x00\x00", 0xD004: b"\x14"}, rom_bank=6,
+    dict(POISON, wram={sym("wNamingScreenQuestionPointer"): b"\x00\x00", sym("wNamingScreenNamePosition"): b"\x00\x00", sym("wNamingScreenBufferMaxLength"): b"\x14"}, rom_bank=6,
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          vread={0: {0x9882: 32}}),
 ]
@@ -283,8 +284,8 @@ CASES["DrawPlayerNamingScreenBG"] = [
 # >>> factory PlayerNamingScreen_ProcessInput
 CONTRACT["PlayerNamingScreen_ProcessInput"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PlayerNamingScreen_ProcessInput"] = [
-    {"wram": {0xD006: b"\x00", 0xCEA4: b"\x05", 0xCEA9: b"\x06", 0xD009: b"\x00"}, "rom_bank": 6},
-    dict(POISON, wram={0xD006: b"\x00", 0xCEA4: b"\x05", 0xCEA9: b"\x06", 0xD009: b"\x00"}, rom_bank=6),
+    {"wram": {sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x05", sym("wCardListNumCursorPositions"): b"\x06", sym("wd009"): b"\x00"}, "rom_bank": 6},
+    dict(POISON, wram={sym("wNamingScreenCursorX"): b"\x00", sym("wCardListCursorPos"): b"\x05", sym("wCardListNumCursorPositions"): b"\x06", sym("wd009"): b"\x00"}, rom_bank=6),
     dict(name_input_fixture(vram=False), **NAME_INPUT_REGS),
 ]
 # <<< factory PlayerNamingScreen_ProcessInput
@@ -308,10 +309,10 @@ CASES["LoadHalfWidthTextCursorTile"] = [
 # >>> factory PrintDeckNameFromInput
 CONTRACT["PrintDeckNameFromInput"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["PrintDeckNameFromInput"] = [
-    {"wram": {0xD007: b"\x00\x00"}, "rom_bank": 6,
+    {"wram": {sym("wNamingScreenNamePosition"): b"\x00\x00"}, "rom_bank": 6,
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "vread": {0: {0x9800: 11}}},
-    dict(POISON, wram={0xD007: b"\x00\x00"}, rom_bank=6,
+    dict(POISON, wram={sym("wNamingScreenNamePosition"): b"\x00\x00"}, rom_bank=6,
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          vread={0: {0x9800: 11}}),
 ]
@@ -320,19 +321,19 @@ CASES["PrintDeckNameFromInput"] = [
 # >>> factory DrawDeckNamingScreenBG
 CONTRACT["DrawDeckNamingScreenBG"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["DrawDeckNamingScreenBG"] = [
-    {"wram": {0xD002: b"\x00\x00", 0xD007: b"\x00\x00", 0xD004: b"\x14"}, "rom_bank": 6,
+    {"wram": {sym("wNamingScreenQuestionPointer"): b"\x00\x00", sym("wNamingScreenNamePosition"): b"\x00\x00", sym("wNamingScreenBufferMaxLength"): b"\x14"}, "rom_bank": 6,
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "vread": {0: {0x9882: 32}}},
-    dict(POISON, wram={0xD002: b"\x00\x00", 0xD007: b"\x00\x00", 0xD004: b"\x14"}, rom_bank=6,
+    dict(POISON, wram={sym("wNamingScreenQuestionPointer"): b"\x00\x00", sym("wNamingScreenNamePosition"): b"\x00\x00", sym("wNamingScreenBufferMaxLength"): b"\x14"}, rom_bank=6,
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          vread={0: {0x9882: 32}}),
 ]
 # <<< factory DrawDeckNamingScreenBG
 
 # >>> factory-cases-statics
-wNamingScreenCursorX = 0xD006
-wNamingScreenCursorY = 0xCEA4
-wNamingScreenKeyboardHeight = 0xCEA9
+wNamingScreenCursorX = sym("wNamingScreenCursorX")
+wNamingScreenCursorY = sym("wNamingScreenCursorY")
+wNamingScreenKeyboardHeight = sym("wNamingScreenKeyboardHeight")
 
 # InitializeInputName clears NAMING_SCREEN_BUFFER_LENGTH bytes at $CFE7, so it
 # writes straight through the PyBoy oracle's sentinel/spin stub at $CFF0-$CFF5
@@ -371,8 +372,8 @@ IPN_PARK = b"\x00\x00\x00" * 4
 # Destination high bytes are restricted to one-byte opcodes for the same slide:
 # $C1 is POP BC and $C5 is PUSH BC, while $C2/$C4 would decode as a three-byte
 # JP/CALL over the question pointer and leave the bank-6 data stream.
-IPN_DEST_NAME_BUFFER = 0xC500
-IPN_DEST_SCRATCH = 0xC100
+IPN_DEST_NAME_BUFFER = sym("wNameBuffer")
+IPN_DEST_SCRATCH = sym("wDecompressionSecondaryBufferStart") + 0x11
 IPN_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # wTileMapFill, wNamingScreenCursorY, wNamingScreenKeyboardHeight, the two
 # cursor tiles, the name buffer up to (never into) the reserved $CFF0-$CFF5
@@ -381,7 +382,7 @@ IPN_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40
 # name position and wd009. Deliberately absent: wVBlankOAMCopyToggle ($CAC0)
 # and wFlushPaletteFlags ($CABF), which the reference's VBlank handler clears
 # and the port never does.
-IPN_READ = {0xCAB6: 1, 0xCEA4: 1, 0xCEA9: 1, 0xCEAA: 2, 0xCFE7: 9, 0xCFFF: 1, 0xD000: 10}
+IPN_READ = {sym("wTileMapFill"): 1, sym("wCardListCursorPos"): 1, sym("wCardListNumCursorPositions"): 1, sym("wVisibleCursorTile"): 2, sym("wNamingScreenBuffer"): 9, sym("wNamingScreenBufferLength"): 1, sym("wNamingScreenDestPointer"): 10}
 # <<< factory-cases-statics
 
 # >>> factory DeckNamingScreen_ProcessInput
@@ -404,35 +405,35 @@ CASES["InitializeInputName"] = [
     # empty initial name: buffer[0] is TX_END, so b = c = 0 and the callee's
     # `xor a` / `sub b` tail exits with f = $C0 (Z and N, no borrow).
     {"a": 0x17, "b": 0x01, "c": 0x02, "d": 0xC1, "e": 0x00, "hl": 0x4567,
-     "wram": {0xC100: _naming_source(b"\x00")},
-     "read": {0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}},
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: _naming_source(b"\x00")},
+     "read": {sym("wNamingScreenBuffer"): 9, sym("wNamingScreenBufferLength"): 1, sym("wNamingScreenDestPointer"): 5, sym("wNamingScreenNamePosition"): 2}},
     # three full-width characters: one tile and one byte each, b = c = 3.
-    {"a": 0x17, "b": 0x03, "c": 0x04, "d": 0xC2, "e": 0x00, "hl": 0xBEEF,
-     "wram": {0xC200: _naming_source(b"\x61\x62\x63\x00")},
-     "read": {0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}},
+    {"a": 0x17, "b": 0x03, "c": 0x04, "d": 0xC2, "e": 0x00, "hl": data(0xBEEF),
+     "wram": {sym("wPlayerCardLocations"): _naming_source(b"\x61\x62\x63\x00")},
+     "read": {sym("wNamingScreenBuffer"): 9, sym("wNamingScreenBufferLength"): 1, sym("wNamingScreenDestPointer"): 5, sym("wNamingScreenNamePosition"): 2}},
     # TX_SYMBOL ($05) swallows the byte after it: b = 2 tiles over c = 3 bytes.
     {"a": 0x17, "b": 0x05, "c": 0x06, "d": 0xC3, "e": 0x00, "hl": 0x7F80,
-     "wram": {0xC300: _naming_source(b"\x05\x61\x62\x00")},
-     "read": {0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}},
+     "wram": {sym("wOpponentCardLocations"): _naming_source(b"\x05\x61\x62\x00")},
+     "read": {sym("wNamingScreenBuffer"): 9, sym("wNamingScreenBufferLength"): 1, sym("wNamingScreenDestPointer"): 5, sym("wNamingScreenNamePosition"): 2}},
     # TX_HALFWIDTH ($06) first takes the half-tile branch, which halves the
     # count with `inc b` / `srl b`: 3 half-tiles over 4 bytes returns b = 2.
     {"a": 0x17, "b": 0x07, "c": 0x08, "d": 0xC4, "e": 0x00, "hl": 0x0102,
-     "wram": {0xC400: _naming_source(b"\x06\x61\x62\x63\x00")},
-     "read": {0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}},
+     "wram": {sym("wBoosterCardsDrawn"): _naming_source(b"\x06\x61\x62\x63\x00")},
+     "read": {sym("wNamingScreenBuffer"): 9, sym("wNamingScreenBufferLength"): 1, sym("wNamingScreenDestPointer"): 5, sym("wNamingScreenNamePosition"): 2}},
     # poisoned entry: f, b, c, d, e and hl all carry their poison values, so de
     # is the source $DDEE and bc the position bytes the routine stores.
     dict(POISON, a=0x17,
-         wram={0xDDEE: _naming_source(b"\x61\x00")},
-         read={0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}),
+         wram={sym("wdded") + 1: _naming_source(b"\x61\x00")},
+         read={sym("wNamingScreenBuffer"): 9, sym("wNamingScreenBufferLength"): 1, sym("wNamingScreenDestPointer"): 5, sym("wNamingScreenNamePosition"): 2}),
 ]
 # <<< factory InitializeInputName
 
 # >>> factory FinalizeInputName
 CONTRACT["FinalizeInputName"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["FinalizeInputName"] = [
-    {"wram": {0xCFE7: b"\x61\x62\x63\x00", 0xD000: b"\x00\xC2", 0xD004: b"\x03"}, "read": {0xC200: 4}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCFE7: b"\x61\x00", 0xD000: b"\x00\xC3", 0xD004: b"\x01"}, "read": {0xC300: 2}},
-    {"wram": {0xCFE7: b"\x00", 0xD000: b"\x00\xC4", 0xD004: b"\x00"}, "read": {0xC400: 1}},
+    {"wram": {sym("wNamingScreenBuffer"): b"\x61\x62\x63\x00", sym("wNamingScreenDestPointer"): b"\x00\xC2", sym("wNamingScreenBufferMaxLength"): b"\x03"}, "read": {sym("wPlayerCardLocations"): 4}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wNamingScreenBuffer"): b"\x61\x00", sym("wNamingScreenDestPointer"): b"\x00\xC3", sym("wNamingScreenBufferMaxLength"): b"\x01"}, "read": {sym("wOpponentCardLocations"): 2}},
+    {"wram": {sym("wNamingScreenBuffer"): b"\x00", sym("wNamingScreenDestPointer"): b"\x00\xC4", sym("wNamingScreenBufferMaxLength"): b"\x00"}, "read": {sym("wBoosterCardsDrawn"): 1}},
     dict(name_final_fixture(vram=False), **NAME_FINAL_REGS),
 ]
 # <<< factory FinalizeInputName
@@ -470,12 +471,12 @@ CONTRACT["InputPlayerName"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), 
 # routine there, leaves wReentrancyFlag set and parks WaitForVBlank at $0271.
 CASES["InputPlayerName"] = [
     {"hl": IPN_DEST_SCRATCH, "rom_bank": 6, "keys": 0x41,
-     "wram": {IPN_DEST_SCRATCH: b"\x00" * 13, 0xFF90: b"\x00", 0xD00A: IPN_PARK},
+     "wram": {IPN_DEST_SCRATCH: b"\x00" * 13, sym("hKeysHeld"): b"\x00", sym("wd009") + 1: IPN_PARK},
      "setup": IPN_SETUP, "read": IPN_READ,
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     # wNameBuffer, the address the game's own callsite passes in hl.
     dict(POISON, hl=IPN_DEST_NAME_BUFFER, rom_bank=6, keys=0x41,
-         wram={IPN_DEST_NAME_BUFFER: b"\x00" * 13, 0xFF90: b"\x00", 0xD00A: IPN_PARK},
+         wram={IPN_DEST_NAME_BUFFER: b"\x00" * 13, sym("hKeysHeld"): b"\x00", sym("wd009") + 1: IPN_PARK},
          setup=IPN_SETUP, read=IPN_READ,
          instruction_budget=20000000, cycle_budget=80000000),
 ]
@@ -486,16 +487,16 @@ CONTRACT["InputDeckName"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "p
 CASES["InputDeckName"] = [
     {"a": 0x14, "b": 0x04, "c": 0x01, "d": 0xC1, "e": 0x00, "hl": 0x0000,
      "rom_bank": 6, "keys": 0x41,
-     "wram": {0xC100: b"\x61\x00" + b"\x00" * 19, 0xFF90: b"\x00", 0xD00A: IPN_PARK},
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x61\x00" + b"\x00" * 19, sym("hKeysHeld"): b"\x00", sym("wd009") + 1: IPN_PARK},
      "setup": IPN_SETUP,
-     "read": {0xCAB6: 1, 0xCEA4: 1, 0xCEA9: 1, 0xCEAA: 2, 0xCFE7: 9,
-               0xCFFF: 1, 0xD000: 10, 0xC100: 21},
+     "read": {sym("wTileMapFill"): 1, sym("wCardListCursorPos"): 1, sym("wCardListNumCursorPositions"): 1, sym("wVisibleCursorTile"): 2, sym("wNamingScreenBuffer"): 9,
+               sym("wNamingScreenBufferLength"): 1, sym("wNamingScreenDestPointer"): 10, sym("wDecompressionSecondaryBufferStart") + 0x11: 21},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, a=0x14, hl=0x0000, rom_bank=6, keys=0x41,
-         wram={0xDDEE: b"\x00" * 21, 0xFF90: b"\x00", 0xD00A: IPN_PARK},
+         wram={sym("wdded") + 1: b"\x00" * 21, sym("hKeysHeld"): b"\x00", sym("wd009") + 1: IPN_PARK},
          setup=IPN_SETUP,
-         read={0xCAB6: 1, 0xCEA4: 1, 0xCEA9: 1, 0xCEAA: 2, 0xCFE7: 9,
-               0xCFFF: 1, 0xD000: 10, 0xDDEE: 21},
+         read={sym("wTileMapFill"): 1, sym("wCardListCursorPos"): 1, sym("wCardListNumCursorPositions"): 1, sym("wVisibleCursorTile"): 2, sym("wNamingScreenBuffer"): 9,
+               sym("wNamingScreenBufferLength"): 1, sym("wNamingScreenDestPointer"): 10, sym("wdded") + 1: 21},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory InputDeckName

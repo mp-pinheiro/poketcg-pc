@@ -1996,12 +1996,12 @@ MUTATIONS = {
                   'hl};',
         'after': '\t\treturn (HandleAIStrangeBehaviorResult){damage.a, 0x80u, c, d, e, hl};',
         'case_ids': ['HandleAIStrangeBehavior-2'],
-        'source': 'src/profiles/extended/home/pkmn_powers.c'},
+        'source': 'src/home/pkmn_powers.c'},
     'HandleAICurse': {   'source_symbol': 'HandleAICurse',
         'before': 'if (found <= 1u) {',
         'after': 'if (found == 0u) {',
         'case_ids': ['HandleAICurse-1'],
-        'source': 'src/profiles/extended/home/pkmn_powers.c'},
+        'source': 'src/home/pkmn_powers.c'},
     'HandleAIDamageSwap': {   'source_symbol': 'HandleAIDamageSwap',
         'before': '\tgb_write8(WCE06_ADDR, ConvertHPToDamageCounters_Bank8(arena.a));',
         'after': '\tgb_write8(WCE06_ADDR, (uint8_t)(ConvertHPToDamageCounters_Bank8(arena.a) + '
@@ -2012,7 +2012,7 @@ MUTATIONS = {
         'before': '\t\t\tgoto heal_arena;',
         'after': '\t\t\treturn (HandleAIHealResult){PLAY_AREA_ARENA, ko.f};',
         'case_ids': ['HandleAIHeal-0'],
-        'source': 'src/profiles/extended/home/pkmn_powers.c'},
+        'source': 'src/home/pkmn_powers.c'},
     'HandleAIPkmnPowers': {   'source_symbol': 'HandleAIPkmnPowers',
         'before': '\treturn (HandleAIPkmnPowersResult){c, 0xC0u};',
         'after': '\treturn (HandleAIPkmnPowersResult){c, 0x80u};',
@@ -2025,7 +2025,7 @@ MUTATIONS = {
                         'HandleAIGoGoRainDanceEnergy-1',
                         'HandleAIGoGoRainDanceEnergy-2',
                         'HandleAIGoGoRainDanceEnergy-3'],
-        'source': 'src/profiles/extended/home/pkmn_powers.c'},
+        'source': 'src/home/pkmn_powers.c'},
     'HandleAICowardice': {   'source_symbol': 'HandleAICowardice',
         'before': '\t\t\tif ((flags & CAN_EVOLVE_THIS_TURN) == 0u) {',
         'after': '\t\t\tif (flags & 0u) {',
@@ -2042,14 +2042,14 @@ MUTATIONS = {
                  '\thTempPlayAreaLocation_ff9d = 1u;',
         'case_ids': [   'AIEnergyTransTransferEnergyToBench-0',
                         'AIEnergyTransTransferEnergyToBench-1'],
-        'source': 'src/profiles/extended/home/pkmn_powers.c'},
+        'source': 'src/home/pkmn_powers.c'},
     'HandleAIEnergyTrans': {   'source_symbol': 'HandleAIEnergyTrans',
         'before': '\tPkmnPowerCountResult venusaur = '
                   'CountTurnDuelistPokemonWithActivePkmnPower(VENUSAUR_LV67);',
         'after': '\tPkmnPowerCountResult venusaur = '
                  'CountTurnDuelistPokemonWithActivePkmnPower(MUK);',
         'case_ids': ['HandleAIEnergyTrans-3', 'HandleAIEnergyTrans-2'],
-        'source': 'src/profiles/extended/home/pkmn_powers.c'},
+        'source': 'src/home/pkmn_powers.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

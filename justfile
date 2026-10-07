@@ -327,6 +327,10 @@ oracle-diff-all: build lint-adapters lint-constants
 lint-adapters:
     python3 tools/lint_adapters.py
 
+# Reject raw WRAM, SRAM and HRAM address literals in case modules (issue #3449).
+lint-case-literals:
+    python3 tools/lint_case_literals.py
+
 # Reject C outside named factory or part blocks and malformed block markers.
 lint-blocks:
     python3 tools/factory_blocks.py lint

@@ -129,7 +129,7 @@ MUTATIONS = {
         'before': '\tZeroObjectPositions();',
         'after': '\t;',
         'case_ids': ['Func_12871-0'],
-        'source': 'src/profiles/extended/home/default_palettes.c'},
+        'source': 'src/home/default_palettes.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

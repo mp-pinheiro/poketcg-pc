@@ -12,11 +12,8 @@ _BENCH_MEW = _BENCH.case(vram=False, C4AE=b'\xa0\x00', C450=b'\x31\x00')
 _BENCH_INFO = _BENCH.case(vram=False, C4AE=b'\xbc\x00')
 _BENCH_MEW["read"][0xCD45] = 0x04
 _BENCH_INFO["read"][0xCD45] = 0x04
-_ACID["read"].pop(0xCC00)
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
-    case["read"][0xCC00] = 0xBD
-    case["read"][0xCCBE] = 0x42
     return case
 
 
@@ -6185,7 +6182,7 @@ MUTATIONS = {
                         'SetAIRetreatFlags-3',
                         'SetAIRetreatFlags-4',
                         'SetAIRetreatFlags-6'],
-        'source': 'src/profiles/extended/home/retreat.c'},
+        'source': 'src/home/retreat.c'},
     'AITryToRetreat': {   'source_symbol': 'AITryToRetreat',
         'before': '\tif (unable.f & FLAG_C)\n'
                   '\t\treturn (AITryToRetreatResult){SUBSTATUS2_ACID, unable.f};',

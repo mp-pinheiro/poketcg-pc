@@ -1,19 +1,20 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-WCONSOLE = 0xCAB4
-WLCDC = 0xCABB
-WBGP = 0xCABC
-WOBP0 = 0xCABD
-WOBP1 = 0xCABE
-WFLAG = 0xCABF
-WVBL = 0xCAC0
-WBG = 0xCAF0
-WOBJ = 0xCB30
-WTEXT = 0xCCF3
-OAM = 0xCA00
-HBANK = 0xFF80
-HSCROLL = 0xFF92
+WCONSOLE = sym("wConsole")
+WLCDC = sym("wLCDC")
+WBGP = sym("wBGP")
+WOBP0 = sym("wOBP0")
+WOBP1 = sym("wOBP1")
+WFLAG = sym("wFlushPaletteFlags")
+WVBL = sym("wVBlankOAMCopyToggle")
+WBG = sym("wBackgroundPalettesCGB")
+WOBJ = sym("wObjectPalettesCGB")
+WTEXT = sym("wTextBoxFrameType")
+OAM = sym("wOAM")
+HBANK = sym("hBankROM")
+HSCROLL = sym("hSCX")
 
 OAM_SEED = b"\xff\x00\x00\x00" * 40
 

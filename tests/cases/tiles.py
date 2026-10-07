@@ -1,21 +1,22 @@
-SRC = 0xC100
+from tests.cases._symbols import STACK_CANARY, sym
+SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
 DST = 0x8000
 MAP = 0x9800
 PAT = bytes((i * 37 + 11) & 0xFF for i in range(1024))
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wConsole = 0xCAB4
+wConsole = sym("wConsole")
 CONSOLE_DMG = 0x01
 CONSOLE_CGB = 0x02
-wLoadedCard1Type = 0xCC24
+wLoadedCard1Type = sym("wLoadedCard1Type")
 TYPE_TRAINER = 0x10
 
 V0_TILES0 = 0x8000
 V0_TILES1 = 0x8800
 V0_TILES2 = 0x9000
-S_GFX_BUFFER1 = 0xA400
-S_GFX_BUFFER4 = 0xB000
+S_GFX_BUFFER1 = sym("sSavedDeck3") + 8
+S_GFX_BUFFER4 = sym("sSavedDeck39Cards") + 0x20
 
 SYMBOLS_FONT_FAR = 0x2968
 DUEL_CARD_HEADER_GFX_FAR = 0x2ce8
@@ -230,47 +231,47 @@ CASES["Func_2055"] = [
 # >>> factory Func_2046
 CONTRACT["Func_2046"] = {"compare": (), "preserve": ()}
 CASES["Func_2046"] = [
-    {"d": 0xC1, "e": 0x00, "hl": 0xC200,
-     "wram": {0xC201: b"\x42"},
+    {"d": 0xC1, "e": 0x00, "hl": sym("wPlayerCardLocations"),
+     "wram": {sym("wPlayerCardLocations") + 1: b"\x42"},
      "vread": {0: {MAP: 1}}},
     {"d": 0xC3, "e": 0x00,
-     "wram": {0xC300: b"\x07"},
+     "wram": {sym("wOpponentCardLocations"): b"\x07"},
      "oracle": False,
      "why": "counter_addr stands in for Func_1f96's not-yet-ported sp+3 "
             "local; a live call always sees that frame byte as 0 (the "
             "harness's own zeroed/return-address frame), so a nonzero "
             "low nibble -- the early-return path -- can only be driven "
             "through an asm-derived case.",
-     "expect": {0xC300: b"\x08"}},
-    {"d": 0xC3, "e": 0x01, "hl": 0xC302, "a": 0x05, "b": 0x02, "c": 0x01,
-     "wram": {0xC301: b"\x00", 0xC302: b"\x77"},
+     "expect": {sym("wOpponentCardLocations"): b"\x08"}},
+    {"d": 0xC3, "e": 0x01, "hl": sym("wOpponentCardLocations") + 2, "a": 0x05, "b": 0x02, "c": 0x01,
+     "wram": {sym("wOpponentCardLocations") + 1: b"\x00", sym("wOpponentCardLocations") + 2: b"\x77"},
      "oracle": False,
      "why": "frame_c/frame_lo/frame_hi stand in for sp+2/sp+6/sp+7 of the "
             "same not-yet-ported frame; a live call always sees them (and "
             "sp+3/sp+8) as 0, so nonzero row/column arithmetic through the "
             "Func_2055 branch can only be driven through an asm-derived "
             "case.",
-     "expect": {0xC301: b"\x01"},
+     "expect": {sym("wOpponentCardLocations") + 1: b"\x01"},
      "expect_vram": {0: {0x98E1: b"\x77"}}},
-    {"d": 0xC3, "e": 0x03, "hl": 0xC304, "a": 0x03, "b": 0x04, "c": 0x00,
-     "wram": {0xC303: b"\x10", 0xC304: b"\x99", 0xC305: b"\x55"},
+    {"d": 0xC3, "e": 0x03, "hl": sym("wOpponentCardLocations") + 4, "a": 0x03, "b": 0x04, "c": 0x00,
+     "wram": {sym("wOpponentCardLocations") + 3: b"\x10", sym("wOpponentCardLocations") + 4: b"\x99", sym("wOpponentCardLocations") + 5: b"\x55"},
      "oracle": False,
      "why": "old=0x10 selects the Func_2051 branch (bit 4 of the "
             "incremented counter set); the real counter frame byte is "
             "always 0 on an isolated call, so this branch -- and its "
             "hl8+1 (sp+9) dereference -- can only be driven through an "
             "asm-derived case.",
-     "expect": {0xC303: b"\x11"},
+     "expect": {sym("wOpponentCardLocations") + 3: b"\x11"},
      "expect_vram": {0: {0x98E0: b"\x55"}}},
     dict(POISON,
-         wram={0xDDEE: b"\x11"},
+         wram={sym("wdded") + 1: b"\x11"},
          oracle=False,
          why="Poisoned frame_c/frame_lo/frame_hi/hl8 alongside a nonzero "
              "counter low nibble at counter_addr (=de=0xDDEE): proves the "
              "early return is taken -- and nothing else is touched -- even "
              "under maximally hostile register state; the counter frame is "
              "never live-driveable to a nonzero low nibble.",
-         expect={0xDDEE: b"\x12"}),
+         expect={sym("wdded") + 1: b"\x12"}),
 ]
 # <<< factory Func_2046
 
@@ -278,10 +279,10 @@ CASES["Func_2046"] = [
 CONTRACT["Func_1f96"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Func_1f96"] = [
     {"a": 0x00, "d": 0xC1, "e": 0x00,
-     "wram": {0xC100: b"\x00\x00\x00\x00\x00\x00\x00", 0xCABB: b"\x00"},
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\x00\x00\x00\x00\x00\x00", sym("wLCDC"): b"\x00"},
      "keys": [0x00, 0x01]},
     dict(POISON, d=0xC1, e=0x00,
-         wram={0xC100: b"\x00\x00\x00\x00\x00\x00\x00", 0xCABB: b"\x00"},
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\x00\x00\x00\x00\x00\x00", sym("wLCDC"): b"\x00"},
          keys=[0x00, 0x01]),
 ]
 # <<< factory Func_1f96
@@ -434,7 +435,7 @@ MUTATIONS["LoadFullWidthFontTiles"] = {
     "case_ids": ["LoadFullWidthFontTiles-0"],
 }
 for _rec in SCHEMA2_CASES["LoadDeckAndDiscardPileIcons"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["LoadDeckAndDiscardPileIcons"] = {
     "source_symbol": "LoadDeckAndDiscardPileIcons",
     "before": "TileCopyResult LoadDeckAndDiscardPileIcons(void)\n{",

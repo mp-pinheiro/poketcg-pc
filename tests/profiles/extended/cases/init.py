@@ -47,12 +47,12 @@ MUTATIONS = {
         'before': 'wAIPokedexCounter = 5u;',
         'after': 'wAIPokedexCounter = 4u;',
         'case_ids': ['InitAIDuelVars-0', 'InitAIDuelVars-1'],
-        'source': 'src/profiles/extended/home/init.c'},
+        'source': 'src/home/init.c'},
     'InitAITurnVars': {   'source_symbol': 'InitAITurnVars',
         'before': 'wAIPokedexCounter = (uint8_t)(wAIPokedexCounter + 1u);',
         'after': 'wAIPokedexCounter = (uint8_t)(wAIPokedexCounter + 2u);',
         'case_ids': ['InitAITurnVars-0'],
-        'source': 'src/profiles/extended/home/init.c'},
+        'source': 'src/home/init.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

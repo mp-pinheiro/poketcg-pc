@@ -1,8 +1,9 @@
 """Oracle-diff cases for poketcg/src/engine/menus/debug_main.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-HCUR_MENU_ITEM = 0xFFB1
+HCUR_MENU_ITEM = sym("hCurMenuItem")
 
 CONTRACT = {
     "Func_126b3": {
@@ -34,14 +35,14 @@ MUTATIONS = {
 }
 
 # >>> factory-cases-statics
-DM_hCurMenuItem = 0xFFB1
-DM_wConsole = 0xCAB4
-DM_wTileMapFill = 0xCAB6
-DM_wVBlankFunctionTrampoline = 0xCAD0
-DM_wLineSeparation = 0xCD08
-DM_wDebugMenuSelection = 0xD418
-DM_wDebugSGBBorder = 0xD419
-DM_wDebugBoosterSelection = 0xD41A
+DM_hCurMenuItem = sym("hCurMenuItem")
+DM_wConsole = sym("wConsole")
+DM_wTileMapFill = sym("wTileMapFill")
+DM_wVBlankFunctionTrampoline = sym("wVBlankFunctionTrampoline")
+DM_wLineSeparation = sym("wLineSeparation")
+DM_wDebugMenuSelection = sym("wDebugMenuSelection")
+DM_wDebugSGBBorder = sym("wDebugSGBBorder")
+DM_wDebugBoosterSelection = sym("wDebugBoosterSelection")
 # The body's own EnableLCD makes real frames elapse, so the reference VBlank
 # handler runs: CopyDMAFunction installs hDMAFunction (Func_12871 sets
 # wVBlankOAMCopyToggle, so the handler calls it), and SetupText primes the glyph

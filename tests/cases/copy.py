@@ -1,15 +1,16 @@
 """Oracle-diff cases for poketcg/src/home/copy.asm."""
+from tests.cases._symbols import sym
 
-SRC = 0xC100
-DST = 0xC500
-wLCDC = 0xCABB
+SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
+DST = sym("wNameBuffer")
+wLCDC = sym("wLCDC")
 VRAM_DST = 0x8000
 OAM_DST = 0xFE00
 
 # $DDEE is where the d=$DD/e=$EE poison lands: real WRAM, clear of the oracle's
 # $CE00-$CFFF frame, so the poisoned registers can be used verbatim as a
 # destination and hl=$1234 verbatim as a (ROM) source.
-POISON_DST = 0xDDEE
+POISON_DST = sym("wdded") + 1
 POISON_SRC = 0x1234
 
 PAT = bytes((i * 7 + 3) & 0xFF for i in range(512))
@@ -87,7 +88,7 @@ CASES = {
             # a $400 stride. $C500 is the first write; $D900 is $1400 bytes in,
             # both surviving the $E000 echo pass because $2000 is a multiple of
             # the stride. A no-op or an 8-bit count leaves them zero.
-            "expect": {DST: b"\xde\xad\xbe\xef", 0xD900: b"\xde\xad\xbe\xef"},
+            "expect": {DST: b"\xde\xad\xbe\xef", sym("wd698") + 0x268: b"\xde\xad\xbe\xef"},
         },
     ],
     "CopyDataHLtoDE_SaveRegisters": [
@@ -106,7 +107,7 @@ CASES = {
             "oracle": False,
             "why": "bc=0 is 65536 bytes, which sweeps the whole address space "
                    "and would bury the oracle's synthesized call frame.",
-            "expect": {DST: b"\xde\xad\xbe\xef", 0xD900: b"\xde\xad\xbe\xef"},
+            "expect": {DST: b"\xde\xad\xbe\xef", sym("wd698") + 0x268: b"\xde\xad\xbe\xef"},
         },
     ],
 }
@@ -182,11 +183,11 @@ def _copy_primary(identifier, registers, seeds, budget=10000, completion=None, e
     }
 
 SCHEMA2_CASES["CopyGfxData"].extend([
-    _copy_primary("CopyGfxData-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 20_000_000, {"mode": "pre-ret", "pc": 0x0731}, "native-stress"),
+    _copy_primary("CopyGfxData-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 20_000_000, {"mode": "pre-ret", "pc": sym("CopyGfxData.copy_tile") + 0xA}, "native-stress"),
     _copy_primary(
         "CopyGfxData-poison",
         {"a": 0xAA, "f": 0xF0, "b": 4, "c": 3, "d": 0xDD, "e": 0xEE, "hl": 0x1234},
-        {"wram": {0xDDEE: b"\x00" * 12}},
+        {"wram": {sym("wdded") + 1: b"\x00" * 12}},
     ),
     _copy_primary(
         "CopyGfxData-c-zero",
@@ -201,11 +202,11 @@ SCHEMA2_CASES["CopyGfxData"].append(
     legacy_to_schema({"CopyGfxData": [_BOOT_GFX_CASE]}, CONTRACT)["CopyGfxData"][0])
 
 SCHEMA2_CASES["CopyDataHLtoDE"].extend([
-    _copy_primary("CopyDataHLtoDE-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 2_000_000, {"mode": "pre-ret", "pc": 0x0744}, "native-stress"),
+    _copy_primary("CopyDataHLtoDE-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 2_000_000, {"mode": "pre-ret", "pc": sym("CopyDataHLtoDE") + 8}, "native-stress"),
     _copy_primary(
         "CopyDataHLtoDE-poison",
         {"a": 0xAA, "f": 0xF0, "b": 0, "c": 16, "d": 0xDD, "e": 0xEE, "hl": 0x1234},
-        {"wram": {0xDDEE: b"\x00" * 16}},
+        {"wram": {sym("wdded") + 1: b"\x00" * 16}},
     ),
     _copy_primary(
         "CopyDataHLtoDE-one",
@@ -214,11 +215,11 @@ SCHEMA2_CASES["CopyDataHLtoDE"].extend([
     ),
 ])
 SCHEMA2_CASES["CopyDataHLtoDE_SaveRegisters"].extend([
-    _copy_primary("CopyDataHLtoDE_SaveRegisters-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 2_000_000, {"mode": "pre-ret", "pc": 0x073b}, "dependency-blocked"),
+    _copy_primary("CopyDataHLtoDE_SaveRegisters-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 2_000_000, {"mode": "pre-ret", "pc": sym("CopyDataHLtoDE_SaveRegisters") + 9}, "dependency-blocked"),
     _copy_primary(
         "CopyDataHLtoDE_SaveRegisters-poison",
         {"a": 0xAA, "f": 0xF0, "b": 0, "c": 16, "d": 0xDD, "e": 0xEE, "hl": 0x1234},
-        {"wram": {0xDDEE: b"\x00" * 16}},
+        {"wram": {sym("wdded") + 1: b"\x00" * 16}},
     ),
     _copy_primary(
         "CopyDataHLtoDE_SaveRegisters-one",

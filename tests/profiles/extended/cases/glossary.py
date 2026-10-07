@@ -67,7 +67,7 @@ MUTATIONS = {
         'before': '\twMenuInputTablePointer = (uint8_t)GLOSSARY_TRANSITION_TABLE;',
         'after': '\twMenuInputTablePointer = (uint8_t)(GLOSSARY_TRANSITION_TABLE + 1u);',
         'case_ids': ['OpenGlossaryScreen-3'],
-        'source': 'src/profiles/extended/home/glossary.c'},
+        'source': 'src/home/glossary.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

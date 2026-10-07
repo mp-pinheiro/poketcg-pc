@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/config.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -13,17 +14,17 @@ CONTRACT = {
 CASES = {
     "DrawConfigMenuCursor": [
         {"a": 0, "c": 0, "read": {0x9800 + 6 * 32 + 5: 1}},
-        dict(POISON, a=0x5A, c=1, wram={0xD119: b"\x02"},
+        dict(POISON, a=0x5A, c=1, wram={sym("wConfigDuelAnimationCursorPos"): b"\x02"},
              read={0x9800 + 12 * 32 + 15: 1}),
-        {"a": 0x33, "c": 0, "wram": {0xD118: b"\x01"},
+        {"a": 0x33, "c": 0, "wram": {sym("wConfigMessageSpeedCursorPos"): b"\x01"},
          "read": {0x9800 + 6 * 32 + 7: 1}},
-        {"a": 0x44, "c": 0, "wram": {0xD118: b"\x04"},
+        {"a": 0x44, "c": 0, "wram": {sym("wConfigMessageSpeedCursorPos"): b"\x04"},
          "read": {0x9800 + 6 * 32 + 13: 1}},
-        {"a": 0x66, "c": 1, "wram": {0xD119: b"\x00"},
+        {"a": 0x66, "c": 1, "wram": {sym("wConfigDuelAnimationCursorPos"): b"\x00"},
          "read": {0x9800 + 12 * 32 + 1: 1}},
-        {"a": 0x77, "c": 1, "wram": {0xD119: b"\x01"},
+        {"a": 0x77, "c": 1, "wram": {sym("wConfigDuelAnimationCursorPos"): b"\x01"},
          "read": {0x9800 + 12 * 32 + 7: 1}},
-        {"a": 0x88, "c": 1, "wram": {0xD119: b"\x02"},
+        {"a": 0x88, "c": 1, "wram": {sym("wConfigDuelAnimationCursorPos"): b"\x02"},
          "read": {0x9800 + 12 * 32 + 15: 1}},
         {"a": 0x99, "c": 2, "read": {0x9800 + 16 * 32 + 1: 1}},
     ],
@@ -33,37 +34,37 @@ CASES = {
 CONTRACT["GetConfigCursorPositions"] = {"compare": ("d", "e"), "preserve": ("d", "e")}
 CASES["GetConfigCursorPositions"] = [
     # All-zero: sTextSpeed 0 walks the whole table and stops at c==4.
-    {"sram": {0: {0xA006: b"\x00", 0xA007: b"\x00", 0xA009: b"\x00"}},
-     "wram": {0xD421: b"\x00"},
-     "read": {0xD118: 1, 0xD119: 1}},
+    {"sram": {0: {sym("sTextSpeed"): b"\x00", sym("sAnimationsDisabled"): b"\x00", sym("sSkipDelayAllowed"): b"\x00"}},
+     "wram": {sym("wAnimationsDisabled"): b"\x00"},
+     "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wConfigDuelAnimationCursorPos"): 1}},
     # Poisoned entry registers: the routine takes no arguments; d/e must survive.
     dict(POISON,
-         sram={0: {0xA006: b"\x06", 0xA007: b"\x00", 0xA009: b"\x01"}},
-         wram={0xD421: b"\x01"},
-         read={0xD118: 1, 0xD119: 1}),
+         sram={0: {sym("sTextSpeed"): b"\x06", sym("sAnimationsDisabled"): b"\x00", sym("sSkipDelayAllowed"): b"\x01"}},
+         wram={sym("wAnimationsDisabled"): b"\x01"},
+         read={sym("wConfigMessageSpeedCursorPos"): 1, sym("wConfigDuelAnimationCursorPos"): 1}),
     # sTextSpeed == TEXT_SPEED_1 (6): first compare already takes the match branch.
-    {"sram": {0: {0xA006: b"\x06", 0xA009: b"\x00"}},
-     "wram": {0xD421: b"\x00"}, "read": {0xD118: 1, 0xD119: 1}},
+    {"sram": {0: {sym("sTextSpeed"): b"\x06", sym("sSkipDelayAllowed"): b"\x00"}},
+     "wram": {sym("wAnimationsDisabled"): b"\x00"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wConfigDuelAnimationCursorPos"): 1}},
     # 5: above table[1]=4, below table[0]=6 -> c==1.
-    {"sram": {0: {0xA006: b"\x05", 0xA009: b"\x00"}},
-     "wram": {0xD421: b"\x00"}, "read": {0xD118: 1, 0xD119: 1}},
+    {"sram": {0: {sym("sTextSpeed"): b"\x05", sym("sSkipDelayAllowed"): b"\x00"}},
+     "wram": {sym("wAnimationsDisabled"): b"\x00"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wConfigDuelAnimationCursorPos"): 1}},
     # 4 -> c==1 exactly at the boundary (cp is >=).
-    {"sram": {0: {0xA006: b"\x04", 0xA009: b"\x01"}},
-     "wram": {0xD421: b"\x00"}, "read": {0xD118: 1, 0xD119: 1}},
+    {"sram": {0: {sym("sTextSpeed"): b"\x04", sym("sSkipDelayAllowed"): b"\x01"}},
+     "wram": {sym("wAnimationsDisabled"): b"\x00"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wConfigDuelAnimationCursorPos"): 1}},
     # 2 -> c==2, skip allowed + animations disabled -> index 3 -> setting 2.
-    {"sram": {0: {0xA006: b"\x02", 0xA009: b"\x01"}},
-     "wram": {0xD421: b"\x01"}, "read": {0xD118: 1, 0xD119: 1}},
+    {"sram": {0: {sym("sTextSpeed"): b"\x02", sym("sSkipDelayAllowed"): b"\x01"}},
+     "wram": {sym("wAnimationsDisabled"): b"\x01"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wConfigDuelAnimationCursorPos"): 1}},
     # 1 -> c==3, skip disallowed but animations disabled -> index 1 -> setting 0.
-    {"sram": {0: {0xA006: b"\x01", 0xA009: b"\x00"}},
-     "wram": {0xD421: b"\x01"}, "read": {0xD118: 1, 0xD119: 1}},
+    {"sram": {0: {sym("sTextSpeed"): b"\x01", sym("sSkipDelayAllowed"): b"\x00"}},
+     "wram": {sym("wAnimationsDisabled"): b"\x01"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wConfigDuelAnimationCursorPos"): 1}},
     # Only bit 0 of each flag counts: 0xFE has bit0 clear, 0xFF set.
-    {"sram": {0: {0xA006: b"\xFF", 0xA009: b"\xFE"}},
-     "wram": {0xD421: b"\xFF"}, "read": {0xD118: 1, 0xD119: 1}},
+    {"sram": {0: {sym("sTextSpeed"): b"\xFF", sym("sSkipDelayAllowed"): b"\xFE"}},
+     "wram": {sym("wAnimationsDisabled"): b"\xFF"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wConfigDuelAnimationCursorPos"): 1}},
     # ramg False after seeding: only the routine's own EnableSRAM makes the
     # seeded SRAM bytes visible instead of open-bus $FF.
     {"ramg": False,
-     "sram": {0: {0xA006: b"\x00", 0xA009: b"\x01"}},
-     "wram": {0xD421: b"\x00"}, "read": {0xD118: 1, 0xD119: 1}},
+     "sram": {0: {sym("sTextSpeed"): b"\x00", sym("sSkipDelayAllowed"): b"\x01"}},
+     "wram": {sym("wAnimationsDisabled"): b"\x00"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wConfigDuelAnimationCursorPos"): 1}},
 ]
 # <<< factory GetConfigCursorPositions
 
@@ -71,31 +72,31 @@ CASES["GetConfigCursorPositions"] = [
 CONTRACT["SaveConfigSettings"] = {"compare": ("d", "e"), "preserve": ("d", "e")}
 CASES["SaveConfigSettings"] = [
     # All-zero: show-all animations, slowest text speed.
-    {"wram": {0xD118: b"\x00", 0xD119: b"\x00", 0xD421: b"\x00", 0xCE47: b"\x00"},
-     "sram": {0: {0xA006: b"\x00", 0xA007: b"\x00", 0xA009: b"\x00"}},
-     "sread": {0: {0xA006: 1, 0xA007: 1, 0xA009: 1}}},
+    {"wram": {sym("wConfigMessageSpeedCursorPos"): b"\x00", sym("wConfigDuelAnimationCursorPos"): b"\x00", sym("wAnimationsDisabled"): b"\x00", sym("wTextSpeed"): b"\x00"},
+     "sram": {0: {sym("sTextSpeed"): b"\x00", sym("sAnimationsDisabled"): b"\x00", sym("sSkipDelayAllowed"): b"\x00"}},
+     "sread": {0: {sym("sTextSpeed"): 1, sym("sAnimationsDisabled"): 1, sym("sSkipDelayAllowed"): 1}}},
     # Poisoned entry registers; cursor 1 = skip some, message speed index 4.
     dict(POISON,
-         wram={0xD118: b"\x04", 0xD119: b"\x01", 0xD421: b"\xFF", 0xCE47: b"\xFF"},
-         sram={0: {0xA006: b"\xFF", 0xA007: b"\xFF", 0xA009: b"\xFF"}},
-         sread={0: {0xA006: 1, 0xA007: 1, 0xA009: 1}}),
+         wram={sym("wConfigMessageSpeedCursorPos"): b"\x04", sym("wConfigDuelAnimationCursorPos"): b"\x01", sym("wAnimationsDisabled"): b"\xFF", sym("wTextSpeed"): b"\xFF"},
+         sram={0: {sym("sTextSpeed"): b"\xFF", sym("sAnimationsDisabled"): b"\xFF", sym("sSkipDelayAllowed"): b"\xFF"}},
+         sread={0: {sym("sTextSpeed"): 1, sym("sAnimationsDisabled"): 1, sym("sSkipDelayAllowed"): 1}}),
     # Cursor 2 = none: animations disabled TRUE and skip delay TRUE.
-    {"wram": {0xD118: b"\x02", 0xD119: b"\x02", 0xD421: b"\x00", 0xCE47: b"\x00"},
-     "sram": {0: {0xA006: b"\x00", 0xA007: b"\x00", 0xA009: b"\x00"}},
-     "sread": {0: {0xA006: 1, 0xA007: 1, 0xA009: 1}}},
+    {"wram": {sym("wConfigMessageSpeedCursorPos"): b"\x02", sym("wConfigDuelAnimationCursorPos"): b"\x02", sym("wAnimationsDisabled"): b"\x00", sym("wTextSpeed"): b"\x00"},
+     "sram": {0: {sym("sTextSpeed"): b"\x00", sym("sAnimationsDisabled"): b"\x00", sym("sSkipDelayAllowed"): b"\x00"}},
+     "sread": {0: {sym("sTextSpeed"): 1, sym("sAnimationsDisabled"): 1, sym("sSkipDelayAllowed"): 1}}},
     # Cursor 3 = unused entry: both FALSE.
-    {"wram": {0xD118: b"\x03", 0xD119: b"\x03", 0xD421: b"\x01", 0xCE47: b"\x01"},
-     "sram": {0: {0xA006: b"\x11", 0xA007: b"\x11", 0xA009: b"\x11"}},
-     "sread": {0: {0xA006: 1, 0xA007: 1, 0xA009: 1}}},
+    {"wram": {sym("wConfigMessageSpeedCursorPos"): b"\x03", sym("wConfigDuelAnimationCursorPos"): b"\x03", sym("wAnimationsDisabled"): b"\x01", sym("wTextSpeed"): b"\x01"},
+     "sram": {0: {sym("sTextSpeed"): b"\x11", sym("sAnimationsDisabled"): b"\x11", sym("sSkipDelayAllowed"): b"\x11"}},
+     "sread": {0: {sym("sTextSpeed"): 1, sym("sAnimationsDisabled"): 1, sym("sSkipDelayAllowed"): 1}}},
     # Only the low two bits of the animation cursor are used: 0xFE -> entry 2.
-    {"wram": {0xD118: b"\x01", 0xD119: b"\xFE", 0xD421: b"\x00", 0xCE47: b"\x00"},
-     "sram": {0: {0xA006: b"\x00", 0xA007: b"\x00", 0xA009: b"\x00"}},
-     "sread": {0: {0xA006: 1, 0xA007: 1, 0xA009: 1}}},
+    {"wram": {sym("wConfigMessageSpeedCursorPos"): b"\x01", sym("wConfigDuelAnimationCursorPos"): b"\xFE", sym("wAnimationsDisabled"): b"\x00", sym("wTextSpeed"): b"\x00"},
+     "sram": {0: {sym("sTextSpeed"): b"\x00", sym("sAnimationsDisabled"): b"\x00", sym("sSkipDelayAllowed"): b"\x00"}},
+     "sread": {0: {sym("sTextSpeed"): 1, sym("sAnimationsDisabled"): 1, sym("sSkipDelayAllowed"): 1}}},
     # ramg False after seeding: only the routine's EnableSRAM lets the writes land.
     {"ramg": False,
-     "wram": {0xD118: b"\x02", 0xD119: b"\x01", 0xD421: b"\x00", 0xCE47: b"\x00"},
-     "sram": {0: {0xA006: b"\x00", 0xA007: b"\x00", 0xA009: b"\x00"}},
-     "sread": {0: {0xA006: 1, 0xA007: 1, 0xA009: 1}}},
+     "wram": {sym("wConfigMessageSpeedCursorPos"): b"\x02", sym("wConfigDuelAnimationCursorPos"): b"\x01", sym("wAnimationsDisabled"): b"\x00", sym("wTextSpeed"): b"\x00"},
+     "sram": {0: {sym("sTextSpeed"): b"\x00", sym("sAnimationsDisabled"): b"\x00", sym("sSkipDelayAllowed"): b"\x00"}},
+     "sread": {0: {sym("sTextSpeed"): 1, sym("sAnimationsDisabled"): 1, sym("sSkipDelayAllowed"): 1}}},
 ]
 # <<< factory SaveConfigSettings
 
@@ -122,50 +123,50 @@ CASES["HideConfigMenuCursor"] = [
 # >>> factory ConfigScreenDPadLeft
 CONTRACT["ConfigScreenDPadLeft"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["ConfigScreenDPadLeft"] = [
-    {"wram": {0xD11B: b"\x00", 0xD118: b"\x02", 0xD11C: b"\xFF"}, "read": {0xD118: 1, 0xD11C: 1}},
-    {"wram": {0xD11B: b"\x00", 0xD118: b"\x00", 0xD11C: b"\xFF"}, "read": {0xD118: 1, 0xD11C: 1}},
-    dict(POISON, wram={0xD11B: b"\x00", 0xD118: b"\x02", 0xD11C: b"\xFF"}, read={0xD118: 1, 0xD11C: 1}),
+    {"wram": {sym("wConfigCursorYPos"): b"\x00", sym("wConfigMessageSpeedCursorPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wCursorBlinkTimer"): 1}},
+    {"wram": {sym("wConfigCursorYPos"): b"\x00", sym("wConfigMessageSpeedCursorPos"): b"\x00", sym("wCursorBlinkTimer"): b"\xFF"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wCursorBlinkTimer"): 1}},
+    dict(POISON, wram={sym("wConfigCursorYPos"): b"\x00", sym("wConfigMessageSpeedCursorPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF"}, read={sym("wConfigMessageSpeedCursorPos"): 1, sym("wCursorBlinkTimer"): 1}),
 ]
 # <<< factory ConfigScreenDPadLeft
 
 # >>> factory ConfigScreenDPadRight
 CONTRACT["ConfigScreenDPadRight"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["ConfigScreenDPadRight"] = [
-    {"wram": {0xD11B: b"\x00", 0xD118: b"\x02", 0xD11C: b"\xFF"}, "read": {0xD118: 1, 0xD11C: 1}},
-    {"wram": {0xD11B: b"\x00", 0xD118: b"\x04", 0xD11C: b"\xFF"}, "read": {0xD118: 1, 0xD11C: 1}},
-    dict(POISON, wram={0xD11B: b"\x00", 0xD118: b"\x02", 0xD11C: b"\xFF"}, read={0xD118: 1, 0xD11C: 1}),
+    {"wram": {sym("wConfigCursorYPos"): b"\x00", sym("wConfigMessageSpeedCursorPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wCursorBlinkTimer"): 1}},
+    {"wram": {sym("wConfigCursorYPos"): b"\x00", sym("wConfigMessageSpeedCursorPos"): b"\x04", sym("wCursorBlinkTimer"): b"\xFF"}, "read": {sym("wConfigMessageSpeedCursorPos"): 1, sym("wCursorBlinkTimer"): 1}},
+    dict(POISON, wram={sym("wConfigCursorYPos"): b"\x00", sym("wConfigMessageSpeedCursorPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF"}, read={sym("wConfigMessageSpeedCursorPos"): 1, sym("wCursorBlinkTimer"): 1}),
 ]
 # <<< factory ConfigScreenDPadRight
 
 # >>> factory UpdateConfigMenuCursor
 CONTRACT["UpdateConfigMenuCursor"] = {"compare": ("b", "c"), "preserve": ("b", "c"), "wram_out": True}
 CASES["UpdateConfigMenuCursor"] = [
-    {"a": 0x02, "b": 0xBB, "c": 0xCC, "wram": {0xD11C: b"\x10"}, "read": {0x9A01: 1}},
-    dict(POISON, a=0x02, wram={0xD11C: b"\x10"}, read={0x9A01: 1}),
+    {"a": 0x02, "b": 0xBB, "c": 0xCC, "wram": {sym("wCursorBlinkTimer"): b"\x10"}, "read": {0x9A01: 1}},
+    dict(POISON, a=0x02, wram={sym("wCursorBlinkTimer"): b"\x10"}, read={0x9A01: 1}),
 ]
 # <<< factory UpdateConfigMenuCursor
 
 # >>> factory ConfigScreenDPadDown
 CONTRACT["ConfigScreenDPadDown"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ConfigScreenDPadDown"] = [
-    {"wram": {0xD11B: b"\x02", 0xD11C: b"\xFF", 0xD118: b"\x00"}, "read": {0xD11B: 1, 0xD11C: 1, 0x9825: 1}},
-    dict(POISON, wram={0xD11B: b"\x02", 0xD11C: b"\xFF", 0xD118: b"\x00"}, read={0xD11B: 1, 0xD11C: 1, 0x9825: 1}),
+    {"wram": {sym("wConfigCursorYPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF", sym("wConfigMessageSpeedCursorPos"): b"\x00"}, "read": {sym("wConfigCursorYPos"): 1, sym("wCursorBlinkTimer"): 1, 0x9825: 1}},
+    dict(POISON, wram={sym("wConfigCursorYPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF", sym("wConfigMessageSpeedCursorPos"): b"\x00"}, read={sym("wConfigCursorYPos"): 1, sym("wCursorBlinkTimer"): 1, 0x9825: 1}),
 ]
 # <<< factory ConfigScreenDPadDown
 
 # >>> factory ConfigScreenDPadUp
 CONTRACT["ConfigScreenDPadUp"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ConfigScreenDPadUp"] = [
-    {"wram": {0xD11B: b"\x02", 0xD11C: b"\xFF", 0xD119: b"\x00"}, "read": {0xD11B: 1, 0xD11C: 1, 0x9981: 1}},
-    dict(POISON, wram={0xD11B: b"\x02", 0xD11C: b"\xFF", 0xD119: b"\x00"}, read={0xD11B: 1, 0xD11C: 1, 0x9981: 1}),
+    {"wram": {sym("wConfigCursorYPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF", sym("wConfigDuelAnimationCursorPos"): b"\x00"}, "read": {sym("wConfigCursorYPos"): 1, sym("wCursorBlinkTimer"): 1, 0x9981: 1}},
+    dict(POISON, wram={sym("wConfigCursorYPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF", sym("wConfigDuelAnimationCursorPos"): b"\x00"}, read={sym("wConfigCursorYPos"): 1, sym("wCursorBlinkTimer"): 1, 0x9981: 1}),
 ]
 # <<< factory ConfigScreenDPadUp
 
 # >>> factory ConfigScreenHandleDPadInput
 CONTRACT["ConfigScreenHandleDPadInput"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ConfigScreenHandleDPadInput"] = [
-    {"wram": {0xFF8F: b"\x40", 0xD11B: b"\x02", 0xD11C: b"\xFF"}, "read": {0xD11B: 1, 0xD11C: 1}},
-    dict(POISON, wram={0xFF8F: b"\x40", 0xD11B: b"\x02", 0xD11C: b"\xFF"}, read={0xD11B: 1, 0xD11C: 1}),
+    {"wram": {sym("hDPadHeld"): b"\x40", sym("wConfigCursorYPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF"}, "read": {sym("wConfigCursorYPos"): 1, sym("wCursorBlinkTimer"): 1}},
+    dict(POISON, wram={sym("hDPadHeld"): b"\x40", sym("wConfigCursorYPos"): b"\x02", sym("wCursorBlinkTimer"): b"\xFF"}, read={sym("wConfigCursorYPos"): 1, sym("wCursorBlinkTimer"): 1}),
 ]
 # <<< factory ConfigScreenHandleDPadInput
 
@@ -175,14 +176,14 @@ CASES["_PauseMenu_Config"] = [
     {
         "keys": [0x00, 0x02],
         "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-        "read": {0xD11A: 1, 0xD291: 1, 0xCD08: 1, 0xCD04: 2, 0xC600: 0x20, 0xC700: 0x20},
+        "read": {sym("wConfigExitSettingsCursorPos"): 1, sym("wd291"): 1, sym("wLineSeparation"): 1, sym("wcd04"): 2, sym("wc600"): 0x20, sym("wc700"): 0x20},
         "instruction_budget": 20000000,
         "cycle_budget": 80000000,
     },
     dict(POISON,
         keys=[0x00, 0x02],
         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-        read={0xD11A: 1, 0xD291: 1, 0xCD08: 1, 0xCD04: 2, 0xC600: 0x20, 0xC700: 0x20},
+        read={sym("wConfigExitSettingsCursorPos"): 1, sym("wd291"): 1, sym("wLineSeparation"): 1, sym("wcd04"): 2, sym("wc600"): 0x20, sym("wc700"): 0x20},
         instruction_budget=20000000,
         cycle_budget=80000000,
     ),

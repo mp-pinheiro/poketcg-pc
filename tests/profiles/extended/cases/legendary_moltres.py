@@ -9,8 +9,6 @@ _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
 
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
-    case["read"][0xCC00] = 0xBD
-    case["read"][0xCCBE] = 0x42
     return case
 
 

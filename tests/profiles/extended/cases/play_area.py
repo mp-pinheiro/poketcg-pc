@@ -958,14 +958,14 @@ MUTATIONS = {
         'case_ids': [   'ZeroObjectPositionsAndToggleOAMCopy_Bank6-0',
                         'ZeroObjectPositionsAndToggleOAMCopy_Bank6-1',
                         'ZeroObjectPositionsAndToggleOAMCopy_Bank6-2'],
-        'source': 'src/profiles/extended/home/play_area.c'},
+        'source': 'src/home/play_area.c'},
     'OpenInPlayAreaScreen_HandleInput': {   'source_symbol': 'OpenInPlayAreaScreen_HandleInput',
         'before': 'if (masked != 0u)\n'
                   '\t\treturn (OpenInPlayAreaScreenHandleInputResult){masked, 0x20u};',
         'after': 'if (masked != 0u)\n'
                  '\t\treturn (OpenInPlayAreaScreenHandleInputResult){0u, 0x20u};',
         'case_ids': ['OpenInPlayAreaScreen_HandleInput-0'],
-        'source': 'src/profiles/extended/home/play_area.c'},
+        'source': 'src/home/play_area.c'},
     'OpenInPlayAreaScreen_TurnHolderPlayArea': {   'source_symbol': 'OpenInPlayAreaScreen_TurnHolderPlayArea',
         'before': 'void OpenInPlayAreaScreen_TurnHolderPlayArea(void)\n'
                   '{\n'
@@ -976,7 +976,7 @@ MUTATIONS = {
         'case_ids': [   'OpenInPlayAreaScreen_TurnHolderPlayArea-0',
                         'OpenInPlayAreaScreen_TurnHolderPlayArea-1',
                         'OpenInPlayAreaScreen_TurnHolderPlayArea-2'],
-        'source': 'src/profiles/extended/home/play_area.c'},
+        'source': 'src/home/play_area.c'},
     'OpenInPlayAreaScreen_NonTurnHolderPlayArea': {   'source_symbol': 'OpenInPlayAreaScreen_NonTurnHolderPlayArea',
         'before': 'void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void)\n'
                   '{\n'
@@ -987,7 +987,7 @@ MUTATIONS = {
         'case_ids': [   'OpenInPlayAreaScreen_NonTurnHolderPlayArea-0',
                         'OpenInPlayAreaScreen_NonTurnHolderPlayArea-1',
                         'OpenInPlayAreaScreen_NonTurnHolderPlayArea-2'],
-        'source': 'src/profiles/extended/home/play_area.c'},
+        'source': 'src/home/play_area.c'},
     'OpenInPlayAreaScreen_TurnHolderDiscardPile': {   'source_symbol': 'OpenInPlayAreaScreen_TurnHolderDiscardPile',
         'before': 'void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n'
                   '{\n'
@@ -1000,7 +1000,7 @@ MUTATIONS = {
         'case_ids': [   'OpenInPlayAreaScreen_TurnHolderDiscardPile-0',
                         'OpenInPlayAreaScreen_TurnHolderDiscardPile-1',
                         'OpenInPlayAreaScreen_TurnHolderDiscardPile-2'],
-        'source': 'src/profiles/extended/home/play_area.c'},
+        'source': 'src/home/play_area.c'},
     'OpenInPlayAreaScreen_NonTurnHolderDiscardPile': {   'source_symbol': 'OpenInPlayAreaScreen_NonTurnHolderDiscardPile',
         'before': 'void OpenInPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)\n'
                   '{\n'
@@ -1011,7 +1011,7 @@ MUTATIONS = {
         'case_ids': [   'OpenInPlayAreaScreen_NonTurnHolderDiscardPile-0',
                         'OpenInPlayAreaScreen_NonTurnHolderDiscardPile-1',
                         'OpenInPlayAreaScreen_NonTurnHolderDiscardPile-2'],
-        'source': 'src/profiles/extended/home/play_area.c'},
+        'source': 'src/home/play_area.c'},
     'OpenInPlayAreaScreen_NonTurnHolderHand': {   'source_symbol': 'OpenInPlayAreaScreen_NonTurnHolderHand',
         'before': 'void OpenInPlayAreaScreen_NonTurnHolderHand(void)\n'
                   '{\n'
@@ -1021,7 +1021,7 @@ MUTATIONS = {
                  '\tuint8_t saved_hWhoseTurn = 0u;',
         'case_ids': [   'OpenInPlayAreaScreen_NonTurnHolderHand-0',
                         'OpenInPlayAreaScreen_NonTurnHolderHand-1'],
-        'source': 'src/profiles/extended/home/play_area.c'},
+        'source': 'src/home/play_area.c'},
     'OpenInPlayAreaScreen_TurnHolderHand': {   'source_symbol': 'OpenInPlayAreaScreen_TurnHolderHand',
         'before': 'uint8_t OpenInPlayAreaScreen_TurnHolderHand(void)\n'
                   '{\n'
@@ -1032,12 +1032,12 @@ MUTATIONS = {
         'case_ids': [   'OpenInPlayAreaScreen_TurnHolderHand-0',
                         'OpenInPlayAreaScreen_TurnHolderHand-1',
                         'OpenInPlayAreaScreen_TurnHolderHand-2'],
-        'source': 'src/profiles/extended/home/play_area.c'},
+        'source': 'src/home/play_area.c'},
     'OpenInPlayAreaScreen': {   'source_symbol': 'OpenInPlayAreaScreen',
         'before': '\twInPlayAreaCurPosition = INPLAYAREA_PLAYER_ACTIVE;',
         'after': '\twInPlayAreaCurPosition = INPLAYAREA_PLAYER_HAND;',
         'case_ids': ['OpenInPlayAreaScreen-0', 'OpenInPlayAreaScreen-1'],
-        'source': 'src/profiles/extended/home/play_area.c'},
+        'source': 'src/home/play_area.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

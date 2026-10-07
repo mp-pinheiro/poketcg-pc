@@ -24,7 +24,7 @@ MUTATIONS = {
         'before': 'PlaySFX(SFX_LEGENDARY_CARDS)',
         'after': 'PlaySFX(0x11u)',
         'case_ids': ['HallOfHonorLoadMap-0', 'HallOfHonorLoadMap-1', 'HallOfHonorLoadMap-2'],
-        'source': 'src/profiles/extended/home/hall_of_honor.c'},
+        'source': 'src/home/hall_of_honor.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

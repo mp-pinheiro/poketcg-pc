@@ -1,10 +1,11 @@
 """Oracle-diff cases for poketcg/src/home/bg_map.asm."""
+from tests.cases._symbols import sym
 
-SRC = 0xC100
-DST = 0xC500
+SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
+DST = sym("wNameBuffer")
 VRAM = 0x9800
-WLCDC = 0xCABB
-WTEMPBYTE = 0xCAC1
+WLCDC = sym("wLCDC")
+WTEMPBYTE = sym("wTempByte")
 PAT = bytes((i * 13 + 5) & 0xFF for i in range(520))
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,

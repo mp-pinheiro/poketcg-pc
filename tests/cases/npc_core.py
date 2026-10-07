@@ -1,3 +1,4 @@
+from tests.cases._symbols import STACK_WINDOW, sym
 from tests.cases._fixtures import npc_start_fixture as _npc_start_fixture, NPC_START_REGS as _NPC_START_REGS, npc_move_fixture as _npc_move_fixture, NPC_MOVE_REGS as _NPC_MOVE_REGS
 """Oracle-diff cases for poketcg/src/engine/overworld/npc_core.asm."""
 
@@ -8,9 +9,9 @@ CONTRACT = {}
 CASES = {}
 
 def _observable_npc_tail(payload):
-	pre = 0xDC30 - 0xD3AB
-	post = 0xDD00 - 0xD3AB
-	return {0xD3AB: payload[:pre], 0xDD00: payload[post:]}
+	pre = STACK_WINDOW.start - sym("wTempNPC")
+	post = STACK_WINDOW.stop - sym("wTempNPC")
+	return {sym("wTempNPC"): payload[:pre], STACK_WINDOW.stop: payload[post:]}
 
 
 # >>> factory CheckIfNPCIsRonald
@@ -36,11 +37,11 @@ CASES["CheckIfNPCIsRonald"] = [
 CONTRACT["UpdateNPCAnimation"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ("f", "b", "c", "hl")}
 CASES["UpdateNPCAnimation"] = [
 	{},
-	{"wram": {0xD3AA: b"\x03"}},
-	dict(POISON, wram={0xD4CF: b"\x37"}),
-	{"wram": {0xC100: bytes(range(0x10, 0x20)) * 0xE0, 0xD000: (bytes(range(0x10, 0x20)) * 0x100)[:0x3AA], 0xD3AA: b"\x00", **_observable_npc_tail((bytes(range(0x10, 0x20)) * 0x100)[:0xC55])}},
-	{"wram": {0xC100: bytes(range(0x20, 0x30)) * 0xE0, 0xD000: (bytes(range(0x20, 0x30)) * 0x100)[:0x3AA], 0xD3AA: b"\x01", **_observable_npc_tail((bytes(range(0x20, 0x30)) * 0x100)[:0xC55])}},
-	dict(POISON, wram={0xC100: bytes(range(0x10, 0x20)) * 0xE0, 0xD000: (bytes(range(0x10, 0x20)) * 0x100)[:0x3AA], 0xD3AA: b"\x02", **_observable_npc_tail((bytes(range(0x10, 0x20)) * 0x100)[:0xC55])}),
+	{"wram": {sym("wLoadedNPCTempIndex"): b"\x03"}},
+	dict(POISON, wram={sym("wWhichSprite"): b"\x37"}),
+	{"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(0x10, 0x20)) * 0xE0, sym("wNamingScreenDestPointer"): (bytes(range(0x10, 0x20)) * 0x100)[:0x3AA], sym("wLoadedNPCTempIndex"): b"\x00", **_observable_npc_tail((bytes(range(0x10, 0x20)) * 0x100)[:0xC55])}},
+	{"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(0x20, 0x30)) * 0xE0, sym("wNamingScreenDestPointer"): (bytes(range(0x20, 0x30)) * 0x100)[:0x3AA], sym("wLoadedNPCTempIndex"): b"\x01", **_observable_npc_tail((bytes(range(0x20, 0x30)) * 0x100)[:0xC55])}},
+	dict(POISON, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(0x10, 0x20)) * 0xE0, sym("wNamingScreenDestPointer"): (bytes(range(0x10, 0x20)) * 0x100)[:0x3AA], sym("wLoadedNPCTempIndex"): b"\x02", **_observable_npc_tail((bytes(range(0x10, 0x20)) * 0x100)[:0xC55])}),
 ]
 # <<< factory UpdateNPCAnimation
 
@@ -48,40 +49,40 @@ CASES["UpdateNPCAnimation"] = [
 CONTRACT["ApplyRandomCountToNPCAnim"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ("f", "b", "c", "hl")}
 CASES["ApplyRandomCountToNPCAnim"] = [
 	{},
-	{"wram": {0xD3AA: b"\x01"}},
-	dict(POISON, wram={0xD4CF: b"\x64"}),
-	{"wram": {0xC100: bytes(range(0x10, 0x20)) * 0xE0, 0xD000: (bytes(range(0x10, 0x20)) * 0x100)[:0x3AA], 0xD3AA: b"\x00", **_observable_npc_tail((bytes(range(0x10, 0x20)) * 0x100)[:0xC55])}},
-	{"wram": {0xC100: bytes(range(0x20, 0x30)) * 0xE0, 0xD000: (bytes(range(0x20, 0x30)) * 0x100)[:0x3AA], 0xD3AA: b"\x02", **_observable_npc_tail((bytes(range(0x20, 0x30)) * 0x100)[:0xC55])}},
-	dict(POISON, wram={0xC100: bytes(range(0x10, 0x20)) * 0xE0, 0xD000: (bytes(range(0x10, 0x20)) * 0x100)[:0x3AA], 0xD3AA: b"\x01", **_observable_npc_tail((bytes(range(0x10, 0x20)) * 0x100)[:0xC55])}),
-	{"wram": {0xC100: b"\xff" * 0xE00, 0xD000: b"\xff" * 0x3AA, 0xD3AA: b"\x00", **_observable_npc_tail(b"\xff" * 0xC55)}},
+	{"wram": {sym("wLoadedNPCTempIndex"): b"\x01"}},
+	dict(POISON, wram={sym("wWhichSprite"): b"\x64"}),
+	{"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(0x10, 0x20)) * 0xE0, sym("wNamingScreenDestPointer"): (bytes(range(0x10, 0x20)) * 0x100)[:0x3AA], sym("wLoadedNPCTempIndex"): b"\x00", **_observable_npc_tail((bytes(range(0x10, 0x20)) * 0x100)[:0xC55])}},
+	{"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(0x20, 0x30)) * 0xE0, sym("wNamingScreenDestPointer"): (bytes(range(0x20, 0x30)) * 0x100)[:0x3AA], sym("wLoadedNPCTempIndex"): b"\x02", **_observable_npc_tail((bytes(range(0x20, 0x30)) * 0x100)[:0xC55])}},
+	dict(POISON, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(0x10, 0x20)) * 0xE0, sym("wNamingScreenDestPointer"): (bytes(range(0x10, 0x20)) * 0x100)[:0x3AA], sym("wLoadedNPCTempIndex"): b"\x01", **_observable_npc_tail((bytes(range(0x10, 0x20)) * 0x100)[:0xC55])}),
+	{"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xff" * 0xE00, sym("wNamingScreenDestPointer"): b"\xff" * 0x3AA, sym("wLoadedNPCTempIndex"): b"\x00", **_observable_npc_tail(b"\xff" * 0xC55)}},
 ]
 # <<< factory ApplyRandomCountToNPCAnim
 
 # >>> factory SetNPCAnimation
 CONTRACT["SetNPCAnimation"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("b", "c", "hl")}
 CASES["SetNPCAnimation"] = [
-    {"a": 0, "wram": {0xD3AA: b"\x00"}, "read": {0xD300: 0x100}},
-    {"a": 1, "wram": {0xD3AA: b"\x01"}, "read": {0xD300: 0x100}},
-    {"a": 0xFF, "wram": {0xD3AA: b"\x02"}, "read": {0xD300: 0x100}},
-    dict(POISON, a=0x33, wram={0xD3AA: b"\x01"}, read={0xD300: 0x100}),
+    {"a": 0, "wram": {sym("wLoadedNPCTempIndex"): b"\x00"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x100}},
+    {"a": 1, "wram": {sym("wLoadedNPCTempIndex"): b"\x01"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x100}},
+    {"a": 0xFF, "wram": {sym("wLoadedNPCTempIndex"): b"\x02"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x100}},
+    dict(POISON, a=0x33, wram={sym("wLoadedNPCTempIndex"): b"\x01"}, read={sym("wTempObjectPalettesCGB") + 0x29: 0x100}),
 ]
 # <<< factory SetNPCAnimation
 
 # >>> factory SetNPCDirection
 CONTRACT["SetNPCDirection"] = {"compare": ("a", "hl"), "preserve": ("hl",)}
 CASES["SetNPCDirection"] = [
-    {"a": 0, "wram": {0xD3AA: b"\x00"}, "read": {0xD300: 0x100}},
-    {"a": 1, "wram": {0xD3AA: b"\x01"}, "read": {0xD300: 0x100}},
-    {"a": 0xFF, "wram": {0xD3AA: b"\x02"}, "read": {0xD300: 0x100}},
-    dict(POISON, a=0x02, wram={0xD3AA: b"\x01"}, read={0xD300: 0x100}),
+    {"a": 0, "wram": {sym("wLoadedNPCTempIndex"): b"\x00"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x100}},
+    {"a": 1, "wram": {sym("wLoadedNPCTempIndex"): b"\x01"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x100}},
+    {"a": 0xFF, "wram": {sym("wLoadedNPCTempIndex"): b"\x02"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x100}},
+    dict(POISON, a=0x02, wram={sym("wLoadedNPCTempIndex"): b"\x01"}, read={sym("wTempObjectPalettesCGB") + 0x29: 0x100}),
 ]
 # <<< factory SetNPCDirection
 
 # >>> factory StartNPCMovement
 # wLoadedNPCTempIndex = 0xD3AA; movement scripts live in scratch WRAM ($C100-$CA00),
 # where GetNextNPCMovementByte's bus read at $Cxxx hits WRAM regardless of bank.
-SCRATCH = 0xC100
-wLoadedNPCTempIndex = 0xD3AA
+SCRATCH = sym("wDecompressionSecondaryBufferStart") + 0x11
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
 # compare excludes f (loop/callee residue on the stop path, not a produced contract)
 # and d/e (never read here; callee clobber not modeled). bc is an advanced pointer
 # (the routine's own `inc bc` after callees proves they preserve it), so b/c are outputs.
@@ -96,9 +97,9 @@ CASES["StartNPCMovement"] = [
 	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\xef\x7f"}, "read": {SCRATCH: 2}},  # boundary: $ef rotation, $7f max direction
 	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\xf0\x01\x02"}, "read": {SCRATCH: 3}},  # boundary: $f0 minimal jump command
 	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\xf1\x7f" + b"\x00" * 0x7E + b"\x01"}, "read": {SCRATCH: 0x81}},  # jump +$7f max positive
-	{"b": 0xC1, "c": 0x82, "wram": {0xC103: b"\x06", 0xC182: b"\xf3\x80"}, "read": {0xC103: 1, 0xC182: 2}},  # jump -$80, 16-bit wraparound
+	{"b": 0xC1, "c": 0x82, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x14: b"\x06", sym("wDecompressionSecondaryBufferStart") + 0x93: b"\xf3\x80"}, "read": {sym("wDecompressionSecondaryBufferStart") + 0x14: 1, sym("wDecompressionSecondaryBufferStart") + 0x93: 2}},  # jump -$80, 16-bit wraparound
 	dict(POISON, b=0xC1, c=0x00, wram={SCRATCH: b"\x01"}, read={SCRATCH: 1}),  # proves hl preserved, bc unchanged
-	dict(POISON, b=0xC1, c=0x02, wram={0xC102: b"\x81\x05"}, read={0xC102: 2}),  # preservation through rotation path
+	dict(POISON, b=0xC1, c=0x02, wram={sym("wDecompressionSecondaryBufferStart") + 0x13: b"\x81\x05"}, read={sym("wDecompressionSecondaryBufferStart") + 0x13: 2}),  # preservation through rotation path
 	dict(POISON, b=0xC1, c=0x00, wram={SCRATCH: b"\xff"}, read={SCRATCH: 1}),  # preservation through stop path,
     dict(_npc_start_fixture(vram=False, bank=7), **_NPC_START_REGS),
 ]
@@ -107,9 +108,9 @@ CASES["StartNPCMovement"] = [
 # >>> factory Func_1c5e9
 CONTRACT["Func_1c5e9"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("b", "c", "hl")}
 CASES["Func_1c5e9"] = [
-    {"read": {0xD300: 0x200}},
-    {"wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x00"}, "read": {0xD300: 0x200}},
-    dict(POISON, wram={0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x01"}, read={0xD300: 0x200}),
+    {"read": {sym("wTempObjectPalettesCGB") + 0x29: 0x200}},
+    {"wram": {sym("wTempObjectPalettesCGB") + 0x29: bytes(range(256)) * 2, sym("wLoadedNPCTempIndex"): b"\x00"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x200}},
+    dict(POISON, wram={sym("wTempObjectPalettesCGB") + 0x29: bytes(range(256)) * 2, sym("wLoadedNPCTempIndex"): b"\x01"}, read={sym("wTempObjectPalettesCGB") + 0x29: 0x200}),
 ]
 # <<< factory Func_1c5e9
 
@@ -121,100 +122,100 @@ CONTRACT["UpdateNPCPosition"] = {"compare": ("a", "b", "c", "hl"), "preserve": (
 # is how a +-1 transcription of PlayerMovementOffsetTable_Tiles (steps are
 # +-2, map.asm:227-231) shipped green.
 CASES["UpdateNPCPosition"] = [
-	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x00" * 8}, "read": {0xD34A: 8}},
-	dict(POISON, wram={0xD3AA: b"\x00", 0xD34A: b"\x11\x22\x30\x40\x00\x00\x00\x00"}, read={0xD34A: 8}),
-	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x11\x22\x30\x40\x01\x00\x00\x00"}, "read": {0xD34A: 8}},
-	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x11\x22\x30\x40\x02\x00\x00\x00"}, "read": {0xD34A: 8}},
-	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x11\x22\x30\x40\x03\x00\x00\x00"}, "read": {0xD34A: 8}},
+	{"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1ID"): b"\x00" * 8}, "read": {sym("wLoadedNPC1ID"): 8}},
+	dict(POISON, wram={sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1ID"): b"\x11\x22\x30\x40\x00\x00\x00\x00"}, read={sym("wLoadedNPC1ID"): 8}),
+	{"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1ID"): b"\x11\x22\x30\x40\x01\x00\x00\x00"}, "read": {sym("wLoadedNPC1ID"): 8}},
+	{"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1ID"): b"\x11\x22\x30\x40\x02\x00\x00\x00"}, "read": {sym("wLoadedNPC1ID"): 8}},
+	{"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1ID"): b"\x11\x22\x30\x40\x03\x00\x00\x00"}, "read": {sym("wLoadedNPC1ID"): 8}},
 	# second slot, so the index arithmetic is observed as well
-	{"wram": {0xD3AA: b"\x01", 0xD34A: b"\x00" * 12 + b"\x11\x22\x30\x40\x01\x00\x00\x00"}, "read": {0xD34A: 20}},
+	{"wram": {sym("wLoadedNPCTempIndex"): b"\x01", sym("wLoadedNPC1ID"): b"\x00" * 12 + b"\x11\x22\x30\x40\x01\x00\x00\x00"}, "read": {sym("wLoadedNPC1ID"): 20}},
 ]
 # <<< factory UpdateNPCPosition
 
 # >>> factory UpdateNPCSpritePosition
 CONTRACT["UpdateNPCSpritePosition"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["UpdateNPCSpritePosition"] = [
-	{"hl": 0xD3AB, "wram": {0xD3AD: b"\x01\x02", 0xD3B0: b"\x00", 0xD4CF: b"\x00"}, "hram": {0xFF92: b"\x20", 0xFF93: b"\x30"}, "read": {0xD3B0: 1, 0xFF92: 1, 0xFF93: 1, 0xD4CF: 1, 0xD3AD: 1, 0xD3AE: 1}},
-	dict(POISON, hl=0xD3AB, wram={0xD3AD: b"\x10\x20", 0xD3AF: b"\x01", 0xD3B0: b"\x20", 0xD3B3: b"\x08", 0xD4CF: b"\x00"}, hram={0xFF92: b"\x20", 0xFF93: b"\x30"}, read={0xD3B0: 1, 0xD3AF: 1, 0xD3B3: 1, 0xFF92: 1, 0xFF93: 1, 0xD4CF: 1, 0xD3AD: 1, 0xD3AE: 1}),
+	{"hl": sym("wTempNPC"), "wram": {sym("wLoadNPCYPos"): b"\x01\x02", sym("wLoadNPCFunction") + 1: b"\x00", sym("wWhichSprite"): b"\x00"}, "hram": {sym("hSCX"): b"\x20", sym("hSCY"): b"\x30"}, "read": {sym("wLoadNPCFunction") + 1: 1, sym("hSCX"): 1, sym("hSCY"): 1, sym("wWhichSprite"): 1, sym("wLoadNPCYPos"): 1, sym("wLoadNPCDirection"): 1}},
+	dict(POISON, hl=sym("wTempNPC"), wram={sym("wLoadNPCYPos"): b"\x10\x20", sym("wLoadNPCFunction"): b"\x01", sym("wLoadNPCFunction") + 1: b"\x20", sym("wNPCSpriteID"): b"\x08", sym("wWhichSprite"): b"\x00"}, hram={sym("hSCX"): b"\x20", sym("hSCY"): b"\x30"}, read={sym("wLoadNPCFunction") + 1: 1, sym("wLoadNPCFunction"): 1, sym("wNPCSpriteID"): 1, sym("hSCX"): 1, sym("hSCY"): 1, sym("wWhichSprite"): 1, sym("wLoadNPCYPos"): 1, sym("wLoadNPCDirection"): 1}),
 ]
 # <<< factory UpdateNPCSpritePosition
 
 # >>> factory CheckIsAnNPCMoving
 CONTRACT["CheckIsAnNPCMoving"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["CheckIsAnNPCMoving"] = [
-	{"wram": {0xD3B7: b"\x00"}},
-	{"wram": {0xD3B7: b"\x01"}},
-	{"wram": {0xD3B7: b"\x20"}},
-	{"wram": {0xD3B7: b"\x21"}},
-	dict(POISON, wram={0xD3B7: b"\x20"}),
+	{"wram": {sym("wIsAnNPCMoving"): b"\x00"}},
+	{"wram": {sym("wIsAnNPCMoving"): b"\x01"}},
+	{"wram": {sym("wIsAnNPCMoving"): b"\x20"}},
+	{"wram": {sym("wIsAnNPCMoving"): b"\x21"}},
+	dict(POISON, wram={sym("wIsAnNPCMoving"): b"\x20"}),
 ]
 # <<< factory CheckIsAnNPCMoving
 
 # >>> factory UpdateNPCsTilePermission
 CONTRACT["UpdateNPCsTilePermission"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["UpdateNPCsTilePermission"] = [
-    {"wram": {0xD3AA: b"\x00", 0xD34C: b"\x00\x00", 0xD133: b"\xFF"}, "expect": {0xD133: b"\xBF"}, "expect_regs": {"a": 0xBF}},
-    {"wram": {0xD3AA: b"\x01", 0xD356: b"\x04\x06", 0xD165: b"\x40"}, "expect": {0xD165: b"\x00"}, "expect_regs": {"a": 0x00}},
-    {"wram": {0xD3AA: b"\x07", 0xD39C: b"\x0E\x10", 0xD1BA: b"\x7F"}, "expect": {0xD1BA: b"\x3F"}, "expect_regs": {"a": 0x3F}},
-    {"wram": {0xD3AA: b"\x08", 0xD34C: b"\x02\x04", 0xD154: b"\xFF"}, "expect": {0xD154: b"\xBF"}, "expect_regs": {"a": 0xBF}},
-    dict(POISON, wram={0xD3AA: b"\xAA", 0xD34C: b"\x08\x0A", 0xD183: b"\xFF"}, expect={0xD183: b"\xBF"}, expect_regs={"a": 0xBF}),
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1CoordX"): b"\x00\x00", sym("wBoosterViableCardList"): b"\xFF"}, "expect": {sym("wBoosterViableCardList"): b"\xBF"}, "expect_regs": {"a": 0xBF}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x01", sym("wLoadedNPC2ID"): b"\x04\x06", sym("wBoosterViableCardList") + 0x32: b"\x40"}, "expect": {sym("wBoosterViableCardList") + 0x32: b"\x00"}, "expect_regs": {"a": 0x00}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x07", sym("wLoadedNPC7Field0x0a"): b"\x0E\x10", sym("wBoosterViableCardList") + 0x87: b"\x7F"}, "expect": {sym("wBoosterViableCardList") + 0x87: b"\x3F"}, "expect_regs": {"a": 0x3F}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x08", sym("wLoadedNPC1CoordX"): b"\x02\x04", sym("wBoosterViableCardList") + 0x21: b"\xFF"}, "expect": {sym("wBoosterViableCardList") + 0x21: b"\xBF"}, "expect_regs": {"a": 0xBF}},
+    dict(POISON, wram={sym("wLoadedNPCTempIndex"): b"\xAA", sym("wLoadedNPC1CoordX"): b"\x08\x0A", sym("wBoosterViableCardList") + 0x50: b"\xFF"}, expect={sym("wBoosterViableCardList") + 0x50: b"\xBF"}, expect_regs={"a": 0xBF}),
 ]
 # <<< factory UpdateNPCsTilePermission
 
 # >>> factory SetNPCsTilePermission
 CONTRACT["SetNPCsTilePermission"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["SetNPCsTilePermission"] = [
-    {"wram": {0xD3AA: b"\x00", 0xD34C: b"\x00\x00", 0xD133: b"\xFF"}, "expect": {0xD133: b"\x40"}, "expect_regs": {"a": 0x40}},
-    {"wram": {0xD3AA: b"\x01", 0xD356: b"\x04\x06", 0xD165: b"\x40"}, "expect": {0xD165: b"\x40"}, "expect_regs": {"a": 0x40}},
-    {"wram": {0xD3AA: b"\x07", 0xD39C: b"\x0E\x10", 0xD1BA: b"\x7F"}, "expect": {0xD1BA: b"\x40"}, "expect_regs": {"a": 0x40}},
-    {"wram": {0xD3AA: b"\x08", 0xD34C: b"\x02\x04", 0xD154: b"\xFF"}, "expect": {0xD154: b"\x40"}, "expect_regs": {"a": 0x40}},
-    dict(POISON, wram={0xD3AA: b"\xAA", 0xD34C: b"\x08\x0A", 0xD183: b"\xFF"}, expect={0xD183: b"\x40"}, expect_regs={"a": 0x40}),
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1CoordX"): b"\x00\x00", sym("wBoosterViableCardList"): b"\xFF"}, "expect": {sym("wBoosterViableCardList"): b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x01", sym("wLoadedNPC2ID"): b"\x04\x06", sym("wBoosterViableCardList") + 0x32: b"\x40"}, "expect": {sym("wBoosterViableCardList") + 0x32: b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x07", sym("wLoadedNPC7Field0x0a"): b"\x0E\x10", sym("wBoosterViableCardList") + 0x87: b"\x7F"}, "expect": {sym("wBoosterViableCardList") + 0x87: b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x08", sym("wLoadedNPC1CoordX"): b"\x02\x04", sym("wBoosterViableCardList") + 0x21: b"\xFF"}, "expect": {sym("wBoosterViableCardList") + 0x21: b"\x40"}, "expect_regs": {"a": 0x40}},
+    dict(POISON, wram={sym("wLoadedNPCTempIndex"): b"\xAA", sym("wLoadedNPC1CoordX"): b"\x08\x0A", sym("wBoosterViableCardList") + 0x50: b"\xFF"}, expect={sym("wBoosterViableCardList") + 0x50: b"\x40"}, expect_regs={"a": 0x40}),
 ]
 # <<< factory SetNPCsTilePermission
 
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wLoadedNPCTempIndex = 0xD3AA
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
 
-wLoadedNPCTempIndex = 0xD3AA
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wIsAnNPCMoving = 0xD3B7
+wIsAnNPCMoving = sym("wIsAnNPCMoving")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wLoadedNPCTempIndex = 0xD3AA
-wTempNPC = 0xD3AB
-wLoadedNPCs = 0xD34A
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wTempNPC = sym("wTempNPC")
+wLoadedNPCs = sym("wLoadedNPCs")
 NPC_TABLE = bytes(range(1, 97))
 NPC_READ = {wLoadedNPCs: 96}
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wLoadedNPCs = 0xD34A
-wLoadedNPCTempIndex = 0xD3AA
-wRonaldIsInMap = 0xD3B8
+wLoadedNPCs = sym("wLoadedNPCs")
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wRonaldIsInMap = sym("wRonaldIsInMap")
 
-wLoadedNPCTempIndex = 0xD3AA
-wPlayerDirection = 0xD334
-wCurrentNPCNameTx = 0xD0C8
-wOverworldNPCFlags = 0xD0C1
-NPC_BASE = 0xD34A
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wPlayerDirection = sym("wPlayerDirection")
+wCurrentNPCNameTx = sym("wCurrentNPCNameTx")
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+NPC_BASE = sym("wLoadedNPC1ID")
 NPC_DATA = b"\x00" * 96
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wLoadedNPCTempIndex = 0xD3AA
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wIsAnNPCMoving = 0xD3B7
-wNumLoadedNPCs = 0xD349
-wLoadedNPCs = 0xD34A
-wWhichSprite = 0xD4CF
-wPermissionMap = 0xD133
-SPRITE_BUFFER = 0xD4D0
-hSCX = 0xFF92
-hSCY = 0xFF93
+wIsAnNPCMoving = sym("wIsAnNPCMoving")
+wNumLoadedNPCs = sym("wNumLoadedNPCs")
+wLoadedNPCs = sym("wLoadedNPCs")
+wWhichSprite = sym("wWhichSprite")
+wPermissionMap = sym("wPermissionMap")
+SPRITE_BUFFER = sym("wSprite1Enabled")
+hSCX = sym("hSCX")
+hSCY = sym("hSCY")
 def npc_entry(npc_id, sprite_id, x, y, direction=0, flags=0, step=0):
     e = bytearray(12)
     e[0] = npc_id
@@ -230,66 +231,66 @@ def npc_entry(npc_id, sprite_id, x, y, direction=0, flags=0, step=0):
 # >>> factory SetNPCPosition
 CONTRACT["SetNPCPosition"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["SetNPCPosition"] = [
-    {"b": 0x04, "c": 0x06, "wram": {0xD3AA: b"\x00", 0xD34C: b"\x00\x00", 0xD133: b"\xFF", 0xD165: b"\x00"}, "expect": {0xD133: b"\xBF", 0xD165: b"\x40"}, "expect_regs": {"a": 0x40}},
-    {"b": 0x0E, "c": 0x10, "wram": {0xD3AA: b"\x01", 0xD356: b"\x04\x06", 0xD165: b"\xFF", 0xD1BA: b"\x7F"}, "expect": {0xD165: b"\xBF", 0xD1BA: b"\x40"}, "expect_regs": {"a": 0x40}},
-    {"b": 0x02, "c": 0x04, "wram": {0xD3AA: b"\x07", 0xD39C: b"\x0E\x10", 0xD1BA: b"\xFF", 0xD154: b"\x00"}, "expect": {0xD1BA: b"\xBF", 0xD154: b"\x40"}, "expect_regs": {"a": 0x40}},
-    dict(POISON, b=0x12, c=0x14, wram={0xD3AA: b"\xAA", 0xD34C: b"\x08\x0A", 0xD183: b"\xFF", 0xD1DC: b"\x00"}, expect={0xD183: b"\xBF", 0xD1DC: b"\x40"}, expect_regs={"a": 0x40, "b": 0x12, "c": 0x14, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
+    {"b": 0x04, "c": 0x06, "wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1CoordX"): b"\x00\x00", sym("wBoosterViableCardList"): b"\xFF", sym("wBoosterViableCardList") + 0x32: b"\x00"}, "expect": {sym("wBoosterViableCardList"): b"\xBF", sym("wBoosterViableCardList") + 0x32: b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"b": 0x0E, "c": 0x10, "wram": {sym("wLoadedNPCTempIndex"): b"\x01", sym("wLoadedNPC2ID"): b"\x04\x06", sym("wBoosterViableCardList") + 0x32: b"\xFF", sym("wBoosterViableCardList") + 0x87: b"\x7F"}, "expect": {sym("wBoosterViableCardList") + 0x32: b"\xBF", sym("wBoosterViableCardList") + 0x87: b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"b": 0x02, "c": 0x04, "wram": {sym("wLoadedNPCTempIndex"): b"\x07", sym("wLoadedNPC7Field0x0a"): b"\x0E\x10", sym("wBoosterViableCardList") + 0x87: b"\xFF", sym("wBoosterViableCardList") + 0x21: b"\x00"}, "expect": {sym("wBoosterViableCardList") + 0x87: b"\xBF", sym("wBoosterViableCardList") + 0x21: b"\x40"}, "expect_regs": {"a": 0x40}},
+    dict(POISON, b=0x12, c=0x14, wram={sym("wLoadedNPCTempIndex"): b"\xAA", sym("wLoadedNPC1CoordX"): b"\x08\x0A", sym("wBoosterViableCardList") + 0x50: b"\xFF", sym("wBoosterViableCardList") + 0xA9: b"\x00"}, expect={sym("wBoosterViableCardList") + 0x50: b"\xBF", sym("wBoosterViableCardList") + 0xA9: b"\x40"}, expect_regs={"a": 0x40, "b": 0x12, "c": 0x14, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
 ]
 # <<< factory SetNPCPosition
 
 # >>> factory Func_1c53f
 CONTRACT["Func_1c53f"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("b", "c", "hl")};
 CASES["Func_1c53f"] = [
-    {"wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x00"}, "read": {0xD300: 0x200}},
-    {"wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x01"}, "read": {0xD300: 0x200}},
-    dict(POISON, wram={0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x02"}, read={0xD300: 0x200}),
+    {"wram": {sym("wTempObjectPalettesCGB") + 0x29: bytes(range(256)) * 2, sym("wLoadedNPCTempIndex"): b"\x00"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x200}},
+    {"wram": {sym("wTempObjectPalettesCGB") + 0x29: bytes(range(256)) * 2, sym("wLoadedNPCTempIndex"): b"\x01"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x200}},
+    dict(POISON, wram={sym("wTempObjectPalettesCGB") + 0x29: bytes(range(256)) * 2, sym("wLoadedNPCTempIndex"): b"\x02"}, read={sym("wTempObjectPalettesCGB") + 0x29: 0x200}),
 ]
 # <<< factory Func_1c53f
 
 # >>> factory GetNPCDirection
 CONTRACT["GetNPCDirection"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["GetNPCDirection"] = [
-    {"wram": {0xD3AA: b"\x00", 0xD34E: b"\x2A"}, "read": {0xD34E: 1}},
-    {"wram": {0xD3AA: b"\x07", 0xD3A2: b"\x91"}, "read": {0xD3A2: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD3AA: b"\x08", 0xD34E: b"\x7E"}, "read": {0xD34E: 1}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1Direction"): b"\x2A"}, "read": {sym("wLoadedNPC1Direction"): 1}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x07", sym("wLoadedNPC8Direction"): b"\x91"}, "read": {sym("wLoadedNPC8Direction"): 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wLoadedNPCTempIndex"): b"\x08", sym("wLoadedNPC1Direction"): b"\x7E"}, "read": {sym("wLoadedNPC1Direction"): 1}},
 ]
 # <<< factory GetNPCDirection
 
 # >>> factory GetNPCPosition
 CONTRACT["GetNPCPosition"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("hl",)}
 CASES["GetNPCPosition"] = [
-    {"wram": {0xD3AA: b"\x00", 0xD34C: b"\x12\x34"}, "read": {0xD34C: 2}},
-    {"wram": {0xD3AA: b"\x01", 0xD358: b"\x56\x78"}, "read": {0xD358: 2}},
-    {"wram": {0xD3AA: b"\x07", 0xD3A2: b"\x9A\xBC"}, "read": {0xD3A2: 2}},
-    dict(POISON, wram={0xD3AA: b"\x07", 0xD3A2: b"\xDE\xF0"}, read={0xD3A2: 2}),
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1CoordX"): b"\x12\x34"}, "read": {sym("wLoadedNPC1CoordX"): 2}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x01", sym("wLoadedNPC2CoordX"): b"\x56\x78"}, "read": {sym("wLoadedNPC2CoordX"): 2}},
+    {"wram": {sym("wLoadedNPCTempIndex"): b"\x07", sym("wLoadedNPC8Direction"): b"\x9A\xBC"}, "read": {sym("wLoadedNPC8Direction"): 2}},
+    dict(POISON, wram={sym("wLoadedNPCTempIndex"): b"\x07", sym("wLoadedNPC8Direction"): b"\xDE\xF0"}, read={sym("wLoadedNPC8Direction"): 2}),
 ]
 # <<< factory GetNPCPosition
 
 # >>> factory UpdateIsAnNPCMovingFlag
 CONTRACT["UpdateIsAnNPCMovingFlag"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
 CASES["UpdateIsAnNPCMovingFlag"] = [
-    {"hl": 0xC500, "wram": {wIsAnNPCMoving: b"\x00", 0xC505: b"\x00"}, "expect": {wIsAnNPCMoving: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x80}},
-    {"hl": 0xC500, "wram": {wIsAnNPCMoving: b"\x01", 0xC505: b"\x02"}, "expect": {wIsAnNPCMoving: b"\x03"}, "expect_regs": {"a": 0x03, "f": 0x00}},
-    {"hl": 0xC500, "wram": {wIsAnNPCMoving: b"\x80", 0xC505: b"\x01"}, "expect": {wIsAnNPCMoving: b"\x81"}, "expect_regs": {"a": 0x81, "f": 0x00}},
-    dict(POISON, hl=0xC500, wram={wIsAnNPCMoving: b"\x20", 0xC505: b"\x04"}, expect={wIsAnNPCMoving: b"\x24"}, expect_regs={"a": 0x24, "f": 0x00}),
+    {"hl": sym("wNameBuffer"), "wram": {wIsAnNPCMoving: b"\x00", sym("wNameBuffer") + 5: b"\x00"}, "expect": {wIsAnNPCMoving: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x80}},
+    {"hl": sym("wNameBuffer"), "wram": {wIsAnNPCMoving: b"\x01", sym("wNameBuffer") + 5: b"\x02"}, "expect": {wIsAnNPCMoving: b"\x03"}, "expect_regs": {"a": 0x03, "f": 0x00}},
+    {"hl": sym("wNameBuffer"), "wram": {wIsAnNPCMoving: b"\x80", sym("wNameBuffer") + 5: b"\x01"}, "expect": {wIsAnNPCMoving: b"\x81"}, "expect_regs": {"a": 0x81, "f": 0x00}},
+    dict(POISON, hl=sym("wNameBuffer"), wram={wIsAnNPCMoving: b"\x20", sym("wNameBuffer") + 5: b"\x04"}, expect={wIsAnNPCMoving: b"\x24"}, expect_regs={"a": 0x24, "f": 0x00}),
 ]
 # <<< factory UpdateIsAnNPCMovingFlag
 
 # >>> factory ClearNPCs
 CONTRACT["ClearNPCs"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")};
 CASES["ClearNPCs"] = [
-	{"wram": {0xD34A: b"\xFF" * 0x60, 0xD349: b"\x7F", 0xD3B8: b"\x01"}, "expect": {0xD34A: b"\x00" * 0x60, 0xD349: b"\x00", 0xD3B8: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
-	{"wram": {0xD34A: bytes(range(0x60)), 0xD349: b"\xAA", 0xD3B8: b"\xBB"}, "expect": {0xD34A: b"\x00" * 0x60, 0xD349: b"\x00", 0xD3B8: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
-	dict(POISON, wram={0xD34A: b"\xA5" * 0x60, 0xD349: b"\x5A", 0xD3B8: b"\xC3"}, expect={0xD34A: b"\x00" * 0x60, 0xD349: b"\x00", 0xD3B8: b"\x00"}, expect_regs={"a": 0x00, "f": 0xC0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
+	{"wram": {sym("wLoadedNPC1ID"): b"\xFF" * 0x60, sym("wNumLoadedNPCs"): b"\x7F", sym("wRonaldIsInMap"): b"\x01"}, "expect": {sym("wLoadedNPC1ID"): b"\x00" * 0x60, sym("wNumLoadedNPCs"): b"\x00", sym("wRonaldIsInMap"): b"\x00"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
+	{"wram": {sym("wLoadedNPC1ID"): bytes(range(0x60)), sym("wNumLoadedNPCs"): b"\xAA", sym("wRonaldIsInMap"): b"\xBB"}, "expect": {sym("wLoadedNPC1ID"): b"\x00" * 0x60, sym("wNumLoadedNPCs"): b"\x00", sym("wRonaldIsInMap"): b"\x00"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
+	dict(POISON, wram={sym("wLoadedNPC1ID"): b"\xA5" * 0x60, sym("wNumLoadedNPCs"): b"\x5A", sym("wRonaldIsInMap"): b"\xC3"}, expect={sym("wLoadedNPC1ID"): b"\x00" * 0x60, sym("wNumLoadedNPCs"): b"\x00", sym("wRonaldIsInMap"): b"\x00"}, expect_regs={"a": 0x00, "f": 0xC0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
 ]
 # <<< factory ClearNPCs
 
 # >>> factory SetAllNPCTilePermissions
 CONTRACT["SetAllNPCTilePermissions"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["SetAllNPCTilePermissions"] = [
-	{"wram": {0xD34A: b"\x01\x00\x00\x00" + b"\x00" * 92, 0xD133: b"\xFF"}, "expect": {0xD133: b"\x40"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
-	{"wram": {0xD34A: b"\x00" * 84 + b"\x01\x00\x0E\x10" + b"\x00" * 8, 0xD1BA: b"\x7F"}, "expect": {0xD1BA: b"\x40"}, "expect_regs": {"a": 0x40, "f": 0xC0}},
-	dict(POISON, wram={0xD34A: b"\x00" * 96, 0xD3AA: b"\x77"}, expect_regs={"a": 0x00, "f": 0xC0}),
+	{"wram": {sym("wLoadedNPC1ID"): b"\x01\x00\x00\x00" + b"\x00" * 92, sym("wBoosterViableCardList"): b"\xFF"}, "expect": {sym("wBoosterViableCardList"): b"\x40"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
+	{"wram": {sym("wLoadedNPC1ID"): b"\x00" * 84 + b"\x01\x00\x0E\x10" + b"\x00" * 8, sym("wBoosterViableCardList") + 0x87: b"\x7F"}, "expect": {sym("wBoosterViableCardList") + 0x87: b"\x40"}, "expect_regs": {"a": 0x40, "f": 0xC0}},
+	dict(POISON, wram={sym("wLoadedNPC1ID"): b"\x00" * 96, sym("wLoadedNPCTempIndex"): b"\x77"}, expect_regs={"a": 0x00, "f": 0xC0}),
 ]
 # <<< factory SetAllNPCTilePermissions
 
@@ -324,30 +325,30 @@ CASES["SetNewScriptNPC"] = [
 CONTRACT["UnloadNPC"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["UnloadNPC"] = [
 	{},
-	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x01\x02\x00\x00", 0xD349: b"\x03"}, "expect": {0xD34A: b"\x00\x02", 0xD349: b"\x02"}},
-	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x71\x03\x00\x00", 0xD349: b"\x02", 0xD3B8: b"\x01"}, "expect": {0xD34A: b"\x00\x03", 0xD349: b"\x01", 0xD3B8: b"\x00"}},
-	dict(POISON, wram={0xD3AA: b"\x01", 0xD356: b"\x01\x04\x00\x00", 0xD349: b"\x05"}, expect={0xD356: b"\x00\x04", 0xD349: b"\x04"}),
-	dict(POISON, wram={0xD3AA: b"\x01", 0xD356: b"\x72\x07\x00\x00", 0xD349: b"\x01", 0xD3B8: b"\x01"}, expect={0xD356: b"\x00\x07", 0xD349: b"\x00", 0xD3B8: b"\x00"}),
+	{"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1ID"): b"\x01\x02\x00\x00", sym("wNumLoadedNPCs"): b"\x03"}, "expect": {sym("wLoadedNPC1ID"): b"\x00\x02", sym("wNumLoadedNPCs"): b"\x02"}},
+	{"wram": {sym("wLoadedNPCTempIndex"): b"\x00", sym("wLoadedNPC1ID"): b"\x71\x03\x00\x00", sym("wNumLoadedNPCs"): b"\x02", sym("wRonaldIsInMap"): b"\x01"}, "expect": {sym("wLoadedNPC1ID"): b"\x00\x03", sym("wNumLoadedNPCs"): b"\x01", sym("wRonaldIsInMap"): b"\x00"}},
+	dict(POISON, wram={sym("wLoadedNPCTempIndex"): b"\x01", sym("wLoadedNPC2ID"): b"\x01\x04\x00\x00", sym("wNumLoadedNPCs"): b"\x05"}, expect={sym("wLoadedNPC2ID"): b"\x00\x04", sym("wNumLoadedNPCs"): b"\x04"}),
+	dict(POISON, wram={sym("wLoadedNPCTempIndex"): b"\x01", sym("wLoadedNPC2ID"): b"\x72\x07\x00\x00", sym("wNumLoadedNPCs"): b"\x01", sym("wRonaldIsInMap"): b"\x01"}, expect={sym("wLoadedNPC2ID"): b"\x00\x07", sym("wNumLoadedNPCs"): b"\x00", sym("wRonaldIsInMap"): b"\x00"}),
 ]
 # <<< factory UnloadNPC
 
 # >>> factory Func_1c52e
 CONTRACT["Func_1c52e"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("b", "c", "hl")}
 CASES["Func_1c52e"] = [
-    {"a": 0x00, "wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x00"}, "read": {0xD300: 0x200}, "expect": {0xD307: b"\x00"}},
-    {"a": 0x7F, "wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x01"}, "read": {0xD300: 0x200}, "expect": {0xD313: b"\x7F"}},
-    dict(POISON, a=0x33, wram={0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x00"}, read={0xD300: 0x200}, expect={0xD307: b"\x33"}),
-    dict(POISON, a=0xFF, wram={0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x01"}, read={0xD300: 0x200}, expect={0xD313: b"\xFF"}),
+    {"a": 0x00, "wram": {sym("wTempObjectPalettesCGB") + 0x29: bytes(range(256)) * 2, sym("wLoadedNPCTempIndex"): b"\x00"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x200}, "expect": {sym("wTempObjectPalettesCGB") + 0x30: b"\x00"}},
+    {"a": 0x7F, "wram": {sym("wTempObjectPalettesCGB") + 0x29: bytes(range(256)) * 2, sym("wLoadedNPCTempIndex"): b"\x01"}, "read": {sym("wTempObjectPalettesCGB") + 0x29: 0x200}, "expect": {sym("wTempObjectPalettesCGB") + 0x3C: b"\x7F"}},
+    dict(POISON, a=0x33, wram={sym("wTempObjectPalettesCGB") + 0x29: bytes(range(256)) * 2, sym("wLoadedNPCTempIndex"): b"\x00"}, read={sym("wTempObjectPalettesCGB") + 0x29: 0x200}, expect={sym("wTempObjectPalettesCGB") + 0x30: b"\x33"}),
+    dict(POISON, a=0xFF, wram={sym("wTempObjectPalettesCGB") + 0x29: bytes(range(256)) * 2, sym("wLoadedNPCTempIndex"): b"\x01"}, read={sym("wTempObjectPalettesCGB") + 0x29: 0x200}, expect={sym("wTempObjectPalettesCGB") + 0x3C: b"\xFF"}),
 ]
 # <<< factory Func_1c52e
 
 # >>> factory UpdateNPCMovementStep
 CONTRACT["UpdateNPCMovementStep"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
 CASES["UpdateNPCMovementStep"] = [
-    {"a": 0x17, "hl": 0xC500, "wram": {0xC505: b"\x00", 0xC508: b"\x0F"}, "expect": {0xC508: b"\x0F"}, "expect_regs": {"a": 0x17}},
-    {"a": 0x42, "hl": 0xC500, "wram": {0xC505: b"\x20", 0xC508: b"\x00"}, "expect": {0xC508: b"\x01"}, "expect_regs": {"a": 0x42}},
-    {"a": 0x99, "hl": 0xC500, "wram": {0xC505: b"\x20", 0xC508: b"\x0E"}, "expect": {0xC508: b"\x0F"}, "expect_regs": {"a": 0x99}},
-    dict(POISON, hl=0xC500, wram={0xC505: b"\x20", 0xC508: b"\x0E"}, expect={0xC508: b"\x0F"}, expect_regs={"a": 0xAA}),
+    {"a": 0x17, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer") + 5: b"\x00", sym("wNameBuffer") + 8: b"\x0F"}, "expect": {sym("wNameBuffer") + 8: b"\x0F"}, "expect_regs": {"a": 0x17}},
+    {"a": 0x42, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer") + 5: b"\x20", sym("wNameBuffer") + 8: b"\x00"}, "expect": {sym("wNameBuffer") + 8: b"\x01"}, "expect_regs": {"a": 0x42}},
+    {"a": 0x99, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer") + 5: b"\x20", sym("wNameBuffer") + 8: b"\x0E"}, "expect": {sym("wNameBuffer") + 8: b"\x0F"}, "expect_regs": {"a": 0x99}},
+    dict(POISON, hl=sym("wNameBuffer"), wram={sym("wNameBuffer") + 5: b"\x20", sym("wNameBuffer") + 8: b"\x0E"}, expect={sym("wNameBuffer") + 8: b"\x0F"}, expect_regs={"a": 0xAA}),
 ]
 # <<< factory UpdateNPCMovementStep
 
@@ -355,10 +356,10 @@ CASES["UpdateNPCMovementStep"] = [
 CONTRACT["FindNPCAtLocation"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["FindNPCAtLocation"] = [
     {"b": 0x05, "c": 0x07, "d": 0x11, "e": 0x22, "hl": 0x3344,
-     "wram": {0xD34B: b"\x01", 0xD34C: b"\x05\x07", 0xD34F: b"\x00"}},
+     "wram": {sym("wLoadedNPC1Sprite"): b"\x01", sym("wLoadedNPC1CoordX"): b"\x05\x07", sym("wLoadedNPC1Field0x05"): b"\x00"}},
     dict(POISON, b=0x09, c=0x0A,
-         wram={0xD357: b"\x01", 0xD358: b"\x09\x0A", 0xD35B: b"\x00",
-               0xD34C: b"\x00\x00"}),
+         wram={sym("wLoadedNPC2Sprite"): b"\x01", sym("wLoadedNPC2CoordX"): b"\x09\x0A", sym("wLoadedNPC2Field0x05"): b"\x00",
+               sym("wLoadedNPC1CoordX"): b"\x00\x00"}),
     {"b": 0xFF, "c": 0x00, "d": 0x11, "e": 0x22, "hl": 0x3344},
 ]
 # <<< factory FindNPCAtLocation

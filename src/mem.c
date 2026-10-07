@@ -31,13 +31,12 @@ static uint16_t g_ir_read_count;
 static uint16_t g_ir_write_count;
 static uint8_t g_ir_mode;
 
-/* Key timeline: entries[0..count-1], cycled per completed joypad poll. count <= 1
- * disarms the advance entirely, leaving g_keys exactly as seeded. */
 static uint8_t g_key_entries[MEM_KEY_TIMELINE_MAX];
 static uint8_t g_key_count;
 static uint8_t g_key_index;
 static uint16_t g_key_latch_addr;
 static int g_key_latch_armed;
+static uint8_t g_key_poll_stage;
 
 void gb_keys_arm_timeline(const uint8_t *entries, uint8_t count, uint16_t latch_addr)
 {
@@ -49,6 +48,7 @@ void gb_keys_arm_timeline(const uint8_t *entries, uint8_t count, uint16_t latch_
 	g_key_index = 0;
 	g_key_latch_addr = latch_addr;
 	g_key_latch_armed = count > 1;
+	g_key_poll_stage = 0;
 	if (count)
 		g_keys = entries[0];
 }
@@ -767,10 +767,11 @@ uint8_t gb_read8(uint16_t addr)
 	if (addr == 0xFF00u) {
 		uint8_t sel = (uint8_t)(*gb_ptr(addr) & 0x30u);
 		uint8_t low = 0x0Fu;
+		uint8_t keys = (g_key_latch_armed && g_key_poll_stage == 0u) ? g_key_entries[0] : g_keys;
 		if (!(sel & 0x10u)) /* P14 low: d-pad */
-			low &= (uint8_t)~(g_keys >> 4);
+			low &= (uint8_t)~(keys >> 4);
 		if (!(sel & 0x20u)) /* P15 low: buttons */
-			low &= (uint8_t)~(g_keys & 0x0Fu);
+			low &= (uint8_t)~(keys & 0x0Fu);
 		return (uint8_t)(0xC0u | sel | low);
 	}
 	/* Unmapped IO and the unused bits of partially-mapped registers float
@@ -979,11 +980,17 @@ void gb_write8(uint16_t addr, uint8_t v)
 		g_ir_write_count++;
 	if (addr == 0xFF26u && (v & 0x80u) == 0u)
 		memset(g_io + 0x10, 0, 0x16);
-	/* A completed joypad poll is the native frame boundary: advance to the next
-	 * timeline entry so the following poll sees a fresh press edge, exactly as a
-	 * new reference frame does. Cycles modulo the entry count, matching
-	 * runner.c. Disarmed unless the case declared more than one entry. */
-	if (g_key_latch_armed && addr == g_key_latch_addr) {
+	if (addr == 0xFF00u) {
+		uint8_t sel = (uint8_t)(v & 0x30u);
+		if (sel == 0x20u)
+			g_key_poll_stage = 1;
+		else if (sel == 0x10u && g_key_poll_stage == 1)
+			g_key_poll_stage = 2;
+		else
+			g_key_poll_stage = 0;
+	}
+	if (g_key_latch_armed && addr == g_key_latch_addr && g_key_poll_stage == 2) {
+		g_key_poll_stage = 0;
 		g_key_index = (uint8_t)((g_key_index + 1u) % g_key_count);
 		g_keys = g_key_entries[g_key_index];
 	}

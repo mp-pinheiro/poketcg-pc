@@ -552,17 +552,17 @@ MUTATIONS = {
         'before': '\tif (wdd8c == 0u) {',
         'after': '\tif (wdd8c != 0u) {',
         'case_ids': ['SFX_UpdateSFX-0'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'Func_fc105': {   'source_symbol': 'Func_fc105',
         'before': '\tgb_write8(hl, (uint8_t)de);',
         'after': '\tgb_write8(hl, (uint8_t)(de >> 8));',
         'case_ids': ['Func_fc105-1', 'Func_fc105-3'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'SFX_end': {   'source_symbol': 'SFX_end',
         'before': '\twdd8c = (uint8_t)(wdd8c & mask);',
         'after': '\twdd8c = (uint8_t)(wdd8c | mask);',
         'case_ids': ['SFX_end-0', 'SFX_end-1', 'SFX_end-2', 'SFX_end-3'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'SFX_frequency': {   'source_symbol': 'SFX_frequency',
         'before': '\tuint16_t de = caller_hl;',
         'after': '\tuint16_t de = (uint16_t)(caller_hl + 2u);',
@@ -597,7 +597,7 @@ MUTATIONS = {
                  '{\n'
                  '\tExecuteNextSFXCommand(hl, (uint16_t)(bc + 1u));',
         'case_ids': ['SFX_unused-0', 'SFX_unused-1', 'SFX_unused-2', 'SFX_unused-3'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'SFX_pitch_offset': {   'source_symbol': 'SFX_pitch_offset',
         'before': '\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), gb_read8(caller_hl));',
         'after': '\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), 0u);',
@@ -629,7 +629,7 @@ MUTATIONS = {
                  '\t\tgb_write8((uint16_t)(AUD3WAVERAM + i), wave[i]);\n'
                  '\twMusicWaveChange = 0u;',
         'case_ids': ['SFX_wave-0', 'SFX_wave-1', 'SFX_wave-2'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'SFX_duty': {   'source_symbol': 'SFX_duty',
         'before': 'void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl)\n'
                   '{\n'
@@ -640,7 +640,7 @@ MUTATIONS = {
                  '\tSFX_Duty((uint8_t)bc, a);\n'
                  '\tExecuteNextSFXCommand(caller_hl, (uint16_t)(bc + 1u));',
         'case_ids': ['SFX_duty-0', 'SFX_duty-1', 'SFX_duty-2', 'SFX_duty-3'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'SFX_envelope': {   'source_symbol': 'SFX_envelope',
         'before': 'void SFX_envelope(uint16_t bc, uint16_t caller_hl)\n'
                   '{\n'
@@ -660,7 +660,7 @@ MUTATIONS = {
                  '\tuint8_t count = gb_read8((uint16_t)(wde3f_ADDR + bc));\n'
                  '\tcount = (uint8_t)(count - 2u);',
         'case_ids': ['SFX_endloop-0', 'SFX_endloop-1', 'SFX_endloop-2'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'SFX_Play': {   'source_symbol': 'SFX_Play',
         'before': '\tuint16_t offset = (uint16_t)sfx_id * 2u;',
         'after': '\tuint16_t offset = (uint16_t)sfx_id * 3u;',
@@ -670,7 +670,7 @@ MUTATIONS = {
         'before': '\twde54 = wdd8c;',
         'after': '\twde54 = (uint8_t)(wdd8c ^ 1u);',
         'case_ids': ['SFX_Update-2', 'SFX_Update-3'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'Func_fc26c': {   'source_symbol': 'Func_fc26c',
         'before': '\twCurSfxID = 0x80;',
         'after': '\twCurSfxID = 0x81;',
@@ -680,7 +680,7 @@ MUTATIONS = {
         'before': '\tgb_read8(rAUD4GO);\n\twdd8c = 0;',
         'after': '\tgb_read8(rAUD4GO);\n\twdd8c = 1;',
         'case_ids': ['Func_fc279-0', 'Func_fc279-1'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'SFX_wait': {   'source_symbol': 'SFX_wait',
         'before': '\tgb_write8((uint16_t)(wde33_ADDR + bc), wait_val);',
         'after': '\tgb_write8((uint16_t)(wde33_ADDR + bc + 1u), wait_val);',
@@ -690,12 +690,12 @@ MUTATIONS = {
         'before': '\t\tnew_freq = (uint16_t)(freq + offset);',
         'after': '\t\tnew_freq = (uint16_t)(freq + offset + 1u);',
         'case_ids': ['SFX_ApplyPitchOffset-1', 'SFX_ApplyPitchOffset-3'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
     'Func_fc1cd': {   'source_symbol': 'Func_fc1cd',
         'before': '\tgb_write8(freq_addr, new_low);',
         'after': '\tgb_write8(freq_addr, (uint8_t)(new_low + 1u));',
         'case_ids': ['Func_fc1cd-1', 'Func_fc1cd-2'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+        'source': 'src/home/sfx.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

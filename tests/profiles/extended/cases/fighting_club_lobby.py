@@ -73,18 +73,18 @@ MUTATIONS = {
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(FightingClubLobbyAfterDuelTable + 1u));',
         'case_ids': ['FightingClubLobbyAfterDuel-0'],
-        'source': 'src/profiles/extended/home/fighting_club_lobby.c'},
+        'source': 'src/home/fighting_club_lobby.c'},
     'Preload_Granny1': {   'source_symbol': 'Preload_Granny1',
         'before': '\tif (a < TRUE)\n\t\tf |= 0x10u;',
         'after': '\tif (a <= TRUE)\n\t\tf |= 0x10u;',
         'case_ids': ['Preload_Granny1-1'],
-        'source': 'src/profiles/extended/home/fighting_club_lobby.c'},
+        'source': 'src/home/fighting_club_lobby.c'},
     'Preload_ImakuniInFightingClubLobby': {   'source_symbol': 'Preload_ImakuniInFightingClubLobby',
         'before': '\tif (room != IMAKUNI_FIGHTING_CLUB)',
         'after': '\tif (room == IMAKUNI_FIGHTING_CLUB)',
         'case_ids': [   'Preload_ImakuniInFightingClubLobby-0',
                         'Preload_ImakuniInFightingClubLobby-1'],
-        'source': 'src/profiles/extended/home/fighting_club_lobby.c'},
+        'source': 'src/home/fighting_club_lobby.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

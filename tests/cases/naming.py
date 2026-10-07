@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/naming.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,11 +8,11 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wNameBuffer = 0xC500
-sPlayerName = 0xA010
-wRNG1 = 0xCACA
-wRNG2 = 0xCACB
-wRNGCounter = 0xCACC
+wNameBuffer = sym("wNameBuffer")
+sPlayerName = sym("sPlayerName")
+wRNG1 = sym("wRNG1")
+wRNG2 = sym("wRNG2")
+wRNGCounter = sym("wRNGCounter")
 
 # DisplayPlayerNamingScreen farcalls InputPlayerName, whose InitializeInputName
 # clears $CFE7-$CFFE and wipes the oracle call frame at $CFF0-$CFF5; after the
@@ -34,14 +35,14 @@ DPNS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x4
 CONTRACT["DisplayPlayerNamingScreen"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["DisplayPlayerNamingScreen"] = [
 	{"rom_bank": 4, "keys": 0x41,
-	 "wram": {wNameBuffer: b"\xff" * 16, 0xFF90: b"\x00", 0xD00A: DPNS_PARK,
+	 "wram": {wNameBuffer: b"\xff" * 16, sym("hKeysHeld"): b"\x00", sym("wd009") + 1: DPNS_PARK,
 		  wRNG1: b"\x5A", wRNG2: b"\xC3", wRNGCounter: b"\x00"},
 	 "sram": {0: {}},
 	 "sread": {0: {sPlayerName: 16}},
 	 "setup": DPNS_SETUP,
 	 "instruction_budget": 20000000, "cycle_budget": 80000000},
 	dict(POISON, rom_bank=4, keys=0x41,
-	     wram={wNameBuffer: b"\xff" * 16, 0xFF90: b"\x00", 0xD00A: DPNS_PARK,
+	     wram={wNameBuffer: b"\xff" * 16, sym("hKeysHeld"): b"\x00", sym("wd009") + 1: DPNS_PARK,
 		   wRNG1: b"\xB7", wRNG2: b"\x2E", wRNGCounter: b"\xFD"},
 	     sram={0: {}},
 	     sread={0: {sPlayerName: 16}},

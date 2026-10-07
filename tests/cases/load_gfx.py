@@ -1,10 +1,11 @@
+from tests.cases._symbols import STACK_CANARY, sym
 POISON = {"a": 0xaa, "f": 0xf0, "b": 0xbb, "c": 0xcc, "d": 0xdd, "e": 0xee, "hl": 0x1234}
 GFX_WITNESS = bytes((i * 13 + 7) & 0xff for i in range(16))
 GFX_BOUNDED_STATE = {
     "wram": {
-        0xd4c2: b"\x00\x80", 0xd4c4: b"\x00\xc0", 0xd4c6: b"\x00",
-        0xd4c7: b"\x10", 0xd4c8: b"\x01\x00", 0xd4ca: b"\x00",
-        0xd4cb: b"\x00", 0xff4f: b"\x00", 0xc002: GFX_WITNESS,
+        sym("wVRAMPointer"): b"\x00\x80", sym("wTempPointer"): b"\x00\xc0", sym("wTempPointerBank"): b"\x00",
+        sym("wCurSpriteTileSize"): b"\x10", sym("wGeneralSaveDataByteCount"): b"\x01\x00", sym("wTempBoosterChances"): b"\x00",
+        sym("wWhichBGPalIndex"): b"\x00", 0xff4f: b"\x00", sym("wDeckToBuild") + 2: GFX_WITNESS,
     },
     "vread": {0: {0x8000: 0x10}},
 }
@@ -15,8 +16,8 @@ GFX_POISON_STATE = {
 }
 TILEMAP_STATE = {
     "wram": {
-        0xd4c4: b"\x00\x98", 0xd4c2: b"\x00\x98",
-        0xd12f: b"\x01", 0xd130: b"\x01", 0xd131: b"\x00",
+        sym("wTempPointer"): b"\x00\x98", sym("wVRAMPointer"): b"\x00\x98",
+        sym("wBGMapWidth"): b"\x01", sym("wBGMapHeight"): b"\x01", sym("wCurTilemap"): b"\x00",
     },
 }
 TILEMAP_POISON_STATE = {
@@ -33,10 +34,10 @@ def _max_gfx_case():
         "why": "zero tile count and zero tile size expand to 65536 bytes, "
                "overwriting the synthesized call frame",
         "wram": {
-            0xd4c2: b"\x00\x90", 0xd4c4: b"\x00\xc0", 0xd4c6: b"\x00",
-            0xd4c7: b"\x00", 0xd4c8: b"\x00\x00", 0xd4ca: b"\x00",
-            0xd4cb: b"\x01", 0xff4f: b"\x01", 0xc002: GFX_WITNESS,
-            0xc202: GFX_WITNESS,
+            sym("wVRAMPointer"): b"\x00\x90", sym("wTempPointer"): b"\x00\xc0", sym("wTempPointerBank"): b"\x00",
+            sym("wCurSpriteTileSize"): b"\x00", sym("wGeneralSaveDataByteCount"): b"\x00\x00", sym("wTempBoosterChances"): b"\x00",
+            sym("wWhichBGPalIndex"): b"\x01", 0xff4f: b"\x01", sym("wDeckToBuild") + 2: GFX_WITNESS,
+            sym("wPlayerCardLocations") + 2: GFX_WITNESS,
         },
         "expect_vram": {
             1: {0x9000: GFX_WITNESS, 0x9200: GFX_WITNESS},
@@ -82,63 +83,63 @@ CASES = {
     "LoadTilemap.InitAndDecompressBGMap": [dict(TILEMAP_STATE), dict(TILEMAP_POISON_STATE), dict(TILEMAP_STATE)],
     "LoadTilemap.Decompress": [dict(TILEMAP_STATE), dict(TILEMAP_POISON_STATE), {"b": 1, "wram": TILEMAP_STATE["wram"]}],
     "Func_80148": [{}, dict(POISON), {"b": 1}, {"b": 0xff}],
-    "CopyBGDataToVRAMOrSRAM": [{}, dict(POISON), {"b": 1}, {"b": 0xff}, {"b": 0, "wram": {0xff80: b"\x20", 0xd4c2: b"\x00\x98"}, "read": {0x9800: 0x100}}],
-    "SafelyCopyBGMapFromSRAMToVRAM": [{}, dict(POISON), {"wram": {0xff80: b"\x20"}, "sram": {1: {0xa000: bytes(range(256)) * 8}}, "vread": {0: {0x9800: 0x400}, 1: {0x9800: 0x400}}}],
-    "ClearSRAMBGMaps": [{"wram": {0xff81: b"\x01"}, "sram": {1: {0xa000: b"\xaa" * 0x800}}, "sread": {1: {0xa000: 0x800}}}, dict(POISON)],
+    "CopyBGDataToVRAMOrSRAM": [{}, dict(POISON), {"b": 1}, {"b": 0xff}, {"b": 0, "wram": {sym("hBankROM"): b"\x20", sym("wVRAMPointer"): b"\x00\x98"}, "read": {0x9800: 0x100}}],
+    "SafelyCopyBGMapFromSRAMToVRAM": [{}, dict(POISON), {"wram": {sym("hBankROM"): b"\x20"}, "sram": {1: {sym("sGfxBuffer0"): bytes(range(256)) * 8}}, "vread": {0: {0x9800: 0x400}, 1: {0x9800: 0x400}}}],
+    "ClearSRAMBGMaps": [{"wram": {sym("hBankSRAM"): b"\x01"}, "sram": {1: {sym("sGfxBuffer0"): b"\xaa" * 0x800}}, "sread": {1: {sym("sGfxBuffer0"): 0x800}}}, dict(POISON)],
     "GetMapDataPointer": [{}, dict(POISON), {"a": 0, "hl": 0}, {"a": 0xff, "hl": 4}],
     "LoadGraphicsPointerFromHL": [{}, dict(POISON), {"hl": 0x7fff}, {"hl": 0x8000}],
     "LoadSpriteGfx": [{}, dict(POISON)],
     "LoadGfxDataFromTempPointerToVRAMBank": [
         dict(GFX_BOUNDED_STATE), dict(GFX_POISON_STATE), dict(GFX_BOUNDED_STATE),
-        {"wram": {**GFX_BOUNDED_STATE["wram"], 0xd4c8: b"\x00\x01"},
+        {"wram": {**GFX_BOUNDED_STATE["wram"], sym("wGeneralSaveDataByteCount"): b"\x00\x01"},
          "vread": {0: {0x8000: 0x10}}},
-        {"wram": {**GFX_BOUNDED_STATE["wram"], 0xd4c8: b"\x01\x00"},
+        {"wram": {**GFX_BOUNDED_STATE["wram"], sym("wGeneralSaveDataByteCount"): b"\x01\x00"},
          "vread": {0: {0x8000: 0x10}}},
-        {"wram": {**GFX_BOUNDED_STATE["wram"], 0xd4c8: b"\x01\x01"},
+        {"wram": {**GFX_BOUNDED_STATE["wram"], sym("wGeneralSaveDataByteCount"): b"\x01\x01"},
          "vread": {0: {0x8000: 0x10}}},
         {**_max_gfx_case(), "expect_vram": {1: {0x8000: GFX_WITNESS, 0x8200: GFX_WITNESS}}},
     ],
     "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2": [
         dict(GFX_BOUNDED_STATE_TILES), dict(GFX_POISON_STATE), dict(GFX_BOUNDED_STATE_TILES),
-        {"wram": {**GFX_BOUNDED_STATE_TILES["wram"], 0xd4c8: b"\x00\x01"},
+        {"wram": {**GFX_BOUNDED_STATE_TILES["wram"], sym("wGeneralSaveDataByteCount"): b"\x00\x01"},
          "vread": {0: {0x9000: 0x10}}},
-        {"wram": {**GFX_BOUNDED_STATE_TILES["wram"], 0xd4c8: b"\x01\x00"},
+        {"wram": {**GFX_BOUNDED_STATE_TILES["wram"], sym("wGeneralSaveDataByteCount"): b"\x01\x00"},
          "vread": {0: {0x9000: 0x10}}},
-        {"wram": {**GFX_BOUNDED_STATE_TILES["wram"], 0xd4c8: b"\x01\x01"},
+        {"wram": {**GFX_BOUNDED_STATE_TILES["wram"], sym("wGeneralSaveDataByteCount"): b"\x01\x01"},
          "vread": {0: {0x9000: 0x10}}},
         _max_gfx_case(),
     ],
     "LoadGfxDataFromTempPointer": [
         dict(GFX_BOUNDED_STATE), dict(GFX_POISON_STATE), dict(GFX_BOUNDED_STATE),
-        {"wram": {**GFX_BOUNDED_STATE["wram"], 0xd4c8: b"\x00\x01"},
+        {"wram": {**GFX_BOUNDED_STATE["wram"], sym("wGeneralSaveDataByteCount"): b"\x00\x01"},
          "vread": {0: {0x8000: 0x10}}},
-        {"wram": {**GFX_BOUNDED_STATE["wram"], 0xd4c8: b"\x01\x00"},
+        {"wram": {**GFX_BOUNDED_STATE["wram"], sym("wGeneralSaveDataByteCount"): b"\x01\x00"},
          "vread": {0: {0x8000: 0x10}}},
-        {"wram": {**GFX_BOUNDED_STATE["wram"], 0xd4c8: b"\x01\x01"},
+        {"wram": {**GFX_BOUNDED_STATE["wram"], sym("wGeneralSaveDataByteCount"): b"\x01\x01"},
          "vread": {0: {0x8000: 0x10}}},
         _max_gfx_case(),
     ],
-    "GetTileOffsetPointerAndSwitchVRAM": [{}, dict(POISON), {"wram": {0xd4ca: b"\x00", 0xd4cb: b"\x00"}, "read": {0xd4ca: 1, 0xd4cb: 1}}],
-    "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2": [{}, dict(POISON), {"wram": {0xd4ca: b"\x80", 0xd4cb: b"\x01"}, "read": {0xd4ca: 1, 0xd4cb: 1}}],
+    "GetTileOffsetPointerAndSwitchVRAM": [{}, dict(POISON), {"wram": {sym("wTempBoosterChances"): b"\x00", sym("wWhichBGPalIndex"): b"\x00"}, "read": {sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1}}],
+    "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2": [{}, dict(POISON), {"wram": {sym("wTempBoosterChances"): b"\x80", sym("wWhichBGPalIndex"): b"\x01"}, "read": {sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1}}],
     "LoadTilesetGfx": [{}, dict(POISON)],
     "Func_80238": [
-        {"vread": {0: {0x8000: 0x10, 0x9000: 0x10}}, "read": {0xD4CA: 1}},
+        {"vread": {0: {0x8000: 0x10, 0x9000: 0x10}}, "read": {sym("wTempBoosterChances"): 1}},
         {**POISON, "vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
         {"a": 0, "hl": 0, "vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
         {"a": 0xff, "hl": 0xffff, "vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
     ],
     "LoadTilesetGfx.LoadTileGfx": [
         {}, dict(POISON),
-        {"wram": {0xd4c2: b"\x80\x00", 0xd4ca: b"\x80",
-                  0xd4c8: b"\x01\x00", 0xd4c4: b"\x00\x40",
-                  0xd4c6: b"\x20"}}
+        {"wram": {sym("wVRAMPointer"): b"\x80\x00", sym("wTempBoosterChances"): b"\x80",
+                  sym("wGeneralSaveDataByteCount"): b"\x01\x00", sym("wTempPointer"): b"\x00\x40",
+                  sym("wTempPointerBank"): b"\x20"}}
     ],
     "LoadTilesetGfx.CopyGfxData": [
         {
             "oracle": False,
             "why": "zero remaining count expands to the 65536-tile copy and "
                    "overwrites the synthesized call frame",
-            "expect": {0xd4c8: b"\x00\x00"},
+            "expect": {sym("wGeneralSaveDataByteCount"): b"\x00\x00"},
             "expect_regs": {"b": 0, "c": 0, "d": 0, "e": 0, "hl": 0},
         },
         dict(POISON),
@@ -146,7 +147,7 @@ CASES = {
             "b": 0, "c": 0, "oracle": False,
             "why": "zero remaining count expands to the 65536-tile copy and "
                    "overwrites the synthesized call frame",
-            "expect": {0xd4c8: b"\x00\x00"},
+            "expect": {sym("wGeneralSaveDataByteCount"): b"\x00\x00"},
             "expect_regs": {"b": 0, "c": 0, "d": 0, "e": 0, "hl": 0},
         },
         {"b": 0, "c": 0x80}, {"b": 1, "c": 0}, {"b": 1, "c": 0x80},
@@ -159,9 +160,9 @@ CASES = {
     # contract above cannot see it.
     "LoadBGPalette": [
         {"read": {0xFF47: 1}},
-        {"a": 1, "read": {0xCAF0: 64}},
-        {"a": 0, "read": {0xCAF0: 64}},
-        dict(POISON, a=1, read={0xCAF0: 64}),
+        {"a": 1, "read": {sym("wBackgroundPalettesCGB"): 64}},
+        {"a": 0, "read": {sym("wBackgroundPalettesCGB"): 64}},
+        dict(POISON, a=1, read={sym("wBackgroundPalettesCGB"): 64}),
     ],
     "LoadPaletteDataFromHL": [{}, dict(POISON), {"b": 0, "c": 0}, {"b": 0, "c": 1}, {"b": 15, "c": 8}, {"b": 16, "c": 1}, {"b": 23, "c": 1}, {"b": 24, "c": 1}, {"b": 0, "c": 9}],
     # a=0x00 (PALETTE_DEFAULT_CGB): DMG count=1, wWhichOBP!=1, CGB size=8 (the
@@ -170,23 +171,23 @@ CASES = {
     # address instead of one past it, so wObjectPalettesCGB[0] came back
     # holding the size byte's value.
     "LoadOBPalette": [
-        {"read": {0xCB30: 64}},
+        {"read": {sym("wObjectPalettesCGB"): 64}},
         dict(POISON),
         # a=0x75 (PALETTE_BOOSTER_OAM): DMG count=0 (skips both OBP0/OBP1),
         # CGB size=1 (smallest nonzero loop count).
-        {"a": 0x75, "read": {0xCB30: 64}},
+        {"a": 0x75, "read": {sym("wObjectPalettesCGB"): 64}},
         # a=0x00 with wWhichOBP==1: DMG count=1, jumps straight to .obp1.
-        {"a": 0x00, "wram": {0xd4ca: b"\x01"}, "read": {0xCB30: 64}},
+        {"a": 0x00, "wram": {sym("wTempBoosterChances"): b"\x01"}, "read": {sym("wObjectPalettesCGB"): 64}},
         # a=0x6c (PALETTE_DEFAULT_DMG): DMG count=1, CGB size=0 -> .done,
         # LoadPaletteDataFromHL is never called.
-        {"a": 0x6c, "read": {0xCB30: 64}},
+        {"a": 0x6c, "read": {sym("wObjectPalettesCGB"): 64}},
         # a=0x72 (PALETTE_GB_LINK_OAM): DMG count=2, wWhichOBP!=1 -- both
         # OBP0 and OBP1 consumed, no extra hl skip before the size byte.
-        {"a": 0x72, "read": {0xCB30: 64}},
+        {"a": 0x72, "read": {sym("wObjectPalettesCGB"): 64}},
         # Same blob with wWhichOBP==1: count=2 but only one DMG byte is
         # consumed, so the "if (count) p++" skip must still land on the
         # real size byte.
-        {"a": 0x72, "wram": {0xd4ca: b"\x01"}, "read": {0xCB30: 64}},
+        {"a": 0x72, "wram": {sym("wTempBoosterChances"): b"\x01"}, "read": {sym("wObjectPalettesCGB"): 64}},
     ],
     "LoadPaletteDataToBuffer": [{}, dict(POISON), {"a": 0}, {"a": 0xff}],
 }
@@ -195,27 +196,27 @@ for _name in (
     "LoadTilemap.InitAndDecompressBGMap", "LoadTilemap.Decompress",
 ):
     for _case in CASES[_name]:
-        _case.setdefault("wram", {})[0xff80] = b"\x20"
+        _case.setdefault("wram", {})[sym("hBankROM")] = b"\x20"
 for _name in ("LoadTilesetGfx", "LoadTilesetGfx.LoadTileGfx"):
     for _case in CASES[_name]:
-        _case.setdefault("wram", {})[0xff80] = b"\x20"
+        _case.setdefault("wram", {})[sym("hBankROM")] = b"\x20"
 for _case in CASES["Func_80238"]:
-    _case.setdefault("wram", {})[0xff80] = b"\x20"
+    _case.setdefault("wram", {})[sym("hBankROM")] = b"\x20"
 for _name in (
     "LoadGfxDataFromTempPointerToVRAMBank",
     "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2",
     "LoadGfxDataFromTempPointer",
 ):
     for _case in CASES[_name]:
-        _case.setdefault("wram", {})[0xff80] = b"\x20"
+        _case.setdefault("wram", {})[sym("hBankROM")] = b"\x20"
 for _case in CASES["LoadSpriteGfx"]:
-    _case.setdefault("wram", {})[0xff80] = b"\x20"
+    _case.setdefault("wram", {})[sym("hBankROM")] = b"\x20"
 for _name in (
     "LoadBGPalette", "LoadPaletteDataFromHL", "LoadOBPalette",
     "LoadPaletteDataToBuffer",
 ):
     for _case in CASES[_name]:
-        _case.setdefault("wram", {})[0xff80] = b"\x20"
+        _case.setdefault("wram", {})[sym("hBankROM")] = b"\x20"
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -235,23 +236,23 @@ MUTATIONS = {
     },
 }
 for _rec in SCHEMA2_CASES["Func_803b9"]:
-    _rec.setdefault("bus", {}).update({0xD239: 1, 0xD4C4: 1, 0xD4C6: 1})
+    _rec.setdefault("bus", {}).update({sym("wCurTileset"): 1, sym("wTempPointer"): 1, sym("wTempPointerBank"): 1})
 for _rec in SCHEMA2_CASES["GetTileOffsetPointerAndSwitchVRAM"]:
-    _rec.setdefault("bus", {}).update({0xD4C2: 2})
+    _rec.setdefault("bus", {}).update({sym("wVRAMPointer"): 2})
 for _rec in SCHEMA2_CASES["LoadPaletteDataToBuffer"]:
-    _rec.setdefault("bus", {}).update({0xD4C4: 1, 0xD4C6: 1})
+    _rec.setdefault("bus", {}).update({sym("wTempPointer"): 1, sym("wTempPointerBank"): 1})
 for _rec in SCHEMA2_CASES["LoadTilemap"]:
-    _rec.setdefault("bus", {}).update({0xD12F: 1, 0xD130: 1, 0xD239: 1, 0xD23A: 1, 0xD23C: 1, 0xD23D: 1, 0xD4C2: 2})
+    _rec.setdefault("bus", {}).update({sym("wBGMapWidth"): 1, sym("wBGMapHeight"): 1, sym("wCurTileset"): 1, sym("wBGMapPermissionDataPtr"): 1, sym("wBGMapCGBMode"): 1, sym("wBGMapBank"): 1, sym("wVRAMPointer"): 2})
 for _rec in SCHEMA2_CASES["LoadTilemap.InitAndDecompressBGMap"]:
-    _rec.setdefault("bus", {}).update({0xD28E: 1})
+    _rec.setdefault("bus", {}).update({sym("wDecompressionRowWidth"): 1})
 for _rec in SCHEMA2_CASES["LoadTilemap_ToSRAM"]:
-    _rec.setdefault("bus", {}).update({0xD12F: 1, 0xD130: 1, 0xD23A: 1, 0xD23C: 1, 0xD23D: 1, 0xD292: 1, 0xD4C2: 2})
+    _rec.setdefault("bus", {}).update({sym("wBGMapWidth"): 1, sym("wBGMapHeight"): 1, sym("wBGMapPermissionDataPtr"): 1, sym("wBGMapCGBMode"): 1, sym("wBGMapBank"): 1, sym("wWriteBGMapToSRAM"): 1, sym("wVRAMPointer"): 2})
 for _rec in SCHEMA2_CASES["LoadTilemap_ToVRAM"]:
-    _rec.setdefault("bus", {}).update({0xD12F: 1, 0xD130: 1, 0xD23A: 1, 0xD23C: 1, 0xD23D: 1, 0xD292: 1, 0xD4C2: 2})
+    _rec.setdefault("bus", {}).update({sym("wBGMapWidth"): 1, sym("wBGMapHeight"): 1, sym("wBGMapPermissionDataPtr"): 1, sym("wBGMapCGBMode"): 1, sym("wBGMapBank"): 1, sym("wWriteBGMapToSRAM"): 1, sym("wVRAMPointer"): 2})
 for _rec in SCHEMA2_CASES["LoadTilesetGfx"]:
-    _rec.setdefault("bus", {}).update({0xD4C4: 2, 0xD4C6: 1, 0xD4C8: 2})
+    _rec.setdefault("bus", {}).update({sym("wTempPointer"): 2, sym("wTempPointerBank"): 1, sym("wGeneralSaveDataByteCount"): 2})
 for _rec in SCHEMA2_CASES["LoadTilesetGfx.CopyGfxData"]:
-    _rec.setdefault("bus", {}).update({0xD4C4: 2, 0xD4C8: 2, 0xD4CA: 1, 0xD4CB: 1})
+    _rec.setdefault("bus", {}).update({sym("wTempPointer"): 2, sym("wGeneralSaveDataByteCount"): 2, sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1})
 MUTATIONS["ClearSRAMBGMaps"] = {
     "source_symbol": "ClearSRAMBGMaps",
     "before": "\tFillMemoryWithA(0xa000u, 0x0800u, 0);",
@@ -379,7 +380,7 @@ MUTATIONS["LoadTilesetGfx"] = {
     "case_ids": ["LoadTilesetGfx-0"],
 }
 for _rec in SCHEMA2_CASES["Func_80148"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Func_80148"] = {
     "source_symbol": "FuncEightZeroOneFourEight",
     "before": "void FuncEightZeroOneFourEight(uint16_t hl, uint8_t b)\n{",
@@ -387,7 +388,7 @@ MUTATIONS["Func_80148"] = {
     "case_ids": ["Func_80148-0"],
 }
 for _rec in SCHEMA2_CASES["LoadPaletteDataFromHL"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["LoadPaletteDataFromHL"] = {
     "source_symbol": "LoadPaletteDataFromHL",
     "before": "void LoadPaletteDataFromHL(uint16_t hl, uint8_t b, uint8_t c)\n{",
@@ -395,7 +396,7 @@ MUTATIONS["LoadPaletteDataFromHL"] = {
     "case_ids": ["LoadPaletteDataFromHL-0"],
 }
 for _rec in SCHEMA2_CASES["LoadTilesetGfx.CopyGfxData"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["LoadTilesetGfx.CopyGfxData"] = {
     "source_symbol": "LoadTilesetGfx.CopyGfxData",
     "before": "LoadTilesetChunkResult LoadTilesetGfx_CopyGfxData(uint8_t b, uint8_t c)\n{",

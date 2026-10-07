@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/medal.asm."""
+from tests.cases._symbols import sym, sym_bank
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,12 +10,12 @@ CASES = {}
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wConsole = 0xCAB4
-wLCDC = 0xCABB
-wTxRam2 = 0xCE3F
-wMedalScreenYOffset = 0xD114
-wWhichMedal = 0xD115
-wMedalDisplayTimer = 0xD116
+wConsole = sym("wConsole")
+wLCDC = sym("wLCDC")
+wTxRam2 = sym("wTxRam2")
+wMedalScreenYOffset = sym("wMedalScreenYOffset")
+wWhichMedal = sym("wWhichMedal")
+wMedalDisplayTimer = sym("wMedalDisplayTimer")
 
 # FlashWhiteScreen calls EnableLCD, so real frames elapse from that point on and
 # the VBlank handler runs: CopyDMAFunction installs hDMAFunction, which
@@ -93,6 +94,6 @@ for _record in SCHEMA2_CASES["ShowMedalReceivedScreen"]:
     # wMusicIsPlaying is already clear at the wait -- so this buys a matched
     # boundary rather than a caught defect, and it lets the span widen later
     # without comparing two different moments.
-    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+    _record["completion"] = {"mode": "entry", "pc": sym("AssertSongFinished"), "bank": sym_bank("AssertSongFinished"),
                              "routine": "AssertSongFinished"}
 # <<< factory-completion ShowMedalReceivedScreen

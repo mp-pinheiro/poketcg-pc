@@ -1,15 +1,16 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import SPECIAL_ATTACK_REGS, special_attack_fixture
 from tests.cases._fixtures import SPECIAL_AI_ATTACKS_REGS, special_ai_attacks_fixture
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
-PLAYER_LOCATIONS = 0xC200
-OPPONENT_LOCATIONS = 0xC300
-PLAYER_DECK = 0xC400
-OPPONENT_DECK = 0xC480
-wLoadedCard2 = 0xCC65
+hWhoseTurn = sym("hWhoseTurn")
+PLAYER_LOCATIONS = sym("wPlayerCardLocations")
+OPPONENT_LOCATIONS = sym("wOpponentCardLocations")
+PLAYER_DECK = sym("wBoosterCardsDrawn")
+OPPONENT_DECK = sym("wOpponentDeck")
+wLoadedCard2 = sym("wLoadedCard2")
 
 CONTRACT = {
     "CheckIfAnyBasicPokemonInDeck": {
@@ -59,13 +60,13 @@ MUTATIONS = {
 }
 
 # >>> factory-cases-statics
-wFirstAttackAIScore = 0xCDBF
-wSelectedAttack = 0xCCC6
+wFirstAttackAIScore = sym("wFirstAttackAIScore")
+wSelectedAttack = sym("wSelectedAttack")
 
-hTempPlayAreaLocation_ff9d = 0xFF9D
-wDamage = 0xCCB9
-wDuelTempList = 0xC510
-wSelectedAttack = 0xCCC6
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
+wDamage = sym("wDamage")
+wDuelTempList = sym("wDuelTempList")
+wSelectedAttack = sym("wSelectedAttack")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
@@ -80,29 +81,29 @@ CASES["CheckWhetherToSwitchToFirstAttack"] = [
 
 # >>> factory HandleSpecialAIAttacks
 CONTRACT["HandleSpecialAIAttacks"] = {"compare": ("a", "f"), "preserve": ()}
-_SPECIAL_ARENA = {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC2BC: b"\xFF",
-                  0xC3BB: b"\xFF", 0xC3BC: b"\xFF"}
+_SPECIAL_ARENA = {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerBench"): b"\xFF",
+                  sym("wOpponentArenaCard"): b"\xFF", sym("wOpponentBench"): b"\xFF"}
 CASES["HandleSpecialAIAttacks"] = [
     # water-master 437339: Scyther in the arena; Swords Dance is unusable (the
     # second attack is not powered), so the score is $85 with that carry.
-    dict(special_ai_attacks_fixture(vram=False, bank=8), **SPECIAL_AI_ATTACKS_REGS, read={0xCC23: 1, 0xCCBF: 2}),
+    dict(special_ai_attacks_fixture(vram=False, bank=8), **SPECIAL_AI_ATTACKS_REGS, read={sym("wTotalAttachedEnergies"): 1, sym("wDealtDamage"): 2}),
     {},
     dict(POISON),
     dict(special_attack_fixture(vram=False, bank=5), **SPECIAL_ATTACK_REGS),
     # Big Thunder: the score is unconditional, the flags are the matching `cp`.
-    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x76"}},
+    {"wram": {**_SPECIAL_ARENA, sym("wBoosterCardsDrawn"): b"\x76"}},
     # Fetch: 10 cards used keeps the attack; 45 dismisses it.
-    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\xB9", 0xC2BA: b"\x0A"}},
-    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\xB9", 0xC2BA: b"\x2D"}},
+    {"wram": {**_SPECIAL_ARENA, sym("wBoosterCardsDrawn"): b"\xB9", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A"}},
+    {"wram": {**_SPECIAL_ARENA, sym("wBoosterCardsDrawn"): b"\xB9", sym("wPlayerNumberOfCardsNotInDeck"): b"\x2D"}},
     # Hyper Beam with nothing attached to the player's arena card.
-    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x45"}},
+    {"wram": {**_SPECIAL_ARENA, sym("wBoosterCardsDrawn"): b"\x45"}},
     # Conversion 1 with an empty bench: fewer than two set-up Pokemon.
-    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\xBD", 0xC2F0: b"\x00", 0xCCC6: b"\x00"}},
+    {"wram": {**_SPECIAL_ARENA, sym("wBoosterCardsDrawn"): b"\xBD", sym("wPlayerArenaCardStatus"): b"\x00", sym("wSelectedAttack"): b"\x00"}},
     # Call for Family: a second Oddish still in the deck, one Pokemon in play.
-    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x1C\x1C", 0xC2EF: b"\x01"}},
+    {"wram": {**_SPECIAL_ARENA, sym("wBoosterCardsDrawn"): b"\x1C\x1C", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}},
     # Earthquake with an empty bench: six prizes left versus no KOs.
-    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x7A", 0xC2EC: b"\x3F"}},
-    {"wram": {**_SPECIAL_ARENA, 0xC400: b"\x7A", 0xC2EC: b"\x00"}},
+    {"wram": {**_SPECIAL_ARENA, sym("wBoosterCardsDrawn"): b"\x7A", sym("wPlayerPrizes"): b"\x3F"}},
+    {"wram": {**_SPECIAL_ARENA, sym("wBoosterCardsDrawn"): b"\x7A", sym("wPlayerPrizes"): b"\x00"}},
 ]
 # <<< factory HandleSpecialAIAttacks
 

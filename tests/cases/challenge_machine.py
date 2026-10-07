@@ -1,7 +1,8 @@
+from tests.cases._symbols import sym, sym_bank
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-sChallengeMachineOpponents = 0xBA4B
+sChallengeMachineOpponents = sym("sChallengeMachineOpponents")
 
 CONTRACT = {
     "ChallengeMachine_CheckIfOpponentAlreadySelected": {
@@ -14,8 +15,8 @@ CONTRACT = {
     },
 }
 
-CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
-PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+CACHE_READ = {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("wCurTextTile"): 2, sym("wFontWidth"): 1}
+PLACEMENT_READ = {sym("hTextBGMap0Address"): 2, sym("hTextHorizontalAlign"): 1}
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 
@@ -32,13 +33,13 @@ CASES = {
          "sram": {0: {sChallengeMachineOpponents: bytes(255) + b"\xAA"}}},
     ],
     "ChallengeMachine_PrintText": [
-        {"hl": 0xC100, "b": 0, "c": 0, "wram": {0xC100: b"\x00\x00"}},
-        dict(POISON, hl=0xC100, b=3, c=4,
-             wram={0xC100: b"\x01\x00"}, setup=SETUP,
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "b": 0, "c": 0, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\x00"}},
+        dict(POISON, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, b=3, c=4,
+             wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01\x00"}, setup=SETUP,
              read={**CACHE_READ, **PLACEMENT_READ}, vread=VRAM_READ),
-        {"hl": 0xC100, "b": 1, "c": 2, "wram": {0xC100: b"\x00\x00"}},
-        {"hl": 0xC1FF, "b": 0xFF, "c": 0xFF,
-         "wram": {0xC1FF: b"\x01\x00", 0xC200: b"\x00"},
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "b": 1, "c": 2, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\x00"}},
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x110, "b": 0xFF, "c": 0xFF,
+         "wram": {sym("wDecompressionSecondaryBufferStart") + 0x110: b"\x01\x00", sym("wPlayerCardLocations"): b"\x00"},
          "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": VRAM_READ},
     ],
 }
@@ -50,43 +51,43 @@ CASES["ChallengeMachine_PickOpponentSequence"] = [
     # opponent bytes, the opponent number, the record-increased flag, the five
     # duel-result bytes and the two consecutive-win bytes are all diffed as one
     # block ($BA47..$BA68).
-    {"sram": {0: {0xBA47: b"\x00" * 0x22}},
-     "sread": {0: {0xBA47: 0x22}}},
+    {"sram": {0: {sym("sPresentConsecutiveWins"): b"\x00" * 0x22}},
+     "sread": {0: {sym("sPresentConsecutiveWins"): 0x22}}},
     # Poisoned entry registers: the routine takes no arguments and must ignore
     # every one of them; the SRAM image must be identical to the case above's
     # shape (same RNG start, so the same picks).
     dict(POISON,
-         sram={0: {0xBA47: b"\x00" * 0x22}},
-         sread={0: {0xBA47: 0x22}}),
+         sram={0: {sym("sPresentConsecutiveWins"): b"\x00" * 0x22}},
+         sread={0: {sym("sPresentConsecutiveWins"): 0x22}}),
     # Pre-existing duel results all nonzero: every one of the five bytes at
     # sChallengeMachineDuelResults must be cleared. A clear loop that ran four
     # times (or six) shows up here and nowhere else.
-    {"sram": {0: {0xBA47: b"\x00" * 0x09,
-                  0xBA50: b"\x11\x22\x33\x44\x55",
-                  0xBA55: b"\x77",
-                  0xBA68: b"\x99"}},
-     "sread": {0: {0xBA47: 0x22}}},
+    {"sram": {0: {sym("sPresentConsecutiveWins"): b"\x00" * 0x09,
+                  sym("sChallengeMachineDuelResults"): b"\x11\x22\x33\x44\x55",
+                  sym("sChallengeMachineOpponentNumber"): b"\x77",
+                  sym("sConsecutiveWinRecordIncreased"): b"\x99"}},
+     "sread": {0: {sym("sPresentConsecutiveWins"): 0x22}}},
     # Backup consecutive wins nonzero and distinct in both bytes, with the live
     # sPresentConsecutiveWins pre-loaded with different values: both bytes must be
     # copied from the backup, low byte then high byte, and the backup left alone.
-    {"sram": {0: {0xBA47: b"\xDE\xAD",
-                  0xBA49: b"\x34\x12",
-                  0xBA4B: b"\xFF\xFF\xFF\xFF\xFF",
-                  0xBA50: b"\x01\x01\x01\x01\x01",
-                  0xBA55: b"\x05",
-                  0xBA68: b"\x01"}},
-     "sread": {0: {0xBA47: 0x22}}},
+    {"sram": {0: {sym("sPresentConsecutiveWins"): b"\xDE\xAD",
+                  sym("sPresentConsecutiveWinsBackup"): b"\x34\x12",
+                  sym("sChallengeMachineOpponents"): b"\xFF\xFF\xFF\xFF\xFF",
+                  sym("sChallengeMachineDuelResults"): b"\x01\x01\x01\x01\x01",
+                  sym("sChallengeMachineOpponentNumber"): b"\x05",
+                  sym("sConsecutiveWinRecordIncreased"): b"\x01"}},
+     "sread": {0: {sym("sPresentConsecutiveWins"): 0x22}}},
     # Warm RNG: a prelude call to UpdateRNGSources moves the RNG state off its
     # reset value, so the picked opponent sequence differs from the cases above.
     {"setup": [{"fn": "UpdateRNGSources"}],
-     "sram": {0: {0xBA47: b"\x00" * 0x22}},
-     "sread": {0: {0xBA47: 0x22}}},
+     "sram": {0: {sym("sPresentConsecutiveWins"): b"\x00" * 0x22}},
+     "sread": {0: {sym("sPresentConsecutiveWins"): 0x22}}},
     # ramg False after seeding: only the routine's own EnableSRAM makes any of
     # the writes land, and only it makes the backup bytes readable.
     {"ramg": False,
-     "sram": {0: {0xBA47: b"\x00\x00\x21\x43",
-                  0xBA4B: b"\x00" * 0x1E}},
-     "sread": {0: {0xBA47: 0x22}}},
+     "sram": {0: {sym("sPresentConsecutiveWins"): b"\x00\x00\x21\x43",
+                  sym("sChallengeMachineOpponents"): b"\x00" * 0x1E}},
+     "sread": {0: {sym("sPresentConsecutiveWins"): 0x22}}},
 ]
 # <<< factory ChallengeMachine_PickOpponentSequence
 
@@ -94,28 +95,28 @@ CASES["ChallengeMachine_PickOpponentSequence"] = [
 CONTRACT["ChallengeMachine_GetCurrentOpponent"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
 CASES["ChallengeMachine_GetCurrentOpponent"] = [
     # All-zero: index 0 selects the first opponent byte.
-    {"sram": {0: {0xBA4B: bytes(range(1, 11)), 0xBA55: b"\x00"}},
-     "read": {0xD692: 1}},
+    {"sram": {0: {sym("sChallengeMachineOpponents"): bytes(range(1, 11)), sym("sChallengeMachineOpponentNumber"): b"\x00"}},
+     "read": {sym("wChallengeMachineOpponent"): 1}},
     # Poisoned entry registers: the routine takes no arguments, b/c must survive
     # and d/e/hl are recomputed from SRAM regardless of what came in.
     dict(POISON,
-         sram={0: {0xBA4B: bytes(range(1, 11)), 0xBA55: b"\x03"}},
-         read={0xD692: 1}),
+         sram={0: {sym("sChallengeMachineOpponents"): bytes(range(1, 11)), sym("sChallengeMachineOpponentNumber"): b"\x03"}},
+         read={sym("wChallengeMachineOpponent"): 1}),
     # Last in-table index (opponent slot 9).
-    {"sram": {0: {0xBA4B: bytes(range(0x90, 0x9A)), 0xBA55: b"\x09"}},
-     "read": {0xD692: 1}},
+    {"sram": {0: {sym("sChallengeMachineOpponents"): bytes(range(0x90, 0x9A)), sym("sChallengeMachineOpponentNumber"): b"\x09"}},
+     "read": {sym("wChallengeMachineOpponent"): 1}},
     # Index 10 aliases sChallengeMachineOpponentNumber itself: the byte read back
     # is the index, proving no bounds check exists.
-    {"sram": {0: {0xBA4B: b"\x00" * 10, 0xBA55: b"\x0A"}},
-     "read": {0xD692: 1}},
+    {"sram": {0: {sym("sChallengeMachineOpponents"): b"\x00" * 10, sym("sChallengeMachineOpponentNumber"): b"\x0A"}},
+     "read": {sym("wChallengeMachineOpponent"): 1}},
     # Large index: hl = base + 0xFF with no wrap inside the page.
-    {"sram": {0: {0xBA4B: b"\x11" * 10, 0xBA55: b"\xFF", 0xBB4A: b"\x77"}},
-     "read": {0xD692: 1}},
+    {"sram": {0: {sym("sChallengeMachineOpponents"): b"\x11" * 10, sym("sChallengeMachineOpponentNumber"): b"\xFF", sym("sCardPopNameList") + 0x4A: b"\x77"}},
+     "read": {sym("wChallengeMachineOpponent"): 1}},
     # ramg False after seeding: the routine's own EnableSRAM is load-bearing,
     # otherwise index and opponent both read as open-bus $FF.
     {"ramg": False,
-     "sram": {0: {0xBA4B: bytes(range(1, 11)), 0xBA55: b"\x02"}},
-     "read": {0xD692: 1}},
+     "sram": {0: {sym("sChallengeMachineOpponents"): bytes(range(1, 11)), sym("sChallengeMachineOpponentNumber"): b"\x02"}},
+     "read": {sym("wChallengeMachineOpponent"): 1}},
 ]
 # <<< factory ChallengeMachine_GetCurrentOpponent
 
@@ -126,25 +127,25 @@ CASES["ChallengeMachine_IncrementHLMax999"] = [
     # only observable output is the advanced hl.
     {},
     # Counter at 0 in SRAM: 0 -> 1, hl advances.
-    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\x00\x00"}}, "sread": {0: {0xBA47: 2}}},
+    {"hl": sym("sPresentConsecutiveWins"), "sram": {0: {sym("sPresentConsecutiveWins"): b"\x00\x00"}}, "sread": {0: {sym("sPresentConsecutiveWins"): 2}}},
     # Poisoned entry: b/c/d/e must survive; 998 -> 999.
-    dict(POISON, hl=0xBA47, sram={0: {0xBA47: b"\xE6\x03"}}, sread={0: {0xBA47: 2}}),
+    dict(POISON, hl=sym("sPresentConsecutiveWins"), sram={0: {sym("sPresentConsecutiveWins"): b"\xE6\x03"}}, sread={0: {sym("sPresentConsecutiveWins"): 2}}),
     # Exactly 999: capped, no write at all, hl left on the low byte.
-    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xE7\x03"}}, "sread": {0: {0xBA47: 2}}},
+    {"hl": sym("sPresentConsecutiveWins"), "sram": {0: {sym("sPresentConsecutiveWins"): b"\xE7\x03"}}, "sread": {0: {sym("sPresentConsecutiveWins"): 2}}},
     # High byte 3 but low byte not $E7: increments (1000 -> 1001), proving the
     # cap tests both bytes.
-    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xE8\x03"}}, "sread": {0: {0xBA47: 2}}},
+    {"hl": sym("sPresentConsecutiveWins"), "sram": {0: {sym("sPresentConsecutiveWins"): b"\xE8\x03"}}, "sread": {0: {sym("sPresentConsecutiveWins"): 2}}},
     # Low byte $E7 but high byte not 3: increments ($02E7 -> $02E8).
-    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xE7\x02"}}, "sread": {0: {0xBA47: 2}}},
+    {"hl": sym("sPresentConsecutiveWins"), "sram": {0: {sym("sPresentConsecutiveWins"): b"\xE7\x02"}}, "sread": {0: {sym("sPresentConsecutiveWins"): 2}}},
     # Carry out of the low byte: $03FF -> $0400.
-    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xFF\x03"}}, "sread": {0: {0xBA47: 2}}},
+    {"hl": sym("sPresentConsecutiveWins"), "sram": {0: {sym("sPresentConsecutiveWins"): b"\xFF\x03"}}, "sread": {0: {sym("sPresentConsecutiveWins"): 2}}},
     # Full 16-bit wrap: $FFFF -> $0000.
-    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xFF\xFF"}}, "sread": {0: {0xBA47: 2}}},
+    {"hl": sym("sPresentConsecutiveWins"), "sram": {0: {sym("sPresentConsecutiveWins"): b"\xFF\xFF"}}, "sread": {0: {sym("sPresentConsecutiveWins"): 2}}},
     # WRAM target: no SRAM involved, plain increment of $00FF -> $0100.
-    {"hl": 0xC100, "wram": {0xC100: b"\xFF\x00"}},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF\x00"}},
     # ramg False after seeding: without the routine's own EnableSRAM the read
     # would be open bus and the write would be dropped.
-    {"ramg": False, "hl": 0xBA47, "sram": {0: {0xBA47: b"\xE7\x03"}}, "sread": {0: {0xBA47: 2}}},
+    {"ramg": False, "hl": sym("sPresentConsecutiveWins"), "sram": {0: {sym("sPresentConsecutiveWins"): b"\xE7\x03"}}, "sread": {0: {sym("sPresentConsecutiveWins"): 2}}},
 ]
 # <<< factory ChallengeMachine_IncrementHLMax999
 
@@ -152,60 +153,60 @@ CASES["ChallengeMachine_IncrementHLMax999"] = [
 CONTRACT["ChallengeMachine_CheckForNewRecord"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["ChallengeMachine_CheckForNewRecord"] = [
     # All-zero: present == max == 0, equal on both bytes -> no record.
-    {"sram": {0: {0xBA47: b"\x00\x00", 0xBA56: b"\x00\x00", 0xBA58: b"\x00" * 16,
-                  0xBA68: b"\x00", 0xA010: b"\x00" * 16}},
-     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    {"sram": {0: {sym("sPresentConsecutiveWins"): b"\x00\x00", sym("sMaximumConsecutiveWins"): b"\x00\x00", sym("sChallengeMachineRecordHolderName"): b"\x00" * 16,
+                  sym("sConsecutiveWinRecordIncreased"): b"\x00", sym("sPlayerName"): b"\x00" * 16}},
+     "sread": {0: {sym("sMaximumConsecutiveWins"): 2, sym("sChallengeMachineRecordHolderName"): 16, sym("sConsecutiveWinRecordIncreased"): 1}}},
     # Poisoned entry with a genuine new record (present 5 > max 3, equal high
     # bytes): bc/de/hl are all overwritten by the copy setup.
     dict(POISON,
-         sram={0: {0xBA47: b"\x05\x00", 0xBA56: b"\x03\x00",
-                   0xBA58: b"\xFF" * 16, 0xBA68: b"\x00",
-                   0xA010: bytes(range(0x41, 0x51))}},
-         sread={0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}),
+         sram={0: {sym("sPresentConsecutiveWins"): b"\x05\x00", sym("sMaximumConsecutiveWins"): b"\x03\x00",
+                   sym("sChallengeMachineRecordHolderName"): b"\xFF" * 16, sym("sConsecutiveWinRecordIncreased"): b"\x00",
+                   sym("sPlayerName"): bytes(range(0x41, 0x51))}},
+         sread={0: {sym("sMaximumConsecutiveWins"): 2, sym("sChallengeMachineRecordHolderName"): 16, sym("sConsecutiveWinRecordIncreased"): 1}}),
     # Present low byte less than max, high bytes equal: no record, hl ends on
     # sMaximumConsecutiveWins after the `dec hl`.
-    {"sram": {0: {0xBA47: b"\x02\x00", 0xBA56: b"\x09\x00",
-                  0xBA58: b"\xAA" * 16, 0xBA68: b"\x00", 0xA010: b"\xBB" * 16}},
-     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    {"sram": {0: {sym("sPresentConsecutiveWins"): b"\x02\x00", sym("sMaximumConsecutiveWins"): b"\x09\x00",
+                  sym("sChallengeMachineRecordHolderName"): b"\xAA" * 16, sym("sConsecutiveWinRecordIncreased"): b"\x00", sym("sPlayerName"): b"\xBB" * 16}},
+     "sread": {0: {sym("sMaximumConsecutiveWins"): 2, sym("sChallengeMachineRecordHolderName"): 16, sym("sConsecutiveWinRecordIncreased"): 1}}},
     # High bytes differ with present greater: record taken without ever reading
     # the low bytes for the comparison, and hl stays at sMaximumConsecutiveWins+1
     # on the compare path. Present low byte is smaller than max's on purpose.
-    {"sram": {0: {0xBA47: b"\x00\x02", 0xBA56: b"\xFF\x01",
-                  0xBA58: b"\x00" * 16, 0xBA68: b"\x00", 0xA010: b"\x5A" * 16}},
-     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    {"sram": {0: {sym("sPresentConsecutiveWins"): b"\x00\x02", sym("sMaximumConsecutiveWins"): b"\xFF\x01",
+                  sym("sChallengeMachineRecordHolderName"): b"\x00" * 16, sym("sConsecutiveWinRecordIncreased"): b"\x00", sym("sPlayerName"): b"\x5A" * 16}},
+     "sread": {0: {sym("sMaximumConsecutiveWins"): 2, sym("sChallengeMachineRecordHolderName"): 16, sym("sConsecutiveWinRecordIncreased"): 1}}},
     # High bytes differ with present smaller: no record, hl left at +1.
-    {"sram": {0: {0xBA47: b"\xFF\x01", 0xBA56: b"\x00\x02",
-                  0xBA58: b"\x33" * 16, 0xBA68: b"\x00", 0xA010: b"\x44" * 16}},
-     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    {"sram": {0: {sym("sPresentConsecutiveWins"): b"\xFF\x01", sym("sMaximumConsecutiveWins"): b"\x00\x02",
+                  sym("sChallengeMachineRecordHolderName"): b"\x33" * 16, sym("sConsecutiveWinRecordIncreased"): b"\x00", sym("sPlayerName"): b"\x44" * 16}},
+     "sread": {0: {sym("sMaximumConsecutiveWins"): 2, sym("sChallengeMachineRecordHolderName"): 16, sym("sConsecutiveWinRecordIncreased"): 1}}},
     # Exact equality on both bytes at a nonzero value: the `jr z` guard means
     # equal is NOT a new record.
-    {"sram": {0: {0xBA47: b"\xE7\x03", 0xBA56: b"\xE7\x03",
-                  0xBA58: b"\x77" * 16, 0xBA68: b"\x00", 0xA010: b"\x88" * 16}},
-     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    {"sram": {0: {sym("sPresentConsecutiveWins"): b"\xE7\x03", sym("sMaximumConsecutiveWins"): b"\xE7\x03",
+                  sym("sChallengeMachineRecordHolderName"): b"\x77" * 16, sym("sConsecutiveWinRecordIncreased"): b"\x00", sym("sPlayerName"): b"\x88" * 16}},
+     "sread": {0: {sym("sMaximumConsecutiveWins"): 2, sym("sChallengeMachineRecordHolderName"): 16, sym("sConsecutiveWinRecordIncreased"): 1}}},
     # Off-by-one above equality: present is max+1, the smallest new record.
-    {"sram": {0: {0xBA47: b"\xE8\x03", 0xBA56: b"\xE7\x03",
-                  0xBA58: b"\x00" * 16, 0xBA68: b"\x00", 0xA010: bytes(range(16))}},
-     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    {"sram": {0: {sym("sPresentConsecutiveWins"): b"\xE8\x03", sym("sMaximumConsecutiveWins"): b"\xE7\x03",
+                  sym("sChallengeMachineRecordHolderName"): b"\x00" * 16, sym("sConsecutiveWinRecordIncreased"): b"\x00", sym("sPlayerName"): bytes(range(16))}},
+     "sread": {0: {sym("sMaximumConsecutiveWins"): 2, sym("sChallengeMachineRecordHolderName"): 16, sym("sConsecutiveWinRecordIncreased"): 1}}},
     # ramg False after seeding: without the routine's own EnableSRAM neither the
     # comparison nor any of the three writes would behave.
     {"ramg": False,
-     "sram": {0: {0xBA47: b"\x05\x00", 0xBA56: b"\x03\x00",
-                  0xBA58: b"\x00" * 16, 0xBA68: b"\x00", 0xA010: b"\x63" * 16}},
-     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+     "sram": {0: {sym("sPresentConsecutiveWins"): b"\x05\x00", sym("sMaximumConsecutiveWins"): b"\x03\x00",
+                  sym("sChallengeMachineRecordHolderName"): b"\x00" * 16, sym("sConsecutiveWinRecordIncreased"): b"\x00", sym("sPlayerName"): b"\x63" * 16}},
+     "sread": {0: {sym("sMaximumConsecutiveWins"): 2, sym("sChallengeMachineRecordHolderName"): 16, sym("sConsecutiveWinRecordIncreased"): 1}}},
 ]
 # <<< factory ChallengeMachine_CheckForNewRecord
 
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-sChallengeMachineDuelResults = 0xBA50
-sChallengeMachineOpponentNumber = 0xBA55
-sPresentConsecutiveWins = 0xBA47
-wDuelResult = 0xD0C3
+sChallengeMachineDuelResults = sym("sChallengeMachineDuelResults")
+sChallengeMachineOpponentNumber = sym("sChallengeMachineOpponentNumber")
+sPresentConsecutiveWins = sym("sPresentConsecutiveWins")
+wDuelResult = sym("wDuelResult")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-sChallengeMachineDuelResults = 0xBA50
+sChallengeMachineDuelResults = sym("sChallengeMachineDuelResults")
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
-PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+PLACEMENT_READ = {sym("hTextBGMap0Address"): 2, sym("hTextHorizontalAlign"): 1}
 # <<< factory-cases-statics
 
 # >>> factory ChallengeMachine_RecordDuelResult
@@ -221,144 +222,144 @@ CASES["ChallengeMachine_RecordDuelResult"] = [
 # >>> factory ChallengeMachine_Initialize
 CONTRACT["ChallengeMachine_Initialize"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["ChallengeMachine_Initialize"] = [
-    {"sram": {0: {0xBA42: b"\xE3\x95" + b"\xAA" * 0x25}},
-     "sread": {0: {0xBA42: 0x27}},
+    {"sram": {0: {sym("sChallengeMachineMagic"): b"\xE3\x95" + b"\xAA" * 0x25}},
+     "sread": {0: {sym("sChallengeMachineMagic"): 0x27}},
      "expect_regs": {"a": 0xAA, "f": 0xC0}},
     dict(POISON,
-         sram={0: {0xBA42: b"\x00" * 0x27}},
-         sread={0: {0xBA42: 0x27}},
-         expect_sram={0: {0xBA42: b"\xE3\x95" + b"\x00" * 0x14 + b"\x01\x00" + b"Dr. Mason" + b"\x00" * 7 + b"\x00"}},
+         sram={0: {sym("sChallengeMachineMagic"): b"\x00" * 0x27}},
+         sread={0: {sym("sChallengeMachineMagic"): 0x27}},
+         expect_sram={0: {sym("sChallengeMachineMagic"): b"\xE3\x95" + b"\x00" * 0x14 + b"\x01\x00" + b"Dr. Mason" + b"\x00" * 7 + b"\x00"}},
          expect_regs={"a": 0x00, "f": 0x80}),
-    {"sram": {0: {0xBA42: b"\xE3\x94" + b"\x55" * 0x25}},
-     "sread": {0: {0xBA42: 0x27}},
+    {"sram": {0: {sym("sChallengeMachineMagic"): b"\xE3\x94" + b"\x55" * 0x25}},
+     "sread": {0: {sym("sChallengeMachineMagic"): 0x27}},
      "expect_regs": {"a": 0x00, "f": 0x80},
-     "expect_sram": {0: {0xBA42: b"\xE3\x95" + b"\x00" * 0x14 + b"\x01\x00" + b"Dr. Mason" + b"\x00" * 7 + b"\x00"}}},
+     "expect_sram": {0: {sym("sChallengeMachineMagic"): b"\xE3\x95" + b"\x00" * 0x14 + b"\x01\x00" + b"Dr. Mason" + b"\x00" * 7 + b"\x00"}}},
 ]
 # <<< factory ChallengeMachine_Initialize
 
 # >>> factory ChallengeMachine_Reset
 CONTRACT["ChallengeMachine_Reset"] = {"compare": (), "preserve": (), "sram_out": True}
 CASES["ChallengeMachine_Reset"] = [
-    {"sram": {0: {0xBA42: b"\xE3\x95" + b"\xAA" * 0x25}},
-     "sread": {0: {0xBA42: 0x27}},
-     "expect_sram": {0: {0xBA44: b"\x00\x00\x00\x00\x00\x00\x00"}}},
+    {"sram": {0: {sym("sChallengeMachineMagic"): b"\xE3\x95" + b"\xAA" * 0x25}},
+     "sread": {0: {sym("sChallengeMachineMagic"): 0x27}},
+     "expect_sram": {0: {sym("sChallengeMachineStart"): b"\x00\x00\x00\x00\x00\x00\x00"}}},
     dict(POISON,
-         sram={0: {0xBA42: b"\x00" * 0x27}},
-         sread={0: {0xBA42: 0x27}},
-         expect_sram={0: {0xBA44: b"\x00\x00\x00\x00\x00\x00\x00"}}),
-    {"sram": {0: {0xBA42: b"\xE3\x94" + b"\x55" * 0x25}},
-     "sread": {0: {0xBA42: 0x27}},
-     "expect_sram": {0: {0xBA44: b"\x00\x00\x00\x00\x00\x00\x00"}}},
+         sram={0: {sym("sChallengeMachineMagic"): b"\x00" * 0x27}},
+         sread={0: {sym("sChallengeMachineMagic"): 0x27}},
+         expect_sram={0: {sym("sChallengeMachineStart"): b"\x00\x00\x00\x00\x00\x00\x00"}}),
+    {"sram": {0: {sym("sChallengeMachineMagic"): b"\xE3\x94" + b"\x55" * 0x25}},
+     "sread": {0: {sym("sChallengeMachineMagic"): 0x27}},
+     "expect_sram": {0: {sym("sChallengeMachineStart"): b"\x00\x00\x00\x00\x00\x00\x00"}}},
 ]
 # <<< factory ChallengeMachine_Reset
 
 # >>> factory ChallengeMachine_PrintFinalConsecutiveWinStreak
 CONTRACT["ChallengeMachine_PrintFinalConsecutiveWinStreak"] = {"compare": ("f",), "preserve": (), "wram_out": True}
 CASES["ChallengeMachine_PrintFinalConsecutiveWinStreak"] = [
-    {"hl": 0x5678, "sram": {0: {0xBA47: b"\x00\x00"}}, "read": {0xCE43: 2}},
-    dict(POISON, sram={0: {0xBA47: b"\x00\x00"}}, read={0xCE43: 2}),
-    {"hl": 0x1111, "keys": 0x01, "sram": {0: {0xBA47: b"\x05\x01"}},
-     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+    {"hl": 0x5678, "sram": {0: {sym("sPresentConsecutiveWins"): b"\x00\x00"}}, "read": {sym("wTxRam3"): 2}},
+    dict(POISON, sram={0: {sym("sPresentConsecutiveWins"): b"\x00\x00"}}, read={sym("wTxRam3"): 2}),
+    {"hl": 0x1111, "keys": 0x01, "sram": {0: {sym("sPresentConsecutiveWins"): b"\x05\x01"}},
+     "wram": {sym("wCurDeckCardChanges"): b"\x00", sym("wIsTextBoxLabeled"): b"\xff", sym("wCursorBlinkCounter"): b"\x05", sym("wCurMenuItem"): b"\x04", sym("wMenuInvisibleCursorTile"): b"\x22"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCE43: 2}},
-    {"hl": 0x2222, "keys": 0x01, "sram": {0: {0xBA47: b"\x02\x00"}},
-     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+     "read": {sym("wTxRam3"): 2}},
+    {"hl": 0x2222, "keys": 0x01, "sram": {0: {sym("sPresentConsecutiveWins"): b"\x02\x00"}},
+     "wram": {sym("wCurDeckCardChanges"): b"\x00", sym("wIsTextBoxLabeled"): b"\xff", sym("wCursorBlinkCounter"): b"\x05", sym("wCurMenuItem"): b"\x04", sym("wMenuInvisibleCursorTile"): b"\x22"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCE43: 2}},
-    {"hl": 0x3333, "keys": 0x01, "sram": {0: {0xBA47: b"\x01\x00"}},
-     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+     "read": {sym("wTxRam3"): 2}},
+    {"hl": 0x3333, "keys": 0x01, "sram": {0: {sym("sPresentConsecutiveWins"): b"\x01\x00"}},
+     "wram": {sym("wCurDeckCardChanges"): b"\x00", sym("wIsTextBoxLabeled"): b"\xff", sym("wCursorBlinkCounter"): b"\x05", sym("wCurMenuItem"): b"\x04", sym("wMenuInvisibleCursorTile"): b"\x22"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCE43: 2}},
+     "read": {sym("wTxRam3"): 2}},
 ]
 # <<< factory ChallengeMachine_PrintFinalConsecutiveWinStreak
 
 # >>> factory ChallengeMachine_ShowNewRecord
 CONTRACT["ChallengeMachine_ShowNewRecord"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["ChallengeMachine_ShowNewRecord"] = [
-    {"hl": 0x5678, "sram": {0: {0xBA68: b"\x00"}}},
-    dict(POISON, sram={0: {0xBA68: b"\x00"}}),
+    {"hl": 0x5678, "sram": {0: {sym("sConsecutiveWinRecordIncreased"): b"\x00"}}},
+    dict(POISON, sram={0: {sym("sConsecutiveWinRecordIncreased"): b"\x00"}}),
 ]
 # <<< factory ChallengeMachine_ShowNewRecord
 
 # >>> factory ChallengeMachine_DuelWon
 CONTRACT["ChallengeMachine_DuelWon"] = {"compare": ("f",), "preserve": (), "wram_out": True}
 CASES["ChallengeMachine_DuelWon"] = [
-    {"keys": 0x01, "sram": {0: {0xBA55: b"\x00"}},
-     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+    {"keys": 0x01, "sram": {0: {sym("sChallengeMachineOpponentNumber"): b"\x00"}},
+     "wram": {sym("wCurDeckCardChanges"): b"\x00", sym("wIsTextBoxLabeled"): b"\xff", sym("wCursorBlinkCounter"): b"\x05", sym("wCurMenuItem"): b"\x04", sym("wMenuInvisibleCursorTile"): b"\x22"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCE43: 2}},
-    dict(POISON, keys=0x01, sram={0: {0xBA55: b"\x00"}},
-         wram={0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+     "read": {sym("wTxRam3"): 2}},
+    dict(POISON, keys=0x01, sram={0: {sym("sChallengeMachineOpponentNumber"): b"\x00"}},
+         wram={sym("wCurDeckCardChanges"): b"\x00", sym("wIsTextBoxLabeled"): b"\xff", sym("wCursorBlinkCounter"): b"\x05", sym("wCurMenuItem"): b"\x04", sym("wMenuInvisibleCursorTile"): b"\x22"},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xCE43: 2}),
-    {"keys": 0x01, "sram": {0: {0xBA55: b"\x02"}},
-     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+         read={sym("wTxRam3"): 2}),
+    {"keys": 0x01, "sram": {0: {sym("sChallengeMachineOpponentNumber"): b"\x02"}},
+     "wram": {sym("wCurDeckCardChanges"): b"\x00", sym("wIsTextBoxLabeled"): b"\xff", sym("wCursorBlinkCounter"): b"\x05", sym("wCurMenuItem"): b"\x04", sym("wMenuInvisibleCursorTile"): b"\x22"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-     "read": {0xCE43: 2}},
+     "read": {sym("wTxRam3"): 2}},
 ]
 # <<< factory ChallengeMachine_DuelWon
 
 # >>> factory ChallengeMachine_GetOpponentNameAndDeck
 CONTRACT["ChallengeMachine_GetOpponentNameAndDeck"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
 CASES["ChallengeMachine_GetOpponentNameAndDeck"] = [
-    {"wram": {0xD692: b"\x00"}},
-    {"wram": {0xD692: b"\x05"}},
-    dict(POISON, wram={0xD692: b"\x00"}),
+    {"wram": {sym("wChallengeMachineOpponent"): b"\x00"}},
+    {"wram": {sym("wChallengeMachineOpponent"): b"\x05"}},
+    dict(POISON, wram={sym("wChallengeMachineOpponent"): b"\x00"}),
 ]
 # <<< factory ChallengeMachine_GetOpponentNameAndDeck
 
 # >>> factory ChallengeMachine_PrintScores
 CONTRACT["ChallengeMachine_PrintScores"] = {"compare": (), "preserve": ()}
 CASES["ChallengeMachine_PrintScores"] = [
-    {"hl": 0xC500, "wram": {0xC500: b"\x00\x00"}},
-    {"hl": 0xC500, "wram": {0xC500: b"\x00\xA2\x00\x00\x00\x00"},
-     "sram": {0: {0xA200: b"\x34\x12"}}, "read": {0xD4B4: 3},
+    {"hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x00\x00"}},
+    {"hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x00\xA2\x00\x00\x00\x00"},
+     "sram": {0: {sym("sBuiltDecks"): b"\x34\x12"}}, "read": {sym("wDecimalChars"): 3},
      "vread": {0: {0x9800: 3}}},
-    dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00"}),
+    dict(POISON, hl=sym("wNameBuffer"), wram={sym("wNameBuffer"): b"\x00\x00"}),
 ]
 # <<< factory ChallengeMachine_PrintScores
 
 # >>> factory ChallengeMachine_PrintOpponentName
 CONTRACT["ChallengeMachine_PrintOpponentName"] = {"compare": ("d", "e", "hl"), "preserve": ()}
 CASES["ChallengeMachine_PrintOpponentName"] = [
-    {"wram": {0xD692: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "rom_bank": 4},
-    dict(POISON, wram={0xD692: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], rom_bank=4),
+    {"wram": {sym("wChallengeMachineOpponent"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "rom_bank": 4},
+    dict(POISON, wram={sym("wChallengeMachineOpponent"): b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], rom_bank=4),
 ]
 # <<< factory ChallengeMachine_PrintOpponentName
 
 # >>> factory ChallengeMachine_PrintOpponentClubStatus
 CONTRACT["ChallengeMachine_PrintOpponentClubStatus"] = {"compare": ("b", "c", "hl"), "preserve": ("b", "c")}
 CASES["ChallengeMachine_PrintOpponentClubStatus"] = [
-    {"wram": {0xD692: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "rom_bank": 4},
-    dict(POISON, wram={0xD692: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], rom_bank=4),
+    {"wram": {sym("wChallengeMachineOpponent"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "rom_bank": 4},
+    dict(POISON, wram={sym("wChallengeMachineOpponent"): b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], rom_bank=4),
 ]
 # <<< factory ChallengeMachine_PrintOpponentClubStatus
 
 # >>> factory ChallengeMachine_PrepareDuel
 CONTRACT["ChallengeMachine_PrepareDuel"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ChallengeMachine_PrepareDuel"] = [
-    {"sram": {0: {0xBA55: b"\x02"}}, "rom_bank": 4, "read": {0xCC18: 1}},
-    dict(POISON, sram={0: {0xBA55: b"\x02"}}, rom_bank=4, read={0xCC18: 1}),
+    {"sram": {0: {sym("sChallengeMachineOpponentNumber"): b"\x02"}}, "rom_bank": 4, "read": {sym("wNPCDuelPrizes"): 1}},
+    dict(POISON, sram={0: {sym("sChallengeMachineOpponentNumber"): b"\x02"}}, rom_bank=4, read={sym("wNPCDuelPrizes"): 1}),
 ]
 # <<< factory ChallengeMachine_PrepareDuel
 
 # >>> factory ChallengeMachine_DrawScoreScreen
 CONTRACT["ChallengeMachine_DrawScoreScreen"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ChallengeMachine_DrawScoreScreen"] = [
-    {"sram": {0: {0xBA58: b"ABCDEFGHIJKLMNOP", 0xBA45: b"\x01", 0xBA47: b"\x02", 0xBA56: b"\x03"}},
+    {"sram": {0: {sym("sChallengeMachineRecordHolderName"): b"ABCDEFGHIJKLMNOP", sym("sTotalChallengeMachineWins"): b"\x01", sym("sPresentConsecutiveWins"): b"\x02", sym("sMaximumConsecutiveWins"): b"\x03"}},
      "rom_bank": 4, "instruction_budget": 2000000, "cycle_budget": 8000000,
-     "read": {0xC590: 16}},
-    dict(POISON, sram={0: {0xBA58: b"ABCDEFGHIJKLMNOP", 0xBA45: b"\x01", 0xBA47: b"\x02", 0xBA56: b"\x03"}},
+     "read": {sym("wCurDeckCardChanges"): 16}},
+    dict(POISON, sram={0: {sym("sChallengeMachineRecordHolderName"): b"ABCDEFGHIJKLMNOP", sym("sTotalChallengeMachineWins"): b"\x01", sym("sPresentConsecutiveWins"): b"\x02", sym("sMaximumConsecutiveWins"): b"\x03"}},
          rom_bank=4, instruction_budget=2000000, cycle_budget=8000000,
-         read={0xC590: 16}),
+         read={sym("wCurDeckCardChanges"): 16}),
 ]
 # <<< factory ChallengeMachine_DrawScoreScreen
 
 # >>> factory ChallengeMachine_AreYouReady
 CONTRACT["ChallengeMachine_AreYouReady"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["ChallengeMachine_AreYouReady"] = [
-    {"sram": {0: {0xBA55: b"\x00", 0xBA47: b"\x00\x00"}}, "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCE3F: 2, 0xCE43: 2, 0xCE45: 2}},
-    dict(POISON, sram={0: {0xBA55: b"\x03", 0xBA47: b"\x05\x01"}}, wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000, read={0xCE3F: 2, 0xCE43: 2, 0xCE45: 2}),
+    {"sram": {0: {sym("sChallengeMachineOpponentNumber"): b"\x00", sym("sPresentConsecutiveWins"): b"\x00\x00"}}, "wram": {sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {sym("wTxRam2"): 2, sym("wTxRam3"): 2, sym("wTxRam3_b"): 2}},
+    dict(POISON, sram={0: {sym("sChallengeMachineOpponentNumber"): b"\x03", sym("sPresentConsecutiveWins"): b"\x05\x01"}}, wram={sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000, read={sym("wTxRam2"): 2, sym("wTxRam3"): 2, sym("wTxRam3_b"): 2}),
 ]
 # <<< factory ChallengeMachine_AreYouReady
 
@@ -380,34 +381,34 @@ CONTRACT["ChallengeMachine_PrintOpponentInfo"] = {"compare": (), "preserve": (),
 CASES["ChallengeMachine_PrintOpponentInfo"] = [
     {"d": 0x00, "e": 0x00,
      "sram": {0: {sChallengeMachineOpponents: bytes([0, 1, 2, 3, 4] + [0] * 40)}},
-     "wram": {0xCABB: b"\x00"}, "setup": SETUP, "read": {0xD692: 1}},
+     "wram": {sym("wLCDC"): b"\x00"}, "setup": SETUP, "read": {sym("wChallengeMachineOpponent"): 1}},
     dict(POISON, d=0x00, e=0x00, sram={0: {sChallengeMachineOpponents: bytes(45)}},
-         wram={0xCABB: b"\x00"}, setup=SETUP),
+         wram={sym("wLCDC"): b"\x00"}, setup=SETUP),
 ]
 # <<< factory ChallengeMachine_PrintOpponentInfo
 
 # >>> factory ChallengeMachine_DrawOpponentList
 CONTRACT["ChallengeMachine_DrawOpponentList"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ChallengeMachine_DrawOpponentList"] = [
-    {"sram": {0: {0xBA4B: bytes(45), 0xBA50: b"\x00\x01\x02\x01\x00"}}, "wram": {0xCABB: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, sram={0: {0xBA4B: bytes(45), 0xBA50: b"\x02\x01\x00\x02\x01"}}, wram={0xCABB: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
+    {"sram": {0: {sym("sChallengeMachineOpponents"): bytes(45), sym("sChallengeMachineDuelResults"): b"\x00\x01\x02\x01\x00"}}, "wram": {sym("wLCDC"): b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, sram={0: {sym("sChallengeMachineOpponents"): bytes(45), sym("sChallengeMachineDuelResults"): b"\x02\x01\x00\x02\x01"}}, wram={sym("wLCDC"): b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory ChallengeMachine_DrawOpponentList
 
 # >>> factory ChallengeMachine_Duel
 CONTRACT["ChallengeMachine_Duel"] = {"compare": (), "preserve": ()}
 CASES["ChallengeMachine_Duel"] = [
-    {"rom_bank": 4,"sram": {0: {0xBA55: b"\x00"}},
-     "wram": {0xCABB: b"\x00", 0xD692: b"\x00"},
-     "read": {0xDD80: 1}},
+    {"rom_bank": 4,"sram": {0: {sym("sChallengeMachineOpponentNumber"): b"\x00"}},
+     "wram": {sym("wLCDC"): b"\x00", sym("wChallengeMachineOpponent"): b"\x00"},
+     "read": {sym("wCurSongID"): 1}},
     dict(POISON, rom_bank=4,
-         sram={0: {0xBA55: b"\x00"}},
-         wram={0xCABB: b"\x00", 0xD692: b"\x00"},
-         read={0xDD80: 1}),
+         sram={0: {sym("sChallengeMachineOpponentNumber"): b"\x00"}},
+         wram={sym("wLCDC"): b"\x00", sym("wChallengeMachineOpponent"): b"\x00"},
+         read={sym("wCurSongID"): 1}),
     {"ramg": False, "rom_bank": 4,
-     "sram": {0: {0xBA55: b"\x03"}},
-     "wram": {0xCABB: b"\x00", 0xD692: b"\x03"},
-     "read": {0xDD80: 1}},
+     "sram": {0: {sym("sChallengeMachineOpponentNumber"): b"\x03"}},
+     "wram": {sym("wLCDC"): b"\x00", sym("wChallengeMachineOpponent"): b"\x03"},
+     "read": {sym("wCurSongID"): 1}},
 ]
 # <<< factory ChallengeMachine_Duel
 
@@ -415,12 +416,12 @@ CASES["ChallengeMachine_Duel"] = [
 CONTRACT["ChallengeMachine_Start"] = {"compare": (), "preserve": ()}
 CASES["ChallengeMachine_Start"] = [
     {"rom_bank": 4,
-     "sram": {0: {0xBA42: b"\xE3\x95", 0xBA44: b"\x00"}},
-     "read": {0xCD08: 1},
+     "sram": {0: {sym("sChallengeMachineMagic"): b"\xE3\x95", sym("sChallengeMachineStart"): b"\x00"}},
+     "read": {sym("wLineSeparation"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, rom_bank=4,
-         sram={0: {0xBA42: b"\xE3\x95", 0xBA44: b"\x00"}},
-         read={0xCD08: 1},
+         sram={0: {sym("sChallengeMachineMagic"): b"\xE3\x95", sym("sChallengeMachineStart"): b"\x00"}},
+         read={sym("wLineSeparation"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ChallengeMachine_Start
@@ -543,7 +544,7 @@ for _record in SCHEMA2_CASES["ChallengeMachine_Duel"]:
     # its own `ret`. No observed byte differs between the two, so this buys a
     # matched boundary rather than a caught defect, and it lets the span widen
     # later without comparing two different moments.
-    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+    _record["completion"] = {"mode": "entry", "pc": sym("AssertSongFinished"), "bank": sym_bank("AssertSongFinished"),
                              "routine": "AssertSongFinished"}
 # <<< factory-completion ChallengeMachine_Duel
 # >>> factory-mutation ChallengeMachine_Start
@@ -551,5 +552,5 @@ MUTATIONS["ChallengeMachine_Start"] = {"source_symbol": "ChallengeMachine_Start"
 # <<< factory-mutation ChallengeMachine_Start
 # >>> factory-completion ChallengeMachine_Start
 for _record in SCHEMA2_CASES["ChallengeMachine_Start"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x71EE, "bank": 4}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("ChallengeMachine_Start") + 0x1B, "bank": sym_bank("ChallengeMachine_Start")}
 # <<< factory-completion ChallengeMachine_Start

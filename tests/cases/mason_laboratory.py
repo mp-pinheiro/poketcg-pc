@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/mason_laboratory.asm."""
+from tests.cases._symbols import sym
 
 POISON = {
     "a": 0xAA,
@@ -19,9 +20,9 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wEventVars = 0xD3D2
-wLoadNPCXPos = 0xD3AC
-wLoadNPCYPos = 0xD3AD
+wEventVars = sym("wEventVars")
+wLoadNPCXPos = sym("wLoadNPCXPos")
+wLoadNPCYPos = sym("wLoadNPCYPos")
 EVENT_MASON_LAB_STATE_BYTE = wEventVars + 0x0D
 
 
@@ -35,22 +36,22 @@ def npc_pos(state_byte, x=0x55, y=0x66):
 
 NPC_POS_READ = {EVENT_MASON_LAB_STATE_BYTE: 1, wLoadNPCXPos: 1, wLoadNPCYPos: 1}
 
-wDuelResult = 0xD0C3
-wNPCDuelist = 0xD0C4
-wTempNPC = 0xD3AB
-wLoadedNPCs = 0xD34A
-wLoadedNPCTempIndex = 0xD3AA
-wScriptNPC = 0xD3B6
-wPlayerDirection = 0xD334
-wOverworldNPCFlags = 0xD0C1
-wNextScript = 0xD0C6
-wOverworldMode = 0xD0BF
+wDuelResult = sym("wDuelResult")
+wNPCDuelist = sym("wNPCDuelist")
+wTempNPC = sym("wTempNPC")
+wLoadedNPCs = sym("wLoadedNPCs")
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wScriptNPC = sym("wScriptNPC")
+wPlayerDirection = sym("wPlayerDirection")
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+wNextScript = sym("wNextScript")
+wOverworldMode = sym("wOverworldMode")
 
-wOWMapEvents = 0xD323
-wWriteBGMapToSRAM = 0xD292
-wCurTilemap = 0xD131
-wConsole = 0xCAB4
-wPermissionMap = 0xD133
+wOWMapEvents = sym("wOWMapEvents")
+wWriteBGMapToSRAM = sym("wWriteBGMapToSRAM")
+wCurTilemap = sym("wCurTilemap")
+wConsole = sym("wConsole")
+wPermissionMap = sym("wPermissionMap")
 # <<< factory-cases-statics
 
 # >>> factory Preload_DrMason
@@ -73,8 +74,8 @@ CASES["Preload_DrMason"] = [
 # mask ($0E) in wLoadedEventBits. State 0 moves Sam to ($0a,$08) facing south
 # and returns a=SOUTH; state 1 is the `cp` Z path (f=$90); anything higher
 # leaves the map data alone.
-wLoadNPCDirection = 0xD3AE
-wLoadedEventBits = 0xD3D1
+wLoadNPCDirection = sym("wLoadNPCDirection")
+wLoadedEventBits = sym("wLoadedEventBits")
 
 
 def sam_pos(state_byte, x=0x55, y=0x66, direction=0x77):
@@ -230,9 +231,9 @@ CASES["MasonLabLoadMap"] = [
 # 10,4,NORTH and 12,4,NORTH, matched against the player's own position
 # (fire_club_lobby.asm:26-42).
 _LEGENDARY_BYTE = wEventVars + 0x06
-wPlayerXCoord = 0xD330
-wPlayerYCoord = 0xD331
-wPlayerDirection = 0xD334
+wPlayerXCoord = sym("wPlayerXCoord")
+wPlayerYCoord = sym("wPlayerYCoord")
+wPlayerDirection = sym("wPlayerDirection")
 
 
 def _pressed_a(legendary, x, y, direction):
@@ -266,11 +267,11 @@ from tests.cases._schema_migration import legacy_to_schema
 
 CONTRACT["Func_d703"] = {"compare": ("a", "f"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["Func_d703"] = [
-    {"wram": {0xD3D8: b"\x00"}, "read": {0xD3D8: 1}},
-    dict(POISON, wram={0xD3D8: b"\x00"}, read={0xD3D8: 1}),
+    {"wram": {sym("wEventVars") + 6: b"\x00"}, "read": {sym("wEventVars") + 6: 1}},
+    dict(POISON, wram={sym("wEventVars") + 6: b"\x00"}, read={sym("wEventVars") + 6: 1}),
     {
         **_mason_preload_fixture(vram=False, bank=1),
-        "wram": {**_mason_preload_fixture(vram=False, bank=1)["wram"], 0xD3D8: b"\x02"},
+        "wram": {**_mason_preload_fixture(vram=False, bank=1)["wram"], sym("wEventVars") + 6: b"\x02"},
         **_MASON_PRELOAD_REGS,
     },
 ]
@@ -291,9 +292,9 @@ CASES["Func_d703"] = [
 #
 # Index 0 is the EXACT cp boundary, total == 10: widening `>= 10` to `> 10` is
 # invisible at every other total, so only this case reds the mutation.
-_TECH1_COLL = 0xA100
+_TECH1_COLL = sym("sCardAndDeckSaveData")
 _TECH1_BUDGET = {"instruction_budget": 60000000, "cycle_budget": 240000000}
-_TECH1_RST = {True: 0x5597, False: 0x55B5}  # keyed by "total >= 10"
+_TECH1_RST = {True: sym("Script_Tech1.count_loop") + 0xE, False: sym("Script_Tech1.add_loop") + 0xB}  # keyed by "total >= 10"
 _TECH1_SEEDS = (
     (2, 2, 2, 2, 1, 1),  # total 10 -- the exact cp boundary, high path
     (2, 2, 2, 2, 2, 2),  # total 12 -- high path

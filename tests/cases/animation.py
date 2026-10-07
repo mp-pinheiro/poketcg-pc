@@ -1,10 +1,11 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wOWFramesetSubgroups_ADDR = 0xD31A
-wCurOWFrameDataOffset = 0xD320
-wCurOWFrameDuration = 0xD321
-wNumLoadedFramesetSubgroups = 0xD322
+wOWFramesetSubgroups_ADDR = sym("wOWFramesetSubgroups")
+wCurOWFrameDataOffset = sym("wCurOWFrameDataOffset")
+wCurOWFrameDuration = sym("wCurOWFrameDuration")
+wNumLoadedFramesetSubgroups = sym("wNumLoadedFramesetSubgroups")
 
 
 CONTRACT = {
@@ -29,11 +30,11 @@ CASES = {
         dict(POISON, wram={wOWFramesetSubgroups_ADDR: b"\xAA\xBB\xCC\xDD\xEE\xFF"}),
     ],
     "GetOWFramesetSubgroupData": [
-        {"hl": 0xC100, "c": 0, "wram": {0xC100: b"\x00\x00"}},
-        {"hl": 0xC100, "c": 1, "wram": {0xC101: b"\x04", 0xC104: b"\x22"}},
-        dict(POISON, hl=0xC200, c=2, wram={0xC202: b"\x05", 0xC205: b"\x33",
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 0, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\x00"}},
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 1, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x12: b"\x04", sym("wDecompressionSecondaryBufferStart") + 0x15: b"\x22"}},
+        dict(POISON, hl=sym("wPlayerCardLocations"), c=2, wram={sym("wPlayerCardLocations") + 2: b"\x05", sym("wPlayerCardLocations") + 5: b"\x33",
                                              wCurOWFrameDataOffset: b"\x99", wCurOWFrameDuration: b"\x88"}),
-        {"hl": 0xC300, "c": 1, "wram": {0xC301: b"\x04", 0xC304: b"\xFF",
+        {"hl": sym("wOpponentCardLocations"), "c": 1, "wram": {sym("wOpponentCardLocations") + 1: b"\x04", sym("wOpponentCardLocations") + 4: b"\xFF",
                                              wCurOWFrameDataOffset: b"\x77", wCurOWFrameDuration: b"\x66"}},
     ],
     "LoadOWFramesetSubgroup": [
@@ -63,37 +64,37 @@ CASES = {
 }
 
 # >>> factory-cases-statics
-wNumLoadedFramesetSubgroups = 0xD322
+wNumLoadedFramesetSubgroups = sym("wNumLoadedFramesetSubgroups")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wCurMap = 0xD32F
-wConsole = 0xCAB4
+wCurMap = sym("wCurMap")
+wConsole = sym("wConsole")
 # <<< factory-cases-statics
 
 # >>> factory DoLoadedFramesetSubgroupsFrame
 CONTRACT["DoLoadedFramesetSubgroupsFrame"] = {"compare": (), "preserve": ()}
 CASES["DoLoadedFramesetSubgroupsFrame"] = [
     {"wram": {wNumLoadedFramesetSubgroups: b"\x00"}},
-    {"wram": {wNumLoadedFramesetSubgroups: b"\x01", 0xD31A: b"\xff" * 6}},
-    dict(POISON, wram={wNumLoadedFramesetSubgroups: b"\x02", 0xD31A: b"\xff" * 6}),
-    {"c": 0x7F, "wram": {wNumLoadedFramesetSubgroups: b"\x03", 0xD31A: b"\xff" * 6}},
+    {"wram": {wNumLoadedFramesetSubgroups: b"\x01", sym("wOWFramesetSubgroups"): b"\xff" * 6}},
+    dict(POISON, wram={wNumLoadedFramesetSubgroups: b"\x02", sym("wOWFramesetSubgroups"): b"\xff" * 6}),
+    {"c": 0x7F, "wram": {wNumLoadedFramesetSubgroups: b"\x03", sym("wOWFramesetSubgroups"): b"\xff" * 6}},
 ]
 # <<< factory DoLoadedFramesetSubgroupsFrame
 
 # >>> factory ProcessOWFrameset
 CONTRACT["ProcessOWFrameset"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ProcessOWFrameset"] = [
-    {"hl": 0xC500, "wram": {0xD31A: b"\xFF" * 6, 0xC500: bytes([3, 4, 5, 0xFF, 0xFF, 0xFF])}, "read": {0xD322: 1}},
-    dict(POISON, hl=0xC500, wram={0xD31A: b"\xFF" * 6, 0xC500: bytes([3, 4, 5, 0xFF, 0xFF, 0xFF])}, read={0xD322: 1}),
+    {"hl": sym("wNameBuffer"), "wram": {sym("wOWFramesetSubgroups"): b"\xFF" * 6, sym("wNameBuffer"): bytes([3, 4, 5, 0xFF, 0xFF, 0xFF])}, "read": {sym("wNumLoadedFramesetSubgroups"): 1}},
+    dict(POISON, hl=sym("wNameBuffer"), wram={sym("wOWFramesetSubgroups"): b"\xFF" * 6, sym("wNameBuffer"): bytes([3, 4, 5, 0xFF, 0xFF, 0xFF])}, read={sym("wNumLoadedFramesetSubgroups"): 1}),
 ]
 # <<< factory ProcessOWFrameset
 
 # >>> factory DoMapOWFrame
 CONTRACT["DoMapOWFrame"] = {"compare": (), "preserve": ()}
 CASES["DoMapOWFrame"] = [
-    {"wram": {wCurMap: b"\x02", wConsole: b"\x00", 0xD31A: b"\xFF" * 6}, "rom_bank": 0x20, "read": {0xD31A: 6}},
-    dict(POISON, wram={wCurMap: b"\x02", wConsole: b"\x00", 0xD31A: b"\xFF" * 6}, rom_bank=0x20, read={0xD31A: 6}),
+    {"wram": {wCurMap: b"\x02", wConsole: b"\x00", sym("wOWFramesetSubgroups"): b"\xFF" * 6}, "rom_bank": 0x20, "read": {sym("wOWFramesetSubgroups"): 6}},
+    dict(POISON, wram={wCurMap: b"\x02", wConsole: b"\x00", sym("wOWFramesetSubgroups"): b"\xFF" * 6}, rom_bank=0x20, read={sym("wOWFramesetSubgroups"): 6}),
 ]
 # <<< factory DoMapOWFrame
 

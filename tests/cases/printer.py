@@ -1,13 +1,14 @@
+from tests.cases._symbols import data, sym, sym_bank
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wPrinterPacketSequence = 0xCE63
-wPrinterPacketDataSize = 0xCE68
-wPrinterPacketDataPtr = 0xCE6A
-wPrinterPacketChecksum = 0xCE6C
-wSerialTransferData = 0xCE6E
-wPrinterStatus = 0xCE6F
-wSerialDataPtr = 0xCE70
+wPrinterPacketSequence = sym("wPrinterPacketSequence")
+wPrinterPacketDataSize = sym("wPrinterPacketDataSize")
+wPrinterPacketDataPtr = sym("wPrinterPacketDataPtr")
+wPrinterPacketChecksum = sym("wPrinterPacketChecksum")
+wSerialTransferData = sym("wSerialTransferData")
+wPrinterStatus = sym("wPrinterStatus")
+wSerialDataPtr = sym("wSerialDataPtr")
 rSC = 0xFF02
 rIE = 0xFFFF
 rSB = 0xFF01
@@ -21,11 +22,11 @@ CONTRACT = {
 
 CASES = {
     "SendNextPrinterPacketByte": [
-        {"wram": {wSerialDataPtr: b"\x00\xC1", 0xC100: b"\x00",
+        {"wram": {wSerialDataPtr: b"\x00\xC1", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00",
                   wPrinterPacketChecksum: b"\x00\x00"},
          "read": {wSerialDataPtr: 2, wPrinterPacketChecksum: 2}},
         # Checksum low-byte carry into the high byte.
-        dict(POISON, wram={wSerialDataPtr: b"\x00\xC1", 0xC100: b"\xFF",
+        dict(POISON, wram={wSerialDataPtr: b"\x00\xC1", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xFF",
                             wPrinterPacketChecksum: b"\x01\x05"},
              read={wPrinterPacketChecksum: 2}),
         # Pointer wraps $FFFF -> $0000; reads rIE as the "data byte".
@@ -45,11 +46,11 @@ CASES = {
     # part of the callable contract.
     "ExecutePrinterPacketSequence": [
         # Preamble/header group (a in 1-5): send one byte, sequence += 1.
-        {"a": 1, "wram": {wSerialDataPtr: b"\x00\xC1", 0xC100: b"\x55",
+        {"a": 1, "wram": {wSerialDataPtr: b"\x00\xC1", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x55",
                            wPrinterPacketChecksum: b"\x00\x00",
                            wPrinterPacketSequence: b"\x01"},
          "read": {wPrinterPacketSequence: 1, wSerialDataPtr: 2}},
-        {"a": 5, "wram": {wSerialDataPtr: b"\x10\xC1", 0xC110: b"\x66",
+        {"a": 5, "wram": {wSerialDataPtr: b"\x10\xC1", sym("wDecompressionSecondaryBufferStart") + 0x21: b"\x66",
                            wPrinterPacketChecksum: b"\x00\x00",
                            wPrinterPacketSequence: b"\x05"},
          "read": {wPrinterPacketSequence: 1}},
@@ -62,13 +63,13 @@ CASES = {
          "read": {wPrinterPacketSequence: 1}},
         # a==6, dataSize==1: sends the one byte, sequence 6->7->8.
         {"a": 6, "wram": {wPrinterPacketDataSize: b"\x01\x00",
-                           wPrinterPacketDataPtr: b"\x20\xC1", 0xC120: b"\x33",
+                           wPrinterPacketDataPtr: b"\x20\xC1", sym("wDecompressionSecondaryBufferStart") + 0x31: b"\x33",
                            wPrinterPacketChecksum: b"\x00\x00",
                            wPrinterPacketSequence: b"\x06"},
          "read": {wPrinterPacketSequence: 1, wSerialDataPtr: 2}},
         # a==7, dataSize==2: mid-data continuation, sequence does not advance.
         {"a": 7, "wram": {wPrinterPacketDataSize: b"\x02\x00",
-                           wSerialDataPtr: b"\x30\xC1", 0xC130: b"\x44",
+                           wSerialDataPtr: b"\x30\xC1", sym("wDecompressionSecondaryBufferStart") + 0x41: b"\x44",
                            wPrinterPacketChecksum: b"\x00\x00",
                            wPrinterPacketSequence: b"\x07"},
          "read": {wPrinterPacketSequence: 1}},
@@ -87,37 +88,37 @@ CASES = {
     ],
 }
 # >>> factory-cases-statics
-SGFXBUFFER1 = 0xA400
-SGFXBUFFER5 = 0xB400
+SGFXBUFFER1 = sym("sSavedDeck3") + 8
+SGFXBUFFER5 = sym("sSavedDeck51Cards") + 0x30
 
-wDefaultText = 0xC590
-wPrintOnlyStarRarity = 0xCE9C
-wPrinterCardCount = 0xCE91
-wPrinterHorizontalOffset = 0xCE90
-wPrinterTotalCardCount = 0xCE92
-
-POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wCardPageType = 0xCBD1
-wLoadedCard1Type = 0xCC24
+wDefaultText = sym("wDefaultText")
+wPrintOnlyStarRarity = sym("wPrintOnlyStarRarity")
+wPrinterCardCount = sym("wPrinterCardCount")
+wPrinterHorizontalOffset = sym("wPrinterHorizontalOffset")
+wPrinterTotalCardCount = sym("wPrinterTotalCardCount")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wVBlankFunctionTrampoline = 0xCAD0
+wCardPageType = sym("wCardPageType")
+wLoadedCard1Type = sym("wLoadedCard1Type")
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wVBlankFunctionTrampoline = sym("wVBlankFunctionTrampoline")
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-wPrinterInitAttempts = 0xCE9E
+wPrinterInitAttempts = sym("wPrinterInitAttempts")
 
-wTxRam3 = 0xCE43
+wTxRam3 = sym("wTxRam3")
 
-wPrinterStatus = 0xCE6F
-wPrinterInitAttempts = 0xCE9E
+wPrinterStatus = sym("wPrinterStatus")
+wPrinterInitAttempts = sym("wPrinterInitAttempts")
 
 # Shared seeds for the _PrintCardList cases: an empty card collection in SRAM
 # bank 0 (0xA100 sCardCollection) plus four unnamed deck slots (0xA200 sDeck1Name,
 # 0xA254 sDeck2Name, 0xA2A8 sDeck3Name, 0xA2FC sDeck4Name) so
 # CreateTempCardCollection's .AddDeckCards passes over all four and leaves
 # wTempCardCollection all zero on both sides.
-_PRINT_CARD_LIST_SRAM = {0: {0xA100: b"\x00" * 0x100, 0xA200: b"\x00",
-                             0xA254: b"\x00", 0xA2A8: b"\x00", 0xA2FC: b"\x00"}}
+_PRINT_CARD_LIST_SRAM = {0: {sym("sCardAndDeckSaveData"): b"\x00" * 0x100, sym("sBuiltDecks"): b"\x00",
+                             sym("sDeck2"): b"\x00", sym("sDeck3"): b"\x00", sym("sDeck4"): b"\x00"}}
 _PRINT_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"},
                           {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
@@ -127,17 +128,17 @@ _PRINT_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"},
 # sDeck2Cards, 0xA2C0 sDeck3Cards, 0xA314 sDeck4Cards), so
 # CreateCardCollectionListWithDeckCards' ALL_DECKS pass ends at once and
 # CreateFilteredCardList produces an empty visible list on both sides.
-_PRINTER_MENU_CARD_LIST_SRAM = {0: {0xA100: b"\x00" * 0x100, 0xA218: b"\x00",
-                                    0xA26C: b"\x00", 0xA2C0: b"\x00",
-                                    0xA314: b"\x00"}}
+_PRINTER_MENU_CARD_LIST_SRAM = {0: {sym("sCardAndDeckSaveData"): b"\x00" * 0x100, sym("sDeck1Cards"): b"\x00",
+                                    sym("sDeck2Cards"): b"\x00", sym("sDeck3Cards"): b"\x00",
+                                    sym("sDeck4Cards"): b"\x00"}}
 _PRINTER_MENU_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"},
                                  {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hffb3 = 0xFFB3
-sPrinterContrastLevel = 0xA003
-wPrinterPacketDataPtr = 0xCE6A
-wSelectedPrinterMenuItem = 0xCFE4
+hffb3 = sym("hffb3")
+sPrinterContrastLevel = sym("sPrinterContrastLevel")
+wPrinterPacketDataPtr = sym("wPrinterPacketDataPtr")
+wSelectedPrinterMenuItem = sym("wSelectedPrinterMenuItem")
 SETUP = [{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}]
 QUALITY_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
@@ -145,57 +146,57 @@ QUALITY_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 
 # >>> factory Func_1a14b
 CONTRACT["Func_1a14b"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
 CASES["Func_1a14b"] = [
-    {"f": 0x00, "wram": {0xCE9D: b"\x00"}, "expect": {0xCE9D: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x10}},
-    {"f": 0x80, "wram": {0xCE9D: b"\xFF"}, "expect": {0xCE9D: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x90}},
-    dict(POISON, wram={0xCE9D: b"\x00"}, expect={0xCE9D: b"\x01"}, expect_regs={"a": 0x01, "f": 0x90, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
+    {"f": 0x00, "wram": {sym("wce9d"): b"\x00"}, "expect": {sym("wce9d"): b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x10}},
+    {"f": 0x80, "wram": {sym("wce9d"): b"\xFF"}, "expect": {sym("wce9d"): b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x90}},
+    dict(POISON, wram={sym("wce9d"): b"\x00"}, expect={sym("wce9d"): b"\x01"}, expect_regs={"a": 0x01, "f": 0x90, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
 ]
 # <<< factory Func_1a14b
 
 # >>> factory Func_1a025
 CONTRACT["Func_1a025"] = {"compare": (), "preserve": (), "wram_out": True};
 CASES["Func_1a025"] = [
-    {"read": {0xCD06: 1, 0xCD07: 1}},
-    dict(POISON, read={0xCD06: 1, 0xCD07: 1}),
+    {"read": {sym("wTilePatternSelector"): 1, sym("wTilePatternSelectorCorrection"): 1}},
+    dict(POISON, read={sym("wTilePatternSelector"): 1, sym("wTilePatternSelectorCorrection"): 1}),
 ]
 # <<< factory Func_1a025
 
 # >>> factory ResetPrinterCommunicationSettings
 CONTRACT["ResetPrinterCommunicationSettings"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c"), "wram_out": True}
 CASES["ResetPrinterCommunicationSettings"] = [
-    {"wram": {0xCE8F: b"\x01"}, "read": {0xCE8F: 1, 0xCD04: 1, 0xCD06: 1, 0xCD07: 1, 0xCD0A: 1, 0xCD0B: 1, 0xC600: 256, 0xFF81: 1, 0xFFA8: 1, 0xFFA9: 1, 0xFFAF: 1, 0xFFB0: 1}},
-    dict(POISON, wram={0xCE8F: b"\x02"}, read={0xCE8F: 1, 0xCD04: 1, 0xCD06: 1, 0xCD07: 1, 0xCD0A: 1, 0xCD0B: 1, 0xC600: 256, 0xFF81: 1, 0xFFA8: 1, 0xFFA9: 1, 0xFFAF: 1, 0xFFB0: 1}),
+    {"wram": {sym("wTempPrinterSRAM"): b"\x01"}, "read": {sym("wTempPrinterSRAM"): 1, sym("wcd04"): 1, sym("wTilePatternSelector"): 1, sym("wTilePatternSelectorCorrection"): 1, sym("wFontWidth"): 1, sym("wHalfWidthPrintState"): 1, sym("wc600"): 256, sym("hBankSRAM"): 1, sym("hffa8"): 1, sym("hffa9"): 1, sym("hJapaneseSyllabary"): 1, sym("hffb0"): 1}},
+    dict(POISON, wram={sym("wTempPrinterSRAM"): b"\x02"}, read={sym("wTempPrinterSRAM"): 1, sym("wcd04"): 1, sym("wTilePatternSelector"): 1, sym("wTilePatternSelectorCorrection"): 1, sym("wFontWidth"): 1, sym("wHalfWidthPrintState"): 1, sym("wc600"): 256, sym("hBankSRAM"): 1, sym("hffa8"): 1, sym("hffa9"): 1, sym("hJapaneseSyllabary"): 1, sym("hffb0"): 1}),
 ]
 # <<< factory ResetPrinterCommunicationSettings
 
 # >>> factory ClearPrinterGfxBuffer
 CONTRACT["ClearPrinterGfxBuffer"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e"), "wram_out": True}
 CASES["ClearPrinterGfxBuffer"] = [
-    {"wram": {0xCE9F: b"\x55"}, "sram": {0: {0xA000: b"\xAA" * 0x400}}, "expect": {0xCE9F: b"\x00"}, "expect_sram": {0: {0xA000: b"\x00" * 0x400}}},
-    dict(POISON, wram={0xCE9F: b"\xFF"}, sram={0: {0xA000: b"\xAA" * 0x400}}, expect={0xCE9F: b"\x00"}, expect_sram={0: {0xA000: b"\x00" * 0x400}}),
+    {"wram": {sym("wce9f"): b"\x55"}, "sram": {0: {sym("s0a000"): b"\xAA" * 0x400}}, "expect": {sym("wce9f"): b"\x00"}, "expect_sram": {0: {sym("s0a000"): b"\x00" * 0x400}}},
+    dict(POISON, wram={sym("wce9f"): b"\xFF"}, sram={0: {sym("s0a000"): b"\xAA" * 0x400}}, expect={sym("wce9f"): b"\x00"}, expect_sram={0: {sym("s0a000"): b"\x00" * 0x400}}),
 ]
 # <<< factory ClearPrinterGfxBuffer
 
 # >>> factory GetPrinterContrastSerialData
 CONTRACT["GetPrinterContrastSerialData"] = {"compare": ("a", "hl"), "preserve": ()}
 CASES["GetPrinterContrastSerialData"] = [
-    {"wram": {0xCE99: b"\x00"}},
-    dict(POISON, wram={0xCE99: b"\x02"}),
+    {"wram": {sym("wPrinterContrastLevel"): b"\x00"}},
+    dict(POISON, wram={sym("wPrinterContrastLevel"): b"\x02"}),
 ]
 # <<< factory GetPrinterContrastSerialData
 
 # >>> factory PrepareForPrinterCommunications
 CONTRACT["PrepareForPrinterCommunications"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
 CASES["PrepareForPrinterCommunications"] = [
-    {"wram": {0xFF81: b"\x00"}, "sram": {0: {0xA003: b"\x2A"}}, "read": {0xCE99: 1, 0xCE9B: 1, 0xCE8F: 1, 0xFF81: 1}},
-    dict(POISON, wram={0xFF81: b"\x00"}, sram={0: {0xA003: b"\x2A"}}, read={0xCE99: 1, 0xCE9B: 1, 0xCE8F: 1, 0xFF81: 1}),
+    {"wram": {sym("hBankSRAM"): b"\x00"}, "sram": {0: {sym("sPrinterContrastLevel"): b"\x2A"}}, "read": {sym("wPrinterContrastLevel"): 1, sym("wPrinterNumberLineFeeds"): 1, sym("wTempPrinterSRAM"): 1, sym("hBankSRAM"): 1}},
+    dict(POISON, wram={sym("hBankSRAM"): b"\x00"}, sram={0: {sym("sPrinterContrastLevel"): b"\x2A"}}, read={sym("wPrinterContrastLevel"): 1, sym("wPrinterNumberLineFeeds"): 1, sym("wTempPrinterSRAM"): 1, sym("hBankSRAM"): 1}),
 ]
 # <<< factory PrepareForPrinterCommunications
 
 # >>> factory CheckDataCompression
 CONTRACT["CheckDataCompression"] = {"compare": ("a", "e", "f", "hl"), "preserve": ()}
 CASES["CheckDataCompression"] = [
-    {"c": 0x06, "hl": 0xC500, "wram": {0xC500: bytes([1, 1, 1, 1, 5, 6])}},
-    dict(POISON, c=0x04, hl=0xC500, wram={0xC500: bytes([1, 2, 3, 4])}),
+    {"c": 0x06, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): bytes([1, 1, 1, 1, 5, 6])}},
+    dict(POISON, c=0x04, hl=sym("wNameBuffer"), wram={sym("wNameBuffer"): bytes([1, 2, 3, 4])}),
 ]
 # <<< factory CheckDataCompression
 
@@ -218,8 +219,8 @@ CASES["LoadCardInfoForPrinter"] = [
 # >>> factory PrinterMenu_QuitPrint
 CONTRACT["PrinterMenu_QuitPrint"] = {"compare": ("f",), "preserve": ()}
 CASES["PrinterMenu_QuitPrint"] = [
-    {"stack": [0], "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "stack": [0x1234], "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000}
+    {"stack": [0], "wram": {sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "stack": [0x1234], "wram": {sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000}
 ]
 # <<< factory PrinterMenu_QuitPrint
 
@@ -231,22 +232,22 @@ CASES["DrawBottomCardInfoInSRAMGfxBuffer0"] = [
     # A grass Pokemon with no attacks, retreat cost 1, pokedex 7 (printer.asm:236-245):
     # the Retreat/Weakness/Resistance labels land in sGfxBuffer0 rows 70-72, the
     # colorless retreat symbol at (8,70) and SYM_No plus the number at (15,72)/(15,73).
-    dict(POISON, ramg=True, sram={0: {0xA000: b"\x00" * 0x400}},
-         wram={wLoadedCard1Type: b"\x00", 0xCC34: b"\x00\x00", 0xCC47: b"\x00\x00", 0xCC56: b"\x01",
-               0xCC57: b"\x00", 0xCC58: b"\x00", 0xCC5B: b"\x07"},
-         read={wCardPageType: 1}, sread={0: {0xA0C1: 8, 0xA0C8: 2, 0xA0E1: 8, 0xA101: 8, 0xA10F: 2, 0xA12F: 2}}),
+    dict(POISON, ramg=True, sram={0: {sym("s0a000"): b"\x00" * 0x400}},
+         wram={wLoadedCard1Type: b"\x00", sym("wLoadedCard1Atk1Name"): b"\x00\x00", sym("wLoadedCard1Atk2Name"): b"\x00\x00", sym("wLoadedCard1RetreatCost"): b"\x01",
+               sym("wLoadedCard1Weakness"): b"\x00", sym("wLoadedCard1Resistance"): b"\x00", sym("wLoadedCard1PokedexNumber"): b"\x07"},
+         read={wCardPageType: 1}, sread={0: {sym("sPlayerName") + 0xB1: 8, sym("sPlayerName") + 0xB8: 2, sym("sPlayerName") + 0xD1: 8, sym("sCardAndDeckSaveData") + 1: 8, sym("sCardAndDeckSaveData") + 0xF: 2, sym("sCardAndDeckSaveData") + 0x2F: 2}}),
 ]
 # <<< factory DrawBottomCardInfoInSRAMGfxBuffer0
 
 # >>> factory ShowPrinterTransmitting
 CONTRACT["ShowPrinterTransmitting"] = {"compare": (), "preserve": ()}
 CASES["ShowPrinterTransmitting"] = [
-    {"wram": {0xCABB: b"\x00", wVBlankFunctionTrampoline: b"\x00\x00\x00"},
+    {"wram": {sym("wLCDC"): b"\x00", wVBlankFunctionTrampoline: b"\x00\x00\x00"},
      "sram": {0: {}}, "setup": SETUP,
      "read": {wVBlankFunctionTrampoline: 3},
      "instruction_budget": 8000000, "cycle_budget": 32000000},
     dict(POISON,
-         wram={0xCABB: b"\x00", wVBlankFunctionTrampoline: b"\x00\x00\x00"},
+         wram={sym("wLCDC"): b"\x00", wVBlankFunctionTrampoline: b"\x00\x00\x00"},
          sram={0: {}}, setup=SETUP,
          read={wVBlankFunctionTrampoline: 3},
          instruction_budget=8000000, cycle_budget=32000000),
@@ -256,24 +257,24 @@ CASES["ShowPrinterTransmitting"] = [
 # >>> factory SendPrinterPacket
 CONTRACT["SendPrinterPacket"] = {"compare": (), "preserve": ()}
 CASES["SendPrinterPacket"] = [
-    {"b": 0x00, "c": 0x00, "d": 0x12, "e": 0x34, "hl": 0xC500,
-     "wram": {0xC500: b"\x00", wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+    {"b": 0x00, "c": 0x00, "d": 0x12, "e": 0x34, "hl": sym("wNameBuffer"),
+     "wram": {sym("wNameBuffer"): b"\x00", wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
      "read": {wPrinterPacketSequence: 15}, "expect": {wPrinterPacketSequence: b"\x00\x88\x33\x12\x34\x00\x00\x00\xC5\x46\x00\x81\x00\x6A\xCE"},
      "expect_regs": {"a": 0x00, "f": 0x80}, "oracle": False, "evidence": "intentional-transform",
      "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
-    {"b": 0x00, "c": 0x00, "d": 0x12, "e": 0x34, "hl": 0xC500,
-     "wram": {0xC500: b"\x00", wSerialTransferData: b"\x42", wPrinterStatus: b"\x00"},
+    {"b": 0x00, "c": 0x00, "d": 0x12, "e": 0x34, "hl": sym("wNameBuffer"),
+     "wram": {sym("wNameBuffer"): b"\x00", wSerialTransferData: b"\x42", wPrinterStatus: b"\x00"},
      "read": {wPrinterPacketSequence: 15}, "expect": {wPrinterPacketSequence: b"\x00\x88\x33\x12\x34\x00\x00\x00\xC5\x46\x00\x42\xFF\x6A\xCE"},
      "expect_regs": {"a": 0xFF, "f": 0x10}, "oracle": False, "evidence": "intentional-transform",
      "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
-    dict(POISON, b=0x00, c=0x00, d=0x12, e=0x34, hl=0xC500,
-         wram={0xC500: b"\x00", wSerialTransferData: b"\x81", wPrinterStatus: b"\xF0"},
+    dict(POISON, b=0x00, c=0x00, d=0x12, e=0x34, hl=sym("wNameBuffer"),
+         wram={sym("wNameBuffer"): b"\x00", wSerialTransferData: b"\x81", wPrinterStatus: b"\xF0"},
          read={wPrinterPacketSequence: 15}, expect={wPrinterPacketSequence: b"\x00\x88\x33\x12\x34\x00\x00\x00\xC5\x46\x00\x81\xF0\x6A\xCE"},
          expect_regs={"a": 0xF0, "f": 0x10}, oracle=False, evidence="intentional-transform",
          why="PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"),
-    {"b": 0x00, "c": 0x00, "d": 0x12, "e": 0x34, "hl": 0xC500,
-     "wram": {0xC500: b"\x00", wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
-     "read": {0xCE64: 8}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"b": 0x00, "c": 0x00, "d": 0x12, "e": 0x34, "hl": sym("wNameBuffer"),
+     "wram": {sym("wNameBuffer"): b"\x00", wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+     "read": {sym("wPrinterPacket"): 8}, "instruction_budget": 2000000, "cycle_budget": 8000000},
 ]
 # <<< factory SendPrinterPacket
 
@@ -288,31 +289,31 @@ _SENDTILES_SR = {0: {SGFXBUFFER1: _SENDTILES_GFX}}
 _SENDTILES_STAGED = b"".join(bytes([i]) * 16 for i in list(range(20)) + list(range(32, 52)))
 _SENDTILES_COMPRESSED = bytes.fromhex("8e008e018e028e038e048e058e068e078e088e098e0a8e0b8e0c8e0d8e0e8e0f8e108e118e128e138e208e218e228e238e248e258e268e278e288e298e2a8e2b8e2c8e2d8e2e8e2f8e308e318e328e33")
 CASES["SendTilesToPrinter"] = [
-    {"hl": 0xC500,
-     "wram": {0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+    {"hl": sym("wNameBuffer"),
+     "wram": {sym("wNameBuffer"): _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
      "sram": _SENDTILES_SR, "ramg": True,
-     "expect": {0xCE64: b"\x88\x33\x04\x01\x00\x00\x80\xB6"},
-     "expect_regs": {"a": 0x00, "f": 0x80, "hl": 0xC540},
+     "expect": {sym("wPrinterPacket"): b"\x88\x33\x04\x01\x00\x00\x80\xB6"},
+     "expect_regs": {"a": 0x00, "f": 0x80, "hl": sym("wDuelTempList") + 0x30},
      "expect_sram": {0: {SGFXBUFFER5: _SENDTILES_STAGED, SGFXBUFFER5 + 0x280: _SENDTILES_COMPRESSED}},
      "oracle": False, "evidence": "intentional-transform",
      "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
-    dict(POISON, hl=0xC500,
-         wram={0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+    dict(POISON, hl=sym("wNameBuffer"),
+         wram={sym("wNameBuffer"): _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
          sram=_SENDTILES_SR, ramg=True,
-         expect={0xCE64: b"\x88\x33\x04\x01\x00\x00\x80\xB6"},
-         expect_regs={"a": 0x00, "f": 0x80, "hl": 0xC540},
+         expect={sym("wPrinterPacket"): b"\x88\x33\x04\x01\x00\x00\x80\xB6"},
+         expect_regs={"a": 0x00, "f": 0x80, "hl": sym("wDuelTempList") + 0x30},
          expect_sram={0: {SGFXBUFFER5: _SENDTILES_STAGED, SGFXBUFFER5 + 0x280: _SENDTILES_COMPRESSED}},
          oracle=False, evidence="intentional-transform",
          why="PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"),
-    {"hl": 0xC500,
-     "wram": {0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x42", wPrinterStatus: b"\x00"},
+    {"hl": sym("wNameBuffer"),
+     "wram": {sym("wNameBuffer"): _SENDTILES_MAP, wSerialTransferData: b"\x42", wPrinterStatus: b"\x00"},
      "sram": _SENDTILES_SR, "ramg": True,
-     "expect": {0xCE64: b"\x88\x33\x04\x01\x00\x00\x80\xB6"},
-     "expect_regs": {"a": 0xFF, "f": 0x10, "hl": 0xC540},
+     "expect": {sym("wPrinterPacket"): b"\x88\x33\x04\x01\x00\x00\x80\xB6"},
+     "expect_regs": {"a": 0xFF, "f": 0x10, "hl": sym("wDuelTempList") + 0x30},
      "oracle": False, "evidence": "intentional-transform",
      "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
-    {"hl": 0xC500,
-     "wram": {0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+    {"hl": sym("wNameBuffer"),
+     "wram": {sym("wNameBuffer"): _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
      "sram": _SENDTILES_SR, "ramg": True,
      "sread": {0: {SGFXBUFFER5: 0x280, SGFXBUFFER5 + 0x280: 0x50}},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
@@ -323,14 +324,14 @@ CASES["SendTilesToPrinter"] = [
 CONTRACT["ShowPrinterConnectionErrorScene"] = {"compare": ("f",), "preserve": ()}
 CASES["ShowPrinterConnectionErrorScene"] = [
     {"a": 0x02, "hl": 0x0120, "keys": [0, 1],
-     "wram": {0xCABB: b"\x00"},
-     "setup": [{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
-     "read": {0xCE43: 2},
+     "wram": {sym("wLCDC"): b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+     "read": {sym("wTxRam3"): 2},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, a=0x02, hl=0x0120, keys=[0, 1],
-         wram={0xCABB: b"\x00"},
-         setup=[{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
-         read={0xCE43: 2},
+         wram={sym("wLCDC"): b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+         read={sym("wTxRam3"): 2},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ShowPrinterConnectionErrorScene
@@ -376,14 +377,14 @@ CASES["TryInitPrinterCommunications"] = [
 CONTRACT["ShowPrinterIsNotConnected"] = {"compare": ("f",), "preserve": ()}
 CASES["ShowPrinterIsNotConnected"] = [
     {"keys": [0, 1],
-     "wram": {0xCABB: b"\x00"},
+     "wram": {sym("wLCDC"): b"\x00"},
      "setup": [{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
-     "read": {0xCE43: 2},
+     "read": {sym("wTxRam3"): 2},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0, 1],
-         wram={0xCABB: b"\x00"},
+         wram={sym("wLCDC"): b"\x00"},
          setup=[{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
-         read={0xCE43: 2},
+         read={sym("wTxRam3"): 2},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ShowPrinterIsNotConnected
@@ -391,31 +392,31 @@ CASES["ShowPrinterIsNotConnected"] = [
 # >>> factory HandlePrinterError
 CONTRACT["HandlePrinterError"] = {"compare": ("f",), "preserve": ()}
 CASES["HandlePrinterError"] = [
-    {"wram": {wPrinterStatus: b"\x00", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+    {"wram": {wPrinterStatus: b"\x00", sym("wTxRam3"): b"\xAA\x55", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01], "read": {wTxRam3: 2},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {wPrinterStatus: b"\xFF", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+    {"wram": {wPrinterStatus: b"\xFF", sym("wTxRam3"): b"\xAA\x55", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01], "read": {wTxRam3: 2},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {wPrinterStatus: b"\x80", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+    {"wram": {wPrinterStatus: b"\x80", sym("wTxRam3"): b"\xAA\x55", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01], "read": {wTxRam3: 2},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {wPrinterStatus: b"\x40", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+    {"wram": {wPrinterStatus: b"\x40", sym("wTxRam3"): b"\xAA\x55", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01], "read": {wTxRam3: 2},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {wPrinterStatus: b"\x20", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+    {"wram": {wPrinterStatus: b"\x20", sym("wTxRam3"): b"\xAA\x55", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01], "read": {wTxRam3: 2},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {wPrinterStatus: b"\x01", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+    {"wram": {wPrinterStatus: b"\x01", sym("wTxRam3"): b"\xAA\x55", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x01], "read": {wTxRam3: 2},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={wPrinterStatus: b"\x01", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+    dict(POISON, wram={wPrinterStatus: b"\x01", sym("wTxRam3"): b"\xAA\x55", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x01], read={wTxRam3: 2},
          instruction_budget=20000000, cycle_budget=80000000),
@@ -425,12 +426,12 @@ CASES["HandlePrinterError"] = [
 # >>> factory SendPrinterInstructionPacket
 CONTRACT["SendPrinterInstructionPacket"] = {"compare": (), "preserve": ()}
 CASES["SendPrinterInstructionPacket"] = [
-    {"hl": 0xC100, "stack": [0xC100],
-     "wram": {0xC100: b"\x00\x00\x00\x00", 0xCE6E: b"\x00"},
-     "read": {0xCE6A: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11],
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00\x00\x00\x00", sym("wSerialTransferData"): b"\x00"},
+     "read": {sym("wPrinterPacketDataPtr"): 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, stack=[0x1234],
-         wram={0xCE6E: b"\x00"},
-         read={0xCE6A: 2}, instruction_budget=2000000, cycle_budget=8000000),
+         wram={sym("wSerialTransferData"): b"\x00"},
+         read={sym("wPrinterPacketDataPtr"): 2}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory SendPrinterInstructionPacket
 
@@ -448,12 +449,12 @@ CASES["SendPrinterInstructionPacket"] = [
 # compared; the packet buffer diverges after the second packet and is not read.
 CONTRACT["SendPrinterInstructionPacket_1Sheet"] = {"compare": (), "preserve": ()}
 CASES["SendPrinterInstructionPacket_1Sheet"] = [
-    {"wram": {0xCE99: b"\x00", 0xCE9B: b"\x23", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
-     "read": {0xCE9B: 1},
+    {"wram": {sym("wPrinterContrastLevel"): b"\x00", sym("wPrinterNumberLineFeeds"): b"\x23", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00"},
+     "read": {sym("wPrinterNumberLineFeeds"): 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON,
-         wram={0xCE99: b"\x02", 0xCE9B: b"\x45", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
-         read={0xCE9B: 1},
+         wram={sym("wPrinterContrastLevel"): b"\x02", sym("wPrinterNumberLineFeeds"): b"\x45", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00"},
+         read={sym("wPrinterNumberLineFeeds"): 1},
          instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory SendPrinterInstructionPacket_1Sheet
@@ -479,16 +480,16 @@ CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = [
     # wPrinterStatus ($CE6F) is not seeded: the port's synchronous state
     # machine marks the non-ack $FF there while the reference parks in its
     # transmission wait and never writes it (the transform case [2] below).
-    {"wram": {0xCE99: b"\x00", 0xCE6E: b"\x00",
-              0xCE6A: b"\x00", 0xCE6B: b"\x00"},
-     "read": {0xCE99: 1},
+    {"wram": {sym("wPrinterContrastLevel"): b"\x00", sym("wSerialTransferData"): b"\x00",
+              sym("wPrinterPacketDataPtr"): b"\x00", sym("wPrinterPacketDataPtr") + 1: b"\x00"},
+     "read": {sym("wPrinterContrastLevel"): 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON,
-         wram={0xCE99: b"\x02", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
-         read={0xCE99: 1},
+         wram={sym("wPrinterContrastLevel"): b"\x02", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00"},
+         read={sym("wPrinterContrastLevel"): 1},
          instruction_budget=2000000, cycle_budget=8000000),
-    {"wram": {0xCE99: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
-     "read": {0xCE6B: 2},
+    {"wram": {sym("wPrinterContrastLevel"): b"\x00", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00"},
+     "read": {sym("wPrinterPacketDataPtr") + 1: 2},
      "expect_regs": {"a": 0x00, "f": 0x80, "hl": 0x00E4},
      "oracle": False, "evidence": "intentional-transform",
      "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
@@ -503,19 +504,19 @@ CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = [
 # with a=1, f=0x00 (`ld a, 1` / `or a`).
 CONTRACT["LoadGfxBufferForPrinter"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",)}
 CASES["LoadGfxBufferForPrinter"] = [
-    {"hl": 0xBEEF, "keys": [0x02],
-     "wram": {0xCE90: b"\x14", 0xCE6F: b"\x77", 0xCE9B: b"\xAA"},
-     "read": {0xCE90: 1},
+    {"hl": data(0xBEEF), "keys": [0x02],
+     "wram": {sym("wPrinterHorizontalOffset"): b"\x14", sym("wPrinterStatus"): b"\x77", sym("wPrinterNumberLineFeeds"): b"\xAA"},
+     "read": {sym("wPrinterHorizontalOffset"): 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hl=0xBEEF, keys=[0x02],
-         wram={0xCE90: b"\x14", 0xCE6F: b"\x77", 0xCE9B: b"\xAA"},
-         read={0xCE90: 1},
+    dict(POISON, hl=data(0xBEEF), keys=[0x02],
+         wram={sym("wPrinterHorizontalOffset"): b"\x14", sym("wPrinterStatus"): b"\x77", sym("wPrinterNumberLineFeeds"): b"\xAA"},
+         read={sym("wPrinterHorizontalOffset"): 1},
          instruction_budget=2000000, cycle_budget=8000000),
-    {"hl": 0xBEEF,
-     "wram": {0xCE90: b"\x14", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
-     "sram": {0: {0xA000: bytes([1] * 64), 0xA410: b"\xab" * 16}}, "ramg": True,
-     "read": {0xCE90: 1},
-     "expect": {0xCE90: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x00},
+    {"hl": data(0xBEEF),
+     "wram": {sym("wPrinterHorizontalOffset"): b"\x14", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00"},
+     "sram": {0: {sym("s0a000"): bytes([1] * 64), sym("sSavedDeck3Cards"): b"\xab" * 16}}, "ramg": True,
+     "read": {sym("wPrinterHorizontalOffset"): 1},
+     "expect": {sym("wPrinterHorizontalOffset"): b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x00},
      "oracle": False, "evidence": "intentional-transform",
      "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
 ]
@@ -528,19 +529,19 @@ CASES["LoadGfxBufferForPrinter"] = [
 # TryInitPrinterCommunications' carry before any packet wait.
 CONTRACT["AddToPrinterGfxBuffer"] = {"compare": ("a", "hl"), "preserve": ("hl",)}
 CASES["AddToPrinterGfxBuffer"] = [
-    {"hl": 0xBEEF, "wram": {0xCE90: b"\x0A"}, "read": {0xCE90: 1},
+    {"hl": data(0xBEEF), "wram": {sym("wPrinterHorizontalOffset"): b"\x0A"}, "read": {sym("wPrinterHorizontalOffset"): 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hl=0xBEEF, wram={0xCE90: b"\x0E"}, read={0xCE90: 1},
+    dict(POISON, hl=data(0xBEEF), wram={sym("wPrinterHorizontalOffset"): b"\x0E"}, read={sym("wPrinterHorizontalOffset"): 1},
          instruction_budget=2000000, cycle_budget=8000000),
-    {"hl": 0xBEEF, "keys": [0x02],
-     "wram": {0xCE90: b"\x12", 0xCE6F: b"\x77", 0xCE9B: b"\xAA"},
-     "read": {0xCE90: 1},
+    {"hl": data(0xBEEF), "keys": [0x02],
+     "wram": {sym("wPrinterHorizontalOffset"): b"\x12", sym("wPrinterStatus"): b"\x77", sym("wPrinterNumberLineFeeds"): b"\xAA"},
+     "read": {sym("wPrinterHorizontalOffset"): 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"hl": 0xBEEF,
-     "wram": {0xCE90: b"\x11", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
-     "sram": {0: {0xA000: bytes([1] * 64), 0xA410: b"\xab" * 16}}, "ramg": True,
-     "read": {0xCE90: 1},
-     "expect": {0xCE90: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x00},
+    {"hl": data(0xBEEF),
+     "wram": {sym("wPrinterHorizontalOffset"): b"\x11", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00"},
+     "sram": {0: {sym("s0a000"): bytes([1] * 64), sym("sSavedDeck3Cards"): b"\xab" * 16}}, "ramg": True,
+     "read": {sym("wPrinterHorizontalOffset"): 1},
+     "expect": {sym("wPrinterHorizontalOffset"): b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x00},
      "oracle": False, "evidence": "intentional-transform",
      "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
 ]
@@ -565,7 +566,7 @@ CASES["AddToPrinterGfxBuffer"] = [
 # without touching wPrinterStatus again -- no scene, no text box, no frames.
 CONTRACT["_PreparePrinterConnection"] = {"compare": (), "preserve": ()}
 CASES["_PreparePrinterConnection"] = [
-    {"hl": 0xC100,
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
      "wram": {wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
      "read": {wPrinterPacketDataPtr: 2},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
@@ -580,16 +581,16 @@ CASES["_PreparePrinterConnection"] = [
 CONTRACT["SendCardListToPrinter"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
 CASES["SendCardListToPrinter"] = [
     {"keys": [0x02],
-     "wram": {0xCE90: b"\x01", 0xCE6F: b"\x77", 0xCE9E: b"\xAA"},
-     "read": {0xCE90: 1, 0xCE6F: 1, 0xCE9E: 1},
+     "wram": {sym("wPrinterHorizontalOffset"): b"\x01", sym("wPrinterStatus"): b"\x77", sym("wPrinterInitAttempts"): b"\xAA"},
+     "read": {sym("wPrinterHorizontalOffset"): 1, sym("wPrinterStatus"): 1, sym("wPrinterInitAttempts"): 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     {"keys": [0x02],
-     "wram": {0xCE90: b"\x00", 0xCE6F: b"\x55", 0xCE9E: b"\xCC"},
-     "read": {0xCE90: 1, 0xCE6F: 1, 0xCE9E: 1},
+     "wram": {sym("wPrinterHorizontalOffset"): b"\x00", sym("wPrinterStatus"): b"\x55", sym("wPrinterInitAttempts"): b"\xCC"},
+     "read": {sym("wPrinterHorizontalOffset"): 1, sym("wPrinterStatus"): 1, sym("wPrinterInitAttempts"): 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, keys=[0x02],
-         wram={0xCE90: b"\x00", 0xCE6F: b"\xAA", 0xCE9E: b"\x55"},
-         read={0xCE90: 1, 0xCE6F: 1, 0xCE9E: 1},
+         wram={sym("wPrinterHorizontalOffset"): b"\x00", sym("wPrinterStatus"): b"\xAA", sym("wPrinterInitAttempts"): b"\x55"},
+         read={sym("wPrinterHorizontalOffset"): 1, sym("wPrinterStatus"): 1, sym("wPrinterInitAttempts"): 1},
          instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory SendCardListToPrinter
@@ -624,12 +625,12 @@ CASES["Func_1a011"] = [
 CONTRACT["Func_19f99"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Func_19f99"] = [
     {"keys": [0x02],
-     "wram": {0xCE6F: b"\x77", 0xCE9E: b"\xAA"},
-     "read": {0xCE6F: 1, 0xCE9E: 1},
+     "wram": {sym("wPrinterStatus"): b"\x77", sym("wPrinterInitAttempts"): b"\xAA"},
+     "read": {sym("wPrinterStatus"): 1, sym("wPrinterInitAttempts"): 1},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, keys=[0x02],
-         wram={0xCE6F: b"\xAA", 0xCE9E: b"\x55"},
-         read={0xCE6F: 1, 0xCE9E: 1},
+         wram={sym("wPrinterStatus"): b"\xAA", sym("wPrinterInitAttempts"): b"\x55"},
+         read={sym("wPrinterStatus"): 1, sym("wPrinterInitAttempts"): 1},
          instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory Func_19f99
@@ -638,18 +639,18 @@ CASES["Func_19f99"] = [
 CONTRACT["_PrintDeckConfiguration"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["_PrintDeckConfiguration"] = [
     {"a": 0x00,
-     "wram": {0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF", 0xCF17: b"\x00"},
-     "sram": {0: {0xA350: b"\x00" * 0x53 + b"\xA5"}},
+     "wram": {sym("wLCDC"): b"\x00", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00", sym("wPrinterTotalCardCount"): b"\xFF\xFF", sym("wPrintOnlyStarRarity"): b"\xFF", sym("wCurDeckCards"): b"\x00"},
+     "sram": {0: {sym("sSavedDeck1"): b"\x00" * 0x53 + b"\xA5"}},
      "ramg": True,
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": 0x00,
-     "read": {0xC510: 0x54, 0xCE92: 2, 0xCE9C: 1},
+     "read": {sym("wDuelTempList"): 0x54, sym("wPrinterTotalCardCount"): 2, sym("wPrintOnlyStarRarity"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, a=0x00,
-         wram={0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF", 0xCF17: b"\x00"},
-         sram={0: {0xA350: b"\x00" * 0x53 + b"\xA5"}}, ramg=True,
+         wram={sym("wLCDC"): b"\x00", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00", sym("wPrinterTotalCardCount"): b"\xFF\xFF", sym("wPrintOnlyStarRarity"): b"\xFF", sym("wCurDeckCards"): b"\x00"},
+         sram={0: {sym("sSavedDeck1"): b"\x00" * 0x53 + b"\xA5"}}, ramg=True,
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         keys=0x00, read={0xC510: 0x54, 0xCE92: 2, 0xCE9C: 1},
+         keys=0x00, read={sym("wDuelTempList"): 0x54, sym("wPrinterTotalCardCount"): 2, sym("wPrintOnlyStarRarity"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _PrintDeckConfiguration
@@ -671,7 +672,7 @@ CASES["_PrintDeckConfiguration"] = [
 # so both seeded serial bytes agree at the stop.
 CONTRACT["Func_1a080"] = {"compare": (), "preserve": ()}
 CASES["Func_1a080"] = [
-    {"hl": 0xC100,
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
      "wram": {wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
      "read": {wPrinterPacketDataPtr: 2},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
@@ -704,16 +705,16 @@ CASES["Func_1a080"] = [
 CONTRACT["_RequestToPrintCard"] = {"compare": (), "preserve": ()}
 CASES["_RequestToPrintCard"] = [
     {"a": 0x01,
-     "wram": {0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+     "wram": {sym("wLCDC"): b"\x00", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00"},
      "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": 0x00,
-     "read": {0xCC24: 5, 0xCC2C: 1, 0xCC5D: 1},
+     "read": {sym("wLoadedCard1"): 5, sym("wLoadedCard1EffectCommands"): 1, sym("wLoadedCard1Level"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON,
-         wram={0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+         wram={sym("wLCDC"): b"\x00", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00"},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=0x00,
-         read={0xCC24: 5, 0xCC2C: 1, 0xCC5D: 1},
+         read={sym("wLoadedCard1"): 5, sym("wLoadedCard1EffectCommands"): 1, sym("wLoadedCard1Level"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _RequestToPrintCard
@@ -759,24 +760,24 @@ CASES["_RequestToPrintCard"] = [
 # when the reference parks.
 CONTRACT["_PrintCardList"] = {"compare": (), "preserve": ()}
 CASES["_PrintCardList"] = [
-    {"wram": {0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00",
-              0xCE91: b"\xFF", 0xCE92: b"\xFF\xFF", 0xCE97: b"\xFF",
-              0xCE9C: b"\xFF", 0xFF90: b"\x00", 0xFF97: b"\x00"},
+    {"wram": {sym("wLCDC"): b"\x00", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00",
+              sym("wPrinterCardCount"): b"\xFF", sym("wPrinterTotalCardCount"): b"\xFF\xFF", sym("wPrinterNumCardTypes"): b"\xFF",
+              sym("wPrintOnlyStarRarity"): b"\xFF", sym("hKeysHeld"): b"\x00", sym("hWhoseTurn"): b"\x00"},
      "sram": _PRINT_CARD_LIST_SRAM,
      "ramg": True,
      "setup": _PRINT_CARD_LIST_SETUP,
      "keys": 0x00,
-     "read": {0xCE91: 1, 0xCE92: 2, 0xCE97: 1, 0xCE9C: 1, 0xFF97: 1},
+     "read": {sym("wPrinterCardCount"): 1, sym("wPrinterTotalCardCount"): 2, sym("wPrinterNumCardTypes"): 1, sym("wPrintOnlyStarRarity"): 1, sym("hWhoseTurn"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON,
-         wram={0xCABB: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00",
-               0xCE91: b"\xFF", 0xCE92: b"\xFF\xFF", 0xCE9C: b"\xFF",
-               0xFF90: b"\x04", 0xFF97: b"\x00"},
+         wram={sym("wLCDC"): b"\x00", sym("wSerialTransferData"): b"\x81", sym("wPrinterStatus"): b"\x00",
+               sym("wPrinterCardCount"): b"\xFF", sym("wPrinterTotalCardCount"): b"\xFF\xFF", sym("wPrintOnlyStarRarity"): b"\xFF",
+               sym("hKeysHeld"): b"\x04", sym("hWhoseTurn"): b"\x00"},
          sram=_PRINT_CARD_LIST_SRAM,
          ramg=True,
          setup=_PRINT_CARD_LIST_SETUP,
          keys=0x04,
-         read={0xCE91: 1, 0xCE92: 2, 0xCE9C: 1, 0xFF97: 1},
+         read={sym("wPrinterCardCount"): 1, sym("wPrinterTotalCardCount"): 2, sym("wPrintOnlyStarRarity"): 1, sym("hWhoseTurn"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory _PrintCardList
@@ -809,22 +810,22 @@ CASES["_PrintCardList"] = [
 # elapsed frames, so it still differs when A lands on a different iteration.
 CONTRACT["PrinterMenu_CardList"] = {"compare": (), "preserve": ()}
 CASES["PrinterMenu_CardList"] = [
-    {"wram": {0xCABB: b"\x00", 0xCEA1: b"\xFF", 0xCED3: b"\xFF",
-              0xCEA4: b"\xFF" * 10, 0xFFB3: b"\xFF"},
+    {"wram": {sym("wLCDC"): b"\x00", sym("wCardListVisibleOffset"): b"\xFF", sym("wCurCardTypeFilter"): b"\xFF",
+              sym("wCardListCursorPos"): b"\xFF" * 10, sym("hffb3"): b"\xFF"},
      "sram": _PRINTER_MENU_CARD_LIST_SRAM,
      "ramg": True,
      "setup": _PRINTER_MENU_CARD_LIST_SETUP,
      "keys": [0x00, 0x01],
-     "read": {0xCEA1: 1, 0xCEA4: 10, 0xCED3: 1, 0xFFB3: 1},
+     "read": {sym("wCardListVisibleOffset"): 1, sym("wCardListCursorPos"): 10, sym("wCurCardTypeFilter"): 1, sym("hffb3"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON,
-         wram={0xCABB: b"\x00", 0xCEA1: b"\xFF", 0xCED3: b"\xFF",
-               0xCEA4: b"\xFF" * 10, 0xFFB3: b"\xFF"},
+         wram={sym("wLCDC"): b"\x00", sym("wCardListVisibleOffset"): b"\xFF", sym("wCurCardTypeFilter"): b"\xFF",
+               sym("wCardListCursorPos"): b"\xFF" * 10, sym("hffb3"): b"\xFF"},
          sram=_PRINTER_MENU_CARD_LIST_SRAM,
          ramg=True,
          setup=_PRINTER_MENU_CARD_LIST_SETUP,
          keys=[0x00, 0x01],
-         read={0xCEA1: 1, 0xCEA4: 10, 0xCED3: 1, 0xFFB3: 1},
+         read={sym("wCardListVisibleOffset"): 1, sym("wCardListCursorPos"): 10, sym("wCurCardTypeFilter"): 1, sym("hffb3"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PrinterMenu_CardList
@@ -833,23 +834,23 @@ CASES["PrinterMenu_CardList"] = [
 CONTRACT["PrinterMenu_PokemonCards"] = {"compare": (), "preserve": ()}
 CASES["PrinterMenu_PokemonCards"] = [
     {"rom_bank": 2,
-     "wram": {0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\xFF",
-              0xCED3: b"\xFF", 0xCEA4: b"\xFF" * 10, 0xFFB3: b"\xFF"},
+     "wram": {sym("wConsole"): b"\x00", sym("wLCDC"): b"\x00", sym("wCardListVisibleOffset"): b"\xFF",
+              sym("wCurCardTypeFilter"): b"\xFF", sym("wCardListCursorPos"): b"\xFF" * 10, sym("hffb3"): b"\xFF"},
      "sram": _PRINTER_MENU_CARD_LIST_SRAM,
      "ramg": True,
      "setup": _PRINTER_MENU_CARD_LIST_SETUP,
      "keys": [0x00, 0x02],
-     "read": {0xCEA1: 1, 0xCEA4: 10, 0xCED3: 1, 0xFFB3: 1},
+     "read": {sym("wCardListVisibleOffset"): 1, sym("wCardListCursorPos"): 10, sym("wCurCardTypeFilter"): 1, sym("hffb3"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON,
          rom_bank=2,
-         wram={0xCAB4: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\xFF",
-               0xCED3: b"\xFF", 0xCEA4: b"\xFF" * 10, 0xFFB3: b"\xFF"},
+         wram={sym("wConsole"): b"\x00", sym("wLCDC"): b"\x00", sym("wCardListVisibleOffset"): b"\xFF",
+               sym("wCurCardTypeFilter"): b"\xFF", sym("wCardListCursorPos"): b"\xFF" * 10, sym("hffb3"): b"\xFF"},
          sram=_PRINTER_MENU_CARD_LIST_SRAM,
          ramg=True,
          setup=_PRINTER_MENU_CARD_LIST_SETUP,
          keys=[0x00, 0x02],
-         read={0xCEA1: 1, 0xCEA4: 10, 0xCED3: 1, 0xFFB3: 1},
+         read={sym("wCardListVisibleOffset"): 1, sym("wCardListCursorPos"): 10, sym("wCurCardTypeFilter"): 1, sym("hffb3"): 1},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PrinterMenu_PokemonCards
@@ -857,9 +858,9 @@ CASES["PrinterMenu_PokemonCards"] = [
 # >>> factory HandlePrinterMenu
 CONTRACT["HandlePrinterMenu"] = {"compare": (), "preserve": ()}
 CASES["HandlePrinterMenu"] = [
-    {"wram": {0xCFE4: b"\x00"}, "read": {0xCFE4: 1}, "keys": [0x00, 0x01],
+    {"wram": {sym("wSelectedPrinterMenuItem"): b"\x00"}, "read": {sym("wSelectedPrinterMenuItem"): 1}, "keys": [0x00, 0x01],
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xCFE4: b"\x00"}, read={0xCFE4: 1}, keys=[0x00, 0x01],
+    dict(POISON, wram={sym("wSelectedPrinterMenuItem"): b"\x00"}, read={sym("wSelectedPrinterMenuItem"): 1}, keys=[0x00, 0x01],
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory HandlePrinterMenu
@@ -867,14 +868,14 @@ CASES["HandlePrinterMenu"] = [
 # >>> factory PrinterMenu_PrintQuality
 CONTRACT["PrinterMenu_PrintQuality"] = {"compare": (), "preserve": ()}
 CASES["PrinterMenu_PrintQuality"] = [
-    {"rom_bank": 2, "stack": [0], "wram": {0xCABB: b"\x00", hffb3: b"\x00", wSelectedPrinterMenuItem: b"\x00"}, "sram": {0: {sPrinterContrastLevel: b"\x02"}}, "setup": QUALITY_SETUP, "keys": [0x00, 0x01], "sread": {0: {sPrinterContrastLevel: 1}}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, rom_bank=2, stack=[0x1234], wram={0xCABB: b"\x00", hffb3: b"\x00", wSelectedPrinterMenuItem: b"\x00"}, sram={0: {sPrinterContrastLevel: b"\x03"}}, setup=QUALITY_SETUP, keys=[0x00, 0x01], sread={0: {sPrinterContrastLevel: 1}}, instruction_budget=20000000, cycle_budget=80000000),
+    {"rom_bank": 2, "stack": [0], "wram": {sym("wLCDC"): b"\x00", hffb3: b"\x00", wSelectedPrinterMenuItem: b"\x00"}, "sram": {0: {sPrinterContrastLevel: b"\x02"}}, "setup": QUALITY_SETUP, "keys": [0x00, 0x01], "sread": {0: {sPrinterContrastLevel: 1}}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=2, stack=[0x1234], wram={sym("wLCDC"): b"\x00", hffb3: b"\x00", wSelectedPrinterMenuItem: b"\x00"}, sram={0: {sPrinterContrastLevel: b"\x03"}}, setup=QUALITY_SETUP, keys=[0x00, 0x01], sread={0: {sPrinterContrastLevel: 1}}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PrinterMenu_PrintQuality
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 
 MUTATIONS = {
     "ShowPrinterConnectionErrorScene": {
@@ -986,7 +987,7 @@ MUTATIONS["SendPrinterInstructionPacket"] = {
 # <<< factory-mutation SendPrinterInstructionPacket
 # >>> factory-completion SendPrinterInstructionPacket
 for _record in SCHEMA2_CASES["SendPrinterInstructionPacket"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion SendPrinterInstructionPacket
 # >>> factory-mutation SendPrinterInstructionPacket_1Sheet
 MUTATIONS["SendPrinterInstructionPacket_1Sheet"] = {
@@ -1002,7 +1003,7 @@ MUTATIONS["SendPrinterInstructionPacket_1Sheet"] = {
 # the serial line. legacy_to_schema always emits completion "return", so the
 # split is applied after migration.
 for _record in SCHEMA2_CASES["SendPrinterInstructionPacket_1Sheet"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion SendPrinterInstructionPacket_1Sheet
 # >>> factory-mutation _PreparePrinterConnection
 MUTATIONS["_PreparePrinterConnection"] = {
@@ -1018,7 +1019,7 @@ MUTATIONS["_PreparePrinterConnection"] = {
 # the serial line. legacy_to_schema always emits completion "return", so the
 # split is applied after migration.
 for _record in SCHEMA2_CASES["_PreparePrinterConnection"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion _PreparePrinterConnection
 
 # >>> factory-mutation SendTilesToPrinter
@@ -1033,7 +1034,7 @@ MUTATIONS["SendTilesToPrinter"] = {
 # >>> factory-completion SendTilesToPrinter
 for _record in SCHEMA2_CASES["SendTilesToPrinter"]:
     if _record.get("evidence") == "primary":
-        _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+        _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion SendTilesToPrinter
 
 # >>> factory-mutation SendPrinterInstructionPacket_1Sheet_3LineFeeds
@@ -1051,7 +1052,7 @@ MUTATIONS["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = {
 # split is applied after migration to the primary records only.
 for _record in SCHEMA2_CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"]:
     if _record["evidence"] == "primary":
-        _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+        _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion SendPrinterInstructionPacket_1Sheet_3LineFeeds
 
 # >>> factory-mutation LoadGfxBufferForPrinter
@@ -1102,7 +1103,7 @@ MUTATIONS["_PrintDeckConfiguration"] = {"source_symbol": "_PrintDeckConfiguratio
 # <<< factory-mutation _PrintDeckConfiguration
 # >>> factory-completion _PrintDeckConfiguration
 for _record in SCHEMA2_CASES["_PrintDeckConfiguration"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion _PrintDeckConfiguration
 # >>> factory-mutation Func_1a080
 MUTATIONS["Func_1a080"] = {
@@ -1118,7 +1119,7 @@ MUTATIONS["Func_1a080"] = {
 # the serial line. legacy_to_schema always emits completion "return", so the
 # split is applied after migration.
 for _record in SCHEMA2_CASES["Func_1a080"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion Func_1a080
 # >>> factory-mutation _RequestToPrintCard
 MUTATIONS["_RequestToPrintCard"] = {
@@ -1134,7 +1135,7 @@ MUTATIONS["_RequestToPrintCard"] = {
 # printer answering on the serial line. legacy_to_schema always emits
 # completion "return", so the split is applied after migration.
 for _record in SCHEMA2_CASES["_RequestToPrintCard"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion _RequestToPrintCard
 # >>> factory-mutation _PrintCardList
 MUTATIONS["_PrintCardList"] = {
@@ -1150,7 +1151,7 @@ MUTATIONS["_PrintCardList"] = {
 # without a printer answering on the serial line. legacy_to_schema always emits
 # completion "return", so the split is applied after migration.
 for _record in SCHEMA2_CASES["_PrintCardList"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion _PrintCardList
 # >>> factory-mutation PrinterMenu_CardList
 MUTATIONS["PrinterMenu_CardList"] = {
@@ -1173,14 +1174,14 @@ MUTATIONS["HandlePrinterMenu"] = {"source_symbol": "HandlePrinterMenu", "before"
 # <<< factory-mutation HandlePrinterMenu
 # >>> factory-completion HandlePrinterMenu
 for _record in SCHEMA2_CASES["HandlePrinterMenu"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("SendPrinterPacket.wait_printer_packet_transmission")}
 # <<< factory-completion HandlePrinterMenu
 # >>> factory-mutation PrinterMenu_PrintQuality
 MUTATIONS["PrinterMenu_PrintQuality"] = {"source_symbol": "PrinterMenu_PrintQuality", "before": "\t\t\tsPrinterContrastLevel = selected;", "after": "\t\t\tsPrinterContrastLevel = (uint8_t)(selected + 1u);", "case_ids": ["PrinterMenu_PrintQuality-0", "PrinterMenu_PrintQuality-1"]}
 # <<< factory-mutation PrinterMenu_PrintQuality
 # >>> factory-completion PrinterMenu_PrintQuality
 for _record in SCHEMA2_CASES["PrinterMenu_PrintQuality"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x6DE2, "bank": 2}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("PrinterMenu_PrintQuality.asm_ade2"), "bank": sym_bank("PrinterMenu_PrintQuality.asm_ade2")}
 # <<< factory-completion PrinterMenu_PrintQuality
 MUTATIONS["SendNextPrinterPacketByte"] = {
     "source_symbol": "SendNextPrinterPacketByte",

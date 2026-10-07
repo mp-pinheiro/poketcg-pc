@@ -1,9 +1,10 @@
+from tests.cases._symbols import data, sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-ACTIVE = 0xD42A
-WD4C0 = 0xD4C0
-QUEUE = 0xD423
-DO_FRAME_FUNCTION = 0xCAD3
+ACTIVE = sym("wActiveScreenAnim")
+WD4C0 = sym("wd4c0")
+QUEUE = sym("wAnimationQueue")
+DO_FRAME_FUNCTION = sym("wDoFrameFunction")
 
 CONTRACT = {
     "CheckAnyAnimationPlaying": {
@@ -34,7 +35,7 @@ CASES = {
     ],
     "ResetDoFrameFunction": [
         {"hl": 0x5678, "read": {DO_FRAME_FUNCTION: 2}},
-        dict(POISON, hl=0xABCD, read={DO_FRAME_FUNCTION: 2}),
+        dict(POISON, hl=data(0xABCD), read={DO_FRAME_FUNCTION: 2}),
     ],
 # PlayDuelAnimation, UpdateQueuedAnimations, and Func_3bb5 remain unregistered:
 # each farcalls the unported duel-animation engine or sprite-animation dispatcher.
@@ -47,13 +48,13 @@ CONTRACT["PlayDuelAnimation"] = {
     "preserve": ("f", "b", "c", "d", "e", "hl"),
 }
 
-WDO_FRAME_FN = 0xCAD3
+WDO_FRAME_FN = sym("wDoFrameFunction")
 UPDATE_LO = 0xA2
 UPDATE_HI = 0x3B
-WD4AC = 0xD4AC
-WD4AD = 0xD4AD
-WD4BE = 0xD4BE
-WD4BF = 0xD4BF
+WD4AC = sym("wDuelAnimBufferCurPos")
+WD4AD = sym("wDuelAnimBufferSize")
+WD4BE = sym("wDuelAnimReturnBank")
+WD4BF = sym("wd4bf")
 
 CASES["PlayDuelAnimation"] = [
     {"a": 0, "read": {WD4AD: 1, WD4BE: 1, WD4BF: 1}},
@@ -76,14 +77,14 @@ CONTRACT["UpdateQueuedAnimations"] = {
     "preserve": ("f",),
 }
 
-CUR_POS = 0xD4AC
-BUF_SIZE = 0xD4AD
+CUR_POS = sym("wDuelAnimBufferCurPos")
+BUF_SIZE = sym("wDuelAnimBufferSize")
 
 CASES["UpdateQueuedAnimations"] = [
     {"wram": {ACTIVE: b"\xff", WD4C0: b"\x00"}},
     dict(POISON, wram={ACTIVE: b"\xff", WD4C0: b"\x80", CUR_POS: b"\x00", BUF_SIZE: b"\x00"},
          read={WD4C0: 1}),
-    {"hl": 0xABCD, "wram": {ACTIVE: b"\xff", WD4C0: b"\x00"}},
+    {"hl": data(0xABCD), "wram": {ACTIVE: b"\xff", WD4C0: b"\x00"}},
     {"hl": 0x1234, "wram": {ACTIVE: b"\xff", WD4C0: b"\xff", QUEUE: b"\xff" * 7,
                              CUR_POS: b"\x00", BUF_SIZE: b"\x00"},
      "read": {QUEUE: 7, WD4C0: 1}},
@@ -91,9 +92,9 @@ CASES["UpdateQueuedAnimations"] = [
 # <<< factory UpdateQueuedAnimations
 
 # >>> factory-cases-statics
-WD4C0 = 0xD4C0
-hBankROM = 0xFF80
-wDuelAnimReturnBank = 0xD4BE
+WD4C0 = sym("wd4c0")
+hBankROM = sym("hBankROM")
+wDuelAnimReturnBank = sym("wDuelAnimReturnBank")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics

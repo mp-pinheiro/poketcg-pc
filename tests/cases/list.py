@@ -1,7 +1,8 @@
 """Oracle-diff cases for poketcg/src/home/list.asm."""
+from tests.cases._symbols import WRAMX_START, sym
 
-wListPointer = 0xCB72
-BUF = 0xC200
+wListPointer = sym("wListPointer")
+BUF = sym("wPlayerCardLocations")
 
 CONTRACT = {
     "SetListPointer": {
@@ -26,12 +27,12 @@ CASES = {
     "SetNextElementOfList": [
         {"wram": {wListPointer: bytes([BUF & 0xFF, BUF >> 8]), BUF: b"\xff"}},
         # Reads back both the written element and the advanced pointer.
-        dict(POISON, wram={wListPointer: b"\x10\xc2", 0xC210: b"\x00"},
+        dict(POISON, wram={wListPointer: b"\x10\xc2", sym("wPlayerCardLocations") + 0x10: b"\x00"},
              read={wListPointer: 2}),
         # $DFFF + 1 crosses a page: the stored pointer must become $E000.
-        dict(POISON, a=0x5A, wram={wListPointer: b"\xff\xdf", 0xDFFF: b"\x00"},
+        dict(POISON, a=0x5A, wram={wListPointer: b"\xff\xdf", WRAMX_START + 0xFFF: b"\x00"},
              read={wListPointer: 2}),
-        dict(POISON, a=0x01, wram={wListPointer: b"\xff\xc0", 0xC0FF: b"\x00"},
+        dict(POISON, a=0x01, wram={wListPointer: b"\xff\xc0", sym("wDecompressionSecondaryBufferStart") + 0x10: b"\x00"},
              read={wListPointer: 2}),
         # The list pointing at itself pins the write order of the inlined writeback.
         dict(POISON, wram={wListPointer: b"\x72\xcb"}, read={wListPointer: 2}),

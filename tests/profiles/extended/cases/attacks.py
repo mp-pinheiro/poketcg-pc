@@ -2725,7 +2725,7 @@ MUTATIONS = {
                         'RetrievePlayAreaAIScoreFromBackup2-1',
                         'RetrievePlayAreaAIScoreFromBackup2-2',
                         'RetrievePlayAreaAIScoreFromBackup2-3'],
-        'source': 'src/profiles/extended/home/attacks.c'},
+        'source': 'src/home/attacks.c'},
     'GetAIScoreOfAttack': {   'source_symbol': 'GetAIScoreOfAttack',
         'before': 'void GetAIScoreOfAttack(uint8_t a)\n{\n\twSelectedAttack = a;',
         'after': 'void GetAIScoreOfAttack(uint8_t a)\n'
@@ -2739,18 +2739,18 @@ MUTATIONS = {
         'after': '\twAIRetreatScore = (uint8_t)(wAIRetreatScore + 2u);\n'
                  '\treturn (AIProcessAttacksResult){failed_execute, 0x80u};',
         'case_ids': ['AIProcessAttacks-0'],
-        'source': 'src/profiles/extended/home/attacks.c'},
+        'source': 'src/home/attacks.c'},
     'AIProcessAndTryToUseAttack': {   'source_symbol': 'AIProcessAndTryToUseAttack',
         'before': '\twAIExecuteProcessedAttack = 0u;',
         'after': '\twAIExecuteProcessedAttack = 1u;',
         'case_ids': ['AIProcessAndTryToUseAttack-0', 'AIProcessAndTryToUseAttack-2'],
-        'source': 'src/profiles/extended/home/attacks.c'},
+        'source': 'src/home/attacks.c'},
     'AIProcessButDontUseAttack': {   'source_symbol': 'AIProcessButDontUseAttack',
         'before': '\t\tgb_write8((uint16_t)(wTempPlayAreaAIScore_ADDR + i),\n'
                   '\t\t\t  gb_read8((uint16_t)(wPlayAreaAIScore_ADDR + i)));',
         'after': '\t\tgb_write8((uint16_t)(wTempPlayAreaAIScore_ADDR + i), 0u);',
         'case_ids': ['AIProcessButDontUseAttack-0', 'AIProcessButDontUseAttack-1'],
-        'source': 'src/profiles/extended/home/attacks.c'},
+        'source': 'src/home/attacks.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

@@ -80,22 +80,22 @@ MUTATIONS = {
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(FightingClubAfterDuelTable + 1u));',
         'case_ids': ['FightingClubAfterDuel-0'],
-        'source': 'src/profiles/extended/home/fighting_club.c'},
+        'source': 'src/home/fighting_club.c'},
     'Preload_ChrisInFightingClub': {   'source_symbol': 'Preload_ChrisInFightingClub',
         'before': '\treturn preload_pupil(EVENT_PUPIL_CHRIS_STATE);',
         'after': '\treturn preload_pupil(EVENT_PUPIL_MICHAEL_STATE);',
         'case_ids': ['Preload_ChrisInFightingClub-1'],
-        'source': 'src/profiles/extended/home/fighting_club.c'},
+        'source': 'src/home/fighting_club.c'},
     'Preload_MichaelInFightingClub': {   'source_symbol': 'Preload_MichaelInFightingClub',
         'before': '\treturn preload_pupil(EVENT_PUPIL_MICHAEL_STATE);',
         'after': '\treturn preload_pupil(EVENT_PUPIL_CHRIS_STATE);',
         'case_ids': ['Preload_MichaelInFightingClub-1'],
-        'source': 'src/profiles/extended/home/fighting_club.c'},
+        'source': 'src/home/fighting_club.c'},
     'Preload_JessicaInFightingClub': {   'source_symbol': 'Preload_JessicaInFightingClub',
         'before': '\treturn preload_pupil(EVENT_PUPIL_JESSICA_STATE);',
         'after': '\treturn preload_pupil(EVENT_PUPIL_CHRIS_STATE);',
         'case_ids': ['Preload_JessicaInFightingClub-1'],
-        'source': 'src/profiles/extended/home/fighting_club.c'},
+        'source': 'src/home/fighting_club.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

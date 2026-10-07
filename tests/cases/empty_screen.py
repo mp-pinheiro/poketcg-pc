@@ -1,6 +1,7 @@
-wConsole = 0xCAB4
-wTileMapFill = 0xCAB6
-wDuelDisplayedScreen = 0xCAC2
+from tests.cases._symbols import sym
+wConsole = sym("wConsole")
+wTileMapFill = sym("wTileMapFill")
+wDuelDisplayedScreen = sym("wDuelDisplayedScreen")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -15,14 +16,14 @@ CASES = {
     # calls DisableLCD first, which is what clears both, so WriteByteToBGMap0
     # and DoFrameIfLCDEnabled take their LCD-off paths until EnableLCD.
     "EmptyScreen": [
-        {"wram": {wTileMapFill: b"\x00", wConsole: b"\x00", 0xCABB: b"\x91", 0xFF40: b"\x91"},
-         "read": {0x9800: 0x800, 0xFF82: 1, 0xFF40: 1}},
+        {"wram": {wTileMapFill: b"\x00", wConsole: b"\x00", sym("wLCDC"): b"\x91", 0xFF40: b"\x91"},
+         "read": {0x9800: 0x800, sym("hBankVRAM"): 1, 0xFF40: 1}},
         dict(POISON,
              wram={wTileMapFill: b"\xA5", wConsole: b"\x00",
-                   wDuelDisplayedScreen: b"\x7F", 0xCABB: b"\x91", 0xFF40: b"\x91"},
-             read={0x9800: 0x800, 0xFF82: 1, 0xFF40: 1}),
-        {"wram": {wTileMapFill: b"\x5A", wConsole: b"\x02", 0xCABB: b"\x91", 0xFF40: b"\x91"},
-         "read": {0x9800: 0x800, 0xFF82: 1, 0xFF40: 1}},
+                   wDuelDisplayedScreen: b"\x7F", sym("wLCDC"): b"\x91", 0xFF40: b"\x91"},
+             read={0x9800: 0x800, sym("hBankVRAM"): 1, 0xFF40: 1}),
+        {"wram": {wTileMapFill: b"\x5A", wConsole: b"\x02", sym("wLCDC"): b"\x91", 0xFF40: b"\x91"},
+         "read": {0x9800: 0x800, sym("hBankVRAM"): 1, 0xFF40: 1}},
     ],
     "BCCoordToBGMap0Address": [
         {},

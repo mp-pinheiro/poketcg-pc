@@ -1,10 +1,11 @@
 """Oracle-diff cases for poketcg/src/home/objects.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wOAM = 0xCA00
+wOAM = sym("wOAM")
 OAM_SIZE = 160
-wOAMOffset = 0xCAB5
+wOAMOffset = sym("wOAMOffset")
 
 CONTRACT = {
     "SetOneObjectAttributes": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
@@ -16,7 +17,7 @@ OBJ = bytes((0x11, 0x22, 0x33, 0x44)) * 40
 SPRITE = bytes((0x11, 0x22, 0x33, 0x44))
 SRC40 = bytes((0,)) + SPRITE * 40  # count 0 means 256; only 40 fit before OAM fills
 SRC1 = bytes((1,)) + SPRITE
-SRC = 0xC100
+SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
 
 CASES = {
     "SetOneObjectAttributes": [

@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/status.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,14 +10,14 @@ CASES = {}
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
-wMedalScreenYOffset = 0xD114
+wMedalScreenYOffset = sym("wMedalScreenYOffset")
 # <<< factory-cases-statics
 
 # >>> factory _PauseMenu_Status
 CONTRACT["_PauseMenu_Status"] = {"compare": (), "preserve": ()}
 CASES["_PauseMenu_Status"] = [
-    {"keys": [0x00, 0x01], "setup": SETUP, "wram": {0xCABB: b"\x00", 0xD291: b"\x5A"}, "read": {0xD291: 1, 0xD114: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, keys=[0x00, 0x01], setup=SETUP, wram={0xCABB: b"\x00", 0xD291: b"\x5A"}, read={0xD291: 1, 0xD114: 1}, instruction_budget=20000000, cycle_budget=100000000),
+    {"keys": [0x00, 0x01], "setup": SETUP, "wram": {sym("wLCDC"): b"\x00", sym("wd291"): b"\x5A"}, "read": {sym("wd291"): 1, sym("wMedalScreenYOffset"): 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x01], setup=SETUP, wram={sym("wLCDC"): b"\x00", sym("wd291"): b"\x5A"}, read={sym("wd291"): 1, sym("wMedalScreenYOffset"): 1}, instruction_budget=20000000, cycle_budget=100000000),
 ]
 # <<< factory _PauseMenu_Status
 

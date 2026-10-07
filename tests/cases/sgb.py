@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/home/sgb.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -35,14 +36,14 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 # >>> factory SendSGB
 CONTRACT["SendSGB"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["SendSGB"] = [
-    {"a": 0x00, "hl": 0xC500, "wram": {0xC500: b"\x00"}, "sram": {0: {}},
-     "expect_regs": {"a": 0x00, "f": 0xA0, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC500},
+    {"a": 0x00, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x00"}, "sram": {0: {}},
+     "expect_regs": {"a": 0x00, "f": 0xA0, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": sym("wNameBuffer")},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"hl": 0xC500, "wram": {0xC500: b"\x01" + b"\x00" * 16}, "sram": {0: {}},
-     "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC510},
+    {"hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x01" + b"\x00" * 16}, "sram": {0: {}},
+     "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": sym("wDuelTempList")},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hl=0xC500, wram={0xC500: b"\x00"}, sram={0: {}},
-         expect_regs={"a": 0x00, "f": 0xA0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0xC500},
+    dict(POISON, hl=sym("wNameBuffer"), wram={sym("wNameBuffer"): b"\x00"}, sram={0: {}},
+         expect_regs={"a": 0x00, "f": 0xA0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": sym("wNameBuffer")},
          instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory SendSGB
@@ -66,8 +67,8 @@ CASES["DetectSGB"] = [
 # >>> factory Func_0bcb
 CONTRACT["Func_0bcb"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["Func_0bcb"] = [
-    {"hl": 0xA000, "ramg": True, "sram": {0: {0xA000: bytes(range(256)) * 16}}, "wram": {0xCABB: b"\xC3", 0xFF40: b"\x80"}, "vread": {0: {0x8800: 0x1000, 0x9800: 0x1A0}}, "instruction_budget": 500000, "cycle_budget": 2000000},
-    dict(POISON, hl=0xA000, ramg=True, sram={0: {0xA000: bytes(range(256)) * 16}}, wram={0xCABB: b"\xC3", 0xFF40: b"\x80"}, vread={0: {0x8800: 0x1000, 0x9800: 0x1A0}}, instruction_budget=500000, cycle_budget=2000000),
+    {"hl": sym("s0a000"), "ramg": True, "sram": {0: {sym("s0a000"): bytes(range(256)) * 16}}, "wram": {sym("wLCDC"): b"\xC3", 0xFF40: b"\x80"}, "vread": {0: {0x8800: 0x1000, 0x9800: 0x1A0}}, "instruction_budget": 500000, "cycle_budget": 2000000},
+    dict(POISON, hl=sym("s0a000"), ramg=True, sram={0: {sym("s0a000"): bytes(range(256)) * 16}}, wram={sym("wLCDC"): b"\xC3", 0xFF40: b"\x80"}, vread={0: {0x8800: 0x1000, 0x9800: 0x1A0}}, instruction_budget=500000, cycle_budget=2000000),
 ]
 # <<< factory Func_0bcb
 

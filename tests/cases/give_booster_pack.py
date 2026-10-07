@@ -3,6 +3,7 @@
 _PauseMenu_Exit is a bare ret: it reads nothing, writes nothing, and preserves
 all registers.
 """
+from tests.cases._symbols import sym, sym_bank
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -14,18 +15,18 @@ CONTRACT = {
 CASES = {
     "_PauseMenu_Exit": [
         # All-zero baseline, including an untouched WRAM byte.
-        {"wram": {0xC000: b"\x5A"}, "read": {0xC000: 1}},
+        {"wram": {sym("wDeckToBuild"): b"\x5A"}, "read": {sym("wDeckToBuild"): 1}},
         # Poisoned registers and untouched WRAM must survive unchanged.
-        dict(POISON, wram={0xC000: b"\xA5"}, read={0xC000: 1}),
+        dict(POISON, wram={sym("wDeckToBuild"): b"\xA5"}, read={sym("wDeckToBuild"): 1}),
     ],
 }
 # >>> factory-cases-statics
 # give_booster_pack.asm:1-56 (GiveBoosterPack). Addresses only; the C side uses
 # the generated bare labels.
-GBP_wLCDC = 0xCABB
-GBP_wTxRam2 = 0xCE3F
-GBP_wTxRam3 = 0xCE43
-GBP_wAnotherBoosterPack = 0xD117
+GBP_wLCDC = sym("wLCDC")
+GBP_wTxRam2 = sym("wTxRam2")
+GBP_wTxRam3 = sym("wTxRam3")
+GBP_wAnotherBoosterPack = sym("wAnotherBoosterPack")
 
 # FlashWhiteScreen calls EnableLCD, so real frames elapse from that point on and
 # the VBlank handler runs every frame: CopyDMAFunction installs hDMAFunction,
@@ -126,6 +127,6 @@ for _record in SCHEMA2_CASES["GiveBoosterPack"]:
     # its own `ret`. No observed byte differs between the two, so this buys a
     # matched boundary rather than a caught defect, and it lets the span widen
     # later without comparing two different moments.
-    _record["completion"] = {"mode": "entry", "pc": 0x378A, "bank": 0,
+    _record["completion"] = {"mode": "entry", "pc": sym("AssertSongFinished"), "bank": sym_bank("AssertSongFinished"),
                              "routine": "AssertSongFinished"}
 # <<< factory-completion GiveBoosterPack

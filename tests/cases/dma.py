@@ -1,6 +1,7 @@
 """Oracle-diff cases for poketcg/src/home/dma.asm."""
+from tests.cases._symbols import sym
 
-WOAM = 0xCA00
+WOAM = sym("wOAM")
 OAM = 0xFE00
 PAT = bytes((i * 7 + 3) & 0xFF for i in range(160))
 
@@ -21,8 +22,8 @@ CASES = {
 # >>> factory CopyDMAFunction
 CONTRACT["CopyDMAFunction"] = {"compare": (), "preserve": ()}
 CASES["CopyDMAFunction"] = [
-    {"read": {0xFF83: 10}},
-    dict(POISON, read={0xFF83: 10}),
+    {"read": {sym("hDMAFunction"): 10}},
+    dict(POISON, read={sym("hDMAFunction"): 10}),
 ]
 # <<< factory CopyDMAFunction
 

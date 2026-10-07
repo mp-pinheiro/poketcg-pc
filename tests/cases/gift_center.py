@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/scripts/gift_center.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -11,8 +12,8 @@ CONTRACT["Preload_GiftCenterClerk"] = {
     "compare": ("a", "f", "b", "c", "d", "e", "hl"),
     "preserve": ("b", "c", "d", "e", "hl"),
 }
-wConsole = 0xCAB4
-wLoadNPCDirection = 0xD3AE
+wConsole = sym("wConsole")
+wLoadNPCDirection = sym("wLoadNPCDirection")
 CONSOLE_CGB = 0x02
 CASES["Preload_GiftCenterClerk"] = [
     {"wram": {wConsole: b"\x00", wLoadNPCDirection: b"\x55"},
@@ -32,16 +33,16 @@ CASES["Preload_GiftCenterClerk"] = [
 
 # >>> factory-cases-statics
 # GiftCenterMenu (gift_center.asm:31) seeds and observations.
-wLCDC = 0xCABB
-wTxRam2 = 0xCE3F
-wSelectedGiftCenterMenuItem = 0xD0BA
-wOverworldNPCFlags = 0xD0C1
-wGiftCenterChoice = 0xD10E
-wPermissionMap = 0xD133
+wLCDC = sym("wLCDC")
+wTxRam2 = sym("wTxRam2")
+wSelectedGiftCenterMenuItem = sym("wSelectedGiftCenterMenuItem")
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+wGiftCenterChoice = sym("wGiftCenterChoice")
+wPermissionMap = sym("wPermissionMap")
 rLCDC = 0xFF40
-hDPadHeld = 0xFF8F
-hKeysPressed = 0xFF91
-hCurMenuItem = 0xFFB1
+hDPadHeld = sym("hDPadHeld")
+hKeysPressed = sym("hKeysPressed")
+hCurMenuItem = sym("hCurMenuItem")
 PAD_A = 0x01
 PAD_B = 0x02
 # <<< factory-cases-statics
@@ -111,9 +112,9 @@ CASES["GiftCenterMenu"] = [
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory gift-center event-value statics
-wGiftCenterChoice = 0xD10E
-wLoadedEventBits = 0xD3D1
-wEventVars = 0xD3D2
+wGiftCenterChoice = sym("wGiftCenterChoice")
+wLoadedEventBits = sym("wLoadedEventBits")
+wEventVars = sym("wEventVars")
 # <<< factory gift-center event-value statics
 
 # >>> factory Func_fc7a
@@ -168,8 +169,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # legacy_to_schema always emits completion "return"; both routines end at their
 # `rst $20`, so the split is applied after migration.
 for _fn, _pc in (
-        ("Func_fc7a", 0x7C82),
-        ("Func_fcad", 0x7CB5),
+        ("Func_fc7a", sym("Func_fc7a") + 8),
+        ("Func_fcad", sym("Func_fcad") + 8),
 ):
     for _rec in SCHEMA2_CASES[_fn]:
         _rec["completion"] = {"mode": "pre-ret", "pc": _pc}

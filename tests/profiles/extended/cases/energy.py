@@ -11,8 +11,6 @@ _ARTICUNO_ENERGY = Fixture("legendary-articuno-aiprocessandtrytoplayenergy-entry
 _FIRE_ENERGY = Fixture("ai-duel-fire-charge-aiprocessandtrytoplayenergy-entry", directory=_FIXTURES, holes=_HOLES)
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
-    case["read"][0xCC00] = 0xBD
-    case["read"][0xCCBE] = 0x42
     return case
 
 
@@ -430,7 +428,7 @@ MUTATIONS = {
         'before': '\tif (e < 0x85u) {',
         'after': '\tif (e < 0x86u) {',
         'case_ids': ['FindPlayAreaCardWithHighestAIScore-1'],
-        'source': 'src/profiles/extended/home/energy.c'},
+        'source': 'src/home/energy.c'},
     'CheckSpecificDecksToAttachDoubleColorless': {   'source_symbol': 'CheckSpecificDecksToAttachDoubleColorless',
         'before': 'if (card_id == CHARMANDER || card_id == DRATINI)',
         'after': 'if ((uint8_t)card_id == CHARMANDER || (uint8_t)card_id == DRATINI)',
@@ -446,7 +444,7 @@ MUTATIONS = {
         'after': 'uint8_t f_out = (evo.a == 0u) ? 0x00u : 0x80u;',
         'case_ids': [   'CheckIfEvolutionNeedsEnergyForAttack-0',
                         'CheckIfEvolutionNeedsEnergyForAttack-1'],
-        'source': 'src/profiles/extended/home/energy.c'},
+        'source': 'src/home/energy.c'},
     'AITryToPlayEnergyCard': {   'source_symbol': 'AITryToPlayEnergyCard',
         'before': '\t\tif ((evo.f & 0x10u) == 0u)\n'
                   '\t\t\treturn (AITryToPlayEnergyCardResult){evo.a, evo.f};',
@@ -486,7 +484,7 @@ MUTATIONS = {
                  '}\n'
                  '/* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */',
         'case_ids': ['AIProcessButDontPlayEnergy_SkipEvolution-0'],
-        'source': 'src/profiles/extended/home/energy.c'},
+        'source': 'src/home/energy.c'},
     'AIProcessButDontPlayEnergy_SkipEvolutionAndArena': {   'source_symbol': 'AIProcessButDontPlayEnergy_SkipEvolutionAndArena',
         'before': '\twAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | '
                   'AI_ENERGY_FLAG_SKIP_EVOLUTION | AI_ENERGY_FLAG_SKIP_ARENA_CARD;',
@@ -494,7 +492,7 @@ MUTATIONS = {
                  'AI_ENERGY_FLAG_SKIP_EVOLUTION;',
         'case_ids': [   'AIProcessButDontPlayEnergy_SkipEvolutionAndArena-0',
                         'AIProcessButDontPlayEnergy_SkipEvolutionAndArena-1'],
-        'source': 'src/profiles/extended/home/energy.c'},
+        'source': 'src/home/energy.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

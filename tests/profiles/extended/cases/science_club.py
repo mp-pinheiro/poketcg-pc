@@ -52,13 +52,13 @@ MUTATIONS = {
         'before': '\t\tuint8_t new_x = (uint8_t)(x + 2u);',
         'after': '\t\tuint8_t new_x = (uint8_t)(x + 3u);',
         'case_ids': ['Preload_Joseph-1', 'Preload_Joseph-2'],
-        'source': 'src/profiles/extended/home/science_club.c'},
+        'source': 'src/home/science_club.c'},
     'ScienceClubAfterDuel': {   'source_symbol': 'ScienceClubAfterDuel',
         'before': '\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(ScienceClubAfterDuelTable);',
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(ScienceClubAfterDuelTable + 1u));',
         'case_ids': ['ScienceClubAfterDuel-0'],
-        'source': 'src/profiles/extended/home/science_club.c'},
+        'source': 'src/home/science_club.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

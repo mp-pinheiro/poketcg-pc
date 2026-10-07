@@ -300,12 +300,12 @@ MUTATIONS = {
         'before': '\tuint8_t out = WriteByteToBGMap0(a, b, c);',
         'after': '\tuint8_t out = (WriteByteToBGMap0(a, b, c), a);',
         'case_ids': ['DrawCheckMenuCursor-3'],
-        'source': 'src/profiles/extended/home/deck_check.c'},
+        'source': 'src/home/deck_check.c'},
     'PlaySFXConfirmOrCancel': {   'source_symbol': 'PlaySFXConfirmOrCancel',
         'before': 'uint8_t sfx_id = (uint8_t)(a + 1u) == 0 ? SFX_CANCEL : SFX_CONFIRM;',
         'after': 'uint8_t sfx_id = (uint8_t)(a + 1u) == 0 ? SFX_CONFIRM : SFX_CONFIRM;',
         'case_ids': ['PlaySFXConfirmOrCancel-1'],
-        'source': 'src/profiles/extended/home/deck_check.c'},
+        'source': 'src/home/deck_check.c'},
     'EraseCheckMenuCursor': {   'source_symbol': 'EraseCheckMenuCursor',
         'before': 'DrawCheckMenuCursorResult EraseCheckMenuCursor(void)\n'
                   '{\n'
@@ -316,7 +316,7 @@ MUTATIONS = {
                  '\treturn DrawCheckMenuCursor(SYM_CURSOR_R);\n'
                  '}',
         'case_ids': ['EraseCheckMenuCursor-0', 'EraseCheckMenuCursor-1', 'EraseCheckMenuCursor-2'],
-        'source': 'src/profiles/extended/home/deck_check.c'},
+        'source': 'src/home/deck_check.c'},
     'DisplayCheckMenuCursor': {   'source_symbol': 'DisplayCheckMenuCursor',
         'before': 'DrawCheckMenuCursorResult DisplayCheckMenuCursor(void)\n'
                   '{\n'
@@ -329,12 +329,12 @@ MUTATIONS = {
         'case_ids': [   'DisplayCheckMenuCursor-0',
                         'DisplayCheckMenuCursor-1',
                         'DisplayCheckMenuCursor-2'],
-        'source': 'src/profiles/extended/home/deck_check.c'},
+        'source': 'src/home/deck_check.c'},
     'HandleCheckMenuInput': {   'source_symbol': 'HandleCheckMenuInput',
         'before': 'return (HandleCheckMenuInputResult){MENU_CONFIRM, 0x10u};',
         'after': 'return (HandleCheckMenuInputResult){MENU_CANCEL, 0x10u};',
         'case_ids': ['HandleCheckMenuInput-1'],
-        'source': 'src/profiles/extended/home/deck_check.c'},
+        'source': 'src/home/deck_check.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

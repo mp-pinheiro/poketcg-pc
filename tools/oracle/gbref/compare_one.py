@@ -13,11 +13,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path.insert(0, str(ROOT / "tests" / "cases"))
-sys.path.insert(0, str(ROOT / "tests"))
-sys.path.insert(0, str(ROOT))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-from lane_frames import lane_frames  # noqa: E402
+from tests.cases._symbols import CALL_FRAME, STACK_TOP, STACK_WINDOW  # noqa: E402
 
 REGISTERS = ("a", "f", "b", "c", "d", "e", "hl")
 LANE_TIMEOUT_FLOOR = 30.0
@@ -85,7 +84,32 @@ def _symbols(path):
                 continue
     return result
 
+
+def stack_window_symbols(table):
+    return sorted(name for name, (_bank, address) in table.items() if address in STACK_WINDOW)
+
+
+def joypad_poll_pc(rom, table):
+    if "ReadJoypad" not in table:
+        raise ValueError("ReadJoypad is absent from symbols")
+    bank, start = table["ReadJoypad"]
+    if bank != 0 or start >= 0x4000:
+        raise ValueError(f"ReadJoypad is not in ROM bank 0 ({bank:02X}:{start:04X})")
+    end = min((address for name, (sym_bank, address) in table.items()
+               if sym_bank == 0 and "." not in name and start < address <= 0x4000),
+              default=0x4000)
+    hits = [address for address in range(start, end - 1) if rom[address:address + 2] == b"\xb0\x4f"]
+    if len(hits) != 1:
+        raise ValueError(
+            f"ReadJoypad {start:04X}-{end:04X} holds {len(hits)} `or b; ld c, a` sequences, expected 1")
+    return hits[0] + 1
+
+
 def main() -> int:
+    position = sys.path.index(str(ROOT)) + 1
+    sys.path[position:position] = [str(ROOT / "tests"), str(ROOT / "tests" / "cases")]
+    from lane_frames import lane_frames
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--fn", required=True)
     parser.add_argument("--index", type=int, default=0)
@@ -108,6 +132,10 @@ def main() -> int:
     symbols = _symbols(args.symbols)
     if args.fn not in symbols:
         raise SystemExit("ARTIFACT function is absent from symbols")
+    window_symbols = stack_window_symbols(symbols)
+    if window_symbols:
+        raise SystemExit(f"ARTIFACT symbols inside the harness stack window "
+                         f"${STACK_WINDOW.start:04X}-${STACK_WINDOW.stop - 1:04X}: {', '.join(window_symbols)}")
     if args.case.suffix == ".py":
         spec = importlib.util.spec_from_file_location("schema2_case", args.case)
         if spec is None or spec.loader is None:
@@ -245,6 +273,8 @@ def main() -> int:
         or not 0x0002 <= entry_sp <= 0xFFFD
     ):
         raise SystemExit("SCHEMA entry_sp must leave room for a return address")
+    if entry_sp is None:
+        entry_sp = STACK_TOP - 2
     if post_call_byte is not None and (
             isinstance(post_call_byte, bool) or not isinstance(post_call_byte, int)
             or not 0 <= post_call_byte <= 0xff):
@@ -292,8 +322,6 @@ def main() -> int:
         raise SystemExit("SCHEMA state spans must be arrays")
     if not isinstance(case["setup"], list) or not isinstance(case["input_events"], list):
         raise SystemExit("SCHEMA setup and input_events must be arrays")
-    # A timeline, one entry per rendered frame, with the last entry held for the
-    # rest of the run. The cap matches MAX_INPUT_EVENTS in runner.c.
     if len(case["input_events"]) > 16 or any(
         not isinstance(event, dict)
         or set(event) != {"keys"}
@@ -348,10 +376,12 @@ def main() -> int:
     registers = {name: int(case["registers"].get(name, 0)) for name in REGISTERS}
     env = os.environ.copy()
     env["POKETCG_ROM"] = str(args.rom.resolve())
-    # The native probe renders no frames, so it cycles the timeline on each
-    # completed joypad poll instead (src/mem.c). `keys` stays the entry the run
-    # starts on -- index 0, matching runner.c -- and is the whole story for a
-    # zero- or one-entry timeline.
+    with args.rom.open("rb") as stream:
+        home_bank = stream.read(0x4000)
+    try:
+        poll_pc = joypad_poll_pc(home_bank, symbols)
+    except ValueError as error:
+        raise SystemExit(f"ARTIFACT {error}") from None
     keys = case["input_events"][0]["keys"] if case["input_events"] else 0
     request = {
         "completion": "pre-ret" if mode == "entry" else mode,
@@ -362,7 +392,9 @@ def main() -> int:
         "rom_bank": int(case["mapper"]["rom_bank"]),
         **({"hbank_rom": int(native_hbank_rom)}
            if native_hbank_rom is not None else {}),
-        **({"entry_sp": int(entry_sp)} if entry_sp is not None else {}),
+        "entry_sp": int(entry_sp),
+        "setup_sp": STACK_TOP - 2,
+        "joypad_poll_pc": poll_pc,
         "ram_bank": int(case["mapper"]["ram_bank"]),
         "ram_enable": int(bool(case["mapper"]["ram_enable"])),
         "vram_bank": native_vram_bank,
@@ -378,6 +410,7 @@ def main() -> int:
         request["stack"] = [int(word) for word in stack_words]
     if post_call_byte is not None:
         request["post_call_byte"] = post_call_byte
+        request["post_call_pc"] = CALL_FRAME.start
     if mode in ("pre-ret", "entry"):
         request["stop_pc"] = int(case["stop_pc"] if isinstance(completion, str) else completion["pc"])
     if mode == "event":

@@ -1,13 +1,14 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-W_CONSOLE = 0xCAB4
-W_DEFAULT_SONG = 0xD111
-W_CUR_TILEMAP = 0xD131
-W_CUR_MAP_SGB_PALS = 0xD132
-W_CUR_MAP_INITIAL_PALETTE = 0xD28F
-W_CUR_MAP_PALETTE = 0xD290
-W_CUR_MAP = 0xD32F
+W_CONSOLE = sym("wConsole")
+W_DEFAULT_SONG = sym("wDefaultSong")
+W_CUR_TILEMAP = sym("wCurTilemap")
+W_CUR_MAP_SGB_PALS = sym("wCurMapSGBPals")
+W_CUR_MAP_INITIAL_PALETTE = sym("wCurMapInitialPalette")
+W_CUR_MAP_PALETTE = sym("wCurMapPalette")
+W_CUR_MAP = sym("wCurMap")
 
 CONTRACT = {
     "LoadMapHeader": {

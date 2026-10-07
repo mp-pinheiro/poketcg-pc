@@ -1,7 +1,8 @@
-HRAM_KEYS_HELD = 0xFF90
+from tests.cases._symbols import sym
+HRAM_KEYS_HELD = sym("hKeysHeld")
 
 from tests.cases._fixtures import WAIT_KEYS_REGS, wait_keys_fixture
-HRAM_KEYS_PRESSED = 0xFF91
+HRAM_KEYS_PRESSED = sym("hKeysPressed")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}

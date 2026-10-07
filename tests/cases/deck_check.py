@@ -1,10 +1,11 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import CHECK_CURSOR_REGS, check_cursor_fixture
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-X_POSITION = 0xCEAF
-Y_POSITION = 0xCEB0
+X_POSITION = sym("wCheckMenuCursorXPosition")
+Y_POSITION = sym("wCheckMenuCursorYPosition")
 
 CONTRACT = {
     "DrawCheckMenuCursor": {
@@ -27,9 +28,9 @@ CASES = {
         dict(check_cursor_fixture(vram=False), **CHECK_CURSOR_REGS),
     ],
     "PlaySFXConfirmOrCancel": [
-        {"a": 0, "read": {0xDD82: 1, 0xDD83: 1}},
-        dict(POISON, a=0xFF, read={0xDD82: 1, 0xDD83: 1}),
-        {"a": 1, "read": {0xDD82: 1, 0xDD83: 1}},
+        {"a": 0, "read": {sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}},
+        dict(POISON, a=0xFF, read={sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}),
+        {"a": 1, "read": {sym("wCurSfxID"): 1, sym("wSfxPriority"): 1}},
     ],
 }
 
@@ -56,12 +57,12 @@ CASES["DisplayCheckMenuCursor"] = [
 # <<< factory DisplayCheckMenuCursor
 
 # >>> factory-cases-statics
-wMenuInputSFX = 0xCFE3
-hDPadHeld = 0xFF8F
-hKeysPressed = 0xFF91
-wCheckMenuCursorXPosition = 0xCEAF
-wCheckMenuCursorYPosition = 0xCEB0
-wCheckMenuCursorBlinkCounter = 0xCEA3
+wMenuInputSFX = sym("wMenuInputSFX")
+hDPadHeld = sym("hDPadHeld")
+hKeysPressed = sym("hKeysPressed")
+wCheckMenuCursorXPosition = sym("wCheckMenuCursorXPosition")
+wCheckMenuCursorYPosition = sym("wCheckMenuCursorYPosition")
+wCheckMenuCursorBlinkCounter = sym("wCheckMenuCursorBlinkCounter")
 # <<< factory-cases-statics
 
 # >>> factory HandleCheckMenuInput

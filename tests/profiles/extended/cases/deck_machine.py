@@ -5560,12 +5560,12 @@ MUTATIONS = {
         'before': 'if (hBankSRAM != 1u)',
         'after': 'if (hBankSRAM == 1u)',
         'case_ids': ['SafelySwitchToSRAM1-0', 'SafelySwitchToSRAM1-2'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
     'SafelySwitchToTempSRAMBank': {   'source_symbol': 'SafelySwitchToTempSRAMBank',
         'before': 'if (hBankSRAM != wTempBankSRAM)',
         'after': 'if (hBankSRAM != (uint8_t)(wTempBankSRAM + 1u))',
         'case_ids': ['SafelySwitchToTempSRAMBank-1'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
     'CheckIfHasEnoughCardsToBuildDeck': {   'source_symbol': 'CheckIfHasEnoughCardsToBuildDeck',
         'before': 'if (count == 0u || count == CARD_NOT_OWNED)',
         'after': 'if (count == 0u && count == CARD_NOT_OWNED)',
@@ -5594,7 +5594,7 @@ MUTATIONS = {
         'before': 'if (bank != 0u)',
         'after': 'if (bank == 0u)',
         'case_ids': ['SafelySwitchToSRAM0-1', 'SafelySwitchToSRAM0-2', 'SafelySwitchToSRAM0-3'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
     'DrawListScrollArrows': {   'source_symbol': 'DrawListScrollArrows',
         'before': 'WriteByteToBGMap0(tile, 19u, 1u);',
         'after': 'WriteByteToBGMap0(tile, 19u, 11u);',
@@ -5602,7 +5602,7 @@ MUTATIONS = {
                         'DrawListScrollArrows-1',
                         'DrawListScrollArrows-2',
                         'DrawListScrollArrows-3'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
     'SetDeckMachineTitleText': {   'source_symbol': 'SetDeckMachineTitleText',
         'before': '\tInitTextPrinting(1u, 0u);',
         'after': '\tInitTextPrinting(0u, 0u);',
@@ -5666,7 +5666,7 @@ MUTATIONS = {
         'before': '\t\t\tuint8_t h = (uint8_t)(((before & 0x0Fu) == 0u) ? 0x20u : 0x00u);',
         'after': '\t\t\tuint8_t h = 0x20u;',
         'case_ids': ['PrintVisibleDeckMachineEntries-3'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
     'ClearScreenAndDrawDeckMachineScreen': {   'source_symbol': 'ClearScreenAndDrawDeckMachineScreen',
         'before': '\twTileMapFill = 0u;',
         'after': '\twTileMapFill = 1u;',
@@ -5677,13 +5677,13 @@ MUTATIONS = {
         'before': '\thffb0 = 0x00u;',
         'after': '\thffb0 = 0x01u;',
         'case_ids': ['DrawDeckMachineScreen-0', 'DrawDeckMachineScreen-1'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
     'HandleDeckMachineSelection': {   'source_symbol': 'HandleDeckMachineSelection',
         'before': '\t\t\tDrawListCursor_Visible();\n'
                   '\t\t\twTempCardListVisibleOffset = wCardListVisibleOffset;',
         'after': '\t\t\tDrawListCursor_Visible();\n\t\t\twTempCardListVisibleOffset = 0u;',
         'case_ids': ['HandleDeckMachineSelection-0', 'HandleDeckMachineSelection-1'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
     'UpdateDeckMachineScrollArrowsAndEntries': {   'source_symbol': 'UpdateDeckMachineScrollArrowsAndEntries',
         'before': 'PrintVisibleDeckMachineEntriesResult '
                   'UpdateDeckMachineScrollArrowsAndEntries(uint8_t f)\n'
@@ -5703,7 +5703,7 @@ MUTATIONS = {
         'case_ids': [   'UpdateDeckMachineScrollArrowsAndEntries-0',
                         'UpdateDeckMachineScrollArrowsAndEntries-1',
                         'UpdateDeckMachineScrollArrowsAndEntries-2'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
     'SaveDeckInDeckSaveMachine': {   'source_symbol': 'SaveDeckInDeckSaveMachine',
         'before': '\t\t\tuint8_t f = (uint8_t)((waited.f & 0x80u) | 0x10u);\n'
                   '\t\t\treturn (SaveDeckInDeckSaveMachineResult){a, f};',
@@ -5741,7 +5741,7 @@ MUTATIONS = {
                  '\tgb_write8((uint16_t)(wDeckMachineText_ADDR + 1u), d);\n'
                  '\twCardListUpdateFunction = (uint8_t)(DRAW_DECK_MACHINE_SCREEN_ADDR + 1u);',
         'case_ids': ['InitDeckMachineDrawingParams-0', 'InitDeckMachineDrawingParams-1'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
     'HandleDeckSaveMachineMenu': {   'source_symbol': 'HandleDeckSaveMachineMenu',
         'before': 'HandleDeckSaveMachineMenuResult HandleDeckSaveMachineMenu(void)\n'
                   '{\n'
@@ -5764,7 +5764,7 @@ MUTATIONS = {
                  '\tClearScreenAndDrawDeckMachineScreen();\n'
                  '\twNumDeckMachineEntries = 0u;',
         'case_ids': ['HandleDeckSaveMachineMenu-0', 'HandleDeckSaveMachineMenu-1'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+        'source': 'src/home/deck_machine.c'},
 }
 
 for _index, _record in enumerate(CASES['HandleDeckMissingCardsList']):

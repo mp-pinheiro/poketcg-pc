@@ -106,24 +106,24 @@ MUTATIONS = {
         'after': '\tSetNextNPCAndScriptResult r2 = SetNextNPCAndScript((uint16_t)(Script_ea02_ADDR '
                  '+ 1u), hl);',
         'case_ids': ['PsychicClubLobbyLoadMap-0'],
-        'source': 'src/profiles/extended/home/psychic_club_lobby.c'},
+        'source': 'src/home/psychic_club_lobby.c'},
     'PsychicClubLobbyAfterDuel': {   'source_symbol': 'PsychicClubLobbyAfterDuel',
         'before': '\tFindEndOfDuelScriptResult r = '
                   'FindEndOfDuelScript(PsychicClubLobbyAfterDuelTable);',
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(PsychicClubLobbyAfterDuelTable + 1u));',
         'case_ids': ['PsychicClubLobbyAfterDuel-0'],
-        'source': 'src/profiles/extended/home/psychic_club_lobby.c'},
+        'source': 'src/home/psychic_club_lobby.c'},
     '_Preload_Ronald1InPsychicClubLobby': {   'source_symbol': '_Preload_Ronald1InPsychicClubLobby',
         'before': 'uint8_t f = (medal_count == 0u) ? 0x80u : 0x00u;',
         'after': 'uint8_t f = (medal_count == 0u) ? 0x00u : 0x80u;',
         'case_ids': ['_Preload_Ronald1InPsychicClubLobby-0'],
-        'source': 'src/profiles/extended/home/psychic_club_lobby.c'},
+        'source': 'src/home/psychic_club_lobby.c'},
     'Preload_Ronald1InPsychicClubLobby': {   'source_symbol': 'Preload_Ronald1InPsychicClubLobby',
         'before': '\t\treturn (Preload_Ronald1InPsychicClubLobbyResult){r.a, r.f, b, c, d, e, hl};',
         'after': '\t\treturn (Preload_Ronald1InPsychicClubLobbyResult){r.a, r.f, c, c, d, e, hl};',
         'case_ids': ['Preload_Ronald1InPsychicClubLobby-1'],
-        'source': 'src/profiles/extended/home/psychic_club_lobby.c'},
+        'source': 'src/home/psychic_club_lobby.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

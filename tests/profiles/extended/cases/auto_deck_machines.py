@@ -139,7 +139,7 @@ MUTATIONS = {
                  '\treturn (CheckWhichDecksToDismantleToBuildSavedDeckResult){a, f};',
         'case_ids': [   'CheckWhichDecksToDismantleToBuildSavedDeck-0',
                         'CheckWhichDecksToDismantleToBuildSavedDeck-1'],
-        'source': 'src/profiles/extended/home/auto_deck_machines.c'},
+        'source': 'src/home/auto_deck_machines.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

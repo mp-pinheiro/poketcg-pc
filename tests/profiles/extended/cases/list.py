@@ -93,12 +93,12 @@ MUTATIONS = {
                         'SetListPointer-1',
                         'SetListPointer-2',
                         'SetListPointer-3'],
-        'source': 'src/profiles/extended/home/list.c'},
+        'source': 'src/home/list.c'},
     'SetNextElementOfList': {   'source_symbol': 'SetNextElementOfList',
         'before': '\t                         (gb_read8((uint16_t)(wListPointer_ADDR + 1)) << 8));',
         'after': '\t                         (gb_read8((uint16_t)(wListPointer_ADDR - 1)) << 8));',
         'case_ids': ['SetNextElementOfList-0'],
-        'source': 'src/profiles/extended/home/list.c'},
+        'source': 'src/home/list.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

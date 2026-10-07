@@ -1,22 +1,23 @@
 """Oracle-diff cases for poketcg/src/home/card_collection.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-sCardCollection = 0xA100
+sCardCollection = sym("sCardCollection")
 CARD_COLLECTION_SIZE = 0x100
-wTempCardCollection = 0xC000
-hBankSRAM = 0xFF81
+wTempCardCollection = sym("wTempCardCollection")
+hBankSRAM = sym("hBankSRAM")
 
-sDeck1Name = 0xA200
-sDeck2Name = 0xA254
-sDeck3Name = 0xA2A8
-sDeck4Name = 0xA2FC
+sDeck1Name = sym("sDeck1Name")
+sDeck2Name = sym("sDeck2Name")
+sDeck3Name = sym("sDeck3Name")
+sDeck4Name = sym("sDeck4Name")
 DECK_SIZE = 60
 
-sDeck1Cards = 0xA218
-sDeck2Cards = 0xA26C
-sDeck3Cards = 0xA2C0
-sDeck4Cards = 0xA314
+sDeck1Cards = sym("sDeck1Cards")
+sDeck2Cards = sym("sDeck2Cards")
+sDeck3Cards = sym("sDeck3Cards")
+sDeck4Cards = sym("sDeck4Cards")
 
 
 def deck(built, cards=None):

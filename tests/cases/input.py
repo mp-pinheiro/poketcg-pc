@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/home/input.asm."""
+from tests.cases._symbols import sym, sym_bank
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -11,33 +12,33 @@ CONTRACT = {
 
 CASES = {
     "ReadJoypad": [
-        {"wram": {0xFF8D: b"\x00\x00\x00\x00\x00"},
-         "read": {0xFF8D: 5}},
-        dict(POISON, wram={0xFF8D: b"\x12\x34\x56\x78\x9A"},
-             read={0xFF8D: 5}),
-        {"keys": 0x01, "wram": {0xFF8D: b"\x00\x00\x00\x00\x00"},
-         "read": {0xFF8D: 5}},
-        {"wram": {0xFF8D: b"\x00\x00\x00\x0F\x00"},
-         "read": {0xFF8D: 5}},
-        dict(POISON, wram={0xFF8D: b"\x00\x00\x00\x0F\x00"},
-             read={0xFF8D: 5}),
+        {"wram": {sym("hDPadRepeat"): b"\x00\x00\x00\x00\x00"},
+         "read": {sym("hDPadRepeat"): 5}},
+        dict(POISON, wram={sym("hDPadRepeat"): b"\x12\x34\x56\x78\x9A"},
+             read={sym("hDPadRepeat"): 5}),
+        {"keys": 0x01, "wram": {sym("hDPadRepeat"): b"\x00\x00\x00\x00\x00"},
+         "read": {sym("hDPadRepeat"): 5}},
+        {"wram": {sym("hDPadRepeat"): b"\x00\x00\x00\x0F\x00"},
+         "read": {sym("hDPadRepeat"): 5}},
+        dict(POISON, wram={sym("hDPadRepeat"): b"\x00\x00\x00\x0F\x00"},
+             read={sym("hDPadRepeat"): 5}),
     ],
     "SaveButtonsHeld": [
-        {"c": 0x00, "read": {0xFF90: 1}},
-        dict(POISON, c=0xA5, read={0xFF90: 1}),
+        {"c": 0x00, "read": {sym("hKeysHeld"): 1}},
+        dict(POISON, c=0xA5, read={sym("hKeysHeld"): 1}),
     ],
     "ClearJoypad": [
-        {"wram": {0xFF8D: b"\x01\x02\x03\x04\x05"},
-         "read": {0xFF8D: 5}},
-        dict(POISON, wram={0xFF8D: b"\x01\x02\x03\x04\x05"},
-             read={0xFF8D: 5}),
+        {"wram": {sym("hDPadRepeat"): b"\x01\x02\x03\x04\x05"},
+         "read": {sym("hDPadRepeat"): 5}},
+        dict(POISON, wram={sym("hDPadRepeat"): b"\x01\x02\x03\x04\x05"},
+             read={sym("hDPadRepeat"): 5}),
     ],
 }
 # >>> factory Reset
 CONTRACT["Reset"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
 CASES["Reset"] = [
-    {"wram": {0xCAB3: b"\x37"}, "read": {0xCAB3: 1}},
-    dict(POISON, wram={0xCAB3: b"\xC3"}, read={0xCAB3: 1}),
+    {"wram": {sym("wInitialA"): b"\x37"}, "read": {sym("wInitialA"): 1}},
+    dict(POISON, wram={sym("wInitialA"): b"\xC3"}, read={sym("wInitialA"): 1}),
 ]
 # <<< factory Reset
 
@@ -57,7 +58,7 @@ MUTATIONS["Reset"] = {"source_symbol": "Reset", "before": "return wInitialA;", "
 # <<< factory-mutation Reset
 # >>> factory-completion Reset
 for _record in SCHEMA2_CASES["Reset"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x0150, "bank": 0}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("Start"), "bank": sym_bank("Start")}
 # <<< factory-completion Reset
 # >>> factory-mutation ReadJoypad
 MUTATIONS["ReadJoypad"] = {"source_symbol": "ReadJoypad", "before": "\t\t(void)Reset();\n\t\treturn;", "after": "\t\t(void)Reset();\n\t\tSaveButtonsHeld(c);\n\t\treturn;", "case_ids": ["ReadJoypad-3", "ReadJoypad-4"]}
@@ -65,8 +66,8 @@ MUTATIONS["ReadJoypad"] = {"source_symbol": "ReadJoypad", "before": "\t\t(void)R
 # >>> factory-completion ReadJoypad
 # The reset combo falls into Reset's `jp Start`, which never returns; the
 # combo witnesses stop the oracle at that jump instead (input.asm Reset+4).
-SCHEMA2_CASES["ReadJoypad"][3]["completion"] = {"mode": "pre-ret", "pc": 0x051F}
-SCHEMA2_CASES["ReadJoypad"][4]["completion"] = {"mode": "pre-ret", "pc": 0x051F}
+SCHEMA2_CASES["ReadJoypad"][3]["completion"] = {"mode": "pre-ret", "pc": sym("Reset") + 4}
+SCHEMA2_CASES["ReadJoypad"][4]["completion"] = {"mode": "pre-ret", "pc": sym("Reset") + 4}
 # <<< factory-completion ReadJoypad
 MUTATIONS["ClearJoypad"] = {
     "source_symbol": "ClearJoypad",

@@ -1,16 +1,17 @@
 """Oracle-diff cases for poketcg/src/engine/save.asm (the WRAMToSRAMMapper walkers
 and the SRAM<->SRAM2 backup copiers)."""
+from tests.cases._symbols import SRAM_START, STACK_CANARY, sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hBankSRAM = 0xFF81
-wNumSRAMValidationErrors = 0xD3C7
-wAnimationsDisabled = 0xD421
-wTextSpeed = 0xCE47
-wEventVars = 0xD3D2
-wGeneralSaveDataCheckSum = 0xD3C5
-wTempPointer = 0xD4C4
-wGeneralSaveDataByteCount = 0xD4C8
+hBankSRAM = sym("hBankSRAM")
+wNumSRAMValidationErrors = sym("wNumSRAMValidationErrors")
+wAnimationsDisabled = sym("wAnimationsDisabled")
+wTextSpeed = sym("wTextSpeed")
+wEventVars = sym("wEventVars")
+wGeneralSaveDataCheckSum = sym("wGeneralSaveDataCheckSum")
+wTempPointer = sym("wTempPointer")
+wGeneralSaveDataByteCount = sym("wGeneralSaveDataByteCount")
 
 # Both walkers keep the running count and checksum in WRAM, not in registers, and
 # ValidateGeneralSaveDataFromDE's final header test ORs them straight back out of
@@ -23,30 +24,30 @@ ACCUMULATORS = {wGeneralSaveDataByteCount: 2, wGeneralSaveDataCheckSum: 2,
 # wPlayTimeHourMinutes ($D3C8, 3 bytes), wCurOverworldMap ($D3CB) and wMedalCount
 # ($D3CC) are contiguous. save.asm:325-341 copies all five out of the payload after the
 # error counting, with no branch on the error count.
-PLAYTIME_OUT = {0xD3C8: 5}
+PLAYTIME_OUT = {sym("wPlayTimeHourMinutes"): 5}
 
-sGeneralSaveData = 0xB800
-sCardCollection = 0xA100
+sGeneralSaveData = sym("sGeneralSaveData")
+sCardCollection = sym("sCardCollection")
 
-hBankROM = 0xFF80
-sAlbumProgress = 0xB8FE
-sBackupGeneralSaveData = 0xB800  # bank 2, same GB address as sGeneralSaveData
-wTotalNumCardsCollected = 0xD3CD
-wTotalNumCardsToCollect = 0xD3CE
-wLoadedEventBits = 0xD3D1
-wPCPacks = 0xD11E
-wMedalCount = 0xD3CC
-wCurOverworldMap = 0xD3CB
-wOverworldMapSelection = 0xD32E
-wCurMap = 0xD32F
-wPlayerXCoord = 0xD330
-wPlayerYCoord = 0xD331
-wPlayerDirection = 0xD334
-wTempMap = 0xD0BB
-wTempPlayerXCoord = 0xD0BC
-wTempPlayerYCoord = 0xD0BD
-wTempPlayerDirection = 0xD0BE
-sReceivedLegendaryCards = 0xA00A
+hBankROM = sym("hBankROM")
+sAlbumProgress = sym("sEventVars") + 0x83
+sBackupGeneralSaveData = sym("sGeneralSaveData")  # bank 2, same GB address as sGeneralSaveData
+wTotalNumCardsCollected = sym("wTotalNumCardsCollected")
+wTotalNumCardsToCollect = sym("wTotalNumCardsToCollect")
+wLoadedEventBits = sym("wLoadedEventBits")
+wPCPacks = sym("wPCPacks")
+wMedalCount = sym("wMedalCount")
+wCurOverworldMap = sym("wCurOverworldMap")
+wOverworldMapSelection = sym("wOverworldMapSelection")
+wCurMap = sym("wCurMap")
+wPlayerXCoord = sym("wPlayerXCoord")
+wPlayerYCoord = sym("wPlayerYCoord")
+wPlayerDirection = sym("wPlayerDirection")
+wTempMap = sym("wTempMap")
+wTempPlayerXCoord = sym("wTempPlayerXCoord")
+wTempPlayerYCoord = sym("wTempPlayerYCoord")
+wTempPlayerDirection = sym("wTempPlayerDirection")
+sReceivedLegendaryCards = sym("sReceivedLegendaryCards")
 
 ROM_SLOT = 0x556C  # WRAMToSRAMMapper.EmptySRAMSlot, ROM bank 4: always reads 0
 
@@ -55,15 +56,15 @@ ROM_SLOT = 0x556C  # WRAMToSRAMMapper.EmptySRAMSlot, ROM bank 4: always reads 0
 # offset (36) lands exactly on sPCPackSelection ($B82C = $B800 + 8 + 36), and the
 # four ROM_SLOT entries' payload offsets land exactly on $B827/$B84C/$B85B/$B86B.
 MAPPER = [
-    (0xD3CC, 1, 0, 255), (0xD3CB, 1, 0, 255), (0xCAC5, 1, 0, 255), (0xCAC6, 1, 0, 255),
-    (0xCAC7, 1, 0, 255), (0xCAC8, 2, 0, 255), (0xD32E, 1, 0, 255), (0xD0BB, 1, 0, 255),
-    (0xD0BC, 1, 0, 255), (0xD0BD, 1, 0, 255), (0xD0BE, 1, 0, 255), (0xD0C2, 1, 0, 255),
-    (0xD0C3, 1, 0, 255), (0xD0C4, 1, 0, 255), (0xD696, 1, 0, 255), (0xD698, 4, 0, 255),
-    (0xD323, 11, 0, 255), (ROM_SLOT, 1, 0, 255), (0xD0B8, 1, 0, 255), (0xD0B9, 1, 0, 255),
-    (0xD11B, 1, 0, 255), (0xD0BA, 1, 0, 255), (0xD11D, 1, 0, 14), (0xD11E, 15, 0, 255),
-    (0xD111, 1, 0, 255), (0xCAD5, 1, 0, 255), (0xD3B8, 1, 0, 255), (0xD3BB, 10, 0, 255),
-    (0xD0C5, 1, 0, 255), (0xD695, 1, 0, 255), (0xD10E, 1, 0, 255), (ROM_SLOT, 15, 0, 255),
-    (ROM_SLOT, 16, 0, 255), (ROM_SLOT, 16, 0, 255), (0xD3D2, 64, 0, 255),
+    (sym("wMedalCount"), 1, 0, 255), (sym("wCurOverworldMap"), 1, 0, 255), (sym("wPlayTimeCounter"), 1, 0, 255), (sym("wPlayTimeCounter") + 1, 1, 0, 255),
+    (sym("wPlayTimeCounter") + 2, 1, 0, 255), (sym("wPlayTimeCounter") + 3, 2, 0, 255), (sym("wOverworldMapSelection"), 1, 0, 255), (sym("wTempMap"), 1, 0, 255),
+    (sym("wTempPlayerXCoord"), 1, 0, 255), (sym("wTempPlayerYCoord"), 1, 0, 255), (sym("wTempPlayerDirection"), 1, 0, 255), (sym("wActiveGameEvent"), 1, 0, 255),
+    (sym("wDuelResult"), 1, 0, 255), (sym("wNPCDuelist"), 1, 0, 255), (sym("wChallengeHallNPC"), 1, 0, 255), (sym("wd698"), 4, 0, 255),
+    (sym("wOWMapEvents"), 11, 0, 255), (ROM_SLOT, 1, 0, 255), (sym("wSelectedPauseMenuItem"), 1, 0, 255), (sym("wSelectedPCMenuItem"), 1, 0, 255),
+    (sym("wConfigCursorYPos"), 1, 0, 255), (sym("wSelectedGiftCenterMenuItem"), 1, 0, 255), (sym("wPCPackSelection"), 1, 0, 14), (sym("wPCPacks"), 15, 0, 255),
+    (sym("wDefaultSong"), 1, 0, 255), (sym("wDebugPauseAllowed"), 1, 0, 255), (sym("wRonaldIsInMap"), 1, 0, 255), (sym("wMastersBeatenList"), 10, 0, 255),
+    (sym("wNPCDuelistDirection"), 1, 0, 255), (sym("wMultichoiceTextboxResult_ChooseDeckToDuelAgainst"), 1, 0, 255), (sym("wGiftCenterChoice"), 1, 0, 255), (ROM_SLOT, 15, 0, 255),
+    (ROM_SLOT, 16, 0, 255), (ROM_SLOT, 16, 0, 255), (sym("wEventVars"), 64, 0, 255),
 ]
 assert sum(n for _, n, _, _ in MAPPER) == 0xB3
 
@@ -351,39 +352,39 @@ CASES = {
         # SRAM address then observes bank 2's mirrored content without needing
         # `sread`, proving the sweep actually ran rather than no-op'd on bc=0.
         {"wram": {hBankSRAM: b"\x02"}, "ramg": True,
-         "sram": {0: {0xA100: b"\xde\xad\xbe\xef"}},
+         "sram": {0: {sym("sCardAndDeckSaveData"): b"\xde\xad\xbe\xef"}},
          "oracle": False,
          "why": "bc=0 is 65536 iterations (two SRAM bank switches each), which "
          "exceeds the oracle's 240-frame synthesized-call-frame budget.",
-         "expect_sram": {0: {0xA100: b"\xde\xad\xbe\xef"}}},
-        dict(POISON, hl=0xA100, b=0x00, c=0x04, ramg=True,
-             sram={0: {0xA100: b"\xde\xad\xbe\xef"}},
-             sread={2: {0xA100: 4}}),
-        {"hl": 0xA100, "b": 0x00, "c": 0x01, "ramg": True,
-         "sram": {0: {0xA100: b"\x42"}}, "sread": {2: {0xA100: 1}}},
-        {"hl": 0xA100, "b": 0x01, "c": 0x00, "ramg": True,
-         "sram": {0: {0xA100: bytes(range(256))}}, "sread": {2: {0xA100: 256}}},
-        {"hl": 0xA100, "b": 0x01, "c": 0x01, "ramg": True,
-         "sram": {0: {0xA100: bytes(range(256)) + b"\xaa"}}, "sread": {2: {0xA100: 257}}},
+         "expect_sram": {0: {sym("sCardAndDeckSaveData"): b"\xde\xad\xbe\xef"}}},
+        dict(POISON, hl=sym("sCardAndDeckSaveData"), b=0x00, c=0x04, ramg=True,
+             sram={0: {sym("sCardAndDeckSaveData"): b"\xde\xad\xbe\xef"}},
+             sread={2: {SRAM_START + 0x100: 4}}),
+        {"hl": sym("sCardAndDeckSaveData"), "b": 0x00, "c": 0x01, "ramg": True,
+         "sram": {0: {sym("sCardAndDeckSaveData"): b"\x42"}}, "sread": {2: {SRAM_START + 0x100: 1}}},
+        {"hl": sym("sCardAndDeckSaveData"), "b": 0x01, "c": 0x00, "ramg": True,
+         "sram": {0: {sym("sCardAndDeckSaveData"): bytes(range(256))}}, "sread": {2: {SRAM_START + 0x100: 256}}},
+        {"hl": sym("sCardAndDeckSaveData"), "b": 0x01, "c": 0x01, "ramg": True,
+         "sram": {0: {sym("sCardAndDeckSaveData"): bytes(range(256)) + b"\xaa"}}, "sread": {2: {SRAM_START + 0x100: 257}}},
     ],
     "LoadDataFromBackup": [
         # Mirror of WriteDataToBackup's bc=0 case: hBankSRAM defaults to 0, which
         # BankswitchSRAM(saved) restores at the end, so a plain post-call read at
         # the seeded address observes bank 0's mirrored content (from bank 2).
-        {"sram": {2: {0xA100: b"\xde\xad\xbe\xef"}}, "ramg": True,
+        {"sram": {2: {SRAM_START + 0x100: b"\xde\xad\xbe\xef"}}, "ramg": True,
          "oracle": False,
          "why": "bc=0 is 65536 iterations (two SRAM bank switches each), which "
          "exceeds the oracle's 240-frame synthesized-call-frame budget.",
-         "expect_sram": {2: {0xA100: b"\xde\xad\xbe\xef"}}},
-        dict(POISON, hl=0xA100, b=0x00, c=0x04, ramg=True,
-             sram={2: {0xA100: b"\xde\xad\xbe\xef"}},
-             sread={0: {0xA100: 4}}),
-        {"hl": 0xA100, "b": 0x00, "c": 0x01, "ramg": True,
-         "sram": {2: {0xA100: b"\x42"}}, "sread": {0: {0xA100: 1}}},
-        {"hl": 0xA100, "b": 0x01, "c": 0x00, "ramg": True,
-         "sram": {2: {0xA100: bytes(range(256))}}, "sread": {0: {0xA100: 256}}},
-        {"hl": 0xA100, "b": 0x01, "c": 0x01, "ramg": True,
-         "sram": {2: {0xA100: bytes(range(256)) + b"\xaa"}}, "sread": {0: {0xA100: 257}}},
+         "expect_sram": {2: {SRAM_START + 0x100: b"\xde\xad\xbe\xef"}}},
+        dict(POISON, hl=sym("sCardAndDeckSaveData"), b=0x00, c=0x04, ramg=True,
+             sram={2: {SRAM_START + 0x100: b"\xde\xad\xbe\xef"}},
+             sread={0: {sym("sCardAndDeckSaveData"): 4}}),
+        {"hl": sym("sCardAndDeckSaveData"), "b": 0x00, "c": 0x01, "ramg": True,
+         "sram": {2: {SRAM_START + 0x100: b"\x42"}}, "sread": {0: {sym("sCardAndDeckSaveData"): 1}}},
+        {"hl": sym("sCardAndDeckSaveData"), "b": 0x01, "c": 0x00, "ramg": True,
+         "sram": {2: {SRAM_START + 0x100: bytes(range(256))}}, "sread": {0: {sym("sCardAndDeckSaveData"): 256}}},
+        {"hl": sym("sCardAndDeckSaveData"), "b": 0x01, "c": 0x01, "ramg": True,
+         "sram": {2: {SRAM_START + 0x100: bytes(range(256)) + b"\xaa"}}, "sread": {0: {sym("sCardAndDeckSaveData"): 257}}},
     ],
     "WriteBackupGeneralSaveData": [
         {},
@@ -842,7 +843,7 @@ MUTATIONS["_LoadGeneralSaveData"] = {
     "case_ids": ["_LoadGeneralSaveData-2"],
 }
 for _rec in SCHEMA2_CASES["LoadBackupCardAndDeckSaveData"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["LoadBackupCardAndDeckSaveData"] = {
     "source_symbol": "LoadBackupCardAndDeckSaveData",
     "before": "void LoadBackupCardAndDeckSaveData(void)\n{",
@@ -850,7 +851,7 @@ MUTATIONS["LoadBackupCardAndDeckSaveData"] = {
     "case_ids": ["LoadBackupCardAndDeckSaveData-0"],
 }
 for _rec in SCHEMA2_CASES["ValidateGeneralSaveData"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["ValidateGeneralSaveData"] = {
     "source_symbol": "ValidateGeneralSaveData",
     "before": "ValidateResult ValidateGeneralSaveData(void)\n{",
@@ -858,7 +859,7 @@ MUTATIONS["ValidateGeneralSaveData"] = {
     "case_ids": ["ValidateGeneralSaveData-0"],
 }
 for _rec in SCHEMA2_CASES["WriteBackupCardAndDeckSaveData"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["WriteBackupCardAndDeckSaveData"] = {
     "source_symbol": "WriteBackupCardAndDeckSaveData",
     "before": "void WriteBackupCardAndDeckSaveData(void)\n{",
@@ -866,7 +867,7 @@ MUTATIONS["WriteBackupCardAndDeckSaveData"] = {
     "case_ids": ["WriteBackupCardAndDeckSaveData-0"],
 }
 for _rec in SCHEMA2_CASES["WriteDataToBackup"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["WriteDataToBackup"] = {
     "source_symbol": "WriteDataToBackup",
     "before": "void WriteDataToBackup(uint16_t hl, uint16_t bc)\n{",
@@ -874,7 +875,7 @@ MUTATIONS["WriteDataToBackup"] = {
     "case_ids": ["WriteDataToBackup-1"],
 }
 for _rec in SCHEMA2_CASES["LoadDataFromBackup"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["LoadDataFromBackup"] = {
     "source_symbol": "LoadDataFromBackup",
     "before": "void LoadDataFromBackup(uint16_t hl, uint16_t bc)\n{",

@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/promotional_card.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,8 +8,8 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-wLoadedCard1Name = 0xCC27
-hWhoseTurn = 0xFF97
+wLoadedCard1Name = sym("wLoadedCard1Name")
+hWhoseTurn = sym("hWhoseTurn")
 # <<< factory-cases-statics
 
 # >>> factory _ShowPromotionalCardScreen
@@ -56,5 +57,5 @@ MUTATIONS["_ShowPromotionalCardScreen"] = {
 # landed PreparePrinterConnection cases do. legacy_to_schema always emits
 # completion "return", so the split is applied after migration.
 for _record in SCHEMA2_CASES["_ShowPromotionalCardScreen"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x6680}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("_ShowPromotionalCardScreen.loop")}
 # <<< factory-completion _ShowPromotionalCardScreen

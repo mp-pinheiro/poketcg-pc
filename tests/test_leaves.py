@@ -102,7 +102,7 @@ def pyboy_frames(case: dict) -> int | None:
 
 
 def seeded_ram_bank(case: dict) -> int | None:
-    bank = _seed_byte(case.get("wram") or {}, 0xFF81, -1)
+    bank = _seed_byte(case.get("wram") or {}, LAYOUT["hBankSRAM"], -1)
     return bank if 0 <= bank <= 3 else None
 
 
@@ -142,8 +142,6 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
         req["setup"] = [{k: int(v) if k != "fn" else v for k, v in pre.items()}
                         for pre in case["setup"]]
     if case.get("keys"):
-        # The probe cycles `input_events` one entry per completed joypad poll
-        # (src/mem.c); `keys` is the entry the run starts on, as in runner.c.
         timeline = key_timeline(case)
         timeline = timeline if isinstance(timeline, list) else [timeline]
         req["keys"] = timeline[0]
@@ -206,21 +204,30 @@ def merged_spans(case: dict) -> tuple[dict[int, int], dict[int, dict[int, int]],
             {bank: dict(sorted(spans.items())) for bank, spans in sorted(vreads.items())})
 
 
-# Bytes auto-observation never compares: the synthesized call frame lives in
-# RESERVED, and these count frames or key edges. The probe renders no frames
-# and cycles the key timeline per joypad poll while the reference cycles it
-# per frame, so a routine that waits for a press sees a different number of
-# DoFrames on each lane; the counters below record exactly that number.
-#   $CAB8 wVBlankCounter  $CAC5-$CAC9 wPlayTimeCounter  $CD04 wcd04 (frame
-#   counter)  $CD0F wCursorBlinkCounter  $CEA3 wCheckMenuCursorBlinkCounter
-#   $FF8D-$FF91 hDPadRepeat, hKeysReleased, hDPadHeld, hKeysHeld, hKeysPressed
-# $DEE5-$DFFF is the game's CPU stack and $FFB8-$FFFF the boot stack (start.asm
-# runs on `ld sp, $fffe` until setup moves it; hram.asm ends at hffb7 and pads
-# the rest): return addresses and pushed pairs the C port, running on the host
-# stack, cannot reproduce.
-AUTO_OBSERVE_IGNORED = frozenset(
-    {0xCAB8, 0xCD04, 0xCD0F, 0xCEA3} | set(range(0xCAC5, 0xCACA)) | set(range(0xFF8D, 0xFF92))
-    | set(range(0xDEE5, 0xE000)) | set(range(0xFFB8, 0x10000)))
+def _layout() -> dict[str, int]:
+    from tools.gen_layout import parse
+    layout: dict[str, int] = {}
+    for bank, address, name in parse(PROFILE.sym_path(ROOT)):
+        if bank == 0:
+            layout.setdefault(name, address)
+    return layout
+
+
+def _auto_observe_ignored(layout: dict[str, int]) -> frozenset[int]:
+    wram_high = max((address for address in layout.values() if 0xC000 <= address <= 0xDFFF), default=0xC000)
+    wram_end = max(wram_high + 1, layout.get("wMusicCh1StackBackup", wram_high) + 0x30)
+    hram_end = max((address for address in layout.values() if 0xFF80 <= address <= 0xFFFE), default=0xFF80) + 1
+    play_time = layout["wPlayTimeCounter"]
+    play_time_end = min(address for address in layout.values() if address > play_time)
+    return frozenset(
+        {layout[name] for name in ("wVBlankCounter", "wcd04", "wCursorBlinkCounter", "wCheckMenuCursorBlinkCounter")}
+        | set(range(play_time, play_time_end))
+        | set(range(layout["hDPadRepeat"], layout["hKeysPressed"] + 1))
+        | set(range(wram_end, 0xE000)) | set(range(hram_end, 0x10000)))
+
+
+LAYOUT = _layout()
+AUTO_OBSERVE_IGNORED = _auto_observe_ignored(LAYOUT)
 AUTO_OBSERVE_GAP = 32
 
 
@@ -407,7 +414,9 @@ def normalize_case(case: dict, fn: str, fields: tuple[str, ...], dependencies: d
 
 def dependencies(rom: Path) -> dict[str, str]:
     files = {"rom": rom, "sym": rom.with_suffix(".sym"), "harness": Path(__file__),
-             "oracle": ROOT / "tools" / "oracle" / "pyboy_oracle.py"}
+             "oracle": ROOT / "tools" / "oracle" / "pyboy_oracle.py",
+             "poll": ROOT / "tools" / "oracle" / "gbref" / "compare_one.py",
+             "frame": ROOT / "tests" / "cases" / "_symbols.py"}
     return {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in files.items()} | {
         "pyboy": importlib.metadata.version("pyboy")}
 
@@ -497,13 +506,6 @@ def load_reference(cache_dir: Path, key: str, fn: str, fields: tuple[str, ...], 
 
 
 def key_timeline(case: dict) -> int | list[int]:
-    """This case's `keys` as the PyBoy oracle wants it.
-
-    A schema-2 case may declare a cycled per-frame timeline, which
-    pyboy_oracle.call cycles one entry per frame exactly as
-    tools/oracle/gbref/runner.c does. Collapsing it here would strand every
-    routine whose wait reads edge-triggered hKeysPressed.
-    """
     keys = case.get("keys") or 0
     if isinstance(keys, (list, tuple)):
         return [int(k) for k in keys] or 0

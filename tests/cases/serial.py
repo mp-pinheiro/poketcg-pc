@@ -1,24 +1,25 @@
+from tests.cases._symbols import HRAM_START, data, sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wSerialOp = 0xCB74
-wSerialFlags = 0xCB75
-wSerialCounter = 0xCB76
-wSerialCounter2 = 0xCB77
-wSerialTimeoutCounter = 0xCB78
-wSerialSendSave = 0xCB7D
-wSerialSendBufToggle = 0xCB7E
-wSerialSendBufIndex = 0xCB7F
-wcb80 = 0xCB80
-wSerialSendBuf = 0xCB81
-wSerialLastReadCA = 0xCBA1
-wSerialRecvCounter = 0xCBA2
-wcba3 = 0xCBA3
-wSerialRecvIndex = 0xCBA4
-wSerialRecvBuf = 0xCBA5
-wSerialEnd = 0xCBC5
-wPrinterPacketSequence = 0xCE63
-wSerialDataPtr = 0xCE70
+wSerialOp = sym("wSerialOp")
+wSerialFlags = sym("wSerialFlags")
+wSerialCounter = sym("wSerialCounter")
+wSerialCounter2 = sym("wSerialCounter2")
+wSerialTimeoutCounter = sym("wSerialTimeoutCounter")
+wSerialSendSave = sym("wSerialSendSave")
+wSerialSendBufToggle = sym("wSerialSendBufToggle")
+wSerialSendBufIndex = sym("wSerialSendBufIndex")
+wcb80 = sym("wcb80")
+wSerialSendBuf = sym("wSerialSendBuf")
+wSerialLastReadCA = sym("wSerialLastReadCA")
+wSerialRecvCounter = sym("wSerialRecvCounter")
+wcba3 = sym("wcba3")
+wSerialRecvIndex = sym("wSerialRecvIndex")
+wSerialRecvBuf = sym("wSerialRecvBuf")
+wSerialEnd = sym("wSerialEnd")
+wPrinterPacketSequence = sym("wPrinterPacketSequence")
+wSerialDataPtr = sym("wSerialDataPtr")
 rSB = 0xFF01
 rSC = 0xFF02
 rIF = 0xFF0F
@@ -119,7 +120,7 @@ CASES = {
         dict(POISON, wram={wPrinterPacketSequence: b"\x00", wSerialOp: b"\x00"},
              setup=[{"fn": "SendByteThroughSerialData", "a": 0xFF}]),
         # Printer-sequence branch: dispatches into ExecutePrinterPacketSequence.
-        {"wram": {wPrinterPacketSequence: b"\x01", wSerialDataPtr: b"\x00\xC1", 0xC100: b"\x42"},
+        {"wram": {wPrinterPacketSequence: b"\x01", wSerialDataPtr: b"\x00\xC1", sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x42"},
          "read": {wPrinterPacketSequence: 1, rSC: 1, wSerialCounter: 1}},
         # wSerialOp!=0, ==$29: send/recv a byte (rSB forced $FF, so
         # SerialHandleRecv takes its $00-or-$FF branch), external-clock
@@ -226,18 +227,18 @@ CASES = {
     # additional coverage over the send/receive/error paths below.
     "SerialExchangeBytes": [
         # c==0: no send, no receive, immediate success.
-        {"c": 0, "hl": 0xC100, "d": 0xC2, "e": 0x00,
+        {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC2, "e": 0x00,
          "wram": {wSerialFlags: b"\x00"}},
         # c==1, receive data pre-seeded: full send+receive round trip.
-        {"c": 1, "hl": 0xC100, "d": 0xC2, "e": 0x00,
-         "wram": {0xC100: b"\x11", wSerialRecvCounter: b"\x01", wcba3: b"\x00",
+        {"c": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC2, "e": 0x00,
+         "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x11", wSerialRecvCounter: b"\x01", wcba3: b"\x00",
                   wSerialRecvBuf: b"\x22", wcb80: b"\x00",
                   wSerialSendBufIndex: b"\x00", wSerialFlags: b"\x00"},
-         "read": {0xC200: 1, wSerialSendBuf: 1}},
+         "read": {sym("wPlayerCardLocations"): 1, wSerialSendBuf: 1}},
         # wSerialFlags pre-set: error exit after one iteration; b stays at
         # entry c (receive failed, carry) while c decrements (send succeeded).
-        {"c": 1, "hl": 0xC100, "d": 0xC2, "e": 0x00,
-         "wram": {0xC100: b"\x33", wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
+        {"c": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "d": 0xC2, "e": 0x00,
+         "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x33", wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
                   wSerialFlags: b"\x40"},
          "read": {wSerialSendBuf: 1}},
     ],
@@ -268,18 +269,18 @@ CASES = {
     # hang the test process itself, not just the oracle. Coverage below uses
     # bc=1/2 (within ring capacity) plus the error-exit path instead.
     "SerialSendBytes": [
-        {"hl": 0xC100, "b": 0, "c": 1,
-         "wram": {0xC100: b"\x11", wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "b": 0, "c": 1,
+         "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x11", wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
                   wSerialFlags: b"\x00"},
          "read": {wSerialSendBuf: 1}},
         # bc preserved: exit b/c must equal entry, not the live decremented value.
-        {"a": 0xAA, "f": 0xF0, "b": 0, "c": 2, "d": 0xDD, "e": 0xEE, "hl": 0xC100,
-         "wram": {0xC100: b"\x11\x22", wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
+        {"a": 0xAA, "f": 0xF0, "b": 0, "c": 2, "d": 0xDD, "e": 0xEE, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+         "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x11\x22", wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
                   wSerialFlags: b"\x00"},
          "read": {wSerialSendBuf: 2}},
         # wSerialFlags pre-set: error exit after 1 byte, bc preserved despite progress.
-        {"hl": 0xC100, "b": 0, "c": 5,
-         "wram": {0xC100: b"\x99", wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "b": 0, "c": 5,
+         "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x99", wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
                   wSerialFlags: b"\x40"},
          "read": {wSerialSendBuf: 1}},
     ],
@@ -289,26 +290,26 @@ CASES = {
     # pre-seeds enough already-arrived bytes that SerialRecvByte never
     # returns carry.
     "SerialRecvBytes": [
-        {"hl": 0xC100, "b": 0, "c": 1,
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "b": 0, "c": 1,
          "wram": {wSerialRecvCounter: b"\x01", wcba3: b"\x00",
                   wSerialRecvBuf: b"\x77", wSerialFlags: b"\x00"},
-         "read": {0xC100: 1, wSerialRecvCounter: 1, wcba3: 1}},
-        {"a": 0xAA, "f": 0xF0, "b": 0, "c": 2, "d": 0xDD, "e": 0xEE, "hl": 0xC100,
+         "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 1, wSerialRecvCounter: 1, wcba3: 1}},
+        {"a": 0xAA, "f": 0xF0, "b": 0, "c": 2, "d": 0xDD, "e": 0xEE, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
          "wram": {wSerialRecvCounter: b"\x02", wcba3: b"\x00",
                   wSerialRecvBuf: b"\x11\x22", wSerialFlags: b"\x00"},
-         "read": {0xC100: 2, wcba3: 1}},
-        {"hl": 0xC100, "b": 0, "c": 5,
+         "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 2, wcba3: 1}},
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "b": 0, "c": 5,
          "wram": {wSerialRecvCounter: b"\x01", wcba3: b"\x00",
                   wSerialRecvBuf: b"\x88", wSerialFlags: b"\x40"},
-         "read": {0xC100: 1, wcba3: 1}},
+         "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 1, wcba3: 1}},
     ],
 }
 # >>> factory DuelTransmissionError
-wDuelReturnAddress = 0xCBE5
-wDuelResult = 0xD0C3
-wCurSongID = 0xDD80
-wTxRam3 = 0xCE43
-wTxRam3_b = 0xCE45
+wDuelReturnAddress = sym("wDuelReturnAddress")
+wDuelResult = sym("wDuelResult")
+wCurSongID = sym("wCurSongID")
+wTxRam3 = sym("wTxRam3")
+wTxRam3_b = sym("wTxRam3_b")
 DUEL_TRANSMISSION_ERROR_RET_PC = 0x0F57
 
 CONTRACT["DuelTransmissionError"] = {"compare": (), "preserve": ()}
@@ -334,50 +335,50 @@ CASES["DuelTransmissionError"] = [
 # >>> factory SerialRecv8Bytes
 CONTRACT["SerialRecv8Bytes"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["SerialRecv8Bytes"] = [
-	{"wram": {wSerialRecvCounter: b"\x08", wcba3: b"\x08", wSerialRecvBuf: b"\x01\x02\x03\x04\x05\x06\x07\x08"}, "read": {0xCBED: 8}},
-	dict(POISON, wram={wSerialRecvCounter: b"\x08", wcba3: b"\x08", wSerialRecvBuf: b"\x11\x22\x33\x44\x55\x66\x77\x88", 0xCBED: b"\xff" * 8}, read={0xCBED: 8}),
-	{"wram": {wSerialRecvCounter: b"\x0a", wcba3: b"\x0a", wSerialRecvBuf: b"\xf0\x81\x00\x7f\xff\x30\x0a\xc0"}, "read": {0xCBED: 8}},
+	{"wram": {wSerialRecvCounter: b"\x08", wcba3: b"\x08", wSerialRecvBuf: b"\x01\x02\x03\x04\x05\x06\x07\x08"}, "read": {sym("wTempSerialBuf"): 8}},
+	dict(POISON, wram={wSerialRecvCounter: b"\x08", wcba3: b"\x08", wSerialRecvBuf: b"\x11\x22\x33\x44\x55\x66\x77\x88", sym("wTempSerialBuf"): b"\xff" * 8}, read={sym("wTempSerialBuf"): 8}),
+	{"wram": {wSerialRecvCounter: b"\x0a", wcba3: b"\x0a", wSerialRecvBuf: b"\xf0\x81\x00\x7f\xff\x30\x0a\xc0"}, "read": {sym("wTempSerialBuf"): 8}},
 ]
 # <<< factory SerialRecv8Bytes
 
 # >>> factory ExchangeRNG
 CONTRACT["ExchangeRNG"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["ExchangeRNG"] = [
-    {"wram": {0xCC09: b"\x00"}},
-    {"wram": {0xCC09: b"\x02"}},
-    {"wram": {0xCC09: b"\x11"}},
-    dict(POISON, wram={0xCC09: b"\xff"}),
+    {"wram": {sym("wDuelType"): b"\x00"}},
+    {"wram": {sym("wDuelType"): b"\x02"}},
+    {"wram": {sym("wDuelType"): b"\x11"}},
+    dict(POISON, wram={sym("wDuelType"): b"\xff"}),
 ]
 # <<< factory ExchangeRNG
 
 # >>> factory SerialSend8Bytes
 CONTRACT["SerialSend8Bytes"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["SerialSend8Bytes"] = [
-    {"wram": {0xCBED: b"\x00" * 8}, "read": {0xCBED: 8}},
-    dict(POISON, wram={0xCBED: b"\x5a" * 8}, read={0xCBED: 8}),
-    {"a": 0x12, "f": 0x30, "b": 0x34, "c": 0x56, "d": 0x78, "e": 0x9A, "hl": 0xBCDE,
-     "wram": {0xCBED: b"\xff" * 8}, "read": {0xCBED: 8}},
+    {"wram": {sym("wTempSerialBuf"): b"\x00" * 8}, "read": {sym("wTempSerialBuf"): 8}},
+    dict(POISON, wram={sym("wTempSerialBuf"): b"\x5a" * 8}, read={sym("wTempSerialBuf"): 8}),
+    {"a": 0x12, "f": 0x30, "b": 0x34, "c": 0x56, "d": 0x78, "e": 0x9A, "hl": data(0xBCDE),
+     "wram": {sym("wTempSerialBuf"): b"\xff" * 8}, "read": {sym("wTempSerialBuf"): 8}},
 ]
 # <<< factory SerialSend8Bytes
 
 # >>> factory LinkOpponentTurnFrameFunction
 CONTRACT["LinkOpponentTurnFrameFunction"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["LinkOpponentTurnFrameFunction"] = [
-    {"wram": {0xCB75: b"\x00"}},
-    dict(POISON, wram={0xCB75: b"\x00"}),
-    {"a": 0x5A, "hl": 0x4321, "wram": {0xCB75: b"\x00"}},
+    {"wram": {sym("wSerialFlags"): b"\x00"}},
+    dict(POISON, wram={sym("wSerialFlags"): b"\x00"}),
+    {"a": 0x5A, "hl": 0x4321, "wram": {sym("wSerialFlags"): b"\x00"}},
 ]
 # <<< factory LinkOpponentTurnFrameFunction
 
 # >>> factory-cases-statics
-hWhoseTurn = 0xFF97
-hOppActionTableIndex = 0xFF9E
-wDuelType = 0xCC09
-wSerialFlags = 0xCB75
-wSerialSendBufToggle = 0xCB7E
-wSerialSendBufIndex = 0xCB7F
-wcb80 = 0xCB80
-wSerialSendBuf = 0xCB81
+hWhoseTurn = sym("hWhoseTurn")
+hOppActionTableIndex = sym("hOppActionTableIndex")
+wDuelType = sym("wDuelType")
+wSerialFlags = sym("wSerialFlags")
+wSerialSendBufToggle = sym("wSerialSendBufToggle")
+wSerialSendBufIndex = sym("wSerialSendBufIndex")
+wcb80 = sym("wcb80")
+wSerialSendBuf = sym("wSerialSendBuf")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
@@ -388,19 +389,19 @@ CONTRACT["SetOppAction_SerialSendDuelData"] = {
     "preserve": ("b", "c", "hl"),
 }
 CASES["SetOppAction_SerialSendDuelData"] = [
-    {"a": 0x37, "wram": {hWhoseTurn: b"\xC2", 0xC3F1: b"\x00"},
+    {"a": 0x37, "wram": {hWhoseTurn: b"\xC2", sym("wOpponentDuelistType"): b"\x00"},
      "read": {hOppActionTableIndex: 1}},
-    dict(POISON, a=0x37, wram={hWhoseTurn: b"\xC2", 0xC3F1: b"\x00",
+    dict(POISON, a=0x37, wram={hWhoseTurn: b"\xC2", sym("wOpponentDuelistType"): b"\x00",
                                hOppActionTableIndex: b"\xFF"},
          read={hOppActionTableIndex: 1}),
-    {"a": 0x42, "wram": {hWhoseTurn: b"\xC2", 0xC3F1: b"\x01", wDuelType: b"\x00",
+    {"a": 0x42, "wram": {hWhoseTurn: b"\xC2", sym("wOpponentDuelistType"): b"\x01", wDuelType: b"\x00",
                          wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
                          wSerialFlags: b"\x00",
                          hOppActionTableIndex: b"\x00" * 10},
      "read": {hOppActionTableIndex: 10, wSerialSendBuf: 10,
               wSerialSendBufIndex: 1, wcb80: 1, wSerialSendBufToggle: 1}},
     dict(POISON, a=0x77,
-         wram={hWhoseTurn: b"\xC2", 0xC3F1: b"\x01", wDuelType: b"\x00",
+         wram={hWhoseTurn: b"\xC2", sym("wOpponentDuelistType"): b"\x01", wDuelType: b"\x00",
                wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
                wSerialFlags: b"\x00", hOppActionTableIndex: b"\x00" * 10},
          read={hOppActionTableIndex: 10, wSerialSendBuf: 10,
@@ -434,8 +435,8 @@ CASES["UnreferencedGoToSerialReturnAddress"] = [{}, dict(POISON)]
 # compared.
 CONTRACT["UnreferencedSaveSerialReturnAddress"] = {"compare": ("f", "b", "c", "d", "e"), "preserve": ("b", "c")}
 CASES["UnreferencedSaveSerialReturnAddress"] = [
-    {"entry_sp": 0xFFFC, "wram": {0xCB79: b"\x00\x00"}, "read": {0xCB79: 2}},
-    dict(POISON, entry_sp=0xFFFC, wram={0xCB79: b"\x00\x00"}, read={0xCB79: 2}),
+    {"entry_sp": HRAM_START + 0x7C, "wram": {sym("wSerialReturnSP"): b"\x00\x00"}, "read": {sym("wSerialReturnSP"): 2}},
+    dict(POISON, entry_sp=HRAM_START + 0x7C, wram={sym("wSerialReturnSP"): b"\x00\x00"}, read={sym("wSerialReturnSP"): 2}),
 ]
 # <<< factory UnreferencedSaveSerialReturnAddress
 

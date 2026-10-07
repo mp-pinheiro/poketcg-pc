@@ -1,6 +1,7 @@
+from tests.cases._symbols import STACK_CANARY, sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-CUR_SONG_ID = 0xDD80
+CUR_SONG_ID = sym("wCurSongID")
 LCDC = 0xFF40
 
 CONTRACT = {
@@ -44,7 +45,7 @@ MUTATIONS = {
     },
 }
 for _rec in SCHEMA2_CASES["WaitForSongToFinish"]:
-    _rec.setdefault("bus", {}).update({0xDD80: 0x165})
+    _rec.setdefault("bus", {}).update({sym("wCurSongID"): 0x165})
 MUTATIONS["Func_3c87"] = {
     "source_symbol": "Func_3c87",
     "before": "\tPauseSong();",
@@ -52,7 +53,7 @@ MUTATIONS["Func_3c87"] = {
     "case_ids": ["Func_3c87-0"],
 }
 for _rec in SCHEMA2_CASES["WaitForSongToFinish"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["WaitForSongToFinish"] = {
     "source_symbol": "WaitForSongToFinish",
     "before": "void WaitForSongToFinish(void)\n{",

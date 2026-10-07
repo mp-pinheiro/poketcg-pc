@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/duel/ai/boss_deck_set_up.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,15 +10,15 @@ CASES = {}
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
-wDuelistHand = 0xC242
-wDuelistDeck = 0xC27E
-wDuelistNotInDeck = 0xC2BA
-wDuelistHandCount = 0xC2EE
-wPlayerDeck = 0xC400
-wAICardListAvoidPrize = 0xCDA8
-wAISetupBasicPokemonCount = 0xCE06
-wAISetupEnergyCount = 0xCE08
+hWhoseTurn = sym("hWhoseTurn")
+wDuelistHand = sym("wPlayerHand")
+wDuelistDeck = sym("wPlayerDeckCards")
+wDuelistNotInDeck = sym("wPlayerNumberOfCardsNotInDeck")
+wDuelistHandCount = sym("wPlayerNumberOfCardsInHand")
+wPlayerDeck = sym("wPlayerDeck")
+wAICardListAvoidPrize = sym("wAICardListAvoidPrize")
+wAISetupBasicPokemonCount = sym("wAISetupBasicPokemonCount")
+wAISetupEnergyCount = sym("wAISetupEnergyCount")
 # <<< factory-cases-statics
 
 # >>> factory SetUpBossStartingHandAndDeck
@@ -31,9 +32,9 @@ CASES["SetUpBossStartingHandAndDeck"] = [
             wDuelistHand: bytes(range(53, 60)),
             wDuelistDeck: bytes(range(19)),
             wPlayerDeck: bytes([1] * 13),
-            0xC40D: b"\x08",
-            0xC40E: bytes([1] * 41),
-            0xC437: b"\x08\x08\x01\x01\x08",
+            sym("wBoosterTempEnergiesDrawn") + 2: b"\x08",
+            sym("wBoosterTempEnergiesDrawn") + 3: bytes([1] * 41),
+            sym("wBoosterCardsDrawnEnd") + 0x21: b"\x08\x08\x01\x01\x08",
             wAICardListAvoidPrize: b"\x00\x00",
         },
         "read": {wAISetupBasicPokemonCount: 1, wAISetupEnergyCount: 1},
@@ -47,9 +48,9 @@ CASES["SetUpBossStartingHandAndDeck"] = [
         wDuelistHand: bytes(range(53, 60)),
         wDuelistDeck: bytes(range(19)),
         wPlayerDeck: bytes([1] * 13),
-        0xC40D: b"\x08",
-        0xC40E: bytes([1] * 41),
-        0xC437: b"\x08\x08\x01\x01\x08",
+        sym("wBoosterTempEnergiesDrawn") + 2: b"\x08",
+        sym("wBoosterTempEnergiesDrawn") + 3: bytes([1] * 41),
+        sym("wBoosterCardsDrawnEnd") + 0x21: b"\x08\x08\x01\x01\x08",
         wAICardListAvoidPrize: b"\x00\x00",
     }, read={wAISetupBasicPokemonCount: 1, wAISetupEnergyCount: 1}, instruction_budget=2000000, cycle_budget=8000000),
 ]

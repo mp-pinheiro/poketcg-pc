@@ -1,20 +1,21 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import ai_estimate_fixture as _ai_estimate_fixture, AI_ESTIMATE_REGS as _AI_ESTIMATE_REGS
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
-hTempPlayAreaLocation_ff9d = 0xFF9D
-wDamage = 0xCCB9
-wAIMinDamage = 0xCCBA
-wAIMaxDamage = 0xCCBB
-wPlayerArena = 0xC2BB
-wOpponentArena = 0xC3BB
-wPlayerBench = 0xC2BC
-wOpponentBench = 0xC3BC
-wPlayerStatus = 0xC2F0
-wOpponentStatus = 0xC3F0
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC480
+hWhoseTurn = sym("hWhoseTurn")
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
+wDamage = sym("wDamage")
+wAIMinDamage = sym("wDamage") + 1
+wAIMaxDamage = sym("wAIMinDamage")
+wPlayerArena = sym("wPlayerArenaCard")
+wOpponentArena = sym("wOpponentArenaCard")
+wPlayerBench = sym("wPlayerBench")
+wOpponentBench = sym("wOpponentBench")
+wPlayerStatus = sym("wPlayerArenaCardStatus")
+wOpponentStatus = sym("wOpponentArenaCardStatus")
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wOpponentDeck")
 
 CONTRACT = {
     "CalculateDamage_VersusDefendingPokemon": {
@@ -68,15 +69,15 @@ CASES = {
 
 
 # >>> factory EstimateDamage_VersusDefendingCard
-_edvdc_wDamage = 0xCCB9
-_edvdc_wAIMinDamage = 0xCCBB
-_edvdc_wAIMaxDamage = 0xCCBC
-_edvdc_wLoadedAttackCategory = 0xCCB1
+_edvdc_wDamage = sym("wDamage")
+_edvdc_wAIMinDamage = sym("wAIMinDamage")
+_edvdc_wAIMaxDamage = sym("wAIMaxDamage")
+_edvdc_wLoadedAttackCategory = sym("wLoadedAttackCategory")
 # The reference runs the seeded card's real EFFECTCMDTYPE_AI command, so these cases
 # need a budget far above the defaults on BOTH backends; tests/test_leaves.py derives
 # PyBoy's frame allowance from cycle_budget.
 def _edvdc(location, extra=None, **kw):
-    wram = {0xFF97: b"\xC2", 0xFF9D: location, 0xC2BB: b"\x00",
+    wram = {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): location, sym("wPlayerArenaCard"): b"\x00",
             _edvdc_wDamage: b"\x00\x00", _edvdc_wAIMinDamage: b"\x00",
             _edvdc_wAIMaxDamage: b"\x00"}
     if extra:
@@ -90,13 +91,13 @@ def _edvdc(location, extra=None, **kw):
 CONTRACT["EstimateDamage_VersusDefendingCard"] = {"compare": ("a", "f", "d", "e", "hl"), "preserve": ()}
 CASES["EstimateDamage_VersusDefendingCard"] = [
     _edvdc(b"\x00", a=0),
-    _edvdc(b"\x01", extra={0xC2BC: b"\x00"}, a=0),
+    _edvdc(b"\x01", extra={sym("wPlayerBench"): b"\x00"}, a=0),
     _edvdc(b"\x00", extra={_edvdc_wLoadedAttackCategory: b"\x04"}, a=0),
     dict(POISON, **_edvdc(b"\x00")),
     dict(_ai_estimate_fixture(vram=False, bank=5), **_AI_ESTIMATE_REGS),
     # A benched Charmander's Scratch against Bulbasaur: the bench branch returns the
     # calculation's de (the 10 damage), not zero.
-    _edvdc(b"\x01", extra={0xC2BC: b"\x01", 0xC400: b"\x08\x30", 0xC3BB: b"\x00", 0xC480: b"\x08", 0xC3EF: b"\x01", 0xC2EF: b"\x02"}, a=0),
+    _edvdc(b"\x01", extra={sym("wPlayerBench"): b"\x01", sym("wBoosterCardsDrawn"): b"\x08\x30", sym("wOpponentArenaCard"): b"\x00", sym("wOpponentDeck"): b"\x08", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02"}, a=0),
 ]
 # <<< factory EstimateDamage_VersusDefendingCard
 
@@ -105,7 +106,7 @@ CASES["EstimateDamage_VersusDefendingCard"] = [
 # Mirror of the routine above; the opponent's arena card supplies the attack, so
 # 0xC3BB is seeded too. Same large budget: the real EFFECTCMDTYPE_AI command runs.
 def _edfdp(location, extra=None, **kw):
-    wram = {0xFF97: b"\xC2", 0xFF9D: location, 0xC2BB: b"\x00", 0xC3BB: b"\x00",
+    wram = {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): location, sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00",
             _edvdc_wDamage: b"\x00\x00", _edvdc_wAIMinDamage: b"\x00",
             _edvdc_wAIMaxDamage: b"\x00"}
     if extra:
@@ -119,7 +120,7 @@ def _edfdp(location, extra=None, **kw):
 CONTRACT["EstimateDamage_FromDefendingPokemon"] = {"compare": ("a", "f", "d", "e", "hl"), "preserve": ()}
 CASES["EstimateDamage_FromDefendingPokemon"] = [
     _edfdp(b"\x00", a=0),
-    _edfdp(b"\x01", extra={0xC3BC: b"\x00"}, a=0),
+    _edfdp(b"\x01", extra={sym("wOpponentBench"): b"\x00"}, a=0),
     _edfdp(b"\x00", extra={_edvdc_wLoadedAttackCategory: b"\x04"}, a=0),
     dict(POISON, **_edfdp(b"\x00")),
 ]

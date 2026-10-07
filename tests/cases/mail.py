@@ -1,7 +1,8 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wPCPackSelection = 0xD11D
-wPCPacks = 0xD11E
+wPCPackSelection = sym("wPCPackSelection")
+wPCPacks = sym("wPCPacks")
 
 CONTRACT = {
     "GePCPackSelectionCoordinates": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")},
@@ -85,27 +86,27 @@ CASES["PrintEmptyPCPackName"] = [
 # <<< factory PrintEmptyPCPackName
 
 # >>> factory-cases-statics
-wCursorBlinkTimer = 0xD11C
+wCursorBlinkTimer = sym("wCursorBlinkTimer")
 
-hDPadHeld = 0xFF8F
-wPCLastDirectionPressed = 0xD12D
+hDPadHeld = sym("hDPadHeld")
+wPCLastDirectionPressed = sym("wPCLastDirectionPressed")
 
-CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
-PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+CACHE_READ = {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("wCurTextTile"): 2, sym("wFontWidth"): 1}
+PLACEMENT_READ = {sym("hTextBGMap0Address"): 2, sym("hTextHorizontalAlign"): 1}
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
-wPCPacks = 0xD11E
-CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
-PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+wPCPacks = sym("wPCPacks")
+CACHE_READ = {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("wCurTextTile"): 2, sym("wFontWidth"): 1}
+PLACEMENT_READ = {sym("hTextBGMap0Address"): 2, sym("hTextHorizontalAlign"): 1}
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 # mail.asm:263 (TryOpenPCMailBoosterPack).
-wAnotherBoosterPack = 0xD117
-wSelectedPCPack = 0xD12E
-MAIL_wLCDC = 0xCABB
-MAIL_wTxRam2 = 0xCE3F
-MAIL_wTxRam3 = 0xCE43
+wAnotherBoosterPack = sym("wAnotherBoosterPack")
+wSelectedPCPack = sym("wSelectedPCPack")
+MAIL_wLCDC = sym("wLCDC")
+MAIL_wTxRam2 = sym("wTxRam2")
+MAIL_wTxRam3 = sym("wTxRam3")
 
 # wLCDC clear on entry keeps InitMenuScreen's screen off (it never calls
 # EnableLCD), every WaitForVBlank behind the scrollable text a no-op, and the
@@ -122,8 +123,8 @@ MAIL_TEXT_INSTRUCTIONS = 60000000
 MAIL_TEXT_CYCLES = 240000000
 
 # mail.asm:136 (PCMailHandleAInput).
-hKeysPressed = 0xFF91
-hBankROM = 0xFF80
+hKeysPressed = sym("hKeysPressed")
+hBankROM = sym("hBankROM")
 # PlaySFX, one printed pack name and the cursor write together sit well above
 # legacy_to_schema's 100000/400000 fallback defaults, so both budgets are
 # declared explicitly; every case here stops before any text page or DoFrame.
@@ -134,16 +135,16 @@ MAIL_A_CYCLES = 80000000
 # menu loop always lets real frames elapse: CopyDMAFunction has to be installed
 # because InitMenuScreen sets wVBlankOAMCopyToggle, and B has to arrive as an
 # edge on hKeysPressed rather than being held from the first instruction.
-wd291 = 0xD291
+wd291 = sym("wd291")
 MAIL_READ_KEYS = [0x00, 0x02]
 # <<< factory-cases-statics
 
 # >>> factory UpdateMailMenuCursor
 CONTRACT["UpdateMailMenuCursor"] = {"compare": (), "preserve": ()}
 CASES["UpdateMailMenuCursor"] = [
-	{"wram": {0xD11C: b"\x00", wPCPackSelection: b"\x00"}, "vread": {0: {0x9841: 1}, 1: {0x9841: 1}}},
-	{"setup": [{"fn": "ShowMailMenuCursor"}], "wram": {0xD11C: b"\x10", wPCPackSelection: b"\x0e"}, "vread": {0: {0x994d: 1}, 1: {0x994d: 1}}},
-	dict(POISON, wram={0xD11C: b"\x0f", wPCPackSelection: b"\x07"}, vread={0: {0x98c7: 1}, 1: {0x98c7: 1}}),
+	{"wram": {sym("wCursorBlinkTimer"): b"\x00", wPCPackSelection: b"\x00"}, "vread": {0: {0x9841: 1}, 1: {0x9841: 1}}},
+	{"setup": [{"fn": "ShowMailMenuCursor"}], "wram": {sym("wCursorBlinkTimer"): b"\x10", wPCPackSelection: b"\x0e"}, "vread": {0: {0x994d: 1}, 1: {0x994d: 1}}},
+	dict(POISON, wram={sym("wCursorBlinkTimer"): b"\x0f", wPCPackSelection: b"\x07"}, vread={0: {0x98c7: 1}, 1: {0x98c7: 1}}),
 ]
 # <<< factory UpdateMailMenuCursor
 
@@ -168,9 +169,9 @@ CASES["GetPCPackNameTextID"] = [
 # >>> factory PrintPCPackName
 CONTRACT["PrintPCPackName"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["PrintPCPackName"] = [
-    {"a": 0, "wram": {0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x9842: 6}}},
-    {"a": 14, "wram": {0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x994E: 6}}},
-    dict(POISON, a=1, wram={0xFF80: b"\x04", 0xCABB: b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x9848: 6}}),
+    {"a": 0, "wram": {sym("hBankROM"): b"\x04", sym("wLCDC"): b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x9842: 6}}},
+    {"a": 14, "wram": {sym("hBankROM"): b"\x04", sym("wLCDC"): b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x994E: 6}}},
+    dict(POISON, a=1, wram={sym("hBankROM"): b"\x04", sym("wLCDC"): b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x9848: 6}}),
 ]
 # <<< factory PrintPCPackName
 
@@ -178,8 +179,8 @@ CASES["PrintPCPackName"] = [
 CONTRACT["PrintObtainedPCPacks"] = {"compare": (), "preserve": ()}
 CASES["PrintObtainedPCPacks"] = [
     {"wram": {wPCPacks: bytes(15)}},
-    {"wram": {wPCPacks: b"\x01" + bytes(14), 0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x9842: 6}}},
-    dict(POISON, wram={wPCPacks: bytes(14) + b"\x01", 0xFF80: b"\x04", 0xCABB: b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x994E: 6}}),
+    {"wram": {wPCPacks: b"\x01" + bytes(14), sym("hBankROM"): b"\x04", sym("wLCDC"): b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x9842: 6}}},
+    dict(POISON, wram={wPCPacks: bytes(14) + b"\x01", sym("hBankROM"): b"\x04", sym("wLCDC"): b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x994E: 6}}),
 ]
 # <<< factory PrintObtainedPCPacks
 
@@ -187,10 +188,10 @@ CASES["PrintObtainedPCPacks"] = [
 CONTRACT["BlinkUnopenedPCPacks"] = {"compare": (), "preserve": ()}
 CASES["BlinkUnopenedPCPacks"] = [
     {"wram": {wPCPacks: bytes(15), wCursorBlinkTimer: b"\x00"}},
-    {"wram": {wPCPacks: b"\x80" + bytes(14), wCursorBlinkTimer: b"\x00", 0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x9842: 6}}},
-    {"wram": {wPCPacks: bytes(14) + b"\x80", wCursorBlinkTimer: b"\x0c", 0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x994e: 1}}},
+    {"wram": {wPCPacks: b"\x80" + bytes(14), wCursorBlinkTimer: b"\x00", sym("hBankROM"): b"\x04", sym("wLCDC"): b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x9842: 6}}},
+    {"wram": {wPCPacks: bytes(14) + b"\x80", wCursorBlinkTimer: b"\x0c", sym("hBankROM"): b"\x04", sym("wLCDC"): b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x994e: 1}}},
     {"wram": {wPCPacks: b"\x80" + bytes(14), wCursorBlinkTimer: b"\x04"}},
-    dict(POISON, wram={wPCPacks: b"\x80" + bytes(14), wCursorBlinkTimer: b"\x00", 0xFF80: b"\x04", 0xCABB: b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x9842: 6}}),
+    dict(POISON, wram={wPCPacks: b"\x80" + bytes(14), wCursorBlinkTimer: b"\x00", sym("hBankROM"): b"\x04", sym("wLCDC"): b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x9842: 6}}),
 ]
 # <<< factory BlinkUnopenedPCPacks
 

@@ -318,14 +318,14 @@ MUTATIONS = {
         'before': '\tDecompressData(bc, de);',
         'after': '\tDecompressData((uint16_t)(bc ^ 1u), de);',
         'case_ids': ['DecompressDataFromBank-0'],
-        'source': 'src/profiles/extended/home/memory.c'},
+        'source': 'src/home/memory.c'},
     'CopyBankedDataToDE': {   'source_symbol': 'CopyBankedDataToDE',
         'before': 'void CopyBankedDataToDE(uint16_t bc, uint16_t de)\n{',
         'after': 'void CopyBankedDataToDE(uint16_t bc, uint16_t de)\n'
                  '{\n'
                  '\tgb_write8(0xdff0u, 0xFFu);',
         'case_ids': ['CopyBankedDataToDE-1'],
-        'source': 'src/profiles/extended/home/memory.c'},
+        'source': 'src/home/memory.c'},
     'FillMemoryWithA': {   'source_symbol': 'FillMemoryWithA',
         'before': 'gb_write8(hl++, a);',
         'after': 'gb_write8(hl, a);',
@@ -335,19 +335,19 @@ MUTATIONS = {
                         'FillMemoryWithA-3',
                         'FillMemoryWithA-4',
                         'FillMemoryWithA-5'],
-        'source': 'src/profiles/extended/home/memory.c'},
+        'source': 'src/home/memory.c'},
     'FillMemoryWithDE': {   'source_symbol': 'FillMemoryWithDE',
         'before': 'void FillMemoryWithDE(uint16_t hl, uint16_t bc, uint8_t d, uint8_t e)\n{',
         'after': 'void FillMemoryWithDE(uint16_t hl, uint16_t bc, uint8_t d, uint8_t e)\n'
                  '{\n'
                  '\tgb_write8(0xdff0u, 0xFFu);',
         'case_ids': ['FillMemoryWithDE-1'],
-        'source': 'src/profiles/extended/home/memory.c'},
+        'source': 'src/home/memory.c'},
     'GetFarByte': {   'source_symbol': 'GetFarByte',
         'before': '\treturn v;',
         'after': '\treturn 1u + v;',
         'case_ids': ['GetFarByte-0'],
-        'source': 'src/profiles/extended/home/memory.c'},
+        'source': 'src/home/memory.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

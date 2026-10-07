@@ -1,9 +1,10 @@
+from tests.cases._symbols import HRAM_START, STACK_CANARY, sym, sym_bank
 from tests.cases._fixtures import play_area_b_fixture as _play_area_b_fixture, PLAY_AREA_B_REGS as _PLAY_AREA_B_REGS
 from tests.cases._fixtures import CARD_LIST_INPUT_REGS as _CARD_LIST_INPUT_REGS, card_list_input_fixture as _card_list_input_fixture
 from tests.cases._fixtures import BUTTON_AB_REGS as _BUTTON_AB_REGS, button_ab_fixture as _button_ab_fixture
 from tests.cases._fixtures import YES_NO_REGS as _YES_NO_REGS, yes_no_fixture as _yes_no_fixture
-SRC = 0xC100
-CURSOR_STATE = 0xCD0F
+SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
+CURSOR_STATE = sym("wCursorBlinkCounter")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -38,39 +39,39 @@ CASES = {
         dict(POISON, a=5),
     ],
     "OneByteNumberToTxSymbol": [
-        {"read": {0xC590: 3}},
-        dict(POISON, a=9, read={0xC590: 3}),
-        {"a": 10, "read": {0xC590: 3}},
-        {"a": 99, "read": {0xC590: 3}},
-        {"a": 255, "read": {0xC590: 3}},
+        {"read": {sym("wCurDeckCardChanges"): 3}},
+        dict(POISON, a=9, read={sym("wCurDeckCardChanges"): 3}),
+        {"a": 10, "read": {sym("wCurDeckCardChanges"): 3}},
+        {"a": 99, "read": {sym("wCurDeckCardChanges"): 3}},
+        {"a": 255, "read": {sym("wCurDeckCardChanges"): 3}},
     ],
     "OneByteNumberToTxSymbol_PadSpace": [
-        {"read": {0xC590: 3}},
-        {"a": 9, "read": {0xC590: 3}},
-        dict(POISON, a=42, read={0xC590: 3}),
-        {"a": 10, "read": {0xC590: 3}},
-        {"a": 99, "read": {0xC590: 3}},
-        {"a": 255, "read": {0xC590: 3}},
+        {"read": {sym("wCurDeckCardChanges"): 3}},
+        {"a": 9, "read": {sym("wCurDeckCardChanges"): 3}},
+        dict(POISON, a=42, read={sym("wCurDeckCardChanges"): 3}),
+        {"a": 10, "read": {sym("wCurDeckCardChanges"): 3}},
+        {"a": 99, "read": {sym("wCurDeckCardChanges"): 3}},
+        {"a": 255, "read": {sym("wCurDeckCardChanges"): 3}},
     ],
     "OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign": [
-        {"read": {0xC590: 3}},
-        {"a": 9, "read": {0xC590: 3}},
-        dict(POISON, a=7, read={0xC590: 3}),
-        {"a": 10, "read": {0xC590: 3}},
-        {"a": 99, "read": {0xC590: 3}},
-        {"a": 255, "read": {0xC590: 3}},
+        {"read": {sym("wCurDeckCardChanges"): 3}},
+        {"a": 9, "read": {sym("wCurDeckCardChanges"): 3}},
+        dict(POISON, a=7, read={sym("wCurDeckCardChanges"): 3}),
+        {"a": 10, "read": {sym("wCurDeckCardChanges"): 3}},
+        {"a": 99, "read": {sym("wCurDeckCardChanges"): 3}},
+        {"a": 255, "read": {sym("wCurDeckCardChanges"): 3}},
     ],
     "CardTypeToSymbolID": [
-        {"wram": {0xCC24: b"\x00"}},
-        dict(POISON, wram={0xCC24: b"\x07"}),
-        {"wram": {0xCC24: b"\x08"}},
-        {"wram": {0xCC24: b"\x0f"}},
-        {"wram": {0xCC24: b"\x10", 0xCC2D: b"\x03"}},
+        {"wram": {sym("wLoadedCard1"): b"\x00"}},
+        dict(POISON, wram={sym("wLoadedCard1"): b"\x07"}),
+        {"wram": {sym("wLoadedCard1"): b"\x08"}},
+        {"wram": {sym("wLoadedCard1"): b"\x0f"}},
+        {"wram": {sym("wLoadedCard1"): b"\x10", sym("wLoadedCard1Stage"): b"\x03"}},
     ],
     "GetCardSymbolData": [
-        {"wram": {0xCC24: b"\x00", 0xCC2D: b"\x00"}},
-        dict(POISON, wram={0xCC24: b"\x10", 0xCC2D: b"\x02"}),
-        {"wram": {0xCC24: b"\x08"}},
+        {"wram": {sym("wLoadedCard1"): b"\x00", sym("wLoadedCard1Stage"): b"\x00"}},
+        dict(POISON, wram={sym("wLoadedCard1"): b"\x10", sym("wLoadedCard1Stage"): b"\x02"}),
+        {"wram": {sym("wLoadedCard1"): b"\x08"}},
     ],
     "SetCursorParametersForTextBox": [
         {"d": 3, "e": 4, "b": 0x12, "c": 0x34},
@@ -92,13 +93,13 @@ CASES = {
 
 def menu_state(counter=0, item=0, xoff=0, yoff=0, ysep=0, vis=0, invis=0):
     return {
-        0xCD0F: bytes([counter]),
-        0xCD10: bytes([item]),
-        0xCD11: bytes([xoff]),
-        0xCD12: bytes([yoff]),
-        0xCD13: bytes([ysep]),
-        0xCD15: bytes([vis]),
-        0xCD16: bytes([invis]),
+        sym("wCursorBlinkCounter"): bytes([counter]),
+        sym("wCurMenuItem"): bytes([item]),
+        sym("wMenuCursorXOffset"): bytes([xoff]),
+        sym("wMenuCursorYOffset"): bytes([yoff]),
+        sym("wMenuYSeparation"): bytes([ysep]),
+        sym("wMenuVisibleCursorTile"): bytes([vis]),
+        sym("wMenuInvisibleCursorTile"): bytes([invis]),
     }
 
 
@@ -122,8 +123,8 @@ CONTRACT.update({
 })
 
 BOX_READ = {0x9980: 192}  # BG-map row 12, 6 rows x 32 cols, zero scroll
-CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
-PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1, 0xFFAE: 1}
+CACHE_READ = {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("wCurTextTile"): 2, sym("wFontWidth"): 1}
+PLACEMENT_READ = {sym("hTextBGMap0Address"): 2, sym("hTextHorizontalAlign"): 1, sym("hTextLineLength"): 1}
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 192}, 1: {0x9980: 192}}
 
@@ -170,24 +171,24 @@ CASES.update({
         # DMG, pokemon basic (type=0 -> id = stage+8 = 8, tile $d0).
         {"d": 5, "e": 5, "vread": {0: {0x9883: 2, 0x98a3: 2}, 1: {0x9883: 2, 0x98a3: 2}}},
         # CGB, trainer (type>=TYPE_TRAINER -> id=11, tile $dc, attr $02).
-        {"d": 10, "e": 10, "wram": {0xCAB4: b"\x02", 0xCC24: b"\x10"},
+        {"d": 10, "e": 10, "wram": {sym("wConsole"): b"\x02", sym("wLoadedCard1"): b"\x10"},
          "vread": {0: {0x9928: 2, 0x9948: 2}, 1: {0x9928: 2, 0x9948: 2}}},
         # poisoned b/c/hl (must survive the whole push/pop body unchanged) plus
         # d=0,e=1, wrapping x to $fe while y stays 0; energy type=$09 -> id=1, tile $e4.
-        dict(POISON, d=0, e=1, wram={0xCC24: b"\x09"},
+        dict(POISON, d=0, e=1, wram={sym("wLoadedCard1"): b"\x09"},
              vread={0: {0x98fe: 2, 0x991e: 2}}),
         # type == TYPE_ENERGY exactly -> id = type&7 = 0, tile $e0.
-        {"d": 20, "e": 3, "wram": {0xCC24: b"\x08"},
+        {"d": 20, "e": 3, "wram": {sym("wLoadedCard1"): b"\x08"},
          "vread": {0: {0x9852: 2, 0x9872: 2}}},
     ],
     "DrawNarrowTextBox": [
         {"vread": {0: BOX_READ}},
-        {"wram": {0xCAB4: b"\x02"}, "vread": {1: {0x9980: 192}}},
+        {"wram": {sym("wConsole"): b"\x02"}, "vread": {1: {0x9980: 192}}},
         dict(POISON, vread={0: BOX_READ}),
     ],
     "DrawWideTextBox": [
         {"vread": {0: BOX_READ}},
-        {"wram": {0xCAB4: b"\x02"}, "vread": {1: {0x9980: 192}}},
+        {"wram": {sym("wConsole"): b"\x02"}, "vread": {1: {0x9980: 192}}},
         dict(POISON, vread={0: BOX_READ}),
     ],
     "DrawNarrowTextBox_PrintTextNoDelay": [
@@ -205,7 +206,7 @@ CASES.update({
              vread=VRAM_READ),
     ],
     "DrawWideTextBox_PrintText": [
-        {"hl": 0, "wram": {0xC590: b"\x00"}, "vread": {0: BOX_READ}},
+        {"hl": 0, "wram": {sym("wCurDeckCardChanges"): b"\x00"}, "vread": {0: BOX_READ}},
         {"hl": 1, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ},
          "vread": VRAM_READ},
         dict(POISON, hl=1, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ},
@@ -235,19 +236,19 @@ CASES.update({
     "DrawWideTextBox_PrintTextNoDelay_Wait": [
         {"hl": 0, "keys": 0x01,
          "wram": {**menu_state(counter=5, item=1, xoff=4, invis=0x22)},
-         "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+         "read": {sym("wCursorBlinkCounter"): 1, sym("wCurMenuItem"): 1, sym("wMenuInvisibleCursorTile"): 1},
          "vread": {0: {0x9980: 1, 0x9A32: 1}}},
     ],
     "DrawNarrowTextBox_WaitForInput": [
         {"hl": 0, "keys": 0x01,
          "wram": {**menu_state(counter=5, item=1, xoff=4, invis=0x22)},
-         "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+         "read": {sym("wCursorBlinkCounter"): 1, sym("wCurMenuItem"): 1, sym("wMenuInvisibleCursorTile"): 1},
          "vread": {0: {0x9980: 1}}},
     ],
     "DrawWideTextBox_WaitForInput": [
         {"hl": 0, "keys": 0x01,
-         "wram": {0xC590: b"\x00", **menu_state(counter=5, item=1, xoff=4, invis=0x22)},
-         "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+         "wram": {sym("wCurDeckCardChanges"): b"\x00", **menu_state(counter=5, item=1, xoff=4, invis=0x22)},
+         "read": {sym("wCursorBlinkCounter"): 1, sym("wCurMenuItem"): 1, sym("wMenuInvisibleCursorTile"): 1},
          "vread": {0: {0x9980: 1, 0x9A32: 1}}},
     ],
     "WaitForWideTextBoxInput": [
@@ -259,62 +260,62 @@ CASES.update({
 # >>> factory RefreshMenuCursor_CheckPlaySFX
 CONTRACT["RefreshMenuCursor_CheckPlaySFX"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["RefreshMenuCursor_CheckPlaySFX"] = [
-    {"wram": {0xCD99: b"\x00"}},
-    {"wram": {0xCD99: b"\x12", 0xDD83: b"\x00"}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCD99: b"\x34", 0xDD83: b"\x00"}},
+    {"wram": {sym("wRefreshMenuCursorSFX"): b"\x00"}},
+    {"wram": {sym("wRefreshMenuCursorSFX"): b"\x12", sym("wSfxPriority"): b"\x00"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wRefreshMenuCursorSFX"): b"\x34", sym("wSfxPriority"): b"\x00"}},
 ]
 # <<< factory RefreshMenuCursor_CheckPlaySFX
 
 # >>> factory PlayOpenOrExitScreenSFX
 CONTRACT["PlayOpenOrExitScreenSFX"] = {"compare": ("a", "f"), "preserve": ("a", "f"), "wram_out": True}
 CASES["PlayOpenOrExitScreenSFX"] = [
-    {"a": 0x11, "f": 0x00, "wram": {0xFFB1: b"\xFF"}, "read": {0xDD82: 1}},
-    dict(POISON, wram={0xFFB1: b"\x02"}, read={0xDD82: 1}),
+    {"a": 0x11, "f": 0x00, "wram": {sym("hCurMenuItem"): b"\xFF"}, "read": {sym("wCurSfxID"): 1}},
+    dict(POISON, wram={sym("hCurMenuItem"): b"\x02"}, read={sym("wCurSfxID"): 1}),
 ]
 # <<< factory PlayOpenOrExitScreenSFX
 
 # >>> factory-cases-statics
-hCurMenuItem = 0xFFB1
-hDPadHeld = 0xFF8F
-hKeysPressed = 0xFF91
-wCurMenuItem = 0xCD10
-wDefaultYesOrNo = 0xCD9A
+hCurMenuItem = sym("hCurMenuItem")
+hDPadHeld = sym("hDPadHeld")
+hKeysPressed = sym("hKeysPressed")
+wCurMenuItem = sym("wCurMenuItem")
+wDefaultYesOrNo = sym("wDefaultYesOrNo")
 
-wDuelTempList = 0xC510
-wListScrollOffset = 0xCD19
-wMenuCursorYOffset = 0xCD12
-wNumMenuItems = 0xCD14
-wNumListItems = 0xCD1B
-wListItemXPosition = 0xCD1A
-wDefaultText = 0xC590
+wDuelTempList = sym("wDuelTempList")
+wListScrollOffset = sym("wListScrollOffset")
+wMenuCursorYOffset = sym("wMenuCursorYOffset")
+wNumMenuItems = sym("wNumMenuItems")
+wNumListItems = sym("wNumListItems")
+wListItemXPosition = sym("wListItemXPosition")
+wDefaultText = sym("wDefaultText")
 
-hffb0 = 0xFFB0
-wDuelTempList = 0xC510
-wListScrollOffset = 0xCD19
-wMenuCursorYOffset = 0xCD12
-wNumMenuItems = 0xCD14
-wNumListItems = 0xCD1B
+hffb0 = sym("hffb0")
+wDuelTempList = sym("wDuelTempList")
+wListScrollOffset = sym("wListScrollOffset")
+wMenuCursorYOffset = sym("wMenuCursorYOffset")
+wNumMenuItems = sym("wNumMenuItems")
+wNumListItems = sym("wNumListItems")
 
-hDPadHeld = 0xFF8F
-hKeysPressed = 0xFF91
-hCurMenuItem = 0xFFB1
-wCurMenuItem = 0xCD10
-wNumMenuItems = 0xCD14
-wListScrollOffset = 0xCD19
-wNumListItems = 0xCD1B
-wListFunctionPointer = 0xCD1D
-wCardListIndicatorYPosition = 0xCD97
-wRefreshMenuCursorSFX = 0xCD99
-wDefaultText = 0xC590
+hDPadHeld = sym("hDPadHeld")
+hKeysPressed = sym("hKeysPressed")
+hCurMenuItem = sym("hCurMenuItem")
+wCurMenuItem = sym("wCurMenuItem")
+wNumMenuItems = sym("wNumMenuItems")
+wListScrollOffset = sym("wListScrollOffset")
+wNumListItems = sym("wNumListItems")
+wListFunctionPointer = sym("wListFunctionPointer")
+wCardListIndicatorYPosition = sym("wCardListIndicatorYPosition")
+wRefreshMenuCursorSFX = sym("wRefreshMenuCursorSFX")
+wDefaultText = sym("wDefaultText")
 
-wCurMenuItem = 0xCD10
-wDefaultYesOrNo = 0xCD9A
-hCurMenuItem = 0xFFB1
+wCurMenuItem = sym("wCurMenuItem")
+wDefaultYesOrNo = sym("wDefaultYesOrNo")
+hCurMenuItem = sym("hCurMenuItem")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wDuelReturnAddress = 0xCBE5
-wDuelFinished = 0xCC07
-wDuelTheme = 0xCC1A
+wDuelReturnAddress = sym("wDuelReturnAddress")
+wDuelFinished = sym("wDuelFinished")
+wDuelTheme = sym("wDuelTheme")
 # <<< factory-cases-statics
 
 # >>> factory HandleYesOrNoMenu
@@ -342,13 +343,13 @@ CONTRACT["CopyCardNameAndLevel"] = {"compare": ("a", "f", "b", "c", "d", "e", "h
 CASES["CopyCardNameAndLevel"] = [
     {"a": 0x0D, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE,
      "setup": [{"fn": "LoadCardDataToBuffer1_FromCardID", "e": 0x43}],
-     "read": {0xC590: 32}},
+     "read": {sym("wCurDeckCardChanges"): 32}},
     {"a": 0x0D, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE,
      "setup": [{"fn": "LoadCardDataToBuffer1_FromCardID", "e": 0x03}],
-     "read": {0xC590: 32}},
+     "read": {sym("wCurDeckCardChanges"): 32}},
     dict(POISON, a=0x0D,
          setup=[{"fn": "LoadCardDataToBuffer1_FromCardID", "e": 0x43}],
-         read={0xC590: 32}),
+         read={sym("wCurDeckCardChanges"): 32}),
 ]
 # <<< factory CopyCardNameAndLevel
 
@@ -371,8 +372,8 @@ CASES["Func_2827"] = [
 # >>> factory PrintCardListItems
 CONTRACT["PrintCardListItems"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["PrintCardListItems"] = [
-    {"a": 0x01, "d": 0x00, "e": 0x00, "hl": 0xC500, "wram": {0xC500: b"\x01\x02\x03\x04\x01\x20\x21\x00\x00", 0xC510: b"\xFF"}, "read": {0xCD13: 1, 0xCD17: 2, 0xCD97: 1}, "vread": {0: {0x9832: 1, 0x9872: 1}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hl=0x1234, wram={0xC5ED: b"\xFF"}, read={0xCD13: 1, 0xCD17: 2, 0xCD97: 1}, vread={0: {0x9832: 1, 0x9872: 1}}, instruction_budget=2000000, cycle_budget=8000000),
+    {"a": 0x01, "d": 0x00, "e": 0x00, "hl": sym("wNameBuffer"), "wram": {sym("wNameBuffer"): b"\x01\x02\x03\x04\x01\x20\x21\x00\x00", sym("wDuelTempList"): b"\xFF"}, "read": {sym("wMenuYSeparation"): 1, sym("wMenuUpdateFunc"): 2, sym("wCardListIndicatorYPosition"): 1}, "vread": {0: {0x9832: 1, 0x9872: 1}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0x1234, wram={sym("wOwnIRCommunicationParams") + 2: b"\xFF"}, read={sym("wMenuYSeparation"): 1, sym("wMenuUpdateFunc"): 2, sym("wCardListIndicatorYPosition"): 1}, vread={0: {0x9832: 1, 0x9872: 1}}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory PrintCardListItems
 
@@ -387,39 +388,39 @@ CASES["CardListMenuFunction"] = [
     # ($01:5719): START pressed (hKeysPressed $FF91) is the list function's
     # own carry exit, B its MENU_CANCEL write to hCurMenuItem, neither an A/B
     # decision of this routine. Bank 1 mapped by hBankROM ($FF80).
-    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x19\x57", wRefreshMenuCursorSFX: b"\x55", 0xFF91: b"\x08", 0xFF80: b"\x01"}, read={hCurMenuItem: 1}),
-    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x19\x57", wRefreshMenuCursorSFX: b"\x55", 0xFF91: b"\x02", 0xFF80: b"\x01"}, read={hCurMenuItem: 1}),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x19\x57", wRefreshMenuCursorSFX: b"\x55", sym("hKeysPressed"): b"\x08", sym("hBankROM"): b"\x01"}, read={hCurMenuItem: 1}),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x19\x57", wRefreshMenuCursorSFX: b"\x55", sym("hKeysPressed"): b"\x02", sym("hBankROM"): b"\x01"}, read={hCurMenuItem: 1}),
     # menus.asm:436-481 `.no_more_items`: hDPadHeld ($FF8F) UP with the cursor
     # wrapped to the last visible item and no page above (scroll 0), and DOWN
     # wrapped to the first item with no page below (scroll + items == list),
     # both clear the buffered cursor SFX (wRefreshMenuCursorSFX, seeded 1 as
     # HandleMenuInput leaves it) instead of scrolling.
-    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x02", wNumMenuItems: b"\x03", wListScrollOffset: b"\x00", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x40"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
-    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x00", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x80"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x02", wNumMenuItems: b"\x03", wListScrollOffset: b"\x00", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", sym("hDPadHeld"): b"\x40"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x00", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", sym("hDPadHeld"): b"\x80"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}),
     # menus.asm:495-508 LEFT from a page less than one page down (scroll 2 of
     # 5 visible, 7 items) with the cursor on absolute item 6: the first page
     # is shown with the cursor at 6 - 5 = 1, not at 6. menus.asm:530-546 RIGHT
     # onto the last page from scroll 0, cursor 0: scroll becomes 2 and the
     # cursor 0 - 2 + 5 = 3.
-    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x04", wNumMenuItems: b"\x05", wListScrollOffset: b"\x02", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x20"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x00", wNumMenuItems: b"\x05", wListScrollOffset: b"\x00", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", 0xFF8F: b"\x10"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x04", wNumMenuItems: b"\x05", wListScrollOffset: b"\x02", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", sym("hDPadHeld"): b"\x20"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x00", wNumMenuItems: b"\x05", wListScrollOffset: b"\x00", wNumListItems: b"\x07", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x01", sym("hDPadHeld"): b"\x10"}, read={hCurMenuItem: 1, wCurMenuItem: 1, wListScrollOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory CardListMenuFunction
 
 # >>> factory HandleMenuInput
 CONTRACT["HandleMenuInput"] = {"compare": ("a", "e", "f"), "preserve": ()}
 _PLAY_AREA_B = _play_area_b_fixture(vram=False, bank=1)
-_PLAY_AREA_B["wram"] = {**_PLAY_AREA_B["wram"], 0xFF8F: b"\x02", 0xFF90: b"\x02", 0xFF91: b"\x02"}
-_PLAY_AREA_B["read"] = {**_PLAY_AREA_B["read"], 0xFF92: 1, 0xCD10: 1}
+_PLAY_AREA_B["wram"] = {**_PLAY_AREA_B["wram"], sym("hDPadHeld"): b"\x02", sym("hKeysHeld"): b"\x02", sym("hKeysPressed"): b"\x02"}
+_PLAY_AREA_B["read"] = {**_PLAY_AREA_B["read"], sym("hSCX"): 1, sym("wCurMenuItem"): 1}
 CASES["HandleMenuInput"] = [
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x99"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}},
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x03", 0xCD14: b"\x04", 0xFFB1: b"\x03", 0xCD15: b"\x00", 0xCD99: b"\x2A"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}},
-    dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x01", 0xCD14: b"\x04", 0xFFB1: b"\x01", 0xCD15: b"\x00", 0xCD99: b"\x77"}, read={0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}),
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x01", sym("wMenuUpdateFunc"): b"\x00\x00", sym("wCurMenuItem"): b"\x02", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x02", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x99"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x02", sym("wMenuUpdateFunc"): b"\x00\x00", sym("wCurMenuItem"): b"\x03", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x03", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x2A"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1}},
+    dict(POISON, wram={sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x02", sym("wMenuUpdateFunc"): b"\x00\x00", sym("wCurMenuItem"): b"\x01", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x01", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x77"}, read={sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1}),
     # menus.asm:79-104: hDPadHeld PAD_UP with a nonzero cursor position takes
     # the up/down branch, which overwrites wRefreshMenuCursorSFX with $1
     # (buffered cursor SFX) after the unconditional entry clear -- seeded
     # nonzero here to prove both writes land, not just the entry clear.
-    {"wram": {0xFF8F: b"\x40", 0xFF91: b"\x00", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x99"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1}},
+    {"wram": {sym("hDPadHeld"): b"\x40", sym("hKeysPressed"): b"\x00", sym("wMenuUpdateFunc"): b"\x00\x00", sym("wCurMenuItem"): b"\x02", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x02", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x99"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1}},
     # menus.asm:113-122 `call CallHL` on wMenuUpdateFunc ($CD17). With
     # PlayAreaScreenMenuFunction ($01:60CE, hBankROM $FF80 = 1) installed,
     # START is that function's carry exit -- A-pressed epilogue, blink counter
@@ -427,8 +428,8 @@ CASES["HandleMenuInput"] = [
     # which advances the counter. A port that runs CardListMenuFunction for
     # every update function, or that refreshes the cursor before the update
     # function decides, differs on the counter or the flags.
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x08", 0xCD17: b"\xCE\x60", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x99", 0xCD0F: b"\x05", 0xFF80: b"\x01"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1, 0xCD0F: 1}},
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCD17: b"\xCE\x60", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD99: b"\x00", 0xCD0F: b"\x05", 0xFF80: b"\x01"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD99: 1, 0xCD0F: 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x08", sym("wMenuUpdateFunc"): b"\xCE\x60", sym("wCurMenuItem"): b"\x02", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x02", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x99", sym("wCursorBlinkCounter"): b"\x05", sym("hBankROM"): b"\x01"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1, sym("wCursorBlinkCounter"): 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00", sym("wMenuUpdateFunc"): b"\xCE\x60", sym("wCurMenuItem"): b"\x02", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x02", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x00", sym("wCursorBlinkCounter"): b"\x05", sym("hBankROM"): b"\x01"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1, sym("wCursorBlinkCounter"): 1}},
     dict(_PLAY_AREA_B, **_PLAY_AREA_B_REGS),
 ]
 # <<< factory HandleMenuInput
@@ -436,9 +437,9 @@ CASES["HandleMenuInput"] = [
 # >>> factory HandleCardListInput
 CONTRACT["HandleCardListInput"] = {"compare": ("a", "d", "e", "f"), "preserve": ()}
 CASES["HandleCardListInput"] = [
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD19: b"\x03"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD19: 1}},
-    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x03", 0xCD14: b"\x04", 0xFFB1: b"\x03", 0xCD15: b"\x00", 0xCD19: b"\x01"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD19: 1}},
-    dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x01", 0xCD14: b"\x04", 0xFFB1: b"\x01", 0xCD15: b"\x00", 0xCD19: b"\x07"}, read={0xFFB1: 1, 0xCD10: 1, 0xCD19: 1}),
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x01", sym("wMenuUpdateFunc"): b"\x00\x00", sym("wCurMenuItem"): b"\x02", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x02", sym("wMenuVisibleCursorTile"): b"\x00", sym("wListScrollOffset"): b"\x03"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wListScrollOffset"): 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x02", sym("wMenuUpdateFunc"): b"\x00\x00", sym("wCurMenuItem"): b"\x03", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x03", sym("wMenuVisibleCursorTile"): b"\x00", sym("wListScrollOffset"): b"\x01"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wListScrollOffset"): 1}},
+    dict(POISON, wram={sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x02", sym("wMenuUpdateFunc"): b"\x00\x00", sym("wCurMenuItem"): b"\x01", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x01", sym("wMenuVisibleCursorTile"): b"\x00", sym("wListScrollOffset"): b"\x07"}, read={sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wListScrollOffset"): 1}),
     dict(_card_list_input_fixture(vram=False), **_CARD_LIST_INPUT_REGS),
 ]
 # <<< factory HandleCardListInput
@@ -446,9 +447,9 @@ CASES["HandleCardListInput"] = [
 # >>> factory HandleDuelMenuInput
 CONTRACT["HandleDuelMenuInput"] = {"compare": ("a", "e", "f"), "preserve": ()}
 CASES["HandleDuelMenuInput"] = [
-    {"e": 0x00, "wram": {0xFF8F: b"\x01", 0xCD10: b"\x02", 0xFFB1: b"\x02", 0xCD0F: b"\x00"}, "read": {0xFFB1: 1, 0xCD10: 1}},
-    {"e": 0x00, "wram": {0xFF8F: b"\x40", 0xCD10: b"\x00", 0xFFB1: b"\x00", 0xCD0F: b"\x00"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD0F: 1}, "vread": {0: {0x9800 + 32 * 14 + 2: 1}}},
-    dict(POISON, wram={0xFF8F: b"\x00", 0xCD10: b"\x00", 0xFFB1: b"\x00", 0xCD0F: b"\x01"}, read={0xCD0F: 1}),
+    {"e": 0x00, "wram": {sym("hDPadHeld"): b"\x01", sym("wCurMenuItem"): b"\x02", sym("hCurMenuItem"): b"\x02", sym("wCursorBlinkCounter"): b"\x00"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1}},
+    {"e": 0x00, "wram": {sym("hDPadHeld"): b"\x40", sym("wCurMenuItem"): b"\x00", sym("hCurMenuItem"): b"\x00", sym("wCursorBlinkCounter"): b"\x00"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wCursorBlinkCounter"): 1}, "vread": {0: {0x9800 + 32 * 14 + 2: 1}}},
+    dict(POISON, wram={sym("hDPadHeld"): b"\x00", sym("wCurMenuItem"): b"\x00", sym("hCurMenuItem"): b"\x00", sym("wCursorBlinkCounter"): b"\x01"}, read={sym("wCursorBlinkCounter"): 1}),
 ]
 # <<< factory HandleDuelMenuInput
 
@@ -475,8 +476,8 @@ CASES["YesOrNoMenuWithText_LeftAligned"] = [
 # >>> factory TwoItemHorizontalMenu
 CONTRACT["TwoItemHorizontalMenu"] = {"compare": ("a", "f", "d", "e"), "preserve": ()}
 CASES["TwoItemHorizontalMenu"] = [
-    {"hl": 0, "keys": 0x01, "wram": {0xFF97: b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect_regs": {"a": 0, "f": 0x80}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, hl=0, keys=0x01, wram={0xFF97: b"\xC2"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], expect_regs={"a": 0, "f": 0x80}, instruction_budget=2000000, cycle_budget=8000000),
+    {"hl": 0, "keys": 0x01, "wram": {sym("hWhoseTurn"): b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect_regs": {"a": 0, "f": 0x80}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0, keys=0x01, wram={sym("hWhoseTurn"): b"\xC2"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], expect_regs={"a": 0, "f": 0x80}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory TwoItemHorizontalMenu
 
@@ -558,12 +559,12 @@ CASES["DrawTextBox_PrintTextNoDelay"] = [
 # >>> factory ContinueDuel
 CONTRACT["ContinueDuel"] = {"compare": (), "preserve": ()}
 CASES["ContinueDuel"] = [
-    {"entry_sp": 0xFFFC,
+    {"entry_sp": HRAM_START + 0x7C,
      "wram": {wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
      "read": {wDuelReturnAddress: 2, wDuelFinished: 1},
      "expect": {wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, entry_sp=0xFFFC,
+    dict(POISON, entry_sp=HRAM_START + 0x7C,
          wram={wDuelReturnAddress: b"\xAA\xBB", wDuelFinished: b"\xCC", wDuelTheme: b"\x01"},
          read={wDuelReturnAddress: 2, wDuelFinished: 1},
          expect={wDuelReturnAddress: b"\xFC\xFF", wDuelFinished: b"\x00"},
@@ -685,13 +686,13 @@ MUTATIONS["ContinueDuel"] = {"source_symbol": "ContinueDuel", "before": "void Co
 # stop on. Both lanes stop at the duel interface call, after the two writes
 # this case observes.
 for _record in SCHEMA2_CASES["ContinueDuel"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x426D, "bank": 1,
+    _record["completion"] = {"mode": "entry", "pc": sym("DuelMainInterface"), "bank": sym_bank("DuelMainInterface"),
                              "routine": "DuelMainInterface"}
 # <<< factory-completion ContinueDuel
 for _rec in SCHEMA2_CASES["SetCursorParametersForTextBox"]:
-    _rec.setdefault("bus", {}).update({0xCD0F: 1, 0xCD10: 1, 0xCD11: 1, 0xCD12: 1, 0xCD13: 1, 0xCD14: 1, 0xCD15: 1, 0xCD16: 1})
+    _rec.setdefault("bus", {}).update({sym("wCursorBlinkCounter"): 1, sym("wCurMenuItem"): 1, sym("wMenuCursorXOffset"): 1, sym("wMenuCursorYOffset"): 1, sym("wMenuYSeparation"): 1, sym("wNumMenuItems"): 1, sym("wMenuVisibleCursorTile"): 1, sym("wMenuInvisibleCursorTile"): 1})
 for _rec in SCHEMA2_CASES["SetMenuItem"]:
-    _rec.setdefault("bus", {}).update({0xCD0F: 1, 0xCD10: 1, 0xFFB1: 1})
+    _rec.setdefault("bus", {}).update({sym("wCursorBlinkCounter"): 1, sym("wCurMenuItem"): 1, sym("hCurMenuItem"): 1})
 MUTATIONS["DrawCardSymbol"] = {
     "source_symbol": "DrawCardSymbol",
     "before": "\tif (wConsole == CONSOLE_CGB) {",
@@ -837,7 +838,7 @@ MUTATIONS["SetMenuItem"] = {
     "case_ids": ["SetMenuItem-0"],
 }
 for _rec in SCHEMA2_CASES["CardTypeToSymbolID"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["CardTypeToSymbolID"] = {
     "source_symbol": "CardTypeToSymbolID",
     "before": "uint8_t CardTypeToSymbolID(void)\n{",
@@ -845,7 +846,7 @@ MUTATIONS["CardTypeToSymbolID"] = {
     "case_ids": ["CardTypeToSymbolID-0"],
 }
 for _rec in SCHEMA2_CASES["GetCardSymbolData"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["GetCardSymbolData"] = {
     "source_symbol": "GetCardSymbolData",
     "before": "uint8_t GetCardSymbolData(void)\n{",

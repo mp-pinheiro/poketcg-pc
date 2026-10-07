@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/card_album.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -10,7 +11,7 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory GetFirstOwnedCardIndex
-OWNED_LIST = 0xCF68
+OWNED_LIST = sym("wCurDeckCardsEnd")
 NOT_OWNED = 0x80
 
 CONTRACT["GetFirstOwnedCardIndex"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("c", "d", "e")}
@@ -25,24 +26,24 @@ CASES["GetFirstOwnedCardIndex"] = [
 # <<< factory GetFirstOwnedCardIndex
 
 # >>> factory-cases-statics
-wCardListCoords = 0xCED0
-wCardListVisibleOffset = 0xCEA1
-wFilteredCardList = 0xCEDA
-wNumVisibleCardListEntries = 0xCECB
-wUnableToScrollDown = 0xCECD
+wCardListCoords = sym("wCardListCoords")
+wCardListVisibleOffset = sym("wCardListVisibleOffset")
+wFilteredCardList = sym("wFilteredCardList")
+wNumVisibleCardListEntries = sym("wNumVisibleCardListEntries")
+wUnableToScrollDown = sym("wUnableToScrollDown")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hDPadHeld = 0xFF8F
-wCardListCursorPos = 0xCEA4
-wCardListNumCursorPositions = 0xCEA9
-wMenuInputSFX = 0xCFE3
-wOwnedCardsCountList = 0xCF68
-wTempCardListCursorPos = 0xCED4
-wVBlankOAMCopyToggle = 0xCAC0
-wced2 = 0xCED2
+hDPadHeld = sym("hDPadHeld")
+wCardListCursorPos = sym("wCardListCursorPos")
+wCardListNumCursorPositions = sym("wCardListNumCursorPositions")
+wMenuInputSFX = sym("wMenuInputSFX")
+wOwnedCardsCountList = sym("wOwnedCardsCountList")
+wTempCardListCursorPos = sym("wTempCardListCursorPos")
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
+wced2 = sym("wced2")
 
-hCurMenuItem = 0xFFB1
-wLCDC = 0xCABB
+hCurMenuItem = sym("hCurMenuItem")
+wLCDC = sym("wLCDC")
 # <<< factory-cases-statics
 
 # >>> factory PrintCardSetListEntries
@@ -53,16 +54,16 @@ CASES["PrintCardSetListEntries"] = [
     # The live page: owned names, placeholder rows, the list index text and the
     # down cursor, observed through the text buffers and the BG map.
     dict(_card_set_list_fixture(bank=2), **_CARD_SET_LIST_REGS,
-         read={0xC590: 0x20, 0xCEB6: 2, 0xCEC0: 0x20, 0xCED0: 2, 0xCFB9: 0x10, 0xCC24: 0x41}),
+         read={sym("wCurDeckCardChanges"): 0x20, sym("wDecimalDigitsSymbols"): 2, sym("wCardFilterCounts") + 5: 0x20, sym("wCardListCoords"): 2, sym("wCurDeckName"): 0x10, sym("wLoadedCard1"): 0x41}),
 ]
 # <<< factory PrintCardSetListEntries
 
 # >>> factory CreateCardSetList
 CONTRACT["CreateCardSetList"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["CreateCardSetList"] = [
-    {"a": 0x00, "wram": {0xC000: b"\x80" * 0xE5}, "read": {0xCEDA: 60, 0xCF68: 60, 0xCEAE: 1, 0xCFE2: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0x02, "wram": {0xC000: b"\x80" * 0xE5}, "read": {0xCEDA: 60, 0xCF68: 60, 0xCEAE: 1, 0xCFE2: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xC000: b"\x80" * 0xE5}, "read": {0xCEDA: 60, 0xCF68: 60, 0xCEAE: 1, 0xCFE2: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x00, "wram": {sym("wDeckToBuild"): b"\x80" * 0xE5}, "read": {sym("wFilteredCardList"): 60, sym("wCurDeckCardsEnd"): 60, sym("wNumEntriesInCurFilter"): 1, sym("wOwnedPhantomCardFlags"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x02, "wram": {sym("wDeckToBuild"): b"\x80" * 0xE5}, "read": {sym("wFilteredCardList"): 60, sym("wCurDeckCardsEnd"): 60, sym("wNumEntriesInCurFilter"): 1, sym("wOwnedPhantomCardFlags"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wDeckToBuild"): b"\x80" * 0xE5}, "read": {sym("wFilteredCardList"): 60, sym("wCurDeckCardsEnd"): 60, sym("wNumEntriesInCurFilter"): 1, sym("wOwnedPhantomCardFlags"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory CreateCardSetList
 
@@ -95,8 +96,8 @@ CASES["HandleCardAlbumCardPage"] = [
 # >>> factory CreateCardSetListAndInitListCoords
 CONTRACT["CreateCardSetListAndInitListCoords"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
 CASES["CreateCardSetListAndInitListCoords"] = [
-    {"a": 0x04, "sram": {0: {0xA100: bytes(0xFF)}}, "read": {0xC000: 0xFF, 0xCECB: 1, 0xCED0: 2, 0xCFB9: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, a=0x03, sram={0: {0xA100: bytes(0xFF)}}, read={0xC000: 0xFF, 0xCECB: 1, 0xCED0: 2, 0xCFB9: 2}, instruction_budget=2000000, cycle_budget=8000000),
+    {"a": 0x04, "sram": {0: {sym("sCardAndDeckSaveData"): bytes(0xFF)}}, "read": {sym("wDeckToBuild"): 0xFF, sym("wNumVisibleCardListEntries"): 1, sym("wCardListCoords"): 2, sym("wCurDeckName"): 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, a=0x03, sram={0: {sym("sCardAndDeckSaveData"): bytes(0xFF)}}, read={sym("wDeckToBuild"): 0xFF, sym("wNumVisibleCardListEntries"): 1, sym("wCardListCoords"): 2, sym("wCurDeckName"): 2}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory CreateCardSetListAndInitListCoords
 
@@ -106,18 +107,18 @@ CASES["CardAlbum"] = [
     {
         "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
         "keys": [0x02],
-        "wram": {0xFFB1: b"\xFF", 0xCABB: b"\x00"},
-        "read": {0xCABB: 1},
+        "wram": {sym("hCurMenuItem"): b"\xFF", sym("wLCDC"): b"\x00"},
+        "read": {sym("wLCDC"): 1},
         "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
         "instruction_budget": 20000000,
         "cycle_budget": 80000000,
     },
-    dict(POISON, keys=[0x02], wram={0xFFB1: b"\xFF", 0xCABB: b"\x00"}, read={0xCABB: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x02], wram={sym("hCurMenuItem"): b"\xFF", sym("wLCDC"): b"\x00"}, read={sym("wLCDC"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
     # The live entry from the lab PC, cancelled at the booster pack menu. The
     # file list and the card page are the session's to prove: a multi-press
     # timeline lands on different polls per lane once the text print lags.
     dict(_card_album_fixture(bank=2), **_CARD_ALBUM_REGS, keys=[0x00, 0x02],
-         read={0xC200: 0x200, 0xCC00: 0x100, 0xC600: 0x400, 0xCE00: 0x100}),
+         read={sym("wPlayerCardLocations"): 0x200, sym("wPracticeDuelTurn"): 0x100, sym("wc600"): 0x400, sym("wAIFirstAttackDamage"): 0x100}),
 ]
 # <<< factory CardAlbum
 

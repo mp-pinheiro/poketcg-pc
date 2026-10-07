@@ -1,11 +1,12 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wActiveGameEvent = 0xD0C2
-wPlayerXCoord = 0xD330
-wPlayerYCoord = 0xD331
-wLoadNPCXPos = 0xD3AC
-wd3d0 = 0xD3D0
+wActiveGameEvent = sym("wActiveGameEvent")
+wPlayerXCoord = sym("wPlayerXCoord")
+wPlayerYCoord = sym("wPlayerYCoord")
+wLoadNPCXPos = sym("wLoadNPCXPos")
+wd3d0 = sym("wd3d0")
 
 
 def memory(event, x, y, npc_x=0x55, d3d0_value=0x66):
@@ -45,24 +46,24 @@ CASES = {
 # >>> factory WaterClubMovePlayer
 CONTRACT["WaterClubMovePlayer"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ()}
 CASES["WaterClubMovePlayer"] = [
-    {"b": 0x12, "c": 0x34, "hl": 0x0000, "wram": {0xD331: b"\x09"}},
-    dict(POISON, wram={0xD331: b"\x09"}),
-    {"b": 0x56, "c": 0x78, "hl": 0x0000, "wram": {0xD331: b"\x08", 0xD3DD: b"\x20"}},
-    {"b": 0x9A, "c": 0xBC, "hl": 0x1234, "wram": {0xD331: b"\x08", 0xD3DD: b"\x00"}},
+    {"b": 0x12, "c": 0x34, "hl": 0x0000, "wram": {sym("wPlayerYCoord"): b"\x09"}},
+    dict(POISON, wram={sym("wPlayerYCoord"): b"\x09"}),
+    {"b": 0x56, "c": 0x78, "hl": 0x0000, "wram": {sym("wPlayerYCoord"): b"\x08", sym("wEventVars") + 0xB: b"\x20"}},
+    {"b": 0x9A, "c": 0xBC, "hl": 0x1234, "wram": {sym("wPlayerYCoord"): b"\x08", sym("wEventVars") + 0xB: b"\x00"}},
 ]
 # <<< factory WaterClubMovePlayer
 
 # >>> factory-cases-statics
-wDuelResult = 0xD0C3
-wNPCDuelist = 0xD0C4
-wTempNPC = 0xD3AB
-wLoadedNPCs = 0xD34A
-wLoadedNPCTempIndex = 0xD3AA
-wScriptNPC = 0xD3B6
-wPlayerDirection = 0xD334
-wOverworldNPCFlags = 0xD0C1
-wNextScript = 0xD0C6
-wOverworldMode = 0xD0BF
+wDuelResult = sym("wDuelResult")
+wNPCDuelist = sym("wNPCDuelist")
+wTempNPC = sym("wTempNPC")
+wLoadedNPCs = sym("wLoadedNPCs")
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wScriptNPC = sym("wScriptNPC")
+wPlayerDirection = sym("wPlayerDirection")
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+wNextScript = sym("wNextScript")
+wOverworldMode = sym("wOverworldMode")
 # <<< factory-cases-statics
 
 # >>> factory WaterClubAfterDuel

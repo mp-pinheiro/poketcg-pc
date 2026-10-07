@@ -1,6 +1,7 @@
 """Oracle-diff cases for poketcg/src/engine/masters_beaten_list.asm."""
+from tests.cases._symbols import sym
 
-wMastersBeatenList = 0xD3BB
+wMastersBeatenList = sym("wMastersBeatenList")
 GUARD_LOW = wMastersBeatenList - 1
 GUARD_HIGH = wMastersBeatenList + 10
 

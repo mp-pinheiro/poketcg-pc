@@ -83,18 +83,18 @@ MUTATIONS = {
                         'Preload_Amy-2',
                         'Preload_Amy-3',
                         'Preload_Amy-4'],
-        'source': 'src/profiles/extended/home/water_club.c'},
+        'source': 'src/home/water_club.c'},
     'WaterClubMovePlayer': {   'source_symbol': 'WaterClubMovePlayer',
         'before': '\tif (y != 8u) {',
         'after': '\tif (y != 9u) {',
         'case_ids': ['WaterClubMovePlayer-0', 'WaterClubMovePlayer-1'],
-        'source': 'src/profiles/extended/home/water_club.c'},
+        'source': 'src/home/water_club.c'},
     'WaterClubAfterDuel': {   'source_symbol': 'WaterClubAfterDuel',
         'before': '\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(WaterClubAfterDuelTable);',
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(WaterClubAfterDuelTable + 1u));',
         'case_ids': ['WaterClubAfterDuel-0'],
-        'source': 'src/profiles/extended/home/water_club.c'},
+        'source': 'src/home/water_club.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

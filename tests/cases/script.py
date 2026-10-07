@@ -1,7 +1,8 @@
+from tests.cases._symbols import sym, sym_bank
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wCurMap = 0xD32F
+wCurMap = sym("wCurMap")
 
 CONTRACT = {
     "GetMapScriptPointer": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e")},
@@ -19,8 +20,8 @@ CASES = {
     ],
 }
 # >>> factory ResetAnimationQueue
-_HBANK_ROM = 0xFF80
-_WDO_FRAME_FN = 0xCAD3
+_HBANK_ROM = sym("hBankROM")
+_WDO_FRAME_FN = sym("wDoFrameFunction")
 CONTRACT["ResetAnimationQueue"] = {"compare": (), "preserve": ()}
 CASES["ResetAnimationQueue"] = [
 	{"wram": {_HBANK_ROM: b"\x04", _WDO_FRAME_FN: b"\x00\x00"},
@@ -31,11 +32,11 @@ CASES["ResetAnimationQueue"] = [
 # <<< factory ResetAnimationQueue
 
 # >>> factory FinishQueuedAnimations
-_HBANK_ROM = 0xFF80
-_WDO_FRAME_FN = 0xCAD3
-_WVBL_TOGGLE = 0xCAC0
-_WANIM_QUEUE = 0xD423
-_WBUF_POS = 0xD4AC
+_HBANK_ROM = sym("hBankROM")
+_WDO_FRAME_FN = sym("wDoFrameFunction")
+_WVBL_TOGGLE = sym("wVBlankOAMCopyToggle")
+_WANIM_QUEUE = sym("wAnimationQueue")
+_WBUF_POS = sym("wDuelAnimBufferCurPos")
 CONTRACT["FinishQueuedAnimations"] = {"compare": (), "preserve": ()}
 CASES["FinishQueuedAnimations"] = [
 	{"wram": {_HBANK_ROM: b"\x04", _WDO_FRAME_FN: b"\x11\x22"},
@@ -44,7 +45,7 @@ CASES["FinishQueuedAnimations"] = [
 	# does in any live state: the update chain calls through it, and a zero
 	# pointer is a `call $0000` the ROM never makes.
 	{"wram": {_HBANK_ROM: b"\x04", _WDO_FRAME_FN: b"\xA2\x3B",
-	          _WANIM_QUEUE: b"\xff" * 7, _WBUF_POS: b"\x00\x00", 0xD4B9: b"\xBC\x4C"},
+	          _WANIM_QUEUE: b"\xff" * 7, _WBUF_POS: b"\x00\x00", sym("wScreenAnimUpdatePtr"): b"\xBC\x4C"},
 	 "read": {_HBANK_ROM: 1, _WDO_FRAME_FN: 2, _WVBL_TOGGLE: 1}},
 	dict(POISON, wram={_HBANK_ROM: b"\x07", _WDO_FRAME_FN: b"\x33\x44"},
 	     read={_HBANK_ROM: 1, _WDO_FRAME_FN: 2, _WVBL_TOGGLE: 1}),
@@ -60,17 +61,17 @@ CASES["GetNPCDuelConfigurations"] = [
 # <<< factory GetNPCDuelConfigurations
 
 # >>> factory-cases-statics
-wCurMap = 0xD32F
-wPlayerXCoord = 0xD330
-wPlayerYCoord = 0xD331
-wPlayerDirection = 0xD334
-hBankROM = 0xFF80
-wNextScript = 0xD0C6
-wDefaultObjectText = 0xD0CA
-wCurrentNPCNameTx = 0xD0C8
+wCurMap = sym("wCurMap")
+wPlayerXCoord = sym("wPlayerXCoord")
+wPlayerYCoord = sym("wPlayerYCoord")
+wPlayerDirection = sym("wPlayerDirection")
+hBankROM = sym("hBankROM")
+wNextScript = sym("wNextScript")
+wDefaultObjectText = sym("wDefaultObjectText")
+wCurrentNPCNameTx = sym("wCurrentNPCNameTx")
 
-wVBlankOAMCopyToggle = 0xCAC0
-wLastSelectedStartMenuItem = 0xD627
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
+wLastSelectedStartMenuItem = sym("wLastSelectedStartMenuItem")
 # <<< factory-cases-statics
 
 # >>> factory HandleMoveModeAPress
@@ -94,9 +95,9 @@ CASES["Func_3b11"] = [
 # <<< factory Func_3b11
 
 # >>> factory RunOverworldScript
-wScriptPointer = 0xD413
-wBreakScriptLoop = 0xD412
-hBankROM = 0xFF80
+wScriptPointer = sym("wScriptPointer")
+wBreakScriptLoop = sym("wBreakScriptLoop")
+hBankROM = sym("hBankROM")
 CONTRACT["RunOverworldScript"] = {
     "compare": ("a", "f", "b", "c", "d", "e", "hl"),
     "preserve": (),
@@ -109,7 +110,7 @@ CASES["RunOverworldScript"] = [
         "hbank_rom": 0x03,
         "wram": {
             wScriptPointer: b"\x00\xC5",
-            0xC500: b"\x00\x34\x12",
+            sym("wNameBuffer"): b"\x00\x34\x12",
             wBreakScriptLoop: b"\x00",
         },
         "read": {hBankROM: 1, wScriptPointer: 2, wBreakScriptLoop: 1},
@@ -120,7 +121,7 @@ CASES["RunOverworldScript"] = [
         hbank_rom=0x03,
         wram={
             wScriptPointer: b"\x00\xC5",
-            0xC500: b"\x00\x34\x12",
+            sym("wNameBuffer"): b"\x00\x34\x12",
             wBreakScriptLoop: b"\xff",
         },
         read={hBankROM: 1, wScriptPointer: 2, wBreakScriptLoop: 1},
@@ -132,7 +133,7 @@ CASES["RunOverworldScript"] = [
         "hbank_rom": 0x03,
         "wram": {
             wScriptPointer: b"\x00\xC5",
-            0xC500: b"\x01\x34\x12",
+            sym("wNameBuffer"): b"\x01\x34\x12",
             wBreakScriptLoop: b"\x00",
         },
         "read": {hBankROM: 1, wScriptPointer: 2, wBreakScriptLoop: 1},
@@ -185,5 +186,5 @@ MUTATIONS["Func_3b11"] = {"source_symbol": "Func_3b11", "before": "void Func_3b1
 # <<< factory-mutation Func_3b11
 # >>> factory-completion Func_3b11
 for _record in SCHEMA2_CASES["Func_3b11"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x66E1, "bank": 4}
+    _record["completion"] = {"mode": "pre-ret", "pc": sym("_GameLoop.main_menu_loop"), "bank": sym_bank("_GameLoop.main_menu_loop")}
 # <<< factory-completion Func_3b11

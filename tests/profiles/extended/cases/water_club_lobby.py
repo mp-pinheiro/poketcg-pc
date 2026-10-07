@@ -73,17 +73,17 @@ MUTATIONS = {
         'after': '\tFindEndOfDuelScriptResult r = '
                  'FindEndOfDuelScript((uint16_t)(WaterClubLobbyAfterDuelTable + 1u));',
         'case_ids': ['WaterClubLobbyAfterDuel-0'],
-        'source': 'src/profiles/extended/home/water_club_lobby.c'},
+        'source': 'src/home/water_club_lobby.c'},
     'Preload_Man2': {   'source_symbol': 'Preload_Man2',
         'before': '\tif (a < JOSHUA_DEFEATED)\n\t\tf |= 0x10u;',
         'after': '\tif (a <= JOSHUA_DEFEATED)\n\t\tf |= 0x10u;',
         'case_ids': ['Preload_Man2-1'],
-        'source': 'src/profiles/extended/home/water_club_lobby.c'},
+        'source': 'src/home/water_club_lobby.c'},
     'Preload_ImakuniInWaterClubLobby': {   'source_symbol': 'Preload_ImakuniInWaterClubLobby',
         'before': '\tif (room != IMAKUNI_WATER_CLUB)',
         'after': '\tif (room == IMAKUNI_WATER_CLUB)',
         'case_ids': ['Preload_ImakuniInWaterClubLobby-0', 'Preload_ImakuniInWaterClubLobby-1'],
-        'source': 'src/profiles/extended/home/water_club_lobby.c'},
+        'source': 'src/home/water_club_lobby.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

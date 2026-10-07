@@ -2052,32 +2052,9 @@ the mutation at a line the real body owns.
 
 ## Menus under a bare seed: the PyBoy lane spins
 
-The PyBoy lane services `WaitForVBlank` by skipping the `halt`
-(`pyboy_oracle.py`, `_VBLANK_HALT`), so one rendered frame -- one entry of
-the case's `keys` timeline -- holds as many `DoFrame`s as the CPU fits in it.
-Two consequences for any routine that polls a menu:
+The PyBoy lane services `WaitForVBlank` by skipping the `halt` (`pyboy_oracle.py`, `_VBLANK_HALT`), so one rendered frame holds as many `DoFrame`s as the CPU fits in it. The `keys` timeline does not depend on frames: in every lane poll `i` of the routine under test receives entry `i mod n`, set where `ReadJoypad` has combined the d-pad and buttons in `a` (PyBoy and gbref) or presented to `ReadJoypad`'s reads and advanced on the `hKeysHeld` write that completes the poll (the probe), while the physical pad holds entry 0 for the whole call, so a direct `rJOYP` read outside `ReadJoypad` sees entry 0 in every lane. Rendered frames the ROM spends without polling, such as `SetupPlayAreaScreen` under `DisableLCD` or a `PrintPlayAreaCardList` redraw, no longer shift which entry a wait sees, so the phase of a cycled timeline is the same in every lane.
 
-- A held direction auto-repeats inside one rendered frame (`HandleDPadRepeat`
-  counts polls, not frames): one `DOWN` entry moves the cursor `1 + k` items on
-  that lane and exactly one on the port and on gbref. Which item an `A` lands
-  on is therefore not lane-independent.
-- The ROM spends rendered frames where the port spends none:
-  `SetupPlayAreaScreen` under `DisableLCD`, every `PrintPlayAreaCardList`
-  redraw. Edges that fall inside those frames are lost on the reference and
-  seen by the port, so the phase of a cycled timeline differs per lane.
-
-A menu case is admissible only when its end state is the same from every phase
-and under any number of dropped edges. What passes that bar: `[0, A]` on a
-screen whose first `A` completes it; `[0, A, 0, DOWN]` on a multi-pick whose
-*count* and terminator are read but whose pick *order* is not; a Select-closed
-screen driven by `[SELECT, 0, SELECT]`. What does not: any cycle that contains
-`B` on a screen where `B` undoes a pick -- a pick/undo alternation exists for
-some dead-time pattern, proven by simulating the asm's state machine over all
-phases and deterministic dead times 0-7 (`Gigashock_PlayerSelectEffect`). Such
-a branch is left uncased with the reason at the case block, and the sessions
-are its evidence. Reading the PyBoy lane's real cadence is a ten-line hook on
-`HandleMenuInput` (`pb.hook_register`, log `pb.frame_count` and `hKeysPressed`);
-do that before tuning a timeline by trial.
+A menu case is admissible when its end state follows from that per-poll sequence alone. Branches left uncased before this rule because their outcome depended on lane phase (a cycle containing `B` on a screen where `B` undoes a pick, `Gigashock_PlayerSelectEffect`) keep the reason at their case block until a session shows the per-poll timeline reaches them. Reading the PyBoy lane's real cadence is a ten-line hook on `HandleMenuInput` (`pb.hook_register`, log `pb.frame_count` and `hKeysPressed`); do that before tuning a timeline by trial.
 
 `hollow-ratio` names suspects, not stubs: `LookForCardThatIsKnockedOutOnDevolution`
 and `PlayerNamingScreen_GetCharInfoFromPos` are complete ports written on
@@ -2178,9 +2155,9 @@ suspect — read the mismatch and classify:
 |---|---|---|
 | `0xCAB8` (wVBlankCounter), `0xCD0F`, `0xCEA3` | frame counters the two lanes service differently, already listed in `tests/cases/_fixtures.py` `_HOLES` | stop seeding it in the case; a fixture never seeds it either |
 | the case's own seed, unchanged in native | the probe stopped before the reference did | check the case's completion record; an `entry` stop and a frame cap are two terminators and the cap can truncate the run |
-| an HRAM byte such as `0xFF97` (`hWhoseTurn`) | the case entered with `sp` in HRAM (`entry_sp` `0xFFFC`, or the runner's `$FFFE` default) and the reference's call chain grew down into the bytes it compares | set `entry_sp` to `0xDCBE` (decision table above); the duel-entry cases take it from `DUEL_ENTRY_SP` in `tests/cases/_duel_setup.py` |
+| an HRAM byte such as `0xFF97` (`hWhoseTurn`) | the case entered with `sp` in HRAM (an explicit `entry_sp` `0xFFFC`; cases without `entry_sp` enter at `STACK_TOP - 2` in every lane) and the reference's call chain grew down into the bytes it compares | set `entry_sp` to `0xDCBE` or drop it (decision table above); the duel-entry cases take it from `DUEL_ENTRY_SP` in `tests/cases/_duel_setup.py` |
 | `wLoadedCard1` tail bytes `$FF` on the reference only, after a trainer card at the end of the card bank | the 65-byte copy ran past `$7FFF` into VRAM while the PPU was in mode 3 (the `LoadCardDataToHL_FromCardID` row above) | seed rLCDC off (`0xFF40: b"\x00"` in the case's `wram`) and keep VRAM seeded, so both lanes read the tile bytes |
-| `BUDGET_EXHAUSTED` in a menu or text wait, or frame-driven bytes one `DoFrame` apart, on a multi-press `keys` timeline | the gbref runner advances `keys` once per rendered frame, PyBoy once per tick (several DoFrames) and the probe once per poll, so a lag frame changes which entry a wait sees | when only frame-driven bytes differ (the RNG and sprite counters `OverworldDoFrameFunction` advances), seed `wDoFrameFunction` (`CAD3`) to `$0000` so the extra wait frames change nothing; when the presses steer the flow, separate them with releases (`0x00`) or stop at the first wait (an `entry` stop needs a `tests/hatches.py` entry). A timeline that passes one reference can fail the other, so run `just oracle-fn` and `just oracle-diff` on the routine |
+| `BUDGET_EXHAUSTED` in a menu or text wait, or frame-driven bytes one `DoFrame` apart, on a multi-press `keys` timeline | every lane gives poll `i` of the routine entry `i mod n` (`docs/port-contract.md`, `keys`), so the lanes see different entries only when the port calls `ReadJoypad` a different number of times than the ROM, or the timeline never supplies the press the wait needs; frame-driven bytes still differ by the `DoFrame`s each lane renders between polls | count `ReadJoypad` calls on both sides before touching the timeline; when only frame-driven bytes differ (the RNG and sprite counters `OverworldDoFrameFunction` advances), seed `wDoFrameFunction` (`CAD3`) to `$0000` so the extra wait frames change nothing; run `just oracle-fn` and `just oracle-diff` on the routine |
 
 Worked example of the HRAM row: `StartDuel_VSLinkOpp` case 0 seeds `hWhoseTurn` (`0xFF97`) and entered at `$FFFC`. gbref left `0x01` there while PyBoy and the port left `0xC2`, and this page recorded it as a serial-path lane defect with the canary unproven. The byte was the reference's own stack: with the entry stack in the reserved window every seeded byte agrees. The port stores a fixed `wDuelReturnAddress` because it has no Game Boy stack (`tools/completion/scenario.py` excludes that word from sessions), so the duel-entry cases no longer compare it.
 

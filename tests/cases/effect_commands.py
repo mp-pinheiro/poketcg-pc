@@ -8,10 +8,11 @@ no need to hand-derive them. EkansSpitPoisonEffectCommands @ $46f7:
   $46fd: $00 terminator
 EkansWrapEffectCommands (the next table) starts at $46fe.
 """
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wEffectFunctionsBank = 0xCE22
+wEffectFunctionsBank = sym("wEffectFunctionsBank")
 LIST = 0x46F7
 EFFECTCMDTYPE_BEFORE_DAMAGE = 0x03
 EFFECTCMDTYPE_AI = 0x09
@@ -45,27 +46,27 @@ CASES = {
 }
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hBankROM = 0xFF80
-wEffectFunctionsBank = 0xCE22
-wLoadedAttackEffectCommands = 0xCCB2
+hBankROM = sym("hBankROM")
+wEffectFunctionsBank = sym("wEffectFunctionsBank")
+wLoadedAttackEffectCommands = sym("wLoadedAttackEffectCommands")
 # <<< factory-cases-statics
 
 # >>> factory TryExecuteEffectCommandFunction
 CONTRACT["TryExecuteEffectCommandFunction"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["TryExecuteEffectCommandFunction"] = [
-    {"a": 0x05, "hram": {hBankROM: b"\x01"}, "wram": {wLoadedAttackEffectCommands: b"\xE8\xC0", 0xC0E8: b"\x00", wEffectFunctionsBank: b"\x00"},
-     "sram": {0: {}}, "expect_regs": {"a": 0x01, "f": 0x00, "c": 0x05, "hl": 0xC0E9},
+    {"a": 0x05, "hram": {hBankROM: b"\x01"}, "wram": {wLoadedAttackEffectCommands: b"\xE8\xC0", sym("wDeckToBuild") + 0xE8: b"\x00", wEffectFunctionsBank: b"\x00"},
+     "sram": {0: {}}, "expect_regs": {"a": 0x01, "f": 0x00, "c": 0x05, "hl": sym("wDeckToBuild") + 0xE9},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     {"a": 0x00, "hram": {hBankROM: b"\x06"}, "wram": {wLoadedAttackEffectCommands: b"\x00\x00"},
      "sram": {0: {}}, "expect_regs": {"a": 0x00, "f": 0x80, "c": 0x00, "hl": 0x0000},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, a=0xAA, hram={hBankROM: b"\x01"}, wram={wLoadedAttackEffectCommands: b"\xE8\xC0", 0xC0E8: b"\x00", wEffectFunctionsBank: b"\x00"},
-         sram={0: {}}, expect_regs={"a": 0x01, "f": 0x00, "c": 0xAA, "hl": 0xC0E9},
+    dict(POISON, a=0xAA, hram={hBankROM: b"\x01"}, wram={wLoadedAttackEffectCommands: b"\xE8\xC0", sym("wDeckToBuild") + 0xE8: b"\x00", wEffectFunctionsBank: b"\x00"},
+         sram={0: {}}, expect_regs={"a": 0x01, "f": 0x00, "c": 0xAA, "hl": sym("wDeckToBuild") + 0xE9},
          instruction_budget=2000000, cycle_budget=8000000),
     {"a": 0x05, "b": 0x12, "d": 0x34, "e": 0x56,
-     "hram": {hBankROM: b"\x01", 0xFF97: b"\xC2"},
-     "wram": {wLoadedAttackEffectCommands: b"\xE8\xC0", 0xC0E8: b"\x05\xC7\x40\x00", 0xC2F1: b"\x00", wEffectFunctionsBank: b"\x00"},
-     "sram": {0: {}}, "expect_regs": {"a": 0x00, "f": 0x90, "b": 0x00, "c": 0x90, "d": 0x34, "e": 0x56, "hl": 0xC2F1},
+     "hram": {hBankROM: b"\x01", sym("hWhoseTurn"): b"\xC2"},
+     "wram": {wLoadedAttackEffectCommands: b"\xE8\xC0", sym("wDeckToBuild") + 0xE8: b"\x05\xC7\x40\x00", sym("wPlayerDuelistType"): b"\x00", wEffectFunctionsBank: b"\x00"},
+     "sram": {0: {}}, "expect_regs": {"a": 0x00, "f": 0x90, "b": 0x00, "c": 0x90, "d": 0x34, "e": 0x56, "hl": sym("wPlayerDuelistType")},
      "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(_effect_dispatch_fixture(vram=False, bank=1), **_EFFECT_DISPATCH_REGS),
 ]

@@ -170,7 +170,7 @@ MUTATIONS = {
                         'GetNPCHeaderPointer-1',
                         'GetNPCHeaderPointer-2',
                         'GetNPCHeaderPointer-3'],
-        'source': 'src/profiles/extended/home/npc_data.c'},
+        'source': 'src/home/npc_data.c'},
     'SetNPCOpponentNameAndPortrait': {   'source_symbol': 'SetNPCOpponentNameAndPortrait',
         'before': 'const uint8_t *entry = rom_ptr(NPC_HEADER_POINTERS_BANK, (uint16_t)(result.hl + '
                   'NPC_DATA_NAME_TEXT));',
@@ -180,7 +180,7 @@ MUTATIONS = {
                         'SetNPCOpponentNameAndPortrait-1',
                         'SetNPCOpponentNameAndPortrait-2',
                         'SetNPCOpponentNameAndPortrait-3'],
-        'source': 'src/profiles/extended/home/npc_data.c'},
+        'source': 'src/home/npc_data.c'},
     'GetNPCNameAndScript': {   'source_symbol': 'GetNPCNameAndScript',
         'before': '\tuint16_t cursor = (uint16_t)(header.hl + NPC_DATA_SCRIPT_PTR);',
         'after': '\tuint16_t cursor = (uint16_t)(header.hl + NPC_DATA_SCRIPT_PTR + 1u);',
@@ -189,7 +189,7 @@ MUTATIONS = {
                         'GetNPCNameAndScript-2',
                         'GetNPCNameAndScript-3',
                         'GetNPCNameAndScript-4'],
-        'source': 'src/profiles/extended/home/npc_data.c'},
+        'source': 'src/home/npc_data.c'},
     'LoadNPCSpriteData': {   'source_symbol': 'LoadNPCSpriteData',
         'before': '\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, header.hl);',
         'after': '\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + 1u));',
@@ -204,18 +204,18 @@ MUTATIONS = {
         'after': '\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + '
                  'NPC_DATA_DECK_ID + 1u));',
         'case_ids': ['SetNPCDeckIDAndDuelTheme-1', 'SetNPCDeckIDAndDuelTheme-2'],
-        'source': 'src/profiles/extended/home/npc_data.c'},
+        'source': 'src/home/npc_data.c'},
     '_GetChallengeMachineDuelConfigurations': {   'source_symbol': '_GetChallengeMachineDuelConfigurations',
         'before': 'a = entry[5];',
         'after': 'a = entry[4];',
         'case_ids': [   '_GetChallengeMachineDuelConfigurations-0',
                         '_GetChallengeMachineDuelConfigurations-1'],
-        'source': 'src/profiles/extended/home/npc_data.c'},
+        'source': 'src/home/npc_data.c'},
     'SetNPCDialogName': {   'source_symbol': 'SetNPCDialogName',
         'before': 'wCurrentNPCNameTx = lo;',
         'after': 'wCurrentNPCNameTx = (uint8_t)(lo + 1u);',
         'case_ids': ['SetNPCDialogName-0', 'SetNPCDialogName-1'],
-        'source': 'src/profiles/extended/home/npc_data.c'},
+        'source': 'src/home/npc_data.c'},
     'SetNPCMatchStartTheme': {   'source_symbol': 'SetNPCMatchStartTheme',
         'before': '\tif (a != NPC_RONALD1)\n'
                   '\t\treturn (SetNPCMatchStartThemeResult){a, f1, b, c, d, e, hl};',
@@ -224,7 +224,7 @@ MUTATIONS = {
         'case_ids': [   'SetNPCMatchStartTheme-2',
                         'SetNPCMatchStartTheme-0',
                         'SetNPCMatchStartTheme-1'],
-        'source': 'src/profiles/extended/home/npc_data.c'},
+        'source': 'src/home/npc_data.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

@@ -1,6 +1,7 @@
 """Oracle-diff cases for engine/overworld/debug_player_coordinates.asm."""
+from tests.cases._symbols import sym
 
-wLCDC = 0xCABB
+wLCDC = sym("wLCDC")
 
 POISON = {
     "a": 0xAA,
@@ -28,14 +29,14 @@ CASES = {
 }
 
 # >>> factory-cases-statics
-hKeysHeld = 65424
-hKeysPressed = 65425
-hWX = 65428
-hWY = 65429
-wCurMap = 54063
-wOverworldMode = 53439
-wPlayerXCoord = 54064
-wPlayerYCoord = 54065
+hKeysHeld = sym("hKeysHeld")
+hKeysPressed = sym("hKeysPressed")
+hWX = sym("hWX")
+hWY = sym("hWY")
+wCurMap = sym("wCurMap")
+wOverworldMode = sym("wOverworldMode")
+wPlayerXCoord = sym("wPlayerXCoord")
+wPlayerYCoord = sym("wPlayerYCoord")
 # <<< factory-cases-statics
 
 # >>> factory Func_1c003

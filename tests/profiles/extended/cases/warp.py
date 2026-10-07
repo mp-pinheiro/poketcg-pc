@@ -60,7 +60,7 @@ MUTATIONS = {
                         '_HandleMapWarp-2',
                         '_HandleMapWarp-3',
                         '_HandleMapWarp-4'],
-        'source': 'src/profiles/extended/home/warp.c'},
+        'source': 'src/home/warp.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/link/ir_core.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,17 +10,17 @@ CASES = {}
 # >>> factory StoreRegistersInIRDataBuffer
 CONTRACT["StoreRegistersInIRDataBuffer"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e")}
 CASES["StoreRegistersInIRDataBuffer"] = [
-    {"wram": {0xCE85: b"\xaa" * 8}},
-    dict(POISON, wram={0xCE85: b"\x00" * 8}),
+    {"wram": {sym("wIRDataBuffer"): b"\xaa" * 8}},
+    dict(POISON, wram={sym("wIRDataBuffer"): b"\x00" * 8}),
 ]
 # <<< factory StoreRegistersInIRDataBuffer
 
 # >>> factory LoadRegistersFromIRDataBuffer
 CONTRACT["LoadRegistersFromIRDataBuffer"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["LoadRegistersFromIRDataBuffer"] = [
-    {"read": {0xCE85: 8}},
-    dict(POISON, wram={0xCE85: b"\xf0\x11\x22\x33\x44\x55\x66\x77"}),
-    {"wram": {0xCE85: b"\xaf\x12\x34\x56\x78\x9a\xbc\xde"}},
+    {"read": {sym("wIRDataBuffer"): 8}},
+    dict(POISON, wram={sym("wIRDataBuffer"): b"\xf0\x11\x22\x33\x44\x55\x66\x77"}),
+    {"wram": {sym("wIRDataBuffer"): b"\xaf\x12\x34\x56\x78\x9a\xbc\xde"}},
 ]
 # <<< factory LoadRegistersFromIRDataBuffer
 
@@ -72,8 +73,8 @@ CASES["ReceiveByteThroughIR_ZeroIfUnsuccessful"] = [
 # >>> factory ReceiveNBytesToHLThroughIR
 CONTRACT["ReceiveNBytesToHLThroughIR"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["ReceiveNBytesToHLThroughIR"] = [
-    {"hl": 0xC500, "c": 0x03, "wram": {0xFF56: b"\x3E", 0xC500: b"\xFF\xFF\xFF"}, "read": {0xC500: 3}},
-    dict(POISON, hl=0xC500, c=0x03, wram={0xFF56: b"\x3E", 0xC500: b"\xFF\xFF\xFF"}, read={0xC500: 3}),
+    {"hl": sym("wNameBuffer"), "c": 0x03, "wram": {0xFF56: b"\x3E", sym("wNameBuffer"): b"\xFF\xFF\xFF"}, "read": {sym("wNameBuffer"): 3}},
+    dict(POISON, hl=sym("wNameBuffer"), c=0x03, wram={0xFF56: b"\x3E", sym("wNameBuffer"): b"\xFF\xFF\xFF"}, read={sym("wNameBuffer"): 3}),
 ]
 # <<< factory ReceiveNBytesToHLThroughIR
 
@@ -98,8 +99,8 @@ CASES["Func_1971e"] = [
 # >>> factory TransmitNBytesFromHLThroughIR
 CONTRACT["TransmitNBytesFromHLThroughIR"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["TransmitNBytesFromHLThroughIR"] = [
-    {"hl": 0xC500, "c": 0x01, "keys": 0x02, "wram": {0xC500: b"\x11"}},
-    dict(POISON, hl=0xC500, c=0x01, keys=0x02, wram={0xC500: b"\x11"}),
+    {"hl": sym("wNameBuffer"), "c": 0x01, "keys": 0x02, "wram": {sym("wNameBuffer"): b"\x11"}},
+    dict(POISON, hl=sym("wNameBuffer"), c=0x01, keys=0x02, wram={sym("wNameBuffer"): b"\x11"}),
 ]
 # <<< factory TransmitNBytesFromHLThroughIR
 
@@ -139,84 +140,84 @@ CASES["ClearRP"] = [
 # >>> factory StartIRCommunications
 CONTRACT["StartIRCommunications"] = {"compare": (), "preserve": ()}
 CASES["StartIRCommunications"] = [
-    {"oracle": False, "evidence": "primary", "why": "JOYP and RP are hardware registers whose readback is modeled by the native harness; native P14 and RP_ENABLE writes read back as DF and 3E respectively.", "wram": {0xCAB4: b"\x00", 0xFF00: b"\x30"}, "read": {0xFF00: 1, 0xFF56: 1}, "expect": {0xFF00: b"\xDF", 0xFF56: b"\x3E"}},
-    dict(POISON, oracle=False, evidence="primary", why="JOYP and RP are hardware registers whose readback is modeled by the native harness; native P14 and RP_ENABLE writes read back as DF and 3E respectively.", wram={0xCAB4: b"\x00", 0xFF00: b"\x30"}, read={0xFF00: 1, 0xFF56: 1}, expect={0xFF00: b"\xDF", 0xFF56: b"\x3E"}),
+    {"oracle": False, "evidence": "primary", "why": "JOYP and RP are hardware registers whose readback is modeled by the native harness; native P14 and RP_ENABLE writes read back as DF and 3E respectively.", "wram": {sym("wConsole"): b"\x00", 0xFF00: b"\x30"}, "read": {0xFF00: 1, 0xFF56: 1}, "expect": {0xFF00: b"\xDF", 0xFF56: b"\x3E"}},
+    dict(POISON, oracle=False, evidence="primary", why="JOYP and RP are hardware registers whose readback is modeled by the native harness; native P14 and RP_ENABLE writes read back as DF and 3E respectively.", wram={sym("wConsole"): b"\x00", 0xFF00: b"\x30"}, read={0xFF00: 1, 0xFF56: 1}, expect={0xFF00: b"\xDF", 0xFF56: b"\x3E"}),
 ]
 # <<< factory StartIRCommunications
 
 # >>> factory CloseIRCommunications
 CONTRACT["CloseIRCommunications"] = {"compare": (), "preserve": ()}
 CASES["CloseIRCommunications"] = [
-    {"setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xFF06: 1, 0xFF07: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xFF06: 1, 0xFF07: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"setup": [{"fn": "CopyDMAFunction"}], "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "read": {0xFF06: 1, 0xFF07: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, setup=[{"fn": "CopyDMAFunction"}], wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, read={0xFF06: 1, 0xFF07: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory CloseIRCommunications
 
 # >>> factory SafelyCloseIRCommunications
 CONTRACT["SafelyCloseIRCommunications"] = {"compare": (), "preserve": ()}
 CASES["SafelyCloseIRCommunications"] = [
-    {"oracle": False, "evidence": "primary", "why": "rSPD is a hardware speed register whose reference readback varies, so native readback is asserted directly while TMA and TAC verify the speed-switch timer setup.", "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "read": {0xFF06: 1, 0xFF07: 1, 0xFF4D: 1}, "expect": {0xFF06: b"\x78", 0xFF07: b"\x07", 0xFF4D: b"\xFE"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="rSPD is a hardware speed register whose reference readback varies, so native readback is asserted directly while TMA and TAC verify the speed-switch timer setup.", setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, read={0xFF06: 1, 0xFF07: 1, 0xFF4D: 1}, expect={0xFF06: b"\x78", 0xFF07: b"\x07", 0xFF4D: b"\xFE"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "rSPD is a hardware speed register whose reference readback varies, so native readback is asserted directly while TMA and TAC verify the speed-switch timer setup.", "setup": [{"fn": "CopyDMAFunction"}], "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "read": {0xFF06: 1, 0xFF07: 1, 0xFF4D: 1}, "expect": {0xFF06: b"\x78", 0xFF07: b"\x07", 0xFF4D: b"\xFE"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="rSPD is a hardware speed register whose reference readback varies, so native readback is asserted directly while TMA and TAC verify the speed-switch timer setup.", setup=[{"fn": "CopyDMAFunction"}], wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, read={0xFF06: 1, 0xFF07: 1, 0xFF4D: 1}, expect={0xFF06: b"\x78", 0xFF07: b"\x07", 0xFF4D: b"\xFE"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory SafelyCloseIRCommunications
 
 # >>> factory TrySendIRRequest
 CONTRACT["TrySendIRRequest"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["TrySendIRRequest"] = [
-    {"keys": 0x02, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=0x02, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": 0x02, "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=0x02, wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory TrySendIRRequest
 
 # >>> factory-cases-statics
-wIRDataBuffer = 0xCE85
+wIRDataBuffer = sym("wIRDataBuffer")
 # <<< factory-cases-statics
 
 # >>> factory TransmitRegistersThroughIR
 CONTRACT["TransmitRegistersThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["TransmitRegistersThroughIR"] = [
-    {"oracle": False, "evidence": "primary", "why": "Infrared RP input is an external hardware peer unavailable to the reference runner; native hardware semantics are verified through the deterministic IR error path while the transmitted buffer is asserted.", "keys": 0x80, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xCE85: 8}, "expect": {0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}},
-    dict(POISON, oracle=False, evidence="primary", why="Infrared RP input is an external hardware peer unavailable to the reference runner; native hardware semantics are verified through the deterministic IR error path while the transmitted buffer is asserted.", keys=0x80, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000, read={0xCE85: 8}, expect={0xCE85: b"\xF0\xAA\x34\x12\xEE\xDD\xCC\xBB"}),
+    {"oracle": False, "evidence": "primary", "why": "Infrared RP input is an external hardware peer unavailable to the reference runner; native hardware semantics are verified through the deterministic IR error path while the transmitted buffer is asserted.", "keys": 0x80, "ir_peer": True, "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {sym("wIRDataBuffer"): 8}, "expect": {sym("wIRDataBuffer"): b"\x00\x00\x00\x00\x00\x00\x00\x00"}},
+    dict(POISON, oracle=False, evidence="primary", why="Infrared RP input is an external hardware peer unavailable to the reference runner; native hardware semantics are verified through the deterministic IR error path while the transmitted buffer is asserted.", keys=0x80, ir_peer=True, wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], instruction_budget=20000000, cycle_budget=80000000, read={sym("wIRDataBuffer"): 8}, expect={sym("wIRDataBuffer"): b"\xF0\xAA\x34\x12\xEE\xDD\xCC\xBB"}),
 ]
 # <<< factory TransmitRegistersThroughIR
 
 # >>> factory RequestCloseIRCommunication
 CONTRACT["RequestCloseIRCommunication"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["RequestCloseIRCommunication"] = [
-    {"oracle": False, "evidence": "primary", "why": "Infrared peer hardware is unavailable to the reference runner; the deterministic native IR error path is checked together with the close-command buffer write.", "keys": 0x80, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {0xCE85: 8}, "expect": {0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="Infrared peer hardware is unavailable to the reference runner; the deterministic native IR error path is checked together with the close-command buffer write.", keys=0x80, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xCE85: b"\xF0\xAA\x34\x12\xEE\xDD\xCC\xBB"}, read={0xCE85: 8}, expect={0xCE85: b"\xF0\x00\x34\x12\xEE\xDD\xCC\xBB"}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "Infrared peer hardware is unavailable to the reference runner; the deterministic native IR error path is checked together with the close-command buffer write.", "keys": 0x80, "ir_peer": True, "setup": [{"fn": "CopyDMAFunction"}], "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", sym("wIRDataBuffer"): b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {sym("wIRDataBuffer"): 8}, "expect": {sym("wIRDataBuffer"): b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="Infrared peer hardware is unavailable to the reference runner; the deterministic native IR error path is checked together with the close-command buffer write.", keys=0x80, ir_peer=True, setup=[{"fn": "CopyDMAFunction"}], wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", sym("wIRDataBuffer"): b"\xF0\xAA\x34\x12\xEE\xDD\xCC\xBB"}, read={sym("wIRDataBuffer"): 8}, expect={sym("wIRDataBuffer"): b"\xF0\x00\x34\x12\xEE\xDD\xCC\xBB"}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory RequestCloseIRCommunication
 
 # >>> factory RequestDataTransmissionThroughIR
 CONTRACT["RequestDataTransmissionThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["RequestDataTransmissionThroughIR"] = [
-    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and error return are asserted.", "f": 0x00, "b": 0x00, "c": 0x01, "d": 0xC5, "e": 0x00, "hl": 0xC500, "keys": 0x80, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "read": {0xCE85: 8}, "expect": {0xCE85: b"\x00\x02\x00\xC5\x00\xC5\x01\x00"}, "expect_regs": {"a": 0xFF, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and error return are asserted.", keys=0x80, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], read={0xCE85: 8}, expect={0xCE85: b"\xF0\x02\x34\x12\xEE\xDD\xCC\xBB"}, expect_regs={"a": 0xFF, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and error return are asserted.", "f": 0x00, "b": 0x00, "c": 0x01, "d": 0xC5, "e": 0x00, "hl": sym("wNameBuffer"), "keys": 0x80, "ir_peer": True, "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "read": {sym("wIRDataBuffer"): 8}, "expect": {sym("wIRDataBuffer"): b"\x00\x02\x00\xC5\x00\xC5\x01\x00"}, "expect_regs": {"a": 0xFF, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and error return are asserted.", keys=0x80, ir_peer=True, wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], read={sym("wIRDataBuffer"): 8}, expect={sym("wIRDataBuffer"): b"\xF0\x02\x34\x12\xEE\xDD\xCC\xBB"}, expect_regs={"a": 0xFF, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory RequestDataTransmissionThroughIR
 
 # >>> factory ExecuteReceivedIRCommands
 CONTRACT["ExecuteReceivedIRCommands"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["ExecuteReceivedIRCommands"] = [
-    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB IR peer supplies the 81-sample AA/49/52/data receive frame; the close command is zero and the native CGB path returns after closing communications.", "keys": 0x82, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "setup": [], "read": {0xCE85: 8}, "expect": {0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB IR peer supplies the 81-sample AA/49/52/data receive frame; the close command is zero and the native CGB path returns after closing communications.", keys=0x82, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", 0xCE85: b"\xF0\xAA\x34\x12\xEE\xDD\xCC\xBB"}, setup=[], read={0xCE85: 8}, expect={0xCE85: b"\x00\x00\x00\x00\x00\x00\x00\x00"}, expect_regs={"a": 0x00, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB IR peer supplies the 81-sample AA/49/52/data receive frame; the close command is zero and the native CGB path returns after closing communications.", "keys": 0x82, "ir_peer": True, "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", sym("wIRDataBuffer"): b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "setup": [], "read": {sym("wIRDataBuffer"): 8}, "expect": {sym("wIRDataBuffer"): b"\x00\x00\x00\x00\x00\x00\x00\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB IR peer supplies the 81-sample AA/49/52/data receive frame; the close command is zero and the native CGB path returns after closing communications.", keys=0x82, ir_peer=True, wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00", sym("wIRDataBuffer"): b"\xF0\xAA\x34\x12\xEE\xDD\xCC\xBB"}, setup=[], read={sym("wIRDataBuffer"): 8}, expect={sym("wIRDataBuffer"): b"\x00\x00\x00\x00\x00\x00\x00\x00"}, expect_regs={"a": 0x00, "f": 0x90}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ExecuteReceivedIRCommands
 
 # >>> factory TryReceiveIRRequest
 CONTRACT["TryReceiveIRRequest"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["TryReceiveIRRequest"] = [
-    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer supplies the AA request and the native result is checked through the acknowledgement path.", "keys": 0x80, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "expect_regs": {"a": 0x00, "f": 0x80}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer supplies the AA request and the native result is checked through the acknowledgement path with poisoned registers.", keys=0x80, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], expect_regs={"a": 0x00, "f": 0x80}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer supplies the AA request and the native result is checked through the acknowledgement path.", "keys": 0x80, "ir_peer": True, "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "expect_regs": {"a": 0x00, "f": 0x80}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer supplies the AA request and the native result is checked through the acknowledgement path with poisoned registers.", keys=0x80, ir_peer=True, wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], expect_regs={"a": 0x00, "f": 0x80}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory TryReceiveIRRequest
 
 # >>> factory RequestDataReceivalThroughIR
 CONTRACT["RequestDataReceivalThroughIR"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["RequestDataReceivalThroughIR"] = [
-    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and checksum result are asserted.", "f": 0x00, "b": 0x00, "c": 0x01, "d": 0xC5, "e": 0x00, "hl": 0xC500, "keys": 0x80, "ir_peer": True, "wram": {0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "read": {wIRDataBuffer: 8}, "expect": {wIRDataBuffer: b"\x00\x03\x00\xC5\x00\xC5\x01\x00"}, "expect_regs": {"a": 0xFF, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and checksum result are asserted.", keys=0x80, ir_peer=True, wram={0xCAB4: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], read={wIRDataBuffer: 8}, expect={wIRDataBuffer: b"\xF0\x03\x34\x12\xEE\xDD\xCC\xBB"}, expect_regs={"a": 0xFF, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": False, "evidence": "primary", "why": "The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and checksum result are asserted.", "f": 0x00, "b": 0x00, "c": 0x01, "d": 0xC5, "e": 0x00, "hl": sym("wNameBuffer"), "keys": 0x80, "ir_peer": True, "wram": {sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}], "read": {wIRDataBuffer: 8}, "expect": {wIRDataBuffer: b"\x00\x03\x00\xC5\x00\xC5\x01\x00"}, "expect_regs": {"a": 0xFF, "f": 0x10}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="The deterministic CGB infrared peer drives the request exchange; the transmitted register buffer and checksum result are asserted.", keys=0x80, ir_peer=True, wram={sym("wConsole"): b"\x02", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", 0xFF4D: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}], read={wIRDataBuffer: 8}, expect={wIRDataBuffer: b"\xF0\x03\x34\x12\xEE\xDD\xCC\xBB"}, expect_regs={"a": 0xFF, "f": 0x10}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory RequestDataReceivalThroughIR
 

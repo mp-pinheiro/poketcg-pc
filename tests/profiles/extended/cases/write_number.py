@@ -87,7 +87,7 @@ MUTATIONS = {
         'before': '(uint16_t)-10, (uint16_t)-1,',
         'after': '(uint16_t)-10, (uint16_t)-2,',
         'case_ids': ['TwoByteNumberToText-12345'],
-        'source': 'src/profiles/extended/home/write_number.c'},
+        'source': 'src/home/write_number.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

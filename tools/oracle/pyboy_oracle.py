@@ -31,16 +31,18 @@ from pathlib import Path
 
 from pyboy import PyBoy
 
-# The deep stack lives in the unallocated $D69C-$DD7F gap in pret's WRAM map.
-# It used to occupy $CF30-$CFFF, hiding live deck/card scratch symbols from the
-# oracle. Measured stack low-water over the 31 largest routines was 86 bytes
-# below entry SP; this window provides 143 bytes below STACK_TOP.
-SENTINEL = 0x3F80
-SPIN = 0xDCF0
-POST_CALL_SENTINEL = 0xCFF0
-STACK_TOP = 0xDCC0
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-RESERVED = (range(0xCFF0, 0xCFF6), range(0xDC30, 0xDD00))
+from tests.cases._symbols import CALL_FRAME, STACK_TOP, STACK_WINDOW  # noqa: E402
+from tools.oracle.gbref.compare_one import joypad_poll_pc, stack_window_symbols  # noqa: E402
+
+SENTINEL = 0x3F80
+SPIN = STACK_WINDOW.stop - 0x10
+POST_CALL_SENTINEL = CALL_FRAME.start
+
+RESERVED = (CALL_FRAME, STACK_WINDOW)
 
 
 def _reserved_overlap(address: int, size: int) -> range | None:
@@ -209,7 +211,8 @@ class Oracle:
         self.entry_state: Result | None = None
         self._armed_addr: int | None = None
         self._armed_bank: int = 0
-        self._key_timeline: list[int] = [0]
+        self._key_timeline: list[int] = []
+        self._key_index = 0
         self.vblanks = 0
         self._baseline = io.BytesIO()
         self._reset_ram()
@@ -301,10 +304,17 @@ class Oracle:
             match = pattern.match(line.strip())
             if match:
                 table.setdefault(match.group(3), (int(match.group(1), 16), int(match.group(2), 16)))
+        inside = stack_window_symbols(table)
+        if inside:
+            raise OracleError(
+                f"{symbols} has symbols inside the harness stack window "
+                f"${STACK_WINDOW.start:04X}-${STACK_WINDOW.stop - 1:04X}: {', '.join(inside)}")
         wait = table.get("WaitForVBlank")
         counter = table.get("wVBlankCounter")
-        if wait is None or counter is None:
-            raise OracleError(f"{symbols} lacks WaitForVBlank or wVBlankCounter")
+        hbank_rom = table.get("hBankROM")
+        if wait is None or counter is None or hbank_rom is None:
+            raise OracleError(f"{symbols} lacks WaitForVBlank, wVBlankCounter or hBankROM")
+        self._HBANK_ROM = hbank_rom[1]
         data = Path(rom).read_bytes()
         window = data[wait[1]:wait[1] + 0x20]
         if 0x76 not in window:
@@ -312,6 +322,10 @@ class Oracle:
         self._VBLANK_HALT = wait[1] + window.index(0x76)
         self._VBLANK_NOP = self._VBLANK_HALT + 1
         self._WVBLANK_COUNTER = counter[1]
+        try:
+            self._JOYPAD_POLL = joypad_poll_pc(data[:0x4000], table)
+        except ValueError as error:
+            raise OracleError(str(error)) from None
 
     def _service_vblank(self, _ctx) -> None:
         pb = self.pyboy
@@ -319,20 +333,13 @@ class Oracle:
         self.vblanks += 1
         self.pyboy.register_file.PC = self._VBLANK_NOP
 
-    def _apply_keys(self, old: int, new: int) -> None:
-        """Emit only the button edges that actually changed between two frames."""
-        pb = self.pyboy
-        for bit, button in enumerate(BUTTONS):
-            was, now = old & (1 << bit), new & (1 << bit)
-            if was == now:
-                continue
-            if now:
-                pb.button_press(button)
-            else:
-                pb.button_release(button)
+    def _poll_keys(self, _ctx) -> None:
+        self.pyboy.register_file.A = self._key_timeline[self._key_index]
+        self._key_index = (self._key_index + 1) % len(self._key_timeline)
 
     def _run(self, symbol: str, regs: dict, stop_pc: int | None = None,
-             stop_bank: int | None = None, stack: Sequence[int] | None = None, cycle: bool = False,
+             stop_bank: int | None = None, stack: Sequence[int] | None = None,
+             timeline: Sequence[int] = (),
              hbank_rom: int | None = None, frames: int | None = None,
              post_call_byte: int | None = None, entry_sp: int | None = None,
              rom_bank: int | None = None) -> Result:
@@ -347,12 +354,12 @@ class Oracle:
         if window_bank:
             pb.memory[0x2000] = window_bank & 0xFF
             pb.memory[0x3000] = (window_bank >> 8) & 1
-            pb.memory[0xFF80] = window_bank & 0xFF
+            pb.memory[self._HBANK_ROM] = window_bank & 0xFF
         # A routine that re-reads hBankROM as data cannot be tested against its
         # own symbol bank, so let the case name the value without disturbing the
         # $4000-$7FFF paging above.
         if hbank_rom is not None:
-            pb.memory[0xFF80] = hbank_rom & 0xFF
+            pb.memory[self._HBANK_ROM] = hbank_rom & 0xFF
         words = list(stack or ())
         if len(words) > 4:
             raise OracleError("stack declares more than 4 caller-pushed words")
@@ -398,12 +405,10 @@ class Oracle:
         except (ValueError, KeyError):
             pass
         pb.hook_register(0, self._VBLANK_HALT, self._service_vblank, None)
-        # One tick is one frame, so this is the frame boundary the reference
-        # advances its timeline on (tools/oracle/gbref/runner.c). Cycle modulo the
-        # entry count, and only for the routine under test -- runner.c holds entry
-        # 0 across every setup call and starts cycling afterwards.
-        timeline = self._key_timeline if cycle else [0]
-        index, current = 0, timeline[0]
+        self._key_timeline = list(timeline)
+        self._key_index = 0
+        if self._key_timeline:
+            pb.hook_register(0, self._JOYPAD_POLL, self._poll_keys, None)
         # MAX_FRAMES's "a home-bank leaf that has not returned by now never will"
         # assumption does not hold for routines that run a card's real effect
         # command: EstimateDamage_VersusDefendingCard needs millions of
@@ -422,11 +427,6 @@ class Oracle:
                     raise OracleError(
                         f"{symbol} did not return within {cap:.0f}s of wall clock "
                         f"({budget} frames allotted)")
-                if len(timeline) > 1:
-                    index = (index + 1) % len(timeline)
-                    if timeline[index] != current:
-                        self._apply_keys(current, timeline[index])
-                        current = timeline[index]
             raise OracleError(
                 f"{symbol} did not return within {budget} frames")
         finally:
@@ -435,6 +435,9 @@ class Oracle:
                 pb.hook_deregister(0, self._VBLANK_HALT)
             except (ValueError, KeyError):
                 pass
+            if self._key_timeline:
+                pb.hook_deregister(0, self._JOYPAD_POLL)
+                self._key_timeline = []
 
     def call(self, symbol: str, *, a: int = 0, f: int = 0, b: int = 0, c: int = 0,
              d: int = 0, e: int = 0, hl: int = 0,
@@ -456,19 +459,9 @@ class Oracle:
         self._baseline.seek(0)
         pb.load_state(self._baseline)
 
-        # Release every button before pressing the held ones, so a case's `keys`
-        # never inherits state left by a previous call. `no_input=True` (set in
-        # __init__) only skips the window plugin in `_handle_events`; these API
-        # events still reach `mb.buttonevent` on the next tick.
         for button in BUTTONS:
             pb.button_release(button)
-        # A schema-2 case may declare `keys` as a cycled per-frame timeline. The
-        # run starts on entry 0, exactly as runner.c does; _run cycles the rest.
-        self._key_timeline = ([int(k) for k in keys] or [0]) \
-            if isinstance(keys, (list, tuple)) else [int(keys)]
-        for bit, button in enumerate(BUTTONS):
-            if self._key_timeline[0] & (1 << bit):
-                pb.button_press(button)
+        timeline = ([int(k) for k in keys] or [0]) if isinstance(keys, (list, tuple)) else [int(keys)]
 
         self._reset_ram()
         for at, data in (wram or {}).items():
@@ -503,6 +496,9 @@ class Oracle:
             self._run(pre["fn"], pre)
 
         self.entry_state = self._snapshot(latch=False)
+        for bit, button in enumerate(BUTTONS):
+            if timeline[0] & (1 << bit):
+                pb.button_press(button)
         # Banked (non-home) routines run out of the $4000-$7FFF window; select the ROM
         # bank exactly as a farcall would, after _reset_ram's power-on bank=1 and before
         # jumping in. Home-bank (0) routines already sit in the always-mapped $0000-$3FFF.
@@ -512,7 +508,7 @@ class Oracle:
             stop_pc,
             stop_bank,
             stack,
-            cycle=True,
+            timeline=timeline,
             hbank_rom=hbank_rom,
             rom_bank=rom_bank,
             frames=frames,

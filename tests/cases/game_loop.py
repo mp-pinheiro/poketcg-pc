@@ -1,32 +1,33 @@
+from tests.cases._symbols import sym, sym_bank
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-WCONSOLE = 0xCAB4
-WTILE_MAP_FILL = 0xCAB6
-WLCDC = 0xCABB
-WBGP = 0xCABC
-WOBP0 = 0xCABD
-WOBP1 = 0xCABE
-WFLUSH_PALETTE_FLAGS = 0xCABF
+WCONSOLE = sym("wConsole")
+WTILE_MAP_FILL = sym("wTileMapFill")
+WLCDC = sym("wLCDC")
+WBGP = sym("wBGP")
+WOBP0 = sym("wOBP0")
+WOBP1 = sym("wOBP1")
+WFLUSH_PALETTE_FLAGS = sym("wFlushPaletteFlags")
 
 READ = {
     WTILE_MAP_FILL: 1,
     WLCDC: 1,
     WBGP: 1,
-    0xCAB7: 1,
+    sym("wIE"): 1,
     0xFFFF: 1,
     WOBP0: 1,
     WOBP1: 1,
     WFLUSH_PALETTE_FLAGS: 1,
-    0xCD04: 1,
+    sym("wcd04"): 1,
     0xFF40: 1,
     0xFF47: 1,
     0xFF48: 1,
     0xFF49: 1,
-    0xFFA8: 1,
-    0xFFA9: 1,
-    0xFFB0: 1,
-    0xC600: 0x100,
+    sym("hffa8"): 1,
+    sym("hffa9"): 1,
+    sym("hffb0"): 1,
+    sym("wc600"): 0x100,
 }
 
 CONTRACT = {
@@ -50,15 +51,15 @@ CASES = {
 }
 
 # >>> factory-cases-statics
-hWhoseTurn = 0xFF97
-wUppercaseHalfWidthLetters = 0xCD0D
-sCardCollection = 0xA100
+hWhoseTurn = sym("hWhoseTurn")
+wUppercaseHalfWidthLetters = sym("wUppercaseHalfWidthLetters")
+sCardCollection = sym("sCardCollection")
 
-hKeysHeld = 0xFF90
-sTextSpeed = 0xA006
-sSkipDelayAllowed = 0xA009
-wTextSpeed = 0xCE47
-wSkipDelayAllowed = 0xCCF2
+hKeysHeld = sym("hKeysHeld")
+sTextSpeed = sym("sTextSpeed")
+sSkipDelayAllowed = sym("sSkipDelayAllowed")
+wTextSpeed = sym("wTextSpeed")
+wSkipDelayAllowed = sym("wSkipDelayAllowed")
 # <<< factory-cases-statics
 
 # >>> factory InitSaveDataAndSetUppercase
@@ -100,6 +101,6 @@ MUTATIONS["GameLoop"] = {"source_symbol": "GameLoop", "before": "void GameLoop(v
 # <<< factory-mutation GameLoop
 # >>> factory-completion GameLoop
 for _record in SCHEMA2_CASES["GameLoop"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x66D1, "bank": 4,
+    _record["completion"] = {"mode": "entry", "pc": sym("_GameLoop"), "bank": sym_bank("_GameLoop"),
                              "routine": "_GameLoop"}
 # <<< factory-completion GameLoop

@@ -1,4 +1,5 @@
-SRC = 0xC100
+from tests.cases._symbols import STACK_CANARY, sym
+SRC = sym("wDecompressionSecondaryBufferStart") + 0x11
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -26,7 +27,7 @@ CONTRACT = {
 }
 
 CASES = {
-    "InitTextFormat": [{"read": {0xCD0B: 1, 0xFFAF: 1}}, dict(POISON, read={0xCD0B: 1, 0xFFAF: 1})],
+    "InitTextFormat": [{"read": {sym("wHalfWidthPrintState"): 1, sym("hJapaneseSyllabary"): 1}}, dict(POISON, read={sym("wHalfWidthPrintState"): 1, sym("hJapaneseSyllabary"): 1})],
     "CaseHalfWidthLetter": [{"e": 0x61}, dict(POISON, e=0x7A)],
     # All four exit paths: swap (e < TX_CTRL_START, carry set), half-width, katakana,
     # and not-katakana. Previously both cases used e=0x01 and drove only the swap.
@@ -34,11 +35,11 @@ CASES = {
         {"d": 0x20, "e": 0x01},
         dict(POISON, d=0x22, e=0x01),
         {"d": 0x20, "e": 0x08},
-        {"d": 0x20, "e": 0x20, "wram": {0xFFAF: b"\x0f"}},
-        {"d": 0x20, "e": 0x20, "wram": {0xFFAF: b"\x0e"}},
-        {"d": 0x20, "e": 0x70, "wram": {0xFFAF: b"\x0f"}},
-        {"d": 0x20, "e": 0x01, "wram": {0xCD0A: b"\x01"}},
-        {"d": 0x20, "e": 0x20, "wram": {0xCD0A: b"\x01", 0xFFAF: b"\x0f"}},
+        {"d": 0x20, "e": 0x20, "wram": {sym("hJapaneseSyllabary"): b"\x0f"}},
+        {"d": 0x20, "e": 0x20, "wram": {sym("hJapaneseSyllabary"): b"\x0e"}},
+        {"d": 0x20, "e": 0x70, "wram": {sym("hJapaneseSyllabary"): b"\x0f"}},
+        {"d": 0x20, "e": 0x01, "wram": {sym("wFontWidth"): b"\x01"}},
+        {"d": 0x20, "e": 0x20, "wram": {sym("wFontWidth"): b"\x01", sym("hJapaneseSyllabary"): b"\x0f"}},
     ],
     "GetTextLengthInHalfTiles": [
         {"hl": SRC, "wram": {SRC: b"\x00"}},
@@ -54,11 +55,11 @@ CASES = {
     "GetFullWidthFontTileOffset": [{"d": 0, "e": 1}, {"d": 0x0F, "e": 0x20}, dict(POISON, d=0x0E, e=0x20)],
     "ConvertTileNumberToTileDataAddress": [
         {"b": 0}, {"b": 1}, dict(POISON, b=0x80),
-        {"b": 0x20, "wram": {0xCD06: b"\x88", 0xCD07: b"\x80"}}],
+        {"b": 0x20, "wram": {sym("wTilePatternSelector"): b"\x88", sym("wTilePatternSelectorCorrection"): b"\x80"}}],
     "CopyHalfWidthCharacterToDE": [{"a": 0x20, "d": 0xC1, "e": 0}, dict(POISON, a=0x41, d=0xC1, e=0)],
     "CreateHalfWidthFontTile": [{"d": 0x20, "e": 0x20}, dict(POISON, d=0x41, e=0x42)],
     "CreateFullWidthFontTile": [{"hl": 0x4000}, dict(POISON, hl=0x4000),
-                                dict(_font_tile_fixture(), **_FONT_TILE_REGS, read={0xCCF6: 0x20})],
+                                dict(_font_tile_fixture(), **_FONT_TILE_REGS, read={sym("wTextTileBuffer") + 2: 0x20})],
     "CreateFullWidthFontTile_ConvertToTileDataAddress": [{"d": 0, "e": 1}, dict(POISON, d=0x0F, e=0x20)],
     "GenerateTextTile": [{"b": 0, "d": 0x20, "e": 0x20}, {"b": 1, "d": 0x20, "e": 0x20}],
     "TwoByteNumberToTxSymbol_PadSpace": [{"hl": 0}, {"hl": 1}, {"hl": 0xFFFF}, dict(POISON, hl=12345)],
@@ -84,16 +85,16 @@ CASES.update({
                      dict(POISON, hl=SRC, wram={SRC: b"\x00"})],
     "InitTextPrinting_ProcessText": [{"hl": SRC, "wram": {SRC: b"\x00\x00\x00"}},
                                       dict(POISON, hl=SRC, wram={SRC: b"\x00\x00\x00"})],
-    "SetupText": [{"d": 1, "e": 2, "read": {0xc600: 256}},
-                   dict(POISON, d=3, e=4, read={0xc600: 256})],
+    "SetupText": [{"d": 1, "e": 2, "read": {sym("wc600"): 256}},
+                   dict(POISON, d=3, e=4, read={sym("wc600"): 256})],
     "InitTextPrinting": [{"d": 0, "e": 0}, dict(POISON, d=3, e=4)],
     "InitTextPrintingInTextbox": [{"a": 1, "d": 0, "e": 0},
                                    dict(POISON, a=2, d=3, e=4)],
     "PlaceNextTextTile": [dict(_text_tile_fixture(bank=0), **_TEXT_TILE_REGS),
-                          {"a": 0, "wram": {0xffaa: b"\x00", 0xffab: b"\xc0",
-                                               0xcd05: b"\x22", 0xc000: b"\x00"}},
-                           dict(POISON, a=0x44, wram={0xffaa: b"\x00", 0xffab: b"\xc0",
-                                                      0xcd05: b"\x33", 0xc000: b"\x00"})],
+                          {"a": 0, "wram": {sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\xc0",
+                                               sym("wCurTextTile"): b"\x22", sym("wDeckToBuild"): b"\x00"}},
+                           dict(POISON, a=0x44, wram={sym("hTextBGMap0Address"): b"\x00", sym("hTextBGMap0Address") + 1: b"\xc0",
+                                                      sym("wCurTextTile"): b"\x33", sym("wDeckToBuild"): b"\x00"})],
     "ProcessSpecialTextCharacter": [{"a": 0, "hl": SRC},
                                      dict(POISON, a=0, hl=SRC)],
     "TerminateHalfWidthText": [dict(_half_width_end_fixture(bank=0), **_HALF_WIDTH_END_REGS),
@@ -106,12 +107,12 @@ CASES.update({
         {}, dict(POISON),
         {"d": 0x41, "e": 0x42,
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         "read": {0xC600: 4, 0xC700: 4, 0xC800: 4, 0xC900: 4, 0xFFA9: 1}},
+         "read": {sym("wc600"): 4, sym("wc700"): 4, sym("wc800"): 4, sym("wc900"): 4, sym("hffa9"): 1}},
         dict(
             DRAGONITE_TEXT_235E.case(vram=False),
             **DRAGONITE_TEXT_235E.regs,
-            read={0xC600: 0x100, 0xC700: 0x100, 0xC800: 0x100, 0xC900: 0x100,
-                  0xCCF6: 1, 0xCD04: 1, 0xCD05: 1, 0xCD09: 1},
+            read={sym("wc600"): 0x100, sym("wc700"): 0x100, sym("wc800"): 0x100, sym("wc900"): 0x100,
+                  sym("wTextTileBuffer") + 2: 1, sym("wcd04"): 1, sym("wCurTextTile"): 1, sym("wCurTextLine"): 1},
         ),
     ],
     "Func_2325": [
@@ -119,26 +120,26 @@ CASES.update({
         # one miss allocates the first node past the reserved index 0
         {"d": 0x41, "e": 0x42,
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         "read": {0xC620: 2, 0xC720: 2, 0xC820: 2, 0xC920: 2, 0xFFA9: 1,
-                  0xCD04: 1}},
+         "read": {sym("wc600") + 0x20: 2, sym("wc700") + 0x20: 2, sym("wc800") + 0x20: 2, sym("wc900") + 0x20: 2, sym("hffa9"): 1,
+                  sym("wcd04"): 1}},
         # a second distinct pair allocates again and relinks the head
         {"d": 0x43, "e": 0x44,
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40},
                    {"fn": "Func_2325", "d": 0x41, "e": 0x42}],
-         "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xFFA9: 1,
-                  0xCD04: 1}},
+         "read": {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("hffa9"): 1,
+                  sym("wcd04"): 1}},
         # repeating the first pair must hit the cache and hoist it, not allocate
         {"d": 0x41, "e": 0x42,
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40},
                    {"fn": "Func_2325", "d": 0x41, "e": 0x42},
                    {"fn": "Func_2325", "d": 0x43, "e": 0x44}],
-         "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xFFA9: 1,
-                  0xCD04: 1}},
+         "read": {sym("wc600") + 0x20: 4, sym("wc700") + 0x20: 4, sym("wc800") + 0x20: 4, sym("wc900") + 0x20: 4, sym("hffa9"): 1,
+                  sym("wcd04"): 1}},
         dict(
             DRAGONITE_TEXT_2325.case(vram=False),
             **DRAGONITE_TEXT_2325.regs,
-            read={0xC600: 0x100, 0xC700: 0x100, 0xC800: 0x100, 0xC900: 0x100,
-                  0xCCF6: 1, 0xCD04: 1, 0xCD05: 1, 0xCD09: 1},
+            read={sym("wc600"): 0x100, sym("wc700"): 0x100, sym("wc800"): 0x100, sym("wc900"): 0x100,
+                  sym("wTextTileBuffer") + 2: 1, sym("wcd04"): 1, sym("wCurTextTile"): 1, sym("wCurTextLine"): 1},
         ),
     ],
     # The zero-length path alone leaves the whole copy loop unexercised, so these
@@ -150,16 +151,16 @@ CASES.update({
         dict(POISON, a=1, hl=SRC, d=0xc2, e=1, wram={SRC: b"\x00"}),
         # full-width source, ends before the budget: pads with the $70 space tile
         {"a": 4, "hl": SRC, "d": 0xc2, "e": 0,
-         "wram": {SRC: b"\x41\x42\x00"}, "read": {0xC200: 8}},
+         "wram": {SRC: b"\x41\x42\x00"}, "read": {sym("wPlayerCardLocations"): 8}},
         # half-width source ($06 lead byte) doubles the budget and pads with $20
         {"a": 2, "hl": SRC, "d": 0xc2, "e": 0,
-         "wram": {SRC: b"\x06\x41\x42\x00"}, "read": {0xC200: 8}},
+         "wram": {SRC: b"\x06\x41\x42\x00"}, "read": {sym("wPlayerCardLocations"): 8}},
         # more characters than the budget allows: truncates and sets carry
         {"a": 2, "hl": SRC, "d": 0xc2, "e": 0,
-         "wram": {SRC: b"\x41\x42\x43\x44\x45\x00"}, "read": {0xC200: 8}},
+         "wram": {SRC: b"\x41\x42\x43\x44\x45\x00"}, "read": {sym("wPlayerCardLocations"): 8}},
         # a plain control character is copied but must not consume budget
         {"a": 3, "hl": SRC, "d": 0xc2, "e": 0,
-         "wram": {SRC: b"\x07\x41\x42\x00"}, "read": {0xC200: 8}},
+         "wram": {SRC: b"\x07\x41\x42\x00"}, "read": {sym("wPlayerCardLocations"): 8}},
     ],
     # Every CONTRACT field is push/pop-preserved, so the only observable effect is what
     # the dispatched callees write: wCurTextTile ($CD05), the tile at
@@ -170,17 +171,17 @@ CASES.update({
     # Func_2325 / GenerateTextTile path, with bit1 gating PlaceNextTextTile.
     "Func_22ca": [
         {"d": 1, "e": 2,
-         "wram": {0xffb0: b"\x01", 0xffa9: b"\x2a", 0xffaa: b"\x00\x98", 0xffac: b"\x00"},
-         "read": {0xCD05: 1, 0xFFAA: 2, 0xFFAC: 1, 0x9800: 4}},
+         "wram": {sym("hffb0"): b"\x01", sym("hffa9"): b"\x2a", sym("hTextBGMap0Address"): b"\x00\x98", sym("hTextLineCurPos"): b"\x00"},
+         "read": {sym("wCurTextTile"): 1, sym("hTextBGMap0Address"): 2, sym("hTextLineCurPos"): 1, 0x9800: 4}},
         dict(POISON, d=3, e=4,
-             wram={0xffb0: b"\x01", 0xffa9: b"\x2a", 0xffaa: b"\x00\x98", 0xffac: b"\x00"},
-             read={0xCD05: 1, 0xFFAA: 2, 0xFFAC: 1, 0x9800: 4}),
+             wram={sym("hffb0"): b"\x01", sym("hffa9"): b"\x2a", sym("hTextBGMap0Address"): b"\x00\x98", sym("hTextLineCurPos"): b"\x00"},
+             read={sym("wCurTextTile"): 1, sym("hTextBGMap0Address"): 2, sym("hTextLineCurPos"): 1, 0x9800: 4}),
         {"d": 1, "e": 2,
-         "wram": {0xffb0: b"\x00", 0xffa9: b"\x2a", 0xffaa: b"\x00\x98", 0xffac: b"\x00"},
-         "read": {0xCD05: 1, 0xFFAA: 2, 0xFFAC: 1, 0x9800: 4}},
+         "wram": {sym("hffb0"): b"\x00", sym("hffa9"): b"\x2a", sym("hTextBGMap0Address"): b"\x00\x98", sym("hTextLineCurPos"): b"\x00"},
+         "read": {sym("wCurTextTile"): 1, sym("hTextBGMap0Address"): 2, sym("hTextLineCurPos"): 1, 0x9800: 4}},
         {"d": 1, "e": 2,
-         "wram": {0xffb0: b"\x02", 0xffa9: b"\x2a", 0xffaa: b"\x00\x98", 0xffac: b"\x00"},
-         "read": {0xCD05: 1, 0xFFAA: 2, 0xFFAC: 1, 0x9800: 4}},
+         "wram": {sym("hffb0"): b"\x02", sym("hffa9"): b"\x2a", sym("hTextBGMap0Address"): b"\x00\x98", sym("hTextLineCurPos"): b"\x00"},
+         "read": {sym("wCurTextTile"): 1, sym("hTextBGMap0Address"): 2, sym("hTextLineCurPos"): 1, 0x9800: 4}},
     ],
 })
 from tests.cases._schema_migration import legacy_to_schema
@@ -202,13 +203,13 @@ MUTATIONS = {
 MUTATIONS["PlaceNextTextTile"] = {"source_symbol": "PlaceNextTextTile", "before": "\tuint8_t restored_c = (wLCDC & 0x80u) != 0u ? 1u : 0u;", "after": "\tuint8_t restored_c = 0u;", "case_ids": ["PlaceNextTextTile-0", "PlaceNextTextTile-1", "PlaceNextTextTile-2"]}
 MUTATIONS["TerminateHalfWidthText"] = {"source_symbol": "TerminateHalfWidthText", "before": "\tuint8_t exit_a = Func_22ca(d, pair);", "after": "\tuint8_t exit_a = 0u;\n\t(void)Func_22ca(d, pair);", "case_ids": ["TerminateHalfWidthText-0", "TerminateHalfWidthText-1", "TerminateHalfWidthText-2"]}
 for _rec in SCHEMA2_CASES["Func_235e"]:
-    _rec.setdefault("bus", {}).update({0xCD0B: 1, 0xFFA9: 1})
+    _rec.setdefault("bus", {}).update({sym("wHalfWidthPrintState"): 1, sym("hffa9"): 1})
 for _rec in SCHEMA2_CASES["InitTextPrinting"]:
-    _rec.setdefault("bus", {}).update({0xCD09: 1, 0xCD0A: 1, 0xCD0B: 1, 0xFFAA: 1, 0xFFAB: 1, 0xFFAC: 1, 0xFFAD: 1, 0xFFAE: 1, 0xFFAF: 1})
+    _rec.setdefault("bus", {}).update({sym("wCurTextLine"): 1, sym("wFontWidth"): 1, sym("wHalfWidthPrintState"): 1, sym("hTextBGMap0Address"): 1, sym("hTextBGMap0Address") + 1: 1, sym("hTextLineCurPos"): 1, sym("hTextHorizontalAlign"): 1, sym("hTextLineLength"): 1, sym("hJapaneseSyllabary"): 1})
 for _rec in SCHEMA2_CASES["InitTextPrintingInTextbox"]:
-    _rec.setdefault("bus", {}).update({0xCD09: 1, 0xCD0B: 1, 0xFFAA: 1, 0xFFAB: 1, 0xFFAD: 1, 0xFFAE: 1})
+    _rec.setdefault("bus", {}).update({sym("wCurTextLine"): 1, sym("wHalfWidthPrintState"): 1, sym("hTextBGMap0Address"): 1, sym("hTextBGMap0Address") + 1: 1, sym("hTextHorizontalAlign"): 1, sym("hTextLineLength"): 1})
 for _rec in SCHEMA2_CASES["ProcessSpecialTextCharacter"]:
-    _rec.setdefault("bus", {}).update({0xCD05: 1, 0xCD0A: 1, 0xFFAA: 1, 0xFFAB: 1, 0xFFAF: 1})
+    _rec.setdefault("bus", {}).update({sym("wCurTextTile"): 1, sym("wFontWidth"): 1, sym("hTextBGMap0Address"): 1, sym("hTextBGMap0Address") + 1: 1, sym("hJapaneseSyllabary"): 1})
 MUTATIONS["ClassifyTextCharacterPair"] = {
     "source_symbol": "ClassifyTextCharacterPair",
     "before": "\tif (*e >= TX_CTRL_END && *e < 0x60 && hJapaneseSyllabary == TX_KATAKANA) {",
@@ -318,7 +319,7 @@ MUTATIONS["SetupText"] = {
     "case_ids": ["SetupText-0"],
 }
 for _rec in SCHEMA2_CASES["Func_235e"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["Func_235e"] = {
     "source_symbol": "Func_235e",
     "before": "ProcessTextResult Func_235e(uint8_t d, uint8_t e)\n{",
@@ -326,7 +327,7 @@ MUTATIONS["Func_235e"] = {
     "case_ids": ["Func_235e-0"],
 }
 for _rec in SCHEMA2_CASES["ProcessSpecialTextCharacter"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["ProcessSpecialTextCharacter"] = {
     "source_symbol": "ProcessSpecialTextCharacter",
     "before": "ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)\n{",
@@ -334,7 +335,7 @@ MUTATIONS["ProcessSpecialTextCharacter"] = {
     "case_ids": ["ProcessSpecialTextCharacter-0"],
 }
 for _rec in SCHEMA2_CASES["ProcessText"]:
-    _rec.setdefault("bus", {}).update({0xdff0: 1})
+    _rec.setdefault("bus", {}).update({STACK_CANARY: 1})
 MUTATIONS["ProcessText"] = {
     "source_symbol": "ProcessText",
     "before": "ProcessTextResult ProcessText(uint16_t *hl)\n{",

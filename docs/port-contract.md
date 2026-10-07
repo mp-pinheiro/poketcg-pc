@@ -195,6 +195,8 @@ is to the routine. Two corollaries that have each cost a session:
 
 ### Case-key reference
 
+Every address in these keys (dict keys of `wram`, `read`, `sram`, `sread`, `expect`; pointer registers; `stack` words; `entry_sp`; schema-2 `completion` pcs) is spelled through `tests/cases/_symbols.py`, which resolves names against the active profile's `.sym` at import and raises on an unknown name: `sym("wFoo") + n` for a game variable or ROM label (`sym_bank("Label")` for its bank), `data(0x...)` for a value inside a RAM range that is not an address, `CALL_FRAME`, `STACK_WINDOW`, `STACK_TOP` (`entry_sp` is usually `STACK_TOP - 2`) and `STACK_CANARY` for the harness frame, and `WRAM_START`, `WRAMX_START`, `SRAM_START`, `HRAM_START` for whole-region or bank images. A `mem:` event predicate is an f-string over `sym(...)`. Fixture cases pass patches as `fixture.case({sym("wFoo"): b"..."}, vram=False)`. `just lint-case-literals` rejects raw RAM literals.
+
 One line each, matching `diff_case` (`tests/test_leaves.py:95-169`), the
 authoritative source:
 
@@ -221,20 +223,7 @@ authoritative source:
   `{bank: {addr: bytes}}` and `expect_vram` has the same shape. All are derived
   from the asm, never read off the oracle; seeded `wram`/`sram` and requested
   banked reads are not compared automatically in a C-only case.
-- `keys` — `int`, buttons held for the whole call, or `[int, ...]` (up to 16), a
-  per-frame timeline that cycles. Bit layout matches the game's own `hKeysHeld`
-  (`poketcg/src/constants/hardware.inc:88-105`): bit0 `A`, 1 `B`, 2 `SELECT`, 3
-  `START`, 4 `RIGHT`, 5 `LEFT`, 6 `UP`, 7 `DOWN`.
-  The only way to test a routine that spins on `ReadJoypad`/
-  `WaitForButtonAorB` — with `keys` unset (0) it waits forever.
-  A scalar is held from the first instruction and is therefore *newly pressed
-  exactly once*, which is invisible to every wait that starts after that first
-  frame. The game's waits read edge-triggered `hKeysPressed`, so a routine with
-  more than one wait needs a cycle: `keys=[0x00, 0x01]` taps `A` forever. All
-  three lanes cycle it — the reference per rendered frame
-  (`tools/oracle/gbref/runner.c`), PyBoy per tick (`tools/oracle/pyboy_oracle.py`),
-  and the native probe per completed joypad poll (`src/mem.c`, which has no
-  frames). A one-entry timeline never advances, so it is exactly a held scalar.
+- `keys`: `int`, buttons held for the whole call, or `[int, ...]` (up to 16), a timeline that cycles. Bit layout matches the game's own `hKeysHeld` (`poketcg/src/constants/hardware.inc:88-105`): bit0 `A`, 1 `B`, 2 `SELECT`, 3 `START`, 4 `RIGHT`, 5 `LEFT`, 6 `UP`, 7 `DOWN`. The only way to test a routine that spins on `ReadJoypad`/`WaitForButtonAorB`; with `keys` unset (0) it waits forever. One rule holds in all three lanes: poll `i` of the routine under test (counting from 0, setups excluded) receives entry `i mod n` as its held keys, at the point where `ReadJoypad` has combined the d-pad and buttons in `a` (the `ld c, a` after `or b`, found per profile by scanning the ROM from the `ReadJoypad` symbol), and the physical pad holds entry 0 for the whole call, so every other `rJOYP` read (the IR and SGB code read it directly, `TryReceiveIRRequest` cancels on a held `B`) sees entry 0. PyBoy and gbref press entry 0 after the setups and set `a` at the poll point (`tools/oracle/pyboy_oracle.py` `_poll_keys`, `tools/oracle/gbref/runner.c` `joypad_poll_pc`); the native probe presents the current entry to `ReadJoypad`'s own reads, entry 0 to any other `rJOYP` read, and advances on the `hKeysHeld` write that follows `ReadJoypad`'s select writes, never on `ClearJoypad` (`src/mem.c`). Frames play no part. A scalar or a one-entry timeline is therefore held for the whole call; during setups no buttons are held. A held scalar is *newly pressed exactly once*, on the first poll, which is invisible to every later wait. The game's waits read edge-triggered `hKeysPressed`, so a routine with more than one wait needs a cycle: `keys=[0x00, 0x01]` presses `A` on every odd poll.
   "Waits forever" is now bounded on the PyBoy lane. Frames cap emulated time,
   not wall clock, and the two came apart badly: a wedged frame (`mb.tick` spins
   on `while not lcd.frame_done` while `PyBoy._tick` re-enters it per breakpoint)
@@ -312,12 +301,7 @@ silently dropped; this produced false hangs such as `AITryToRetreat`, whose
 for `$FF00-$FF7F` hardware IO and `$FFFF` IE; those are deliberately not
 migrated as plain RAM because their reads require register-specific masking.
 
-**Reserved WRAM: `$CFF0-$CFF5` and `$DC30-$DCFF`.** Only the PyBoy backend
-synthesizes a call frame in WRAM. Its return sentinel and parking loop remain
-at `$CFF0` / `$CFF4` in fixed WRAM, where PyBoy execution hooks capture the
-exit immediately. Its stack grows down from `$DCC0` inside pret's unallocated
-`$D69C-$DD7F` gap. The GBRT runner uses `sp=$FFFE` and sentinel `$FEA0`, both
-outside WRAM.
+**Reserved WRAM: `$CFF0-$CFF5` and `$DC30-$DCFF`.** These are `CALL_FRAME` and `STACK_WINDOW` in `tests/cases/_symbols.py`, the single definition the harness reads; a profile whose sym puts any symbol inside `STACK_WINDOW` fails at harness start. The PyBoy backend parks its post-call byte at `$CFF0` in fixed WRAM, where PyBoy execution hooks capture the exit immediately, and its stack grows down from `STACK_TOP` (`$DCC0`). The GBRT runner uses the same frame: a case without `entry_sp` enters at `STACK_TOP - 2` with return sentinel `$3F80`, and its setups run there too. A routine that reaches `hDMAFunction` (any sprite VBlank function) needs `CopyDMAFunction` in its `setup`: with the stack in HRAM an empty `hDMAFunction` used to slide into the stack bytes and return by accident. The runner's final `bus` snapshot reads VRAM (current `VBK` bank) and OAM as stored memory, not through the CPU's mode-2/3 lock, so a case observing seeded VRAM no longer depends on the PPU mode at completion.
 
 The deep stack was moved from `$CF30-$CFFF` on 2026-08-26 because that range
 overlapped live deck and card symbols. Stack depth was measured over the 31
@@ -346,10 +330,7 @@ the copy. The seven measured regressions all pass after those changes:
 `Func_0bcb`, `UpdateNPCAnimation`, `CometPunch_AIEffect`, and
 `UpdateArenaCardIDsAndClearTwoTurnDuelVars`.
 
-Note when measuring: `compare_one.py` cannot show this. It runs GBRT plus the C
-probe, and GBRT enters at `sp = 0xfffe` with its stack in HRAM, so neither side
-touches `$CFxx` and any seeded pattern survives regardless. Only the PyBoy path
-(`tests/test_leaves.py`, `oracle-diff`) exercises the frame.
+Note when measuring: `compare_one.py` now exercises the same frame, since GBRT enters at `STACK_TOP - 2` in WRAM like PyBoy.
 
 **The frame boundary: what is already testable and what is not.** A large
 blocker cluster (51 stanzas, 3109 B as of 2026-08-26) cites

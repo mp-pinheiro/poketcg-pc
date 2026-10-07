@@ -13,8 +13,6 @@ _RETREAT = Fixture("ai-duel-fire-charge-aiprocessretreat-entry",
 
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
-    case["read"][0xCC00] = 0xBD
-    case["read"][0xCCBE] = 0x42
     return case
 
 
@@ -55,7 +53,7 @@ MUTATIONS = {
         'after': '\tif (already_retreated != 0u)\n'
                  '\t\treturn (AIProcessRetreatResult){0u, 0x00u};',
         'case_ids': ['AIProcessRetreat-0'],
-        'source': 'src/profiles/extended/home/general.c'},
+        'source': 'src/home/general.c'},
     'AIMainTurnLogic': {   'source_symbol': 'AIMainTurnLogic',
         'before': 'AIMainTurnLogicResult AIMainTurnLogic(uint8_t a, uint8_t f, uint8_t b, uint8_t '
                   'c, uint8_t d, uint8_t e, uint16_t hl)\n'
@@ -66,7 +64,7 @@ MUTATIONS = {
                  '{\n'
                  '\tuint8_t unused = 0u;',
         'case_ids': ['AIMainTurnLogic-0', 'AIMainTurnLogic-1'],
-        'source': 'src/profiles/extended/home/general.c'},
+        'source': 'src/home/general.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

@@ -41,12 +41,12 @@ MUTATIONS = {
                         'ScriptPlaySong-1',
                         'ScriptPlaySong-2',
                         'ScriptPlaySong-3'],
-        'source': 'src/profiles/extended/home/play_song.c'},
+        'source': 'src/home/play_song.c'},
     'WaitForSongToFinish': {   'source_symbol': 'WaitForSongToFinish',
         'before': 'void WaitForSongToFinish(void)\n{',
         'after': 'void WaitForSongToFinish(void)\n{\n\tgb_write8(0xdff0u, 0xFFu);',
         'case_ids': ['WaitForSongToFinish-0'],
-        'source': 'src/profiles/extended/home/play_song.c'},
+        'source': 'src/home/play_song.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

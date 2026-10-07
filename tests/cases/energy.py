@@ -1,3 +1,4 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import ai_energy_play_fixture as _ai_energy_play_fixture, AI_ENERGY_PLAY_REGS as _AI_ENERGY_PLAY_REGS, ai_energy_scoring_fixture as _ai_energy_scoring_fixture, AI_ENERGY_SCORING_REGS as _AI_ENERGY_SCORING_REGS
 from tests.cases._fixtures import ai_energy_fixture as _ai_energy_fixture, AI_ENERGY_REGS as _AI_ENERGY_REGS, ai_try_energy_fixture as _ai_try_energy_fixture, AI_TRY_ENERGY_REGS as _AI_TRY_ENERGY_REGS, ai_evolution_energy_fixture as _ai_evolution_energy_fixture, AI_EVOLUTION_ENERGY_REGS as _AI_EVOLUTION_ENERGY_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/energy.asm."""
@@ -11,9 +12,9 @@ CASES = {}
 # >>> factory RetrievePlayAreaAIScoreFromBackup1
 CONTRACT["RetrievePlayAreaAIScoreFromBackup1"] = {"compare": ("a", "f", "c", "d", "e", "hl"), "preserve": ("a", "f", "c")}
 CASES["RetrievePlayAreaAIScoreFromBackup1"] = [
-    {"wram": {0xCDDD: b"\x00" * 7, 0xCDBE: b"\x00" * 7}, "read": {0xCDBE: 7}},
-    {"wram": {0xCDDD: b"\x11\x22\x33\x44\x55\x66\x77", 0xCDBE: b"\xaa" * 7}, "read": {0xCDBE: 7}},
-    dict(POISON, wram={0xCDDD: b"\x01\x02\x03\x04\x05\x06\x07", 0xCDBE: b"\xff" * 7}, read={0xCDBE: 7}),
+    {"wram": {sym("wTempPlayAreaAIScore"): b"\x00" * 7, sym("wAIScore"): b"\x00" * 7}, "read": {sym("wAIScore"): 7}},
+    {"wram": {sym("wTempPlayAreaAIScore"): b"\x11\x22\x33\x44\x55\x66\x77", sym("wAIScore"): b"\xaa" * 7}, "read": {sym("wAIScore"): 7}},
+    dict(POISON, wram={sym("wTempPlayAreaAIScore"): b"\x01\x02\x03\x04\x05\x06\x07", sym("wAIScore"): b"\xff" * 7}, read={sym("wAIScore"): 7}),
 ]
 # <<< factory RetrievePlayAreaAIScoreFromBackup1
 
@@ -22,13 +23,13 @@ CONTRACT["FindPlayAreaCardWithHighestAIScore"] = {"compare": ("a", "f", "b", "c"
 CASES["FindPlayAreaCardWithHighestAIScore"] = [
     # the whole 256-byte window scanned by the count-0 (== 256 iterations) loop is
     # seeded; wAIEnergyAttachLogicFlags (0xCDD8) lives at offset 25 inside it.
-    {"wram": {0xCDBF: b"\x00" * 256}, "read": {0xFF9D: 1}},
-    {"wram": {0xCDBF: b"\x85" + b"\x00" * 255}, "read": {0xFF9D: 1}},
-    {"wram": {0xCDBF: b"\x84" + b"\x00" * 255}, "read": {0xFF9D: 1}},
-    {"wram": {0xCDBF: b"\x00\x00\x00\x90" + b"\x00" * 252}, "read": {0xFF9D: 1}},
-    {"wram": {0xCDBF: b"\x00\x40\x90" + b"\x00" * 22 + b"\x80" + b"\x00" * 230}, "read": {0xFF9D: 1}},
-    dict(POISON, wram={0xCDBF: b"\x00\x91\x00\x00\x91" + b"\x00" * 20 + b"\x80" + b"\x00" * 230}, read={0xFF9D: 1}),
-    dict(POISON, wram={0xCDBF: b"\x90\x00\x90" + b"\x00" * 253}, read={0xFF9D: 1}),
+    {"wram": {sym("wFirstAttackAIScore"): b"\x00" * 256}, "read": {sym("hTempPlayAreaLocation_ff9d"): 1}},
+    {"wram": {sym("wFirstAttackAIScore"): b"\x85" + b"\x00" * 255}, "read": {sym("hTempPlayAreaLocation_ff9d"): 1}},
+    {"wram": {sym("wFirstAttackAIScore"): b"\x84" + b"\x00" * 255}, "read": {sym("hTempPlayAreaLocation_ff9d"): 1}},
+    {"wram": {sym("wFirstAttackAIScore"): b"\x00\x00\x00\x90" + b"\x00" * 252}, "read": {sym("hTempPlayAreaLocation_ff9d"): 1}},
+    {"wram": {sym("wFirstAttackAIScore"): b"\x00\x40\x90" + b"\x00" * 22 + b"\x80" + b"\x00" * 230}, "read": {sym("hTempPlayAreaLocation_ff9d"): 1}},
+    dict(POISON, wram={sym("wFirstAttackAIScore"): b"\x00\x91\x00\x00\x91" + b"\x00" * 20 + b"\x80" + b"\x00" * 230}, read={sym("hTempPlayAreaLocation_ff9d"): 1}),
+    dict(POISON, wram={sym("wFirstAttackAIScore"): b"\x90\x00\x90" + b"\x00" * 253}, read={sym("hTempPlayAreaLocation_ff9d"): 1}),
 ]
 # <<< factory FindPlayAreaCardWithHighestAIScore
 
@@ -36,44 +37,44 @@ CASES["FindPlayAreaCardWithHighestAIScore"] = [
 CONTRACT["CheckSpecificDecksToAttachDoubleColorless"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["CheckSpecificDecksToAttachDoubleColorless"] = [
     {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566,
-     "wram": {0xCC0E: b"\x00"}},
-    dict(POISON, wram={0xCC0E: b"\x00"}),
+     "wram": {sym("wOpponentDeckID"): b"\x00"}},
+    dict(POISON, wram={sym("wOpponentDeckID"): b"\x00"}),
     {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566,
-     "wram": {0xCC0E: b"\x17", 0xFF97: b"\xC2", 0xC2BB: b"\x03", 0xC400+3: b"\x36",
-               0xC2EE: b"\x01", 0xC242: b"\x06", 0xC400+6: b"\x07"}},
+     "wram": {sym("wOpponentDeckID"): b"\x17", sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x03", sym("wBoosterCardsDrawn")+3: b"\x36",
+               sym("wPlayerNumberOfCardsInHand"): b"\x01", sym("wPlayerHand"): b"\x06", sym("wBoosterCardsDrawn")+6: b"\x07"}},
 ]
 # <<< factory CheckSpecificDecksToAttachDoubleColorless
 
 # >>> factory-cases-statics
-hWhoseTurn = 0xFF97
-hTempPlayAreaLocation_ff9d = 0xFF9D
-wPlayerDeck = 0xC400
-wPlayerArenaCard = 0xC2BB
-wSelectedAttack = 0xCCC6
-wLoadedCard2 = 0xCC65
+hWhoseTurn = sym("hWhoseTurn")
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
+wPlayerDeck = sym("wPlayerDeck")
+wPlayerArenaCard = sym("wPlayerArenaCard")
+wSelectedAttack = sym("wSelectedAttack")
+wLoadedCard2 = sym("wLoadedCard2")
 BULBASAUR = 0x08
 IVYSAUR = 0x09
 ZAPDOS_LV64_ID = 0x75
 CHARIZARD_ID = 0x32
 
-hTempPlayAreaLocation_ff9d = 0xFF9D
-wSelectedAttack = 0xCCC6
-wTempAI = 0xCDF1
-wLoadedCard1ID = 0xCC2B
-hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
+wSelectedAttack = sym("wSelectedAttack")
+wTempAI = sym("wTempAI")
+wLoadedCard1ID = sym("wLoadedCard1ID")
+hWhoseTurn = sym("hWhoseTurn")
 
-wAIBarrierFlagCounter = 0xCDA7
-wAIScore = 0xCDBE
-wDuelTempList = 0xC510
-wPlayAreaAIScore = 0xCDBF
-wPlayAreaEnergyAIScore = 0xCDE4
-wTempAI = 0xCDF1
-wTotalAttachedEnergies = 0xCC23
-hTempPlayAreaLocation_ff9d = 0xFF9D
+wAIBarrierFlagCounter = sym("wAIBarrierFlagCounter")
+wAIScore = sym("wAIScore")
+wDuelTempList = sym("wDuelTempList")
+wPlayAreaAIScore = sym("wPlayAreaAIScore")
+wPlayAreaEnergyAIScore = sym("wPlayAreaEnergyAIScore")
+wTempAI = sym("wTempAI")
+wTotalAttachedEnergies = sym("wTotalAttachedEnergies")
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
 
-wAIScore = 0xCDBE
-wPlayAreaAIScore = 0xCDBF
-wTempPlayAreaAIScore = 0xCDDD
+wAIScore = sym("wAIScore")
+wPlayAreaAIScore = sym("wPlayAreaAIScore")
+wTempPlayAreaAIScore = sym("wTempPlayAreaAIScore")
 # <<< factory-cases-statics
 
 # >>> factory GetEnergyCardForDiscardOrEnergyBoostAttack
@@ -107,9 +108,9 @@ CONTRACT["CheckIfEvolutionNeedsEnergyForAttack"] = {"compare": ("a", "f", "b", "
 # CheckCardEvolutionInHandOrDeck left in bc and de; the caller returns on that
 # no-carry without reading them, so they compare the verdict only.
 CASES["CheckIfEvolutionNeedsEnergyForAttack"] = [
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60}, "compare": ("a", "f")},
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2BB: b"\x03", 0xC2BC: b"\x05", 0xC200: b"\xFF" * 60}, "compare": ("a", "f")},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60}, compare=("a", "f")),
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerArenaCard"): b"\x07", sym("wPlayerCardLocations"): b"\xFF" * 60}, "compare": ("a", "f")},
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x01", sym("wPlayerArenaCard"): b"\x03", sym("wPlayerBench"): b"\x05", sym("wPlayerCardLocations"): b"\xFF" * 60}, "compare": ("a", "f")},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerArenaCard"): b"\x07", sym("wPlayerCardLocations"): b"\xFF" * 60}, compare=("a", "f")),
     dict(_ai_evolution_energy_fixture(bank=5), **_AI_EVOLUTION_ENERGY_REGS),
 ]
 # <<< factory CheckIfEvolutionNeedsEnergyForAttack
@@ -117,19 +118,19 @@ CASES["CheckIfEvolutionNeedsEnergyForAttack"] = [
 # >>> factory AITryToPlayEnergyCard
 CONTRACT["AITryToPlayEnergyCard"] = {"compare": ("a",), "preserve": ()}
 CASES["AITryToPlayEnergyCard"] = [
-    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\xFF" * 60}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\xFF" * 60}),
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerCardLocations"): b"\xFF" * 60}},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerCardLocations"): b"\xFF" * 60}),
     dict(_ai_try_energy_fixture(bank=5), **_AI_TRY_ENERGY_REGS),
-    dict(_ai_energy_play_fixture(vram=False, bank=8), **_AI_ENERGY_PLAY_REGS, read={0xC510: 8, 0xCACA: 3, 0xFFA0: 2}),
+    dict(_ai_energy_play_fixture(vram=False, bank=8), **_AI_ENERGY_PLAY_REGS, read={sym("wDuelTempList"): 8, sym("wRNG1"): 3, sym("hTempList"): 2}),
 ]
 # <<< factory AITryToPlayEnergyCard
 
 # >>> factory DetermineAIScoreOfAttackEnergyRequirement
 CONTRACT["DetermineAIScoreOfAttackEnergyRequirement"] = {"compare": (), "preserve": ()}
 CASES["DetermineAIScoreOfAttackEnergyRequirement"] = [
-    {"a": 0x00, "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60, 0xCDF1: b"\xFF"}, "read": {0xCCC6: 1}},
-    {"a": 0x01, "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60, 0xCDF1: b"\xFF"}, "read": {0xCCC6: 1}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60, 0xCDF1: b"\xFF"}, read={0xCCC6: 1}),
+    {"a": 0x00, "wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerArenaCard"): b"\x07", sym("wPlayerCardLocations"): b"\xFF" * 60, sym("wTempAI"): b"\xFF"}, "read": {sym("wSelectedAttack"): 1}},
+    {"a": 0x01, "wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerArenaCard"): b"\x07", sym("wPlayerCardLocations"): b"\xFF" * 60, sym("wTempAI"): b"\xFF"}, "read": {sym("wSelectedAttack"): 1}},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerArenaCard"): b"\x07", sym("wPlayerCardLocations"): b"\xFF" * 60, sym("wTempAI"): b"\xFF"}, read={sym("wSelectedAttack"): 1}),
 ]
 # <<< factory DetermineAIScoreOfAttackEnergyRequirement
 
@@ -138,8 +139,8 @@ CASES["DetermineAIScoreOfAttackEnergyRequirement"] = [
 # when a card was chosen, clear on every other exit.
 CONTRACT["AIProcessEnergyCards"]={"compare":("a","f"),"preserve":()}
 CASES["AIProcessEnergyCards"]=[
- {"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234,"wram":{0xCDB2:b"\0\0",0xCDD8:b"\2",0xCDA7:b"\0",0xC2EF:b"\1",0xC2C8:b"\0",0xFF97:b"\xC2",0xCABB:b"\0",0xC510:b"\xff"},"read":{0xCDBF:6,0xCDE4:6},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000},
- {"wram":{0xCDD8:b"\2",0xC2EF:b"\1",0xC2C8:b"\0",0xFF97:b"\xC2",0xCABB:b"\0",0xC510:b"\xff"},"read":{0xCDBF:6,0xCDE4:6},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000},
+ {"a":0xAA,"f":0xF0,"b":0xBB,"c":0xCC,"d":0xDD,"e":0xEE,"hl":0x1234,"wram":{sym("wAICardListEnergyBonus"):b"\0\0",sym("wAIEnergyAttachLogicFlags"):b"\2",sym("wAIBarrierFlagCounter"):b"\0",sym("wPlayerNumberOfPokemonInPlayArea"):b"\1",sym("wPlayerArenaCardHP"):b"\0",sym("hWhoseTurn"):b"\xC2",sym("wLCDC"):b"\0",sym("wDuelTempList"):b"\xff"},"read":{sym("wFirstAttackAIScore"):6,sym("wPlayAreaEnergyAIScore"):6},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000},
+ {"wram":{sym("wAIEnergyAttachLogicFlags"):b"\2",sym("wPlayerNumberOfPokemonInPlayArea"):b"\1",sym("wPlayerArenaCardHP"):b"\0",sym("hWhoseTurn"):b"\xC2",sym("wLCDC"):b"\0",sym("wDuelTempList"):b"\xff"},"read":{sym("wFirstAttackAIScore"):6,sym("wPlayAreaEnergyAIScore"):6},"setup":[{"fn":"CopyDMAFunction"},{"fn":"SetupText","d":0x20,"e":0x40}],"instruction_budget":20000000,"cycle_budget":80000000},
  dict(_ai_energy_fixture(bank=5), **_AI_ENERGY_REGS),
 ]
 # <<< factory AIProcessEnergyCards
@@ -147,33 +148,33 @@ CASES["AIProcessEnergyCards"]=[
 # >>> factory AIProcessAndTryToPlayEnergy
 CONTRACT["AIProcessAndTryToPlayEnergy"] = {"compare": (), "preserve": ()}
 CASES["AIProcessAndTryToPlayEnergy"] = [
-    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCDBE: b"\x10" * 7, 0xCDBF: b"\x00" * 7}, "read": {0xCDBF: 7}},
-    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCDBE: b"\x20" * 7, 0xCDBF: b"\x00" * 7}, read={0xCDBF: 7}),
-    dict(_ai_energy_scoring_fixture(vram=False, bank=8), **_AI_ENERGY_SCORING_REGS, read={0xC510: 8, 0xCACA: 3, 0xFF9D: 1, 0xFFA0: 2, 0xCDBE: 6}),
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wAIScore"): b"\x10" * 7, sym("wFirstAttackAIScore"): b"\x00" * 7}, "read": {sym("wFirstAttackAIScore"): 7}},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wAIScore"): b"\x20" * 7, sym("wFirstAttackAIScore"): b"\x00" * 7}, read={sym("wFirstAttackAIScore"): 7}),
+    dict(_ai_energy_scoring_fixture(vram=False, bank=8), **_AI_ENERGY_SCORING_REGS, read={sym("wDuelTempList"): 8, sym("wRNG1"): 3, sym("hTempPlayAreaLocation_ff9d"): 1, sym("hTempList"): 2, sym("wAIScore"): 6}),
 ]
 # <<< factory AIProcessAndTryToPlayEnergy
 
 # >>> factory AIProcessButDontPlayEnergy_SkipEvolution
 CONTRACT["AIProcessButDontPlayEnergy_SkipEvolution"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIProcessButDontPlayEnergy_SkipEvolution"] = [
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCDBE: b"\x5A", 0xCDBF: b"\x10\x20\x30\x40\x50\x60\x70", 0xCDB2: b"\0\0", 0xCDA7: b"\0", 0xC2EF: b"\1", 0xC2C8: b"\0", 0xFF97: b"\xC2", 0xCABB: b"\0", 0xC510: b"\xff"}, "read": {0xCDD8: 1, 0xCDDD: 7, 0xCDE4: 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {0xCDBE: b"\x5A", 0xCDBF: b"\x10\x20\x30\x40\x50\x60\x70", 0xCDB2: b"\0\0", 0xCDA7: b"\0", 0xC2EF: b"\1", 0xC2C8: b"\0", 0xFF97: b"\xC2", 0xCABB: b"\0", 0xC510: b"\xff"}, "read": {0xCDD8: 1, 0xCDDD: 7, 0xCDE4: 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wAIScore"): b"\x5A", sym("wFirstAttackAIScore"): b"\x10\x20\x30\x40\x50\x60\x70", sym("wAICardListEnergyBonus"): b"\0\0", sym("wAIBarrierFlagCounter"): b"\0", sym("wPlayerNumberOfPokemonInPlayArea"): b"\1", sym("wPlayerArenaCardHP"): b"\0", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\0", sym("wDuelTempList"): b"\xff"}, "read": {sym("wAIEnergyAttachLogicFlags"): 1, sym("wTempPlayAreaAIScore"): 7, sym("wPlayAreaEnergyAIScore"): 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {sym("wAIScore"): b"\x5A", sym("wFirstAttackAIScore"): b"\x10\x20\x30\x40\x50\x60\x70", sym("wAICardListEnergyBonus"): b"\0\0", sym("wAIBarrierFlagCounter"): b"\0", sym("wPlayerNumberOfPokemonInPlayArea"): b"\1", sym("wPlayerArenaCardHP"): b"\0", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\0", sym("wDuelTempList"): b"\xff"}, "read": {sym("wAIEnergyAttachLogicFlags"): 1, sym("wTempPlayAreaAIScore"): 7, sym("wPlayAreaEnergyAIScore"): 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
 ]
 # <<< factory AIProcessButDontPlayEnergy_SkipEvolution
 
 # >>> factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena
 CONTRACT["AIProcessButDontPlayEnergy_SkipEvolutionAndArena"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIProcessButDontPlayEnergy_SkipEvolutionAndArena"] = [
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCDBE: b"\x11\x10\x20\x30\x40\x50\x60\x70", 0xCDB2: b"\0\0", 0xCDA7: b"\0", 0xC2EF: b"\1", 0xC2C8: b"\0", 0xFF97: b"\xC2", 0xCABB: b"\0", 0xC510: b"\xff"}, "read": {0xCDD8: 1, 0xCDDD: 7, 0xCDE4: 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {0xCDBE: b"\x7f\x81\x00\x00\x00\x00\x00\x00", 0xCDB2: b"\0\0", 0xCDA7: b"\0", 0xC2EF: b"\1", 0xC2C8: b"\0", 0xFF97: b"\xC2", 0xCABB: b"\0", 0xC510: b"\xff"}, "read": {0xCDD8: 1, 0xCDDD: 7, 0xCDE4: 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wAIScore"): b"\x11\x10\x20\x30\x40\x50\x60\x70", sym("wAICardListEnergyBonus"): b"\0\0", sym("wAIBarrierFlagCounter"): b"\0", sym("wPlayerNumberOfPokemonInPlayArea"): b"\1", sym("wPlayerArenaCardHP"): b"\0", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\0", sym("wDuelTempList"): b"\xff"}, "read": {sym("wAIEnergyAttachLogicFlags"): 1, sym("wTempPlayAreaAIScore"): 7, sym("wPlayAreaEnergyAIScore"): 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {sym("wAIScore"): b"\x7f\x81\x00\x00\x00\x00\x00\x00", sym("wAICardListEnergyBonus"): b"\0\0", sym("wAIBarrierFlagCounter"): b"\0", sym("wPlayerNumberOfPokemonInPlayArea"): b"\1", sym("wPlayerArenaCardHP"): b"\0", sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\0", sym("wDuelTempList"): b"\xff"}, "read": {sym("wAIEnergyAttachLogicFlags"): 1, sym("wTempPlayAreaAIScore"): 7, sym("wPlayAreaEnergyAIScore"): 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena
 
 # >>> factory Func_16488
 CONTRACT["Func_16488"] = {"compare": (), "preserve": ()}
 CASES["Func_16488"] = [
-    {"wram": {0xC2EE: b"\x00", 0xCDBE: b"\x77", 0xCDBF: b"\x10\x20\x30\x40\x50\x60\x70"}, "read": {0xCDD8: 1, 0xCDBE: 1, 0xCDBF: 7, 0xCDDD: 7}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xC2EE: b"\x00", 0xCDBE: b"\x88", 0xCDBF: b"\x01\x02\x03\x04\x05\x06\x07"}, "read": {0xCDD8: 1, 0xCDBE: 1, 0xCDBF: 7, 0xCDDD: 7}},
+    {"wram": {sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wAIScore"): b"\x77", sym("wFirstAttackAIScore"): b"\x10\x20\x30\x40\x50\x60\x70"}, "read": {sym("wAIEnergyAttachLogicFlags"): 1, sym("wAIScore"): 1, sym("wFirstAttackAIScore"): 7, sym("wTempPlayAreaAIScore"): 7}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wAIScore"): b"\x88", sym("wFirstAttackAIScore"): b"\x01\x02\x03\x04\x05\x06\x07"}, "read": {sym("wAIEnergyAttachLogicFlags"): 1, sym("wAIScore"): 1, sym("wFirstAttackAIScore"): 7, sym("wTempPlayAreaAIScore"): 7}},
 ]
 # <<< factory Func_16488
 

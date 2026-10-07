@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/duel_init.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -8,17 +9,17 @@ CASES = {}
 
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-DI_WLCDC = 0xCABB
+DI_WLCDC = sym("wLCDC")
 DI_HW = 0xFF40
-DI_WD291 = 0xD291
-DI_FRAME = 0xCCF3
-DI_TXRAM2 = 0xCE3F
-DI_TXRAM2_B = 0xCE41
-DI_DECK_ID = 0xCC19
-DI_OPP_NAME = 0xCC16
-DI_PORTRAIT = 0xCC15
-DI_THEME = 0xD113
-DI_CUR_SONG = 0xDD80
+DI_WD291 = sym("wd291")
+DI_FRAME = sym("wTextBoxFrameType")
+DI_TXRAM2 = sym("wTxRam2")
+DI_TXRAM2_B = sym("wTxRam2_b")
+DI_DECK_ID = sym("wNPCDuelDeckID")
+DI_OPP_NAME = sym("wOpponentName")
+DI_PORTRAIT = sym("wOpponentPortrait")
+DI_THEME = sym("wMatchStartTheme")
+DI_CUR_SONG = sym("wCurSongID")
 # duel_init.asm:19-38 copies the title and deck-name text ids out of
 # OpponentTitlesAndDeckNames at four bytes per deck, and skips the deck-name
 # label when both of its bytes are zero, so the deck id selects the branch.

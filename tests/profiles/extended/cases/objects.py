@@ -63,12 +63,12 @@ MUTATIONS = {
                         'SetOneObjectAttributes-1',
                         'SetOneObjectAttributes-2',
                         'SetOneObjectAttributes-3'],
-        'source': 'src/profiles/extended/home/objects.c'},
+        'source': 'src/home/objects.c'},
     'ZeroObjectPositions': {   'source_symbol': 'ZeroObjectPositions',
         'before': '\t\tuint16_t p = (uint16_t)(wOAM_ADDR + (uint16_t)i * 4u);',
         'after': '\t\tuint16_t p = (uint16_t)(wOAM_ADDR + (uint16_t)i * 5u);',
         'case_ids': ['ZeroObjectPositions-1'],
-        'source': 'src/profiles/extended/home/objects.c'},
+        'source': 'src/home/objects.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

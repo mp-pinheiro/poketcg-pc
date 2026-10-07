@@ -1,3 +1,4 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import bench_switch_fixture as _bench_switch_fixture, BENCH_SWITCH_REGS as _BENCH_SWITCH_REGS
 from tests.cases._fixtures import retreat_stay_fixture as _retreat_stay_fixture, RETREAT_STAY_REGS as _RETREAT_STAY_REGS, retreat_gene_fixture as _retreat_gene_fixture, RETREAT_GENE_REGS as _RETREAT_GENE_REGS
 from tests.cases._fixtures import grass_retreat_fixture as _grass_retreat_fixture, GRASS_RETREAT_REGS as _GRASS_RETREAT_REGS
@@ -9,10 +10,10 @@ from tests.cases._fixtures import ai_ko_switch_fixture as _ai_ko_switch_fixture,
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-W_WHOSE_TURN = 0xCC05
-W_LOADED_ATTACK_CATEGORY = 0xCCB1
-W_AI_RETREAT_FLAGS = 0xCDDA
-W_AI_TRIED_ATTACK = 0xCDDB
+W_WHOSE_TURN = sym("wWhoseTurn")
+W_LOADED_ATTACK_CATEGORY = sym("wLoadedAttackCategory")
+W_AI_RETREAT_FLAGS = sym("wAIRetreatFlags")
+W_AI_TRIED_ATTACK = sym("wAITriedAttack")
 PLAYER_TURN = 0xC2
 OPPONENT_TURN = 0xC3
 
@@ -62,20 +63,20 @@ CASES = {
 }
 
 # >>> factory-cases-statics
-hWhoseTurn = 0xFF97
-hTempPlayAreaLocation_ffa1 = 0xFFA1
-wPlayerDuelVariables = 0xC200
-wPlayerDeck = 0xC400
-wAIPlayEnergyCardForRetreat = 0xCDD7
+hWhoseTurn = sym("hWhoseTurn")
+hTempPlayAreaLocation_ffa1 = sym("hTempPlayAreaLocation_ffa1")
+wPlayerDuelVariables = sym("wPlayerDuelVariables")
+wPlayerDeck = sym("wPlayerDeck")
+wAIPlayEnergyCardForRetreat = sym("wAIPlayEnergyCardForRetreat")
 DUELVARS_ARENA_CARD = 0xBB
 DUELVARS_ARENA_CARD_STATUS = 0xF0
 DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEF
 
-hWhoseTurn = 0xFF97
-wPlayerDuelVariables = 0xC200
+hWhoseTurn = sym("hWhoseTurn")
+wPlayerDuelVariables = sym("wPlayerDuelVariables")
 DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEF
 
-W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL = 0xCC0C
+W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL = sym("wConfusionRetreatCheckWasUnsuccessful")
 # <<< factory-cases-statics
 
 # >>> factory AITryToRetreat
@@ -161,7 +162,7 @@ CASES["AIDecideBenchPokemonToSwitchTo"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, expect_regs={"a": 1, "f": 0x70}),
     dict(_ai_ko_switch_fixture(bank=5), **_AI_KO_SWITCH_REGS),
     dict(_ai_retreat_switch_fixture(bank=5), **_AI_RETREAT_SWITCH_REGS),
-    dict(_bench_switch_fixture(vram=False, bank=5), **_BENCH_SWITCH_REGS, read={0xCDBE: 1, 0xCDBF: 6, 0xCC23: 1, 0xFF9D: 1}),
+    dict(_bench_switch_fixture(vram=False, bank=5), **_BENCH_SWITCH_REGS, read={sym("wAIScore"): 1, sym("wFirstAttackAIScore"): 6, sym("wTotalAttachedEnergies"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}),
 ]
 # <<< factory AIDecideBenchPokemonToSwitchTo
 
@@ -173,14 +174,14 @@ CASES["AIDecideWhetherToRetreat"] = [
     dict(POISON, wram={W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x01"}, expect_regs={"a": 0x01, "f": 0x00}),
     {"a": 0x5c, "f": 0x40, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x89ab, "wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\xff"}, "expect_regs": {"a": 0xff, "f": 0x00}},
     dict(_ai_retreat_decision_fixture(bank=5), **_AI_RETREAT_DECISION_REGS),
-    dict(_retreat_stay_fixture(vram=False, bank=5), **_RETREAT_STAY_REGS, read={0xCDBE: 1, 0xCDDA: 2}),
-    dict(_retreat_gene_fixture(vram=False, bank=5), **_RETREAT_GENE_REGS, read={0xCDBE: 1, 0xCDDA: 2, 0xCE03: 1}),
+    dict(_retreat_stay_fixture(vram=False, bank=5), **_RETREAT_STAY_REGS, read={sym("wAIScore"): 1, sym("wAIRetreatFlags"): 2}),
+    dict(_retreat_gene_fixture(vram=False, bank=5), **_RETREAT_GENE_REGS, read={sym("wAIScore"): 1, sym("wAIRetreatFlags"): 2, sym("wAIRetreatedThisTurn"): 1}),
     # grass-club 549326: Brittany's AI at the retreat decision the port scores 129 and the ROM higher.
-    dict(_grass_retreat_fixture(vram=False, bank=5), **_GRASS_RETREAT_REGS, read={0xCDBE: 1, 0xCDDA: 2, 0xCE03: 1}),
+    dict(_grass_retreat_fixture(vram=False, bank=5), **_GRASS_RETREAT_REGS, read={sym("wAIScore"): 1, sym("wAIRetreatFlags"): 2, sym("wAIRetreatedThisTurn"): 1}),
     # grass-club 570930: two set-up bench Pokemon score by their count, not by one.
-    dict(_grass_retreat_2_fixture(vram=False, bank=5), **_GRASS_RETREAT_2_REGS, read={0xCDBE: 1, 0xCDDA: 2, 0xCE03: 1}),
+    dict(_grass_retreat_2_fixture(vram=False, bank=5), **_GRASS_RETREAT_2_REGS, read={sym("wAIScore"): 1, sym("wAIRetreatFlags"): 2, sym("wAIRetreatedThisTurn"): 1}),
     # ai-duel-12 33860: a boss deck at its last prize with a bench that can KO and an arena that cannot scores 40.
-    dict(_ai_duel_retreat_fixture(vram=False, bank=5), **_AI_DUEL_RETREAT_REGS, read={0xCDBE: 1, 0xCDDA: 2, 0xCE03: 1}),
+    dict(_ai_duel_retreat_fixture(vram=False, bank=5), **_AI_DUEL_RETREAT_REGS, read={sym("wAIScore"): 1, sym("wAIRetreatFlags"): 2, sym("wAIRetreatedThisTurn"): 1}),
 ]
 # <<< factory AIDecideWhetherToRetreat
 

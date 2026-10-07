@@ -12,11 +12,12 @@ that wrapper push. Called directly (`call LoadCardDataToHL_FromCardID`), the
 extra pop consumes the return address itself and `ret` jumps to garbage. Its
 behavior is already covered transitively by the two wrappers below.
 """
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wLoadedCard1 = 0xCC24
-wLoadedCard2 = 0xCC65
+wLoadedCard1 = sym("wLoadedCard1")
+wLoadedCard2 = sym("wLoadedCard2")
 CARD_LEN = 0x41
 
 CONTRACT = {
@@ -82,11 +83,11 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 CONTRACT["LoadCardDataToHL_FromCardID"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["LoadCardDataToHL_FromCardID"] = [
     {"stack": [0]},
-    {"e": 1, "hl": 0xC100, "stack": [0xC100], "wram": {0xC100: b"\xAA" * CARD_DATA_LENGTH}, "read": {0xC100: 0x41}},
-    {"e": 0xE4, "hl": 0xC200, "stack": [0xC200], "wram": {0xC200: b"\xAA" * CARD_DATA_LENGTH}, "read": {0xC200: 0x41}},
+    {"e": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xAA" * CARD_DATA_LENGTH}, "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 0x41}},
+    {"e": 0xE4, "hl": sym("wPlayerCardLocations"), "stack": [sym("wPlayerCardLocations")], "wram": {sym("wPlayerCardLocations"): b"\xAA" * CARD_DATA_LENGTH}, "read": {sym("wPlayerCardLocations"): 0x41}},
     dict(POISON, stack=[0x1234]),
-    dict(POISON, e=1, hl=0xC300, stack=[0xC300], wram={0xC300: b"\xAA" * CARD_DATA_LENGTH}, read={0xC300: 0x41}),
-    {"e": 0x10, "hl": 0xC100, "stack": [0xC100], "wram": {0xC100: b"\xAA" * CARD_DATA_LENGTH, 0xFF80: b"\x03"}, "read": {0xC100: 0x41, 0xFF80: 1}, "rom_bank": 3},
+    dict(POISON, e=1, hl=sym("wOpponentCardLocations"), stack=[sym("wOpponentCardLocations")], wram={sym("wOpponentCardLocations"): b"\xAA" * CARD_DATA_LENGTH}, read={sym("wOpponentCardLocations"): 0x41}),
+    {"e": 0x10, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xAA" * CARD_DATA_LENGTH, sym("hBankROM"): b"\x03"}, "read": {sym("wDecompressionSecondaryBufferStart") + 0x11: 0x41, sym("hBankROM"): 1}, "rom_bank": 3},
 ]
 # <<< factory LoadCardDataToHL_FromCardID
 
@@ -94,9 +95,9 @@ CASES["LoadCardDataToHL_FromCardID"] = [
 CONTRACT["CopyFontsOrDuelGraphicsTiles2"] = {"compare": (), "preserve": ()}
 CASES["CopyFontsOrDuelGraphicsTiles2"] = [
     {},
-    {"b": 1, "hl": 0x4000, "d": 0xC5, "e": 0x00, "wram": {0xC500: b"\xAA" * 16}, "read": {0xC500: 16, 0xFF80: 1}},
-    dict(POISON, b=1, hl=0x4000, wram={0xDDEE: b"\x55" * 16}, read={0xDDEE: 16, 0xFF80: 1}),
-    {"b": 1, "hl": 0x4000, "d": 0xC5, "e": 0x20, "wram": {0xC520: b"\x33" * 16}, "read": {0xC520: 16, 0xFF80: 1}}
+    {"b": 1, "hl": 0x4000, "d": 0xC5, "e": 0x00, "wram": {sym("wNameBuffer"): b"\xAA" * 16}, "read": {sym("wNameBuffer"): 16, sym("hBankROM"): 1}},
+    dict(POISON, b=1, hl=0x4000, wram={sym("wdded") + 1: b"\x55" * 16}, read={sym("wdded") + 1: 16, sym("hBankROM"): 1}),
+    {"b": 1, "hl": 0x4000, "d": 0xC5, "e": 0x20, "wram": {sym("wDuelTempList") + 0x10: b"\x33" * 16}, "read": {sym("wDuelTempList") + 0x10: 16, sym("hBankROM"): 1}}
 ]
 # <<< factory CopyFontsOrDuelGraphicsTiles2
 

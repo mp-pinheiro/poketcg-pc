@@ -1674,17 +1674,17 @@ MUTATIONS = {
         'before': 'for (uint16_t i = 0; i < 0x2000u; i++)',
         'after': 'for (uint16_t i = 0; i < 0x1FFFu; i++)',
         'case_ids': ['ClearSRAMBank-1', 'ClearSRAMBank-0', 'ClearSRAMBank-2', 'ClearSRAMBank-3'],
-        'source': 'src/profiles/extended/home/clear_sram.c'},
+        'source': 'src/home/clear_sram.c'},
     'RestartSRAM': {   'source_symbol': 'RestartSRAM',
         'before': '\tgb_write8(0xA000u, 0x04);',
         'after': '\tgb_write8(0x9FFFu, 0x04);',
         'case_ids': ['RestartSRAM-0'],
-        'source': 'src/profiles/extended/home/clear_sram.c'},
+        'source': 'src/home/clear_sram.c'},
     'ValidateSRAM': {   'source_symbol': 'ValidateSRAM',
         'before': '\t\t\tif (b2 == 0x05u)',
         'after': '\t\t\tif (b2 == 0x06u)',
         'case_ids': ['ValidateSRAM-1'],
-        'source': 'src/profiles/extended/home/clear_sram.c'},
+        'source': 'src/home/clear_sram.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

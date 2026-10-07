@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/audio/sfx.asm's SFX engine."""
+from tests.cases._symbols import WRAMX_START, data, sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -9,51 +10,51 @@ CONTRACT = {
 
 CASES = {
     "SFX_PlaySFX": [
-        {"a": 96, "wram": {0xDE53: b"\x00"},
-         "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}},
-        dict(POISON, a=0, wram={0xDE53: b"\x00"},
-             read={0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}),
+        {"a": 96, "wram": {sym("wSFXIsPlaying"): b"\x00"},
+         "read": {sym("wSFXIsPlaying"): 1, sym("wdd8c"): 1, sym("wde54"): 1}},
+        dict(POISON, a=0, wram={sym("wSFXIsPlaying"): b"\x00"},
+             read={sym("wSFXIsPlaying"): 1, sym("wdd8c"): 1, sym("wde54"): 1}),
         {"a": 96, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
-         "wram": {0xDE53: b"\x00"},
-         "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}},
-        {"a": 1, "wram": {0xDE53: b"\x00"},
-         "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1, 0xDE4B: 8, 0xDE2F: 1, 0xDE33: 1}},
+         "wram": {sym("wSFXIsPlaying"): b"\x00"},
+         "read": {sym("wSFXIsPlaying"): 1, sym("wdd8c"): 1, sym("wde54"): 1}},
+        {"a": 1, "wram": {sym("wSFXIsPlaying"): b"\x00"},
+         "read": {sym("wSFXIsPlaying"): 1, sym("wdd8c"): 1, sym("wde54"): 1, sym("wSFXCommandPointers"): 8, sym("wSFXPitchOffsets"): 1, sym("wde33"): 1}},
     ],
     "SFX_UpdateSFX": [
-        {"wram": {0xDD8C: b"\x00", 0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
-         "read": {0xDE53: 1, 0xDD83: 1, 0xDD82: 1}},
-        dict(POISON, wram={0xDD8C: b"\x00", 0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
-             read={0xDE53: 1, 0xDD83: 1, 0xDD82: 1}),
-        {"wram": {0xDD8C: b"\x02", 0xDE54: b"\xff", 0xDE53: b"\x01",
-                  0xDE33: b"\x02\x00\x00\x00", 0xDE2F: b"\x00\x00\x00",
-                  0xDE37: b"\x00\x00\x00\x00\x00\x00"},
-         "read": {0xDE33: 1}},
+        {"wram": {sym("wdd8c"): b"\x00", sym("wSFXIsPlaying"): b"\x01", sym("wSfxPriority"): b"\x05", sym("wCurSfxID"): b"\x04"},
+         "read": {sym("wSFXIsPlaying"): 1, sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}},
+        dict(POISON, wram={sym("wdd8c"): b"\x00", sym("wSFXIsPlaying"): b"\x01", sym("wSfxPriority"): b"\x05", sym("wCurSfxID"): b"\x04"},
+             read={sym("wSFXIsPlaying"): 1, sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}),
+        {"wram": {sym("wdd8c"): b"\x02", sym("wde54"): b"\xff", sym("wSFXIsPlaying"): b"\x01",
+                  sym("wde33"): b"\x02\x00\x00\x00", sym("wSFXPitchOffsets"): b"\x00\x00\x00",
+                  sym("wde37"): b"\x00\x00\x00\x00\x00\x00"},
+         "read": {sym("wde33"): 1}},
         # Sfx_Cursor_Ch1 (0x44DF): env→pan→duty(0)→freq($7AC)→terminates.
         # wdd85 seeded 0xFF to prove pan preserves other channel bits.
-        {"wram": {0xDD8C: b"\x01", 0xDE54: b"\xff", 0xDE53: b"\x01",
-                  0xDD85: b"\xFF",
-                  0xDE33: b"\x01\x00\x00\x00",
-                  0xDE4B: b"\xDF\x44\x00\x00\x00\x00\x00\x00"},
-         "read": {0xDD8C: 1, 0xDD85: 1, 0xDE2B: 1, 0xDE37: 2, 0xDE4B: 8}},
-        dict(POISON, wram={0xDD8C: b"\x01", 0xDE54: b"\xff", 0xDE53: b"\x01",
-                           0xDD85: b"\xFF",
-                           0xDE33: b"\x01\x00\x00\x00",
-                           0xDE4B: b"\xDF\x44\x00\x00\x00\x00\x00\x00"},
-             read={0xDD8C: 1, 0xDD85: 1, 0xDE2B: 1, 0xDE37: 2, 0xDE4B: 8}),
+        {"wram": {sym("wdd8c"): b"\x01", sym("wde54"): b"\xff", sym("wSFXIsPlaying"): b"\x01",
+                  sym("wdd85"): b"\xFF",
+                  sym("wde33"): b"\x01\x00\x00\x00",
+                  sym("wSFXCommandPointers"): b"\xDF\x44\x00\x00\x00\x00\x00\x00"},
+         "read": {sym("wdd8c"): 1, sym("wdd85"): 1, sym("wde2b"): 1, sym("wde37"): 2, sym("wSFXCommandPointers"): 8}},
+        dict(POISON, wram={sym("wdd8c"): b"\x01", sym("wde54"): b"\xff", sym("wSFXIsPlaying"): b"\x01",
+                           sym("wdd85"): b"\xFF",
+                           sym("wde33"): b"\x01\x00\x00\x00",
+                           sym("wSFXCommandPointers"): b"\xDF\x44\x00\x00\x00\x00\x00\x00"},
+             read={sym("wdd8c"): 1, sym("wdd85"): 1, sym("wde2b"): 1, sym("wde37"): 2, sym("wSFXCommandPointers"): 8}),
         # sfx_end at ROM 0x4096 ($F0): clears channel bit in wdd8c.
-        {"wram": {0xDD8C: b"\x01", 0xDE54: b"\xff", 0xDE53: b"\x01",
-                  0xDE33: b"\x01\x00\x00\x00",
-                  0xDE4B: b"\x96\x40\x00\x00\x00\x00\x00\x00"},
-         "read": {0xDD8C: 1}},
+        {"wram": {sym("wdd8c"): b"\x01", sym("wde54"): b"\xff", sym("wSFXIsPlaying"): b"\x01",
+                  sym("wde33"): b"\x01\x00\x00\x00",
+                  sym("wSFXCommandPointers"): b"\x96\x40\x00\x00\x00\x00\x00\x00"},
+         "read": {sym("wdd8c"): 1}},
     ],
 }
 # >>> factory Func_fc105
 CONTRACT["Func_fc105"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("a", "b", "c", "d", "e")}
 CASES["Func_fc105"] = [
-    {"wram": {0xDE4B: b"\x00\x00"}, "read": {0xDE4B: 2}},
-    {"c": 1, "d": 0x12, "e": 0x34, "wram": {0xDE4D: b"\x00\x00"}, "read": {0xDE4D: 2}},
-    {"c": 0x20, "d": 0xFF, "e": 0xFF, "wram": {0xDE8B: b"\x00\x00"}, "read": {0xDE8B: 2}},
-    dict(POISON, b=0, c=0x10, wram={0xDE6B: b"\x00\x00"}, read={0xDE6B: 2}),
+    {"wram": {sym("wSFXCommandPointers"): b"\x00\x00"}, "read": {sym("wSFXCommandPointers"): 2}},
+    {"c": 1, "d": 0x12, "e": 0x34, "wram": {sym("wSFXCommandPointers") + 2: b"\x00\x00"}, "read": {sym("wSFXCommandPointers") + 2: 2}},
+    {"c": 0x20, "d": 0xFF, "e": 0xFF, "wram": {sym("wMusicCutoffBackup") + 3: b"\x00\x00"}, "read": {sym("wMusicCutoffBackup") + 3: 2}},
+    dict(POISON, b=0, c=0x10, wram={sym("wMusicChannelPointersBackup") + 5: b"\x00\x00"}, read={sym("wMusicChannelPointersBackup") + 5: 2}),
 ]
 # <<< factory Func_fc105
 
@@ -67,136 +68,136 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 # >>> factory SFX_end
 CONTRACT["SFX_end"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
 CASES["SFX_end"] = [
-    {"b": 0, "c": 0, "wram": {0xDD8C: b"\xFF"}, "stack": _STACK, "read": {0xDD8C: 1}},
-    dict(POISON, b=0, c=1, wram={0xDD8C: b"\xFF"}, stack=_STACK, read={0xDD8C: 1}),
-    {"b": 0, "c": 3, "wram": {0xDD8C: b"\x01"}, "stack": [0x1357], "read": {0xDD8C: 1}},
-    dict(POISON, b=0, c=0xFF, wram={0xDD8C: b"\xFF"}, stack=[0xBEEF], read={0xDD8C: 1})
+    {"b": 0, "c": 0, "wram": {sym("wdd8c"): b"\xFF"}, "stack": _STACK, "read": {sym("wdd8c"): 1}},
+    dict(POISON, b=0, c=1, wram={sym("wdd8c"): b"\xFF"}, stack=_STACK, read={sym("wdd8c"): 1}),
+    {"b": 0, "c": 3, "wram": {sym("wdd8c"): b"\x01"}, "stack": [0x1357], "read": {sym("wdd8c"): 1}},
+    dict(POISON, b=0, c=0xFF, wram={sym("wdd8c"): b"\xFF"}, stack=[data(0xBEEF)], read={sym("wdd8c"): 1})
 ]
 # <<< factory SFX_end
 
 # >>> factory SFX_frequency
 CONTRACT["SFX_frequency"] = {"compare": (), "preserve": ()}
 CASES["SFX_frequency"] = [
-    {"stack": [0], "wram": {0xDE37: b"\x00\x00", 0xDE2B: b"\x00"}, "hram": {0xFF11: b"\x00"}, "read": {0xDE4B: 2}},
-    {"a": 0x12, "c": 0, "stack": [0xC500], "wram": {0xC500: b"\x34", 0xDE37: b"\x78\x56", 0xDE2B: b"\x20"}, "hram": {0xFF11: b"\xC0"}, "read": {0xDE4B: 2}},
-    {"a": 0xAB, "c": 3, "stack": [0xC510], "wram": {0xC510: b"\x41", 0xDE3D: b"\x49\x00", 0xDE2E: b"\x10"}, "hram": {0xFF20: b"\x80"}, "read": {0xDE4B: 2}},
-    dict(POISON, stack=[0x1234], read={0xDE4B: 2})
+    {"stack": [0], "wram": {sym("wde37"): b"\x00\x00", sym("wde2b"): b"\x00"}, "hram": {0xFF11: b"\x00"}, "read": {sym("wSFXCommandPointers"): 2}},
+    {"a": 0x12, "c": 0, "stack": [sym("wNameBuffer")], "wram": {sym("wNameBuffer"): b"\x34", sym("wde37"): b"\x78\x56", sym("wde2b"): b"\x20"}, "hram": {0xFF11: b"\xC0"}, "read": {sym("wSFXCommandPointers"): 2}},
+    {"a": 0xAB, "c": 3, "stack": [sym("wDuelTempList")], "wram": {sym("wDuelTempList"): b"\x41", sym("wde3d"): b"\x49\x00", sym("wde2e"): b"\x10"}, "hram": {0xFF20: b"\x80"}, "read": {sym("wSFXCommandPointers"): 2}},
+    dict(POISON, stack=[0x1234], read={sym("wSFXCommandPointers"): 2})
 ]
 # <<< factory SFX_frequency
 
 # >>> factory ExecuteNextSFXCommand
 CONTRACT["ExecuteNextSFXCommand"] = {"compare": (), "preserve": ()}
 CASES["ExecuteNextSFXCommand"] = [
-    {"hl": 0xC100, "c": 0, "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"},
-     "read": {0xDD8C: 1}, "hram": {0xFF12: b"\x00", 0xFF14: b"\x00"}},
-    dict(POISON, b=0, c=1, hl=0xC100, wram={0xC100: b"\xF0", 0xDD8C: b"\xFF"},
-         read={0xDD8C: 1}, hram={0xFF17: b"\x00", 0xFF19: b"\x00"}),
-    {"hl": 0xC100, "c": 0,
-     "wram": {0xC100: b"\x01\x23", 0xDE37: b"\x00\x00", 0xDE2B: b"\x20"},
-     "read": {0xDE4B: 2, 0xDE37: 2, 0xDE2B: 1},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 0, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wdd8c"): b"\xFF"},
+     "read": {sym("wdd8c"): 1}, "hram": {0xFF12: b"\x00", 0xFF14: b"\x00"}},
+    dict(POISON, b=0, c=1, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wdd8c"): b"\xFF"},
+         read={sym("wdd8c"): 1}, hram={0xFF17: b"\x00", 0xFF19: b"\x00"}),
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 0,
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01\x23", sym("wde37"): b"\x00\x00", sym("wde2b"): b"\x20"},
+     "read": {sym("wSFXCommandPointers"): 2, sym("wde37"): 2, sym("wde2b"): 1},
      "hram": {0xFF11: b"\xC0", 0xFF13: b"\x00", 0xFF14: b"\x00"}},
-    {"hl": 0xC100, "c": 1, "wram": {0xC100: b"\x27\xF0", 0xDD8C: b"\xFF"},
-     "read": {0xDD8C: 1},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 1, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x27\xF0", sym("wdd8c"): b"\xFF"},
+     "read": {sym("wdd8c"): 1},
      "hram": {0xFF16: b"\x00", 0xFF17: b"\x00", 0xFF19: b"\x00"}},
-    {"hl": 0xC100, "c": 3,
-     "wram": {0xC100: b"\x08\x88", 0xDE3D: b"\x00\x00", 0xDE2E: b"\x00"},
-     "read": {0xDE51: 2, 0xDE3D: 2, 0xDE2E: 1},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 3,
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x08\x88", sym("wde3d"): b"\x00\x00", sym("wde2e"): b"\x00"},
+     "read": {sym("wSFXCommandPointers") + 6: 2, sym("wde3d"): 2, sym("wde2e"): 1},
      "hram": {0xFF20: b"\x00", 0xFF22: b"\x00", 0xFF23: b"\x00"}},
-    {"hl": 0xC100, "c": 2,
-     "wram": {0xC100: b"\x10\xAB\xF0", 0xDD8C: b"\xFF"},
-     "read": {0xDE2D: 1, 0xDD8C: 1},
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "c": 2,
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x10\xAB\xF0", sym("wdd8c"): b"\xFF"},
+     "read": {sym("wde2b") + 2: 1, sym("wdd8c"): 1},
      "hram": {0xFF1C: b"\x00", 0xFF1E: b"\x00"}},
     # idx=4 (endloop), c=0, count decrements 1->0: real asm falls through to
     # `jp ExecuteNextSFXCommand` at the forward pointer instead of stopping
     # (sfx.asm:248-253/263-265); byte at hl+1 is then idx=15 (end), which
     # must run and clear wdd8c bit 0.
-    {"hl": 0xC500, "c": 0,
-     "wram": {0xC500: b"\x40\xF0", 0xDE3F: b"\x01", 0xDD8C: b"\xFF"},
-     "read": {0xDE3F: 1, 0xDD8C: 1}},
+    {"hl": sym("wNameBuffer"), "c": 0,
+     "wram": {sym("wNameBuffer"): b"\x40\xF0", sym("wde3f"): b"\x01", sym("wdd8c"): b"\xFF"},
+     "read": {sym("wde3f"): 1, sym("wdd8c"): 1}},
     # idx=4 (endloop), c=1, count decrements 2->1: real asm jumps back to the
     # wde43-stored loop address (sfx.asm:254-262) and keeps interpreting
     # there; the loop address here points at an idx=15 (end) opcode for c=1.
-    {"hl": 0xC800, "c": 1,
-     "wram": {0xC800: b"\x40", 0xDE40: b"\x02", 0xDE45: b"\x00\xC9",
-              0xC900: b"\xF0", 0xDD8C: b"\xFF"},
-     "read": {0xDE40: 1, 0xDD8C: 1}},
+    {"hl": sym("wc800"), "c": 1,
+     "wram": {sym("wc800"): b"\x40", sym("wde3f") + 1: b"\x02", sym("wde43") + 2: b"\x00\xC9",
+              sym("wc900"): b"\xF0", sym("wdd8c"): b"\xFF"},
+     "read": {sym("wde3f") + 1: 1, sym("wdd8c"): 1}},
 ]
 # <<< factory ExecuteNextSFXCommand
 
 # >>> factory SFX_loop
 CONTRACT["SFX_loop"] = {"compare": (), "preserve": ()}
 CASES["SFX_loop"] = [
-    {"b": 0, "c": 0, "stack": [0xC400], "wram": {0xC400: b"\x12\xF0"}, "read": {0xDE43: 2, 0xDE3F: 1}},
-    {"b": 0, "c": 1, "stack": [0xC400], "wram": {0xC400: b"\x34\xF0"}, "read": {0xDE45: 2, 0xDE40: 1}},
-    {"b": 0, "c": 3, "stack": [0xC400], "wram": {0xC400: b"\x56\xF0"}, "read": {0xDE49: 2, 0xDE42: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "stack": [0xC400], "wram": {0xC400: b"\x78\xF0"}, "read": {0xDE43: 2, 0xDE3F: 1}},
+    {"b": 0, "c": 0, "stack": [sym("wBoosterCardsDrawn")], "wram": {sym("wBoosterCardsDrawn"): b"\x12\xF0"}, "read": {sym("wde43"): 2, sym("wde3f"): 1}},
+    {"b": 0, "c": 1, "stack": [sym("wBoosterCardsDrawn")], "wram": {sym("wBoosterCardsDrawn"): b"\x34\xF0"}, "read": {sym("wde43") + 2: 2, sym("wde3f") + 1: 1}},
+    {"b": 0, "c": 3, "stack": [sym("wBoosterCardsDrawn")], "wram": {sym("wBoosterCardsDrawn"): b"\x56\xF0"}, "read": {sym("wde43") + 6: 2, sym("wde3f") + 3: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "stack": [sym("wBoosterCardsDrawn")], "wram": {sym("wBoosterCardsDrawn"): b"\x78\xF0"}, "read": {sym("wde43"): 2, sym("wde3f"): 1}},
 ]
 # <<< factory SFX_loop
 
 # >>> factory SFX_pan
 CONTRACT["SFX_pan"] = {"compare": (), "preserve": ()}
 CASES["SFX_pan"] = [
-    {"b": 0, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xF0", 0xDD85: b"\xFF", 0xDD8C: b"\xFF"}, "read": {0xDD85: 1, 0xDD8C: 1}},
-    {"b": 0, "c": 1, "stack": [0xC200], "wram": {0xC200: b"\xF0", 0xDD85: b"\xFF", 0xDD8C: b"\xFF"}, "read": {0xDD85: 1, 0xDD8C: 1}},
-    {"b": 0, "c": 3, "stack": [0xC300], "wram": {0xC300: b"\xF0", 0xDD85: b"\xFF", 0xDD8C: b"\xFF"}, "read": {0xDD85: 1, 0xDD8C: 1}},
-    dict(POISON, b=0, c=2, stack=[0xC400], wram={0xC400: b"\xF0", 0xDD85: b"\xFF", 0xDD8C: b"\xFF"}, read={0xDD85: 1, 0xDD8C: 1}),
+    {"b": 0, "c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wdd85"): b"\xFF", sym("wdd8c"): b"\xFF"}, "read": {sym("wdd85"): 1, sym("wdd8c"): 1}},
+    {"b": 0, "c": 1, "stack": [sym("wPlayerCardLocations")], "wram": {sym("wPlayerCardLocations"): b"\xF0", sym("wdd85"): b"\xFF", sym("wdd8c"): b"\xFF"}, "read": {sym("wdd85"): 1, sym("wdd8c"): 1}},
+    {"b": 0, "c": 3, "stack": [sym("wOpponentCardLocations")], "wram": {sym("wOpponentCardLocations"): b"\xF0", sym("wdd85"): b"\xFF", sym("wdd8c"): b"\xFF"}, "read": {sym("wdd85"): 1, sym("wdd8c"): 1}},
+    dict(POISON, b=0, c=2, stack=[sym("wBoosterCardsDrawn")], wram={sym("wBoosterCardsDrawn"): b"\xF0", sym("wdd85"): b"\xFF", sym("wdd8c"): b"\xFF"}, read={sym("wdd85"): 1, sym("wdd8c"): 1}),
 ]
 # <<< factory SFX_pan
 
 # >>> factory SFX_unused
 CONTRACT["SFX_unused"] = {"compare": (), "preserve": ()}
 CASES["SFX_unused"] = [
-    {"c": 0, "hl": 0xC100, "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
-    {"c": 1, "hl": 0xC100, "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
-    {"c": 3, "hl": 0xC100, "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
-    dict(POISON, b=0, c=2, hl=0xC100, wram={0xC100: b"\xF0", 0xDD8C: b"\xFF"}, read={0xDD8C: 1}),
+    {"c": 0, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wdd8c"): b"\xFF"}, "read": {sym("wdd8c"): 1}},
+    {"c": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wdd8c"): b"\xFF"}, "read": {sym("wdd8c"): 1}},
+    {"c": 3, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wdd8c"): b"\xFF"}, "read": {sym("wdd8c"): 1}},
+    dict(POISON, b=0, c=2, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wdd8c"): b"\xFF"}, read={sym("wdd8c"): 1}),
 ]
 # <<< factory SFX_unused
 
 # >>> factory SFX_pitch_offset
 CONTRACT["SFX_pitch_offset"] = {"compare": (), "preserve": ()}
 CASES["SFX_pitch_offset"] = [
-    {"b": 0, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\x12\xF0"}, "read": {0xDE2F: 1}},
-    {"b": 0, "c": 1, "stack": [0xC200], "wram": {0xC200: b"\x34\xF0"}, "read": {0xDE30: 1}},
-    dict(POISON, b=0, c=2, stack=[0xC300], wram={0xC300: b"\x56\xF0"}, read={0xDE31: 1}),
+    {"b": 0, "c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x12\xF0"}, "read": {sym("wSFXPitchOffsets"): 1}},
+    {"b": 0, "c": 1, "stack": [sym("wPlayerCardLocations")], "wram": {sym("wPlayerCardLocations"): b"\x34\xF0"}, "read": {sym("wSFXPitchOffsets") + 1: 1}},
+    dict(POISON, b=0, c=2, stack=[sym("wOpponentCardLocations")], wram={sym("wOpponentCardLocations"): b"\x56\xF0"}, read={sym("wSFXPitchOffsets") + 2: 1}),
 ]
 # <<< factory SFX_pitch_offset
 
 # >>> factory SFX_wave
 CONTRACT["SFX_wave"] = {"compare": (), "preserve": ()}
 CASES["SFX_wave"] = [
-    {"a": 0, "b": 0, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xF0"}, "read": {0xDD8B: 1}},
-    {"a": 1, "b": 0, "c": 0, "stack": [0xC200], "wram": {0xC200: b"\xF0"}, "read": {0xDD8B: 1}},
-    dict(POISON, b=0, c=0, stack=[0xC300], wram={0xC300: b"\xF0"}, read={0xDD8B: 1}),
+    {"a": 0, "b": 0, "c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0"}, "read": {sym("wMusicWaveChange"): 1}},
+    {"a": 1, "b": 0, "c": 0, "stack": [sym("wPlayerCardLocations")], "wram": {sym("wPlayerCardLocations"): b"\xF0"}, "read": {sym("wMusicWaveChange"): 1}},
+    dict(POISON, b=0, c=0, stack=[sym("wOpponentCardLocations")], wram={sym("wOpponentCardLocations"): b"\xF0"}, read={sym("wMusicWaveChange"): 1}),
 ]
 # <<< factory SFX_wave
 
 # >>> factory SFX_duty
 CONTRACT["SFX_duty"] = {"compare": (), "preserve": ()}
 CASES["SFX_duty"] = [
-    {"a": 0x12, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
-    {"a": 0xAB, "c": 1, "stack": [0xC200], "wram": {0xC200: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
-    {"a": 0x5E, "c": 3, "stack": [0xC400], "wram": {0xC400: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
-    dict(POISON, stack=[0xC300], wram={0xC300: b"\xF0", 0xDD8C: b"\xFF"}, read={0xDD8C: 1}),
+    {"a": 0x12, "c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wdd8c"): b"\xFF"}, "read": {sym("wdd8c"): 1}},
+    {"a": 0xAB, "c": 1, "stack": [sym("wPlayerCardLocations")], "wram": {sym("wPlayerCardLocations"): b"\xF0", sym("wdd8c"): b"\xFF"}, "read": {sym("wdd8c"): 1}},
+    {"a": 0x5E, "c": 3, "stack": [sym("wBoosterCardsDrawn")], "wram": {sym("wBoosterCardsDrawn"): b"\xF0", sym("wdd8c"): b"\xFF"}, "read": {sym("wdd8c"): 1}},
+    dict(POISON, stack=[sym("wOpponentCardLocations")], wram={sym("wOpponentCardLocations"): b"\xF0", sym("wdd8c"): b"\xFF"}, read={sym("wdd8c"): 1}),
 ]
 # <<< factory SFX_duty
 
 # >>> factory SFX_envelope
 CONTRACT["SFX_envelope"] = {"compare": (), "preserve": ()}
 CASES["SFX_envelope"] = [
-    {"b": 0x00, "c": 0x00, "stack": [0xC100], "wram": {0xC100: b"\x40\xF0"}, "read": {0xDE2B: 1}},
-    {"b": 0x00, "c": 0x01, "stack": [0xC200], "wram": {0xC200: b"\x55\xF0"}, "read": {0xDE2C: 1}},
-    {"b": 0x00, "c": 0x03, "stack": [0xC300], "wram": {0xC300: b"\xA5\xF0"}, "read": {0xDE2E: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "stack": [0xC400], "wram": {0xC400: b"\xF0\xF0"}, "read": {0xDEF7: 1}}
+    {"b": 0x00, "c": 0x00, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x40\xF0"}, "read": {sym("wde2b"): 1}},
+    {"b": 0x00, "c": 0x01, "stack": [sym("wPlayerCardLocations")], "wram": {sym("wPlayerCardLocations"): b"\x55\xF0"}, "read": {sym("wde2b") + 1: 1}},
+    {"b": 0x00, "c": 0x03, "stack": [sym("wOpponentCardLocations")], "wram": {sym("wOpponentCardLocations"): b"\xA5\xF0"}, "read": {sym("wde2e"): 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "stack": [sym("wBoosterCardsDrawn")], "wram": {sym("wBoosterCardsDrawn"): b"\xF0\xF0"}, "read": {WRAMX_START + 0xEF7: 1}}
 ]
 # <<< factory SFX_envelope
 
 # >>> factory SFX_endloop
 CONTRACT["SFX_endloop"] = {"compare": (), "preserve": ()}
 CASES["SFX_endloop"] = [
-    {"b": 0, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xF0", 0xDE3F: b"\x01"}, "read": {0xDE3F: 1}},
-    {"b": 0, "c": 1, "stack": [0xC100], "wram": {0xC100: b"\xF0", 0xDE40: b"\x02", 0xDE45: b"\x00\xC2", 0xC200: b"\xF0"}, "read": {0xDE40: 1}},
-    dict(POISON, b=0, c=0, stack=[0xC300], wram={0xC300: b"\xF0", 0xDE3F: b"\x01"}, read={0xDE3F: 1}),
+    {"b": 0, "c": 0, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wde3f"): b"\x01"}, "read": {sym("wde3f"): 1}},
+    {"b": 0, "c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xF0", sym("wde3f") + 1: b"\x02", sym("wde43") + 2: b"\x00\xC2", sym("wPlayerCardLocations"): b"\xF0"}, "read": {sym("wde3f") + 1: 1}},
+    dict(POISON, b=0, c=0, stack=[sym("wOpponentCardLocations")], wram={sym("wOpponentCardLocations"): b"\xF0", sym("wde3f"): b"\x01"}, read={sym("wde3f"): 1}),
 ]
 # <<< factory SFX_endloop
 
@@ -205,45 +206,45 @@ CASES["SFX_endloop"] = [
 # mirror the trampoline's cases.
 CONTRACT["SFX_Play"] = {"compare": (), "preserve": ()}
 CASES["SFX_Play"] = [
-    {"a": 0, "wram": {0xDE53: b"\x00"},
-     "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}},
-    dict(POISON, a=0, wram={0xDE53: b"\x00"},
-         read={0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}),
-    {"a": 96, "wram": {0xDE53: b"\x00"},
-     "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}},
-    {"a": 1, "wram": {0xDE53: b"\x00"},
-     "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1, 0xDE4B: 8, 0xDE2F: 1, 0xDE33: 1}},
+    {"a": 0, "wram": {sym("wSFXIsPlaying"): b"\x00"},
+     "read": {sym("wSFXIsPlaying"): 1, sym("wdd8c"): 1, sym("wde54"): 1}},
+    dict(POISON, a=0, wram={sym("wSFXIsPlaying"): b"\x00"},
+         read={sym("wSFXIsPlaying"): 1, sym("wdd8c"): 1, sym("wde54"): 1}),
+    {"a": 96, "wram": {sym("wSFXIsPlaying"): b"\x00"},
+     "read": {sym("wSFXIsPlaying"): 1, sym("wdd8c"): 1, sym("wde54"): 1}},
+    {"a": 1, "wram": {sym("wSFXIsPlaying"): b"\x00"},
+     "read": {sym("wSFXIsPlaying"): 1, sym("wdd8c"): 1, sym("wde54"): 1, sym("wSFXCommandPointers"): 8, sym("wSFXPitchOffsets"): 1, sym("wde33"): 1}},
 ]
 # <<< factory SFX_Play
 
 # >>> factory SFX_Update
 CONTRACT["SFX_Update"] = {"compare": (), "preserve": ()}
 CASES["SFX_Update"] = [
-    {"wram": {0xDD8C: b"\x00", 0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
-     "read": {0xDE53: 1, 0xDD83: 1, 0xDD82: 1}},
-    dict(POISON, wram={0xDD8C: b"\x00", 0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
-         read={0xDE53: 1, 0xDD83: 1, 0xDD82: 1}),
-    {"wram": {0xDD8C: b"\x01", 0xDE54: b"\xff", 0xDE53: b"\x01",
-              0xDD85: b"\xFF",
-              0xDE33: b"\x01\x00\x00\x00",
-              0xDE4B: b"\xDF\x44\x00\x00\x00\x00\x00\x00"},
-     "read": {0xDD8C: 1, 0xDD85: 1, 0xDE2B: 1, 0xDE37: 2, 0xDE4B: 8}},
-    {"wram": {0xDD8C: b"\x01", 0xDE54: b"\xff", 0xDE53: b"\x01",
-              0xDE33: b"\x01\x00\x00\x00",
-              0xDE4B: b"\x96\x40\x00\x00\x00\x00\x00\x00"},
-     "read": {0xDD8C: 1}},
+    {"wram": {sym("wdd8c"): b"\x00", sym("wSFXIsPlaying"): b"\x01", sym("wSfxPriority"): b"\x05", sym("wCurSfxID"): b"\x04"},
+     "read": {sym("wSFXIsPlaying"): 1, sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}},
+    dict(POISON, wram={sym("wdd8c"): b"\x00", sym("wSFXIsPlaying"): b"\x01", sym("wSfxPriority"): b"\x05", sym("wCurSfxID"): b"\x04"},
+         read={sym("wSFXIsPlaying"): 1, sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}),
+    {"wram": {sym("wdd8c"): b"\x01", sym("wde54"): b"\xff", sym("wSFXIsPlaying"): b"\x01",
+              sym("wdd85"): b"\xFF",
+              sym("wde33"): b"\x01\x00\x00\x00",
+              sym("wSFXCommandPointers"): b"\xDF\x44\x00\x00\x00\x00\x00\x00"},
+     "read": {sym("wdd8c"): 1, sym("wdd85"): 1, sym("wde2b"): 1, sym("wde37"): 2, sym("wSFXCommandPointers"): 8}},
+    {"wram": {sym("wdd8c"): b"\x01", sym("wde54"): b"\xff", sym("wSFXIsPlaying"): b"\x01",
+              sym("wde33"): b"\x01\x00\x00\x00",
+              sym("wSFXCommandPointers"): b"\x96\x40\x00\x00\x00\x00\x00\x00"},
+     "read": {sym("wdd8c"): 1}},
 ]
 # <<< factory SFX_Update
 
 # >>> factory Func_fc26c
 CONTRACT["Func_fc26c"] = {"compare": (), "preserve": ()}
 CASES["Func_fc26c"] = [
-    {"wram": {0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
-     "read": {0xDE53: 1, 0xDD83: 1, 0xDD82: 1}},
-    {"wram": {0xDE53: b"\xFF", 0xDD83: b"\xFF", 0xDD82: b"\xFF"},
-     "read": {0xDE53: 1, 0xDD83: 1, 0xDD82: 1}},
-    dict(POISON, wram={0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
-         read={0xDE53: 1, 0xDD83: 1, 0xDD82: 1}),
+    {"wram": {sym("wSFXIsPlaying"): b"\x01", sym("wSfxPriority"): b"\x05", sym("wCurSfxID"): b"\x04"},
+     "read": {sym("wSFXIsPlaying"): 1, sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}},
+    {"wram": {sym("wSFXIsPlaying"): b"\xFF", sym("wSfxPriority"): b"\xFF", sym("wCurSfxID"): b"\xFF"},
+     "read": {sym("wSFXIsPlaying"): 1, sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}},
+    dict(POISON, wram={sym("wSFXIsPlaying"): b"\x01", sym("wSfxPriority"): b"\x05", sym("wCurSfxID"): b"\x04"},
+         read={sym("wSFXIsPlaying"): 1, sym("wSfxPriority"): 1, sym("wCurSfxID"): 1}),
 ]
 # <<< factory Func_fc26c
 
@@ -252,19 +253,19 @@ CASES["Func_fc26c"] = [
 # clearing wdd8c is the only surviving effect.
 CONTRACT["Func_fc279"] = {"compare": (), "preserve": ()}
 CASES["Func_fc279"] = [
-    {"wram": {0xDD8C: b"\x01"}, "read": {0xDD8C: 1}},
-    {"wram": {0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
-    dict(POISON, wram={0xDD8C: b"\x0F"}, read={0xDD8C: 1}),
+    {"wram": {sym("wdd8c"): b"\x01"}, "read": {sym("wdd8c"): 1}},
+    {"wram": {sym("wdd8c"): b"\xFF"}, "read": {sym("wdd8c"): 1}},
+    dict(POISON, wram={sym("wdd8c"): b"\x0F"}, read={sym("wdd8c"): 1}),
 ]
 # <<< factory Func_fc279
 
 # >>> factory SFX_wait
 CONTRACT["SFX_wait"] = {"compare": ("b", "c", "hl"), "preserve": ("b", "c")}
 CASES["SFX_wait"] = [
-    {"stack": [0xC100], "wram": {0xC100: b"\x42", 0xDE33: b"\x00"}, "read": {0xDE33: 1, 0xDE4B: 2}},
-    {"c": 1, "stack": [0xC110], "wram": {0xC110: b"\x37", 0xDE34: b"\x00"}, "read": {0xDE34: 1, 0xDE4D: 2}},
-    {"c": 3, "stack": [0xC120], "wram": {0xC120: b"\x7E", 0xDE32: b"\x00", 0xDE36: b"\x00"}, "read": {0xDE36: 1, 0xDE51: 2}},
-    dict(POISON, stack=[0xC130], wram={0xC130: b"\x55"}),
+    {"stack": [sym("wDecompressionSecondaryBufferStart") + 0x11], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x42", sym("wde33"): b"\x00"}, "read": {sym("wde33"): 1, sym("wSFXCommandPointers"): 2}},
+    {"c": 1, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x21], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x21: b"\x37", sym("wde33") + 1: b"\x00"}, "read": {sym("wde33") + 1: 1, sym("wSFXCommandPointers") + 2: 2}},
+    {"c": 3, "stack": [sym("wDecompressionSecondaryBufferStart") + 0x31], "wram": {sym("wDecompressionSecondaryBufferStart") + 0x31: b"\x7E", sym("wde32"): b"\x00", sym("wde33") + 3: b"\x00"}, "read": {sym("wde33") + 3: 1, sym("wSFXCommandPointers") + 6: 2}},
+    dict(POISON, stack=[sym("wDecompressionSecondaryBufferStart") + 0x41], wram={sym("wDecompressionSecondaryBufferStart") + 0x41: b"\x55"}),
 ]
 # <<< factory SFX_wait
 
@@ -273,16 +274,16 @@ CASES["SFX_wait"] = [
 # c==3 lands on wde32/wde3d/wde2e/rAUD4LEN by address arithmetic.
 CONTRACT["SFX_ApplyPitchOffset"] = {"compare": (), "preserve": ()}
 CASES["SFX_ApplyPitchOffset"] = [
-    {"c": 0, "wram": {0xDE2F: b"\x00", 0xDE37: b"\x49\x00", 0xDE2B: b"\x20"},
-     "read": {0xDE37: 2, 0xDE2B: 1}},
-    {"c": 0, "wram": {0xDE2F: b"\x10", 0xDE37: b"\x49\x00", 0xDE2B: b"\x20"},
-     "hram": {0xFF11: b"\xC0"}, "read": {0xDE37: 2, 0xDE2B: 1}},
-    {"c": 0, "wram": {0xDE2F: b"\x80", 0xDE37: b"\x00\x01", 0xDE2B: b"\x00"},
-     "hram": {0xFF11: b"\x00"}, "read": {0xDE37: 2, 0xDE2B: 1}},
-    {"c": 3, "wram": {0xDE32: b"\x05", 0xDE3D: b"\xFE\x00", 0xDE2E: b"\x40"},
-     "hram": {0xFF20: b"\x80"}, "read": {0xDE3D: 2, 0xDE2E: 1}},
-    dict(POISON, b=0, c=1, wram={0xDE30: b"\x01", 0xDE39: b"\xFF\xFF", 0xDE2C: b"\x08"},
-         hram={0xFF16: b"\x3F"}, read={0xDE39: 2, 0xDE2C: 1}),
+    {"c": 0, "wram": {sym("wSFXPitchOffsets"): b"\x00", sym("wde37"): b"\x49\x00", sym("wde2b"): b"\x20"},
+     "read": {sym("wde37"): 2, sym("wde2b"): 1}},
+    {"c": 0, "wram": {sym("wSFXPitchOffsets"): b"\x10", sym("wde37"): b"\x49\x00", sym("wde2b"): b"\x20"},
+     "hram": {0xFF11: b"\xC0"}, "read": {sym("wde37"): 2, sym("wde2b"): 1}},
+    {"c": 0, "wram": {sym("wSFXPitchOffsets"): b"\x80", sym("wde37"): b"\x00\x01", sym("wde2b"): b"\x00"},
+     "hram": {0xFF11: b"\x00"}, "read": {sym("wde37"): 2, sym("wde2b"): 1}},
+    {"c": 3, "wram": {sym("wde32"): b"\x05", sym("wde3d"): b"\xFE\x00", sym("wde2e"): b"\x40"},
+     "hram": {0xFF20: b"\x80"}, "read": {sym("wde3d"): 2, sym("wde2e"): 1}},
+    dict(POISON, b=0, c=1, wram={sym("wSFXPitchOffsets") + 1: b"\x01", sym("wde37") + 2: b"\xFF\xFF", sym("wde2b") + 1: b"\x08"},
+         hram={0xFF16: b"\x3F"}, read={sym("wde37") + 2: 2, sym("wde2b") + 1: 1}),
 ]
 # <<< factory SFX_ApplyPitchOffset
 
@@ -290,14 +291,14 @@ CASES["SFX_ApplyPitchOffset"] = [
 # Unlike SFX_ApplyPitchOffset the LEN register is zeroed outright, not masked.
 CONTRACT["Func_fc1cd"] = {"compare": (), "preserve": ()}
 CASES["Func_fc1cd"] = [
-    {"wram": {0xDE32: b"\x00", 0xDE3D: b"\x11", 0xDE2E: b"\x00"},
-     "read": {0xDE3D: 1, 0xDE2E: 1}},
-    {"wram": {0xDE32: b"\x04", 0xDE3D: b"\x0C", 0xDE2E: b"\x30"},
-     "hram": {0xFF20: b"\x00"}, "read": {0xDE3D: 1, 0xDE2E: 1}},
-    {"wram": {0xDE32: b"\xF8", 0xDE3D: b"\x20", 0xDE2E: b"\x01"},
-     "hram": {0xFF20: b"\x80"}, "read": {0xDE3D: 1, 0xDE2E: 1}},
-    dict(POISON, b=0, wram={0xDE32: b"\x10", 0xDE3D: b"\x00", 0xDE2E: b"\x00"},
-         hram={0xFF20: b"\x3F"}, read={0xDE3D: 1, 0xDE2E: 1}),
+    {"wram": {sym("wde32"): b"\x00", sym("wde3d"): b"\x11", sym("wde2e"): b"\x00"},
+     "read": {sym("wde3d"): 1, sym("wde2e"): 1}},
+    {"wram": {sym("wde32"): b"\x04", sym("wde3d"): b"\x0C", sym("wde2e"): b"\x30"},
+     "hram": {0xFF20: b"\x00"}, "read": {sym("wde3d"): 1, sym("wde2e"): 1}},
+    {"wram": {sym("wde32"): b"\xF8", sym("wde3d"): b"\x20", sym("wde2e"): b"\x01"},
+     "hram": {0xFF20: b"\x80"}, "read": {sym("wde3d"): 1, sym("wde2e"): 1}},
+    dict(POISON, b=0, wram={sym("wde32"): b"\x10", sym("wde3d"): b"\x00", sym("wde2e"): b"\x00"},
+         hram={0xFF20: b"\x3F"}, read={sym("wde3d"): 1, sym("wde2e"): 1}),
 ]
 # <<< factory Func_fc1cd
 

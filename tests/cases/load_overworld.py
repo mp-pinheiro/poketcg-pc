@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/overworld/load_overworld.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,29 +10,29 @@ CASES = {}
 # >>> factory LoadMapTilesAndPals
 CONTRACT["LoadMapTilesAndPals"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["LoadMapTilesAndPals"] = [
-    {"wram": {0xD32F: b"\x00", 0xD291: b"\x00"},
+    {"wram": {sym("wCurMap"): b"\x00", sym("wd291"): b"\x00"},
      "instruction_budget": 4000000, "cycle_budget": 16000000,
-     "read": {0xD4CA: 1, 0xD4CB: 1}},
-    dict(POISON, wram={0xD32F: b"\x00", 0xD291: b"\x00"},
+     "read": {sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1}},
+    dict(POISON, wram={sym("wCurMap"): b"\x00", sym("wd291"): b"\x00"},
          instruction_budget=4000000, cycle_budget=16000000,
-         read={0xD4CA: 1, 0xD4CB: 1}),
+         read={sym("wTempBoosterChances"): 1, sym("wWhichBGPalIndex"): 1}),
 ]
 # <<< factory LoadMapTilesAndPals
 
 # >>> factory ReloadMapAfterTextClose
 CONTRACT["ReloadMapAfterTextClose"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["ReloadMapAfterTextClose"] = [
-    {"wram": {0xD133: b"\x00" * 0x100}, "read": {0xD133: 0x100}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xD133: b"\xFF" * 0x100}, read={0xD133: 0x100}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wBoosterViableCardList"): b"\x00" * 0x100}, "read": {sym("wBoosterViableCardList"): 0x100}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={sym("wBoosterViableCardList"): b"\xFF" * 0x100}, read={sym("wBoosterViableCardList"): 0x100}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ReloadMapAfterTextClose
 
 # >>> factory LoadMapGfxAndPermissions
 CONTRACT["LoadMapGfxAndPermissions"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["LoadMapGfxAndPermissions"] = [
-    {"wram": {0xD32F: b"\x01"}, "read": {0xCCF3: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"wram": {0xD32F: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCCF3: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={0xD32F: b"\x01"}, read={0xCCF3: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wCurMap"): b"\x01"}, "read": {sym("wTextBoxFrameType"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {sym("wCurMap"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("wTextBoxFrameType"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={sym("wCurMap"): b"\x01"}, read={sym("wTextBoxFrameType"): 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory LoadMapGfxAndPermissions
 

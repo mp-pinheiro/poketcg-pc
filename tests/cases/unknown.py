@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/unknown.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,9 +8,9 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory Func_18661
-hDPadHeld = 0xFF8F
-wCheckMenuCursorBlinkCounter = 0xCEA3
-wCheckMenuCursorXY = 0xCEAF
+hDPadHeld = sym("hDPadHeld")
+wCheckMenuCursorBlinkCounter = sym("wCheckMenuCursorBlinkCounter")
+wCheckMenuCursorXY = sym("wCheckMenuCursorXPosition")
 CONTRACT["Func_18661"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Func_18661"] = [
 	# all-zero: phase 0 -> counter 0->1, bit 4 clear -> cursor tile $0f

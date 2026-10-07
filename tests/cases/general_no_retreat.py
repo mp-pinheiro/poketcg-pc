@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/duel/ai/decks/general_no_retreat.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -7,21 +8,21 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory-cases-statics
-hWhoseTurn = 0xFF97
-wAlreadyPlayedEnergy = 0xCC0B
-wPreviousAIFlags = 0xCE20
-wAIBarrierFlagCounter = 0xCDA7
-wPlayerHandCount = 0xC2EE
-wOpponentHandCount = 0xC3EE
-wPlayerArenaCard = 0xC2BB
-wOpponentArenaCard = 0xC3BB
-wPlayerBenchList = 0xC2BC
-wOpponentBenchList = 0xC3BC
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC600
-wDuelDisplayedScreen = 0xCAC2
-wLCDC = 0xCABB
-wSkipDuelistIsThinkingDelay = 0xCBF9
+hWhoseTurn = sym("hWhoseTurn")
+wAlreadyPlayedEnergy = sym("wAlreadyPlayedEnergy")
+wPreviousAIFlags = sym("wPreviousAIFlags")
+wAIBarrierFlagCounter = sym("wAIBarrierFlagCounter")
+wPlayerHandCount = sym("wPlayerNumberOfCardsInHand")
+wOpponentHandCount = sym("wOpponentNumberOfCardsInHand")
+wPlayerArenaCard = sym("wPlayerArenaCard")
+wOpponentArenaCard = sym("wOpponentArenaCard")
+wPlayerBenchList = sym("wPlayerBench")
+wOpponentBenchList = sym("wOpponentBench")
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wc600")
+wDuelDisplayedScreen = sym("wDuelDisplayedScreen")
+wLCDC = sym("wLCDC")
+wSkipDuelistIsThinkingDelay = sym("wSkipDuelistIsThinkingDelay")
 # <<< factory-cases-statics
 
 # >>> factory AIDoTurn_GeneralNoRetreat

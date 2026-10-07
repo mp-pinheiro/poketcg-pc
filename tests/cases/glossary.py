@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/glossary.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -9,15 +10,15 @@ CASES = {}
 # >>> factory OpenGlossaryScreen
 CONTRACT["OpenGlossaryScreen"] = {"compare": (), "preserve": ()}
 CASES["OpenGlossaryScreen"] = [
-    {"keys": [0x00, 0x02], "wram": {0xCE62: b"\x00", 0xCE52: b"\x00", 0xCE55: b"\xFF", 0xCEA3: b"\x00", 0xCAB6: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": [0x00, 0x02], "wram": {0xCE62: b"\x01", 0xCE52: b"\x00", 0xCE55: b"\xFF", 0xCEA3: b"\x00", 0xCAB6: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x02], wram={0xCE62: b"\x00", 0xCE52: b"\x00", 0xCE55: b"\xFF", 0xCEA3: b"\x00", 0xCAB6: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x02], "wram": {sym("wGlossaryPageNo"): b"\x00", sym("wInPlayAreaCurPosition"): b"\x00", sym("wDuelInitialPrizesUpperBitsSet"): b"\xFF", sym("wCheckMenuCursorBlinkCounter"): b"\x00", sym("wTileMapFill"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x02], "wram": {sym("wGlossaryPageNo"): b"\x01", sym("wInPlayAreaCurPosition"): b"\x00", sym("wDuelInitialPrizesUpperBitsSet"): b"\xFF", sym("wCheckMenuCursorBlinkCounter"): b"\x00", sym("wTileMapFill"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={sym("wGlossaryPageNo"): b"\x00", sym("wInPlayAreaCurPosition"): b"\x00", sym("wDuelInitialPrizesUpperBitsSet"): b"\xFF", sym("wCheckMenuCursorBlinkCounter"): b"\x00", sym("wTileMapFill"): b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
     # glossary.asm:1-16 with the menu drawn (rows 0-3 and the wide box) and the
     # bank-2 transition table parked in wMenuInputTablePointer ($CE53), then
     # B: the page counter, the pointer and the BG map are read back.
-    dict(POISON, keys=[0x00, 0x02], wram={0xCE62: b"\x00", 0xCE52: b"\x55", 0xCE53: b"\x55\x55", 0xCE55: b"\x00", 0xCEA3: b"\x00", 0xCAB6: b"\x00"},
+    dict(POISON, keys=[0x00, 0x02], wram={sym("wGlossaryPageNo"): b"\x00", sym("wInPlayAreaCurPosition"): b"\x55", sym("wMenuInputTablePointer"): b"\x55\x55", sym("wDuelInitialPrizesUpperBitsSet"): b"\x00", sym("wCheckMenuCursorBlinkCounter"): b"\x00", sym("wTileMapFill"): b"\x00"},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         read={0xCE62: 1, 0xCE52: 1, 0xCE53: 2, 0xCE55: 1}, vread={0: {0x9800: 0x400}},
+         read={sym("wGlossaryPageNo"): 1, sym("wInPlayAreaCurPosition"): 1, sym("wMenuInputTablePointer"): 2, sym("wDuelInitialPrizesUpperBitsSet"): 1}, vread={0: {0x9800: 0x400}},
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory OpenGlossaryScreen

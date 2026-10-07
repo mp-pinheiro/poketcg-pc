@@ -263,30 +263,30 @@ MUTATIONS = {
         'after': '\t_DrawPlayAreaToPlacePrizeCards();\n'
                  '\tBankswitchROM((uint8_t)(saved_bank ^ 1u));',
         'case_ids': ['DrawPlayAreaToPlacePrizeCards-0', 'DrawPlayAreaToPlacePrizeCards-1'],
-        'source': 'src/profiles/extended/home/duel_menus.c'},
+        'source': 'src/home/duel_menus.c'},
     'DrawYourOrOppPlayAreaScreen_Bank0': {   'source_symbol': 'DrawYourOrOppPlayAreaScreen_Bank0',
         'before': '\t(void)DrawWideTextBox();\n\tBankswitchROM(saved_bank);',
         'after': '\t(void)DrawWideTextBox();\n\tBankswitchROM(0u);',
         'case_ids': ['DrawYourOrOppPlayAreaScreen_Bank0-0', 'DrawYourOrOppPlayAreaScreen_Bank0-1'],
-        'source': 'src/profiles/extended/home/duel_menus.c'},
+        'source': 'src/home/duel_menus.c'},
     'DrawAIPeekScreen': {   'source_symbol': 'DrawAIPeekScreen',
         'before': '\tBankswitchROM(saved_bank);\n\treturn (DrawAIPeekScreenResult){saved_bank, f};',
         'after': '\tBankswitchROM((uint8_t)(saved_bank ^ 1u));\n'
                  '\treturn (DrawAIPeekScreenResult){saved_bank, f};',
         'case_ids': ['DrawAIPeekScreen-0', 'DrawAIPeekScreen-1'],
-        'source': 'src/profiles/extended/home/duel_menus.c'},
+        'source': 'src/home/duel_menus.c'},
     'SelectPrizeCards': {   'source_symbol': 'SelectPrizeCards',
         'before': '\t_SelectPrizeCards();\n\tBankswitchROM(saved_bank);',
         'after': '\t_SelectPrizeCards();\n\tBankswitchROM((uint8_t)(saved_bank ^ 1u));',
         'case_ids': ['SelectPrizeCards-0', 'SelectPrizeCards-1'],
-        'source': 'src/profiles/extended/home/duel_menus.c'},
+        'source': 'src/home/duel_menus.c'},
     'HandlePeekSelection': {   'source_symbol': 'HandlePeekSelection',
         'before': '\tHandlePeekSelectionResult inner = _HandlePeekSelection();\n'
                   '\tBankswitchROM(saved_bank);',
         'after': '\tHandlePeekSelectionResult inner = _HandlePeekSelection();\n'
                  '\tBankswitchROM((uint8_t)(saved_bank ^ 1u));',
         'case_ids': ['HandlePeekSelection-0', 'HandlePeekSelection-1'],
-        'source': 'src/profiles/extended/home/duel_menus.c'},
+        'source': 'src/home/duel_menus.c'},
     'OpenDuelCheckMenu': {   'source_symbol': 'OpenDuelCheckMenu',
         'before': '\tBankswitchROM(saved_bank);',
         'after': '\tBankswitchROM((uint8_t)(saved_bank ^ 1u));',
@@ -297,7 +297,7 @@ MUTATIONS = {
         'after': '\twInPlayAreaFromSelectButton = 2u;',
         'case_ids': [   'OpenInPlayAreaScreen_FromSelectButton-0',
                         'OpenInPlayAreaScreen_FromSelectButton-1'],
-        'source': 'src/profiles/extended/home/duel_menus.c'},
+        'source': 'src/home/duel_menus.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

@@ -5,19 +5,20 @@ them as one 10-byte span. InitDataDecompression is the only way the game reaches
 that state, but a probe call is a single routine call, so the streaming routines
 get the post-Init state (and any mid-stream state) seeded directly instead.
 """
+from tests.cases._symbols import HRAM_START, SRAM_START, VRAM_START, WRAMX_START, sym
 from tests.cases._fixtures import Fixture
 MW_WIN_DECOMPRESS = Fixture("mw-win-decompressdata-entry")
 
-STATE = 0xCAD6  # source ptr LE, bits left, command byte, repeat toggle, lengths,
+STATE = sym("wDecompSourcePosPtr")  # source ptr LE, bits left, command byte, repeat toggle, lengths,
                 # bytes to repeat, buffer page, repeat offset, buffer low
 PAGE = 0xC0     # secondary buffer page used by the game (wDecompressionSecondaryBuffer)
 BUF = PAGE << 8
 START_LOW = 0xEF  # LOW(wDecompressionSecondaryBufferStart)
 
-SRC = 0xC200
-OUT = 0xC300
-SRC_LIT = 0xC400
-OUT_LIT = 0xC600
+SRC = sym("wPlayerCardLocations")
+OUT = sym("wOpponentCardLocations")
+SRC_LIT = sym("wBoosterCardsDrawn")
+OUT_LIT = sym("wc600")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -100,15 +101,15 @@ LITERAL = b"".join(bytes([0xFF]) + bytes((i * 8 + k) & 0xFF for k in range(8))
 # why all four banks are seeded and not just the one live at entry. $C000-$C3FF is
 # seeded so the source's WRAM tail does not depend on the sweep having overwritten it
 # first.
-AA_SEED = {at: b"\xaa" * 0x800 for at in range(0x8000, 0xA000, 0x800)}
+AA_SEED = {at: b"\xaa" * 0x800 for at in range(VRAM_START, VRAM_START + 0x2000, 0x800)}
 AA_SEED[BUF] = b"\xaa" * 0x400
 AA_SEED[STATE] = state(src=0x8000)
 # Witnesses: neither address is ever read (the source stops at $C371 and the buffer
 # page is $C0 then $AA), so $55 can only become $AA by being written. $D000 is output
 # byte 45057 and $FF80 is 57217, both far past the 256 an 8-bit counter would stop at.
-AA_SEED[0xD000] = b"\x55"
-AA_SEED[0xFF80] = b"\x55"
-AA_SRAM = {bank: {at: b"\xaa" * 0x800 for at in range(0xA000, 0xC000, 0x800)}
+AA_SEED[WRAMX_START] = b"\x55"
+AA_SEED[HRAM_START] = b"\x55"
+AA_SRAM = {bank: {at: b"\xaa" * 0x800 for at in range(SRAM_START, SRAM_START + 0x2000, 0x800)}
            for bank in range(4)}
 # The state block itself is not checked: the sweep does overwrite it, but every later
 # .Decompress call writes its own fields again, so its final value is not derivable.
@@ -121,8 +122,8 @@ CASES = {
         # de is stored, never dereferenced, so the poison value goes in unchanged.
         # $C0FF and $C200 are guards: the clear is exactly the $C1 page.
         dict(POISON, b=0xC1,
-             wram={STATE: bytes(10), 0xC100: b"\xff" * 0x100,
-                   0xC0FF: b"\xff", 0xC200: b"\xff"}),
+             wram={STATE: bytes(10), sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xff" * 0x100,
+                   sym("wDecompressionSecondaryBufferStart") + 0x10: b"\xff", sym("wPlayerCardLocations"): b"\xff"}),
         # Page overlapping the state block: the asm writes the state first and then
         # clears, so the state is wiped again.
         dict(POISON, b=0xCA, d=0xC2, e=0x34, wram={STATE: b"\xff" * 10}),
@@ -133,7 +134,7 @@ CASES = {
         # ($CAD9 command byte, $CADA toggle, $CADB lengths, $CADC bytes-to-repeat,
         # $CADE offset). Poison it, and clear a page that does not overlap it.
         dict(POISON, b=0xC1, d=0x12, e=0x34,
-             wram={STATE: b"\xa5" * 10, 0xC100: b"\xff" * 0x100},
+             wram={STATE: b"\xa5" * 10, sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xff" * 0x100},
              read={STATE: 10}),
     ],
     "DecompressData": [
@@ -161,8 +162,8 @@ CASES = {
         # Same stream against a secondary buffer page other than the game's.
         dict(POISON, b=0x00, c=0x22, d=OUT >> 8, e=OUT & 0xFF,
              wram={SRC: RICH, STATE: state(src=SRC, page=0xC1),
-                   0xC100: bytes(0x100), 0xC0FF: b"\x5a", 0xC200 + len(RICH): b"\x5a"},
-             read={OUT: 34, 0xC100: 0x100}),
+                   sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(0x100), sym("wDecompressionSecondaryBufferStart") + 0x10: b"\x5a", sym("wPlayerCardLocations") + len(RICH): b"\x5a"},
+             read={OUT: 34, sym("wDecompressionSecondaryBufferStart") + 0x11: 0x100}),
         {"b": 0x01, "c": 0x00, "d": OUT_LIT >> 8, "e": OUT_LIT & 0xFF,
          "wram": {SRC_LIT: LITERAL, STATE: state(src=SRC_LIT)},
          "read": {OUT_LIT: 0x100, BUF: 0x100}},
@@ -176,13 +177,13 @@ CASES = {
          "wram": AA_SEED,
          "sram": AA_SRAM,
          "expect": {
-             0xD000: b"\xaa",
-             0xFF80: b"\xaa",
+             sym("wNamingScreenDestPointer"): b"\xaa",
+             sym("hBankROM"): b"\xaa",
          }},
         dict(
             MW_WIN_DECOMPRESS.case(vram=False),
             **MW_WIN_DECOMPRESS.regs,
-            read={0xC000: 0x100, 0xC0EF: 1, 0xC0F0: 1, 0xCAD6: 10},
+            read={sym("wDeckToBuild"): 0x100, sym("wDecompressionSecondaryBufferStart"): 1, sym("wDecompressionSecondaryBufferStart") + 1: 1, sym("wDecompSourcePosPtr"): 10},
         ),
     ],
     "DecompressData.Decompress": [
@@ -223,8 +224,8 @@ CASES = {
              read={BUF: 0x100}),
         # A page other than the game's, with a literal copy landing in it.
         dict(POISON, wram={SRC: RICH, STATE: state(src=SRC, page=0xC1),
-                           0xC100: bytes(0x100)},
-             read={0xC100: 0x100}),
+                           sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(0x100)},
+             read={sym("wDecompressionSecondaryBufferStart") + 0x11: 0x100}),
     ],
 }
 

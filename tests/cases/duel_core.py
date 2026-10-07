@@ -1,42 +1,43 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-hWhoseTurn = 0xFF97
-CARD = 0xC100  # stand-in for wLoadedCard1
-LOCATION = 0xC200  # player duel variables page
+hWhoseTurn = sym("hWhoseTurn")
+CARD = sym("wDecompressionSecondaryBufferStart") + 0x11  # stand-in for wLoadedCard1
+LOCATION = sym("wPlayerCardLocations")  # player duel variables page
 
-wAttackAnimationIsPlaying = 0xCE7E
-wUnused_DefendingPkmnStatus = 0xCCC5
-wDefendingWasForcedToSwitch = 0xCCEF
-wDealtDamage = 0xCCBF
-wNoEffectFromWhichStatus = 0xCCF1
-wLoadedAttackName = 0xCCAA
-wTxRam2 = 0xCE3F
-wLoadedAttackAnimation = 0xCCB8
+wAttackAnimationIsPlaying = sym("wAttackAnimationIsPlaying")
+wUnused_DefendingPkmnStatus = sym("wUnused_DefendingPkmnStatus")
+wDefendingWasForcedToSwitch = sym("wDefendingWasForcedToSwitch")
+wDealtDamage = sym("wDealtDamage")
+wNoEffectFromWhichStatus = sym("wNoEffectFromWhichStatus")
+wLoadedAttackName = sym("wLoadedAttackName")
+wTxRam2 = sym("wTxRam2")
+wLoadedAttackAnimation = sym("wLoadedAttackAnimation")
 
-PLAYER_ARENA = 0xC200
-OPP_ARENA  = 0xC300
-wPlayerArenaCardLastTurnStatus = 0xC2F5
-wOpponentArenaCardLastTurnStatus = 0xC3F5
-wWhoseTurn = 0xCC05
-wStatusConditionQueueIndex = 0xCCCD
-wStatusConditionQueue = 0xCCCE
-wNoDamageOrEffect = 0xCCC7
-wIsDamageToSelf = 0xCCE6
-wPlayerArenaCardStatus = 0xC2F0
-wOpponentArenaCardStatus = 0xC3F0
-hTempPlayAreaLocation_ff9d = 0xFF9D
-wPlayerDeck = 0xC400
-wOpponentDeck = 0xC480
-wPlayerArenaCard = 0xC2BB
-wOpponentArenaCard = 0xC3BB
-wPlayerArenaCardStage = 0xC2CE
-wOpponentArenaCardStage = 0xC3CE
-wAllStagesIndices = 0xCCCA
-wLoadedCard2 = 0xCC65
-wLoadedCard2Type = 0xCC65
-wLoadedCard2Stage = 0xCC6E
-hBankROM = 0xFF80
+PLAYER_ARENA = sym("wPlayerCardLocations")
+OPP_ARENA  = sym("wOpponentCardLocations")
+wPlayerArenaCardLastTurnStatus = sym("wPlayerArenaCardLastTurnStatus")
+wOpponentArenaCardLastTurnStatus = sym("wOpponentArenaCardLastTurnStatus")
+wWhoseTurn = sym("wWhoseTurn")
+wStatusConditionQueueIndex = sym("wStatusConditionQueueIndex")
+wStatusConditionQueue = sym("wStatusConditionQueue")
+wNoDamageOrEffect = sym("wNoDamageOrEffect")
+wIsDamageToSelf = sym("wIsDamageToSelf")
+wPlayerArenaCardStatus = sym("wPlayerArenaCardStatus")
+wOpponentArenaCardStatus = sym("wOpponentArenaCardStatus")
+hTempPlayAreaLocation_ff9d = sym("hTempPlayAreaLocation_ff9d")
+wPlayerDeck = sym("wPlayerDeck")
+wOpponentDeck = sym("wOpponentDeck")
+wPlayerArenaCard = sym("wPlayerArenaCard")
+wOpponentArenaCard = sym("wOpponentArenaCard")
+wPlayerArenaCardStage = sym("wPlayerArenaCardStage")
+wOpponentArenaCardStage = sym("wOpponentArenaCardStage")
+wAllStagesIndices = sym("wAllStagesIndices")
+wLoadedCard2 = sym("wLoadedCard2")
+wLoadedCard2Type = sym("wLoadedCard2Type")
+wLoadedCard2Stage = sym("wLoadedCard2Stage")
+hBankROM = sym("hBankROM")
 
 
 
@@ -381,11 +382,11 @@ CASES["GetCardOneStageBelow"] = [
 ]
 
 
-ACTIVE_ANIM = 0xD42A
-WD4C0_ANIM = 0xD4C0
-QUEUE_ANIM = 0xD423
+ACTIVE_ANIM = sym("wActiveScreenAnim")
+WD4C0_ANIM = sym("wd4c0")
+QUEUE_ANIM = sym("wAnimationQueue")
 ALL_FF_ANIM = {ACTIVE_ANIM: b"\xff", WD4C0_ANIM: b"\xff", QUEUE_ANIM: b"\xff" * 7}
-HPAD_REPEAT = 0xFF8D
+HPAD_REPEAT = sym("hDPadRepeat")
 
 CASES["WaitAttackAnimation"] = [
     {"wram": {wLoadedAttackAnimation: b"\x00"}},
@@ -398,14 +399,14 @@ CASES["WaitAttackAnimation"] = [
          read={HPAD_REPEAT: 5, ACTIVE_ANIM: 1, WD4C0_ANIM: 1, QUEUE_ANIM: 7}),
 ]
 
-WCONSOLE = 0xCAB4
-WBGP = 0xCABC
-WOBP0 = 0xCABD
-WFLAG = 0xCABF
-WBG = 0xCAF0
-WOBJ = 0xCB30
-WTEXT = 0xCCF3
-HBANK = 0xFF80
+WCONSOLE = sym("wConsole")
+WBGP = sym("wBGP")
+WOBP0 = sym("wOBP0")
+WFLAG = sym("wFlushPaletteFlags")
+WBG = sym("wBackgroundPalettesCGB")
+WOBJ = sym("wObjectPalettesCGB")
+WTEXT = sym("wTextBoxFrameType")
+HBANK = sym("hBankROM")
 
 CASES["SetDefaultConsolePalettes"] = [
     {"wram": {WCONSOLE: b"\x00", WBGP: b"\xff", WOBP0: b"\xff",
@@ -422,8 +423,8 @@ CASES["SetDefaultConsolePalettes"] = [
     # core.asm:4158-4170. No case seeded wConsole = CONSOLE_SGB, which is why
     # the whole SGB branch could be a bare return; the packet it builds at
     # wTempSGBPacket is the observation that catches it.
-    {"wram": {WCONSOLE: b"\x01", WTEXT: b"\x00", 0xCAE0: b"\x00" * 16},
-     "read": {WTEXT: 1, 0xCAE0: 16},
+    {"wram": {WCONSOLE: b"\x01", WTEXT: b"\x00", sym("wTempSGBPacket"): b"\x00" * 16},
+     "read": {WTEXT: 1, sym("wTempSGBPacket"): 16},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
     {"b": 1,
      "wram": {WCONSOLE: b"\x02", HBANK: b"\x01", WBG: b"\x00" * 40,

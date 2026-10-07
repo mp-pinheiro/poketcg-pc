@@ -1,11 +1,12 @@
 """Oracle-diff cases for ClearSavedDuel (engine/duel/core.asm:6183-6191)."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-sCurrentDuelValid = 0xBC00
-GUARD_LOW = 0xBBFF        # byte just below sCurrentDuelValid
-GUARD_HIGH = 0xBC03       # sCurrentDuelType, the byte just past the checksum
-hBankSRAM = 0xFF81
+sCurrentDuelValid = sym("sCurrentDuelValid")
+GUARD_LOW = sym("sCardPopNameList") + 0xFF        # byte just below sCurrentDuelValid
+GUARD_HIGH = sym("sCurrentDuelType")       # sCurrentDuelType, the byte just past the checksum
+hBankSRAM = sym("hBankSRAM")
 
 CONTRACT = {
     "ClearSavedDuel": {

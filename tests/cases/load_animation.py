@@ -1,19 +1,20 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-W_WHICH_SPRITE = 0xD4CF
-SPRITE_BUFFER = 0xD4D0
+W_WHICH_SPRITE = sym("wWhichSprite")
+SPRITE_BUFFER = sym("wSprite1Enabled")
 
-hBankROM = 0xFF80
-wCurrSpriteAttributes = 0xD5D0
-wCurrSpriteXPos = 0xD5D1
-wCurrSpriteYPos = 0xD5D2
-wCurrSpriteTileID = 0xD5D3
-wCurrSpriteRightEdgeCheck = 0xD5D4
-wCurrSpriteFrameBank = 0xD5D6
-wOAM = 0xCA00
-wOAMOffset = 0xCAB5
-wWhichAnimationFrame = 0xD4CA
-wTempPointer = 0xD4C4
+hBankROM = sym("hBankROM")
+wCurrSpriteAttributes = sym("wCurrSpriteAttributes")
+wCurrSpriteXPos = sym("wCurrSpriteXPos")
+wCurrSpriteYPos = sym("wCurrSpriteYPos")
+wCurrSpriteTileID = sym("wCurrSpriteTileID")
+wCurrSpriteRightEdgeCheck = sym("wCurrSpriteRightEdgeCheck")
+wCurrSpriteFrameBank = sym("wCurrSpriteFrameBank")
+wOAM = sym("wOAM")
+wOAMOffset = sym("wOAMOffset")
+wWhichAnimationFrame = sym("wWhichAnimationFrame")
+wTempPointer = sym("wTempPointer")
 
 
 def wtemp_seed(bank, addr, tail=b""):
@@ -66,36 +67,36 @@ CASES = {
     ],
     "DrawSpriteAnimationFrame": [
         # Baseline: no flip, no edge clipping, single record.
-        {"hl": 0xC100, "wram": {
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {
             wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x90", wCurrSpriteYPos: b"\x60",
             wCurrSpriteAttributes: b"\x00", wCurrSpriteTileID: b"\x10", wOAMOffset: b"\x00",
-            0xC100: bytes((1, 0x05, 0x08, 0x02, 0x00))},
+            sym("wDecompressionSecondaryBufferStart") + 0x11: bytes((1, 0x05, 0x08, 0x02, 0x00))},
          "read": {wOAM: 4, wOAMOffset: 1, wCurrSpriteRightEdgeCheck: 2}},
         # Poison hl (the only field this routine consumes) to a controlled address;
         # count=0 exits immediately, but the edge checks still run unconditionally.
-        dict(POISON, hl=0xC300, wram={
+        dict(POISON, hl=sym("wOpponentCardLocations"), wram={
             hBankROM: b"\x0A", wCurrSpriteFrameBank: b"\x01",
-            wCurrSpriteXPos: b"\xF5", wCurrSpriteYPos: b"\x10", 0xC300: b"\x00"},
+            wCurrSpriteXPos: b"\xF5", wCurrSpriteYPos: b"\x10", sym("wOpponentCardLocations"): b"\x00"},
              read={wCurrSpriteRightEdgeCheck: 2}),
         # Both Y and X flip, with a palette/flip-bit attribute delta.
-        {"hl": 0xC100, "wram": {
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {
             wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x50", wCurrSpriteYPos: b"\x60",
             wCurrSpriteAttributes: b"\x60", wCurrSpriteTileID: b"\x20", wOAMOffset: b"\x00",
-            0xC100: bytes((1, 0x05, 0x03, 0x0A, 0x11))},
+            sym("wDecompressionSecondaryBufferStart") + 0x11: bytes((1, 0x05, 0x03, 0x0A, 0x11))},
          "read": {wOAM: 4, wOAMOffset: 1}},
         # Y offset carries a non-edge sprite past the 256 boundary: clipped, so
         # wOAM/wOAMOffset must stay untouched even though hl still advances.
-        {"hl": 0xC200, "wram": {
+        {"hl": sym("wPlayerCardLocations"), "wram": {
             wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x10", wCurrSpriteYPos: b"\x90",
             wCurrSpriteAttributes: b"\x00", wCurrSpriteTileID: b"\x00", wOAMOffset: b"\x08",
             wOAM + 8: bytes((0x11, 0x22, 0x33, 0x44)),
-            0xC200: bytes((1, 0x7F, 0x00, 0x00, 0x00))},
+            sym("wPlayerCardLocations"): bytes((1, 0x7F, 0x00, 0x00, 0x00))},
          "read": {wOAM + 8: 4, wOAMOffset: 1}},
         # Three records in one frame: hl advances 1 + 4*3 and wOAMOffset by 12.
-        {"hl": 0xC400, "wram": {
+        {"hl": sym("wBoosterCardsDrawn"), "wram": {
             wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x10", wCurrSpriteYPos: b"\x10",
             wCurrSpriteAttributes: b"\x00", wCurrSpriteTileID: b"\x00", wOAMOffset: b"\x00",
-            0xC400: bytes((3, 1, 1, 1, 0, 2, 2, 2, 0, 3, 3, 3, 0))},
+            sym("wBoosterCardsDrawn"): bytes((3, 1, 1, 1, 0, 2, 2, 2, 0, 3, 3, 3, 0))},
          "read": {wOAM: 12, wOAMOffset: 1}},
         # Real bank switch: frame data comes from bank 3's actual ROM image.
         {"hl": 0x4000, "wram": {
@@ -107,44 +108,44 @@ CASES = {
     "GetAnimationFramePointer": [
         # wWhichAnimationFrame == $FF: the SpriteNullAnimationPointer branch,
         # a real, fixed ROM address and bank.
-        {"hl": 0xC500, "wram": {wWhichAnimationFrame: b"\xFF"}, "read": {0xC50B: 3}},
+        {"hl": sym("wNameBuffer"), "wram": {wWhichAnimationFrame: b"\xFF"}, "read": {sym("wNameBuffer") + 0xB: 3}},
         # Ordinary table lookup, frame index 3.
-        {"hl": 0xC500, "wram": {
-            wWhichAnimationFrame: b"\x03", wTempPointer: wtemp_seed(0x02, 0xC300),
-            0xC300: bytes((0x02, 0x00, 0xC3)), 0xC306: bytes((0x78, 0x56))},
-         "read": {0xC50B: 3}},
+        {"hl": sym("wNameBuffer"), "wram": {
+            wWhichAnimationFrame: b"\x03", wTempPointer: wtemp_seed(0x02, sym("wOpponentCardLocations")),
+            sym("wOpponentCardLocations"): bytes((0x02, 0x00, 0xC3)), sym("wOpponentCardLocations") + 6: bytes((0x78, 0x56))},
+         "read": {sym("wNameBuffer") + 0xB: 3}},
         # Poison hl (the only field this routine consumes); frame index 0 exercises
         # the rotate(0)==0 boundary.
-        dict(POISON, hl=0xC600, wram={
+        dict(POISON, hl=sym("wc600"), wram={
             hBankROM: b"\x09", wWhichAnimationFrame: b"\x00",
-            wTempPointer: wtemp_seed(0x00, 0xC300),
-            0xC300: bytes((0x00, 0x80, 0xC3)), 0xC380: bytes((0xAB, 0xCD))},
-             read={0xC60B: 3, hBankROM: 1}),
+            wTempPointer: wtemp_seed(0x00, sym("wOpponentCardLocations")),
+            sym("wOpponentCardLocations"): bytes((0x00, 0x80, 0xC3)), sym("wOpponentDeckCards") + 2: bytes((0xAB, 0xCD))},
+             read={sym("wc600") + 0xB: 3, hBankROM: 1}),
         # frame index $FE: rotate($FE) == $FD, carries into the high byte.
-        {"hl": 0xC500, "wram": {
-            wWhichAnimationFrame: b"\xFE", wTempPointer: wtemp_seed(0x01, 0xC700),
-            0xC700: bytes((0x01, 0x80, 0xC7)), 0xC87D: bytes((0x11, 0x22))},
-         "read": {0xC50B: 3}},
+        {"hl": sym("wNameBuffer"), "wram": {
+            wWhichAnimationFrame: b"\xFE", wTempPointer: wtemp_seed(0x01, sym("wc700")),
+            sym("wc700"): bytes((0x01, 0x80, 0xC7)), sym("wc800") + 0x7D: bytes((0x11, 0x22))},
+         "read": {sym("wNameBuffer") + 0xB: 3}},
     ],
 }
 # >>> factory-cases-statics
-wAllSpriteAnimationsDisabled = 0xD5D7
-wVBlankOAMCopyToggle = 0xCAC0
+wAllSpriteAnimationsDisabled = sym("wAllSpriteAnimationsDisabled")
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
 
-hBankROM = 0xFF80
-wCurTilemap = 0xD131
+hBankROM = sym("hBankROM")
+wCurTilemap = sym("wCurTilemap")
 
-wCurPortrait = 0xD61E
+wCurPortrait = sym("wCurPortrait")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-hBankROM = 0xFF80
-wSceneBaseX = 0xD61C
-wSceneBaseY = 0xD61D
-wSceneSGBPacketPtr = 0xD620
-wSceneSGBRoutinePtr = 0xD622
-wd291 = 0xD291
-wCurTilemap = 0xD131
-wAllSpriteAnimationsDisabled = 0xD5D7
+hBankROM = sym("hBankROM")
+wSceneBaseX = sym("wSceneBaseX")
+wSceneBaseY = sym("wSceneBaseY")
+wSceneSGBPacketPtr = sym("wSceneSGBPacketPtr")
+wSceneSGBRoutinePtr = sym("wSceneSGBRoutinePtr")
+wd291 = sym("wd291")
+wCurTilemap = sym("wCurTilemap")
+wAllSpriteAnimationsDisabled = sym("wAllSpriteAnimationsDisabled")
 # <<< factory-cases-statics
 
 
@@ -227,8 +228,8 @@ CASES["DrawPlayerPortrait"] = [
 # >>> factory Func_3e31
 CONTRACT["Func_3e31"] = {"compare": ("a", "f"), "preserve": ("f",), "wram_out": True}
 CASES["Func_3e31"] = [
-    {"wram": {0xFF80: b"\x03", 0xD322: b"\x00"}, "read": {0xFF80: 1}},
-    dict(POISON, wram={0xFF80: b"\x05", 0xD322: b"\x00"}, read={0xFF80: 1}),
+    {"wram": {sym("hBankROM"): b"\x03", sym("wNumLoadedFramesetSubgroups"): b"\x00"}, "read": {sym("hBankROM"): 1}},
+    dict(POISON, wram={sym("hBankROM"): b"\x05", sym("wNumLoadedFramesetSubgroups"): b"\x00"}, read={sym("hBankROM"): 1}),
 ]
 # <<< factory Func_3e31
 

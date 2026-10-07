@@ -106,13 +106,8 @@ CASES["Foo"] = [
      proving every preservation claim;
   3. every boundary: count 0 (must act as maximum, never no-op), 1, and
      256/257 for 16-bit counters.
-- **Python case files use NUMERIC addresses only.** The C `_ADDR` macros do
-  not exist in Python. The prompt lists every RAM symbol's address; define
-  module-level constants (`wFoo = 0xCCED`) inside your CASES block if it
-  helps readability.
-- **Reserved WRAM $CF00-$CFFF** belongs to the oracle's call frame: never
-  seed or write it. Use $C100-$CA00 for scratch buffers, or the routine's
-  real pret symbols.
+- Python case files spell RAM addresses through `tests/cases/_symbols.py`, never as raw literals: `sym("wFoo")` or `sym("wFoo") + offset` for a game variable (resolved at import from the active profile's `.sym`, so one module serves every profile; an unknown name raises), `data(0x...)` for a value in a RAM range that is not an address (a dividend, a junk register word), and the harness constants `CALL_FRAME`, `STACK_WINDOW`, `STACK_TOP`, `STACK_CANARY` and hardware bases `WRAM_START`, `WRAMX_START`, `SRAM_START`, `HRAM_START` for the oracle frame, the reserved stack and whole-region images. `just lint-case-literals` rejects any integer literal in `$A000-$BFFF`, `$C000-$DFFF` or `$FF80-$FFFE`; `tools/case_symbols.py` performs the rewrite. Name a module-level constant after the symbol (`wFoo = sym("wFoo")`) only if it helps readability.
+- Reserved WRAM: `CALL_FRAME` (`$CFF0-$CFF5`) and `STACK_WINDOW` (`$DC30-$DCFF`) belong to the oracle's call frame and stack: never seed or write them. Use the routine's real pret symbols, or `$C100-$CA00` scratch named by the symbol that contains it.
 - A case the live oracle physically cannot run uses `"oracle": False` plus
   `"why": "..."` plus asm-derived `"expect": {addr: bytes}` /
   `"expect_regs": {...}` — derived from the asm, never guessed.

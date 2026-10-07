@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/pc_glossary.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -14,8 +15,8 @@ SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # >>> factory _PCMenu_Glossary
 CONTRACT["_PCMenu_Glossary"] = {"compare": (), "preserve": ()}
 CASES["_PCMenu_Glossary"] = [
-    {"keys": [0x00, 0x02], "setup": SETUP, "wram": {0xCABB: b"\x00", 0xD291: b"\x5A"}, "read": {0xD291: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
-    dict(POISON, keys=[0x00, 0x02], setup=SETUP, wram={0xCABB: b"\x00", 0xD291: b"\x5A"}, read={0xD291: 1}, instruction_budget=20000000, cycle_budget=100000000),
+    {"keys": [0x00, 0x02], "setup": SETUP, "wram": {sym("wLCDC"): b"\x00", sym("wd291"): b"\x5A"}, "read": {sym("wd291"): 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x02], setup=SETUP, wram={sym("wLCDC"): b"\x00", sym("wd291"): b"\x5A"}, read={sym("wd291"): 1}, instruction_budget=20000000, cycle_budget=100000000),
 ]
 # <<< factory _PCMenu_Glossary
 

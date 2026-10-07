@@ -1,6 +1,7 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import in_play_area_b_exit_fixture as _in_play_area_b_exit_fixture, IN_PLAY_AREA_B_EXIT_REGS as _IN_PLAY_AREA_B_EXIT_REGS
-wOAM = 0xCA00
-wVBlankOAMCopyToggle = 0xCAC0
+wOAM = sym("wOAM")
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
 OAM_SIZE = 160
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -45,15 +46,15 @@ CONTRACT["OpenInPlayAreaScreen_HandleInput"] = {"compare": ("a", "f"), "preserve
 # The routine reads the joypad snapshot without polling, so the frame's B press
 # (hDPadHeld, hKeysHeld, hKeysPressed) is seeded here; the fixture leaves it out.
 _B_EXIT = _in_play_area_b_exit_fixture(bank=6)
-_B_EXIT["wram"] = {**_B_EXIT["wram"], 0xFF8F: b"\x02", 0xFF90: b"\x02", 0xFF91: b"\x02"}
-_B_EXIT["read"] = {**_B_EXIT["read"], 0xCEA3: 1}
+_B_EXIT["wram"] = {**_B_EXIT["wram"], sym("hDPadHeld"): b"\x02", sym("hKeysHeld"): b"\x02", sym("hKeysPressed"): b"\x02"}
+_B_EXIT["read"] = {**_B_EXIT["read"], sym("wCheckMenuCursorBlinkCounter"): 1}
 CASES["OpenInPlayAreaScreen_HandleInput"] = [
     {
         "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
         "wram": {
-            0xCEA3: b"\x01",   # wCheckMenuCursorBlinkCounter = 1
+            sym("wCheckMenuCursorBlinkCounter"): b"\x01",   # wCheckMenuCursorBlinkCounter = 1
         },
-        "hram": {0xFF8F: b"\x00", 0xFF91: b"\x00"},   # hDPadHeld=0, hKeysPressed=0
+        "hram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00"},   # hDPadHeld=0, hKeysPressed=0
         "expect_regs": {"a": 0x01, "f": 0x20},
     },
     dict(_B_EXIT, **_IN_PLAY_AREA_B_EXIT_REGS),
@@ -63,66 +64,66 @@ CASES["OpenInPlayAreaScreen_HandleInput"] = [
 # >>> factory OpenInPlayAreaScreen_TurnHolderPlayArea
 CONTRACT["OpenInPlayAreaScreen_TurnHolderPlayArea"] = {"compare": (), "preserve": ()}
 CASES["OpenInPlayAreaScreen_TurnHolderPlayArea"] = [
-    {"wram": {0xCE52: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCBC9: 1}, "expect": {0xCBC9: b"\x00"}},
-    {"wram": {0xCE52: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCBC9: 1}, "expect": {0xCBC9: b"\x01"}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCE52: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCBC9: 1}, "expect": {0xCBC9: b"\x00"}}]
+    {"wram": {sym("wInPlayAreaCurPosition"): b"\x05", sym("wLCDC"): b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {sym("wCurPlayAreaSlot"): 1}, "expect": {sym("wCurPlayAreaSlot"): b"\x00"}},
+    {"wram": {sym("wInPlayAreaCurPosition"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {sym("wCurPlayAreaSlot"): 1}, "expect": {sym("wCurPlayAreaSlot"): b"\x01"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wInPlayAreaCurPosition"): b"\x05", sym("wLCDC"): b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {sym("wCurPlayAreaSlot"): 1}, "expect": {sym("wCurPlayAreaSlot"): b"\x00"}}]
 # <<< factory OpenInPlayAreaScreen_TurnHolderPlayArea
 
 # >>> factory-cases-statics
-wInPlayAreaCurPosition = 0xCE52
-wCurPlayAreaSlot = 0xCBC9
-wCurPlayAreaY = 0xCBCA
+wInPlayAreaCurPosition = sym("wInPlayAreaCurPosition")
+wCurPlayAreaSlot = sym("wCurPlayAreaSlot")
+wCurPlayAreaY = sym("wCurPlayAreaY")
 
-hBankROM = 0xFF80
-hDPadHeld = 0xFF8F
-hWhoseTurn = 0xFF97
-wDefaultText = 0xC590
-wInPlayAreaCurPosition = 0xCE52
-wInPlayAreaFromSelectButton = 0xCE60
-wMenuInputTablePointer = 0xCE53
-wVBlankOAMCopyToggle = 0xCAC0
+hBankROM = sym("hBankROM")
+hDPadHeld = sym("hDPadHeld")
+hWhoseTurn = sym("hWhoseTurn")
+wDefaultText = sym("wDefaultText")
+wInPlayAreaCurPosition = sym("wInPlayAreaCurPosition")
+wInPlayAreaFromSelectButton = sym("wInPlayAreaFromSelectButton")
+wMenuInputTablePointer = sym("wMenuInputTablePointer")
+wVBlankOAMCopyToggle = sym("wVBlankOAMCopyToggle")
 # <<< factory-cases-statics
 
 # >>> factory OpenInPlayAreaScreen_NonTurnHolderPlayArea
 CONTRACT["OpenInPlayAreaScreen_NonTurnHolderPlayArea"] = {"compare": (), "preserve": ()}
 CASES["OpenInPlayAreaScreen_NonTurnHolderPlayArea"] = [
-    {"wram": {wInPlayAreaCurPosition: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}, "expect": {wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00"}},
-    {"wram": {wInPlayAreaCurPosition: b"\x0B", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}, "expect": {wCurPlayAreaSlot: b"\x01", wCurPlayAreaY: b"\x00"}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wInPlayAreaCurPosition: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}, "expect": {wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00"}}]
+    {"wram": {wInPlayAreaCurPosition: b"\x08", sym("wLCDC"): b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}, "expect": {wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00"}},
+    {"wram": {wInPlayAreaCurPosition: b"\x0B", sym("wLCDC"): b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}, "expect": {wCurPlayAreaSlot: b"\x01", wCurPlayAreaY: b"\x00"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wInPlayAreaCurPosition: b"\x08", sym("wLCDC"): b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}, "expect": {wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00"}}]
 # <<< factory OpenInPlayAreaScreen_NonTurnHolderPlayArea
 
 # >>> factory OpenInPlayAreaScreen_TurnHolderDiscardPile
 CONTRACT["OpenInPlayAreaScreen_TurnHolderDiscardPile"] = {"compare": (), "preserve": ()}
 CASES["OpenInPlayAreaScreen_TurnHolderDiscardPile"] = [
-    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00"}, "read": {sym("wDuelTempList"): 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x02", sym("wPlayerDeckCards"): b"\x11\x22", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00", sym("wDuelTempList"): b"\xFF", sym("wNoItemSelectionMenuKeys"): b"\x00"}, "read": {sym("wNoItemSelectionMenuKeys"): 1, sym("wDuelTempList"): 3}, "expect": {sym("wNoItemSelectionMenuKeys"): b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00"}, read={sym("wDuelTempList"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory OpenInPlayAreaScreen_TurnHolderDiscardPile
 
 # >>> factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile
 CONTRACT["OpenInPlayAreaScreen_NonTurnHolderDiscardPile"] = {"compare": (), "preserve": ()}
 CASES["OpenInPlayAreaScreen_NonTurnHolderDiscardPile"] = [
-    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC1ED: b"\x00", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC2"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC1", 0xC1ED: b"\x00", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC1"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC1ED: b"\x00", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xFF97: 1}, expect={0xFF97: b"\xC2"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wDecompressionSecondaryBufferStart") + 0xFE: b"\x00", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00"}, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC2"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {sym("hWhoseTurn"): b"\xC1", sym("wDecompressionSecondaryBufferStart") + 0xFE: b"\x00", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00"}, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC1"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wDecompressionSecondaryBufferStart") + 0xFE: b"\x00", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wLCDC"): b"\x00", sym("wCurDeckCardChanges"): b"\x00"}, read={sym("hWhoseTurn"): 1}, expect={sym("hWhoseTurn"): b"\xC2"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile
 
 # >>> factory OpenInPlayAreaScreen_NonTurnHolderHand
 CONTRACT["OpenInPlayAreaScreen_NonTurnHolderHand"] = {"compare": (), "preserve": ()}
 CASES["OpenInPlayAreaScreen_NonTurnHolderHand"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC3EE: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC2"}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC3EE: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC2"}}
+    {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC2"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC2"}}
 ]
 # <<< factory OpenInPlayAreaScreen_NonTurnHolderHand
 
 # >>> factory OpenInPlayAreaScreen_TurnHolderHand
 CONTRACT["OpenInPlayAreaScreen_TurnHolderHand"] = {"compare": ("a", "f"), "preserve": ("f",)}
 CASES["OpenInPlayAreaScreen_TurnHolderHand"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC1", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC1"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, read={0xFF97: 1}, expect={0xFF97: b"\xC2"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+    {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC1", sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, "read": {sym("hWhoseTurn"): 1}, "expect": {sym("hWhoseTurn"): b"\xC1"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wLCDC"): b"\x00"}, read={sym("hWhoseTurn"): 1}, expect={sym("hWhoseTurn"): b"\xC2"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory OpenInPlayAreaScreen_TurnHolderHand
 

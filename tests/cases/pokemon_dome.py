@@ -1,11 +1,12 @@
+from tests.cases._symbols import sym
 from tests.cases._fixtures import dome_load_map_fixture as _dome_load_map_fixture, DOME_LOAD_MAP_REGS as _DOME_LOAD_MAP_REGS
 from tests.cases._fixtures import dome_after_duel_fixture as _dome_after_duel_fixture, DOME_AFTER_DUEL_REGS as _DOME_AFTER_DUEL_REGS
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wLoadNPCXPos = 0xD3AC
-wLoadNPCYPos = 0xD3AD
-wLoadNPCDirection = 0xD3AE
+wLoadNPCXPos = sym("wLoadNPCXPos")
+wLoadNPCYPos = sym("wLoadNPCYPos")
+wLoadNPCDirection = sym("wLoadNPCDirection")
 
 
 CONTRACT = {
@@ -70,33 +71,33 @@ CASES["Func_f77d"] = [
 # <<< factory Func_f77d
 
 # >>> factory-cases-statics
-wOWMapEvents = 0xD323
-wWriteBGMapToSRAM = 0xD292
-wCurTilemap = 0xD131
-wConsole = 0xCAB4
-wPermissionMap = 0xD133
+wOWMapEvents = sym("wOWMapEvents")
+wWriteBGMapToSRAM = sym("wWriteBGMapToSRAM")
+wCurTilemap = sym("wCurTilemap")
+wConsole = sym("wConsole")
+wPermissionMap = sym("wPermissionMap")
 
-wPlayerYCoord = 0xD331
-wPlayerXCoord = 0xD330
-wTempNPC = 0xD3AB
-wLoadedNPCs = 0xD34A
-wLoadedNPCTempIndex = 0xD3AA
-wScriptNPC = 0xD3B6
-wPlayerDirection = 0xD334
-wOverworldNPCFlags = 0xD0C1
-wNextScript = 0xD0C6
-wOverworldMode = 0xD0BF
+wPlayerYCoord = sym("wPlayerYCoord")
+wPlayerXCoord = sym("wPlayerXCoord")
+wTempNPC = sym("wTempNPC")
+wLoadedNPCs = sym("wLoadedNPCs")
+wLoadedNPCTempIndex = sym("wLoadedNPCTempIndex")
+wScriptNPC = sym("wScriptNPC")
+wPlayerDirection = sym("wPlayerDirection")
+wOverworldNPCFlags = sym("wOverworldNPCFlags")
+wNextScript = sym("wNextScript")
+wOverworldMode = sym("wOverworldMode")
 NPC_TABLE = b"\x00" * 96
 READ_SPAN = {wTempNPC: 1, wLoadedNPCTempIndex: 1, wScriptNPC: 1, wNextScript: 2}
 
-wEventVarByte_A = 0xD3E9
-wPCPacks_A = 0xD11E
-wNextScript_A = 0xD0C6
+wEventVarByte_A = sym("wEventVars") + 0x17
+wPCPacks_A = sym("wPCPacks")
+wNextScript_A = sym("wNextScript")
 # <<< factory-cases-statics
-wEventVarByte_Dome = 0xD3E9
-wEventVarByte_GrandMasters = 0xD3E9
-wEventVarByte_NPC = 0xD3EA
-wEventVarByte_Ronald = 0xD3EB
+wEventVarByte_Dome = sym("wEventVars") + 0x17
+wEventVarByte_GrandMasters = sym("wEventVars") + 0x17
+wEventVarByte_NPC = sym("wEventVars") + 0x18
+wEventVarByte_Ronald = sym("wEventVars") + 0x19
 # >>> factory PokemonDomeCloseTextBox
 CONTRACT["PokemonDomeCloseTextBox"] = {"compare": (), "preserve": ()}
 CASES["PokemonDomeCloseTextBox"] = [
@@ -131,7 +132,7 @@ CASES["PokemonDomeMovePlayer"] = [
 
 # >>> factory PokemonDomeLoadMap
 CONTRACT["PokemonDomeLoadMap"] = {"compare": (), "preserve": (), "wram_out": True}
-wLoadedEventBits_A = 0xD3D1
+wLoadedEventBits_A = sym("wLoadedEventBits")
 CASES["PokemonDomeLoadMap"] = [
     {"wram": {wEventVarByte_A: b"\x00", wPCPacks_A: bytes(15)},
      "read": {wPCPacks_A: 15, wNextScript_A: 2, wLoadedEventBits_A: 1}},
@@ -147,13 +148,13 @@ CASES["PokemonDomeLoadMap"] = [
 # >>> factory PokemonDomeAfterDuel
 CONTRACT["PokemonDomeAfterDuel"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["PokemonDomeAfterDuel"] = [
-    {"wram": {0xD0C3: b"\x00", 0xD0C4: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    {"wram": {0xD0C3: b"\x00", 0xD0C4: b"\x37"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
-    dict(POISON, wram={0xD0C3: b"\x01", 0xD0C4: b"\x37"}, instruction_budget=2000000, cycle_budget=8000000),
+    {"wram": {sym("wDuelResult"): b"\x00", sym("wNPCDuelist"): b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"wram": {sym("wDuelResult"): b"\x00", sym("wNPCDuelist"): b"\x37"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={sym("wDuelResult"): b"\x01", sym("wNPCDuelist"): b"\x37"}, instruction_budget=2000000, cycle_budget=8000000),
     # dome-1 681052: Courtney's duel lost; the dispatcher is the table lookup alone,
     # so the PC packs and the event scratch (wLoadedEventBits) stay as the duel left them.
     dict(_dome_after_duel_fixture(vram=False, bank=3), **_DOME_AFTER_DUEL_REGS,
-         read={0xD3D1: 1, wPCPacks_A: 15, 0xD3E9: 1}),
+         read={sym("wLoadedEventBits"): 1, wPCPacks_A: 15, sym("wEventVars") + 0x17: 1}),
 ]
 # <<< factory PokemonDomeAfterDuel
 
@@ -189,7 +190,7 @@ CONTRACT["Preload_Rod"] = {"compare": ("a", "f"), "preserve": (), "wram_out": Tr
 CASES["Preload_Rod"] = [
     {"wram": {wEventVarByte_NPC: b"\x00", wEventVarByte_Dome: b"\x00"}},
     {"wram": {wEventVarByte_NPC: b"\x00", wEventVarByte_Dome: b"\x20"},
-     "read": {0xD3AC: 2}},
+     "read": {sym("wLoadNPCXPos"): 2}},
     {"wram": {wEventVarByte_NPC: b"\x00", wEventVarByte_Dome: b"\x10"}},
     dict(POISON, wram={wEventVarByte_NPC: b"\x01", wEventVarByte_Dome: b"\x00"}),
 ]
@@ -197,11 +198,11 @@ CASES["Preload_Rod"] = [
 # >>> factory Preload_Ronald1InPokemonDome
 CONTRACT["Preload_Ronald1InPokemonDome"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
 CASES["Preload_Ronald1InPokemonDome"] = [
-    {"wram": {wEventVarByte_Ronald: b"\x00", 0xD3B0: b"\x00"}},
-    {"wram": {wEventVarByte_Ronald: b"\x40", 0xD3B0: b"\x00"},
-     "read": {0xD111: 1}},
-    {"wram": {wEventVarByte_Ronald: b"\x80", 0xD3B0: b"\x00"}},
-    dict(POISON, wram={wEventVarByte_Ronald: b"\x00", 0xD3B0: b"\x00"}),
+    {"wram": {wEventVarByte_Ronald: b"\x00", sym("wLoadNPCFunction") + 1: b"\x00"}},
+    {"wram": {wEventVarByte_Ronald: b"\x40", sym("wLoadNPCFunction") + 1: b"\x00"},
+     "read": {sym("wDefaultSong"): 1}},
+    {"wram": {wEventVarByte_Ronald: b"\x80", sym("wLoadNPCFunction") + 1: b"\x00"}},
+    dict(POISON, wram={wEventVarByte_Ronald: b"\x00", sym("wLoadNPCFunction") + 1: b"\x00"}),
 ]
 # <<< factory Preload_Ronald1InPokemonDome
 

@@ -9,8 +9,6 @@ _HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
 
 def _fixture_case(fixture):
     case = fixture.case(vram=False)
-    case["read"][0xCC00] = 0xBD
-    case["read"][0xCCBE] = 0x42
     return case
 
 
@@ -18,8 +16,6 @@ _ARTICUNO_AI = Fixture("legendary-articuno-aidoturn-entry", directory=_FIXTURES,
 _ARTICUNO_SCORE = Fixture("legendary-articuno-score-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 _ARTICUNO_SCORING = Fixture("legendary-articuno-score-2-entry", directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
 _ARTICUNO_SCORING_THREE = _ARTICUNO_SCORING.case(vram=False, bank=5)
-_ARTICUNO_SCORING_THREE["read"][0xCC00] = 0xBD
-_ARTICUNO_SCORING_THREE["read"][0xCCBE] = 0x42
 _ARTICUNO_SCORING_THREE["snapshot"] = True
 _ARTICUNO_SCORING_THREE["wram"][0xC2EC] = b"\x07"
 _ARTICUNO_SCORING_THREE["wram"][0xC3EC] = b"\x07"
@@ -51,7 +47,7 @@ MUTATIONS = {
         'after': '\tif (prizes < 7u)\n\t\treturn;',
         'case_ids': ['ScoreLegendaryArticunoCards-2',
                      'ScoreLegendaryArticunoCards-3'],
-        'source': 'src/profiles/extended/home/legendary_articuno.c'},
+        'source': 'src/home/legendary_articuno.c'},
     'AIDoTurn_LegendaryArticuno': {   'source_symbol': 'AIDoTurn_LegendaryArticuno',
         'before': '\t\t(void)AIProcessRetreat();\n'
                   '\t\ttrainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10);',
@@ -60,7 +56,7 @@ MUTATIONS = {
                  '\t\t\treturn (AIDoTurn_LegendaryArticunoResult){retreat.f};\n'
                  '\t\ttrainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10);',
         'case_ids': ['AIDoTurn_LegendaryArticuno-0'],
-        'source': 'src/profiles/extended/home/legendary_articuno.c'},
+        'source': 'src/home/legendary_articuno.c'},
 }
 
 from tests.cases._schema_migration import legacy_to_schema

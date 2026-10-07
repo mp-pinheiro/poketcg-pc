@@ -1,6 +1,7 @@
+from tests.cases._symbols import sym
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wCardPopCardCandidates = 0xC400
+wCardPopCardCandidates = sym("wCardPopCardCandidates")
 
 CONTRACT = {
     "CreateCardPopCandidateList": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
@@ -16,46 +17,46 @@ CASES = {
         dict(POISON, a=0xff, instruction_budget=500000, cycle_budget=5000000, wram={wCardPopCardCandidates: b"\xaa" * 0x80}, read={wCardPopCardCandidates: 0x80}),
     ],
     "CalculateNameHash": [
-        {"wram": {0xC100: b"\x00" * 16}},
-        {"hl": 0xC100, "wram": {0xC100: bytes(range(16))}},
-        {"hl": 0xC200, "wram": {0xC200: b"\xff\x01\xfe\x02\xfd\x03\xfc\x04\xfb\x05\xfa\x06\xf9\x07\xf8\x08"}},
-        dict(POISON, hl=0xC300, wram={0xC300: bytes((0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0, 0xF0, 0xFF))}),
+        {"wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00" * 16}},
+        {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: bytes(range(16))}},
+        {"hl": sym("wPlayerCardLocations"), "wram": {sym("wPlayerCardLocations"): b"\xff\x01\xfe\x02\xfd\x03\xfc\x04\xfb\x05\xfa\x06\xf9\x07\xf8\x08"}},
+        dict(POISON, hl=sym("wOpponentCardLocations"), wram={sym("wOpponentCardLocations"): bytes((0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0, 0xF0, 0xFF))}),
     ],
 }
 
 # >>> factory LookUpNameInCardPopNameList
 CONTRACT["LookUpNameInCardPopNameList"] = {"compare": (), "preserve": ()}
 CASES["LookUpNameInCardPopNameList"] = [
-    {"wram": {0xC000: b"ALICE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xC500: b"ALICE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {0xC5F3: 1}},
-    {"ramg": False, "wram": {0xC000: b"BOB\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xC200: b"CAROL\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xC500: b"ALICE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "sram": {0: {0xA010: b"CAROL\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}}, "read": {0xC5F3: 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xC000: b"DAVE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xC500: b"DAVE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {0xC5F3: 1}}
+    {"wram": {sym("wDeckToBuild"): b"ALICE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", sym("wNameBuffer"): b"ALICE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {sym("wCardPopNameSearchResult"): 1}},
+    {"ramg": False, "wram": {sym("wDeckToBuild"): b"BOB\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", sym("wPlayerCardLocations"): b"CAROL\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", sym("wNameBuffer"): b"ALICE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "sram": {0: {sym("sPlayerName"): b"CAROL\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}}, "read": {sym("wCardPopNameSearchResult"): 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wDeckToBuild"): b"DAVE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", sym("wNameBuffer"): b"DAVE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {sym("wCardPopNameSearchResult"): 1}}
 ]
 # <<< factory LookUpNameInCardPopNameList
 
 # >>> factory DecideCardToReceiveFromCardPop
 CONTRACT["DecideCardToReceiveFromCardPop"] = {"compare": ("a",), "preserve": ()}
 CASES["DecideCardToReceiveFromCardPop"] = [
-    {"sram": {0: {0xA010: b"\x00" * 16}}, "wram": {0xC500: b"\x00" * 16},
+    {"sram": {0: {sym("sPlayerName"): b"\x00" * 16}}, "wram": {sym("wNameBuffer"): b"\x00" * 16},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, sram={0: {0xA010: b"\x00" * 16}}, wram={0xC500: b"\x00" * 16},
+    dict(POISON, sram={0: {sym("sPlayerName"): b"\x00" * 16}}, wram={sym("wNameBuffer"): b"\x00" * 16},
          instruction_budget=20000000, cycle_budget=80000000),
-    {"sram": {0: {0xA010: b"\x00" * 16}}, "wram": {0xC500: b"\xFB" + b"\x00" * 15}},
+    {"sram": {0: {sym("sPlayerName"): b"\x00" * 16}}, "wram": {sym("wNameBuffer"): b"\xFB" + b"\x00" * 15}},
 ]
 # <<< factory DecideCardToReceiveFromCardPop
 
 # >>> factory HandleCardPopCommunications
 CONTRACT["HandleCardPopCommunications"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["HandleCardPopCommunications"] = [
-    {"oracle": True, "evidence": "primary", "why": "Card Pop communication depends on external infrared hardware; this deterministic native no-peer case drives the D-pad abort and checks the SRAM-to-WRAM name-list copy and failure return.", "keys": 0x02, "setup": [{"fn": "EnableLCD"}], "sram": {0: {0xBB00: bytes([0x5a]) * 0x100}}, "read": {0xC000: 0x100}, "expect": {0xC000: bytes([0x5a]) * 0x100}, "expect_regs": {"a": 0x02, "f": 0x10, "hl": 0x018B}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, oracle=False, evidence="primary", why="Card Pop communication depends on external infrared hardware; this deterministic native no-peer case drives the D-pad abort with poisoned registers and checks the SRAM-to-WRAM name-list copy and failure return.", keys=0x02, setup=[{"fn": "EnableLCD"}], sram={0: {0xBB00: bytes([0x5a]) * 0x100}}, read={0xC000: 0x100}, expect={0xC000: bytes([0x5a]) * 0x100}, expect_regs={"a": 0x02, "f": 0x10, "hl": 0x018B}, instruction_budget=20000000, cycle_budget=80000000),
+    {"oracle": True, "evidence": "primary", "why": "Card Pop communication depends on external infrared hardware; this deterministic native no-peer case drives the D-pad abort and checks the SRAM-to-WRAM name-list copy and failure return.", "keys": 0x02, "setup": [{"fn": "EnableLCD"}], "sram": {0: {sym("sCardPopNameList"): bytes([0x5a]) * 0x100}}, "read": {sym("wDeckToBuild"): 0x100}, "expect": {sym("wDeckToBuild"): bytes([0x5a]) * 0x100}, "expect_regs": {"a": 0x02, "f": 0x10, "hl": 0x018B}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, oracle=False, evidence="primary", why="Card Pop communication depends on external infrared hardware; this deterministic native no-peer case drives the D-pad abort with poisoned registers and checks the SRAM-to-WRAM name-list copy and failure return.", keys=0x02, setup=[{"fn": "EnableLCD"}], sram={0: {sym("sCardPopNameList"): bytes([0x5a]) * 0x100}}, read={sym("wDeckToBuild"): 0x100}, expect={sym("wDeckToBuild"): bytes([0x5a]) * 0x100}, expect_regs={"a": 0x02, "f": 0x10, "hl": 0x018B}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory HandleCardPopCommunications
 
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wConsole = 0xCAB4
-hWhoseTurn = 0xFF97
-wLCDC = 0xCABB
+wConsole = sym("wConsole")
+hWhoseTurn = sym("hWhoseTurn")
+wLCDC = sym("wLCDC")
 # <<< factory-cases-statics
 
 # >>> factory _DoCardPop

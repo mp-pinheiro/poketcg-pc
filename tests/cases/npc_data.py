@@ -1,4 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/overworld/npc_data.asm."""
+from tests.cases._symbols import sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -19,27 +20,27 @@ CASES["GetNPCHeaderPointer"] = [
 
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wOpponentName = 0xCC16
-wOpponentPortrait = 0xCC15
+wOpponentName = sym("wOpponentName")
+wOpponentPortrait = sym("wOpponentPortrait")
 
-wCurrentNPCNameTx = 0xD0C8
+wCurrentNPCNameTx = sym("wCurrentNPCNameTx")
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-wConsole = 0xCAB4
-wTempNPC = 0xD3AB
-wNPCSpriteID = 0xD3B3
-wNPCAnim = 0xD3B1
-wNPCAnimFlags = 0xD3B2
+wConsole = sym("wConsole")
+wTempNPC = sym("wTempNPC")
+wNPCSpriteID = sym("wNPCSpriteID")
+wNPCAnim = sym("wNPCAnim")
+wNPCAnimFlags = sym("wNPCAnimFlags")
 NPC_OUTPUT = {wTempNPC: 1, wNPCSpriteID: 1, wNPCAnim: 1, wNPCAnimFlags: 1}
 
-wNPCDuelDeckID = 0xCC19
-wNPCDuelPrizes = 0xCC18
-wOpponentName = 0xCC16
-wOpponentPortrait = 0xCC15
+wNPCDuelDeckID = sym("wNPCDuelDeckID")
+wNPCDuelPrizes = sym("wNPCDuelPrizes")
+wOpponentName = sym("wOpponentName")
+wOpponentPortrait = sym("wOpponentPortrait")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-wCurMap = 0xD32F
-wMatchStartTheme = 0xD113
+wCurMap = sym("wCurMap")
+wMatchStartTheme = sym("wMatchStartTheme")
 # <<< factory-cases-statics
 
 # >>> factory SetNPCOpponentNameAndPortrait
@@ -86,27 +87,27 @@ CASES["_GetNPCDuelConfigurations"] = [
 # >>> factory SetNPCDeckIDAndDuelTheme
 CONTRACT["SetNPCDeckIDAndDuelTheme"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
 CASES["SetNPCDeckIDAndDuelTheme"] = [
-    {"a": 0x00, "wram": {0xCC19: b"\x00", 0xCC1A: b"\x00"}, "read": {0xCC19: 1, 0xCC1A: 1}},
-    dict(POISON, a=0x02, wram={0xCC19: b"\x00", 0xCC1A: b"\x00"}, read={0xCC19: 1, 0xCC1A: 1}),
-    {"a": 0x7F, "wram": {0xCC19: b"\x00", 0xCC1A: b"\x00"}, "read": {0xCC19: 1, 0xCC1A: 1}},
+    {"a": 0x00, "wram": {sym("wNPCDuelDeckID"): b"\x00", sym("wDuelTheme"): b"\x00"}, "read": {sym("wNPCDuelDeckID"): 1, sym("wDuelTheme"): 1}},
+    dict(POISON, a=0x02, wram={sym("wNPCDuelDeckID"): b"\x00", sym("wDuelTheme"): b"\x00"}, read={sym("wNPCDuelDeckID"): 1, sym("wDuelTheme"): 1}),
+    {"a": 0x7F, "wram": {sym("wNPCDuelDeckID"): b"\x00", sym("wDuelTheme"): b"\x00"}, "read": {sym("wNPCDuelDeckID"): 1, sym("wDuelTheme"): 1}},
 ]
 # <<< factory SetNPCDeckIDAndDuelTheme
 
 # >>> factory _GetChallengeMachineDuelConfigurations
 CONTRACT["_GetChallengeMachineDuelConfigurations"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
 CASES["_GetChallengeMachineDuelConfigurations"] = [
-    {"wram": {0xCC19: b"\x00"}},
-    {"wram": {0xCC19: b"\xFE"}},
-    dict(POISON, wram={0xCC19: b"\x00"}),
+    {"wram": {sym("wNPCDuelDeckID"): b"\x00"}},
+    {"wram": {sym("wNPCDuelDeckID"): b"\xFE"}},
+    dict(POISON, wram={sym("wNPCDuelDeckID"): b"\x00"}),
 ]
 # <<< factory _GetChallengeMachineDuelConfigurations
 
 # >>> factory SetNPCDialogName
 CONTRACT["SetNPCDialogName"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ("b", "c", "hl")}
 CASES["SetNPCDialogName"] = [
-    {"a": 0x00, "b": 0xBB, "c": 0xCC, "hl": 0x1234, "wram": {0xD0C8: b"\x00\x00"}, "read": {0xD0C8: 2}},
-    {"a": 0x01, "b": 0x11, "c": 0x22, "hl": 0xC500, "wram": {0xD0C8: b"\x00\x00"}, "read": {0xD0C8: 2}},
-    dict(POISON, a=0x00, wram={0xD0C8: b"\x00\x00"}, read={0xD0C8: 2}),
+    {"a": 0x00, "b": 0xBB, "c": 0xCC, "hl": 0x1234, "wram": {sym("wCurrentNPCNameTx"): b"\x00\x00"}, "read": {sym("wCurrentNPCNameTx"): 2}},
+    {"a": 0x01, "b": 0x11, "c": 0x22, "hl": sym("wNameBuffer"), "wram": {sym("wCurrentNPCNameTx"): b"\x00\x00"}, "read": {sym("wCurrentNPCNameTx"): 2}},
+    dict(POISON, a=0x00, wram={sym("wCurrentNPCNameTx"): b"\x00\x00"}, read={sym("wCurrentNPCNameTx"): 2}),
 ]
 # <<< factory SetNPCDialogName
 
