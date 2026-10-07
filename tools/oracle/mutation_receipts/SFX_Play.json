@@ -1,9 +1,9 @@
 {
   "fn": "SFX_Play",
-  "case": "tests/cases/sfx.py",
-  "index": 3,
+  "case": "tests/profiles/extended/cases/sfx.py",
+  "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"SFX_Play\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 63, \"sram\": {}, \"vram\": {}, \"wram\": {\"56716\": \"02\", \"56879\": \"00\", \"56883\": \"00\", \"56907\": \"0000df44000000000120\", \"56915\": \"01\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"SFX_Play\", \"mismatches\": {\"bus\": {\"address\": 56716, \"reference\": \"0200000000\", \"native\": \"5400000000\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[56716, 1], [56879, 1], [56883, 1], [56907, 10]]}}}\n",
-  "restored": "{\"fn\": \"SFX_Play\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 63, \"sram\": {}, \"vram\": {}, \"wram\": {\"56716\": \"02\", \"56879\": \"00\", \"56883\": \"00\", \"56907\": \"0000df44000000000120\", \"56915\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"SFX_Play\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55215\": \"02\", \"55378\": \"00\", \"55382\": \"00\", \"55406\": \"0000e65500000000\", \"55415\": \"0120\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SFX_Play\", \"mismatches\": {\"bus\": {\"address\": 55215, \"reference\": \"0200000000\", \"native\": \"0000000000\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[55215, 1], [55378, 1], [55382, 1], [55406, 8], [55415, 2]]}}}\n",
+  "restored": "{\"fn\": \"SFX_Play\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55215\": \"02\", \"55378\": \"00\", \"55382\": \"00\", \"55406\": \"0000e65500000000\", \"55415\": \"0120\"}}, \"status\": \"PASS\"}\n"
 }

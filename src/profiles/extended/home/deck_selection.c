@@ -17,7 +17,7 @@
 #include "generated/wram.h"
 #include "home/random.h"
 
-#define DECK_CARD_STRIDE 0x54u
+#define DECK_CARD_STRIDE DECK_COMPRESSED_STRUCT_SIZE
 
 
 #include "generated/wram.h"
@@ -100,7 +100,7 @@ ResetCheckMenuCursorPositionAndBlinkResult ResetCheckMenuCursorPositionAndBlink(
 uint16_t GetPointerToDeckName(void)
 {
 	uint8_t deck = wCurDeck;
-	uint16_t offset = HtimesL((uint16_t)(((uint16_t)deck << 8) | DECK_STRUCT_SIZE));
+	uint16_t offset = HtimesL((uint16_t)(((uint16_t)deck << 8) | DECK_CARD_STRIDE));
 	return (uint16_t)(sDeck1Name_ADDR + offset);
 }
 /* <<< factory GetPointerToDeckName */
@@ -206,11 +206,17 @@ uint8_t PrintThereIsNoDeckHereText(void)
 /* >>> factory WriteCardListsTerminatorBytes */
 WriteCardListsTerminatorBytesResult WriteCardListsTerminatorBytes(void)
 {
-	uint16_t filtered_terminator = (uint16_t)(wFilteredCardList_ADDR + DECK_SIZE);
+	uint16_t filtered_terminator =
+		(uint16_t)(wFilteredCardList_ADDR + MAX_NUM_CARDS_PER_TYPE * 2u);
 	gb_write8(filtered_terminator, 0u);
-	uint16_t deck_terminator = (uint16_t)(wCurDeckCards_ADDR + DECK_CONFIG_BUFFER_SIZE);
+	gb_write8((uint16_t)(filtered_terminator + 1u), 0u);
+	uint16_t deck_terminator =
+		(uint16_t)(wCurDeckCards_ADDR + DECK_CONFIG_BUFFER_SIZE * 2u);
 	gb_write8(deck_terminator, 0u);
-	return (WriteCardListsTerminatorBytesResult){0u, 0x80u, 0u, 0x50u, 0xCF67u};
+	gb_write8((uint16_t)(deck_terminator + 1u), 0u);
+	return (WriteCardListsTerminatorBytesResult){
+		0u, 0x80u, 0u, (uint8_t)(MAX_NUM_CARDS_PER_TYPE * 2u),
+		(uint16_t)(deck_terminator + 1u)};
 }
 /* <<< factory WriteCardListsTerminatorBytes */
 
@@ -398,9 +404,7 @@ void DeckSelectionSubMenu(void)
 		EnableSRAM();
 		(void)DecrementDeckCardsInCollection(wCurDeckCards_ADDR);
 		uint16_t destination = AddDeckToCollection(GetPointerToDeckCards());
-		uint16_t source = wCurDeckCards_ADDR;
-		for (uint8_t i = 0u; i < DECK_SIZE; i++)
-			gb_write8(destination++, gb_read8(source++));
+		CompressDeckToSRAM(wCurDeckCards_ADDR, destination);
 		uint16_t saved_name = GetPointerToDeckName();
 		uint16_t name_source = wCurDeckName_ADDR;
 		CopyListFromHLToDE(&name_source, &saved_name);

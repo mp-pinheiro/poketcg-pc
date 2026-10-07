@@ -1,9 +1,9 @@
 {
   "fn": "GePCPackSelectionCoordinates",
-  "case": "tests/cases/mail.py",
-  "index": 2,
+  "case": "tests/profiles/extended/cases/mail.py",
+  "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"GePCPackSelectionCoordinates\", \"registers\": {\"a\": 170, \"b\": 13, \"c\": 10, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53533\": \"0e\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"GePCPackSelectionCoordinates\", \"mismatches\": {\"b\": [13, 10]}}\n",
-  "restored": "{\"fn\": \"GePCPackSelectionCoordinates\", \"registers\": {\"a\": 170, \"b\": 13, \"c\": 10, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53533\": \"0e\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"GePCPackSelectionCoordinates\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53514\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GePCPackSelectionCoordinates\", \"mismatches\": {\"b\": [1, 2]}}\n",
+  "restored": "{\"fn\": \"GePCPackSelectionCoordinates\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53514\": \"00\"}}, \"status\": \"PASS\"}\n"
 }

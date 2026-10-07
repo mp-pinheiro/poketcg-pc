@@ -2024,7 +2024,7 @@ TryAddCardToDeckResult TryAddCardToDeck(CardId id)
 {
 	uint8_t max_cards = wMaxNumCardsAllowed;
 	if (wTotalCardCount == max_cards)
-		return (TryAddCardToDeckResult){wTotalCardCount, 0x10u};
+		return (TryAddCardToDeckResult){wTotalCardCount, 0x90u};
 	LoadCardDataToBuffer1_FromCardID(id);
 	if (wLoadedCard1Type != TYPE_ENERGY_DOUBLE_COLORLESS &&
 		(wLoadedCard1Type & TYPE_ENERGY) != TYPE_ENERGY) {
@@ -2453,8 +2453,8 @@ DismantleDeckResult DismantleDeck(uint16_t w0)
 		ClearMemory_Bank2(NAME_BUFFER_LENGTH, name);
 		uint16_t cards = GetPointerToDeckCards();
 		(void)AddDeckToCollection(cards);
-		a = DECK_SIZE;
-		ClearMemory_Bank2(DECK_SIZE, cards);
+		a = DECK_COMPRESSED_SIZE;
+		ClearMemory_Bank2(DECK_COMPRESSED_SIZE, cards);
 	}
 	DisableSRAM();
 	return (DismantleDeckResult){a, 1u};

@@ -178,7 +178,7 @@ CASES = {
             'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
     ],
     'WriteCardListsTerminatorBytes': [
-        {'wram': {0xCEC7: b'\xaa', 0xCF18: b'\xbb'}, 'read': {0xCEC7: 0x01, 0xCF18: 0x01}},
+        {'wram': {0xD72A: b'\xaa\x00', 0xCF68: b'\xbb\x00'}, 'read': {0xD72A: 0x02, 0xCF68: 0x02}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -186,8 +186,8 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCEC7: b'\x11', 0xCF18: b'"'},
-            'read': {0xCEC7: 0x01, 0xCF18: 0x01}},
+            'wram': {0xD72A: b'\x11\x00', 0xCF68: b'"\x00'},
+            'read': {0xD72A: 0x02, 0xCF68: 0x02}},
     ],
     'OpenDeckConfirmationMenu': [
         {   'd': 0xA3,
@@ -537,10 +537,10 @@ MUTATIONS = {
         'case_ids': ['PrintThereIsNoDeckHereText-0', 'PrintThereIsNoDeckHereText-1'],
         'source': 'src/profiles/extended/home/deck_selection.c'},
     'WriteCardListsTerminatorBytes': {   'source_symbol': 'WriteCardListsTerminatorBytes',
-        'before': '\tuint16_t filtered_terminator = (uint16_t)(wFilteredCardList_ADDR + '
-                  'DECK_SIZE);',
-        'after': '\tuint16_t filtered_terminator = (uint16_t)(wFilteredCardList_ADDR + (DECK_SIZE '
-                 '- 1u));',
+        'before': '\tuint16_t filtered_terminator =\n'
+                  '\t\t(uint16_t)(wFilteredCardList_ADDR + MAX_NUM_CARDS_PER_TYPE * 2u);',
+        'after': '\tuint16_t filtered_terminator =\n'
+                 '\t\t(uint16_t)(wFilteredCardList_ADDR + MAX_NUM_CARDS_PER_TYPE);',
         'case_ids': ['WriteCardListsTerminatorBytes-0', 'WriteCardListsTerminatorBytes-1'],
         'source': 'src/profiles/extended/home/deck_selection.c'},
     'OpenDeckConfirmationMenu': {   'source_symbol': 'OpenDeckConfirmationMenu',

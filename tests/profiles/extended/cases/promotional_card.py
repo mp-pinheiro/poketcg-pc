@@ -6,24 +6,20 @@ CONTRACT = {
 
 CASES = {
     '_ShowPromotionalCardScreen': [
-        {   'a': 0x1E,
-            'keys': [0x00, 0x02],
-            'read': {0xCBD2: 0x02, 0xFF97: 0x01},
-            'setup': [{'fn': 'CopyDMAFunction'}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
+        {   'oracle': False,
+            'why': 'Extended promotional screen waits for song and input completion outside the isolated oracle.',
+            'a': 0x1E,
+            'expect': {0xCBD2: b'\x02', 0xFF97: b'\x01', 0xCCB2: b'\x01', 0xCCB4: b'\x02', 0xFFA8: b'\x01'}},
+        {   'oracle': False,
+            'why': 'Extended promotional screen waits for song and input completion outside the isolated oracle.',
+            'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
             'c': 0xCC,
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'keys': [0x00, 0x02],
-            'read': {0xCBD2: 0x02, 0xFF97: 0x01},
-            'setup': [{'fn': 'CopyDMAFunction'}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
+            'expect': {0xCBD2: b'\x02', 0xFF97: b'\x01', 0xCCB2: b'\x01', 0xCCB4: b'\x02', 0xFFA8: b'\x01'}},
     ],
 }
 

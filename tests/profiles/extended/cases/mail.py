@@ -127,12 +127,14 @@ CASES = {
     ],
     'PrintEmptyPCPackName': [
         {   'setup': [{'fn': 'WriteByteToBGMap0', 'a': 0x0F, 'b': 0x02, 'c': 0x02}],
-            'a': 0x00,
-            'wram': {0xD10A: b'\x00'},
-            'vread': {0x00: {0x9842: 0x01}}},
-        {   'setup': [{'fn': 'WriteByteToBGMap0', 'a': 0x0F, 'b': 0x0E, 'c': 0x0A}],
             'a': 0x0E,
             'wram': {0xD10A: b'\x00'},
+            'read': {0xFFAA: 0x01, 0xFFAB: 0x01, 0xFFAD: 0x01},
+            'vread': {0x00: {0x9842: 0x01}}},
+        {   'setup': [{'fn': 'WriteByteToBGMap0', 'a': 0x0F, 'b': 0x0E, 'c': 0x0A}],
+            'a': 0x00,
+            'wram': {0xD10A: b'\x00'},
+            'read': {0xFFAA: 0x01, 0xFFAB: 0x01, 0xFFAD: 0x01},
             'vread': {0x00: {0x994E: 0x01}}},
         {   'a': 0x07,
             'f': 0xF0,
@@ -143,6 +145,7 @@ CASES = {
             'hl': 0x1234,
             'setup': [{'fn': 'WriteByteToBGMap0', 'a': 0x0F, 'b': 0x08, 'c': 0x06}],
             'wram': {0xD10A: b'\x03'},
+            'read': {0xFFAA: 0x01, 0xFFAB: 0x01, 0xFFAD: 0x01},
             'vread': {0x00: {0x98C8: 0x01}}},
     ],
     'UpdateMailMenuCursor': [
@@ -162,9 +165,6 @@ CASES = {
             'vread': {0x00: {0x98C7: 0x01}, 0x01: {0x98C7: 0x01}}},
     ],
     'PCMailHandleDPadInput': [
-        {   'hDPadHeld': 0x00,
-            'wram': {0xFF8F: b'\x00', 0xD10A: b'\x00', 0xD109: b'\xaa'},
-            'read': {0xD10A: 0x01, 0xD109: 0x01}},
         {   'hDPadHeld': 0x10,
             'wram': {   0xFF8F: b'\x10',
                         0xD10A: b'\x00',
@@ -172,6 +172,9 @@ CASES = {
                         0xD109: b'\xaa'},
             'read': {0xD11A: 0x01, 0xD10A: 0x01, 0xD109: 0x01},
             'vread': {0x00: {0x9841: 0x01, 0x9847: 0x01}, 0x01: {0x9841: 0x01, 0x9847: 0x01}}},
+        {   'hDPadHeld': 0x00,
+            'wram': {0xFF8F: b'\x00', 0xD10A: b'\x00', 0xD109: b'\xaa'},
+            'read': {0xD10A: 0x01, 0xD109: 0x01}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -244,8 +247,7 @@ CASES = {
             'vread': {0x00: {0x9848: 0x06}}},
     ],
     'PrintObtainedPCPacks': [
-        {'wram': {0xD10B: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'}},
-        {   'wram': {   0xD10B: b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
+        {   'wram': {   0xD10B: b'\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
                         0xFF80: b'\x04',
                         0xCABB: b'\x00'},
             'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
@@ -258,6 +260,7 @@ CASES = {
                         0xFFAA: 0x02,
                         0xFFAD: 0x01},
             'vread': {0x00: {0x9842: 0x06}}},
+        {'wram': {0xD10B: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -280,8 +283,6 @@ CASES = {
             'vread': {0x00: {0x994E: 0x06}}},
     ],
     'BlinkUnopenedPCPacks': [
-        {   'wram': {   0xD10B: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xD109: b'\x00'}},
         {   'wram': {   0xD10B: b'\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
                         0xD109: b'\x00',
                         0xFF80: b'\x04',
@@ -296,6 +297,8 @@ CASES = {
                         0xFFAA: 0x02,
                         0xFFAD: 0x01},
             'vread': {0x00: {0x9842: 0x06}}},
+        {'wram': {0xD10B: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
+                  0xD109: b'\x00'}},
         {   'wram': {   0xD10B: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80',
                         0xD109: b'\x0c',
                         0xFF80: b'\x04',
@@ -370,19 +373,6 @@ CASES = {
             'cycle_budget': 0xE4E1C00},
     ],
     'PCMailHandleAInput': [
-        {   'wram': {   0xFF91: b'\x00',
-                        0xD10A: b'\x00',
-                        0xD10B: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xD11B: b'\xff'},
-            'read': {0xD11B: 0x01, 0xD10B: 0x0F}},
-        {   'wram': {   0xFF91: b'\x01',
-                        0xD10A: b'\x00',
-                        0xD10B: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xD11B: b'\xff'},
-            'read': {0xD11B: 0x01, 0xD10B: 0x0F},
-            'vread': {0x00: {0x9841: 0x01}, 0x01: {0x9841: 0x01}},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
         {   'wram': {   0xFF91: b'\x01',
                         0xD10A: b'\x00',
                         0xD10B: b'\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
@@ -403,6 +393,11 @@ CASES = {
             'vread': {0x00: {0x9841: 0x07}},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
+        {   'wram': {0xFF91: b'\x00',
+                     0xD10A: b'\x00',
+                     0xD10B: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
+                     0xD11B: b'\xff'},
+            'read': {0xD11B: 0x01, 0xD10B: 0x0F}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -534,11 +529,11 @@ MUTATIONS = {
     'GetPCPackNameTextID': {   'source_symbol': 'GetPCPackNameTextID',
         'before': 'uint16_t GetPCPackNameTextID(uint8_t a)\n'
                   '{\n'
-                  '\treturn (uint16_t)(0x035Du + (uint16_t)a);\n'
+                  '\treturn kPCPackNameTextIDs[a];\n'
                   '}',
         'after': 'uint16_t GetPCPackNameTextID(uint8_t a)\n'
                  '{\n'
-                 '\treturn (uint16_t)(0x035Eu + (uint16_t)a);\n'
+                 '\treturn kPCPackNameTextIDs[(uint8_t)(a + 1u)];\n'
                  '}',
         'case_ids': ['GetPCPackNameTextID-0', 'GetPCPackNameTextID-1', 'GetPCPackNameTextID-2'],
         'source': 'src/profiles/extended/home/mail.c'},

@@ -13,7 +13,7 @@ CONTRACT = {
 
 CASES = {
     'DrawPauseMenuPlayerPortrait': [
-        {'wram': {0xD60B: b'\x00'}, 'read': {0xD60B: 0x01}},
+        {'wram': {0xD60B: b'\xff'}, 'read': {0xD60B: 0x01}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -213,8 +213,10 @@ MUTATIONS = {
         'case_ids': ['PrintPlayTime_SkipUpdateTime-0'],
         'source': 'src/profiles/extended/home/print_stats.c'},
     'PrintAlbumProgress': {   'source_symbol': 'PrintAlbumProgress',
-        'before': 'PrintAlbumProgress_SkipGetProgress(b, c, prog.d, prog.e);',
-        'after': 'PrintAlbumProgress_SkipGetProgress(b, c, (uint8_t)(prog.d + 1u), prog.e);',
+        'before': 'PrintAlbumProgress_SkipGetProgress(b, c, prog.d, prog.e,\n'
+                  '\t\t(uint16_t)(((uint16_t)prog.b << 8) | prog.c));',
+        'after': 'PrintAlbumProgress_SkipGetProgress(b, c, prog.d, prog.e,\n'
+                 '\t\t(uint16_t)(((uint16_t)(prog.b + 1u) << 8) | prog.c));',
         'case_ids': ['PrintAlbumProgress-0'],
         'source': 'src/profiles/extended/home/print_stats.c'},
     'PrintPlayTime': {   'source_symbol': 'PrintPlayTime',

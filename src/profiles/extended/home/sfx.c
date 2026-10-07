@@ -29,6 +29,7 @@
 #define SFX_HeaderPointers_ADDR  SFXHeaderPointers_ADDR
 
 #define rAUD1LEN   0xFF11u
+#define rAUD1SWEEP 0xFF10u
 #define rAUD1ENV   0xFF12u
 #define rAUD1HIGH  0xFF14u
 #define rAUD4LEN   0xFF20u
@@ -356,6 +357,10 @@ void ExecuteNextSFXCommand(uint16_t hl, uint16_t bc)
 			break;
 		case 8u:
 			cmd_ptr = SFX_Pan(cmd_ptr, c);
+			break;
+		case 9u:
+			gb_write8(rAUD1SWEEP, gb_read8(cmd_ptr));
+			cmd_ptr = (uint16_t)(cmd_ptr + 1u);
 			break;
 		case 15u:
 			SFX_End(c);

@@ -82,16 +82,7 @@ static void adapt_PCMailHandleDPadInput(ProbeState *s)
 /* >>> factory GetPCPackNameTextID */
 static void adapt_GetPCPackNameTextID(ProbeState *s)
 {
-	uint8_t input = s->a;
-	uint16_t text_id = GetPCPackNameTextID(input);
-	s->a = (uint8_t)(input << 1);
-	s->f = 0u;
-	if (s->a == 0u)
-		s->f |= 0x80u;
-	if ((uint8_t)(input & 0x0Fu) > 0x07u)
-		s->f |= 0x20u;
-	if ((input & 0x80u) != 0u)
-		s->f |= 0x10u;
+	uint16_t text_id = GetPCPackNameTextID(s->a);
 	s->d = (uint8_t)(text_id >> 8);
 	s->e = (uint8_t)text_id;
 }

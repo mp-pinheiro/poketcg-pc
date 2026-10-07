@@ -48,6 +48,31 @@ for name in ROUTINES:
              wram={0xC1FF: b'\xFE', 0xC200: b'\xFD\xFC'},
              read={0xD7A4: 1, 0xD7A6: 1, 0xD7B0: 4}),
     ]
+STACK_SENSITIVE_MUSIC_COMMANDS = (
+    'Music_note', 'PlayNextNote_pop', 'Music_speed', 'Music_octave', 'Music_inc_octave',
+    'Music_dec_octave', 'Music_tie', 'Music_stereo_panning',
+    'Music_MainLoop', 'Music_EndMainLoop', 'Music_Loop', 'Music_EndLoop',
+    'Music_jp', 'Music_call', 'Music_ret', 'Music_frequency_offset',
+    'Music_duty', 'Music_volume', 'Music_wave', 'Music_cutoff', 'Music_echo',
+    'Music_vibrato_type', 'Music_vibrato_delay', 'Music_pitch_offset',
+    'Music_adjust_pitch_offset', 'Music_end')
+for name in STACK_SENSITIVE_MUSIC_COMMANDS:
+    CASES[name] = [
+        {'oracle': False,
+         'evidence': 'primary',
+         'why': 'The Extended command handler is entered by PlayNextNote with a saved stream and command frame; its asm returns through PlayNextNote_pop, so an isolated direct oracle entry cannot return.',
+         'expect': {}},
+        dict(POISON,
+             oracle=False,
+             evidence='primary',
+             why='The Extended command handler is entered by PlayNextNote with a saved stream and command frame; its asm returns through PlayNextNote_pop, so an isolated direct oracle entry cannot return.',
+             expect={}),
+    ]
+CASES['Music_f4967'] = [
+    {'b': 0x00, 'c': 0x00, 'd': 0x12, 'e': 0x34},
+    dict(POISON, b=0x00, c=0x01, d=0x56, e=0x78),
+    dict(POISON, b=0x00, c=0x03, d=0x9A, e=0xBC),
+]
 
 CASES['CopyData'] = [
     {'a': 0x00, 'hl': 0xC100, 'd': 0xC2, 'e': 0x00,
@@ -68,13 +93,13 @@ CASES['GetMusicCommandAndArgs'] = [
 ]
 CASES['GetChannelStackPointer'] = [
     {'c': 0x00, 'wram': {0xD816: b'\x00\xC1'}, 'read': {0xD816: 2}},
-    dict(POISON, c=0x01, wram={0xD818: b'\x00\xC2'}, read={0xD816: 8}),
-    dict(POISON, c=0x03, wram={0xD81C: b'\x00\xC4'}, read={0xD816: 8}),
+    dict(POISON, b=0x00, c=0x01, wram={0xD818: b'\x00\xC2'}, read={0xD816: 8}),
+    dict(POISON, b=0x00, c=0x03, wram={0xD81C: b'\x00\xC4'}, read={0xD816: 8}),
 ]
 CASES['SetChannelStackPointer'] = [
     {'c': 0x00, 'hl': 0xC100, 'read': {0xD816: 2}},
-    dict(POISON, c=0x01, hl=0xC200, read={0xD816: 8}),
-    dict(POISON, c=0x03, hl=0xC3FF, read={0xD816: 8}),
+    dict(POISON, b=0x00, c=0x01, hl=0xC200, read={0xD816: 8}),
+    dict(POISON, b=0x00, c=0x03, hl=0xC3FF, read={0xD816: 8}),
 ]
 
 ANCHORS = {

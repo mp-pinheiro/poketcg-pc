@@ -302,7 +302,7 @@ void StopAllChannels(void)
 void BeginSong(uint8_t a)
 {
 	g_rom_bank = MUSIC_BANK;
-	uint16_t header = rom_read16((uint16_t)(ADR_SONG_HEADER_POINTERS + (uint16_t)a * 2u));
+	uint16_t header = rom_read16((uint16_t)(ADR_SONG_HEADER_POINTERS + (uint8_t)(a + a)));
 	uint8_t mask = rom_read8(header);
 	header = (uint16_t)(header + 1u);
 	uint8_t bank = rom_read8(header);

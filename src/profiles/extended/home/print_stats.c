@@ -11,14 +11,14 @@
 #include "home/load_animation.h"
 
 static const uint8_t kMedalCoordsAndTilemaps[24] = {
-	 1u, 10u, 0x3eu,
-	 6u, 10u, 0x3fu,
-	11u, 10u, 0x40u,
-	16u, 10u, 0x41u,
-	 1u, 14u, 0x42u,
-	 6u, 14u, 0x45u,
-	11u, 14u, 0x44u,
-	16u, 14u, 0x43u,
+	 1u, 10u, TILEMAP_GRASS_MEDAL,
+	 6u, 10u, TILEMAP_SCIENCE_MEDAL,
+	11u, 10u, TILEMAP_FIRE_MEDAL,
+	16u, 10u, TILEMAP_WATER_MEDAL,
+	 1u, 14u, TILEMAP_LIGHTNING_MEDAL,
+	 6u, 14u, TILEMAP_PSYCHIC_MEDAL,
+	11u, 14u, TILEMAP_ROCK_MEDAL,
+	16u, 14u, TILEMAP_FIGHTING_MEDAL,
 };
 
 #include "home/print_stats.h"
@@ -122,14 +122,14 @@ ConvertWordToNumericalDigitsResult ConvertWordToNumericalDigits(uint16_t hl)
 /* <<< factory ConvertWordToNumericalDigits */
 
 /* >>> factory PrintAlbumProgress_SkipGetProgress */
-void PrintAlbumProgress_SkipGetProgress(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+void PrintAlbumProgress_SkipGetProgress(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	(void)ConvertWordToNumericalDigits((uint16_t)d);
+	(void)ConvertWordToNumericalDigits((uint16_t)(((uint16_t)d << 8) | e));
 	uint16_t dest1 = BCCoordToBGMap0Address(b, c);
 	uint16_t src1 = wDecimalChars_ADDR;
 	SafeCopyDataHLtoDE(&src1, &dest1, 3u);
 
-	(void)ConvertWordToNumericalDigits((uint16_t)e);
+	(void)ConvertWordToNumericalDigits(hl);
 	uint8_t b2 = (uint8_t)(b + 4u);
 	uint16_t dest2 = BCCoordToBGMap0Address(b2, c);
 	uint16_t src2 = wDecimalChars_ADDR;
@@ -164,7 +164,8 @@ void PrintPlayTime_SkipUpdateTime(uint8_t b, uint8_t c)
 void PrintAlbumProgress(uint8_t b, uint8_t c)
 {
 	AlbumProgress prog = GetCardAlbumProgress();
-	PrintAlbumProgress_SkipGetProgress(b, c, prog.d, prog.e);
+	PrintAlbumProgress_SkipGetProgress(b, c, prog.d, prog.e,
+		(uint16_t)(((uint16_t)prog.b << 8) | prog.c));
 }
 /* <<< factory PrintAlbumProgress */
 
