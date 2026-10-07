@@ -1048,5 +1048,26 @@ MUTATIONS = {
         'source': 'src/profiles/extended/home/common.c'},
 }
 
+from pathlib import Path as _Path
+from tests.cases._fixtures import Fixture as _Fixture
+
+_MUK_LOOKUP = _Fixture(
+    "extended-fixes-lookforcardidinhandlist-muk-entry",
+    directory=_Path(__file__).resolve().parent.parent / "fixtures",
+    holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
+    lcdc=0xCABB,
+)
+_MUK_CASE = _MUK_LOOKUP.case(vram=False)
+_MUK_CASE["read"][0xCC00] = 0xBD
+_MUK_CASE["read"][0xCCBE] = 0x42
+CASES["LookForCardIDInHandList_Bank8"].append(dict(_MUK_CASE, **_MUK_LOOKUP.regs))
+MUTATIONS["LookForCardIDInHandList_Bank8"] = {
+    "source_symbol": "LookForCardIDInHandList_Bank8",
+    "before": "== e\n\t\t    && gb_read8((uint16_t)(wTempCardIDToLook_ADDR + 1u)) == d)",
+    "after": "== gb_read8(wLoadedCard1ID_ADDR)\n\t\t    && gb_read8((uint16_t)(wTempCardIDToLook_ADDR + 1u)) == gb_read8((uint16_t)(wLoadedCard1ID_ADDR + 1u)))",
+    "case_ids": [f"LookForCardIDInHandList_Bank8-{len(CASES['LookForCardIDInHandList_Bank8']) - 1}"],
+    "source": "src/profiles/extended/home/common.c",
+}
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

@@ -498,17 +498,18 @@ LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(CardId de)
 {
 	gb_write8(wTempCardIDToLook_ADDR, (uint8_t)de);
 	gb_write8((uint16_t)(wTempCardIDToLook_ADDR + 1u), (uint8_t)(de >> 8));
-	(void)CreateHandCardList(0u);
+	HandListResult list = CreateHandCardList(0u);
+	uint8_t d = list.d;
+	uint8_t e = list.e;
 	uint16_t scan = wDuelTempList_ADDR;
-	uint8_t d = (uint8_t)(wDuelTempList_ADDR >> 8);
 	for (;;) {
 		uint8_t index = gb_read8(scan++);
 		if (index == 0xFFu)
 			return (LookForCardIDInHandListResult){0xFFu, 0xC0u, d};
 		hTempCardIndex_ff98 = index;
 		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
-		CardId card_id = card_id_read_at(wLoadedCard1ID_ADDR);
-		if (card_id == de)
+		if (gb_read8(wTempCardIDToLook_ADDR) == e
+		    && gb_read8((uint16_t)(wTempCardIDToLook_ADDR + 1u)) == d)
 			return (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u, d};
 	}
 }
