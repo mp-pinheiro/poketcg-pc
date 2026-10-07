@@ -464,14 +464,16 @@ AIDecideMaintenanceResult AIDecide_Maintenance(uint8_t d)
 		while (found < 2u) {
 			card = gb_read8(p++);
 			if (card == 0xFFu)
-				return (AIDecideMaintenanceResult){card, 0x00u, 0xCEu};
+				return (AIDecideMaintenanceResult){card, 0x00u,
+					(uint8_t)(wce1a_ADDR >> 8)};
 			if (card == target)
 				continue;
 			gb_write8((uint16_t)(wce1a_ADDR + out++), card);
 			found++;
 		}
 		/* `dec c` reached zero and `scf` keeps its Z: Z|C. */
-		return (AIDecideMaintenanceResult){card, 0x90u, 0xCEu};
+		return (AIDecideMaintenanceResult){card, 0x90u,
+			(uint8_t)(wce1a_ADDR >> 8)};
 	}
 	if (hand.a < 4u)
 		return (AIDecideMaintenanceResult){hand.a,
@@ -1115,16 +1117,15 @@ AIDecide_PokemonTrader_StrangePowerResult AIDecide_PokemonTrader_StrangePower(ui
 /* >>> factory AIDecide_PokemonTrader_LegendaryArticuno */
 AIDecide_PokemonTrader_LegendaryArticunoResult AIDecide_PokemonTrader_LegendaryArticuno(uint8_t d)
 {
-	uint8_t entry_d = d;
 	LookForCardIDInHandAndPlayAreaResult r =
 		LookForCardIDInHandAndPlayArea(ARTICUNO_LV35);
 	if (r.f & 0x10u)
 		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a,
-			(uint8_t)(r.a == 0u ? 0x80u : 0u), entry_d};
+			(uint8_t)(r.a == 0u ? 0x80u : 0u), 0u};
 	r = LookForCardIDInHandAndPlayArea(LAPRAS);
 	if (r.f & 0x10u)
 		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a,
-			(uint8_t)(r.a == 0u ? 0x80u : 0u), entry_d};
+			(uint8_t)(r.a == 0u ? 0x80u : 0u), 0u};
 
 	r = LookForCardIDInHandAndPlayArea(SEEL);
 	if (!(r.f & 0x10u)) {
@@ -1140,7 +1141,7 @@ AIDecide_PokemonTrader_LegendaryArticunoResult AIDecide_PokemonTrader_LegendaryA
 	r = LookForCardIDInHandAndPlayArea(DEWGONG);
 	if (r.f & 0x10u)
 		return (AIDecide_PokemonTrader_LegendaryArticunoResult){r.a,
-			(uint8_t)(r.a == 0u ? 0x80u : 0u), entry_d};
+			(uint8_t)(r.a == 0u ? 0x80u : 0u), 0u};
 	{
 		LookForCardIDInLocationBank8Result loc =
 			LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, DEWGONG);
@@ -1155,15 +1156,15 @@ check_articuno_trader_hand:
 	{
 		CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(CHANSEY);
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
+			return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0u};
 		h = CheckIfHasCardIDInHand(DITTO);
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
+			return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0u};
 		h = CheckIfHasCardIDInHand(ARTICUNO_LV37);
 		if (h.f & 0x10u)
-			return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0xC5u};
+			return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, 0x10u, 0u};
 		return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a,
-			(uint8_t)(h.a == 0u ? 0x80u : 0u), 0xC5u};
+			(uint8_t)(h.a == 0u ? 0x80u : 0u), 0u};
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryArticuno */

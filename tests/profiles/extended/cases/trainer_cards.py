@@ -9,7 +9,10 @@ _PROFESSOR_OAK = Fixture(
     holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
     lcdc=0xCABB,
 )
-
+_ENERGY_SEARCH = Fixture(
+    "extended-fixes-aidecide-energysearch-entry",
+    directory=_FIXTURES,
+)
 CONTRACT = {
     'RemoveCardFromList': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
     'FindDuplicateCards': {'compare': ('a', 'f', 'hl', 'd'), 'preserve': ()},
@@ -160,7 +163,7 @@ CASES = {
                         0xC342: b'\x00\x01\x02\xff',
                         0xCBB8: b'4',
                         0xCD9D: b'\x00',
-                        0xC478: b'\x0800',
+                        0xC478: b'\x08\x00\x30\x00\x30\x00',
                         0xCACA: b'\x00\x00\x00'},
             'read': {0xCDA0: 0x02}},
         {   'wram': {   0xFF97: b'\xc3',
@@ -168,7 +171,7 @@ CASES = {
                         0xC342: b'\x00\x01\x02\xff',
                         0xCBB8: b'4',
                         0xCD9D: b'\x00',
-                        0xC478: b'\x0800',
+                        0xC478: b'\x08\x00\x30\x00\x30\x00',
                         0xCACA: b'<\xa5Z'},
             'read': {0xCDA0: 0x02}},
         {   'wram': {   0xFF97: b'\xc3',
@@ -176,7 +179,7 @@ CASES = {
                         0xC342: b'\x00\x01\x02\xff',
                         0xCBB8: b'4',
                         0xCD9D: b'\x00',
-                        0xC478: b'\x0800',
+                        0xC478: b'\x08\x00\x30\x00\x30\x00',
                         0xCACA: b'\x91\x12\x07'},
             'read': {0xCDA0: 0x02}},
         {   'wram': {   0xFF97: b'\xc3',
@@ -184,7 +187,7 @@ CASES = {
                         0xC342: b'\x00\x01\x02\xff',
                         0xCBB8: b'4',
                         0xCD9D: b'\x00',
-                        0xC478: b'\x0800',
+                        0xC478: b'\x08\x00\x30\x00\x30\x00',
                         0xCACA: b'\xff\x00\x80'},
             'read': {0xCDA0: 0x02}},
         {   'a': 0xAA,
@@ -199,8 +202,11 @@ CASES = {
                         0xCBB8: b'4',
                         0xCD9D: b'\x05',
                         0xC242: b'\x05\x11"3',
-                        0xCACA: b'\x00\x00\x00',
-                        0xCDA0: b'\xaa\xaa'},
+                        0xC40A: b'\x05\x00',
+                        0xC422: b'\x11\x00',
+                        0xC444: b'\x22\x00',
+                        0xC466: b'\x33\x00',
+                        0xCACA: b'\x00\x00\x00'},
             'read': {0xCDA0: 0x02, 0xC500: 0x06, 0xCACA: 0x03}},
         {   'a': 0xAA,
             'f': 0xF0,
@@ -1145,21 +1151,16 @@ CASES = {
         {   'wram': {   0xFF97: b'\xc2',
                         0xC2EE: b'\x01',
                         0xC242: b'\x00',
-                        0xC200: b'\x00',
-                        0xC400: b'^',
-                        0xC2BB: b'\xff'},
+                        0xC200: b'\x10',
+                        0xC400: b'\x5e\x00',
+                        0xC2BB: b'\x00'},
             'read': {0xC500: 0x20}},
         {   'wram': {   0xFF97: b'\xc2',
                         0xC2EE: b'\x02',
-                        0xC242: b'\n',
-                        0xC243: b'\x0b',
-                        0xC200: b'\x00',
-                        0xC201: b'\x00',
-                        0xC40A: b'\xb8',
-                        0xC416: b'\xb8',
-                        0xC405: b'K',
+                        0xC242: b'\n\x0b',
+                        0xC20A: b'\x01\x01\x00',
+                        0xC414: b'\xb8\x00\xb8\x00\x4b\x00',
                         0xC2BB: b'\xff'},
-            'expect': {0xCDA0: b'\x05'},
             'read': {0xC500: 0x20}},
         {   'a': 0xAA,
             'f': 0xF0,
@@ -1171,9 +1172,9 @@ CASES = {
             'wram': {   0xFF97: b'\xc2',
                         0xC2EE: b'\x01',
                         0xC242: b'\x00',
-                        0xC200: b'\x00',
-                        0xC400: b'^',
-                        0xC2BB: b'\xff'},
+                        0xC200: b'\x10',
+                        0xC400: b'\x5e\x00',
+                        0xC2BB: b'\x00'},
             'read': {0xC500: 0x20}},
     ],
     'AIDecide_ComputerSearch_FireCharge': [
@@ -4178,11 +4179,11 @@ CASES = {
             'e': 0x00,
             'hl': 0x00,
             'wram': {   0xFF97: b'\xc2',
-                        0xCBB8: b'\x00',
-                        0xC200: b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'},
+                        0xCBB8: b'\x16',
+                        0xC2EF: b'\x01',
+                        0xC2BB: b'\x00',
+                        0xC200: b'\x10' + b'\x00' * 59,
+                        0xC400: b'\x30\x00\x01\x00'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
         {   'a': 0xAA,
@@ -4193,11 +4194,11 @@ CASES = {
             'e': 0xEE,
             'hl': 0x1234,
             'wram': {   0xFF97: b'\xc2',
-                        0xCBB8: b'\x00',
-                        0xC200: b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'},
+                        0xCBB8: b'\x16',
+                        0xC2EF: b'\x01',
+                        0xC2BB: b'\x00',
+                        0xC200: b'\x10' + b'\x00' * 59,
+                        0xC400: b'\x30\x00\x01\x00'},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
         {   'wram': {   0xC000: b'\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0'
@@ -7865,6 +7866,46 @@ CASES = {
 CASES['AIDecide_ProfessorOak'].append(
     dict(_PROFESSOR_OAK.case(vram=False), **_PROFESSOR_OAK.regs)
 )
+CASES['AIDecide_EnergySearch'] += [
+    dict(_ENERGY_SEARCH.case(vram=False), **_ENERGY_SEARCH.regs),
+    {'wram': {
+        0xFF97: b'\xc2',
+        0xCBB8: b'\x16',
+        0xC2EF: b'\x01',
+        0xC2BB: b'\x00',
+        0xC200: b'\x10' + b'\x00' * 59,
+        0xC400: b'\x08\x00\x01\x00',
+    }, 'read': {0xC500: 0x02}},
+    {'wram': {
+        0xFF97: b'\xc2',
+        0xCBB8: b'\x16',
+        0xC2EF: b'\x01',
+        0xC2BB: b'\x00',
+        0xC200: b'\x10' + b'\x00' * 59,
+        0xC400: b'\x30\x00\x01\x00',
+    }, 'read': {0xC500: 0x02}},
+    {'wram': {
+        0xFF97: b'\xc2',
+        0xCBB8: b'\x00',
+        0xC2EF: b'\x00',
+        0xC200: b'\x00' * 60,
+        0xC400: b'\x01\x00',
+    }, 'read': {0xC500: 0x02}},
+]
+def _expand_extended_deck(case):
+    data = bytearray(case['wram'][0xC000])
+    player = data[0xC400 - 0xC000:0xC400 - 0xC000 + 60]
+    opponent = data[0xC480 - 0xC000:0xC480 - 0xC000 + 60]
+    data[0xC400 - 0xC000:0xC400 - 0xC000 + 120] = b''.join(
+        bytes((card, 0)) for card in player
+    )
+    data[0xC478 - 0xC000:0xC478 - 0xC000 + 120] = b''.join(
+        bytes((card, 0)) for card in opponent
+    )
+    case['wram'] = {0xC000: bytes(data)}
+
+
+_expand_extended_deck(CASES['AIDecide_EnergyRemoval'][2])
 
 MUTATIONS = {
     'RemoveCardFromList': {   'source_symbol': 'RemoveCardFromList',
@@ -7888,8 +7929,10 @@ MUTATIONS = {
         'case_ids': ['PickPokedexCards-0', 'PickPokedexCards-1'],
         'source': 'src/profiles/extended/home/trainer_cards.c'},
     'AIDecide_Maintenance': {   'source_symbol': 'AIDecide_Maintenance',
-        'before': '\t\treturn (AIDecideMaintenanceResult){card, 0x90u, 0xCEu};',
-        'after': '\t\treturn (AIDecideMaintenanceResult){0u, 0x90u, 0xCEu};',
+        'before': '\t\treturn (AIDecideMaintenanceResult){card, 0x90u,\n'
+                  '\t\t\t(uint8_t)(wce1a_ADDR >> 8)};',
+        'after': '\t\treturn (AIDecideMaintenanceResult){0u, 0x90u,\n'
+                 '\t\t\t(uint8_t)(wce1a_ADDR >> 8)};',
         'case_ids': ['AIDecide_Maintenance-2', 'AIDecide_Maintenance-4', 'AIDecide_Maintenance-5'],
         'source': 'src/profiles/extended/home/trainer_cards.c'},
     'AIDecide_Lass': {   'source_symbol': 'AIDecide_Lass',
