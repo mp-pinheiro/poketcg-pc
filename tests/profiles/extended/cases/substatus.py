@@ -29,7 +29,7 @@ CONTRACT = {
     'HandleStrikesBack_AgainstResidualAttack': {'compare': ('a', 'f'), 'preserve': ()},
     'HandleDestinyBondSubstatus': {'compare': ('a', 'f', 'hl'), 'preserve': ()},
     'HandleNShieldAndTransparency': {'compare': ('d', 'e', 'f'), 'preserve': ('d', 'e')},
-    'HandleTransparency': {'compare': ('a', 'f', 'hl'), 'preserve': ('hl',)},
+    'HandleTransparency': {'compare': ('a', 'f', 'hl'), 'preserve': ()},
     'HandleDamageReductionOrNoDamageFromPkmnPowerEffects': {'compare': ('f', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
     'HandleSandAttackOrSmokescreenSubstatus': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
 }
