@@ -66,7 +66,7 @@ void DrawPauseMenuPlayerPortrait(uint8_t b, uint8_t c)
 /* >>> factory FlashReceivedMedal */
 void FlashReceivedMedal(void)
 {
-	gb_write8(0xD291u, 0u);
+	gb_write8(wd291_ADDR, 0u);
 	uint8_t which = wWhichMedal;
 	uint8_t idx = (uint8_t)(which * 3u);
 	uint8_t x = kMedalCoordsAndTilemaps[idx];

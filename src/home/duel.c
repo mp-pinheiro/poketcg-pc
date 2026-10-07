@@ -419,7 +419,7 @@ static const uint8_t kCursorTileData[16] = {
 #define B_PAD_DOWN 7u
 #define PAD_A 0x01u
 #define PAD_B 0x02u
-#define WCE5E_ADDR 0xCE5Eu
+#define WCE5E_ADDR wce5e_ADDR
 
 #include "home/duel.h"
 #include "generated/wram.h"
@@ -435,7 +435,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define hTempPlayAreaLocation_ff9d_ADDR 0xFF9Du
 
 #include "home/duel.h"
 #include "home/empty_screen.h"
@@ -445,10 +444,6 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/wram.h"
 #define PLAYER_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards__player_icon_coordinates_ADDR)
 #define OPP_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards__opp_icon_coordinates_ADDR)
-#define wTileMapFill_ADDR 0xCAB6u
-#define wCheckMenuPlayAreaWhichDuelist_ADDR 0xCE50u
-#define wCheckMenuPlayAreaWhichLayout_ADDR 0xCE51u
-#define wIsSwapTurnPending_ADDR 0xCE56u
 
 #include "home/duel.h"
 #include "home/serial.h"
@@ -655,7 +650,7 @@ ShuffleCardsResult ShuffleCards(uint8_t a, uint16_t hl)
 	return (ShuffleCardsResult){last, 0xC0u};
 }
 
-#define HTEMP_LIST_PTR 0xFF99u
+#define HTEMP_LIST_PTR hTempListPtr_ff99_ADDR
 
 static uint16_t list_ptr(void)
 {

@@ -266,7 +266,6 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #include "mem.h"
-#define hTemp_ffa0_ADDR 0xFFA0u
 
 #include "home/effect_functions.h"
 #include "mem.h"
@@ -1390,16 +1389,16 @@ uint16_t ApplySubstatus1ToAttackingCard(uint8_t a)
 /* >>> factory SetNoEffectFromStatus */
 void SetNoEffectFromStatus(void)
 {
-	gb_write8(0xCCEDu, 0x01u);
+	gb_write8(wEffectFailed_ADDR, 0x01u);
 }
 /* <<< factory SetNoEffectFromStatus */
 
 /* >>> factory SetDefiniteAIDamage */
 void SetDefiniteAIDamage(void)
 {
-	uint8_t a = gb_read8(0xCCB9u);
-	gb_write8(0xCCBBu, a);
-	gb_write8(0xCCBCu, a);
+	uint8_t a = gb_read8(wDamage_ADDR);
+	gb_write8(wAIMinDamage_ADDR, a);
+	gb_write8(wAIMaxDamage_ADDR, a);
 }
 /* <<< factory SetDefiniteAIDamage */
 
@@ -2495,7 +2494,7 @@ void KakunaPoisonPowder_AIEffect(void)
 /* >>> factory SwordsDanceEffect */
 uint16_t SwordsDanceEffect(void)
 {
-	if (gb_read8(0xCCC3u) != 0x2Eu)
+	if (gb_read8(wTempTurnDuelistCardID_ADDR) != 0x2Eu)
 		return 0u;
 	return ApplySubstatus1ToAttackingCard(0x19u);
 }
@@ -2852,7 +2851,7 @@ uint8_t Quickfreeze_InitialEffect(uint8_t f)
 /* effect_functions.asm:3509-3520 */
 void FocusEnergyEffect(void)
 {
-	if (gb_read8(0xCCC3u) != 0x5Au)
+	if (gb_read8(wTempTurnDuelistCardID_ADDR) != 0x5Au)
 		return;
 	(void)ApplySubstatus1ToAttackingCard(0x19u);
 }
@@ -11175,7 +11174,7 @@ void StoneBarrage_MultiplierEffect(void)
 	uint16_t damage = HtimesL((uint16_t)(0x0A00u | hTemp_ffa0));
 	gb_write8(wDamage_ADDR, (uint8_t)damage);
 	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(damage >> 8));
-	*gb_ptr(0xCE4E) = 0x00u;
+	*gb_ptr(wCoinTossScreenTextID_ADDR) = 0x00u;
 }
 /* <<< factory StoneBarrage_MultiplierEffect */
 

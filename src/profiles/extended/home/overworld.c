@@ -466,18 +466,20 @@ void Func_c41c(void)
 
 	uint8_t max_x = (uint8_t)(wd237 << 3);
 	uint8_t scx = wSCXBuffer;
-	if (scx < 0xB1u)
+	if (scx >= 0xB1u) {
 		scx = 0u;
-	else if (scx >= max_x)
+	} else if (scx >= max_x) {
 		scx = max_x;
+	}
 	wSCXBuffer = scx;
 
 	uint8_t max_y = (uint8_t)(wd238 << 3);
 	uint8_t scy = wSCYBuffer;
-	if (scy < 0xB9u)
+	if (scy >= 0xB9u) {
 		scy = 0u;
-	else if (scy >= max_y)
+	} else if (scy >= max_y) {
 		scy = max_y;
+	}
 	wSCYBuffer = scy;
 }
 /* <<< factory Func_c41c */
@@ -654,7 +656,7 @@ void Func_c36a(void)
 {
 	wOWMapEvents = 0u;
 	if (wCurMap == POKEMON_DOME_ENTRANCE)
-		gb_write8(0xD324u, 0u);
+		gb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 0u);
 }
 /* <<< factory Func_c36a */
 
@@ -685,7 +687,7 @@ void RestoreObjectPalettes(void)
 {
 	wOBP0 = wOBP0Backup;
 	wOBP1 = wOBP1Backup;
-	CopyDataHLtoDE_SaveRegisters(0xD0CCu, 0xCB30u, 64u);
+	CopyDataHLtoDE_SaveRegisters(wObjectPalettesCGBBackup_ADDR, wObjectPalettesCGB_ADDR, 64u);
 	FlushAllPalettes();
 }
 /* <<< factory RestoreObjectPalettes */
@@ -1188,7 +1190,7 @@ FindNPCOrObjectResult FindNPCOrObject(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 /* >>> factory Func_c6dc */
 FuncC6dcResult Func_c6dc(uint16_t saved_hl)
 {
-	uint16_t movement_hl = 0xD335u;
+	uint16_t movement_hl = wPlayerCurrentlyMoving_ADDR;
 	wPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x03u);
 	(void)Func_c6f7(&movement_hl);
 	HandleMapWarp();
@@ -1323,10 +1325,15 @@ SetScriptDataResult SetScriptData(uint16_t hl)
 	uint8_t script_npc = wScriptNPC;
 	wLoadedNPCTempIndex = script_npc;
 	SetNewScriptNPCResult npc = SetNewScriptNPC(hl);
+	wNextScriptBank = npc.a;
 	wNextScript = npc.c;
 	wNextScript_PTR[1] = npc.b;
 	wOverworldMode = OWMODE_SCRIPT;
-	return (SetScriptDataResult){OWMODE_SCRIPT, npc.f, npc.b, npc.c, npc.hl};
+	ScriptEntryRegs entered = ScriptEntryEnterWithBank(
+		(uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8)),
+		npc.a, npc.f, npc.b, npc.c, 0u, 0u);
+	entered.a = npc.a;
+	return (SetScriptDataResult){entered.a, entered.f, entered.b, entered.c, entered.hl};
 }
 /* <<< factory SetScriptData */
 

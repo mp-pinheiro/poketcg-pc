@@ -11,11 +11,11 @@
 #define WaterClubAfterDuelTable (WaterClubAfterDuel__after_duel_table_ADDR)
 /* <<< factory statics */
 
-#define W_ACTIVE_GAME_EVENT_ADDR 0xD0C2u
-#define W_PLAYER_X_COORD_ADDR 0xD330u
-#define W_PLAYER_Y_COORD_ADDR 0xD331u
-#define W_LOAD_NPC_X_POS_ADDR 0xD3ACu
-#define W_D3D0_ADDR 0xD3D0u
+#define W_ACTIVE_GAME_EVENT_ADDR wActiveGameEvent_ADDR
+#define W_PLAYER_X_COORD_ADDR wPlayerXCoord_ADDR
+#define W_PLAYER_Y_COORD_ADDR wPlayerYCoord_ADDR
+#define W_LOAD_NPC_X_POS_ADDR wLoadNPCXPos_ADDR
+#define W_D3D0_ADDR wd3d0_ADDR
 
 PreloadAmyResult Preload_Amy(void)
 {

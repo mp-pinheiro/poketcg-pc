@@ -9725,7 +9725,7 @@ void StoneBarrage_MultiplierEffect(void)
 	uint16_t damage = HtimesL((uint16_t)(0x0A00u | hTemp_ffa0));
 	gb_write8(wDamage_ADDR, (uint8_t)damage);
 	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(damage >> 8));
-	*gb_ptr(0xCE4E) = 0x00u;
+	*gb_ptr(wCoinTossScreenTextID_ADDR) = 0x00u;
 }
 /* <<< factory StoneBarrage_MultiplierEffect */
 

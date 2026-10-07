@@ -433,7 +433,7 @@ static const uint8_t kCursorTileData[16] = {
 #define B_PAD_DOWN 7u
 #define PAD_A 0x01u
 #define PAD_B 0x02u
-#define WCE5E_ADDR 0xCE5Eu
+#define WCE5E_ADDR wce5e_ADDR
 
 #include "home/duel.h"
 #include "generated/wram.h"

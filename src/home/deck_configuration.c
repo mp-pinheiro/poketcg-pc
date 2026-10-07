@@ -16,7 +16,7 @@
 
 #define SYM_0 0x20u
 #define FILTER_TRAINER 0x10u
-#define HFFB3 0xffb3u
+#define HFFB3 hffb3_ADDR
 #include "home/deck_configuration.h"
 
 #include "home/deck_selection.h"
@@ -1159,7 +1159,7 @@ HandleCardSelectionInputResult HandleCardSelectionInput(void)
 		}
 	}
 
-	gb_write8(0xFFB3u, gb_read8(wCardListCursorPos_ADDR));
+	gb_write8(hffb3_ADDR, gb_read8(wCardListCursorPos_ADDR));
 	uint8_t keys = gb_read8(hKeysPressed_ADDR);
 	if ((keys & (PAD_A | PAD_B)) == 0u) {
 		DrawHorizontalListCursorResult r = HandleCardSelectionCursorBlink();
@@ -1169,7 +1169,7 @@ HandleCardSelectionInputResult HandleCardSelectionInput(void)
 		ConfirmSelectionAndReturnCarryResult r = ConfirmSelectionAndReturnCarry();
 		return (HandleCardSelectionInputResult){r.a, r.e, 0u, 0u, 1};
 	}
-	gb_write8(0xFFB3u, MENU_CANCEL);
+	gb_write8(hffb3_ADDR, MENU_CANCEL);
 	PlaySFXConfirmOrCancel(MENU_CANCEL);
 	return (HandleCardSelectionInputResult){MENU_CANCEL, 0u, 0u, 0u, 1};
 }

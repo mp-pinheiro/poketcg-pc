@@ -2047,8 +2047,8 @@ AIDecide_PokeballResult AIDecide_Pokeball(uint8_t d)
 /* >>> factory AIDecide_MrFuji */
 AIDecideParameterResult AIDecide_MrFuji(uint8_t d)
 {
-	gb_write8(0xCE06u, 0xFFu);
-	gb_write8(0xCE08u, 0xFFu);
+	gb_write8(wAIDefendingPokemonWeakness_ADDR, 0xFFu);
+	gb_write8(wAISetupEnergyCount_ADDR, 0xFFu);
 
 	DuelistVarResult r1 = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	uint8_t count = r1.a;
@@ -2068,16 +2068,16 @@ AIDecideParameterResult AIDecide_MrFuji(uint8_t d)
 		uint8_t counters = ConvertHPToDamageCounters_Bank8(dmg.a);
 		if (counters != 0u) {
 			CalculateBDividedByA_Bank8Result div = CalculateBDividedByA_Bank8(counters, maxHP);
-			if (div.a < 20u && div.a < gb_read8(0xCE08u)) {
-				gb_write8(0xCE08u, div.a);
-				gb_write8(0xCE06u, e);
+			if (div.a < 20u && div.a < gb_read8(wAISetupEnergyCount_ADDR)) {
+				gb_write8(wAISetupEnergyCount_ADDR, div.a);
+				gb_write8(wAIDefendingPokemonWeakness_ADDR, e);
 			}
 		}
 		e++;
 		d--;
 	}
 
-	uint8_t chosen = gb_read8(0xCE06u);
+	uint8_t chosen = gb_read8(wAIDefendingPokemonWeakness_ADDR);
 	if (chosen == 0xFFu)
 		return (AIDecideParameterResult){chosen, 0xC0u, 0u};
 	return (AIDecideParameterResult){chosen, 0x10u, 0u};

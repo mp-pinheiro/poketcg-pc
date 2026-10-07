@@ -1510,6 +1510,8 @@ static void adapt_ScriptCommand_JumpIfMan1RequestedCardOwned(ProbeState *s)
 	s->f = r.f;
 	s->b = r.b;
 	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory ScriptCommand_JumpIfMan1RequestedCardOwned */
 
@@ -1521,6 +1523,8 @@ static void adapt_ScriptCommand_JumpIfMan1RequestedCardInCollection(ProbeState *
 	s->f = r.f;
 	s->b = r.b;
 	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
 }
 /* <<< factory ScriptCommand_JumpIfMan1RequestedCardInCollection */
 

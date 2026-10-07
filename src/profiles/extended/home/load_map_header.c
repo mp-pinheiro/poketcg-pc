@@ -1,10 +1,11 @@
 #include "home/load_map_header.h"
 
 #include "generated/wram.h"
+#include "generated/rom.h"
 #include "mem.h"
 
-#define MAP_HEADERS_BANK 7u
-#define MAP_HEADERS 0x4306u
+#define MAP_HEADERS_BANK MapHeaders_BANK
+#define MAP_HEADERS MapHeaders_ADDR
 #define MAP_HEADER_SIZE 4u
 
 void LoadMapHeader(void)

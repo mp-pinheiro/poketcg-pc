@@ -1,5 +1,7 @@
 #include "home/division.h"
 
+#include "generated/hram.h"
+#include "generated/wram.h"
 #include "mem.h"
 
 /* Restoring division hand-ported from poketcg/src/home/division.asm.
@@ -30,7 +32,7 @@ DivResult DivideBCbyDE(uint16_t bc, uint16_t de)
 		uint8_t l, h, a;
 		int borrow;
 
-		gb_write8(0xFFB6u, counter);
+		gb_write8(hffb6_ADDR, counter);
 		hl = (uint16_t)(hl << 1 | cf);
 
 		l = (uint8_t)(hl - e);

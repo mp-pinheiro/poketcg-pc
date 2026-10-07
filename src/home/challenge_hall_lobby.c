@@ -14,7 +14,7 @@
 #define CUP1_TABLE RonaldChallengeHallLobbyCup1States_ADDR
 #define EVENT_CHALLENGE_CUP_STARTING_OFFSET 0x10u
 #define EVENT_CHALLENGE_CUP_STARTING_MASK 0x80u
-#define W_DEFAULT_SONG_ADDR 0xD111u
+#define W_DEFAULT_SONG_ADDR wDefaultSong_ADDR
 #define CUP2_TABLE RonaldChallengeHallLobbyCup2States_ADDR
 
 /* >>> factory Preload_ChallengeHallNPCs1 */

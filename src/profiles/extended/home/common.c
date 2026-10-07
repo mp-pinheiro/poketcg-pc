@@ -304,8 +304,8 @@ LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(CardId de, uint8_t b
 		DuelistVarResult r = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + b));
 		if (r.a == 0xffu)
 			return (LookForCardIDInPlayAreaResult){0xffu, b, 0xc0u};
-		(void)LoadCardDataToBuffer1_FromDeckIndex(r.a);
-		if (card_id_read_at(wLoadedCard1ID_ADDR) == de)
+		CardId card_id = GetCardIDFromDeckIndex(r.a);
+		if (card_id == de)
 			return (LookForCardIDInPlayAreaResult){b, b, 0x90u};
 		b++;
 		if (b == MAX_PLAY_AREA_POKEMON)
@@ -504,8 +504,8 @@ LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(CardId de)
 		if (index == 0xFFu)
 			return (LookForCardIDInHandListResult){0xFFu, 0xC0u, d};
 		hTempCardIndex_ff98 = index;
-		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
-		if (card_id_read_at(wLoadedCard1ID_ADDR) == de)
+		CardId card_id = GetCardIDFromDeckIndex(index);
+		if (card_id == de)
 			return (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u, d};
 	}
 }

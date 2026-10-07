@@ -29,9 +29,9 @@ static PokemonDomeResult preload_grand_master(uint8_t event, uint8_t x, uint8_t 
 }
 /* <<< factory statics */
 
-#define W_LOAD_NPC_X_POS_ADDR 0xD3ACu
-#define W_LOAD_NPC_Y_POS_ADDR 0xD3ADu
-#define W_LOAD_NPC_DIRECTION_ADDR 0xD3AEu
+#define W_LOAD_NPC_X_POS_ADDR wLoadNPCXPos_ADDR
+#define W_LOAD_NPC_Y_POS_ADDR wLoadNPCYPos_ADDR
+#define W_LOAD_NPC_DIRECTION_ADDR wLoadNPCDirection_ADDR
 
 static uint8_t carry_flags(uint8_t f)
 {

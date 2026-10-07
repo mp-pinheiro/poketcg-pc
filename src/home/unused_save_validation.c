@@ -50,7 +50,7 @@ UnusedCalculateSaveDataValidationByteResult UnusedCalculateSaveDataValidationByt
 /* >>> factory UnusedSaveDataValidation */
 void UnusedSaveDataValidation(void)
 {
-	if (gb_read8(0xFF81u) != 0u)
+	if (gb_read8(hBankSRAM_ADDR) != 0u)
 		return;
 }
 /* <<< factory UnusedSaveDataValidation */

@@ -115,15 +115,15 @@ InitDeckBuildingParamsResult InitDeckBuildingParams(uint16_t *hl, uint8_t f)
 		wMaxNumCardsAllowed_PTR[i] = a;
 		b--;
 	}
-	return (InitDeckBuildingParamsResult){a, (uint8_t)((f & 0x10u) | 0xC0u), b, 0xCFD8u, *hl};
+	return (InitDeckBuildingParamsResult){a, (uint8_t)((f & 0x10u) | 0xC0u), b, wCurCardListPtr_ADDR, *hl};
 }
 /* <<< factory InitDeckBuildingParams */
 
 /* >>> factory CheckIfCurDeckIsValid */
 CheckIfCurDeckIsValidResult CheckIfCurDeckIsValid(void)
 {
-	uint8_t deck = gb_read8(0xCEB1u);
-	uint16_t hl = (uint16_t)(0xCEB2u + deck);
+	uint8_t deck = gb_read8(wCurDeck_ADDR);
+	uint16_t hl = (uint16_t)(wDeck1Valid_ADDR + deck);
 	uint8_t b = 0u;
 	uint8_t c = deck;
 	uint8_t value = gb_read8(hl);

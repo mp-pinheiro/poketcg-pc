@@ -45,7 +45,7 @@
 
 #include "home/deck_machine.h"
 #include "home/deck_configuration.h"
-#define WMACHINEDECKPTRS_ADDR 0xD00Du
+#define WMACHINEDECKPTRS_ADDR wMachineDeckPtrs_ADDR
 
 #include "home/deck_machine.h"
 #include "home/deck_configuration.h"
@@ -414,7 +414,7 @@ void EmptyScreenAndDrawTextBox(void)
 {
 	Set_OBJ_8x8();
 	PrepareMenuGraphics();
-	uint16_t hl = 0xc600u;
+	uint16_t hl = wc600_ADDR;
 	DrawRegularTextBox(&hl, 0u, 20u, 13u, 0u, 0u);
 }
 /* <<< factory EmptyScreenAndDrawTextBox */

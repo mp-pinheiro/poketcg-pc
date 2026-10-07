@@ -692,7 +692,7 @@ void RestoreObjectPalettes(void)
 {
 	wOBP0 = wOBP0Backup;
 	wOBP1 = wOBP1Backup;
-	CopyDataHLtoDE_SaveRegisters(0xD0CCu, 0xCB30u, 64u);
+	CopyDataHLtoDE_SaveRegisters(wObjectPalettesCGBBackup_ADDR, wObjectPalettesCGB_ADDR, 64u);
 	FlushAllPalettes();
 }
 /* <<< factory RestoreObjectPalettes */
@@ -1230,7 +1230,7 @@ FindNPCOrObjectResult FindNPCOrObject(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 /* >>> factory Func_c6dc */
 FuncC6dcResult Func_c6dc(uint16_t saved_hl)
 {
-	uint16_t movement_hl = 0xD335u;
+	uint16_t movement_hl = wPlayerCurrentlyMoving_ADDR;
 	wPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x03u);
 	(void)Func_c6f7(&movement_hl);
 	HandleMapWarp();

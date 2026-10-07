@@ -2358,7 +2358,7 @@ uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a)
 			return bench.hl;
 		if (GetCardIDFromDeckIndex(deck_index) != a)
 			continue;
-		uint16_t score = (uint16_t)(0xCDE4u + e);
+		uint16_t score = (uint16_t)(wPlayAreaEnergyAIScore_ADDR + e);
 		gb_write8(score, (uint8_t)(gb_read8(score) + 5u));
 	}
 }
@@ -4294,7 +4294,7 @@ void CheckPrintCnfSlpPrz(uint8_t a, uint8_t b, uint8_t c)
 /* >>> factory LoadAnimCoordsAndFlags */
 void LoadAnimCoordsAndFlags(void)
 {
-	uint16_t hl = GetSpriteAnimBufferProperty_SpriteInA(gb_read8(0xD423u), 0x01u);
+	uint16_t hl = GetSpriteAnimBufferProperty_SpriteInA(gb_read8(wAnimationQueue_ADDR), 0x01u);
 	AnimCoordsResult r = GetAnimCoordsAndFlags();
 	uint8_t attr = (uint8_t)((r.a & (SPRITE_ANIM_FLAG_Y_FLIP_MASK | SPRITE_ANIM_FLAG_X_FLIP_MASK)) | gb_read8(hl));
 	gb_write8(hl, attr);

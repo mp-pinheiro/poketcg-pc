@@ -90,6 +90,10 @@ void ContinueDrawingTextBoxDMG(uint16_t *hl, uint8_t a, uint8_t b,
 void DrawRegularTextBox(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	uint8_t d, uint8_t e)
 {
+	if (wConsole == CONSOLE_CGB) {
+		DrawRegularTextBoxCGB(hl, a, b, c, d, e);
+		return;
+	}
 	*hl = DECoordToBGMap0Address(d, e);
 	draw_line(hl, SYM_BOX_TOP, SYM_BOX_TOP_L, SYM_BOX_TOP_R, b);
 	ContinueDrawingTextBoxDMG(hl, a, b, c, d, e);
@@ -118,7 +122,7 @@ void ContinueDrawingTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	/* The bottom border goes through CopyCurrentLineTilesAndAttrCGB, which falls into
 	 * CopyCurrentLineAttrCGB -- and that one has no `xor a`, so unlike a body row the
 	 * whole bottom row's attributes are the frame type, not just its two borders. */
-	CopyCurrentLineAttrCGB(hl, 0x1du, b, 0x1au, 0x1bu);
+	CopyCurrentLineTilesAndAttrCGB(hl, 0x1du, b, 0x1au, 0x1bu);
 }
 
 void DrawRegularTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,

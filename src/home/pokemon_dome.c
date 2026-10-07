@@ -29,9 +29,9 @@ static PokemonDomeResult preload_grand_master(uint8_t event, uint8_t x, uint8_t 
 }
 /* <<< factory statics */
 
-#define W_LOAD_NPC_X_POS_ADDR 0xD3ACu
-#define W_LOAD_NPC_Y_POS_ADDR 0xD3ADu
-#define W_LOAD_NPC_DIRECTION_ADDR 0xD3AEu
+#define W_LOAD_NPC_X_POS_ADDR wLoadNPCXPos_ADDR
+#define W_LOAD_NPC_Y_POS_ADDR wLoadNPCYPos_ADDR
+#define W_LOAD_NPC_DIRECTION_ADDR wLoadNPCDirection_ADDR
 
 static uint8_t carry_flags(uint8_t f)
 {
@@ -141,14 +141,14 @@ void PokemonDomeCloseTextBox(void)
 /* >>> factory PokemonDomeMovePlayer */
 void PokemonDomeMovePlayer(void)
 {
-	if (gb_read8(0xD331u) != 0x16u)
+	if (gb_read8(wPlayerYCoord_ADDR) != 0x16u)
 		return;
-	uint8_t x = gb_read8(0xD330u);
+	uint8_t x = gb_read8(wPlayerXCoord_ADDR);
 	if (x < 0x0Eu)
 		return;
 	if (x >= 0x11u)
 		return;
-	gb_write8(0xD3ABu, 0x3Au);
+	gb_write8(wTempNPC_ADDR, 0x3Au);
 	(void)SetNextNPCAndScript(Script_f84c_ADDR, PokemonDomeMovePlayer_ADDR);
 }
 /* <<< factory PokemonDomeMovePlayer */

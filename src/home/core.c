@@ -717,7 +717,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define hTempPlayAreaLocation_ff9d_ADDR 0xFF9Du
 
 #include "home/core.h"
 #include "generated/hram.h"
@@ -733,21 +732,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/list.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define wDuelDisplayedScreen_ADDR 0xCAC2u
-#define wDuelTempList_ADDR 0xC510u
-#define wExcludeArenaPokemon_ADDR 0xCBD2u
-#define wNumPlayAreaItems_ADDR 0xCBC8u
 
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/serial.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
-#define hTempCardIndex_ff9f_ADDR 0xFF9Fu
-#define hTemp_ffa0_ADDR 0xFFA0u
-#define wLoadedAttackName_ADDR 0xCCAAu
-#define wSkipDuelistIsThinkingDelay_ADDR 0xCBF9u
-#define wTxRam2_b_ADDR 0xCE41u
 
 #include "home/core.h"
 #include "home/empty_screen.h"
@@ -2153,7 +2143,7 @@ uint8_t PlaceCardImageOAM(uint16_t *hl, uint16_t *de)
 
 	*hl = (uint16_t)((*hl & 0xff00u) | l);
 	*de = (uint16_t)((uint16_t)x << 8 | y);
-	gb_write8(0xcac0u, TRUE);
+	gb_write8(wVBlankOAMCopyToggle_ADDR, TRUE);
 	return TRUE;
 }
 /* <<< factory PlaceCardImageOAM */
@@ -2675,7 +2665,7 @@ uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a)
 			return bench.hl;
 		if (GetCardIDFromDeckIndex(deck_index) != a)
 			continue;
-		uint16_t score = (uint16_t)(0xCDE4u + e);
+		uint16_t score = (uint16_t)(wPlayAreaEnergyAIScore_ADDR + e);
 		gb_write8(score, (uint8_t)(gb_read8(score) + 5u));
 	}
 }
@@ -4452,7 +4442,7 @@ void PrintNumberOfHandAndDeckCards(void)
 PrintReturnCardsToDeckDrawAgainResult PrintReturnCardsToDeckDrawAgain(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ReturnCardsToDeckAndDrawAgainText);
-	ExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD12u);
+	ExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, wMenuCursorYOffset_ADDR);
 	return (PrintReturnCardsToDeckDrawAgainResult){x.a, x.b, x.c, x.f, x.hl, x.de};
 }
 /* <<< factory PrintReturnCardsToDeckDrawAgain */
@@ -4708,7 +4698,7 @@ void CheckPrintCnfSlpPrz(uint8_t a, uint8_t b, uint8_t c)
 /* >>> factory LoadAnimCoordsAndFlags */
 void LoadAnimCoordsAndFlags(void)
 {
-	uint16_t hl = GetSpriteAnimBufferProperty_SpriteInA(gb_read8(0xD423u), 0x01u);
+	uint16_t hl = GetSpriteAnimBufferProperty_SpriteInA(gb_read8(wAnimationQueue_ADDR), 0x01u);
 	AnimCoordsResult r = GetAnimCoordsAndFlags();
 	uint8_t attr = (uint8_t)((r.a & (SPRITE_ANIM_FLAG_Y_FLIP_MASK | SPRITE_ANIM_FLAG_X_FLIP_MASK)) | gb_read8(hl));
 	gb_write8(hl, attr);

@@ -20,7 +20,7 @@
 #include "home/load_animation.h"
 /* <<< factory statics */
 
-#define rQUEUE 0xD423u
+#define rQUEUE wAnimationQueue_ADDR
 
 AnimationStatusResult CheckAnyAnimationPlaying(void)
 {

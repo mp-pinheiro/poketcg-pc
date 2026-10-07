@@ -254,7 +254,7 @@ PutEnergiesAndNonEnergiesTogetherResult PutEnergiesAndNonEnergiesTogether(uint8_
 	uint8_t *energy = wBoosterTempEnergiesDrawn_PTR;
 	while ((a = *energy++) != 0u) {
 		wBoosterCurrentCard = a;
-		uint16_t cursor = 0xC400u;
+		uint16_t cursor = wBoosterCardsDrawn_ADDR;
 		AppendCurrentCardToHL(&cursor);
 	}
 	a = 0u;

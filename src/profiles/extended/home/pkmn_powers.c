@@ -18,8 +18,8 @@
 #define DUELVARS_ARENA_CARD                 0xbbu
 #define DUELVARS_ARENA_CARD_FLAGS          0xc2u
 /* wce08: AI scratch byte holding the deck index the Pkmn Power acts on. */
-#define WCE08_ADDR                          0xce08u
-#define WCE06_ADDR                          0xce06u
+#define WCE08_ADDR                          wAISetupEnergyCount_ADDR
+#define WCE06_ADDR                          wAIDefendingPokemonWeakness_ADDR
 
 /* pkmn_powers.asm:618-729 (.CheckWhetherTurnDuelistHasColor). Returns 1 with
  * carry set if the turn duelist has a card in play whose color matches the
@@ -426,7 +426,7 @@ HandleAIHealResult HandleAIHeal(uint8_t c)
 		if (after == 0u || (uint8_t)(hp + heal) < damage)
 			goto check_bench;
 heal_arena:
-		hTempCardIndex_ff9f = gb_read8(0xce08u);
+		hTempCardIndex_ff9f = gb_read8(wAISetupEnergyCount_ADDR);
 		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 		hPlayAreaEffectTarget = PLAY_AREA_ARENA;
 		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);
@@ -444,7 +444,7 @@ check_bench:
 		}
 		if (best_location == PLAY_AREA_ARENA)
 			return (HandleAIHealResult){PLAY_AREA_ARENA, 0x80u};
-		hTempCardIndex_ff9f = gb_read8(0xce08u);
+		hTempCardIndex_ff9f = gb_read8(wAISetupEnergyCount_ADDR);
 		(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER, 0u, 0u, 0u, 0u);
 		hPlayAreaEffectTarget = best_location;
 		(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, 0u, 0u, 0u, 0u);

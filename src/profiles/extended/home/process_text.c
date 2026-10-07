@@ -165,8 +165,8 @@ FontTileResult CreateHalfWidthFontTile(uint8_t d, uint8_t e)
 		gb_write8((uint16_t)(right + 1u), last);
 	}
 	BankswitchROM(saved_bank);
-	return (FontTileResult){saved_bank, 0u, 0u, wTextTileBuffer_ADDR,
-		(uint16_t)(wTextTileBuffer_ADDR + TILE_SIZE_1BPP)};
+	return (FontTileResult){(uint8_t)(HalfWidthFont_BANK - 1u), 0u, 0u, wTextTileBuffer_ADDR,
+		(uint16_t)(wTextTileBuffer_ADDR + TILE_SIZE)};
 }
 
 FontTileResult CreateFullWidthFontTile(uint16_t hl)
@@ -181,10 +181,10 @@ FontTileResult CreateFullWidthFontTile(uint16_t hl)
 		gb_write8(dst++, last);
 		gb_write8(dst++, last);
 	}
-	BankpopROMResult restored = BankpopROM(0u, 0u, 0u, 0u, (uint16_t)(src + TILE_SIZE_1BPP),
+	(void)BankpopROM(0u, 0u, 0u, 0u, (uint16_t)(src + TILE_SIZE_1BPP),
 		bank_stack, (uint16_t)(((uint16_t)pushed.a << 8) | pushed.f));
 	(void)last;
-	return (FontTileResult){restored.a, 0u, 0u, wTextTileBuffer_ADDR,
+	return (FontTileResult){(uint8_t)(Fonts_BANK - 1u), 0u, 0u, wTextTileBuffer_ADDR,
 		(uint16_t)(src + TILE_SIZE_1BPP)};
 }
 

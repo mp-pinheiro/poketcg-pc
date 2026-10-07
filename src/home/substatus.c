@@ -57,7 +57,7 @@
 #define DUELVARS_ARENA_CARD 0xbbu
 #define DUELVARS_BENCH 0xbcu
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
-#define wTempPokemonID_ADDR 0xce7cu
+#define wTempPokemonID_ADDR wTempPokemonID_ce7c_ADDR
 
 /* substatus.asm:544-590. Counts arena (if not status-incapable) plus bench
  * slots matching the target id. The bench walk ends at its $FF terminator. */

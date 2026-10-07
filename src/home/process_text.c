@@ -272,26 +272,26 @@ ProcessTextResult Func_235e(uint8_t d, uint8_t e)
 	}
 	uint8_t i = hffa9;
 	for (;;) {
-		uint8_t key = gb_read8((uint16_t)(0xc600u + i));
+		uint8_t key = gb_read8((uint16_t)(wc600_ADDR + i));
 		if (!key) return text_result(0, d, e, 0x80, 0);
-		if (key == e && gb_read8((uint16_t)(0xc700u + i)) == d) break;
-		i = gb_read8((uint16_t)(0xc800u + i));
+		if (key == e && gb_read8((uint16_t)(wc700_ADDR + i)) == d) break;
+		i = gb_read8((uint16_t)(wc800_ADDR + i));
 	}
 	/* `cp l` leaves N set on a hit; `scf` sets C, clears N/H, leaves Z. */
 	if (hffa9 == i)
 		return text_result(i, d, e, 0x90, 0);
 
 	uint8_t old = hffa9;
-	uint8_t prev = gb_read8((uint16_t)(0xc900u + i));
-	uint8_t next = gb_read8((uint16_t)(0xc800u + i));
+	uint8_t prev = gb_read8((uint16_t)(wc900_ADDR + i));
+	uint8_t next = gb_read8((uint16_t)(wc800_ADDR + i));
 
-	gb_write8((uint16_t)(0xc900u + old), i);
+	gb_write8((uint16_t)(wc900_ADDR + old), i);
 	hffa9 = i;
-	gb_write8((uint16_t)(0xc900u + i), 0);
-	gb_write8((uint16_t)(0xc800u + i), old);
-	gb_write8((uint16_t)(0xc800u + prev), next);
+	gb_write8((uint16_t)(wc900_ADDR + i), 0);
+	gb_write8((uint16_t)(wc800_ADDR + i), old);
+	gb_write8((uint16_t)(wc800_ADDR + prev), next);
 	if (next)
-		gb_write8((uint16_t)(0xc900u + next), prev);
+		gb_write8((uint16_t)(wc900_ADDR + next), prev);
 	/* `inc c / dec c` leaves N set; `scf` sets C, clears N/H, leaves Z.
 	 * Z is set only when next == 0 (the inc/dec pair returns to zero). */
 	uint8_t f = (uint8_t)(0x10 | (next ? 0 : 0x80));
@@ -310,9 +310,9 @@ ProcessTextResult Func_2325(uint8_t d, uint8_t e)
 	if (hffa8 == wcd04) {
 		/* cache full: walk to the tail and reuse that node */
 		index = hffa9;
-		while (gb_read8((uint16_t)(0xc800u + index)))
-			index = gb_read8((uint16_t)(0xc800u + index));
-		gb_write8((uint16_t)(0xc800u + gb_read8((uint16_t)(0xc900u + index))), 0);
+		while (gb_read8((uint16_t)(wc800_ADDR + index)))
+			index = gb_read8((uint16_t)(wc800_ADDR + index));
+		gb_write8((uint16_t)(wc800_ADDR + gb_read8((uint16_t)(wc900_ADDR + index))), 0);
 	} else {
 		/* allocate the next node, stepping over index 0: it is the terminator */
 		wcd04++;
@@ -324,10 +324,10 @@ ProcessTextResult Func_2325(uint8_t d, uint8_t e)
 	uint8_t old = hffa9;
 
 	hffa9 = index;
-	gb_write8((uint16_t)(0xc900u + old), index);
-	gb_write8((uint16_t)(0xc800u + index), old);
-	gb_write8((uint16_t)(0xc600u + index), found.e);
-	gb_write8((uint16_t)(0xc700u + index), found.d);
+	gb_write8((uint16_t)(wc900_ADDR + old), index);
+	gb_write8((uint16_t)(wc800_ADDR + index), old);
+	gb_write8((uint16_t)(wc600_ADDR + index), found.e);
+	gb_write8((uint16_t)(wc700_ADDR + index), found.d);
 	return text_result(0, found.d, found.e, 0x80, 0);
 }
 
@@ -451,8 +451,8 @@ uint16_t SetupText(uint8_t d, uint8_t e)
 	hffa9 = 0;
 	wTilePatternSelector = 0x88;
 	wTilePatternSelectorCorrection = 0x80;
-	for (uint16_t i = 0xc600; i != 0xc700; i++) gb_write8(i, 0);
-	return 0xc600;
+	for (uint16_t i = wc600_ADDR; i != wc700_ADDR; i++) gb_write8(i, 0);
+	return wc600_ADDR;
 }
 
 void InitTextPrinting(uint8_t d, uint8_t e)
