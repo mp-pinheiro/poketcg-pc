@@ -9,6 +9,12 @@ _PROFESSOR_OAK = Fixture(
     holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
     lcdc=0xCABB,
 )
+_EXTENDED_FIXES_PROFESSOR_OAK = Fixture(
+    "extended-fixes-aidecide-professor-oak-entry",
+    directory=_FIXTURES,
+    holes=(0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D),
+    lcdc=0xCABB,
+)
 _ENERGY_SEARCH = Fixture(
     "extended-fixes-aidecide-energysearch-entry",
     directory=_FIXTURES,
@@ -99,7 +105,7 @@ CONTRACT = {
     'AIPlay_Revive': {'compare': ('f',), 'preserve': ()},
     'AIPlay_Lass': {'compare': ('f',), 'preserve': ()},
     'AIPlay_MrFuji': {'compare': ('f',), 'preserve': ()},
-    'AIDecide_ProfessorOak': {'compare': ('a', 'f', 'd'), 'preserve': ()},
+    'AIDecide_ProfessorOak': {'compare': ('a', 'f'), 'preserve': ()},
     'AIPlay_SuperEnergyRetrieval': {'compare': ('f',), 'preserve': ()},
 }
 
@@ -7872,6 +7878,13 @@ CASES = {
 CASES['AIDecide_ProfessorOak'].append(
     dict(_PROFESSOR_OAK.case(vram=False), **_PROFESSOR_OAK.regs)
 )
+_EXTENDED_FIXES_PROFESSOR_OAK_CASE = _EXTENDED_FIXES_PROFESSOR_OAK.case(vram=False)
+_EXTENDED_FIXES_PROFESSOR_OAK_CASE['read'][0xCC00] = 0xBD
+_EXTENDED_FIXES_PROFESSOR_OAK_CASE['read'][0xCCBE] = 0x42
+_EXTENDED_FIXES_PROFESSOR_OAK_CASE['read'][0xCD8F] = 0x20
+CASES['AIDecide_ProfessorOak'].append(
+    dict(_EXTENDED_FIXES_PROFESSOR_OAK_CASE, **_EXTENDED_FIXES_PROFESSOR_OAK.regs)
+)
 CASES['AIDecide_EnergySearch'] += [
     dict(_ENERGY_SEARCH.case(vram=False), **_ENERGY_SEARCH.regs),
     {'wram': {
@@ -8539,13 +8552,9 @@ MUTATIONS = {
         'case_ids': ['AIPlay_MrFuji-0'],
         'source': 'src/profiles/extended/home/trainer_cards.c'},
     'AIDecide_ProfessorOak': {   'source_symbol': 'AIDecide_ProfessorOak',
-        'before': '\tif (remaining >= DECK_SIZE - 6u)\n'
-                  '\t\treturn (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - '
-                  '6u), d};',
-        'after': '\tif (remaining >= DECK_SIZE - 7u)\n'
-                 '\t\treturn (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - '
-                 '7u), d};',
-        'case_ids': ['AIDecide_ProfessorOak-0', 'AIDecide_ProfessorOak-1'],
+        'before': '\t\t\twce06 = (uint8_t)(wce06 + 10u);',
+        'after': '\t\t\twce06 = (uint8_t)(wce06 + 20u);',
+        'case_ids': ['AIDecide_ProfessorOak-4'],
         'source': 'src/profiles/extended/home/trainer_cards.c'},
     'AIPlay_SuperEnergyRetrieval': {   'source_symbol': 'AIPlay_SuperEnergyRetrieval',
         'before': 'AIDecideResult AIPlay_SuperEnergyRetrieval(uint8_t d, uint8_t e)\n'

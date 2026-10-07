@@ -3993,14 +3993,12 @@ static uint8_t oak_evolution_in_hand(uint8_t location)
 
 AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 {
-	/* trainer_cards.asm AIDecide_ProfessorOak: a score in wce06 against 60. */
 	uint8_t remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
 	if (remaining >= DECK_SIZE - 6u)
 		return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 6u), d};
 
 	uint8_t deck_id = wOpponentDeckID;
 	if (deck_id == LEGENDARY_ARTICUNO_DECK_ID) {
-		/* .HandleLegendaryArticunoDeck */
 		uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 		if (count < 3u) {
 			d = count;
@@ -4016,7 +4014,6 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 			if (!evolves)
 				return (AIDecideParameterResult){count, 0x90u, count};
 		}
-		/* .check_playable_cards */
 		CountOppEnergyResult energy = CountOppEnergyCardsInHand(0u, 0u);
 		if (energy.a >= 4u)
 			return (AIDecideParameterResult){energy.a, or_a_flags(energy.a), d};
@@ -4037,7 +4034,6 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 	}
 
 	if (deck_id == EXCAVATION_DECK_ID) {
-		/* .HandleExcavationDeck */
 		if (remaining >= 46u)
 			return (AIDecideParameterResult){remaining, cp_flags(remaining, 46u), d};
 		LookForCardIDInHandAndPlayAreaResult fossil = LookForCardIDInHandAndPlayArea(MYSTERIOUS_FOSSIL);
@@ -4045,7 +4041,6 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 		wce06 = (fossil.f & 0x10u) ? 0x1Eu : 0x50u;
 	} else {
 		if (deck_id == WONDERS_OF_SCIENCE_DECK_ID) {
-			/* .HandleWondersOfScienceDeck */
 			LookForCardIDInHandListResult found = LookForCardIDInHandList_Bank8(GRIMER);
 			d = 0xC5u;
 			if ((found.f & 0x10u) == 0u)
@@ -4054,12 +4049,10 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 			if (found.f & 0x10u)
 				return (AIDecideParameterResult){found.a, or_a_flags(found.a), d};
 		}
-		/* .general_logic */
 		if (remaining >= DECK_SIZE - 14u)
 			return (AIDecideParameterResult){remaining, cp_flags(remaining, DECK_SIZE - 14u), d};
 		wce06 = 30u;
 	}
-	/* .general_logic_got_initial_score */
 	uint8_t hand = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
 	if (hand < 4u)
 		wce06 = (uint8_t)(wce06 + 50u);
@@ -4067,7 +4060,6 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 		wce06 = (uint8_t)(wce06 - 30u);
 	if (CreateEnergyCardListFromHand(0u).f & 0x10u)
 		wce06 = (uint8_t)(wce06 + 40u);
-	/* .handle_blastoise: Blastoise in play, no Muk, and no Water Energy in hand. */
 	if ((CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK).f & 0x10u) == 0u
 	    && (CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE).f & 0x10u) != 0u
 	    && (LookForCardIDInHand(WATER_ENERGY).f & 0x10u) != 0u)
@@ -4081,10 +4073,11 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
 		if (wLoadedCard1Type >= TYPE_ENERGY)
 			continue;
-		if (wLoadedCard1Stage == 0u)
+		if (wLoadedCard1Stage == 0u) {
 			wce06 = (uint8_t)(wce06 + 10u);
+			break;
+		}
 	}
-	/* .check_evolutions */
 	wce0f = 0u;
 	gb_write8((uint16_t)(wce0f_ADDR + 1u), 0u);
 	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
@@ -4096,7 +4089,6 @@ AIDecideParameterResult AIDecide_ProfessorOak(uint8_t d)
 	}
 	if (gb_read8((uint16_t)(wce0f_ADDR + 1u)) != 0u && wce0f == 0u)
 		wce06 = (uint8_t)(wce06 + 10u);
-	/* .check_score */
 	uint8_t score = wce06;
 	if (score >= 60u)
 		return (AIDecideParameterResult){score, (uint8_t)((score == 60u ? 0x80u : 0u) | 0x10u), 0u};
