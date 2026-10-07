@@ -15,7 +15,7 @@
 
 #include "home/scripting.h"
 #include "mem.h"
-#define EVENT_MEDAL_COUNT_540 0x2Eu
+#define EVENT_MEDAL_COUNT_540 EVENT_MEDAL_COUNT
 #define EVENT_RONALD_ENCOUNTER_540 0x32u
 
 #include "home/psychic_club_lobby.h"

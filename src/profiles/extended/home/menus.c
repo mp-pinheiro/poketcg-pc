@@ -3,6 +3,7 @@
 #include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
+#include "generated/text_ids.h"
 #include "generated/wram.h"
 #include "home/bg_map.h"
 #include "home/frames.h"
@@ -72,7 +73,7 @@
 #define SYM_0 0x20
 #define SYM_SPACE 0x00
 #define CARD_SYMBOL_TABLE 0x20C5u
-#define YES_OR_NO_TEXT_ID 0x2f
+#define YES_OR_NO_TEXT_ID YesOrNoText
 
 void InitializeCardListParameters(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 {

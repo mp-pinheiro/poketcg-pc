@@ -2,6 +2,7 @@
 
 #include "generated/rom.h"
 #include "generated/hram.h"
+#include "generated/constants.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
@@ -12,7 +13,7 @@
 
 #include "home/scripting.h"
 #include "mem.h"
-#define EVENT_MEDAL_COUNT_530 0x2Eu
+#define EVENT_MEDAL_COUNT_530 EVENT_MEDAL_COUNT
 
 #include "home/psychic_club.h"
 #include "mem.h"

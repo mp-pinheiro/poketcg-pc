@@ -556,7 +556,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #define Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
-#define Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -564,7 +564,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #define NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
-#define NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -572,7 +572,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #define MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
-#define MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -580,7 +580,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #define KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
-#define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 
 #include "generated/hram.h"
 #include "home/core.h"
@@ -610,7 +610,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #define BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
-#define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 
 #include "home/switch_rom.h"
 

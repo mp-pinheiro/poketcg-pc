@@ -191,6 +191,61 @@ def matches(c_value: int, asm_value: int) -> bool:
     return False
 
 
+def normalized(name: str) -> str:
+    stripped = re.sub(r"_(\d+|MAIN|ID|ADDR)$", "", name)
+    return re.sub(r"[^a-z0-9]", "", stripped.lower())
+
+
+def stale_vanilla_literals(defines: dict[str, list[tuple[Path, int, int]]], constants: dict[str, int],
+                           ids: dict[str, int], names: list[str]) -> list[str]:
+    """A define holding the vanilla value of a same-named constant whose value moved in this profile."""
+    vanilla = get_profile("vanilla", REPO_ROOT)
+    vanilla_source = vanilla.source_path(REPO_ROOT)
+    global DISASM
+    profile_source = DISASM
+    DISASM = vanilla_source
+    try:
+        vanilla_constants = asm_values(sorted(set(all_constant_names(vanilla_source))))
+        vanilla_ids = text_ids()
+    finally:
+        DISASM = profile_source
+    by_value: dict[int, list[tuple[str, str]]] = defaultdict(list)
+    for name, value in vanilla_constants.items():
+        by_value[value].append((name, "constant"))
+    for name, value in vanilla_ids.items():
+        by_value[value].append((name, "text id"))
+    suspects: list[tuple[str, Path, int, int, str, str]] = []
+    for define in names:
+        if define in constants or define in ids:
+            continue
+        wanted = normalized(define)
+        for path, number, value in defines[define]:
+            for name, kind in by_value.get(value, ()):
+                candidate = normalized(name)
+                if candidate == wanted or candidate in wanted or wanted in candidate:
+                    suspects.append((define, path, number, value, name, kind))
+                    break
+    profile_values = asm_values(sorted({name for _, _, _, _, name, kind in suspects if kind == "constant"}))
+    profile_values.update(ids)
+    failures = []
+    for define, path, number, value, name, kind in suspects:
+        current = profile_values.get(name)
+        if current is None or current == value:
+            continue
+        failures.append(f"{path.relative_to(REPO_ROOT)}:{number}: {define} is 0x{value:X}, the vanilla value of "
+                        f"{kind} {name}, which this profile defines as 0x{current:X}")
+    return failures
+
+
+def all_constant_names(source: Path) -> list[str]:
+    names = []
+    for path in sorted((source / "src" / "constants").glob("*.asm")):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            match = re.match(r"\s*(?:DEF\s+)?([A-Za-z_]\w*)\s+(?:EQU|=|RW|RB|RL)\b|\s*const\s+([A-Za-z_]\w*)", line)
+            if match:
+                names.append(match.group(1) or match.group(2))
+    return names
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--profile")
@@ -237,11 +292,13 @@ def main(argv: list[str] | None = None) -> int:
                     f"{source} says 0x{expected & 0xFFFFFFFF:X} ({expected})"
                 )
     literal_failures = rom_literal_failures(roots, labels)
+    if profile.name != "vanilla":
+        literal_failures += stale_vanilla_literals(defines, constants, ids, names)
     for failure in failures + literal_failures:
         print(failure)
     bad = bool(failures or literal_failures)
     print(f"lint-constants: {checked} defines checked against the disassembly, "
-          f"{len(failures)} mismatched; {len(literal_failures)} banked literals point into code",
+          f"{len(failures)} mismatched; {len(literal_failures)} banked literals point into code or hold vanilla values",
           file=sys.stderr if bad else sys.stdout)
     return 1 if bad else 0
 
