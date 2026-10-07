@@ -2586,8 +2586,8 @@ uint8_t HandleFailedToContinueDuel(uint16_t hl)
 /* core.asm:2048-2081 */
 IsLoadedCard1BasicPokemonResult IsLoadedCard1BasicPokemon(void)
 {
-	uint8_t id = wLoadedCard1ID;
-	if (id == 0xCCu || id == 0xCBu)
+	CardId id = card_id_read_at(wLoadedCard1ID_ADDR);
+	if (id == MYSTERIOUS_FOSSIL || id == CLEFAIRY_DOLL)
 		return (IsLoadedCard1BasicPokemonResult){1u, 0u};
 	if (wLoadedCard1Type >= 0x08u || wLoadedCard1Stage != 0u)
 		return (IsLoadedCard1BasicPokemonResult){0u, 0x90u};
@@ -2598,7 +2598,7 @@ IsLoadedCard1BasicPokemonResult IsLoadedCard1BasicPokemon(void)
 /* >>> factory PracticeDuel_PlayGoldeen */
 PracticeDuelPlayGoldeenResult PracticeDuel_PlayGoldeen(void)
 {
-	if (wLoadedCard1ID == 0x53u)
+	if (card_id_read_at(wLoadedCard1ID_ADDR) == GOLDEEN)
 		return (PracticeDuelPlayGoldeenResult){0xC0u};
 	PrintPracticeDuelDrMasonInstructions(0x01A5u);
 	return (PracticeDuelPlayGoldeenResult){0x10u};
@@ -3617,8 +3617,7 @@ void DrawPracticeDuelInstructionsTextBox(void)
 /* >>> factory PracticeDuelVerify_Turn7Or8 */
 PracticeDuelVerifyTurn7Or8Result PracticeDuelVerify_Turn7Or8(void)
 {
-	uint8_t card = gb_read8(wTempCardID_ccc2_ADDR);
-	if (card != STARMIE)
+	if (card_id_read_at(wTempCardID_ccc2_ADDR) != STARMIE)
 		return (PracticeDuelVerifyTurn7Or8Result){0x10u};
 	uint8_t attack = gb_read8(wSelectedAttack_ADDR);
 	if (attack != SECOND_ATTACK)
@@ -3679,7 +3678,7 @@ PracticeDuelVerifyTurn6Result PracticeDuelVerify_Turn6(void)
 		return (PracticeDuelVerifyTurn6Result){0x10u};
 	if (*wPlayerArenaCardHP_PTR != 40u)
 		return (PracticeDuelVerifyTurn6Result){0x10u};
-	if (*wTempCardID_ccc2_PTR != STARYU)
+	if (card_id_read_at(wTempCardID_ccc2_ADDR) != STARYU)
 		return (PracticeDuelVerifyTurn6Result){0x10u};
 	return (PracticeDuelVerifyTurn6Result){0xC0u};
 }
@@ -3693,7 +3692,7 @@ PracticeDuelVerifyTurn4Result PracticeDuelVerify_Turn4(void)
 	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_BENCH_2);
 	if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) == 0u)
 		return (PracticeDuelVerifyTurn4Result){ReturnWrongAction(0x80u)};
-	if (gb_read8(wTempCardID_ccc2_ADDR) != SEAKING)
+	if (card_id_read_at(wTempCardID_ccc2_ADDR) != SEAKING)
 		return (PracticeDuelVerifyTurn4Result){ReturnWrongAction(0u)};
 	if (gb_read8(wSelectedAttack_ADDR) != SECOND_ATTACK)
 		return (PracticeDuelVerifyTurn4Result){ReturnWrongAction(0u)};
@@ -4049,8 +4048,11 @@ PrintReturnCardsToDeckDrawAgainResult PrintReturnCardsToDeckDrawAgain(void)
 /* >>> factory PracticeDuelVerify_Turn3 */
 PracticeDuelVerifyTurn3Result PracticeDuelVerify_Turn3(void)
 {
-	uint8_t a = wTempCardID_ccc2;
-	if (a != SEAKING) {
+	CardId card = card_id_read_at(wTempCardID_ccc2_ADDR);
+	uint8_t a = (uint8_t)(card >> 8);
+	if ((uint8_t)(card >> 8) == (uint8_t)(SEAKING >> 8))
+		a = (uint8_t)card;
+	if (card != SEAKING) {
 		uint8_t f = ReturnWrongAction(0x00u);
 		return (PracticeDuelVerifyTurn3Result){a, f};
 	}
@@ -4336,7 +4338,7 @@ PracticeDuelVerifyTurn5Result PracticeDuelVerify_Turn5(void)
 	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
 	if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 2u)
 		return (PracticeDuelVerifyTurn5Result){ReturnWrongAction(0u)};
-	if (gb_read8(wTempCardID_ccc2_ADDR) != STARYU)
+	if (card_id_read_at(wTempCardID_ccc2_ADDR) != STARYU)
 		return (PracticeDuelVerifyTurn5Result){ReturnWrongAction(0u)};
 	return (PracticeDuelVerifyTurn5Result){0xC0u};
 }
@@ -4345,8 +4347,7 @@ PracticeDuelVerifyTurn5Result PracticeDuelVerify_Turn5(void)
 /* >>> factory PracticeDuelVerify_Turn1 */
 PracticeDuelVerify_Turn1Result PracticeDuelVerify_Turn1(void)
 {
-	uint8_t a = wTempCardID_ccc2;
-	if (a != GOLDEEN)
+	if (card_id_read_at(wTempCardID_ccc2_ADDR) != GOLDEEN)
 		return (PracticeDuelVerify_Turn1Result){ReturnWrongAction(0u)};
 	return (PracticeDuelVerify_Turn1Result){0xC0u};
 }
@@ -4355,8 +4356,7 @@ PracticeDuelVerify_Turn1Result PracticeDuelVerify_Turn1(void)
 /* >>> factory PracticeDuelVerify_Turn2 */
 PracticeDuelVerify_Turn2Result PracticeDuelVerify_Turn2(void)
 {
-	uint8_t a = wTempCardID_ccc2;
-	if (a != SEAKING)
+	if (card_id_read_at(wTempCardID_ccc2_ADDR) != SEAKING)
 		return (PracticeDuelVerify_Turn2Result){ReturnWrongAction(0u)};
 	uint8_t attack = wSelectedAttack;
 	if (attack != SECOND_ATTACK)
@@ -7009,7 +7009,7 @@ void DisplayOpponentUsedAttackScreen(void)
 	EmptyScreen();
 	(void)LoadDuelCardSymbolTiles();
 	(void)LoadDuelFaceDownCardTiles();
-	uint8_t cardid = wTempCardID_ccc2;
+	CardId cardid = card_id_read_at(wTempCardID_ccc2_ADDR);
 	LoadCardDataToBuffer1_FromCardID(cardid);
 	wCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;
 	uint16_t hl = wLoadedCard1Atk1Name_ADDR;

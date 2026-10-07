@@ -1,0 +1,9 @@
+{
+  "fn": "HandleStrikesBack_AgainstDamagingAttack",
+  "case": "tests/profiles/extended/cases/substatus.py",
+  "index": 5,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleStrikesBack_AgainstDamagingAttack\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 10, \"f\": 64, \"frame_budget_reached\": 0, \"hl\": 52337, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"52316\": \"04\", \"52337\": \"7f01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleStrikesBack_AgainstDamagingAttack\", \"mismatches\": {\"a\": [1, 4], \"e\": [10, 39], \"f\": [64, 192]}}\n",
+  "restored": "{\"fn\": \"HandleStrikesBack_AgainstDamagingAttack\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 10, \"f\": 64, \"frame_budget_reached\": 0, \"hl\": 52337, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"52316\": \"04\", \"52337\": \"7f01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

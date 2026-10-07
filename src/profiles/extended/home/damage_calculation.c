@@ -1,4 +1,5 @@
 #include "home/damage_calculation.h"
+#include "home/card_id_bus.h"
 
 #include "generated/constants.h"
 #include "generated/hram.h"
@@ -37,17 +38,22 @@ static DamageCalculationResult finish_damage(uint16_t out, uint16_t value)
 
 static void load_attacker_and_defender(uint8_t location)
 {
-    uint8_t index;
-    uint8_t id;
+	uint8_t index;
+	CardId id;
+	uint16_t temp;
 
-    index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location)).a;
-    id = LoadCardDataToBuffer2_FromDeckIndex(index);
-    wTempTurnDuelistCardID = id;
-    SwapTurn();
-    index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
-    id = LoadCardDataToBuffer2_FromDeckIndex(index);
-    wTempNonTurnDuelistCardID = id;
-    SwapTurn();
+	index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location)).a;
+	LoadCardDataToBuffer2_FromDeckIndex(index);
+	id = card_id_read_at(wLoadedCard2ID_ADDR);
+	temp = wTempTurnDuelistCardID_ADDR;
+	card_id_write(&temp, id);
+	SwapTurn();
+	index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	LoadCardDataToBuffer2_FromDeckIndex(index);
+	id = card_id_read_at(wLoadedCard2ID_ADDR);
+	temp = wTempNonTurnDuelistCardID_ADDR;
+	card_id_write(&temp, id);
+	SwapTurn();
 }
 
 static uint16_t calculate_versus_one(uint16_t damage)
@@ -102,20 +108,26 @@ static uint16_t calculate_versus_one(uint16_t damage)
 }
 static uint16_t calculate_from_one(uint16_t damage)
 {
-    uint8_t location = hTempPlayAreaLocation_ff9d;
-    uint8_t b;
-    uint8_t status;
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	uint8_t b;
+	uint8_t status;
 
-    SwapTurn();
-    {
-        uint8_t index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
-        wTempTurnDuelistCardID = LoadCardDataToBuffer2_FromDeckIndex(index);
-    }
-    SwapTurn();
-    {
-        uint8_t index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location)).a;
-        wTempNonTurnDuelistCardID = LoadCardDataToBuffer2_FromDeckIndex(index);
-    }
+	SwapTurn();
+	{
+		uint8_t index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+		LoadCardDataToBuffer2_FromDeckIndex(index);
+		CardId id = card_id_read_at(wLoadedCard2ID_ADDR);
+		uint16_t temp = wTempTurnDuelistCardID_ADDR;
+		card_id_write(&temp, id);
+	}
+	SwapTurn();
+	{
+		uint8_t index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location)).a;
+		LoadCardDataToBuffer2_FromDeckIndex(index);
+		CardId id = card_id_read_at(wLoadedCard2ID_ADDR);
+		uint16_t temp = wTempNonTurnDuelistCardID_ADDR;
+		card_id_write(&temp, id);
+	}
     /* damage_calculation.asm:347-407. The weakness and resistance checks both
      * run on the defending side (no swap between them), and an attack flagged
      * UNAFFECTED_BY_WEAKNESS_RESISTANCE skips them; PlusPower is the

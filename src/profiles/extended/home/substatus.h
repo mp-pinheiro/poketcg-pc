@@ -39,10 +39,6 @@ PkmnPowerIncapableResult CheckIsIncapableOfUsingPkmnPower_ArenaCard(void);
  * return address, so they are not reproduced. */
 uint16_t HandleDoubleDamageSubstatus(uint16_t de);
 
-/* substatus.asm:60-159. Bug-compatible: SUBSTATUS1_HALVE_DAMAGE and Kabuto
- * Armor use `sla d` where the source comment says it should be `sra d` --
- * doubling the high byte instead of halving it -- and the result sticks even
- * when the parity check afterward takes the early return. */
 uint16_t HandleDamageReductionExceptSubstatus2(uint16_t de);
 uint16_t HandleDamageReductionExceptSubstatus2_PkmnPower(uint16_t de);
 

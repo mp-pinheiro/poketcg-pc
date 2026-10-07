@@ -1348,6 +1348,45 @@ CASES = {
             'hl': 0xC2E8},
     ],
 }
+CASES['HandleDamageReductionExceptSubstatus2'] += [
+    {'d': 0x01, 'e': 0x00,
+     'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff',
+              0xC2E7: b'\x15'}},
+    {'d': 0x00, 'e': 0x64,
+     'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff',
+              0xCC5C: b'\x00', 0xCC71: b'\x8b\x01'}},
+]
+CASES['HandleNoDamageOrEffectSubstatus'] += [
+    {'e': 0x99, 'hl': 0x1234,
+     'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff',
+              0xCC71: b'\xa0\x01', 0xCC6F: b'\x01\x00'}},
+]
+CASES['GetLoadedCard1RetreatCost'] += [
+    {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\x00\xff', 0xC3BC: b'\xff',
+              0xC400: b'\xb6\x01', 0xCC02: b'\x03'}},
+]
+CASES['ClearChangedTypesIfMuk'] += [
+    {'a': 0x00,
+     'wram': {0xFF97: b'\xc2', 0xC2BB: b'\x00', 0xC400: b'\x27\x01',
+              0xC2D4: b'\x01\x02\x03\x04\x05\x06',
+              0xC3D4: b'\x07\x08\t\n\x0b\x0c'},
+     'read': {0xC2D4: 0x06, 0xC3D4: 0x06}},
+]
+CASES['HandleStrikesBack_AgainstDamagingAttack'] += [
+    {'d': 0x00, 'e': 0x0A,
+     'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff',
+              0xCC5C: b'\x04', 0xCC71: b'\x7f\x01'}},
+]
+CASES['ApplyStrikesBack_AgainstResidualAttack'] += [
+    {'hl': 0x00, 'wram': {0xFF97: b'\xc2', 0xCC6F: b'\x01\x01'},
+     'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
+]
+CASES['HandleStrikesBack_AgainstResidualAttack'] += [
+    {'wram': {0xCC71: b'\x7f\x01', 0xCC5C: b'\x80'}},
+]
+CASES['HandleTransparency'] += [
+    {'wram': {0xCC71: b'\x96\x01', 0xCC5C: b'\x04'}, 'hl': 0xC100},
+]
 
 MUTATIONS = {
     'CheckSandAttackOrSmokescreenSubstatus': {   'source_symbol': 'CheckSandAttackOrSmokescreenSubstatus',
@@ -1384,10 +1423,12 @@ MUTATIONS = {
                         'HandleDoubleDamageSubstatus-3',
                         'HandleDoubleDamageSubstatus-4'],
         'source': 'src/profiles/extended/home/substatus.c'},
-    'HandleDamageReductionExceptSubstatus2': {   'source_symbol': 'HandleDamageReductionExceptSubstatus2',
-        'before': '\tif (gb_read8(wNoDamageOrEffect_ADDR) != 0)',
-        'after': '\tif (gb_read8(wNoDamageOrEffect_ADDR) == 0)',
-        'case_ids': ['HandleDamageReductionExceptSubstatus2-0'],
+    'HandleDamageReductionExceptSubstatus2': {   'source_symbol': 'HandleDamageReductionExceptSubstatus2_PkmnPower',
+        'before': '\tCardId defender = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);\n'
+                  '\tif (defender == MR_MIME) {',
+        'after': '\tuint8_t defender = gb_read8(wTempNonTurnDuelistCardID_ADDR);\n'
+                 '\tif (defender == MR_MIME) {',
+        'case_ids': ['HandleDamageReductionExceptSubstatus2-18'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'HandleDamageReduction': {   'source_symbol': 'HandleDamageReduction',
         'before': '\tif (sub2.a == SUBSTATUS2_REDUCE_BY_20)',
@@ -1405,12 +1446,11 @@ MUTATIONS = {
         'case_ids': ['HandleAmnesiaSubstatus-1'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'HandleNoDamageOrEffectSubstatus': {   'source_symbol': 'HandleNoDamageOrEffectSubstatus_PkmnPower',
-        'before': '\te = gb_read8(wTempTurnDuelistCardID_ADDR);\n'
-                  '\td = 0u;\n'
-                  '\tLoadCardDataToBuffer2_FromCardID(e);',
-        'after': '\te = gb_read8(wTempTurnDuelistCardID_ADDR);\n'
-                 '\tLoadCardDataToBuffer2_FromCardID(e);',
-        'case_ids': ['HandleNoDamageOrEffectSubstatus-10'],
+        'before': '\tCardId defender = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);\n'
+                  '\tuint8_t a = cphl_value(defender, MEW_LV8);',
+        'after': '\tCardId defender = 0u;\n'
+                 '\tuint8_t a = cphl_value(defender, MEW_LV8);',
+        'case_ids': ['HandleNoDamageOrEffectSubstatus-12'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'CheckNoDamageOrEffect': {   'source_symbol': 'CheckNoDamageOrEffect',
         'before': '\tif (val == 0)',
@@ -1423,9 +1463,9 @@ MUTATIONS = {
         'case_ids': ['IsClairvoyanceActive-2'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'GetLoadedCard1RetreatCost': {   'source_symbol': 'GetLoadedCard1RetreatCost',
-        'before': '\twhile (gb_read8(bench) != 0xFFu) {',
-        'after': '\twhile (gb_read8(bench) == 0xFFu) {',
-        'case_ids': ['GetLoadedCard1RetreatCost-1'],
+        'before': '\t\tif (id == DODRIO)',
+        'after': '\t\tif ((uint8_t)id == DODRIO)',
+        'case_ids': ['GetLoadedCard1RetreatCost-6'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'CheckUnableToRetreatDueToEffect': {   'source_symbol': 'CheckUnableToRetreatDueToEffect',
         'before': '\tif (sub2.a != SUBSTATUS2_ACID)',
@@ -1463,9 +1503,9 @@ MUTATIONS = {
         'case_ids': ['IsRainDanceActive-0'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'ClearChangedTypesIfMuk': {   'source_symbol': 'ClearChangedTypesIfMuk',
-        'before': '\tif ((uint8_t)id != MUK)',
-        'after': '\tif ((uint8_t)id == MUK)',
-        'case_ids': ['ClearChangedTypesIfMuk-0'],
+        'before': '\tif (id != MUK)',
+        'after': '\tif ((uint8_t)id != MUK)',
+        'case_ids': ['ClearChangedTypesIfMuk-3'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'CheckRainDanceScenario': {   'source_symbol': 'CheckRainDanceScenario',
         'before': '\tif (card_type != TYPE_ENERGY_WATER)',
@@ -1473,23 +1513,21 @@ MUTATIONS = {
         'case_ids': ['CheckRainDanceScenario-1'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'HandleStrikesBack_AgainstDamagingAttack': {   'source_symbol': 'HandleStrikesBack_AgainstDamagingAttack',
-        'before': '\t\treturn (StrikesBackResult){a, f_cp(a, 0x04u),\n'
-                  '\t\t\t(uint8_t)(count.de >> 8), (uint8_t)count.de, hl};',
-        'after': '\t\treturn (StrikesBackResult){a, f_cp(a, 0x05u),\n'
-                 '\t\t\t(uint8_t)(count.de >> 8), (uint8_t)count.de, hl};',
-        'case_ids': ['HandleStrikesBack_AgainstDamagingAttack-3'],
+        'before': '\tif (defender != MACHAMP)',
+        'after': '\tif ((uint8_t)defender != MACHAMP)',
+        'case_ids': ['HandleStrikesBack_AgainstDamagingAttack-5'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'ApplyStrikesBack_AgainstResidualAttack': {   'source_symbol': 'ApplyStrikesBack_AgainstResidualAttack',
-        'before': '\tuint8_t card_id = wTempTurnDuelistCardID;',
-        'after': '\tuint8_t card_id = 0;',
-        'case_ids': [   'ApplyStrikesBack_AgainstResidualAttack-0',
-                        'ApplyStrikesBack_AgainstResidualAttack-1',
-                        'ApplyStrikesBack_AgainstResidualAttack-2'],
+        'before': '\tif (subtracted.a == 0)\n'
+                  '\t\treturn (ApplyStrikesBackResult){0, 0x80u};',
+        'after': '\tif (subtracted.a != 0)\n'
+                 '\t\treturn (ApplyStrikesBackResult){0, 0x80u};',
+        'case_ids': ['ApplyStrikesBack_AgainstResidualAttack-0'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'HandleStrikesBack_AgainstResidualAttack': {   'source_symbol': 'HandleStrikesBack_AgainstResidualAttack',
-        'before': '\t\tuint8_t f = 0x40u;\n\t\tif ((card_id & 0x0Fu) < (MACHAMP & 0x0Fu))',
-        'after': '\t\tuint8_t f = 0x50u;\n\t\tif ((card_id & 0x0Fu) < (MACHAMP & 0x0Fu))',
-        'case_ids': ['HandleStrikesBack_AgainstResidualAttack-0'],
+        'before': '\tCardId card_id = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);',
+        'after': '\tuint8_t card_id = wTempNonTurnDuelistCardID;',
+        'case_ids': ['HandleStrikesBack_AgainstResidualAttack-6'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'HandleDestinyBondSubstatus': {   'source_symbol': 'HandleDestinyBondSubstatus',
         'before': 'DestinyBondResult HandleDestinyBondSubstatus(void)\n'
@@ -1508,11 +1546,9 @@ MUTATIONS = {
         'case_ids': ['HandleNShieldAndTransparency-1'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'HandleTransparency': {   'source_symbol': 'HandleTransparency',
-        'before': '\tif (category == POKEMON_POWER) {\n'
-                  '\t\treturn (HandleTransparencyResult){category, category ? 0u : 0x80u, hl};',
-        'after': '\tif (category == POKEMON_POWER) {\n'
-                 '\t\treturn (HandleTransparencyResult){0x05u, category ? 0u : 0x80u, hl};',
-        'case_ids': ['HandleTransparency-1', 'HandleTransparency-2'],
+        'before': '\tif (category == POKEMON_POWER) {',
+        'after': '\tif (category != POKEMON_POWER) {',
+        'case_ids': ['HandleTransparency-1'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'HandleDamageReductionOrNoDamageFromPkmnPowerEffects': {   'source_symbol': 'HandleDamageReductionOrNoDamageFromPkmnPowerEffects',
         'before': '\tNoDamageOrEffectResult no_damage = '

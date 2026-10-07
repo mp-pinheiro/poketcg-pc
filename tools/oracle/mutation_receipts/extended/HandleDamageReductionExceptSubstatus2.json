@@ -1,0 +1,9 @@
+{
+  "fn": "HandleDamageReductionExceptSubstatus2",
+  "case": "tests/profiles/extended/cases/substatus.py",
+  "index": 18,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleDamageReductionExceptSubstatus2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 100, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"52316\": \"00\", \"52337\": \"8b01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleDamageReductionExceptSubstatus2\", \"mismatches\": {\"e\": [100, 50]}}\n",
+  "restored": "{\"fn\": \"HandleDamageReductionExceptSubstatus2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 100, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"52316\": \"00\", \"52337\": \"8b01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

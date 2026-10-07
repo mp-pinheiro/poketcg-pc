@@ -29293,6 +29293,15 @@ CASES['OppAction_PlayAttackAnimationDealAttackDamage'] = [
         'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC,
         'd': 0xDD, 'e': 0xEE, 'hl': 0x1234}),
 ]
+CASES['IsLoadedCard1BasicPokemon'] += [
+    {'wram': {0xCBD6: b'\xcc\x01', 0xCBCF: b'\xff', 0xCBD9: b'\xff'}},
+]
+CASES['PracticeDuelVerify_Turn7Or8'] += [
+    {'wram': {0xCC6D: b'V\x01', 0xCC74: b'\x01'}},
+]
+CASES['PracticeDuelVerify_Turn1'] += [
+    {'wram': {0xFF97: b'\xc2', 0xCC6D: b'S\x01'}},
+]
 
 
 MUTATIONS = {
@@ -29711,8 +29720,8 @@ MUTATIONS = {
         'case_ids': ['HandleFailedToContinueDuel-0', 'HandleFailedToContinueDuel-1'],
         'source': 'src/profiles/extended/home/core.c'},
     'IsLoadedCard1BasicPokemon': {   'source_symbol': 'IsLoadedCard1BasicPokemon',
-        'before': 'id == 0xCCu || id == 0xCBu',
-        'after': 'id == 0xCDu || id == 0xCBu',
+        'before': 'id == MYSTERIOUS_FOSSIL || id == CLEFAIRY_DOLL',
+        'after': 'id == 0xCDu || id == CLEFAIRY_DOLL',
         'case_ids': ['IsLoadedCard1BasicPokemon-6'],
         'source': 'src/profiles/extended/home/core.c'},
     'PracticeDuel_PlayGoldeen': {   'source_symbol': 'PracticeDuel_PlayGoldeen',
@@ -29990,8 +29999,8 @@ MUTATIONS = {
                         'DrawPracticeDuelInstructionsTextBox-1'],
         'source': 'src/profiles/extended/home/core.c'},
     'PracticeDuelVerify_Turn7Or8': {   'source_symbol': 'PracticeDuelVerify_Turn7Or8',
-        'before': 'card != STARMIE',
-        'after': 'card != 0x57u',
+        'before': 'card_id_read_at(wTempCardID_ccc2_ADDR) != STARMIE',
+        'after': 'card_id_read_at(wTempCardID_ccc2_ADDR) != 0x57u',
         'case_ids': [   'PracticeDuelVerify_Turn7Or8-0',
                         'PracticeDuelVerify_Turn7Or8-1',
                         'PracticeDuelVerify_Turn7Or8-2'],
@@ -30111,9 +30120,9 @@ MUTATIONS = {
         'case_ids': ['PrintReturnCardsToDeckDrawAgain-0', 'PrintReturnCardsToDeckDrawAgain-1'],
         'source': 'src/profiles/extended/home/core.c'},
     'PracticeDuelVerify_Turn3': {   'source_symbol': 'PracticeDuelVerify_Turn3',
-        'before': '\tif (a != SEAKING) {',
-        'after': '\tif (a != (uint8_t)(SEAKING + 1u)) {',
-        'case_ids': ['PracticeDuelVerify_Turn3-0', 'PracticeDuelVerify_Turn3-1'],
+        'before': '\tif (card != SEAKING) {',
+        'after': '\tif (card == SEAKING) {',
+        'case_ids': ['PracticeDuelVerify_Turn3-0'],
         'source': 'src/profiles/extended/home/core.c'},
     'CheckIfEnoughEnergiesToAttack': {   'source_symbol': 'CheckIfEnoughEnergiesToAttack',
         'before': '\tuint8_t doubled = (uint8_t)(menu_item * 2u);',
@@ -30166,12 +30175,12 @@ MUTATIONS = {
         'source': 'src/profiles/extended/home/core.c'},
     'PracticeDuelVerify_Turn5': {   'source_symbol': 'PracticeDuelVerify_Turn5',
         'before': 'if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 2u)',
-        'after': 'if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 3u)',
+        'after': 'if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) == 2u)',
         'case_ids': ['PracticeDuelVerify_Turn5-0'],
         'source': 'src/profiles/extended/home/core.c'},
     'PracticeDuelVerify_Turn1': {   'source_symbol': 'PracticeDuelVerify_Turn1',
-        'before': 'if (a != GOLDEEN)',
-        'after': 'if (a == GOLDEEN)',
+        'before': 'if (card_id_read_at(wTempCardID_ccc2_ADDR) != GOLDEEN)',
+        'after': 'if (card_id_read_at(wTempCardID_ccc2_ADDR) == GOLDEEN)',
         'case_ids': ['PracticeDuelVerify_Turn1-0', 'PracticeDuelVerify_Turn1-1'],
         'source': 'src/profiles/extended/home/core.c'},
     'PracticeDuelVerify_Turn2': {   'source_symbol': 'PracticeDuelVerify_Turn2',
@@ -30975,27 +30984,9 @@ MUTATIONS = {
                         'PlayAttackAnimation_DealAttackDamageSimple-2'],
         'source': 'src/profiles/extended/home/core.c'},
     'DisplayOpponentUsedAttackScreen': {   'source_symbol': 'DisplayOpponentUsedAttackScreen',
-        'before': 'void DisplayOpponentUsedAttackScreen(void)\n'
-                  '{\n'
-                  '\tZeroObjectPositionsAndToggleOAMCopy();\n'
-                  '\tEmptyScreen();\n'
-                  '\t(void)LoadDuelCardSymbolTiles();\n'
-                  '\t(void)LoadDuelFaceDownCardTiles();\n'
-                  '\tuint8_t cardid = wTempCardID_ccc2;\n'
-                  '\tLoadCardDataToBuffer1_FromCardID(cardid);\n'
-                  '\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;',
-        'after': 'void DisplayOpponentUsedAttackScreen(void)\n'
-                 '{\n'
-                 '\tZeroObjectPositionsAndToggleOAMCopy();\n'
-                 '\tEmptyScreen();\n'
-                 '\t(void)LoadDuelCardSymbolTiles();\n'
-                 '\t(void)LoadDuelFaceDownCardTiles();\n'
-                 '\tuint8_t cardid = wTempCardID_ccc2;\n'
-                 '\tLoadCardDataToBuffer1_FromCardID(cardid);\n'
-                 '\twCardPageNumber = 0x02u;',
-        'case_ids': [   'DisplayOpponentUsedAttackScreen-0',
-                        'DisplayOpponentUsedAttackScreen-1',
-                        'DisplayOpponentUsedAttackScreen-2'],
+        'before': '\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;',
+        'after': '\twCardPageNumber = 0u;',
+        'case_ids': ['DisplayOpponentUsedAttackScreen-0'],
         'source': 'src/profiles/extended/home/core.c'},
     'DisplayCardList': {   'source_symbol': 'DisplayCardList',
         'before': '\t\t\t\tif ((keys & PAD_B) != 0u) {\n'

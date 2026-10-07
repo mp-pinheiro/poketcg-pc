@@ -9,6 +9,7 @@
 #include "home/bg_map.h"
 /* >>> factory statics */
 #include "home/duel.h"
+#include "home/card_id_bus.h"
 #include "home/effect_functions.h"
 
 #define DUELVARS_DUELIST_TYPE             0xf1u
@@ -1429,7 +1430,7 @@ QueueStatusConditionResult QueueStatusCondition(uint8_t b, uint8_t c)
 	uint8_t can_induce = 1u;
 
 	if (who == turn) {
-		uint8_t cardid = wTempNonTurnDuelistCardID;
+		CardId cardid = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);
 		if (cardid == CLEFAIRY_DOLL || cardid == MYSTERIOUS_FOSSIL) {
 			can_induce = 0u;
 		} else if (cardid == SNORLAX) {
@@ -2875,8 +2876,8 @@ void BoyfriendsEffect(void)
 	uint16_t hl = arena.hl;
 	uint8_t c = PLAY_AREA_ARENA;
 	while (gb_read8(hl) != 0xffu) {
-		uint16_t id = GetCardIDFromDeckIndex(gb_read8(hl));
-		if ((uint8_t)id == NIDOKING && (uint8_t)(id >> 8) == 0u)
+		CardId id = GetCardIDFromDeckIndex(gb_read8(hl));
+		if (id == NIDOKING)
 			c++;
 		hl++;
 	}
@@ -7803,10 +7804,12 @@ void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e)
 	wTempPlayAreaLocation_cceb = location;
 	DuelistVarResult var = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
 	uint8_t deck_index = LoadCardDataToBuffer1_FromDeckIndex(var.a);
-	wTempNonTurnDuelistCardID = wLoadedCard1ID;
+	CardId card_id = card_id_read_at(wLoadedCard1ID_ADDR);
+	uint16_t temp_non_turn_id = wTempNonTurnDuelistCardID_ADDR;
+	card_id_write(&temp_non_turn_id, card_id);
 	uint16_t hl = var.hl;
 	if (hTempPlayAreaLocation_ff9d == 0u) {
-		NoDamageOrEffectResult substatus = HandleNoDamageOrEffectSubstatus(0u, 0u, hl);
+		HandleNoDamageOrEffectResult substatus = HandleNoDamageOrEffect(0u);
 		if ((substatus.f & 0x10u) == 0u)
 			hl = substatus.hl;
 	}
@@ -8936,12 +8939,10 @@ void FullHeal_ClearStatusEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint
 /* >>> factory ImakuniEffect */
 void ImakuniEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
-	/* Every path keeps the entry de (the card load and the power check push
-	 * and pop it) and PlayAttackAnimation stores it into wDamageAnimAmount. */
 	(void)a;
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
-	uint8_t card = wLoadedCard1ID;
+	CardId card = card_id_read_at(wLoadedCard1ID_ADDR);
 	if (card == CLEFAIRY_DOLL || card == MYSTERIOUS_FOSSIL) {
 		PlayTrainerEffectAnimation(ATK_ANIM_OWN_CONFUSION, f, b, c, d, e, hl);
 		(void)DrawWideTextBox_WaitForInput(ThereWasNoEffectText);
@@ -9975,7 +9976,8 @@ DuelistSelectForcedSwitchResult DuelistSelectForcedSwitch(uint8_t a, uint8_t f, 
 	uint8_t selected = AIDoAction_ForcedSwitch();
 	hTempPlayAreaLocation_ff9d = selected;
 	SwapTurn();
-	AttackCopyResult copied = CopyAttackDataAndDamage_FromCardID(wPlayerAttackingCardID, wPlayerAttackingCardIndex, wPlayerAttackingAttackIndex);
+	CardId attacking = card_id_read_at(wPlayerAttackingCardID_ADDR);
+	AttackCopyResult copied = CopyAttackDataAndDamage_FromCardID(attacking, wPlayerAttackingCardIndex, wPlayerAttackingAttackIndex);
 	DuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(copied.a, copied.f, b, copied.c, (uint8_t)(copied.de >> 8), (uint8_t)copied.de, copied.hl);
 	return (DuelistSelectForcedSwitchResult){updated.a, updated.f};
 }

@@ -1,0 +1,9 @@
+{
+  "fn": "IsLoadedCard1BasicPokemon",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 6,
+  "status": "RED",
+  "baseline": "{\"fn\": \"IsLoadedCard1BasicPokemon\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52175\": \"ff\", \"52182\": \"cc\", \"52185\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"IsLoadedCard1BasicPokemon\", \"mismatches\": {\"a\": [1, 0], \"f\": [0, 144]}}\n",
+  "restored": "{\"fn\": \"IsLoadedCard1BasicPokemon\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52175\": \"ff\", \"52182\": \"cc\", \"52185\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

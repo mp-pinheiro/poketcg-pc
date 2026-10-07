@@ -182,14 +182,26 @@ static uint16_t reduce_by(uint16_t de, uint16_t amount)
 {
 	return (uint16_t)(de + (uint16_t)(0u - amount));
 }
+static uint8_t cphl_value(CardId id, CardId value)
+{
+	uint8_t result = (uint8_t)(id >> 8);
+	if ((uint8_t)(id >> 8) == (uint8_t)(value >> 8))
+		result = (uint8_t)id;
+	return result;
+}
+static uint8_t f_cp16(CardId id, CardId value)
+{
+	return CompareDEtoBC((uint8_t)(id >> 8), (uint8_t)id,
+		(uint8_t)(value >> 8), (uint8_t)value);
+}
 
-static uint16_t buggy_halve_damage(uint16_t de)
+static uint16_t halve_damage(uint16_t de)
 {
 	uint8_t d = (uint8_t)(de >> 8);
 	uint8_t e = (uint8_t)de;
-	uint8_t sla_carry = (uint8_t)(d >> 7);
-	d = (uint8_t)(d << 1);
-	e = (uint8_t)((sla_carry << 7) | (e >> 1));
+	uint8_t sra_carry = (uint8_t)(d & 1u);
+	d = (uint8_t)((d >> 1) | (d & 0x80u));
+	e = (uint8_t)((sra_carry << 7) | (e >> 1));
 	de = (uint16_t)((uint16_t)d << 8 | e);
 	if (!(e & 1u))
 		return de;
@@ -216,7 +228,7 @@ uint16_t HandleDamageReductionExceptSubstatus2(uint16_t de)
 			return de;
 		}
 		if (sub1.a == SUBSTATUS1_HALVE_DAMAGE)
-			return buggy_halve_damage(de);
+			return halve_damage(de);
 	}
 
 	if (CheckIsIncapableOfUsingPkmnPower_ArenaCard().f & 0x10u)
@@ -228,14 +240,14 @@ uint16_t HandleDamageReductionExceptSubstatus2_PkmnPower(uint16_t de)
 {
 	if (gb_read8(wLoadedAttackCategory_ADDR) == POKEMON_POWER)
 		return de;
-	uint8_t defender = gb_read8(wTempNonTurnDuelistCardID_ADDR);
+	CardId defender = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);
 	if (defender == MR_MIME) {
 		if (CompareDEtoBC((uint8_t)(de >> 8), (uint8_t)de, 0, 30) & 0x10u)
 			return de;
 		return 0;
 	}
 	if (defender == KABUTO)
-		return buggy_halve_damage(de);
+		return halve_damage(de);
 	return de;
 }
 
@@ -319,17 +331,18 @@ NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus(uint8_t d, uint8_t e, uin
 
 NoDamageOrEffectResult HandleNoDamageOrEffectSubstatus_PkmnPower(uint8_t d, uint8_t e, uint16_t hl)
 {
-	uint8_t defender = gb_read8(wTempNonTurnDuelistCardID_ADDR);
+	CardId defender = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);
+	uint8_t a = cphl_value(defender, MEW_LV8);
 	if (defender != MEW_LV8)
-		return (NoDamageOrEffectResult){defender == 0 ? 0x80u : 0x00u, d, e, hl};
+		return (NoDamageOrEffectResult){a ? 0x00u : 0x80u, d, e, hl};
 
 	if (gb_read8(wIsDamageToSelf_ADDR) != 0)
 		return (NoDamageOrEffectResult){0x00u, d, e, hl};
 
-	/* `ld e, a; ld d, $0`: the card id is loaded through de. */
-	e = gb_read8(wTempTurnDuelistCardID_ADDR);
-	d = 0u;
-	LoadCardDataToBuffer2_FromCardID(e);
+	CardId turn_id = card_id_read_at(wTempTurnDuelistCardID_ADDR);
+	d = (uint8_t)(turn_id >> 8);
+	e = (uint8_t)turn_id;
+	LoadCardDataToBuffer2_FromCardID(turn_id);
 	if (gb_read8(wLoadedCard2Stage_ADDR) == 0)
 		return (NoDamageOrEffectResult){0x80u, d, e, hl};
 
@@ -367,8 +380,8 @@ uint8_t GetLoadedCard1RetreatCost(void)
 	uint8_t dodrio_count = 0;
 	uint16_t bench = GetTurnDuelistVariable(DUELVARS_BENCH).hl;
 	while (gb_read8(bench) != 0xFFu) {
-		uint16_t id = GetCardIDFromDeckIndex(gb_read8(bench));
-		if ((uint8_t)id == DODRIO)
+		CardId id = GetCardIDFromDeckIndex(gb_read8(bench));
+		if (id == DODRIO)
 			dodrio_count++;
 		bench++;
 	}
@@ -470,8 +483,8 @@ static void zero_changed_type_run(void)
 
 void ClearChangedTypesIfMuk(uint8_t a)
 {
-	uint16_t id = GetCardIDFromDeckIndex(a);
-	if ((uint8_t)id != MUK)
+	CardId id = GetCardIDFromDeckIndex(a);
+	if (id != MUK)
 		return;
 	SwapTurn();
 	zero_changed_type_run();
@@ -494,8 +507,6 @@ RainDanceResult CheckRainDanceScenario(void)
 	return (RainDanceResult){TYPE_PKMN_WATER, 0x90u};
 }
 
-#define MACHAMP_ID 0x7Fu
-#define MUK_ID     0x27u
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT ReceivesDamageDueToStrikesBackText
 static uint8_t f_or(uint8_t result) { return (uint8_t)(result ? 0x00u : 0x80u); }
@@ -517,12 +528,13 @@ StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de, uint16_t 
 	a = wIsDamageToSelf;
 	if (a)
 		return (StrikesBackResult){a, f_or(a), (uint8_t)(de >> 8), (uint8_t)de, entry_hl};
-	a = wTempNonTurnDuelistCardID;
+	CardId defender = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);
 	hl = wTempNonTurnDuelistCardID_ADDR;
-	if (a != MACHAMP_ID)
-		return (StrikesBackResult){a, f_cp(a, MACHAMP_ID),
+	a = cphl_value(defender, MACHAMP);
+	if (defender != MACHAMP)
+		return (StrikesBackResult){a, f_cp16(defender, MACHAMP),
 			(uint8_t)(de >> 8), (uint8_t)de, hl};
-	PkmnPowerCountResult count = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK_ID);
+	PkmnPowerCountResult count = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 	if (count.f & 0x10u)
 		return (StrikesBackResult){count.a, count.f,
 			(uint8_t)(count.de >> 8), (uint8_t)count.de, hl};
@@ -542,7 +554,8 @@ StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de, uint16_t 
 	DuelistVarResult hp_var = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
 	uint8_t hp = hp_var.a;
 	(void)SubtractHP(hp_var.hl, 10);
-	wTempNonTurnDuelistCardID = wLoadedCard2ID;
+	uint16_t temp_non_turn_id = wTempNonTurnDuelistCardID_ADDR;
+	card_id_write(&temp_non_turn_id, card_id_read_at(wLoadedCard2ID_ADDR));
 	LoadTxRam3(10);
 	uint16_t name = (uint16_t)(gb_read8(wLoadedCard2Name_ADDR)
 		| (uint16_t)gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)) << 8);
@@ -558,7 +571,7 @@ StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de, uint16_t 
 ApplyStrikesBackResult ApplyStrikesBack_AgainstResidualAttack(uint16_t hl)
 {
 	LoadTxRam3(hl);
-	uint8_t card_id = wTempTurnDuelistCardID;
+	CardId card_id = card_id_read_at(wTempTurnDuelistCardID_ADDR);
 	LoadCardDataToBuffer2_FromCardID(card_id);
 	uint16_t name = (uint16_t)(gb_read8(wLoadedCard2Name_ADDR) |
 		(uint16_t)gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)) << 8);
@@ -573,21 +586,14 @@ ApplyStrikesBackResult ApplyStrikesBack_AgainstResidualAttack(uint16_t hl)
 	DrawDuelHUDs();
 	return (ApplyStrikesBackResult){0, 0x10u};
 }
-/* <<< factory ApplyStrikesBack_AgainstResidualAttack */
 
-/* >>> factory HandleStrikesBack_AgainstResidualAttack */
 HandleStrikesBackResidualResult HandleStrikesBack_AgainstResidualAttack(void)
 {
-	uint8_t card_id = wTempNonTurnDuelistCardID;
+	CardId card_id = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);
+	uint8_t a = cphl_value(card_id, MACHAMP);
 	if (card_id != MACHAMP) {
-		/* substatus.asm:788-790 `cp MACHAMP / ret`: N, and H or C as the
-		 * compare borrows; the carry is not implied. */
-		uint8_t f = 0x40u;
-		if ((card_id & 0x0Fu) < (MACHAMP & 0x0Fu))
-			f |= 0x20u;
-		if (card_id < MACHAMP)
-			f |= 0x10u;
-		return (HandleStrikesBackResidualResult){card_id, f};
+		uint8_t f = f_cp16(card_id, MACHAMP);
+		return (HandleStrikesBackResidualResult){a, f};
 	}
 	uint8_t category = wLoadedAttackCategory;
 	uint8_t residual = (uint8_t)(category & RESIDUAL);
@@ -693,9 +699,10 @@ HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de)
 /* >>> factory HandleTransparency */
 HandleTransparencyResult HandleTransparency(uint16_t hl)
 {
-	uint8_t card = wTempNonTurnDuelistCardID;
+	CardId card = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);
+	uint8_t a = cphl_value(card, HAUNTER_LV17);
 	if (card != HAUNTER_LV17)
-		return (HandleTransparencyResult){card, card ? 0u : 0x80u,
+		return (HandleTransparencyResult){a, a ? 0u : 0x80u,
 			wTempNonTurnDuelistCardID_ADDR};
 
 	uint8_t category = wLoadedAttackCategory;
@@ -717,7 +724,6 @@ HandleTransparencyResult HandleTransparency(uint16_t hl)
 	wNoDamageOrEffect = NO_DAMAGE_OR_EFFECT_TRANSPARENCY;
 	return (HandleTransparencyResult){NO_DAMAGE_OR_EFFECT_TRANSPARENCY, 0x10u, NoDamageOrEffectDueToTransparencyText};
 }
-/* <<< factory HandleTransparency */
 
 /* >>> factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
 HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl)
