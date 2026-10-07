@@ -33,18 +33,6 @@
 #define TRUE 0x01u
 /* <<< factory statics */
 
-/* >>> factory TryFirstRonaldEncounter */
-TryFirstRonaldEncounterResult TryFirstRonaldEncounter(uint8_t b, uint8_t c, uint16_t hl)
-{
-	wTempNPC = NPC_RONALD1;
-	NPCSearchResult r = FindLoadedNPC();
-	if (r.f & 0x10u)
-		return (TryFirstRonaldEncounterResult){r.a, r.f, b, c, hl};
-	SetNextNPCAndScriptResult r2 = SetNextNPCAndScript(Script_FirstRonaldEncounter_ADDR, hl);
-	return (TryFirstRonaldEncounterResult){r2.a, r2.f, r2.b, r2.c, r2.hl};
-}
-/* <<< factory TryFirstRonaldEncounter */
-
 /* >>> factory TryFirstRonaldDuel */
 TryFirstRonaldDuelResult TryFirstRonaldDuel(uint8_t b, uint8_t c, uint16_t hl)
 {
@@ -80,8 +68,11 @@ void LoadClubEntrance(void)
 {
 	TryFirstRonaldDuelResult r1 = TryFirstRonaldDuel(0u, 0u, 0u);
 	TrySecondRonaldDuelResult r2 = TrySecondRonaldDuel(r1.b, r1.c, r1.hl);
-	TryFirstRonaldEncounterResult r3 = TryFirstRonaldEncounter(r2.b, r2.c, r2.hl);
-	(void)r3;
+	wTempNPC = NPC_RONALD1;
+	NPCSearchResult found = FindLoadedNPC();
+	if (found.f & 0x10u)
+		return;
+	(void)SetNextNPCAndScript(Script_FirstRonaldEncounter_ADDR, r2.hl);
 }
 /* <<< factory LoadClubEntrance */
 
