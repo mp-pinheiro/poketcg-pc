@@ -355,7 +355,7 @@ ScriptEntryRegs ScriptEntryEnterWithBank(uint16_t target, uint8_t bank, uint8_t 
 \t\t        (unsigned)opcode, (unsigned)target);
 \t\tabort();
 \t}}
-\trow = ScriptEntryLookupBank(bank, target);
+\trow = bank == 0u ? ScriptEntryLookup(target) : ScriptEntryLookupBank(bank, target);
 \tif (row == NULL) {{
 \t\tfprintf(stderr, "script entry miss target=$%04X\\n", (unsigned)target);
 \t\tabort();
