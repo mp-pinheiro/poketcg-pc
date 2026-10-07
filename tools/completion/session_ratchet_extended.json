@@ -1,9 +1,18 @@
 {
   "ai-duel-fire-charge": {
-    "confirmed_ordinal": 11206
+    "confirmed_ordinal": 24839
   },
   "boot-menu": {
     "confirmed_ordinal": 1000
+  },
+  "extended-animations": {
+    "confirmed_ordinal": 9812
+  },
+  "extended-animations-2": {
+    "confirmed_ordinal": 9812
+  },
+  "extended-animations-3": {
+    "confirmed_ordinal": 9812
   },
   "new-game": {
     "confirmed_ordinal": 5891

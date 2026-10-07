@@ -1,0 +1,10 @@
+{
+  "confirmed_ordinal": 0,
+  "first_ordinal": 26255,
+  "kind": "animation",
+  "last_ordinal": 26350,
+  "name": "ATK_ANIM_LEG_SWEEP",
+  "session": "ai-duel-water-carriers",
+  "status": "fail",
+  "value": 143
+}

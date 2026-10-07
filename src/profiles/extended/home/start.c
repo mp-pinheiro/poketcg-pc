@@ -145,7 +145,7 @@ typedef struct {
 static const PcOptionPage kPcPages[] = {
 	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
 	{"SOUND", 3u, {3u, 4u, 8u}},
-	{"GAMEPLAY", 2u, {10u, 11u}},
+	{"GAMEPLAY", 1u, {11u}},
 };
 #define PC_PAGE_COUNT (sizeof kPcPages / sizeof kPcPages[0])
 static const char *const kPcFontNames[] = {
@@ -213,9 +213,6 @@ static void print_pc_option_line(uint8_t y, uint8_t option)
 		break;
 	case 8u:
 		snprintf(text, sizeof text, "SFX VOL %d", value);
-		break;
-	case 10u:
-		snprintf(text, sizeof text, "PLAYER %s", value ? "MINT" : "MARK");
 		break;
 	case 11u:
 		snprintf(text, sizeof text, "NEW GAME SELECT %s", value ? "ON" : "OFF");
@@ -702,11 +699,6 @@ title_screen:
 			LoadGeneralSaveData();
 		}
 		RunPCOptionsMenu();
-		if (had_save && runtime_player_gender_dirty()) {
-			SaveGeneralSaveData();
-			WriteBackupGeneralSaveData();
-			runtime_clear_player_gender_dirty();
-		}
 		wLastSelectedStartMenuItem = 0u;
 		goto title_screen;
 	}

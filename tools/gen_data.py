@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import tomllib
 import re
 import struct
 import sys
@@ -59,6 +60,8 @@ SCHEMA = (
 # Static tables embedded in code sections are declared explicitly so the
 # production resolver never reads unclassified code bytes from the ROM.
 PKMN_CARD_DATA_LENGTH = 0x41
+WAVE_TABLE_ENTRIES = 16
+WAVE_LENGTH = 16
 
 NATIVE_DATA_LABELS = (
     ("input_name_question_data", "WhatIsYourNameData", 0, 0x29),
@@ -235,10 +238,61 @@ def native_data_spans(sym_path: Path, rom: bytes, inventory_spans: list[dict[str
     return spans
 
 
+def wave_table_spans(sym_path: Path, rom: bytes, labels: list[str],
+                     inventory_spans: list[dict[str, object]]) -> list[tuple[str, int, int, int]]:
+    sym_line = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
+    symbols: dict[str, tuple[int, int]] = {}
+    for line in sym_path.read_text().splitlines():
+        match = sym_line.match(line.strip())
+        if match:
+            symbols.setdefault(match.group(3), (int(match.group(1), 16), int(match.group(2), 16)))
+    covered = [(span["bank"], span["address"], span["address"] + span["length"]) for span in inventory_spans
+               if span.get("kind") == "data"]
+    spans = []
+    for label in labels:
+        if label not in symbols:
+            raise ValueError(f"wave table {label} is not a symbol of this profile")
+        bank, table = symbols[label]
+        base = rom_offset(bank, table)
+        for index in range(WAVE_TABLE_ENTRIES):
+            pointer = rom[base + 2 * index] | rom[base + 2 * index + 1] << 8
+            if pointer >= 0x8000:
+                continue
+            target_bank = 0 if pointer < 0x4000 else bank
+            end = pointer + WAVE_LENGTH
+            if any(b == target_bank and start <= pointer and end <= stop for b, start, stop in covered):
+                continue
+            spans.append((f"{label.lower()}_{index}", target_bank, pointer, WAVE_LENGTH))
+    return spans
+
+
+def audio_tail_spans(inventory_spans: list[dict[str, object]], tail: int) -> list[tuple[str, int, int, int]]:
+    data = [span for span in inventory_spans if span.get("kind") == "data"]
+    covered: dict[int, list[tuple[int, int]]] = {}
+    for span in data:
+        covered.setdefault(span["bank"], []).append((span["address"], span["address"] + span["length"]))
+    spans = []
+    for span in data:
+        section = str(span.get("section", ""))
+        symbol = str(span.get("symbol", ""))
+        if not section.lower().startswith(("sfx", "music")) or symbol.endswith("CommandTable"):
+            continue
+        bank, end = span["bank"], span["address"] + span["length"]
+        length = 0
+        while length < tail and end + length < 0x8000 and not any(
+                start <= end + length < stop for start, stop in covered[bank]):
+            length += 1
+        if length:
+            spans.append((f"{symbol.lower()}_tail", bank, end, length))
+    return spans
+
+
 def sparse_items(
     rom: bytes,
     inventory_path: Path,
     sym_path: Path,
+    wave_tables: list[str] | None = None,
+    audio_tail: int = 0,
 ) -> list[tuple[dict[str, str], Section, bytes]]:
     try:
         inventory = json.loads(inventory_path.read_text())
@@ -269,7 +323,9 @@ def sparse_items(
         entry = {"name": name, "section": section.name, "ctype": "uint8_t"}
         result.append((entry, section, rom[start:end]))
     for name, bank, address, length in (
-            tuple(native_data_spans(sym_path, rom, spans)) + tuple(script_entry_spans(rom, sym_path))):
+            tuple(native_data_spans(sym_path, rom, spans)) + tuple(script_entry_spans(rom, sym_path))
+            + tuple(wave_table_spans(sym_path, rom, wave_tables or [], spans))
+            + tuple(audio_tail_spans(spans, audio_tail))):
         start = rom_offset(bank, address)
         end = start + length
         if length < 1 or end > len(rom):
@@ -545,7 +601,11 @@ def main() -> int:
     sections = parse_map(args.map)
     symbols = parse_symbols(args.sym)
     rom = args.rom.read_bytes()
-    items = sparse_items(rom, args.inventory, args.sym) if args.sparse_pack else slices(SCHEMA, sections, symbols, rom)
+    native_data = root / "profiles" / profile.name / "native_data.toml"
+    declared = tomllib.loads(native_data.read_text()) if native_data.is_file() else {}
+    items = (sparse_items(rom, args.inventory, args.sym, declared.get("wave_tables", []),
+                          declared.get("audio_script_tail", 0))
+             if args.sparse_pack else slices(SCHEMA, sections, symbols, rom))
     if args.sparse_pack and args.pack_check:
         parser.error("--sparse-pack and --pack-check are mutually exclusive")
     if args.sparse_pack or args.pack_check:

@@ -63,7 +63,7 @@ void PlayLoadedDuelAnimation(void)
     ClearSpriteVRAMBuffer();
     ZeroObjectPositions();
     write(wVBlankOAMCopyToggle_ADDR, 1u);
-    const uint8_t *anim = rom_ptr(ANIMATIONS_BANK, ANIMATIONS_ADDR) + (uint16_t)animation * ANIM_ENTRY_SIZE;
+    const uint8_t *anim = rom_ptr(ANIMATIONS_BANK, (uint16_t)(ANIMATIONS_ADDR + (uint16_t)animation * ANIM_ENTRY_SIZE));
     uint8_t sprite_id  = anim[0];
     uint8_t palette_id = anim[1];
     uint8_t anim_id    = anim[2];

@@ -1,0 +1,24 @@
+{
+  "animations": {
+    "DUEL_ANIM_3D_ATTACK": 8676,
+    "DUEL_ANIM_BENCH_MANIPULATION": 8748,
+    "DUEL_ANIM_BIG_SNORE": 8822,
+    "DUEL_ANIM_BONE_HEADBUTT": 8882,
+    "DUEL_ANIM_BONE_TOSS_BENCH": 8932,
+    "DUEL_ANIM_BOULDER_SMASH": 8966,
+    "DUEL_ANIM_COIN_HURL": 9034,
+    "DUEL_ANIM_COIN_HURL_BENCH": 9069,
+    "DUEL_ANIM_CONTINUOUS_FIREBALL": 9094,
+    "DUEL_ANIM_DARK_SONG": 9170
+  },
+  "batches": [
+    "10@8613"
+  ],
+  "branch_ordinal": 8612,
+  "derived_from": "ai-duel-fire-charge",
+  "goal": "ai-duel-fire-charge with Extended-only sprite duel animations appended to the ROM's own duel animation buffer during the opening shuffle-and-draw animation wait, alternating player and opponent sides, so each plays its sprites, palette and SFX through PlayBufferedDuelAnimations (set 1 of 3)",
+  "name": "extended-animations",
+  "ordinals": 9812,
+  "recorded": "2026-10-07T04:02:03+00:00",
+  "schema": 1
+}

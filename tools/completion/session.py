@@ -2232,6 +2232,82 @@ def anim_seed(name: str, *, base: str, at: int, anims: list[str], length: int, g
     return 0
 
 
+def attack_anim_seed(name: str, *, base: str, at: int, anims: list[str], length: int, goal: str) -> int:
+    from tools.gen_constants import constant_names, evaluate
+
+    base_masks, base_meta = load_session(base)
+    if not 1 <= at < len(base_masks):
+        raise SessionError(f"--at must be within {base}'s {len(base_masks)} ordinals")
+    source = PROFILE.source_path(ROOT)
+    values = evaluate(source, constant_names(source))
+    ids: list[int] = []
+    for anim in anims:
+        if not anim.startswith("ATK_ANIM_") or anim not in values:
+            raise SessionError(f"{anim} is not an ATK_ANIM_ constant of the {PROFILE.name} profile")
+        ids.append(values[anim])
+    if not ids:
+        raise SessionError("--anims names no animation")
+    masks = base_masks[:at + length]
+    pokes: refstream.Pokes = {k: list(v) for k, v in base_meta["pokes"].items() if k <= len(masks)}
+    start_bank, start_address = symbol_address(PROFILE, "PlayAttackAnimation", ROOT)
+    play_bank, play_address = symbol_address(PROFILE, "PlayAttackAnimationCommands", ROOT)
+    loaded = symbol_address(PROFILE, "wLoadedAttackAnimation", ROOT)[1]
+
+    def replay() -> tuple[list[int], list[tuple[int, int]]]:
+        starts: list[int] = []
+        played: list[tuple[int, int]] = []
+        with refstream.Core(masks, pokes=pokes, save=base_meta["save"]) as core:
+            core.input_axis = "ordinal"
+            read = core.library.gambatte_cpuread
+            read.restype = ctypes.c_ubyte
+
+            def on_exec(address: int, _cycle: int) -> None:
+                if core.ordinal <= at:
+                    return
+                if address == start_address and core.bank_of(address) == start_bank:
+                    starts.append(core.ordinal)
+                elif address == play_address and core.bank_of(address) == play_bank:
+                    played.append((core.ordinal, read(core.core, loaded)))
+
+            core.install_exec(on_exec)
+            core.run(len(masks) * 2 + 400, stop=lambda: core.ordinal >= len(masks))
+        return starts, played
+
+    used: list[int] = []
+    schedule: list[str] = []
+    for anim, anim_id in zip(anims, ids, strict=True):
+        starts, _played = replay()
+        floor = used[-1] if used else at
+        for ordinal in [start for start in starts if start > floor]:
+            pokes.setdefault(ordinal, []).append((loaded, anim_id))
+            _starts, played = replay()
+            first = next((value for when, value in played if when >= ordinal), None)
+            if first == anim_id:
+                used.append(ordinal)
+                schedule.append(f"{anim}@{ordinal}")
+                break
+            pokes[ordinal].pop()
+            if not pokes[ordinal]:
+                del pokes[ordinal]
+        else:
+            raise SessionError(f"no attack after {floor} within {len(masks)} ordinals took {anim}; "
+                               f"placed {', '.join(schedule) or 'none'}")
+    directory = session_dir(name)
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")
+    (directory / "pokes.txt").write_text(refstream.pokes_text(pokes))
+    inherit_save(directory, base_meta["save"])
+    meta = {
+        "schema": 1, "name": name, "ordinals": len(masks),
+        "goal": goal or f"{len(anims)} attack animations substituted into {base}'s attacks from {at}",
+        "derived_from": base, "branch_ordinal": at, "attack_animations": schedule,
+        "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
+    }
+    (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
+    print(f"SESSION {name} ordinals={len(masks)} attacks={' '.join(schedule)}")
+    return 0
+
+
 def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goal: str,
               then: list[str] | None = None, discard: list[str] | None = None,
               poke_at: int | None = None, status: int | None = None, stage: int | None = None,
@@ -2662,6 +2738,13 @@ def main(argv: list[str] | None = None) -> int:
     anim_parser.add_argument("--anims", required=True, help="comma-separated DUEL_ANIM_ constant names")
     anim_parser.add_argument("--length", type=int, default=6000, help="DoFrames of the base kept after --at")
     anim_parser.add_argument("--goal", default="")
+    attack_parser = sub.add_parser("attack-anim-seed", help="substitute attack animations into a duel's own attacks")
+    attack_parser.add_argument("name")
+    attack_parser.add_argument("--from", dest="base", required=True)
+    attack_parser.add_argument("--at", type=int, required=True, help="first ordinal whose attacks may be substituted")
+    attack_parser.add_argument("--anims", required=True, help="comma-separated ATK_ANIM_ constant names, one attack each")
+    attack_parser.add_argument("--length", type=int, required=True, help="DoFrames of the base kept after --at")
+    attack_parser.add_argument("--goal", default="")
     seed_parser = sub.add_parser("deck-seed", help="a player-controlled duel with a poked deck, as a search seed")
     seed_parser.add_argument("name")
     seed_parser.add_argument("--from", dest="base", default="practice-win")
@@ -2752,6 +2835,10 @@ def main(argv: list[str] | None = None) -> int:
             return anim_seed(args.name, base=args.base, at=args.at,
                              anims=[anim for anim in args.anims.split(",") if anim],
                              length=args.length, goal=args.goal)
+        if args.command == "attack-anim-seed":
+            return attack_anim_seed(args.name, base=args.base, at=args.at,
+                                    anims=[anim for anim in args.anims.split(",") if anim],
+                                    length=args.length, goal=args.goal)
         if args.command == "deck-seed":
             return deck_seed(args.name, base=args.base, at=args.at, deck=args.deck,
                              cards=load_cards(args.cards), goal=args.goal,

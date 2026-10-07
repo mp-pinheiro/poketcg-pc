@@ -1768,7 +1768,7 @@ AnimCoordsResult GetAnimCoordsAndFlags(void)
 		c = (uint8_t)(c + wDuelAnimLocationParam);
 		index = rom_ptr(ANIM_DATA_BANK, ANIM_COORDS_INDEX_ADDR)[c];
 	}
-	const uint8_t *entry = rom_ptr(ANIM_DATA_BANK, ANIM_COORDS_ADDR) + (uint16_t)index * 3u;
+	const uint8_t *entry = rom_ptr(ANIM_DATA_BANK, (uint16_t)(ANIM_COORDS_ADDR + (uint16_t)index * 3u));
 	uint8_t x = entry[0];
 	uint8_t y = entry[1];
 	uint8_t flags = (uint8_t)(wAnimFlags & entry[2]);

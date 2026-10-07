@@ -97,7 +97,6 @@
 #include "home/sprite_animations.h"
 #include "home/overworld_map.h"
 
-#define SPRITE_OW_MINT 0x72u
 
 #include "home/scripting.h"
 #include "home/battle_center.h"
