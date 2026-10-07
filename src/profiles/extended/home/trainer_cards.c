@@ -2435,8 +2435,13 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a, uint8_t d)
 	}
 
 	uint8_t deck_id = wOpponentDeckID;
-	uint8_t filter = (deck_id == HEATED_BATTLE_DECK_ID || deck_id == WONDERS_OF_SCIENCE_DECK_ID)
-		? TYPE_ENERGY_FIRE : ENERGY_SEARCH_ANY_TYPE;
+	uint8_t filter;
+	if (deck_id == HEATED_BATTLE_DECK_ID)
+		filter = TYPE_ENERGY_FIRE;
+	else if (deck_id == WONDERS_OF_SCIENCE_DECK_ID)
+		filter = TYPE_ENERGY_GRASS;
+	else
+		filter = ENERGY_SEARCH_ANY_TYPE;
 
 	FindBasicEnergyCardsInLocationResult deck = FindBasicEnergyCardsInLocation(CARD_LOCATION_DECK);
 	if (deck.f & 0x10u)
@@ -2448,7 +2453,7 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a, uint8_t d)
 	if (filter != ENERGY_SEARCH_ANY_TYPE)
 		return (AIDecideEnergySearchResult){scan.a,
 			(uint8_t)(scan.a == 0u ? 0x80u : 0x00u), scan.d};
-	return (AIDecideEnergySearchResult){wDuelTempList, scan.f, scan.d};
+	return (AIDecideEnergySearchResult){wDuelTempList, 0x90u, scan.d};
 }
 /* <<< factory AIDecide_EnergySearch */
 
