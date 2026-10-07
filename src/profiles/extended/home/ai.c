@@ -104,25 +104,25 @@ static void turn_legendary_dragonite(void) { (void)AIDoTurn_LegendaryDragonite(0
 static void turn_legendary_ronald(void) { (void)AIDoTurn_LegendaryRonald(0u, 0u, 0u, 0u, 0u, 0u, 0u); }
 
 static const DeckAI deck_ais[] = {
-	{0x4668u, NULL, {0}},                                                                   /* GeneralDecks */
-	{0x47BDu, NULL, {0}},                                                                   /* SamPractice, scripted below */
-	{0x48DCu, turn_general_no_retreat, {0}},                                                /* GeneralNoRetreat */
-	{0x49E8u, turn_legendary_moltres, {0x4A47u, 0x4A15u, 0x4A1Cu, 0x4A22u, 0x4A29u, 0x4A2Eu}},
-	{0x4B0Fu, turn_legendary_zapdos, {0x4B69u, 0x4B3Cu, 0x4B43u, 0x4B43u, 0u, 0x4B50u}},
-	{0x4C0Bu, turn_legendary_articuno, {0x4C60u, 0x4C38u, 0x4C3Fu, 0x4C3Fu, 0u, 0x4C4Au}},
-	{0x4D60u, turn_legendary_dragonite, {0x4DBDu, 0x4D8Du, 0x4D93u, 0x4D93u, 0u, 0x4D9Eu}},
-	{0x4E89u, NULL, {0x4EDDu, 0x4EB6u, 0x4EBBu, 0x4EBBu, 0u, 0x4EC7u}},               /* FirstStrike */
-	{0x4F0Eu, NULL, {0x4F5Eu, 0x4F3Bu, 0x4F40u, 0x4F40u, 0u, 0x4F48u}},               /* RockCrusher */
-	{0x4F8Fu, NULL, {0x4FE6u, 0x4FBCu, 0x4FC1u, 0x4FC1u, 0u, 0x4FCDu}},               /* GoGoRainDance */
-	{0x5019u, NULL, {0x506Bu, 0x5046u, 0x504Cu, 0x504Cu, 0u, 0x5055u}},               /* ZappingSelfdestruct */
-	{0x509Bu, NULL, {0x50F2u, 0x50C8u, 0x50CCu, 0x50CCu, 0u, 0x50D9u}},               /* FlowerPower */
-	{0x5122u, NULL, {0x517Au, 0x514Fu, 0x5155u, 0x5155u, 0u, 0x5164u}},               /* StrangePsyshock */
-	{0x51ADu, NULL, {0x5202u, 0x51DAu, 0x51E1u, 0x51E1u, 0u, 0x51E9u}},               /* WondersOfScience */
-	{0x5232u, NULL, {0x528Du, 0x525Fu, 0x5266u, 0x5266u, 0u, 0x5274u}},               /* FireCharge */
-	{0x52BDu, NULL, {0x531Bu, 0x52EAu, 0x52F1u, 0x52F1u, 0u, 0x52F9u}},               /* ImRonald */
-	{0x534Bu, NULL, {0x53B7u, 0x5378u, 0x5383u, 0x5383u, 0u, 0x5395u}},               /* PowerfulRonald */
-	{0x53E8u, NULL, {0x543Fu, 0x5415u, 0x541Cu, 0x541Cu, 0u, 0x5426u}},               /* InvincibleRonald */
-	{0x546Fu, turn_legendary_ronald, {0x54D3u, 0x549Cu, 0x54A3u, 0x54A7u, 0u, 0x54B1u}},
+	{AIActionTable_GeneralDecks_ADDR, NULL, {0}}, /* GeneralDecks */
+	{AIActionTable_SamPractice_ADDR, NULL, {0}}, /* SamPractice, scripted below */
+	{AIActionTable_GeneralNoRetreat_ADDR, turn_general_no_retreat, {0}}, /* GeneralNoRetreat */
+	{AIActionTable_LegendaryMoltres_ADDR, turn_legendary_moltres, {AIActionTable_LegendaryMoltres__list_prize_ADDR, AIActionTable_LegendaryMoltres__list_arena_ADDR, AIActionTable_LegendaryMoltres__list_bench_ADDR, AIActionTable_LegendaryMoltres__list_play_hand_ADDR, AIActionTable_LegendaryMoltres__list_retreat_ADDR, AIActionTable_LegendaryMoltres__list_energy_ADDR}},
+	{AIActionTable_LegendaryZapdos_ADDR, turn_legendary_zapdos, {AIActionTable_LegendaryZapdos__list_prize_ADDR, AIActionTable_LegendaryZapdos__list_arena_ADDR, AIActionTable_LegendaryZapdos__list_bench_ADDR, AIActionTable_LegendaryZapdos__list_bench_ADDR, 0u, AIActionTable_LegendaryZapdos__list_energy_ADDR}},
+	{AIActionTable_LegendaryArticuno_ADDR, turn_legendary_articuno, {AIActionTable_LegendaryArticuno__list_prize_ADDR, AIActionTable_LegendaryArticuno__list_arena_ADDR, AIActionTable_LegendaryArticuno__list_bench_ADDR, AIActionTable_LegendaryArticuno__list_bench_ADDR, 0u, AIActionTable_LegendaryArticuno__list_energy_ADDR}},
+	{AIActionTable_LegendaryDragonite_ADDR, turn_legendary_dragonite, {AIActionTable_LegendaryDragonite__list_prize_ADDR, AIActionTable_LegendaryDragonite__list_arena_ADDR, AIActionTable_LegendaryDragonite__list_bench_ADDR, AIActionTable_LegendaryDragonite__list_bench_ADDR, 0u, AIActionTable_LegendaryDragonite__list_energy_ADDR}},
+	{AIActionTable_FirstStrike_ADDR, NULL, {AIActionTable_FirstStrike__list_prize_ADDR, AIActionTable_FirstStrike__list_arena_ADDR, AIActionTable_FirstStrike__list_bench_ADDR, AIActionTable_FirstStrike__list_bench_ADDR, 0u, AIActionTable_FirstStrike__list_energy_ADDR}}, /* FirstStrike */
+	{AIActionTable_RockCrusher_ADDR, NULL, {AIActionTable_RockCrusher__list_prize_ADDR, AIActionTable_RockCrusher__list_arena_ADDR, AIActionTable_RockCrusher__list_bench_ADDR, AIActionTable_RockCrusher__list_bench_ADDR, 0u, AIActionTable_RockCrusher__list_energy_ADDR}}, /* RockCrusher */
+	{AIActionTable_GoGoRainDance_ADDR, NULL, {AIActionTable_GoGoRainDance__list_prize_ADDR, AIActionTable_GoGoRainDance__list_arena_ADDR, AIActionTable_GoGoRainDance__list_bench_ADDR, AIActionTable_GoGoRainDance__list_bench_ADDR, 0u, AIActionTable_GoGoRainDance__list_energy_ADDR}}, /* GoGoRainDance */
+	{AIActionTable_ZappingSelfdestruct_ADDR, NULL, {AIActionTable_ZappingSelfdestruct__list_prize_ADDR, AIActionTable_ZappingSelfdestruct__list_arena_ADDR, AIActionTable_ZappingSelfdestruct__list_bench_ADDR, AIActionTable_ZappingSelfdestruct__list_bench_ADDR, 0u, AIActionTable_ZappingSelfdestruct__list_energy_ADDR}}, /* ZappingSelfdestruct */
+	{AIActionTable_FlowerPower_ADDR, NULL, {AIActionTable_FlowerPower__list_prize_ADDR, AIActionTable_FlowerPower__list_arena_ADDR, AIActionTable_FlowerPower__list_bench_ADDR, AIActionTable_FlowerPower__list_bench_ADDR, 0u, AIActionTable_FlowerPower__list_energy_ADDR}}, /* FlowerPower */
+	{AIActionTable_StrangePsyshock_ADDR, NULL, {AIActionTable_StrangePsyshock__list_prize_ADDR, AIActionTable_StrangePsyshock__list_arena_ADDR, AIActionTable_StrangePsyshock__list_bench_ADDR, AIActionTable_StrangePsyshock__list_bench_ADDR, 0u, AIActionTable_StrangePsyshock__list_energy_ADDR}}, /* StrangePsyshock */
+	{AIActionTable_WondersOfScience_ADDR, NULL, {AIActionTable_WondersOfScience__list_prize_ADDR, AIActionTable_WondersOfScience__list_arena_ADDR, AIActionTable_WondersOfScience__list_bench_ADDR, AIActionTable_WondersOfScience__list_bench_ADDR, 0u, AIActionTable_WondersOfScience__list_energy_ADDR}}, /* WondersOfScience */
+	{AIActionTable_FireCharge_ADDR, NULL, {AIActionTable_FireCharge__list_prize_ADDR, AIActionTable_FireCharge__list_arena_ADDR, AIActionTable_FireCharge__list_bench_ADDR, AIActionTable_FireCharge__list_bench_ADDR, 0u, AIActionTable_FireCharge__list_energy_ADDR}}, /* FireCharge */
+	{AIActionTable_ImRonald_ADDR, NULL, {AIActionTable_ImRonald__list_prize_ADDR, AIActionTable_ImRonald__list_arena_ADDR, AIActionTable_ImRonald__list_bench_ADDR, AIActionTable_ImRonald__list_bench_ADDR, 0u, AIActionTable_ImRonald__list_energy_ADDR}}, /* ImRonald */
+	{AIActionTable_PowerfulRonald_ADDR, NULL, {AIActionTable_PowerfulRonald__list_prize_ADDR, AIActionTable_PowerfulRonald__list_arena_ADDR, AIActionTable_PowerfulRonald__list_bench_ADDR, AIActionTable_PowerfulRonald__list_bench_ADDR, 0u, AIActionTable_PowerfulRonald__list_energy_ADDR}}, /* PowerfulRonald */
+	{AIActionTable_InvincibleRonald_ADDR, NULL, {AIActionTable_InvincibleRonald__list_prize_ADDR, AIActionTable_InvincibleRonald__list_arena_ADDR, AIActionTable_InvincibleRonald__list_bench_ADDR, AIActionTable_InvincibleRonald__list_bench_ADDR, 0u, AIActionTable_InvincibleRonald__list_energy_ADDR}}, /* InvincibleRonald */
+	{AIActionTable_LegendaryRonald_ADDR, turn_legendary_ronald, {AIActionTable_LegendaryRonald__list_prize_ADDR, AIActionTable_LegendaryRonald__list_arena_ADDR, AIActionTable_LegendaryRonald__list_bench_ADDR, AIActionTable_LegendaryRonald__list_play_hand_ADDR, 0u, AIActionTable_LegendaryRonald__list_energy_ADDR}},
 };
 
 static const DeckAI *deck_ai_for(uint16_t table)

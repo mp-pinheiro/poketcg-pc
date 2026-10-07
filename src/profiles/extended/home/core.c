@@ -314,11 +314,13 @@ static PlayInOrderResult play_pokemon_card_in_order(uint16_t *hl, uint16_t de)
 	uint8_t d = gb_read8(de);
 	de = (uint16_t)((uint16_t)d << 8 | c);
 	for (;;) {
-		uint8_t a = gb_read8(de);
+		uint8_t lo = gb_read8(de);
 		de++;
-		if (a == 0x00u)
-			return (PlayInOrderResult){a, 0x90u, de, *hl};
-		RemoveCardIDResult removed = RemoveCardIDInList(hl, a);
+		uint8_t hi = gb_read8(de);
+		if ((uint8_t)(lo | hi) == 0x00u)
+			return (PlayInOrderResult){0x00u, 0x90u, de, *hl};
+		RemoveCardIDResult removed = RemoveCardIDInList(hl, (CardId)((uint16_t)hi << 8 | lo));
+		de++;
 		if ((removed.f & 0x10u) == 0x00u)
 			continue;
 		PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(removed.a, removed.f);
