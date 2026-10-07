@@ -31685,6 +31685,17 @@ _SECOND_ATTACK_ENERGY_CASE["wram"][0xCC74] = b"\x01"
 _SECOND_ATTACK_ENERGY_CASE["wram"][0xFF9D] = b"\x00"
 CASES["CheckEnergyNeededForAttack"].append(_SECOND_ATTACK_ENERGY_CASE)
 
+_CARD_LIST_STATE = Fixture(
+    "practice-menu-cardlistfunction-entry",
+    directory=_FIXTURES, holes=_FIXTURE_HOLES, lcdc=0xCABB)
+_CARD_LIST_RELOAD_CASE = dict(_CARD_LIST_STATE.case(vram=False), **_CARD_LIST_STATE.regs)
+_CARD_LIST_RELOAD_CASE["read"][0xCC00] = 0xBD
+_CARD_LIST_RELOAD_CASE["read"][0xCCBE] = 0x42
+_CARD_LIST_RELOAD_CASE["wram"][0xFF91] = b"\x00"
+_CARD_LIST_RELOAD_CASE["wram"][0xFF8E] = b"\x80"
+_CARD_LIST_RELOAD_CASE["vread"] = {0x01: {0x998C + 0x20 * row: 8 for row in range(6)}}
+CASES["CardListFunction"].append(_CARD_LIST_RELOAD_CASE)
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 for _name, _entries in CASES.items():

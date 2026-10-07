@@ -5396,7 +5396,8 @@ CardListFunctionResult CardListFunction(void)
 	a = (uint8_t)(hKeysReleased & PAD_CTRL_PAD);
 	if (a != 0u) {
 		LoadSelectedCardGfx();
-		return (CardListFunctionResult){0u, 0x00u};
+		uint8_t high = (uint8_t)(ApplyCardCGBAttributes(0u, 0x0C0Cu).de >> 8);
+		return (CardListFunctionResult){high, (uint8_t)(high == 0u ? 0x80u : 0x00u)};
 	}
 	return (CardListFunctionResult){a, 0xA0u};
 }
@@ -7041,6 +7042,7 @@ DisplayCardListResult DisplayCardList(void)
 
 			PrintCardListItems(count, scroll, item, &params);
 			LoadSelectedCardGfx();
+			(void)ApplyCardCGBAttributes(0u, 0x0C0Cu);
 			EnableLCD();
 
 			for (;;) {
