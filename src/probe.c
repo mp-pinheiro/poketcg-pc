@@ -712,7 +712,7 @@ int main(void)
 		 * switched to on entry, so leave g_rom_bank alone and only drop the
 		 * frames the unwound calls would have restored. */
 		frame_boundary_install_watchdog(NULL, NULL);
-		bank_guard_reset();
+		bank_guard_truncate(0u);
 	}
 	trace_set_stop(NULL, NULL);
 
