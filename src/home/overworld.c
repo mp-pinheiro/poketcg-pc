@@ -715,7 +715,7 @@ void Func_c36a(void)
 {
 	wOWMapEvents = 0u;
 	if (wCurMap == POKEMON_DOME_ENTRANCE)
-		gb_write8(0xD324u, 0u);
+		gb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 0u);
 }
 /* <<< factory Func_c36a */
 

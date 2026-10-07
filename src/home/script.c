@@ -40,7 +40,7 @@
 /* <<< part includes_MAP_SCRIPTS_BANK */
 
 /* >>> part MAP_SCRIPTS_BANK */
-#define MAP_SCRIPTS_BANK 4u
+#define MAP_SCRIPTS_BANK MapScripts_BANK
 /* <<< part MAP_SCRIPTS_BANK */
 /* >>> part MAP_SCRIPTS */
 #define MAP_SCRIPTS MapScripts_ADDR

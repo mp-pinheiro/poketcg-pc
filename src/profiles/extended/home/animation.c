@@ -1,6 +1,3 @@
-/* >>> part MAP_OW_FRAMESET_POINTERS_BANK */
-#define MAP_OW_FRAMESET_POINTERS_BANK MapOWFramesetPointers_BANK
-/* <<< part MAP_OW_FRAMESET_POINTERS_BANK */
 /* >>> factory DoMapOWFrame */
 void DoMapOWFrame(void)
 {

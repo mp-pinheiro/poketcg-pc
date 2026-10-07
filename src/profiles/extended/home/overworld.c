@@ -127,14 +127,6 @@ void Func_c41c(void)
 	wSCYBuffer = scy;
 }
 /* <<< factory Func_c41c */
-/* >>> factory Func_c36a */
-void Func_c36a(void)
-{
-	wOWMapEvents = 0u;
-	if (wCurMap == POKEMON_DOME_ENTRANCE)
-		gb_write8((uint16_t)(wOWMapEvents_ADDR + 1u), 0u);
-}
-/* <<< factory Func_c36a */
 /* >>> factory Func_c4b9 */
 void Func_c4b9(void)
 {

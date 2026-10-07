@@ -1,53 +1,4 @@
-/* >>> part includes */
-#include "home/substatus.h"
-
-#include "generated/text_ids.h"
-#include "generated/rom.h"
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/card_data.h"
-#include "home/coin_toss.h"
-#include "home/duel.h"
-#include "home/card_color.h"
-#include "home/menus.h"
-#include "home/frames.h"
-#include "home/print_text.h"
-#include "mem.h"
-#include "home/card_id_bus.h"
-#include "generated/wram.h"
-#include "home/card_data.h"
-#include "home/core.h"
-#include "home/duel.h"
-#include "home/menus.h"
-#include "home/print_text.h"
-#include "mem.h"
-
-#include "generated/wram.h"
-#include "home/duel.h"
-#include "home/menus.h"
-#include "home/substatus.h"
-
-#include "generated/wram.h"
-#include "home/core.h"
-#include "home/duel.h"
-#include "home/menus.h"
-#include "home/print_text.h"
-#include "mem.h"
-
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/coin_toss.h"
-#include "home/duel.h"
-#include "home/menus.h"
-/* <<< part includes */
 /* --- part includes_2 */
-/* >>> part SAND_ATTACK_CHECK_TEXT */
-#define SAND_ATTACK_CHECK_TEXT SandAttackCheckText
-/* <<< part SAND_ATTACK_CHECK_TEXT */
-/* >>> part SMOKESCREEN_CHECK_TEXT */
-#define SMOKESCREEN_CHECK_TEXT SmokescreenCheckText
-/* <<< part SMOKESCREEN_CHECK_TEXT */
 /* >>> factory CountTurnDuelistPokemonWithActivePkmnPower */
 /* substatus.asm:544-590. Counts arena (if not status-incapable) plus bench
  * slots matching the target id. The bench walk ends at its $FF terminator. */
@@ -86,47 +37,6 @@ PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(CardId targe
 	return (PkmnPowerCountResult){count, count ? 0x10u : 0x80u, target};
 }
 /* <<< factory CountPokemonWithActivePkmnPowerInBothPlayAreas */
-/* >>> part CANNOT_USE_DUE_TO_STATUS_TEXT_ID */
-/* ldtx's compile-time text ids, matching text_offsets.asm's index (the same
- * convention as duel.c's PLAYER2_TEXT_ID). */
-#define CANNOT_USE_DUE_TO_STATUS_TEXT_ID CannotUseDueToStatusText
-/* <<< part CANNOT_USE_DUE_TO_STATUS_TEXT_ID */
-/* >>> part UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID */
-#define UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID UnableDueToToxicGasText
-/* <<< part UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID */
-/* >>> part UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID */
-#define UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID UnableToRetreatDueToAcidText
-/* <<< part UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID */
-/* >>> part UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID */
-#define UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID UnableToUseTrainerDueToHeadacheText
-/* <<< part UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID */
-/* >>> part UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID */
-#define UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID UnableToAttackDueToTailWagText
-/* <<< part UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID */
-/* >>> part UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID */
-#define UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID UnableToAttackDueToLeerText
-/* <<< part UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID */
-/* >>> part UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID */
-#define UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID UnableToAttackDueToBoneAttackText
-/* <<< part UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID */
-/* >>> part UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID */
-#define UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID UnableToUseAttackDueToAmnesiaText
-/* <<< part UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID */
-/* >>> part UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID */
-#define UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID UnableToEvolveDueToPrehistoricPowerText
-/* <<< part UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID */
-/* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID */
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID NoDamageOrEffectDueToFlyText
-/* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID */
-/* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID */
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID NoDamageOrEffectDueToBarrierText
-/* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID */
-/* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID */
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID NoDamageOrEffectDueToAgilityText
-/* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID */
-/* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID */
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID NoDamageOrEffectDueToNShieldText
-/* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID */
 /* --- part buggy_halve_damage */
 /* === part reduce_by */
 /* >>> part cphl_value */
@@ -350,9 +260,6 @@ RainDanceResult CheckRainDanceScenario(void)
 /* <<< factory CheckRainDanceScenario */
 /* --- part MACHAMP_ID */
 /* --- part MUK_ID */
-/* >>> part RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT */
-#define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT ReceivesDamageDueToStrikesBackText
-/* <<< part RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT */
 /* >>> factory HandleStrikesBack_AgainstDamagingAttack */
 StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de, uint16_t hl)
 {

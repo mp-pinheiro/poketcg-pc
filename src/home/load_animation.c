@@ -24,7 +24,7 @@
 #include "home/switch_rom.h"
 /* <<< part includes_BANK_DRAW_PORTRAIT */
 /* >>> part BANK_DRAW_PORTRAIT */
-#define BANK_DRAW_PORTRAIT 0x04u
+#define BANK_DRAW_PORTRAIT _DrawPortrait_BANK
 /* <<< part BANK_DRAW_PORTRAIT */
 
 /* >>> part includes_MINT_PIC */
@@ -37,6 +37,10 @@
 /* <<< part MINT_PIC */
 
 /* >>> part includes_BANK_LOAD_SCENE */
+#include "generated/wram.h"
+
+#include "generated/wram.h"
+
 #include "home/animation.h"
 
 #include "generated/hram.h"

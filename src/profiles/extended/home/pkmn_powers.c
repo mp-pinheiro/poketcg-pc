@@ -29,9 +29,6 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 	}
 }
 /* <<< part check_turn_duelist_has_color */
-/* >>> part OPPACTION_DUEL_MAIN_SCENE_269 */
-#define OPPACTION_DUEL_MAIN_SCENE_269 OPPACTION_DUEL_MAIN_SCENE
-/* <<< part OPPACTION_DUEL_MAIN_SCENE_269 */
 /* >>> factory HandleAIShift */
 /* pkmn_powers.asm:618-729. AI handler for Venomoth's Shift power. c is the
  * Play Area location of Venomoth (0 = Arena card); any nonzero location

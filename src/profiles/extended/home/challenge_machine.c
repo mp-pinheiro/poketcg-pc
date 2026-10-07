@@ -1,53 +1,6 @@
-/* >>> part includes */
-#include "home/challenge_machine.h"
-
-#include "generated/text_ids.h"
-#include "generated/rom.h"
-#include "generated/constants.h"
-#include "generated/sram.h"
-#include "home/core.h"
-#include "home/print_text.h"
-#include "home/process_text.h"
-#include "home/save.h"
-#include "mem.h"
-/* <<< part includes */
 /* >>> part CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
 #define CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT ChallengeMachineNotDuelledIconText
 /* <<< part CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
-/* >>> part CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT */
-#define CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT ChallengeMachineDuelWonIconText
-/* <<< part CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT */
-/* >>> part CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT */
-#define CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT ChallengeMachineDuelLostIconText
-/* <<< part CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT */
-/* >>> factory ChallengeMachine_Initialize */
-ChallengeMachineInitializeResult ChallengeMachine_Initialize(void)
-{
-	EnableSRAM();
-	uint8_t initialized = 0u;
-	if (gb_read8(sChallengeMachineMagic_ADDR) == 0xE3u &&
-		gb_read8((uint16_t)(sChallengeMachineMagic_ADDR + 1u)) == 0x95u) {
-		initialized = 1u;
-	} else {
-		uint16_t hl = sChallengeMachineMagic_ADDR;
-		uint8_t c = (uint8_t)(sChallengeMachineEnd_ADDR - sChallengeMachineStart_ADDR);
-		gb_write8(hl++, 0xE3u);
-		gb_write8(hl++, 0x95u);
-		while (c != 0u) {
-			gb_write8(hl++, 0u);
-			c--;
-		}
-		const uint8_t *text = rom_ptr(ChallengeMachine_DrMasonText_BANK, ChallengeMachine_DrMasonText_ADDR);
-		for (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)
-			gb_write8((uint16_t)(sChallengeMachineRecordHolderName_ADDR + i), text[i]);
-		gb_write8(sMaximumConsecutiveWins_ADDR, 1u);
-		gb_write8((uint16_t)(sMaximumConsecutiveWins_ADDR + 1u), 0u);
-	}
-	uint8_t a = gb_read8(sPlayerInChallengeMachine_ADDR);
-	DisableSRAM();
-	return (ChallengeMachineInitializeResult){.a = a, .f = initialized ? 0xC0u : 0x80u};
-}
-/* <<< factory ChallengeMachine_Initialize */
 /* >>> factory ChallengeMachine_Start */
 void ChallengeMachine_Start(void)
 {

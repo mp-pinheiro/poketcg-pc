@@ -1052,19 +1052,6 @@ PracticeDuelPlayGoldeenResult PracticeDuel_PlayGoldeen(void)
 }
 /* <<< factory PracticeDuel_PlayGoldeen */
 /* --- factory TwoByteNumberToTxSymbol_PadSpace_Bank1 */
-/* >>> factory CheckIfActiveCardParalyzedOrAsleep */
-CheckIfActiveStatusResult CheckIfActiveCardParalyzedOrAsleep(void)
-{
-	DuelistVarResult status = GetTurnDuelistVariable(0xF0u);
-	uint8_t masked = (uint8_t)(status.a & 0x0Fu);
-	if (masked == 0x03u)
-		return (CheckIfActiveStatusResult){masked, 0x90u, UnableDueToParalysisText};
-	if (masked == 0x02u)
-		return (CheckIfActiveStatusResult){masked, 0x90u, UnableDueToSleepText};
-	return (CheckIfActiveStatusResult){masked,
-		(uint8_t)(masked == 0u ? 0x80u : 0x00u), status.hl};
-}
-/* <<< factory CheckIfActiveCardParalyzedOrAsleep */
 /* >>> factory LookForCardIDInLocation_Bank5 */
 LookForCardIDInLocationResult LookForCardIDInLocation_Bank5(
 	uint8_t location, CardId card_id)
@@ -1245,56 +1232,6 @@ void SetBGP5ToCardPalette(void)
 }
 /* <<< factory SetBGP5ToCardPalette */
 /* --- factory DecideLinkDuelVariables */
-/* >>> factory DisplayCardPage */
-/* core.asm:3665-3701: CardPageDisplayPointerTable indexed by wCardPageNumber. */
-#define CARDPAGE_ENERGY_2 0x0Au
-#define CARDPAGE_TABLE_LAST 0x0Fu
-DisplayCardPageResult DisplayCardPage(void)
-{
-	uint8_t page = wCardPageNumber;
-	uint8_t b = 0u;
-
-	switch (page) {
-	case CARDPAGE_POKEMON_OVERVIEW:
-		b = DisplayCardPage_PokemonOverview();
-		break;
-	case CARDPAGE_POKEMON_ATTACK1_1:
-		b = DisplayCardPage_PokemonAttack1Page1(0u, 0u, 0u);
-		break;
-	case CARDPAGE_POKEMON_ATTACK1_2:
-		b = DisplayCardPage_PokemonAttack1Page2(0u, 0u, 0u);
-		break;
-	case CARDPAGE_POKEMON_ATTACK2_1:
-		b = DisplayCardPage_PokemonAttack2Page1(0u, 0u, 0u);
-		break;
-	case CARDPAGE_POKEMON_ATTACK2_2:
-		b = DisplayCardPage_PokemonAttack2Page2(0u, 0u, 0u);
-		break;
-	case CARDPAGE_POKEMON_DESCRIPTION:
-		b = DisplayCardPage_PokemonDescription().b;
-		break;
-	case CARDPAGE_ENERGY:
-	case CARDPAGE_ENERGY_2:
-		b = DisplayCardPage_Energy(0u, 0u, 0u, 0u, 0u, 0u, 0u).b;
-		break;
-	case CARDPAGE_TRAINER_1:
-		b = DisplayCardPage_TrainerPage1(0u, 0u, 0u, 0u, 0u, 0u, 0u).b;
-		break;
-	case CARDPAGE_TRAINER_2:
-		b = DisplayCardPage_TrainerPage2(0u, 0u, 0u, 0u, 0u, 0u, 0u).b;
-		break;
-	default:
-		if (page > CARDPAGE_TABLE_LAST)
-			DispatchIndirect("CardPageDisplayPointerTable", page);
-		DrawDuelMainScene();
-		break;
-	}
-	/* duel/core.asm:3669-3671: EnableLCD's a (wLCDC, or FLUSH_ALL_PALS when
-	 * it just turned the screen on), then `or a`. */
-	uint8_t a = EnableLCD();
-	return (DisplayCardPageResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), b};
-}
-/* <<< factory DisplayCardPage */
 /* >>> factory DrawDuelHorizontalSeparator */
 /* core.asm:2582-2616. The blocks are x, y, bytes[], 0: row 4 from x=0 for 11
  * tiles, rows 5-6 two tiles at x=9, row 7 from x=9 for 11 -- the separator
@@ -2843,22 +2780,6 @@ PrintAttackOrCardDescriptionResult DisplayEnergyOrTrainerCardPage(uint8_t a, uin
 	return PrintAttackOrNonPokemonCardDescription(icons.b, saved_hl, d, e);
 }
 /* <<< factory DisplayEnergyOrTrainerCardPage */
-/* >>> factory PrintPracticeDuelInstructionsForCurrentTurn */
-/* core.asm:2792-2807 */
-void PrintPracticeDuelInstructionsForCurrentTurn(uint8_t a)
-{
-	const uint8_t *entry = rom_ptr(PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK,
-		(uint16_t)(PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR
-			+ (uint16_t)(wDuelTurns & 0xFEu)));
-	uint16_t hl = (uint16_t)(entry[0] | (uint16_t)entry[1] << 8);
-
-	if (a != 0u) {
-		PrintPracticeDuelInstructions_Fast(hl);
-		return;
-	}
-	PrintPracticeDuelInstructions(hl);
-}
-/* <<< factory PrintPracticeDuelInstructionsForCurrentTurn */
 /* --- factory Func_5a81 */
 /* >>> factory _TossCoin */
 TossCoinResult _TossCoin(uint8_t a)
@@ -3239,55 +3160,6 @@ DisplayCardListResult DisplayCardList(void)
 }
 /* <<< factory DisplayCardList */
 /* --- factory Func_5542 */
-/* >>> factory CheckIfCanDamageDefendingPokemon */
-CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
-{
-	hTempPlayAreaLocation_ff9d = a;
-	wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
-	/* `xor a` hands the call a = 0 with Z set. */
-	CheckIfSelectedAttackIsUnusableResult first =
-		CheckIfSelectedAttackIsUnusable(FIRST_ATTACK_OR_PKMN_POWER, 0x80u, b, c, d, e, hl);
-	a = first.a;
-	f = first.f;
-	b = first.b;
-	c = first.c;
-	d = first.d;
-	e = first.e;
-	hl = first.hl;
-	if ((f & 0x10u) == 0u) {
-		DamageCalculationResult estimate =
-			EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);
-		d = estimate.d;
-		e = estimate.e;
-		hl = estimate.hl;
-		a = wDamage;
-		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d, e};
-		f = 0x80u; /* `or a` on a zero damage byte */
-	}
-
-	/* .second_attack */
-	wSelectedAttack = SECOND_ATTACK;
-	CheckIfSelectedAttackIsUnusableResult second =
-		CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, f, b, c, d, e, hl);
-	a = second.a;
-	f = second.f;
-	d = second.d;
-	e = second.e;
-	if ((f & 0x10u) == 0u) {
-		DamageCalculationResult estimate = EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
-		d = estimate.d;
-		e = estimate.e;
-		a = wDamage;
-		if (a != 0u)
-			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u, d, e};
-	}
-
-	/* .no_carry */
-	f = (a == 0u) ? 0x80u : 0x00u;
-	return (CheckIfCanDamageDefendingPokemonResult){a, f, d, e};
-}
-/* <<< factory CheckIfCanDamageDefendingPokemon */
 /* --- factory CanArenaCardUseNonResidualAttack */
 /* === factory OpenNonTurnHolderDiscardPileScreen */
 /* >>> factory CheckIfActivePokemonCanUseAnyNonResidualAttack */
@@ -4218,27 +4090,6 @@ void HandleBetweenTurnsEvents(void)
 /* >>> part DUEL_ANIM_DUEL_WIN_MAIN */
 #define DUEL_ANIM_DUEL_WIN_MAIN DUEL_ANIM_DUEL_WIN
 /* <<< part DUEL_ANIM_DUEL_WIN_MAIN */
-/* >>> part DUEL_ANIM_DUEL_LOSS_MAIN */
-#define DUEL_ANIM_DUEL_LOSS_MAIN DUEL_ANIM_DUEL_LOSS
-/* <<< part DUEL_ANIM_DUEL_LOSS_MAIN */
-/* >>> part DUEL_ANIM_DUEL_DRAW_MAIN */
-#define DUEL_ANIM_DUEL_DRAW_MAIN DUEL_ANIM_DUEL_DRAW
-/* <<< part DUEL_ANIM_DUEL_DRAW_MAIN */
-/* >>> part DECISION_TEXT_MAIN */
-#define DECISION_TEXT_MAIN DecisionText
-/* <<< part DECISION_TEXT_MAIN */
-/* >>> part DUEL_WAS_A_DRAW_TEXT_MAIN */
-#define DUEL_WAS_A_DRAW_TEXT_MAIN DuelWasADrawText
-/* <<< part DUEL_WAS_A_DRAW_TEXT_MAIN */
-/* >>> part WON_DUEL_TEXT_MAIN */
-#define WON_DUEL_TEXT_MAIN WonDuelText
-/* <<< part WON_DUEL_TEXT_MAIN */
-/* >>> part LOST_DUEL_TEXT_MAIN */
-#define LOST_DUEL_TEXT_MAIN LostDuelText
-/* <<< part LOST_DUEL_TEXT_MAIN */
-/* >>> part SUDDEN_DEATH_TEXT_MAIN */
-#define SUDDEN_DEATH_TEXT_MAIN StartSuddenDeathMatchText
-/* <<< part SUDDEN_DEATH_TEXT_MAIN */
 /* >>> factory MainDuelLoop */
 /* core.asm:73-217. One turn per iteration: start-of-turn substatus, the turn
  * screen, the turn itself, then the between-turns work. wDuelFinished is

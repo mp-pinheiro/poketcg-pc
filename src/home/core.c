@@ -3475,9 +3475,9 @@ CheckIfActiveStatusResult CheckIfActiveCardParalyzedOrAsleep(void)
 	DuelistVarResult status = GetTurnDuelistVariable(0xF0u);
 	uint8_t masked = (uint8_t)(status.a & 0x0Fu);
 	if (masked == 0x03u)
-		return (CheckIfActiveStatusResult){masked, 0x90u, 0x0025u};
+		return (CheckIfActiveStatusResult){masked, 0x90u, UnableDueToParalysisText};
 	if (masked == 0x02u)
-		return (CheckIfActiveStatusResult){masked, 0x90u, 0x0024u};
+		return (CheckIfActiveStatusResult){masked, 0x90u, UnableDueToSleepText};
 	return (CheckIfActiveStatusResult){masked,
 		(uint8_t)(masked == 0u ? 0x80u : 0x00u), status.hl};
 }
@@ -3825,10 +3825,7 @@ void DisplayAttackPage(void)
 }
 /* <<< factory DisplayAttackPage */
 /* >>> factory DisplayCardPage */
-/* core.asm:3665-3701: CardPageDisplayPointerTable indexed by wCardPageNumber.
- * The page routines read wLoadedCard1 and the page number; their register
- * parameters are the asm's incidental entry state, which none of them
- * consumes (ApplyBGP6OrSGB3ToCardImage takes its coordinates from `lb de`). */
+/* core.asm:3665-3701: CardPageDisplayPointerTable indexed by wCardPageNumber. */
 #define CARDPAGE_ENERGY_2 0x0Au
 #define CARDPAGE_TABLE_LAST 0x0Fu
 DisplayCardPageResult DisplayCardPage(void)
@@ -7664,10 +7661,6 @@ PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8
 /* core.asm:2792-2807 */
 void PrintPracticeDuelInstructionsForCurrentTurn(uint8_t a)
 {
-	/* `push af / ld a, [wDuelTurns] / and %11111110 / ld e, a / ld d, $00 /
-	 * ld hl, PracticeDuelTextPointerTable / add hl, de / ld a, [hli] /
-	 * ld h, [hl] / ld l, a / pop af`: the entry `a` survives the table read
-	 * and only selects which printer the fallthrough runs. */
 	const uint8_t *entry = rom_ptr(PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK,
 		(uint16_t)(PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR
 			+ (uint16_t)(wDuelTurns & 0xFEu)));
@@ -8289,13 +8282,6 @@ Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, 
 /* <<< factory Func_5542 */
 
 /* >>> factory CheckIfCanDamageDefendingPokemon */
-/* core.asm:2310-2355. Stores the caller's a in hTempPlayAreaLocation_ff9d, tries
- * the first attack and, failing that, the second one, and reports in a the damage
- * the last EstimateDamage_VersusDefendingCard left in wDamage. The body itself
- * touches no register but a -- b/c/d/e/hl only travel from one callee to the next,
- * and neither their values nor d's are part of what this routine computes -- and
- * both exits are plain flag work: `or a` on the fallthrough, `scf` as soon as
- * either attack deals damage. a and the flags are the whole output contract. */
 CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	hTempPlayAreaLocation_ff9d = a;
@@ -10900,10 +10886,10 @@ void OppAction_PlayAttackAnimationDealAttackDamage(void)
 #define DUEL_ANIM_DUEL_WIN_MAIN 0x5Du
 /* <<< part DUEL_ANIM_DUEL_WIN_MAIN */
 /* >>> part DUEL_ANIM_DUEL_LOSS_MAIN */
-#define DUEL_ANIM_DUEL_LOSS_MAIN 0x5Eu
+#define DUEL_ANIM_DUEL_LOSS_MAIN DUEL_ANIM_DUEL_LOSS
 /* <<< part DUEL_ANIM_DUEL_LOSS_MAIN */
 /* >>> part DUEL_ANIM_DUEL_DRAW_MAIN */
-#define DUEL_ANIM_DUEL_DRAW_MAIN 0x5Fu
+#define DUEL_ANIM_DUEL_DRAW_MAIN DUEL_ANIM_DUEL_DRAW
 /* <<< part DUEL_ANIM_DUEL_DRAW_MAIN */
 /* >>> part MUSIC_MATCH_VICTORY_MAIN */
 #define MUSIC_MATCH_VICTORY_MAIN 0x18u
@@ -10915,19 +10901,19 @@ void OppAction_PlayAttackAnimationDealAttackDamage(void)
 #define MUSIC_MATCH_DRAW_MAIN 0x1Au
 /* <<< part MUSIC_MATCH_DRAW_MAIN */
 /* >>> part DECISION_TEXT_MAIN */
-#define DECISION_TEXT_MAIN 0x0076u
+#define DECISION_TEXT_MAIN DecisionText
 /* <<< part DECISION_TEXT_MAIN */
 /* >>> part DUEL_WAS_A_DRAW_TEXT_MAIN */
-#define DUEL_WAS_A_DRAW_TEXT_MAIN 0x0077u
+#define DUEL_WAS_A_DRAW_TEXT_MAIN DuelWasADrawText
 /* <<< part DUEL_WAS_A_DRAW_TEXT_MAIN */
 /* >>> part WON_DUEL_TEXT_MAIN */
-#define WON_DUEL_TEXT_MAIN 0x0078u
+#define WON_DUEL_TEXT_MAIN WonDuelText
 /* <<< part WON_DUEL_TEXT_MAIN */
 /* >>> part LOST_DUEL_TEXT_MAIN */
-#define LOST_DUEL_TEXT_MAIN 0x0079u
+#define LOST_DUEL_TEXT_MAIN LostDuelText
 /* <<< part LOST_DUEL_TEXT_MAIN */
 /* >>> part SUDDEN_DEATH_TEXT_MAIN */
-#define SUDDEN_DEATH_TEXT_MAIN 0x007Au
+#define SUDDEN_DEATH_TEXT_MAIN StartSuddenDeathMatchText
 /* <<< part SUDDEN_DEATH_TEXT_MAIN */
 
 /* >>> factory MainDuelLoop */

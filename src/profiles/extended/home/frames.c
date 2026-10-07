@@ -1,19 +1,3 @@
-/* >>> part includes */
-#include "home/frames.h"
-#include "serial_track.h"
-#include "isr.h"
-#include "home/music.h"
-
-#include "generated/hram.h"
-#include "generated/rom.h"
-#include "generated/wram.h"
-#include "home/indirect_dispatch.h"
-#include "home/input.h"
-#include "home/load_animation.h"
-#include "home/map.h"
-#include "home/play_animation.h"
-#include "mem.h"
-/* <<< part includes */
 /* --- part DO_FRAME_LINK_OPPONENT_TURN */
 /* >>> part CallDoFrameFunction */
 /* CallIndirect(wDoFrameFunction), poketcg/src/home/frames.asm:18-19 through

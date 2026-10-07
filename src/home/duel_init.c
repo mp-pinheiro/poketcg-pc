@@ -1,6 +1,7 @@
 /* >>> part includes */
 #include "home/duel_init.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"

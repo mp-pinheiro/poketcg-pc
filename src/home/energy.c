@@ -9,6 +9,7 @@
 /* <<< part includes */
 /* >>> part includes_2 */
 #include "home/duel.h"
+#include "home/card_id_bus.h"
 /* <<< part includes_2 */
 
 /* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
@@ -89,7 +90,7 @@
 #define SECOND_ATTACK_600 0x01u
 /* <<< part SECOND_ATTACK_600 */
 /* >>> part OPPACTION_PLAY_ENERGY_600 */
-#define OPPACTION_PLAY_ENERGY_600 0x03u
+#define OPPACTION_PLAY_ENERGY_600 OPPACTION_PLAY_ENERGY
 /* <<< part OPPACTION_PLAY_ENERGY_600 */
 
 

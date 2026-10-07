@@ -9,6 +9,7 @@
 #include "generated/hram.h"
 #include "home/core.h"
 
+#include "home/card_id_bus.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "home/core.h"

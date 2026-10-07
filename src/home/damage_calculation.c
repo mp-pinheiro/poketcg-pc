@@ -1,5 +1,6 @@
 /* >>> part includes */
 #include "home/damage_calculation.h"
+#include "home/card_id_bus.h"
 
 #include "generated/constants.h"
 #include "generated/hram.h"

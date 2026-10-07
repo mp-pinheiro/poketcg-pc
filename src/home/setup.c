@@ -149,7 +149,7 @@ SetupPalettesResult SetupPalettes(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	gb_write8(wFlushPaletteFlags_ADDR, 0);
 
 	if (gb_read8(wConsole_ADDR) != CONSOLE_CGB)
-		return (SetupPalettesResult){b, c, d, e, wOBP1_ADDR};
+		return (SetupPalettesResult){b, c, d, e, 0xCABEu};
 
 	uint16_t de = wBackgroundPalettesCGB_ADDR;
 	for (uint8_t i = 16; i != 0; i--) {

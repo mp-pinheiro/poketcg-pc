@@ -125,8 +125,8 @@ FadeColorResult FadePalIntoAnother_GetFadedColor(uint8_t b, uint8_t c, uint8_t d
         /* color.asm:297,322 -- .unequal parks the faded red and the top two
          * green bits in HRAM scratch; a colour already at its target skips
          * the block and leaves both bytes as they were. */
-        gb_write8(hffb6_ADDR, red);
-        gb_write8(hffb7_ADDR, (uint8_t)((green >> 3) & 3));
+        gb_write8(0xFFB6u, red);
+        gb_write8(0xFFB7u, (uint8_t)((green >> 3) & 3));
     }
     FadeColorResult result;
     result.a = (uint8_t)(((green >> 3) & 3) | (blue << 2));

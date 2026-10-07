@@ -14,6 +14,32 @@
 #include "home/frames.h"
 #include "home/print_text.h"
 #include "mem.h"
+#include "home/card_id_bus.h"
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "mem.h"
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/substatus.h"
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "mem.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/coin_toss.h"
+#include "home/duel.h"
+#include "home/menus.h"
 /* <<< part includes */
 /* >>> part includes_2 */
 #include "generated/wram.h"
@@ -61,10 +87,10 @@
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
 /* <<< part DUELVARS_ARENA_CARD_SUBSTATUS2 */
 /* >>> part SAND_ATTACK_CHECK_TEXT */
-#define SAND_ATTACK_CHECK_TEXT 0x00deu
+#define SAND_ATTACK_CHECK_TEXT SandAttackCheckText
 /* <<< part SAND_ATTACK_CHECK_TEXT */
 /* >>> part SMOKESCREEN_CHECK_TEXT */
-#define SMOKESCREEN_CHECK_TEXT 0x00dfu
+#define SMOKESCREEN_CHECK_TEXT SmokescreenCheckText
 /* <<< part SMOKESCREEN_CHECK_TEXT */
 /* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xbbu
@@ -172,43 +198,43 @@ SandAttackCheckResult CheckSandAttackOrSmokescreenSubstatus(uint16_t de)
 /* >>> part CANNOT_USE_DUE_TO_STATUS_TEXT_ID */
 /* ldtx's compile-time text ids, matching text_offsets.asm's index (the same
  * convention as duel.c's PLAYER2_TEXT_ID). */
-#define CANNOT_USE_DUE_TO_STATUS_TEXT_ID 0x00cbu
+#define CANNOT_USE_DUE_TO_STATUS_TEXT_ID CannotUseDueToStatusText
 /* <<< part CANNOT_USE_DUE_TO_STATUS_TEXT_ID */
 /* >>> part UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID */
-#define UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID 0x00d4u
+#define UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID UnableDueToToxicGasText
 /* <<< part UNABLE_DUE_TO_TOXIC_GAS_TEXT_ID */
 /* >>> part UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID */
-#define UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID 0x00feu
+#define UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID UnableToRetreatDueToAcidText
 /* <<< part UNABLE_TO_RETREAT_DUE_TO_ACID_TEXT_ID */
 /* >>> part UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID */
-#define UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID 0x00ffu
+#define UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID UnableToUseTrainerDueToHeadacheText
 /* <<< part UNABLE_TO_USE_TRAINER_DUE_TO_HEADACHE_TEXT_ID */
 /* >>> part UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID */
-#define UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID 0x0100u
+#define UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID UnableToAttackDueToTailWagText
 /* <<< part UNABLE_TO_ATTACK_DUE_TO_TAIL_WAG_TEXT_ID */
 /* >>> part UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID */
-#define UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID 0x0101u
+#define UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID UnableToAttackDueToLeerText
 /* <<< part UNABLE_TO_ATTACK_DUE_TO_LEER_TEXT_ID */
 /* >>> part UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID */
-#define UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID 0x0102u
+#define UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID UnableToAttackDueToBoneAttackText
 /* <<< part UNABLE_TO_ATTACK_DUE_TO_BONE_ATTACK_TEXT_ID */
 /* >>> part UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID */
-#define UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID 0x0103u
+#define UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID UnableToUseAttackDueToAmnesiaText
 /* <<< part UNABLE_TO_USE_ATTACK_DUE_TO_AMNESIA_TEXT_ID */
 /* >>> part UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID */
-#define UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID 0x0106u
+#define UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID UnableToEvolveDueToPrehistoricPowerText
 /* <<< part UNABLE_TO_EVOLVE_DUE_TO_PREHISTORIC_POWER_TEXT_ID */
 /* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID */
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID 0x0107u
+#define NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID NoDamageOrEffectDueToFlyText
 /* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_FLY_TEXT_ID */
 /* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID */
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID 0x0108u
+#define NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID NoDamageOrEffectDueToBarrierText
 /* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_BARRIER_TEXT_ID */
 /* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID */
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID 0x0109u
+#define NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID NoDamageOrEffectDueToAgilityText
 /* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_AGILITY_TEXT_ID */
 /* >>> part NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID */
-#define NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID 0x010bu
+#define NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID NoDamageOrEffectDueToNShieldText
 /* <<< part NO_DAMAGE_OR_EFFECT_DUE_TO_NSHIELD_TEXT_ID */
 
 /* >>> part NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR */
@@ -615,7 +641,7 @@ RainDanceResult CheckRainDanceScenario(void)
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 /* <<< part DUELVARS_ARENA_CARD_HP */
 /* >>> part RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT */
-#define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT 0x0105u
+#define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT ReceivesDamageDueToStrikesBackText
 /* <<< part RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT */
 /* >>> part f_or */
 static uint8_t f_or(uint8_t result) { return (uint8_t)(result ? 0x00u : 0x80u); }

@@ -1,15 +1,3 @@
-/* >>> part kMedalCoordsAndTilemaps */
-static const uint8_t kMedalCoordsAndTilemaps[24] = {
-	 1u, 10u, TILEMAP_GRASS_MEDAL,
-	 6u, 10u, TILEMAP_SCIENCE_MEDAL,
-	11u, 10u, TILEMAP_FIRE_MEDAL,
-	16u, 10u, TILEMAP_WATER_MEDAL,
-	 1u, 14u, TILEMAP_LIGHTNING_MEDAL,
-	 6u, 14u, TILEMAP_PSYCHIC_MEDAL,
-	11u, 14u, TILEMAP_ROCK_MEDAL,
-	16u, 14u, TILEMAP_FIGHTING_MEDAL,
-};
-/* <<< part kMedalCoordsAndTilemaps */
 /* >>> factory PrintAlbumProgress_SkipGetProgress */
 void PrintAlbumProgress_SkipGetProgress(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {

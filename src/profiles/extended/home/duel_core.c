@@ -1,29 +1,3 @@
-/* >>> part includes */
-#include "home/duel_core.h"
-
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/text_ids.h"
-#include "generated/wram.h"
-#include "generated/rom.h"
-#include "home/palettes.h"
-#include "mem.h"
-#include "home/frames.h"
-#include "home/play_animation.h"
-#include "home/menus.h"
-#include "home/substatus.h"
-#include "home/duel.h"
-#include "home/sgb.h"
-/* <<< part includes */
-/* >>> part TRAINER_TO_PKMN_DATA */
-#define TRAINER_TO_PKMN_DATA ConvertSpecialTrainerCardToPokemon__trainer_to_pkmn_data_ADDR
-/* <<< part TRAINER_TO_PKMN_DATA */
-/* >>> part trainer_to_pkmn_data */
-static const uint8_t *trainer_to_pkmn_data(void)
-{
-	return rom_ptr(ConvertSpecialTrainerCardToPokemon__trainer_to_pkmn_data_BANK, TRAINER_TO_PKMN_DATA);
-}
-/* <<< part trainer_to_pkmn_data */
 /* >>> factory ConvertSpecialTrainerCardToPokemon */
 /* core.asm:7123-7163. Entry: a = deck index (a duelvar offset), hl = wLoadedCard*
  * buffer, de = the card id. Overwrites a trainer card in the play area with a
@@ -71,27 +45,6 @@ overwrite:
 				      0, (uint16_t)(hl + CARD_DATA_AI_INFO)};
 }
 /* <<< factory ConvertSpecialTrainerCardToPokemon */
-/* >>> part THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT         ThereWasNoEffectFromTxRam2Text
-/* <<< part THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT */
-/* >>> part THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT ThereWasNoEffectFromPoisonConfusionText
-/* <<< part THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT */
-/* >>> part THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT        ThereWasNoEffectFromParalysisText
-/* <<< part THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT */
-/* >>> part THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT            ThereWasNoEffectFromSleepText
-/* <<< part THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT */
-/* >>> part THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT        ThereWasNoEffectFromConfusionText
-/* <<< part THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT */
-/* >>> part THERE_WAS_NO_EFFECT_FROM_POISON_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_POISON_TEXT           ThereWasNoEffectFromPoisonText
-/* <<< part THERE_WAS_NO_EFFECT_FROM_POISON_TEXT */
-/* >>> part THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT            ThereWasNoEffectFromToxicText
-/* <<< part THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT */
 /* >>> factory SetDefaultConsolePalettes */
 void SetDefaultConsolePalettes(void)
 {

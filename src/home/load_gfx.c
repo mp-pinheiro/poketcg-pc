@@ -1,6 +1,7 @@
 /* >>> part includes */
 #include "home/load_gfx.h"
 
+#include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -267,10 +268,10 @@ void LoadGraphicsPointerFromHL(uint16_t *hl)
 {
 	uint8_t saved = hBankROM;
 	uint16_t p = *hl;
-	BankswitchROM(0x20);
+	BankswitchROM(GfxTablePointers_BANK);
 	wTempPointer = gb_read8(p++);
 	gb_write8(wTempPointer_ADDR + 1u, gb_read8(p++));
-	wTempPointerBank = (uint8_t)(gb_read8(p) + 0x20u);
+	wTempPointerBank = (uint8_t)(gb_read8(p) + GfxTablePointers_BANK);
 	BankswitchROM(saved);
 	*hl = (uint16_t)(p + 1u);
 }

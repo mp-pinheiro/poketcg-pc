@@ -738,23 +738,6 @@ FriendshipSongBenchCheckResult FriendshipSong_BenchCheck(void)
 	return (FriendshipSongBenchCheckResult){count.a, f, NoSpaceOnTheBenchText};
 }
 /* <<< factory FriendshipSong_BenchCheck */
-/* >>> factory Maintenance_HandCheck */
-MaintenanceHandCheckResult Maintenance_HandCheck(void)
-{
-	DuelistVarResult hand = GetTurnDuelistVariable(0xeeu);
-	uint8_t result = (uint8_t)(hand.a - 3u);
-	uint8_t f = 0x40u;
-
-	if (result == 0u)
-		f |= 0x80u;
-	if ((hand.a & 0x0fu) < 3u)
-		f |= 0x20u;
-	if (hand.a < 3u)
-		f |= 0x10u;
-
-	return (MaintenanceHandCheckResult){hand.a, f, NotEnoughCardsInHandText};
-}
-/* <<< factory Maintenance_HandCheck */
 /* >>> factory SwordsDanceEffect */
 uint16_t SwordsDanceEffect(void)
 {
@@ -765,17 +748,6 @@ uint16_t SwordsDanceEffect(void)
 	return ApplySubstatus1ToAttackingCard(0x19u);
 }
 /* <<< factory SwordsDanceEffect */
-/* >>> factory Teleport_CheckBench */
-TeleportCheckBenchResult Teleport_CheckBench(void)
-{
-    DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
-    uint8_t f = 0x40u;
-    if (count.a == 2u) f |= 0x80u;
-    if ((count.a & 0x0fu) < 2u) f |= 0x20u;
-    if (count.a < 2u) f |= 0x10u;
-    return (TeleportCheckBenchResult){count.a, f, ThereAreNoPokemonOnBenchText};
-}
-/* <<< factory Teleport_CheckBench */
 /* --- factory NidorinaDoubleKick_AIEffect */
 /* --- factory NidorinoDoubleKick_AIEffect */
 /* --- factory NidoranFFurySwipes_AIEffect */
@@ -898,19 +870,6 @@ SolarPowerCheckUseResult Peek_OncePerTurnCheck(void)
 	return (SolarPowerCheckUseResult){r.f, r.hl};
 }
 /* <<< factory Peek_OncePerTurnCheck */
-/* >>> factory Wail_BenchCheck */
-/* effect_functions.asm:6339-6363 */
-MrFujiBenchCheckResult Wail_BenchCheck(void)
-{
-	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
-	if (turn.a < 6u)
-		return (MrFujiBenchCheckResult){turn.a, turn.a == 0u ? 0x80u : 0u, turn.hl};
-	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
-	if (nonturn.a < 6u)
-		return (MrFujiBenchCheckResult){nonturn.a, nonturn.a == 0u ? 0x80u : 0u, nonturn.hl};
-	return (MrFujiBenchCheckResult){nonturn.a, 0x10u, NoSpaceOnTheBenchText};
-}
-/* <<< factory Wail_BenchCheck */
 /* --- factory JynxMeditate_DamageBoostEffect */
 /* --- factory MewtwoAltEnergyAbsorption_AddToHandEffect */
 /* --- factory MewtwoEnergyAbsorption_AddToHandEffect */
@@ -1987,49 +1946,6 @@ KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEff
 	}
 }
 /* <<< factory KrabbyCallForFamily_PlayerSelectEffect */
-/* >>> factory NidoranFCallForFamily_PlayerSelectEffect */
-NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelectEffect(void)
-{
-	hTemp_ffa0 = 0xffu;
-	CardListResult deck = CreateDeckCardList(0u, 0u);
-	LookForCardsInDeckResult search = LookForCardsInDeck(deck.a,
-		(uint8_t)(NidoranMNidoranFText >> 8),
-		(uint8_t)NidoranMNidoranFText, SEARCHEFFECT_NIDORAN, 0u,
-		ChooseNidoranFromDeckText);
-	if ((search.f & 0x10u) != 0u)
-		return (NidoranFCallForFamily_PlayerSelectEffectResult){search.a, search.f};
-	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
-	SetCardListHeaderText(DuelistDeckText, ChooseNidoranText);
-	for (;;) {
-		DisplayCardListResult display = DisplayCardList();
-		if ((display.f & 0x10u) == 0u) {
-			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
-			uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
-				(uint8_t)(NIDORANF >> 8), (uint8_t)NIDORANF);
-			uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
-				(uint8_t)(NIDORANM >> 8), (uint8_t)NIDORANM);
-			if ((is_f & 0x80u) != 0u || (is_m & 0x80u) != 0u) {
-				uint8_t selected = hTempCardIndex_ff98;
-				hTemp_ffa0 = selected;
-				return (NidoranFCallForFamily_PlayerSelectEffectResult){selected, (uint8_t)(selected == 0u ? 0x80u : 0x00u)};
-			}
-			continue;
-		}
-		DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
-		uint16_t hl = locations.hl;
-		for (;;) {
-			if (gb_read8(hl) == CARD_LOCATION_DECK) {
-				uint16_t card_id = GetCardIDFromDeckIndex((uint8_t)hl);
-				uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
-					(uint8_t)(NIDORANF >> 8), (uint8_t)NIDORANF);
-				if ((is_f & 0x80u) != 0u) { PlaySFX_InvalidChoice(); break; }
-			}
-			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
-			if ((uint8_t)hl >= DECK_SIZE) { hTemp_ffa0 = 0xffu; return (NidoranFCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u}; }
-		}
-	}
-}
-/* <<< factory NidoranFCallForFamily_PlayerSelectEffect */
 /* --- factory TossCoin_BankB */
 /* >>> factory GustOfWind_SwitchEffect */
 void GustOfWind_SwitchEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
@@ -2465,57 +2381,6 @@ uint8_t FoulGas_PoisonOrConfusionEffect(void)
 	return PoisonEffect().f;
 }
 /* <<< factory FoulGas_PoisonOrConfusionEffect */
-/* >>> factory Sprout_PlayerSelectEffect */
-Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
-{
-	hTemp_ffa0 = 0xffu;
-	CardListResult deck = CreateDeckCardList(0u, 0u);
-	LookForCardsInDeckResult search = LookForCardsInDeck(
-		deck.a, (uint8_t)(OddishText >> 8), (uint8_t)OddishText,
-		(uint8_t)(ODDISH >> 8), (uint8_t)ODDISH, ChooseAnOddishFromDeckText);
-	if ((search.f & 0x10u) != 0u)
-		return (Sprout_PlayerSelectEffectResult){search.a, search.f};
-
-	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
-	SetCardListHeaderText(DuelistDeckText, ChooseAnOddishText);
-	for (;;) {
-		DisplayCardListResult display = DisplayCardList();
-		if ((display.f & 0x10u) == 0u) {
-			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
-			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-				(uint8_t)card_id, (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
-			if ((compare & 0x80u) != 0u) {
-				uint8_t selected = hTempCardIndex_ff98;
-				hTemp_ffa0 = selected;
-				return (Sprout_PlayerSelectEffectResult){selected,
-					(uint8_t)(selected == 0u ? 0x80u : 0x00u)};
-			}
-			PlaySFX_InvalidChoice();
-			continue;
-		}
-
-		DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
-		uint16_t hl = locations.hl;
-		for (;;) {
-			if (gb_read8(hl) == CARD_LOCATION_DECK) {
-				uint8_t index = (uint8_t)hl;
-				uint16_t card_id = GetCardIDFromDeckIndex(index);
-				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-					(uint8_t)card_id, (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
-				if ((compare & 0x80u) != 0u) {
-					PlaySFX_InvalidChoice();
-					break;
-				}
-			}
-			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
-			if ((uint8_t)hl >= DECK_SIZE) {
-				hTemp_ffa0 = 0xffu;
-				return (Sprout_PlayerSelectEffectResult){0xffu, 0x00u};
-			}
-		}
-	}
-}
-/* <<< factory Sprout_PlayerSelectEffect */
 /* >>> factory ImakuniEffect */
 void ImakuniEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
@@ -3430,3 +3295,5 @@ uint16_t HyperBeam_DiscardEffect(uint16_t hl)
 /* === factory ResetDevolvedCardStatus */
 /* === factory ScoopUp_ReturnToHandEffect */
 /* === factory Sprout_AISelectEffect */
+/* === factory NidoranFCallForFamily_PlayerSelectEffect */
+/* === factory Sprout_PlayerSelectEffect */

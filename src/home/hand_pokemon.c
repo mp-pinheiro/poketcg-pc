@@ -13,6 +13,7 @@
 #include "home/common.h"
 #include "home/substatus.h"
 #include "home/duel.h"
+#include "home/card_id_bus.h"
 /* <<< part includes_2 */
 
 /* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */

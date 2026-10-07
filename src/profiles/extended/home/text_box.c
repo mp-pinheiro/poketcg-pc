@@ -1,15 +1,4 @@
-/* >>> part SYM_BOX_TOP_L */
-#define SYM_BOX_TOP_L 0x18u
-/* <<< part SYM_BOX_TOP_L */
-/* >>> part SYM_BOX_TOP_R */
-#define SYM_BOX_TOP_R 0x19u
-/* <<< part SYM_BOX_TOP_R */
-/* >>> part SYM_BOX_TOP */
-#define SYM_BOX_TOP 0x1cu
-/* <<< part SYM_BOX_TOP */
-/* >>> part FW_SPACE */
-#define FW_SPACE 0x70u
-/* <<< part FW_SPACE */
+/* === part FW_SPACE */
 /* >>> part SYM_BOX_BOTTOM */
 #define SYM_BOX_BOTTOM 0x1du
 /* <<< part SYM_BOX_BOTTOM */
@@ -44,33 +33,6 @@ void DrawRegularTextBox(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	ContinueDrawingTextBoxDMG(hl, a, b, c, d, e);
 }
 /* <<< factory DrawRegularTextBox */
-/* >>> factory ContinueDrawingTextBoxCGB */
-void ContinueDrawingTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
-	uint8_t d, uint8_t e)
-{
-	(void)a;
-	(void)d;
-	(void)e;
-	uint8_t raw = (uint8_t)(c - 2u);
-	uint32_t count = raw ? raw : 0x100u;
-	do {
-		uint16_t row = *hl;
-		draw_line(hl, 0, 0x1e, 0x1f, b);
-		*hl = row;
-		hBankVRAM = 1;
-		gb_write8(0xff4f, 1);
-		/* asm: ld e,a / ld d,a / xor a -- the frame type is the two BORDER attrs and
-		 * the middle of the row is filled with 0, not with the frame type. */
-		draw_line(hl, 0, wTextBoxFrameType, wTextBoxFrameType, b);
-		hBankVRAM = 0;
-		gb_write8(0xff4f, 0);
-	} while (--count);
-	/* The bottom border goes through CopyCurrentLineTilesAndAttrCGB, which falls into
-	 * CopyCurrentLineAttrCGB -- and that one has no `xor a`, so unlike a body row the
-	 * whole bottom row's attributes are the frame type, not just its two borders. */
-	CopyCurrentLineTilesAndAttrCGB(hl, 0x1du, b, 0x1au, 0x1bu);
-}
-/* <<< factory ContinueDrawingTextBoxCGB */
 /* >>> factory DrawLabeledTextBox */
 /* Draws a b x c box at de whose top border carries the text labelled by hl.
  * The SGB colorisation tail (ColorizeTextBoxSGB) is dropped along with the rest of

@@ -1,10 +1,3 @@
-/* >>> part includes_2 */
-#include "home/switch_rom.h"
-#include "home/time.h"
-#include "home/music.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-/* <<< part includes_2 */
 /* >>> part BANK_SOUND_TIMER_HANDLER */
 #define BANK_SOUND_TIMER_HANDLER 0x42u
 /* <<< part BANK_SOUND_TIMER_HANDLER */

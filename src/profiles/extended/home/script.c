@@ -1,6 +1,3 @@
-/* >>> part MAP_SCRIPTS_BANK */
-#define MAP_SCRIPTS_BANK MapScripts_BANK
-/* <<< part MAP_SCRIPTS_BANK */
 /* === part MAP_SCRIPTS */
 /* >>> part OVERWORLD_SCRIPT_TABLE_BANK */
 #define OVERWORLD_SCRIPT_TABLE_BANK OverworldScriptTable_BANK

@@ -1,10 +1,3 @@
-/* >>> part includes */
-#include "home/load_map_header.h"
-
-#include "generated/wram.h"
-#include "generated/rom.h"
-#include "mem.h"
-/* <<< part includes */
 /* >>> part MAP_HEADERS_BANK */
 #define MAP_HEADERS_BANK MapHeaders_BANK
 /* <<< part MAP_HEADERS_BANK */

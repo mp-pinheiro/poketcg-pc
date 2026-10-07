@@ -2,20 +2,7 @@
 /* --- part V0_TILES0 */
 /* --- part S_GFX_BUFFER1 */
 /* --- part S_GFX_BUFFER4 */
-/* >>> part DUEL_OTHER_GFX */
-/* Bank:addr pairs below are taken directly from poketcg.sym; DuelOtherGraphics
- * and DuelBoxMessages live one bank past BANK_FONTS (0x1e), the rest share
- * BANK_FONTS (0x1d) with the far-pointer offset already subtracted, matching
- * how each caller in tiles.asm encodes them (see CopyFontsOrDuelGraphicsTiles). */
-#define DUEL_OTHER_GFX DuelOtherGraphics_ADDR
-/* <<< part DUEL_OTHER_GFX */
 /* --- part DUEL_DMG_SGB_SYMBOL_GFX_FAR */
-/* >>> part DUEL_CGB_SYMBOL_GFX_FAR */
-#define DUEL_CGB_SYMBOL_GFX_FAR (DuelCgbSymbolGraphics_ADDR - 0x4000u)
-/* <<< part DUEL_CGB_SYMBOL_GFX_FAR */
-/* >>> part LOAD_CARD_SET2_TILES_TABLE */
-#define LOAD_CARD_SET2_TILES_TABLE (LoadCardSet2Tiles__tile_offsets_ADDR)
-/* <<< part LOAD_CARD_SET2_TILES_TABLE */
 /* --- part LOAD_FULL_WIDTH_FONT_TILES_SRC */
 /* >>> factory LoadDuelCardSymbolTiles */
 TileCopyResult LoadDuelCardSymbolTiles(void)

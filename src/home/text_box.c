@@ -11,16 +11,16 @@
 /* <<< part includes */
 
 /* >>> part SYM_BOX_TOP_L */
-#define SYM_BOX_TOP_L 0x18
+#define SYM_BOX_TOP_L 0x18u
 /* <<< part SYM_BOX_TOP_L */
 /* >>> part SYM_BOX_TOP_R */
-#define SYM_BOX_TOP_R 0x19
+#define SYM_BOX_TOP_R 0x19u
 /* <<< part SYM_BOX_TOP_R */
 /* >>> part SYM_BOX_TOP */
-#define SYM_BOX_TOP 0x1c
+#define SYM_BOX_TOP 0x1cu
 /* <<< part SYM_BOX_TOP */
 /* >>> part FW_SPACE */
-#define FW_SPACE 0x70
+#define FW_SPACE 0x70u
 /* <<< part FW_SPACE */
 
 /* >>> factory SafeCopyDataDEtoHL */
@@ -153,7 +153,7 @@ void ContinueDrawingTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	/* The bottom border goes through CopyCurrentLineTilesAndAttrCGB, which falls into
 	 * CopyCurrentLineAttrCGB -- and that one has no `xor a`, so unlike a body row the
 	 * whole bottom row's attributes are the frame type, not just its two borders. */
-	CopyCurrentLineTilesAndAttrCGB(hl, 0x1d, b, 0x1a, 0x1b);
+	CopyCurrentLineTilesAndAttrCGB(hl, 0x1du, b, 0x1au, 0x1bu);
 }
 /* <<< factory ContinueDrawingTextBoxCGB */
 

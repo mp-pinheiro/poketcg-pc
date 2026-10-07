@@ -33,7 +33,7 @@ static uint8_t ccf_cp_flags(uint8_t a, uint8_t n)
 /* >>> factory Preload_NikkiInIshiharasHouse */
 PreloadNikkiInIshiharasHouseResult Preload_NikkiInIshiharasHouse(void)
 {
-	uint8_t a = GetEventValue(0x35u);
+	uint8_t a = GetEventValue(EVENT_NIKKI_STATE);
 	uint8_t f = (a == NIKKI_IN_ISHIHARAS_HOUSE) ? 0x90u : ((a == 0u) ? 0x80u : 0u);
 	return (PreloadNikkiInIshiharasHouseResult){a, f};
 }
@@ -42,10 +42,10 @@ PreloadNikkiInIshiharasHouseResult Preload_NikkiInIshiharasHouse(void)
 /* >>> factory Preload_IshiharaInIshiharasHouse */
 PreloadIshiharaInIshiharasHouseResult Preload_IshiharaInIshiharasHouse(void)
 {
-	uint8_t mentioned = GetEventValue(0x1Cu);
+	uint8_t mentioned = GetEventValue(EVENT_ISHIHARA_MENTIONED);
 	if (mentioned == 0u)
 		return (PreloadIshiharaInIshiharasHouseResult){mentioned, 0x80u};
-	uint8_t a = GetEventValue(0x1Fu);
+	uint8_t a = GetEventValue(EVENT_ISHIHARA_TRADE_STATE);
 	return (PreloadIshiharaInIshiharasHouseResult){a, cp_flags(a, ISHIHARA_LEFT)};
 }
 /* <<< factory Preload_IshiharaInIshiharasHouse */
@@ -53,7 +53,7 @@ PreloadIshiharaInIshiharasHouseResult Preload_IshiharaInIshiharasHouse(void)
 /* >>> factory Preload_Ronald1InIshiharasHouse */
 PreloadRonald1InIshiharasHouseResult Preload_Ronald1InIshiharasHouse(void)
 {
-	uint8_t a = GetEventValue(0x22u);
+	uint8_t a = GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS);
 	return (PreloadRonald1InIshiharasHouseResult){a, ccf_cp_flags(a, TRUE)};
 }
 /* <<< factory Preload_Ronald1InIshiharasHouse */

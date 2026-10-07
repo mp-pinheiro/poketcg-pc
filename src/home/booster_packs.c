@@ -8,6 +8,7 @@
 #include "mem.h"
 /* <<< part includes */
 /* >>> part includes_2 */
+#include "home/card_id_bus.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes_2 */
@@ -500,7 +501,7 @@ void InitBoosterData(void)
 {
 	for (uint16_t addr = wBoosterCardsDrawn_ADDR; addr < wBoosterCardsDrawnEnd_ADDR; addr++)
 		gb_write8(addr, 0u);
-	for (uint16_t i = 0; i < 256u; i++)
+	for (uint16_t i = 0; i < CARD_COLLECTION_SIZE; i++)
 		gb_write8((uint16_t)(wTempCardCollection_ADDR + i), 0u);
 
 	uint16_t hl = FindBoosterDataPointer();

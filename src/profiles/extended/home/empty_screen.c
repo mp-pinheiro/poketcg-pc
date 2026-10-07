@@ -1,13 +1,3 @@
-/* >>> part includes */
-#include "home/empty_screen.h"
-
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/lcd.h"
-#include "home/setup.h"
-#include "mem.h"
-#include "ppu.h"
-/* <<< part includes */
 /* --- part ATTR_BLK_PACKET_EMPTY_SCREEN */
 /* >>> factory EmptyScreen */
 /* empty_screen.asm:2-14. DisableLCD first: it is what turns wLCDC's enable

@@ -1,13 +1,3 @@
-/* >>> part includes */
-#include "home/sound.h"
-
-#include "home/frames.h"
-#include "home/music.h"
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "home/switch_rom.h"
-#include "mem.h"
-/* <<< part includes */
 /* --- factory Func_37c5 */
 /* --- factory Func_37a5 */
 /* --- part BANK_AUDIO_1 */
@@ -64,13 +54,6 @@ uint8_t AssertSFXFinished(void)
 	return result;
 }
 /* <<< factory AssertSFXFinished */
-/* >>> factory PlaySFX_InvalidChoice */
-/* sound.asm:19-23 */
-void PlaySFX_InvalidChoice(void)
-{
-	PlaySFX(SFX_DENIED);
-}
-/* <<< factory PlaySFX_InvalidChoice */
 /* >>> factory PlaySFX */
 /* sound.asm:21-23 */
 void PlaySFX(uint8_t a)

@@ -12,15 +12,6 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 /* <<< part includes */
-/* >>> part includes_2 */
-#include "generated/wram.h"
-#include "home/print_stats.h"
-#include "home/text_box.h"
-#include "home/init_menu.h"
-#include "home/labels.h"
-#include "home/wait_keys.h"
-#include "home/scripting.h"
-/* <<< part includes_2 */
 /* === part PAD_START */
 /* >>> part OAM_X_OFS */
 #define OAM_X_OFS 0x08u

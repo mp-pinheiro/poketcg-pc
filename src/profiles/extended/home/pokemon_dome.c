@@ -1,6 +1,3 @@
-/* >>> part PokemonDomeAfterDuelTable */
-#define PokemonDomeAfterDuelTable (PokemonDomeAfterDuel_ADDR + 0x06u)
-/* <<< part PokemonDomeAfterDuelTable */
 /* >>> factory PokemonDomeMovePlayer */
 void PokemonDomeMovePlayer(void)
 {

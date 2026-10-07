@@ -2,9 +2,10 @@
 #include "home/duel_core.h"
 
 #include "generated/constants.h"
-#include "generated/rom.h"
 #include "generated/hram.h"
+#include "generated/text_ids.h"
 #include "generated/wram.h"
+#include "generated/rom.h"
 #include "home/palettes.h"
 #include "mem.h"
 #include "home/frames.h"
@@ -41,13 +42,13 @@ static void load_tx_ram2(uint16_t text_id)
 
 
 /* >>> part TRAINER_TO_PKMN_DATA */
-#define TRAINER_TO_PKMN_DATA (ConvertSpecialTrainerCardToPokemon__trainer_to_pkmn_data_ADDR) /* bank 1 */
+#define TRAINER_TO_PKMN_DATA ConvertSpecialTrainerCardToPokemon__trainer_to_pkmn_data_ADDR
 /* <<< part TRAINER_TO_PKMN_DATA */
 
 /* >>> part trainer_to_pkmn_data */
 static const uint8_t *trainer_to_pkmn_data(void)
 {
-	return rom_ptr(1u, TRAINER_TO_PKMN_DATA);
+	return rom_ptr(ConvertSpecialTrainerCardToPokemon__trainer_to_pkmn_data_BANK, TRAINER_TO_PKMN_DATA);
 }
 /* <<< part trainer_to_pkmn_data */
 
@@ -122,25 +123,25 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 
 
 /* >>> part THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT         0x014Bu
+#define THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT         ThereWasNoEffectFromTxRam2Text
 /* <<< part THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT */
 /* >>> part THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT 0x0183u
+#define THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT ThereWasNoEffectFromPoisonConfusionText
 /* <<< part THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT */
 /* >>> part THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT        0x0181u
+#define THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT        ThereWasNoEffectFromParalysisText
 /* <<< part THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT */
 /* >>> part THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT            0x0180u
+#define THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT            ThereWasNoEffectFromSleepText
 /* <<< part THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT */
 /* >>> part THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT        0x0182u
+#define THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT        ThereWasNoEffectFromConfusionText
 /* <<< part THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT */
 /* >>> part THERE_WAS_NO_EFFECT_FROM_POISON_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_POISON_TEXT           0x017Fu
+#define THERE_WAS_NO_EFFECT_FROM_POISON_TEXT           ThereWasNoEffectFromPoisonText
 /* <<< part THERE_WAS_NO_EFFECT_FROM_POISON_TEXT */
 /* >>> part THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT */
-#define THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT            0x017Eu
+#define THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT            ThereWasNoEffectFromToxicText
 /* <<< part THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT */
 
 /* >>> factory ResetAttackAnimationIsPlaying */

@@ -1,18 +1,3 @@
-/* >>> part includes */
-#include "home/main_menu.h"
-#include "home/start.h"
-
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-#include "runtime.h"
-#include "generated/sram.h"
-#include "home/map.h"
-#include "home/naming.h"
-#include "home/starter_deck.h"
-#include "home/switch_sram.h"
-/* <<< part includes */
 /* --- factory MainMenu_CardPop */
 /* >>> factory MainMenu_NewGame */
 uint8_t MainMenu_NewGame(void)

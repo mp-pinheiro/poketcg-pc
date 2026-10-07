@@ -357,7 +357,7 @@ static const uint8_t sAaronDeckIDs[] = {
 /* <<< part includes_MAN1_REQUESTED_CARDS_BANK */
 
 /* >>> part MAN1_REQUESTED_CARDS_BANK */
-#define MAN1_REQUESTED_CARDS_BANK 3u
+#define MAN1_REQUESTED_CARDS_BANK Man1RequestedCardsList_BANK
 /* <<< part MAN1_REQUESTED_CARDS_BANK */
 /* >>> part MAN1_REQUESTED_CARDS_ADDR */
 #define MAN1_REQUESTED_CARDS_ADDR Man1RequestedCardsList_ADDR
@@ -2199,7 +2199,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
 	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, (ScriptCommand_ShowSamNormalMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
-	(void)SetEventValue(0x75u, 0u, 0u, choice);
+	(void)SetEventValue(EVENT_SAM_MENU_CHOICE, 0u, 0u, choice);
 	wMultichoiceTextboxResult_Sam = 0u;
 	return IncreaseScriptPointerBy1();
 }
@@ -2215,7 +2215,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, (ScriptCommand_ShowSamRulesMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
-	(void)SetEventValue(0x75u, 0u, 0u, choice);
+	(void)SetEventValue(EVENT_SAM_MENU_CHOICE, 0u, 0u, choice);
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_ShowSamRulesMultichoice */

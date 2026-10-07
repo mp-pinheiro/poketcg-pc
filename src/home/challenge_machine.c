@@ -191,10 +191,10 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #define CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT 0x07F3u
 /* <<< part CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
 /* >>> part CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT */
-#define CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT 0x07F4u
+#define CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT ChallengeMachineDuelWonIconText
 /* <<< part CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT */
 /* >>> part CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT */
-#define CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT 0x07F5u
+#define CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT ChallengeMachineDuelLostIconText
 /* <<< part CHALLENGE_MACHINE_DUEL_LOST_ICON_TEXT */
 /* >>> part challenge_machine_duel_result_icons */
 static const uint16_t challenge_machine_duel_result_icons[3] = {
@@ -424,7 +424,7 @@ ChallengeMachineInitializeResult ChallengeMachine_Initialize(void)
 			gb_write8(hl++, 0u);
 			c--;
 		}
-		const uint8_t *text = rom_ptr(0x04u, ChallengeMachine_DrMasonText_ADDR);
+		const uint8_t *text = rom_ptr(ChallengeMachine_DrMasonText_BANK, ChallengeMachine_DrMasonText_ADDR);
 		for (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)
 			gb_write8((uint16_t)(sChallengeMachineRecordHolderName_ADDR + i), text[i]);
 		gb_write8(sMaximumConsecutiveWins_ADDR, 1u);

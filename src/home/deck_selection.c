@@ -33,6 +33,7 @@
 #include "mem.h"
 
 #include "home/switch_sram.h"
+#include "home/load_deck.h"
 #include "mem.h"
 
 #include "home/deck_selection.h"
@@ -136,7 +137,7 @@ ResetCheckMenuCursorPositionAndBlinkResult ResetCheckMenuCursorPositionAndBlink(
 uint16_t GetPointerToDeckName(void)
 {
 	uint8_t deck = wCurDeck;
-	uint16_t offset = HtimesL((uint16_t)(((uint16_t)deck << 8) | DECK_STRUCT_SIZE));
+	uint16_t offset = HtimesL((uint16_t)(((uint16_t)deck << 8) | DECK_CARD_STRIDE));
 	return (uint16_t)(sDeck1Name_ADDR + offset);
 }
 /* <<< factory GetPointerToDeckName */

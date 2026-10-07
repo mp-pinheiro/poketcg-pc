@@ -1,6 +1,3 @@
-/* >>> part MasonLaboratoryAfterDuelTable */
-#define MasonLaboratoryAfterDuelTable (MasonLaboratoryAfterDuel_ADDR + 0x06u)
-/* <<< part MasonLaboratoryAfterDuelTable */
 /* >>> factory Script_Tech1 */
 /* mason_laboratory.asm:58-90. Two paths, each ending in its own `rst $20`:
  *   total >= 10 -> the `start_script` rst at $5597

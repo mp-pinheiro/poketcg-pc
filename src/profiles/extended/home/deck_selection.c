@@ -1,14 +1,4 @@
-/* >>> part includes */
-#include "home/deck_selection.h"
-#include "home/duel.h"
-#include "home/duel_core.h"
-#include "home/empty_screen.h"
-#include "home/objects.h"
-#include "home/switch_rom.h"
-
-#include "generated/text_ids.h"
-#include "generated/constants.h"
-/* <<< part includes */
+/* === part includes */
 /* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 /* <<< part MENU_CONFIRM */
@@ -21,20 +11,6 @@
 /* >>> part DECK_CARD_STRIDE */
 #define DECK_CARD_STRIDE DECK_COMPRESSED_STRUCT_SIZE
 /* <<< part DECK_CARD_STRIDE */
-/* >>> part includes_SYM_0 */
-#include "generated/wram.h"
-
-#include "mem.h"
-
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "home/switch_sram.h"
-#include "home/load_deck.h"
-#include "mem.h"
-
-#include "home/deck_selection.h"
-/* <<< part includes_SYM_0 */
 /* >>> part INPUT_CUR_DECK_DECK1_DATA */
 #define INPUT_CUR_DECK_DECK1_DATA Deck1Data_ADDR
 /* <<< part INPUT_CUR_DECK_DECK1_DATA */
@@ -47,14 +23,6 @@
 /* >>> part INPUT_CUR_DECK_DECK4_DATA */
 #define INPUT_CUR_DECK_DECK4_DATA Deck4Data_ADDR
 /* <<< part INPUT_CUR_DECK_DECK4_DATA */
-/* >>> factory GetPointerToDeckName */
-uint16_t GetPointerToDeckName(void)
-{
-	uint8_t deck = wCurDeck;
-	uint16_t offset = HtimesL((uint16_t)(((uint16_t)deck << 8) | DECK_CARD_STRIDE));
-	return (uint16_t)(sDeck1Name_ADDR + offset);
-}
-/* <<< factory GetPointerToDeckName */
 /* --- factory CopyDeckFromSRAM */
 /* --- factory Func_9001 */
 /* >>> factory WriteCardListsTerminatorBytes */
@@ -166,3 +134,4 @@ get_input_deck_name:
 }
 /* <<< factory DeckSelectionSubMenu */
 /* === factory CheckIfCurDeckIsValid */
+/* === factory GetPointerToDeckName */

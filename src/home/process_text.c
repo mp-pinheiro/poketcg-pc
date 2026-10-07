@@ -1,6 +1,15 @@
 /* >>> part includes */
 #include "home/process_text.h"
 #include "home/switch_rom.h"
+#include "home/text_box.h"
+
+#include "home/copy.h"
+#include "generated/constants.h"
+#include "generated/rom.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/write_number.h"
 /* <<< part includes */
 /* >>> part BANK_FONTS */
 #define BANK_FONTS 0x1Du
@@ -18,16 +27,16 @@
 #include "home/write_number.h"
 /* <<< part includes_SYM_SPACE */
 /* >>> part SYM_SPACE */
-#define SYM_SPACE 0x00
+#define SYM_SPACE 0x00u
 /* <<< part SYM_SPACE */
 /* >>> part SYM_0 */
-#define SYM_0 0x20
+#define SYM_0 0x20u
 /* <<< part SYM_0 */
 /* >>> part FW_SPACE */
-#define FW_SPACE 0x70
+#define FW_SPACE 0x70u
 /* <<< part FW_SPACE */
 /* >>> part TILE_SIZE */
-#define TILE_SIZE 16
+#define TILE_SIZE 16u
 /* <<< part TILE_SIZE */
 
 /* >>> factory InitTextFormat */
@@ -357,9 +366,9 @@ ProcessTextResult Func_2325(uint8_t d, uint8_t e)
 	if (hffa8 == wcd04) {
 		/* cache full: walk to the tail and reuse that node */
 		index = hffa9;
-		while (gb_read8((uint16_t)(wc800_ADDR + index)))
-			index = gb_read8((uint16_t)(wc800_ADDR + index));
-		gb_write8((uint16_t)(wc800_ADDR + gb_read8((uint16_t)(wc900_ADDR + index))), 0);
+		while (gb_read8((uint16_t)(0xc800u + index)))
+			index = gb_read8((uint16_t)(0xc800u + index));
+		gb_write8((uint16_t)(0xc800u + gb_read8((uint16_t)(0xc900u + index))), 0);
 	} else {
 		/* allocate the next node, stepping over index 0: it is the terminator */
 		wcd04++;
@@ -371,10 +380,10 @@ ProcessTextResult Func_2325(uint8_t d, uint8_t e)
 	uint8_t old = hffa9;
 
 	hffa9 = index;
-	gb_write8((uint16_t)(wc900_ADDR + old), index);
-	gb_write8((uint16_t)(wc800_ADDR + index), old);
-	gb_write8((uint16_t)(wc600_ADDR + index), found.e);
-	gb_write8((uint16_t)(wc700_ADDR + index), found.d);
+	gb_write8((uint16_t)(0xc900u + old), index);
+	gb_write8((uint16_t)(0xc800u + index), old);
+	gb_write8((uint16_t)(0xc600u + index), found.e);
+	gb_write8((uint16_t)(0xc700u + index), found.d);
 	return text_result(0, found.d, found.e, 0x80, 0);
 }
 /* <<< part Func_2325 */
@@ -512,7 +521,8 @@ uint16_t SetupText(uint8_t d, uint8_t e)
 	hffa9 = 0;
 	wTilePatternSelector = 0x88;
 	wTilePatternSelectorCorrection = 0x80;
-	for (uint16_t i = wc600_ADDR; i != wc700_ADDR; i++) gb_write8(i, 0);
+	for (uint16_t i = wc600_ADDR; i != wc700_ADDR; i++)
+		gb_write8(i, 0u);
 	return wc600_ADDR;
 }
 /* <<< part SetupText */

@@ -10,6 +10,8 @@
 /* <<< part includes */
 
 /* >>> part includes_2 */
+#include "home/card_id_bus.h"
+
 #include "generated/wram.h"
 #include "home/bg_map.h"
 #include "home/card_data.h"

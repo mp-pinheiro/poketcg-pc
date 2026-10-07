@@ -8,6 +8,7 @@
 #include "mem.h"
 /* <<< part includes */
 /* >>> part includes_2 */
+#include "home/card_id_bus.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "home/duel.h"
@@ -3924,7 +3925,7 @@ AIDecideResult AIPlay_GustOfWind(uint8_t d, uint8_t e)
 	wCurrentAIFlags = flags;
 	hTempCardIndex_ff9f = wAITrainerCardToPlay;
 	hTemp_ffa0 = wAITrainerCardParameter;
-	AIMakeDecisionResult decision = AIMakeDecision(0x07u, 0u, 0u, d, e);
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, d, e);
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_GustOfWind */

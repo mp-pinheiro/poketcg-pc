@@ -1,16 +1,3 @@
-/* >>> part includes_2 */
-#include "generated/hram.h"
-#include "home/core.h"
-
-#include "home/card_id_bus.h"
-#include "generated/wram.h"
-#include "generated/hram.h"
-#include "home/core.h"
-#include "home/duel.h"
-#include "home/special_attacks.h"
-#include "home/damage_calculation.h"
-#include "home/substatus.h"
-/* <<< part includes_2 */
 /* >>> factory GetAIScoreOfAttack */
 /* attacks.asm .check_if_kos_bench: how many of the turn holder's benched
  * Pokemon `bench_damage` knocks out, plus `initial`, reaches the prize count

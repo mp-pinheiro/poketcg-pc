@@ -1,14 +1,3 @@
-/* >>> part includes_2 */
-#include "generated/text_ids.h"
-#include "generated/hram.h"
-#include "generated/sram.h"
-#include "generated/wram.h"
-#include "home/credits_sequence_commands.h"
-#include "home/main_menu.h"
-#include "home/menus.h"
-#include "home/switch_sram.h"
-#include "mem.h"
-/* <<< part includes_2 */
 /* >>> factory GameLoop */
 void GameLoop(void)
 {

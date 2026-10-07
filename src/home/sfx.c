@@ -24,7 +24,7 @@
 /* <<< part includes_2 */
 
 /* >>> part SFX_BANK */
-#define SFX_BANK 0x3Fu
+#define SFX_BANK NumberOfSFX_BANK
 /* <<< part SFX_BANK */
 
 /* >>> part SFX_NumberOfSFX_ADDR */

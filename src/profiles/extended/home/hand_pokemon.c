@@ -1,12 +1,3 @@
-/* >>> part includes_2 */
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/core.h"
-#include "home/common.h"
-#include "home/substatus.h"
-#include "home/duel.h"
-#include "home/card_id_bus.h"
-/* <<< part includes_2 */
 /* === part DUELVARS_ARENA_CARD */
 /* >>> part DUELVARS_ARENA_CARD_HP */
 #define DUELVARS_ARENA_CARD_HP 0xC8u

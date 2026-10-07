@@ -1,6 +1,3 @@
-/* >>> part AFTER_DUEL_TABLE_830 */
-#define AFTER_DUEL_TABLE_830 (FireClubLobbyAfterDuel_ADDR + 0x06u)
-/* <<< part AFTER_DUEL_TABLE_830 */
 /* >>> factory FindExtraInteractableObjects */
 FindExtraInteractableObjectsResult FindExtraInteractableObjects(uint16_t hl)
 {

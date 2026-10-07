@@ -1,17 +1,3 @@
-/* >>> part includes */
-#include "home/damage_calculation.h"
-#include "home/card_id_bus.h"
-
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "home/card_color.h"
-#include "home/duel.h"
-#include "home/effect_commands.h"
-#include "home/substatus.h"
-
-#include <stdint.h>
-/* <<< part includes */
 /* >>> part load_attacker_and_defender */
 static void load_attacker_and_defender(uint8_t location)
 {

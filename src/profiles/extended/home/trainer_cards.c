@@ -1,25 +1,3 @@
-/* >>> part includes_2 */
-#include "home/card_id_bus.h"
-#include "generated/wram.h"
-#include "home/card_data.h"
-#include "home/duel.h"
-#include "mem.h"
-#include "home/random.h"
-
-#include "home/card_data.h"
-#include "home/duel.h"
-
-#include "home/duel.h"
-#include "home/card_data.h"
-
-#include "home/trainer_cards.h"
-
-#include "home/duel.h"
-#include "home/card_data.h"
-#include "home/trainer_cards.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes_2 */
 /* >>> factory FindDuplicateCards */
 /* trainer_cards.asm:2788-2859 */
 FindDupResult FindDuplicateCards(uint16_t hl, uint8_t d)
@@ -1889,18 +1867,6 @@ AIDecideParameterResult AIDecide_PlusPower2(uint8_t d)
 	return (AIDecideParameterResult){(uint8_t)defender, 0x10u, d};
 }
 /* <<< part AIDecide_PlusPower2 */
-/* >>> factory AIPlay_GustOfWind */
-AIDecideResult AIPlay_GustOfWind(uint8_t d, uint8_t e)
-{
-	uint8_t flags = wCurrentAIFlags;
-	flags |= 0x10u;
-	wCurrentAIFlags = flags;
-	hTempCardIndex_ff9f = wAITrainerCardToPlay;
-	hTemp_ffa0 = wAITrainerCardParameter;
-	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS, 0u, 0u, d, e);
-	return (AIDecideResult){decision.f};
-}
-/* <<< factory AIPlay_GustOfWind */
 /* --- factory AIDecide_SuperPotion_Phase11 */
 /* >>> factory AIDecide_ProfessorOak */
 /* .LookForEvolution: carry when a card in hand evolves the card in play area

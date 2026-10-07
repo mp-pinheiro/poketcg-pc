@@ -1,10 +1,4 @@
-/* >>> part includes */
-#include "home/deck_machine.h"
-
-#include "generated/text_ids.h"
-#include "generated/constants.h"
-#include "generated/rom.h"
-/* <<< part includes */
+/* === part includes */
 /* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 /* <<< part MENU_CONFIRM */
@@ -14,61 +8,6 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes_tail */
-/* >>> part includes_2 */
-#include "home/print_text.h"
-#include "home/process_text.h"
-#include "home/switch_sram.h"
-#include "home/switch_rom.h"
-
-
-#include "home/switch_sram.h"
-
-
-#include "home/deck_configuration.h"
-#include "home/card_id_bus.h"
-#include "home/load_deck.h"
-#include "generated/sram.h"
-
-
-#include "generated/wram.h"
-#include "home/bg_map.h"
-/* <<< part includes_2 */
-/* >>> part PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR */
-#define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR PrintDeckMachineEntry__text_ADDR
-/* <<< part PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR */
-/* >>> part DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR */
-/* Bank-2 addresses this routine reads as data (poketcg.sym):
- * 02:52a7 DeckNameSuffix,
- * 02:6e91 HandleDeckMissingCardsList.DeckConfirmationCardSelectionParams,
- * 02:6e9a HandleDeckMissingCardsList.CardListUpdateFunction. */
-#define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR HandleDeckMissingCardsList__DeckConfirmationCardSelectionParams_ADDR
-/* <<< part DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR */
-/* >>> part CARD_LIST_UPDATE_FUNCTION_ADDR */
-#define CARD_LIST_UPDATE_FUNCTION_ADDR HandleDeckMissingCardsList__CardListUpdateFunction_ADDR
-/* <<< part CARD_LIST_UPDATE_FUNCTION_ADDR */
-/* >>> part HANDLE_AUTO_DECK_MENU_BANK */
-/* poketcg.sym, every one of these in bank 2:
- *   02:7b6e HandleAutoDeckMenu.MenuParameters
- *   02:7b76 HandleAutoDeckMenu.DeckMachineMenuData
- *   02:7b83 HandleAutoDeckMenu.DeckMachineTitleTextList
- *   02:73fe UpdateDeckMachineScrollArrowsAndEntries
- * The first two are handed to InitializeMenuParameters/PlaceTextItems, which
- * read them off the bus, so the case has to map bank 2; the title list is read
- * with an explicit rom_ptr() because it is this routine's own data. */
-#define HANDLE_AUTO_DECK_MENU_BANK HandleAutoDeckMenu_BANK
-/* <<< part HANDLE_AUTO_DECK_MENU_BANK */
-/* >>> part HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR */
-#define HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR HandleAutoDeckMenu__MenuParameters_ADDR
-/* <<< part HANDLE_AUTO_DECK_MENU_MENU_PARAMETERS_ADDR */
-/* >>> part HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR */
-#define HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR HandleAutoDeckMenu__DeckMachineMenuData_ADDR
-/* <<< part HANDLE_AUTO_DECK_MENU_MENU_DATA_ADDR */
-/* >>> part HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR */
-#define HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR HandleAutoDeckMenu__DeckMachineTitleTextList_ADDR
-/* <<< part HANDLE_AUTO_DECK_MENU_TITLE_TEXT_LIST_ADDR */
-/* >>> part DECK_MACHINE_MENU_DATA_ADDR */
-#define DECK_MACHINE_MENU_DATA_ADDR HandleDeckSaveMachineMenu__DeckMachineMenuData_ADDR
-/* <<< part DECK_MACHINE_MENU_DATA_ADDR */
 /* --- part includes_DATA_B04A_ADDR */
 /* --- part DATA_B04A_ADDR */
 /* --- part SHOW_RECEIVED_CARDS_LIST_ADDR */

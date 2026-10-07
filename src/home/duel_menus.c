@@ -7,9 +7,9 @@
 #include "mem.h"
 /* <<< part includes */
 /* >>> part includes_2 */
+#include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "home/duel.h"
-#include "generated/hram.h"
 /* <<< part includes_2 */
 /* >>> part BANK__DrawPlayersPrizeAndBenchCards */
 #define BANK__DrawPlayersPrizeAndBenchCards 0x02u

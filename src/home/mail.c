@@ -20,7 +20,7 @@
 #define SYM_SPACE 0x00u
 /* <<< part SYM_SPACE */
 /* >>> part EMPTY_MAIL_NAME_TEXT */
-#define EMPTY_MAIL_NAME_TEXT 0x035Cu
+#define EMPTY_MAIL_NAME_TEXT EmptyMailNameText
 /* <<< part EMPTY_MAIL_NAME_TEXT */
 
 /* >>> part includes_PAD_CTRL_PAD */

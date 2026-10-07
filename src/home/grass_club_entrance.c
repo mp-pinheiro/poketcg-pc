@@ -56,7 +56,7 @@ FindEndOfDuelScriptResult GrassClubEntranceAfterDuel(void)
 /* >>> factory Preload_MichaelInGrassClubEntrance */
 PreloadMichaelInGrassClubEntranceResult Preload_MichaelInGrassClubEntrance(void)
 {
-	uint8_t a = GetEventValue(0x11u);
+	uint8_t a = GetEventValue(EVENT_PUPIL_MICHAEL_STATE);
 	if (a == 0u)
 		return (PreloadMichaelInGrassClubEntranceResult){a, 0x80u};
 	uint8_t f = (uint8_t)(0x40u | ((a == PUPIL_DEFEATED) ? 0x80u : 0u)

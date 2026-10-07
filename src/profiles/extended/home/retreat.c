@@ -1,11 +1,3 @@
-/* >>> part includes_2 */
-#include "home/card_data.h"
-#include "home/core.h"
-#include "home/card_id_bus.h"
-#include "home/substatus.h"
-#include "home/duel.h"
-#include "generated/hram.h"
-/* <<< part includes_2 */
 /* >>> factory AITryToRetreat */
 /* engine/duel/ai/retreat.asm:775-1012. The entry `push af` is popped exactly
  * once on every path, so the frame balances and the caller's a/f -- the Play

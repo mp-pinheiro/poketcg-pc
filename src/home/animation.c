@@ -20,7 +20,7 @@
 #include "home/animation.h"
 /* <<< part includes_2 */
 /* >>> part MAP_OW_FRAMESET_POINTERS_BANK */
-#define MAP_OW_FRAMESET_POINTERS_BANK 0x20u
+#define MAP_OW_FRAMESET_POINTERS_BANK MapOWFramesetPointers_BANK
 /* <<< part MAP_OW_FRAMESET_POINTERS_BANK */
 /* >>> part MAP_OW_FRAMESET_POINTERS_ADDR */
 #define MAP_OW_FRAMESET_POINTERS_ADDR MapOWFramesetPointers_ADDR

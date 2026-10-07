@@ -99,7 +99,7 @@ void Copy1bppTiles(uint16_t *hl, uint16_t *de)
  * and DuelBoxMessages live one bank past BANK_FONTS (0x1e), the rest share
  * BANK_FONTS (0x1d) with the far-pointer offset already subtracted, matching
  * how each caller in tiles.asm encodes them (see CopyFontsOrDuelGraphicsTiles). */
-#define DUEL_OTHER_GFX 0x4008u
+#define DUEL_OTHER_GFX DuelOtherGraphics_ADDR
 /* <<< part DUEL_OTHER_GFX */
 /* >>> part DUEL_BOX_MESSAGES */
 #define DUEL_BOX_MESSAGES DuelBoxMessages_ADDR
@@ -117,10 +117,10 @@ void Copy1bppTiles(uint16_t *hl, uint16_t *de)
 #define DUEL_DMG_SGB_SYMBOL_GFX_FAR 0x2fe8u
 /* <<< part DUEL_DMG_SGB_SYMBOL_GFX_FAR */
 /* >>> part DUEL_CGB_SYMBOL_GFX_FAR */
-#define DUEL_CGB_SYMBOL_GFX_FAR 0x37f8u
+#define DUEL_CGB_SYMBOL_GFX_FAR (DuelCgbSymbolGraphics_ADDR - 0x4000u)
 /* <<< part DUEL_CGB_SYMBOL_GFX_FAR */
 /* >>> part LOAD_CARD_SET2_TILES_TABLE */
-#define LOAD_CARD_SET2_TILES_TABLE 0x2085u
+#define LOAD_CARD_SET2_TILES_TABLE (LoadCardSet2Tiles__tile_offsets_ADDR)
 /* <<< part LOAD_CARD_SET2_TILES_TABLE */
 /* >>> part LOAD_FULL_WIDTH_FONT_TILES_SRC */
 #define LOAD_FULL_WIDTH_FONT_TILES_SRC 0x1e60u

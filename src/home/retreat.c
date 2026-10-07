@@ -9,6 +9,8 @@
 /* >>> part includes_2 */
 #include "home/card_data.h"
 #include "home/core.h"
+#include "home/card_id_bus.h"
+#include "home/substatus.h"
 #include "home/duel.h"
 #include "generated/hram.h"
 /* <<< part includes_2 */

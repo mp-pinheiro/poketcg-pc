@@ -8,9 +8,6 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
-/* >>> part SFX_BANK */
-#define SFX_BANK NumberOfSFX_BANK
-/* <<< part SFX_BANK */
 /* === part rAUD1LEN */
 /* >>> part rAUD1SWEEP */
 #define rAUD1SWEEP 0xFF10u

@@ -1,8 +1,4 @@
-/* >>> part includes */
-#include "home/deck_check.h"
-
-#include "generated/constants.h"
-/* <<< part includes */
+/* === part includes */
 /* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 /* <<< part MENU_CONFIRM */

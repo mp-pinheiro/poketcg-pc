@@ -1,8 +1,3 @@
-/* >>> part includes */
-#include "home/play_area.h"
-
-#include "generated/constants.h"
-/* <<< part includes */
 /* --- part includes_2 */
 /* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u

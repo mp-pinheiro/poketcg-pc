@@ -174,6 +174,7 @@ uint8_t AssertSFXFinished(void)
 /* <<< part AssertSFXFinished */
 
 /* >>> part PlaySFX_InvalidChoice */
+/* sound.asm:19-23 */
 void PlaySFX_InvalidChoice(void)
 {
 	PlaySFX(SFX_DENIED);

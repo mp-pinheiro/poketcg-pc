@@ -780,7 +780,7 @@ static const uint8_t kCursorTileData[16] = {
 #define PEEK_OPP_TRANSITION_TABLE PeekOppPlayAreaTransitionTable_ADDR
 /* <<< part PEEK_OPP_TRANSITION_TABLE */
 /* >>> part PEEK_WHICH_CARD_TEXT */
-#define PEEK_WHICH_CARD_TEXT 0x024Cu
+#define PEEK_WHICH_CARD_TEXT WhichCardWouldYouLikeToSeeText
 /* <<< part PEEK_WHICH_CARD_TEXT */
 /* >>> part PEEK_MENU_CANCEL */
 #define PEEK_MENU_CANCEL 0xFFu
@@ -877,7 +877,7 @@ ShuffleCardsResult ShuffleCards(uint8_t a, uint16_t hl)
 /* <<< factory ShuffleCards */
 
 /* >>> part HTEMP_LIST_PTR */
-#define HTEMP_LIST_PTR hTempListPtr_ff99_ADDR
+#define HTEMP_LIST_PTR 0xFF99u
 /* <<< part HTEMP_LIST_PTR */
 
 /* >>> part list_ptr */
@@ -1048,7 +1048,7 @@ CardListResult CreateDiscardPileCardList(uint8_t c)
 
 /* >>> part PLAYER2_TEXT_ID */
 /* Text ID of the fallback opponent name. */
-#define PLAYER2_TEXT_ID 0x0092u
+#define PLAYER2_TEXT_ID Player2Text
 /* <<< part PLAYER2_TEXT_ID */
 
 /* >>> part copy_name_loop */
@@ -1829,7 +1829,7 @@ LoadEffectResult LoadNonPokemonCardEffectCommands(void)
 PowerModifierResult ApplyAttachedPlusPower(uint8_t b, uint16_t de)
 {
 	uint16_t page = (uint16_t)((uint16_t)hWhoseTurn << 8);
-	uint8_t count = CountCardIDInLocation(b, PLUSPOWER, page).a;
+	uint8_t count = CountCardIDInLocation(b, (CardId)PLUSPOWER, page).a;
 	uint16_t product = (uint16_t)(count * 10u);
 
 	return (PowerModifierResult){product, (uint16_t)(de + product)};
@@ -1840,7 +1840,7 @@ PowerModifierResult ApplyAttachedPlusPower(uint8_t b, uint16_t de)
 PowerModifierResult ApplyAttachedDefender(uint8_t b, uint16_t de)
 {
 	uint16_t page = (uint16_t)((uint16_t)hWhoseTurn << 8);
-	uint8_t count = CountCardIDInLocation(b, DEFENDER, page).a;
+	uint8_t count = CountCardIDInLocation(b, (CardId)DEFENDER, page).a;
 	uint16_t product = (uint16_t)(count * 20u);
 
 	return (PowerModifierResult){product, (uint16_t)(de - product)};
@@ -1991,7 +1991,7 @@ uint8_t GetPlayAreaCardRetreatCost(void)
 /* <<< factory GetPlayAreaCardRetreatCost */
 
 /* >>> part WAS_KNOCKED_OUT_TEXT */
-#define WAS_KNOCKED_OUT_TEXT 0x0081u
+#define WAS_KNOCKED_OUT_TEXT WasKnockedOutText
 /* <<< part WAS_KNOCKED_OUT_TEXT */
 
 /* >>> factory DrawWideTextBox_WaitForInput_ReturnCarry */
@@ -3568,7 +3568,7 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_
  * data at $44B4/$44C0. DrawPlayArea_PrizeCards intentionally reads coordinates
  * through gb_read8, whose C probe path cannot represent a caller-owned banked
  * ROM pointer. Copy the selected 12-byte table to WRAM exactly like the landed
- * _DrawPlayersPrizeAndBenchCards caller of the same callee. */
+ * DrawPlayAreaToPlacePrizeCards is another caller of the same callee. */
 void Func_82b6(void)
 {
 	uint8_t duelist = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);

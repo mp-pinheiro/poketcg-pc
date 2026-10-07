@@ -1,10 +1,3 @@
-/* >>> part includes_2 */
-#include "home/duel.h"
-#include "home/card_id_bus.h"
-/* <<< part includes_2 */
-/* >>> part OPPACTION_PLAY_ENERGY_600 */
-#define OPPACTION_PLAY_ENERGY_600 OPPACTION_PLAY_ENERGY
-/* <<< part OPPACTION_PLAY_ENERGY_600 */
 /* >>> factory CheckSpecificDecksToAttachDoubleColorless */
 static CardId CheckSpecificDecksToAttachDoubleColorless_GetID(void)
 {

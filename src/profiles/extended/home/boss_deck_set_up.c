@@ -1,8 +1,3 @@
-/* >>> part includes_2 */
-#include "home/duel.h"
-#include "generated/wram.h"
-#include "home/card_id_bus.h"
-/* <<< part includes_2 */
 /* === part DUELVARS_HAND */
 /* >>> part CARD_LIST_TERMINATOR */
 #define CARD_LIST_TERMINATOR 0x00u

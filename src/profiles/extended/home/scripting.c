@@ -89,9 +89,6 @@
 #include "home/switch_rom.h"
 #include "generated/wram.h"
 /* <<< part includes_SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK */
-/* >>> part MAN1_REQUESTED_CARDS_BANK */
-#define MAN1_REQUESTED_CARDS_BANK Man1RequestedCardsList_BANK
-/* <<< part MAN1_REQUESTED_CARDS_BANK */
 /* >>> factory GetEventVar */
 GetEventVarResult GetEventVar(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 {
@@ -402,32 +399,6 @@ Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 	return (Func_c943Result){post.a, post.f, saved_b, saved_c, saved_d, saved_e, saved_hl};
 }
 /* <<< factory Func_c943 */
-/* >>> factory ScriptCommand_ShowSamNormalMultichoice */
-IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
-{
-	BankswitchROM(3u);
-	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, (ScriptCommand_ShowSamNormalMultichoice__multichoice_menu_args_ADDR));
-	uint8_t choice = wMultichoiceTextboxResult_Sam;
-	(void)menu;
-	(void)SetEventValue(EVENT_SAM_MENU_CHOICE, 0u, 0u, choice);
-	wMultichoiceTextboxResult_Sam = 0u;
-	return IncreaseScriptPointerBy1();
-}
-/* <<< factory ScriptCommand_ShowSamNormalMultichoice */
-/* >>> factory ScriptCommand_ShowSamRulesMultichoice */
-IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
-{
-	/* scripting.asm:1716-1730 passes `.multichoice_menu_args`, the table that
-	 * follows the routine in bank 3 ($03:532B). */
-	BankswitchROM(3u);
-	ShowMultichoiceTextboxResult menu =
-		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, (ScriptCommand_ShowSamRulesMultichoice__multichoice_menu_args_ADDR));
-	uint8_t choice = wMultichoiceTextboxResult_Sam;
-	(void)menu;
-	(void)SetEventValue(EVENT_SAM_MENU_CHOICE, 0u, 0u, choice);
-	return IncreaseScriptPointerBy1();
-}
-/* <<< factory ScriptCommand_ShowSamRulesMultichoice */
 /* >>> factory ScriptCommand_ShowCardReceivedScreen */
 IncreaseScriptPointerResult ScriptCommand_ShowCardReceivedScreen(uint8_t b, uint8_t c)
 {

@@ -1,9 +1,4 @@
-/* >>> part includes */
-#include "home/card_album.h"
-
-#include "generated/text_ids.h"
-#include "generated/constants.h"
-/* <<< part includes */
+/* === part includes */
 /* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 /* <<< part MENU_CONFIRM */
@@ -14,16 +9,6 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes_tail */
-/* >>> part includes_2 */
-#include "home/card_id_bus.h"
-
-#include "generated/wram.h"
-#include "home/bg_map.h"
-#include "home/card_data.h"
-#include "home/deck_configuration.h"
-#include "home/menus.h"
-#include "home/process_text.h"
-/* <<< part includes_2 */
 /* === part PAD_BUTTONS */
 /* >>> part includes_tail_2 */
 #include "home/deck_configuration.h"

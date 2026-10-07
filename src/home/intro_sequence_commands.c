@@ -1,8 +1,8 @@
 /* >>> part includes */
 #include "home/intro_sequence_commands.h"
 
-#include "generated/constants.h"
 #include "generated/rom.h"
+#include "generated/constants.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -107,52 +107,52 @@ static void UpdateSpriteAttributes(void)
 #include "generated/wram.h"
 /* <<< part includes_INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION */
 /* >>> part INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION */
-#define INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION IntroSequenceCmd_WaitOrbsAnimation_ADDR
+#define INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION (IntroSequenceCmd_WaitOrbsAnimation_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_WAIT_ORBS_ANIMATION */
 /* >>> part INTRO_SEQUENCE_CMD_WAIT */
-#define INTRO_SEQUENCE_CMD_WAIT IntroSequenceCmd_Wait_ADDR
+#define INTRO_SEQUENCE_CMD_WAIT (IntroSequenceCmd_Wait_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_WAIT */
 /* >>> part INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS */
-#define INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS IntroSequenceCmd_SetOrbsAnimations_ADDR
+#define INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS (IntroSequenceCmd_SetOrbsAnimations_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_SET_ORBS_ANIMATIONS */
 /* >>> part INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES */
-#define INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES IntroSequenceCmd_SetOrbsCoordinates_ADDR
+#define INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES (IntroSequenceCmd_SetOrbsCoordinates_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_SET_ORBS_COORDINATES */
 /* >>> part INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC */
-#define INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC IntroSequenceCmd_PlayTitleScreenMusic_ADDR
+#define INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC (IntroSequenceCmd_PlayTitleScreenMusic_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_PLAY_TITLE_SCREEN_MUSIC */
 /* >>> part INTRO_SEQUENCE_CMD_WAIT_SFX */
-#define INTRO_SEQUENCE_CMD_WAIT_SFX IntroSequenceCmd_WaitSFX_ADDR
+#define INTRO_SEQUENCE_CMD_WAIT_SFX (IntroSequenceCmd_WaitSFX_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_WAIT_SFX */
 /* >>> part INTRO_SEQUENCE_CMD_PLAY_SFX */
-#define INTRO_SEQUENCE_CMD_PLAY_SFX IntroSequenceCmd_PlaySFX_ADDR
+#define INTRO_SEQUENCE_CMD_PLAY_SFX (IntroSequenceCmd_PlaySFX_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_PLAY_SFX */
 /* >>> part INTRO_SEQUENCE_CMD_FADE_IN */
-#define INTRO_SEQUENCE_CMD_FADE_IN IntroSequenceCmd_FadeIn_ADDR
+#define INTRO_SEQUENCE_CMD_FADE_IN (IntroSequenceCmd_FadeIn_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_FADE_IN */
 /* >>> part INTRO_SEQUENCE_CMD_FADE_OUT */
-#define INTRO_SEQUENCE_CMD_FADE_OUT IntroSequenceCmd_FadeOut_ADDR
+#define INTRO_SEQUENCE_CMD_FADE_OUT (IntroSequenceCmd_FadeOut_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_FADE_OUT */
 /* >>> part INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE */
-#define INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE IntroSequenceCmd_LoadCharizardScene_ADDR
+#define INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE (IntroSequenceCmd_LoadCharizardScene_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_LOAD_CHARIZARD_SCENE */
 /* >>> part INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE */
-#define INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE IntroSequenceCmd_LoadScytherScene_ADDR
+#define INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE (IntroSequenceCmd_LoadScytherScene_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_LOAD_SCYTHER_SCENE */
 /* >>> part INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE */
-#define INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE IntroSequenceCmd_LoadAerodactylScene_ADDR
+#define INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE (IntroSequenceCmd_LoadAerodactylScene_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_LOAD_AERODACTYL_SCENE */
 /* >>> part INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE */
-#define INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE IntroSequenceCmd_LoadTitleScreenScene_ADDR
+#define INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE (IntroSequenceCmd_LoadTitleScreenScene_ADDR)
 /* <<< part INTRO_SEQUENCE_CMD_LOAD_TITLE_SCREEN_SCENE */
 /* >>> part INTRO_SEQUENCE_LOAD_OPENING_SCENE_AND_UPDATE_SGB_BORDER */
 #define INTRO_SEQUENCE_LOAD_OPENING_SCENE_AND_UPDATE_SGB_BORDER LoadOpeningSceneAndUpdateSGBBorder_ADDR
 /* <<< part INTRO_SEQUENCE_LOAD_OPENING_SCENE_AND_UPDATE_SGB_BORDER */
 /* >>> part INTRO_SEQUENCE_LOAD_OPENING_SCENE */
-#define INTRO_SEQUENCE_LOAD_OPENING_SCENE LoadOpeningScene_ADDR
+#define INTRO_SEQUENCE_LOAD_OPENING_SCENE (LoadOpeningScene_ADDR)
 /* <<< part INTRO_SEQUENCE_LOAD_OPENING_SCENE */
 /* >>> part INTRO_SEQUENCE_EMPTY_FUNC */
-#define INTRO_SEQUENCE_EMPTY_FUNC IntroSequenceEmptyFunc_ADDR
+#define INTRO_SEQUENCE_EMPTY_FUNC (IntroSequenceEmptyFunc_ADDR)
 /* <<< part INTRO_SEQUENCE_EMPTY_FUNC */
 
 

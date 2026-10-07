@@ -1,12 +1,3 @@
-/* >>> part includes */
-#include "home/naming.h"
-
-#include "generated/constants.h"
-#include "generated/rom.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
 /* --- part MINT_NAME */
 /* --- part NAMING_BANK */
 /* >>> factory DisplayPlayerNamingScreen */

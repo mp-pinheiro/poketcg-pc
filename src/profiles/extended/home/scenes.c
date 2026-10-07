@@ -1,24 +1,3 @@
-/* >>> part includes */
-#include "home/scenes.h"
-
-#include "generated/rom.h"
-#include "generated/constants.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
-/* >>> part includes_2 */
-#include "home/decompress.h"
-#include "home/empty_screen.h"
-#include "home/load_gfx.h"
-#include "home/load_animation.h"
-#include "home/palettes.h"
-#include "home/map.h"
-#include "home/memory.h"
-#include "home/objects.h"
-#include "home/switch_rom.h"
-#include "home/sprite_animations.h"
-/* <<< part includes_2 */
 /* --- part includes_MINT_PIC */
 /* --- part MINT_PIC */
 /* --- part TILESET_MINT */

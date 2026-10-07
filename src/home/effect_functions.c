@@ -2684,7 +2684,7 @@ MaintenanceHandCheckResult Maintenance_HandCheck(void)
 	if (hand.a < 3u)
 		f |= 0x10u;
 
-	return (MaintenanceHandCheckResult){hand.a, f, 0x00b6u};
+	return (MaintenanceHandCheckResult){hand.a, f, NotEnoughCardsInHandText};
 }
 /* <<< factory Maintenance_HandCheck */
 
@@ -2801,7 +2801,7 @@ TeleportCheckBenchResult Teleport_CheckBench(void)
     if (count.a == 2u) f |= 0x80u;
     if ((count.a & 0x0fu) < 2u) f |= 0x20u;
     if (count.a < 2u) f |= 0x10u;
-    return (TeleportCheckBenchResult){count.a, f, 0x00d2u};
+    return (TeleportCheckBenchResult){count.a, f, ThereAreNoPokemonOnBenchText};
 }
 /* <<< factory Teleport_CheckBench */
 
@@ -3963,7 +3963,7 @@ MrFujiBenchCheckResult Wail_BenchCheck(void)
 	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	if (nonturn.a < 6u)
 		return (MrFujiBenchCheckResult){nonturn.a, nonturn.a == 0u ? 0x80u : 0u, nonturn.hl};
-	return (MrFujiBenchCheckResult){nonturn.a, 0x10u, 0x00B2u};
+	return (MrFujiBenchCheckResult){nonturn.a, 0x10u, NoSpaceOnTheBenchText};
 }
 /* <<< factory Wail_BenchCheck */
 
@@ -9606,8 +9606,10 @@ NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelec
 		DisplayCardListResult display = DisplayCardList();
 		if ((display.f & 0x10u) == 0u) {
 			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
-			uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANF);
-			uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANM);
+			uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
+				(uint8_t)(NIDORANF >> 8), (uint8_t)NIDORANF);
+			uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
+				(uint8_t)(NIDORANM >> 8), (uint8_t)NIDORANM);
 			if ((is_f & 0x80u) != 0u || (is_m & 0x80u) != 0u) {
 				uint8_t selected = hTempCardIndex_ff98;
 				hTemp_ffa0 = selected;
@@ -9620,7 +9622,8 @@ NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelec
 		for (;;) {
 			if (gb_read8(hl) == CARD_LOCATION_DECK) {
 				uint16_t card_id = GetCardIDFromDeckIndex((uint8_t)hl);
-				uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANF);
+				uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
+					(uint8_t)(NIDORANF >> 8), (uint8_t)NIDORANF);
 				if ((is_f & 0x80u) != 0u) { PlaySFX_InvalidChoice(); break; }
 			}
 			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
@@ -10569,7 +10572,7 @@ Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
 	CardListResult deck = CreateDeckCardList(0u, 0u);
 	LookForCardsInDeckResult search = LookForCardsInDeck(
 		deck.a, (uint8_t)(OddishText >> 8), (uint8_t)OddishText,
-		SEARCHEFFECT_CARD_ID, ODDISH, ChooseAnOddishFromDeckText);
+		(uint8_t)(ODDISH >> 8), (uint8_t)ODDISH, ChooseAnOddishFromDeckText);
 	if ((search.f & 0x10u) != 0u)
 		return (Sprout_PlayerSelectEffectResult){search.a, search.f};
 
@@ -10580,7 +10583,7 @@ Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
 		if ((display.f & 0x10u) == 0u) {
 			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
 			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-				(uint8_t)card_id, 0u, ODDISH);
+				(uint8_t)card_id, (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
 			if ((compare & 0x80u) != 0u) {
 				uint8_t selected = hTempCardIndex_ff98;
 				hTemp_ffa0 = selected;
@@ -10598,7 +10601,7 @@ Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
 				uint8_t index = (uint8_t)hl;
 				uint16_t card_id = GetCardIDFromDeckIndex(index);
 				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-					(uint8_t)card_id, 0u, ODDISH);
+					(uint8_t)card_id, (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
 				if ((compare & 0x80u) != 0u) {
 					PlaySFX_InvalidChoice();
 					break;

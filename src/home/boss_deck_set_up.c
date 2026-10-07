@@ -9,7 +9,7 @@
 /* >>> part includes_2 */
 #include "home/duel.h"
 #include "generated/wram.h"
-#include "mem.h"
+#include "home/card_id_bus.h"
 /* <<< part includes_2 */
 /* >>> part DUELVARS_DECK_CARDS */
 #define DUELVARS_DECK_CARDS 0x7Eu

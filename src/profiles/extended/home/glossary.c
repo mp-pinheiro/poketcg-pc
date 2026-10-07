@@ -1,9 +1,4 @@
-/* >>> part includes */
-#include "home/glossary.h"
-
-#include "generated/text_ids.h"
-#include "generated/constants.h"
-/* <<< part includes */
+/* === part includes */
 /* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 /* <<< part MENU_CONFIRM */

@@ -9,12 +9,10 @@
 #include "mem.h"
 /* <<< part includes */
 /* >>> part includes_2 */
+#include "generated/sram.h"
 #include "home/load_deck.h"
 #include "home/print_text.h"
 #include "home/switch_sram.h"
-
-
-#include "generated/sram.h"
 /* <<< part includes_2 */
 
 /* >>> part PLAYER_TURN */

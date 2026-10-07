@@ -9,6 +9,7 @@
 #include "home/play_animation.h"
 
 #include "generated/wram.h"
+#include "home/card_id_bus.h"
 #include "mem.h"
 /* <<< part includes */
 

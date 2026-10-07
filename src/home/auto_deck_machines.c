@@ -11,7 +11,7 @@
 #include "home/random.h"
 #include "home/print_text.h"
 #include "home/switch_sram.h"
-#include "generated/wram.h"
+#include "home/load_deck.h"
 #include "generated/sram.h"
 #include "mem.h"
 /* <<< part includes_2 */

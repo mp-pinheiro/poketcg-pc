@@ -1,22 +1,3 @@
-/* >>> part includes */
-#include "home/load_gfx.h"
-
-#include "generated/constants.h"
-#include "generated/rom.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "generated/sram.h"
-#include "home/bg_map.h"
-#include "home/copy.h"
-#include "home/decompress.h"
-#include "home/empty_screen.h"
-#include "home/map.h"
-#include "home/memory.h"
-#include "home/palettes.h"
-#include "home/switch_rom.h"
-#include "home/switch_sram.h"
-#include "mem.h"
-/* <<< part includes */
 /* --- part TILESET_MINT */
 /* --- part TILESET_MINT_SINGLE */
 /* --- part SPRITE_OW_MINT */
@@ -176,19 +157,6 @@ void SafelyCopyBGMapFromSRAMToVRAM(void)
 	DisableSRAM();
 }
 /* <<< factory SafelyCopyBGMapFromSRAMToVRAM */
-/* >>> factory LoadGraphicsPointerFromHL */
-void LoadGraphicsPointerFromHL(uint16_t *hl)
-{
-	uint8_t saved = hBankROM;
-	uint16_t p = *hl;
-	BankswitchROM(GfxTablePointers_BANK);
-	wTempPointer = gb_read8(p++);
-	gb_write8(wTempPointer_ADDR + 1u, gb_read8(p++));
-	wTempPointerBank = (uint8_t)(gb_read8(p) + GfxTablePointers_BANK);
-	BankswitchROM(saved);
-	*hl = (uint16_t)(p + 1u);
-}
-/* <<< factory LoadGraphicsPointerFromHL */
 /* >>> factory LoadSpriteGfx */
 uint8_t LoadSpriteGfx(uint8_t a)
 {

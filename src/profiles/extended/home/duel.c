@@ -1,11 +1,4 @@
-/* >>> part includes */
-#include "home/duel.h"
-#include <stdio.h>
-
-#include "generated/text_ids.h"
-#include "generated/rom.h"
-#include "generated/constants.h"
-/* <<< part includes */
+/* === part includes */
 /* >>> part MENU_CONFIRM */
 #define MENU_CONFIRM 0x01u
 /* <<< part MENU_CONFIRM */
@@ -103,26 +96,6 @@ static void copy_card_palette(uint8_t palette)
 /* >>> part hTempPlayAreaLocation_ff9d_ADDR */
 #define hTempPlayAreaLocation_ff9d_ADDR 0xFF9Du
 /* <<< part hTempPlayAreaLocation_ff9d_ADDR */
-/* >>> part includes_PLAYER_ICON_COORDINATES_ADDR */
-#include "home/duel.h"
-#include "home/empty_screen.h"
-#include "home/tiles.h"
-#include "home/objects.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-/* <<< part includes_PLAYER_ICON_COORDINATES_ADDR */
-/* >>> part PLAYER_ICON_COORDINATES_ADDR */
-#define PLAYER_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x60u)
-/* <<< part PLAYER_ICON_COORDINATES_ADDR */
-/* >>> part OPP_ICON_COORDINATES_ADDR */
-#define OPP_ICON_COORDINATES_ADDR (_DrawPlayAreaToPlacePrizeCards_ADDR + 0x66u)
-/* <<< part OPP_ICON_COORDINATES_ADDR */
-/* >>> part PEEK_WHICH_CARD_TEXT */
-#define PEEK_WHICH_CARD_TEXT WhichCardWouldYouLikeToSeeText
-/* <<< part PEEK_WHICH_CARD_TEXT */
-/* >>> part HTEMP_LIST_PTR */
-#define HTEMP_LIST_PTR 0xFF99u
-/* <<< part HTEMP_LIST_PTR */
 /* >>> factory SortCardsInListByID */
 /* duel.asm:589-648. The terminator is $FF, whose bit 7 is the loop-exit test. Each
  * pass finds the lowest-ID card in the remaining span and swaps it to the front,
@@ -173,15 +146,6 @@ SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de)
 	}
 }
 /* <<< factory SortCardsInListByID */
-/* >>> factory TranslateColorToWR */
-/* duel.asm:1915-1922. The table is `db $80, $40, $20, $10, $08, $04, $02, $01`
- * (InvertedPowersOf2, 00:1A1A). Entry a is a color index; all other registers
- * are preserved. */
-uint8_t TranslateColorToWR(uint8_t a)
-{
-	return rom_ptr(InvertedPowersOf2_BANK, InvertedPowersOf2_ADDR)[a];
-}
-/* <<< factory TranslateColorToWR */
 /* >>> factory CountCardIDInLocation */
 /* duel.asm:1290-1315. Entry hl supplies the page only: `ld l,
  * DUELVARS_CARD_LOCATIONS` overwrites the low byte before the walk, so only h
@@ -202,10 +166,6 @@ CardLocationCountResult CountCardIDInLocation(uint8_t b, CardId de, uint16_t hl)
 	return (CardLocationCountResult){count, (uint16_t)(base + DECK_SIZE)};
 }
 /* <<< factory CountCardIDInLocation */
-/* >>> part PLAYER2_TEXT_ID */
-/* Text ID of the fallback opponent name. */
-#define PLAYER2_TEXT_ID Player2Text
-/* <<< part PLAYER2_TEXT_ID */
 /* >>> factory CopyDeckData */
 /* duel.asm:60-104. */
 CardListResult CopyDeckData(uint16_t de)
@@ -282,28 +242,6 @@ AttackCopyResult CopyAttackDataAndDamage_FromCardID(uint8_t b, uint8_t c, uint16
 	return CopyAttackDataAndDamage(c);
 }
 /* <<< factory CopyAttackDataAndDamage_FromCardID */
-/* >>> factory ApplyAttachedPlusPower */
-/* duel.asm:1976-1988 / 1991-2006. a/f flow through the opaque HtimesL leaf and
- * are omitted. */
-PowerModifierResult ApplyAttachedPlusPower(uint8_t b, uint16_t de)
-{
-	uint16_t page = (uint16_t)((uint16_t)hWhoseTurn << 8);
-	uint8_t count = CountCardIDInLocation(b, (CardId)PLUSPOWER, page).a;
-	uint16_t product = (uint16_t)(count * 10u);
-
-	return (PowerModifierResult){product, (uint16_t)(de + product)};
-}
-/* <<< factory ApplyAttachedPlusPower */
-/* >>> factory ApplyAttachedDefender */
-PowerModifierResult ApplyAttachedDefender(uint8_t b, uint16_t de)
-{
-	uint16_t page = (uint16_t)((uint16_t)hWhoseTurn << 8);
-	uint8_t count = CountCardIDInLocation(b, (CardId)DEFENDER, page).a;
-	uint16_t product = (uint16_t)(count * 20u);
-
-	return (PowerModifierResult){product, (uint16_t)(de - product)};
-}
-/* <<< factory ApplyAttachedDefender */
 /* --- part WEAKNESS */
 /* --- part RESISTANCE */
 /* >>> factory ApplyDamageModifiers_DamageToTarget */
@@ -405,9 +343,6 @@ uint16_t ApplyDamageModifiers_DamageToSelf(void)
 	return de;
 }
 /* <<< factory ApplyDamageModifiers_DamageToSelf */
-/* >>> part WAS_KNOCKED_OUT_TEXT */
-#define WAS_KNOCKED_OUT_TEXT WasKnockedOutText
-/* <<< part WAS_KNOCKED_OUT_TEXT */
 /* >>> factory PrintKnockedOut */
 uint8_t PrintKnockedOut(void)
 {
@@ -1015,21 +950,6 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_
 	}
 }
 /* <<< factory DealDamageToPlayAreaPokemon */
-/* >>> factory Func_82b6 */
-/* duel.asm:487-501. PrizeCardsCoordinateData_YourOrOppPlayArea is bank-2 ROM
- * data at $44B4/$44C0. DrawPlayArea_PrizeCards intentionally reads coordinates
- * through gb_read8, whose C probe path cannot represent a caller-owned banked
- * ROM pointer. Copy the selected 12-byte table to WRAM exactly like the landed
- * DrawPlayAreaToPlacePrizeCards is another caller of the same callee. */
-void Func_82b6(void)
-{
-	uint8_t duelist = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
-	uint8_t layout = gb_read8(wCheckMenuPlayAreaWhichLayout_ADDR);
-
-	DrawPlayArea_PrizeCards(duelist == layout ? PRIZE_COORDS_YOUR_OR_OPP_PLAYER
-	                                          : PRIZE_COORDS_YOUR_OR_OPP_OPPONENT);
-}
-/* <<< factory Func_82b6 */
 /* >>> factory DuelCheckMenu_InPlayArea */
 /* menus/duel.asm:36-40 */
 void DuelCheckMenu_InPlayArea(void)

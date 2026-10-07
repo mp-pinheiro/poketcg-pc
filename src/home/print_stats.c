@@ -15,14 +15,14 @@
 
 /* >>> part kMedalCoordsAndTilemaps */
 static const uint8_t kMedalCoordsAndTilemaps[24] = {
-	 1u, 10u, 0x3eu,
-	 6u, 10u, 0x3fu,
-	11u, 10u, 0x40u,
-	16u, 10u, 0x41u,
-	 1u, 14u, 0x42u,
-	 6u, 14u, 0x45u,
-	11u, 14u, 0x44u,
-	16u, 14u, 0x43u,
+	 1u, 10u, TILEMAP_GRASS_MEDAL,
+	 6u, 10u, TILEMAP_SCIENCE_MEDAL,
+	11u, 10u, TILEMAP_FIRE_MEDAL,
+	16u, 10u, TILEMAP_WATER_MEDAL,
+	 1u, 14u, TILEMAP_LIGHTNING_MEDAL,
+	 6u, 14u, TILEMAP_PSYCHIC_MEDAL,
+	11u, 14u, TILEMAP_ROCK_MEDAL,
+	16u, 14u, TILEMAP_FIGHTING_MEDAL,
 };
 /* <<< part kMedalCoordsAndTilemaps */
 
