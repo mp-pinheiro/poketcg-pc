@@ -1,4 +1,23 @@
 """Extended oracle-diff cases for general_no_retreat, seeded from tests/cases/general_no_retreat.py."""
+from pathlib import Path
+
+from tests.cases._fixtures import Fixture
+
+_FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
+_HOLES = (0xCAB7, 0xCAB8, 0xCABF, 0xCAC0, 0xCCBD, 0xCE4D)
+_AI_MAIN = Fixture("ai-duel-fire-charge-aimainturnlogic-entry",
+                   directory=_FIXTURES, holes=_HOLES, lcdc=0xCABB)
+
+
+def _fixture_case(fixture):
+    case = fixture.case(vram=False)
+    case["read"][0xCC00] = 0xBD
+    case["read"][0xCCBE] = 0x42
+    return case
+
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
     'AIDoTurn_GeneralNoRetreat': {'compare': ('f',), 'preserve': ()},
@@ -6,51 +25,8 @@ CONTRACT = {
 
 CASES = {
     'AIDoTurn_GeneralNoRetreat': [
-        {   'keys': [0x00, 0x01],
-            'wram': {   0xFF97: b'\xc2',
-                        0xCD2D: b'\x80',
-                        0xC2EE: b'\x00',
-                        0xC3EE: b'\x00',
-                        0xC2BB: b'\x00',
-                        0xC3BB: b'\x00',
-                        0xC2BC: b'\xff',
-                        0xC3BC: b'\xff',
-                        0xC400: b'\xb9\xff',
-                        0xC600: b'\xb9\xff',
-                        0xCBB5: b'\x01',
-                        0xCDA6: b'\x00',
-                        0xCAC2: b'\x01',
-                        0xCBA3: b'\x01'},
-            'read': {0xCDA6: 0x01},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'keys': [0x00, 0x01],
-            'wram': {   0xFF97: b'\xc2',
-                        0xCD2D: b'\x80',
-                        0xC2EE: b'\x00',
-                        0xC3EE: b'\x00',
-                        0xC2BB: b'\x00',
-                        0xC3BB: b'\x00',
-                        0xC2BC: b'\xff',
-                        0xC3BC: b'\xff',
-                        0xC400: b'\xb9\xff',
-                        0xC600: b'\xb9\xff',
-                        0xCBB5: b'\x01',
-                        0xCDA6: b'\x00',
-                        0xCAC2: b'\x01',
-                        0xCBA3: b'\x01'},
-            'read': {0xCDA6: 0x01},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
+        dict(_fixture_case(_AI_MAIN), **_AI_MAIN.regs),
+        dict(_fixture_case(_AI_MAIN), **POISON),
     ],
 }
 
