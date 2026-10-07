@@ -7,6 +7,7 @@
 #define MENU_CONFIRM 0x01u
 #define CURSOR_BLINK_PERIOD_MASK 0x0Fu
 #define B_CURSOR_BLINK_PERIOD 4u
+#define PAL_SIZE 8u
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
@@ -359,9 +360,14 @@ void YourOrOppPlayAreaScreen_DrawCursor(void)
 static void copy_card_palette(uint8_t palette)
 {
 	uint16_t src = wCardPalette_ADDR;
-	uint16_t dst = (uint16_t)(wBackgroundPalettesCGB_ADDR + (uint16_t)palette * 8u);
-	for (uint8_t i = 0u; i < 8u; i++)
+	uint8_t offset = (uint8_t)(palette * PAL_SIZE);
+	uint16_t dst = (uint16_t)(wBackgroundPalettesCGB_ADDR + offset);
+	for (uint8_t i = 0u; i < 3u * PAL_SIZE; i++)
 		gb_write8(dst++, gb_read8(src++));
+	for (uint8_t i = 0u; i < 0x30u; i++) {
+		uint16_t addr = (uint16_t)(wCardAttrMap_ADDR + i);
+		gb_write8(addr, (uint8_t)(gb_read8(addr) + palette));
+	}
 }
 
 static const uint8_t kCursorTileData[16] = {
@@ -1562,7 +1568,7 @@ uint16_t ApplyDamageModifiers_DamageToTarget(void)
 		SwapTurn();
 		if (weakness & wr) {
 			de <<= 1;
-			gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | WEAKNESS));
+			gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | (1u << WEAKNESS)));
 		}
 
 		SwapTurn();
@@ -1570,7 +1576,7 @@ uint16_t ApplyDamageModifiers_DamageToTarget(void)
 		SwapTurn();
 		if (resistance & wr) {
 			de = (uint16_t)(de - 30u);
-			gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | RESISTANCE));
+			gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | (1u << RESISTANCE)));
 		}
 	}
 
@@ -1607,12 +1613,12 @@ uint16_t ApplyDamageModifiers_DamageToSelf(void)
 	uint8_t weakness = GetArenaCardWeakness();
 	if (weakness & wr) {
 		de <<= 1;
-		gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | WEAKNESS));
+		gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | (1u << WEAKNESS)));
 	}
 	uint8_t resistance = GetArenaCardResistance();
 	if (resistance & wr) {
 		de = (uint16_t)(de - 30u);
-		gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | RESISTANCE));
+		gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | (1u << RESISTANCE)));
 	}
 
 	{
@@ -1672,7 +1678,7 @@ KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a)
 	PrintKnockedOut();
 	temp_card_id = wTempNonTurnDuelistCardID_ADDR;
 	card_id_write(&temp_card_id, saved);
-	return (KnockoutCheckResult){saved, 0x90u};
+	return (KnockoutCheckResult){(uint8_t)(saved >> 8), 0x90u};
 }
 
 
@@ -2194,6 +2200,7 @@ void SaveDuelStateToSRAM(void)
 	CardId non_turn_card = GetCardIDFromDeckIndex(r2.a);
 	temp_addr = wTempNonTurnDuelistCardID_ADDR;
 	card_id_write(&temp_addr, non_turn_card);
+	SwapTurn();
 
 	EnableSRAM();
 	uint16_t cursor = buffer;
@@ -2451,13 +2458,13 @@ UsePokemonPowerResult UsePokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 /* <<< factory UsePokemonPower */
 
 /* >>> factory DrawYourOrOppPlayArea_ActiveCardGfx */
-void DrawYourOrOppPlayArea_ActiveCardGfx(uint16_t de)
+uint16_t DrawYourOrOppPlayArea_ActiveCardGfx(uint16_t de)
 {
 	uint8_t page = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
 	uint16_t arena_addr = (uint16_t)(((uint16_t)page << 8) | DUELVARS_ARENA_CARD);
 	uint8_t arena_card = gb_read8(arena_addr);
 	if (arena_card == 0xFFu)
-		return;
+		return de;
 
 	uint8_t turn = gb_read8(hWhoseTurn_ADDR);
 	if (turn != page)
@@ -2470,7 +2477,8 @@ void DrawYourOrOppPlayArea_ActiveCardGfx(uint16_t de)
 	copy_card_palette(2u);
 	FlushAllPalettes();
 	FillRectangle(0xA0u, 8u, 6u, de, 0x0601u);
-	(void)ApplyCardCGBAttributes(0xA0u, de);
+	ApplyCardCGBAttributesResult attributes = ApplyCardCGBAttributes(0xA0u, de);
+	return attributes.de;
 }
 /* <<< factory DrawYourOrOppPlayArea_ActiveCardGfx */
 
@@ -2765,7 +2773,7 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 		uint8_t c_bit = (category < POKEMON_POWER) ? 0x10u : 0u;
 		f = (uint8_t)(z_bit | 0x40u | h_bit | c_bit);
 		if (category != POKEMON_POWER)
-			return (DuelRoutineResult){a, f, b, c, d, e, hl};
+			return (DuelRoutineResult){category, f, b, c, d, e, hl};
 	}
 	DisplayUsePokemonPowerScreen();
 	(void)LoadCardDataToBuffer1_FromDeckIndex(index);
@@ -3056,7 +3064,7 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_
 			(void)PrintKnockedOutIfHLZero(hp.hl);
 	}
 	{
-		StrikesBackResult strikes = HandleStrikesBack_AgainstDamagingAttack(de);
+		StrikesBackResult strikes = HandleStrikesBack_AgainstDamagingAttack(de, hl);
 		return (DealDamageToPlayAreaPokemonResult){strikes.a, strikes.f};
 	}
 }

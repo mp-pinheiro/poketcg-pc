@@ -8638,7 +8638,7 @@ uint8_t TailWagEffect(uint16_t hl)
 		SetWasUnsuccessful();
 		return toss.f;
 	}
-	wLoadedAttackAnimation = ATK_ANIM_LURE;
+	wLoadedAttackAnimation = ATK_ANIM_TAIL_WHIP;
 	ApplySubstatus2ToDefendingCard(SUBSTATUS2_TAIL_WAG, hl);
 	return toss.f;
 }

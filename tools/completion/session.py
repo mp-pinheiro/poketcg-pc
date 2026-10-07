@@ -47,7 +47,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import refstream
 import scenario as scenario_module
-from tools.profiles import get_profile, symbol_address
+from tools.profiles import get_profile, symbol_address, symbol_table
 
 PROFILE = get_profile()
 def profile_symbol(name: str, default: tuple[int, int]) -> tuple[int, int]:
@@ -127,20 +127,77 @@ TIMER_SYNC_ENABLED = {symbol_address(PROFILE, "LoadGeneralSaveDataFromDE.loop_co
 # (core.asm:291) and AIMakeDecision (core.asm:6255). One record per write:
 # the interval, the real time, the counter before the write and the value
 # written. The port calls frame_boundary_vblank_sync at the same writes.
-VBLANK_SYNC = {(1, 0x427D): "DuelMainInterface", (1, 0x67EE): "AIMakeDecision"}
+def _vblank_sync_table() -> dict[tuple[int, int], str]:
+    rom = PROFILE.rom_path(ROOT).read_bytes()
+    counter = symbol_address(PROFILE, "wVBlankCounter", ROOT)[1]
+    store = bytes([0xEA, counter & 0xFF, counter >> 8])
+    table: dict[tuple[int, int], str] = {}
+    for routine in ("DuelMainInterface", "AIMakeDecision"):
+        bank, address = symbol_address(PROFILE, routine, ROOT)
+        base = bank * 0x4000 + (address - 0x4000 if bank else address)
+        offset = rom.find(store, base, base + 0x200)
+        if offset < 0:
+            raise SystemExit(f"{routine} has no `ld [wVBlankCounter], a` within $200 bytes of its entry")
+        table[(bank, address + offset - base)] = routine
+    return table
+
+
+VBLANK_SYNC = _vblank_sync_table()
 VBLANK_SYNC_ADDRESSES = {address: bank for bank, address in VBLANK_SYNC}
 VBLANK_RECORD = struct.Struct("<IQBB")
 ISR_RECORD = struct.Struct("<IHHBHB")
-ISR_EVENTS = {(None, 0x02B8): "@DisableLCD", (7, 0x57E7): "@Func_1d765"}
+def _home_site(rom: bytes, routine: str, offset: int, opcode: int) -> tuple[int, int] | None:
+    labels = symbol_table(PROFILE, ROOT)
+    if routine not in labels:
+        return None
+    bank, address = labels[routine]
+    physical = address if address < 0x4000 else bank * 0x4000 + address - 0x4000
+    if rom[physical + offset] != opcode:
+        raise SystemExit(f"{routine}+{offset:#x} is not opcode ${opcode:02X} in the {PROFILE.name} ROM")
+    return bank, address + offset
+
+
+def _isr_sites() -> tuple[dict[tuple[int | None, int], str], int, frozenset[int], frozenset[int], int,
+                          int | None, int | None]:
+    rom = PROFILE.rom_path(ROOT).read_bytes()
+    labels = symbol_table(PROFILE, ROOT)
+    events: dict[tuple[int | None, int], str] = {}
+    disable_lcd = _home_site(rom, "DisableLCD", 0x2E, 0xC9)
+    if disable_lcd is not None:
+        events[(None, disable_lcd[1])] = "@DisableLCD"
+    credits = _home_site(rom, "Func_1d765", 0x82, 0xEA)
+    if credits is not None:
+        events[credits] = "@Func_1d765"
+    halt = _home_site(rom, "WaitForVBlank", 0x0D, 0x00)
+    if halt is None:
+        raise SystemExit("WaitForVBlank is missing from the profile symbols")
+    entries = {rom[vector + 1] | rom[vector + 2] << 8 for vector in (0x40, 0x50, 0x58) if rom[vector] == 0xC3}
+    returns = {0x004B, 0x0060} | {vector for vector in (0x40, 0x50, 0x58) if rom[vector] == 0xD9}
+    home = sorted({address for name, (bank, address) in labels.items()
+                   if bank == 0 and "." not in name and address < 0x4000})
+    for entry in entries:
+        end = min(address for address in home if address > entry) - 1
+        if rom[end] != 0xD9:
+            raise SystemExit(f"the ISR at ${entry:04X} does not end in reti before the next label")
+        returns.add(end)
+    counter = labels["wVBlankCounter"][1]
+    handler = labels["VBlankHandler"][1]
+    increment = rom.find(bytes([0x21, counter & 0xFF, counter >> 8, 0x34]), handler, handler + 0x80)
+    if increment < 0:
+        raise SystemExit("VBlankHandler has no `ld hl, wVBlankCounter / inc [hl]`")
+    printer = labels.get("SendPrinterPacket")
+    serial = _home_site(rom, "SerialSend8Bytes", 0x10, rom[0x0FBC]) if "SerialSend8Bytes" in labels else None
+    return (events, halt[1], frozenset(returns), frozenset(entries), increment + 3,
+            printer[1] if printer else None, serial[1] if serial else None)
+
+
+(ISR_EVENTS, HALT_RESUME, ISR_RETURNS, ISR_HANDLER_ENTRIES, VBLANK_INCREMENT,
+ SEND_PRINTER_PACKET, SERIAL_SEND8_LINK) = _isr_sites()
 ISR_EVENT_ADDRESSES = {address: bank for bank, address in ISR_EVENTS}
-HALT_RESUME = 0x0271
-ISR_RETURNS = frozenset({0x004B, 0x0060, 0x01E5, 0x021B, 0x0D76})
-ISR_HANDLER_ENTRIES = frozenset({0x019B, 0x01E6, 0x0D26})
 ISR_KIND_VBLANK = 0
 ISR_KIND_STAT = 1
 ISR_KIND_SERIAL = 2
 SERIAL_VECTOR = 0x0058
-SEND_PRINTER_PACKET = 0x312D
 PRINTERPKT_PRINT_INSTRUCTION = 0x02
 STACK_RECORD = struct.Struct("<IH")
 STACK_TRACK = "stack.bin"
@@ -160,7 +217,6 @@ REG_SP = 1
 REG_D = 5
 REG_H = 8
 REG_L = 9
-VBLANK_INCREMENT = 0x01D7
 STAT_VECTOR = 0x0048
 STAT_MASK_BITS = 8
 STAT_REPEATS = "stat-repeats.txt"
@@ -853,8 +909,10 @@ SERIAL_TRACK_RECORD = struct.Struct("<IIBB")
 SERIAL_TRACK_TRANSFER = 0
 SERIAL_TRACK_TIMER = 1
 SERIAL_TRACK_AT_ANCHOR = 0xFFFFFFFF
-SERIAL_TIMER_STEPS = frozenset({0x0C9D, 0x0CA3, 0x0CA7, 0x0CAA, 0x0CB0, 0x0CB1, 0x0CB7, 0x0CB8, 0x0CBF, 0x0CC2})
-SERIAL_SEND8_LINK = 0x0FBC
+SERIAL_TIMER_STEPS = frozenset(
+    symbol_table(PROFILE, ROOT)["SerialTimerHandler"][1] + offset
+    for offset in (0x0C, 0x12, 0x16, 0x19, 0x1F, 0x20, 0x26, 0x27, 0x2E, 0x31)
+) if "SerialTimerHandler" in symbol_table(PROFILE, ROOT) else frozenset()
 SERIAL_RESIDUE_RECORD = struct.Struct("<I8B")
 SERIAL_STATE_SYMBOLS = (
     "wSerialOp", "wSerialFlags", "wSerialCounter", "wSerialCounter2", "wSerialTimeoutCounter",
@@ -2037,6 +2095,143 @@ def ai_duel(name: str, *, base: str, at: int, deck: int, seed: int | None, prize
     return 0
 
 
+ANIM_SEED = {name: symbol_address(PROFILE, name, ROOT)[1]
+             for name in ("wDuelAnimBuffer", "wDuelAnimBufferSize", "wDuelAnimBufferCurPos",
+                          "wDoFrameFunction", "wTempAnimation")}
+DUEL_ANIM_ENTRY_SIZE = 8
+DUEL_ANIM_BUFFER_MASK = 0x7F
+OPPONENT_TURN = 0xC3
+
+
+def anim_seed(name: str, *, base: str, at: int, anims: list[str], length: int, goal: str) -> int:
+    from tools.gen_constants import constant_names, evaluate
+
+    base_masks, base_meta = load_session(base)
+    if not 1 <= at < len(base_masks):
+        raise SessionError(f"--at must be within {base}'s {len(base_masks)} ordinals")
+    if not anims:
+        raise SessionError("--anims names no animation")
+    source = PROFILE.source_path(ROOT)
+    values = evaluate(source, constant_names(source))
+    ids: list[int] = []
+    for anim in anims:
+        if not anim.startswith("DUEL_ANIM_") or anim not in values:
+            raise SessionError(f"{anim} is not a DUEL_ANIM_ constant of the {PROFILE.name} profile")
+        if values[anim] >= values["DUEL_SPECIAL_ANIMS"]:
+            raise SessionError(f"{anim} is a screen effect, not a sprite animation")
+        ids.append(values[anim])
+    if len(set(ids)) != len(ids):
+        raise SessionError("--anims repeats an animation")
+    masks = base_masks[:at + length]
+    pokes: refstream.Pokes = {k: list(v) for k, v in base_meta["pokes"].items() if k <= len(masks)}
+    update = symbol_address(PROFILE, "UpdateQueuedAnimations", ROOT)[1]
+    bank = symbol_address(PROFILE, "DrawDuelMainScene", ROOT)[0]
+    screen = values["DUEL_ANIM_SCREEN_MAIN_SCENE"]
+    capacity = (DUEL_ANIM_BUFFER_MASK + 1) // DUEL_ANIM_ENTRY_SIZE - 1
+    play_bank, play_address = symbol_address(PROFILE, "PlayLoadedDuelAnimation", ROOT)
+
+    def replay(after: int, phase_start: bool) -> tuple[tuple[int, int, int] | None, dict[int, int]]:
+        found: list[tuple[int, int, int]] = []
+        played: dict[int, int] = {}
+        previous = {"function": None}
+        with refstream.Core(masks, pokes=pokes, save=base_meta["save"]) as core:
+            core.input_axis = "ordinal"
+            read = core.library.gambatte_cpuread
+            read.restype = ctypes.c_ubyte
+
+            def on_exec(address: int, _cycle: int) -> None:
+                if address != play_address or core.ordinal <= at or core.bank_of(address) != play_bank:
+                    return
+                played.setdefault(read(core.core, ANIM_SEED["wTempAnimation"]), core.ordinal)
+
+            def stop() -> bool:
+                if not found and core.ordinal > after:
+                    wram = core.area("WRAM")
+                    function = (wram[ANIM_SEED["wDoFrameFunction"] - 0xC000]
+                                | wram[ANIM_SEED["wDoFrameFunction"] - 0xC000 + 1] << 8)
+                    starts = function == update and (not phase_start or previous["function"] not in (None, update))
+                    if starts:
+                        size = wram[ANIM_SEED["wDuelAnimBufferSize"] - 0xC000]
+                        cursor = wram[ANIM_SEED["wDuelAnimBufferCurPos"] - 0xC000]
+                        found.append((core.ordinal, size,
+                                      ((size - cursor) & DUEL_ANIM_BUFFER_MASK) // DUEL_ANIM_ENTRY_SIZE))
+                    previous["function"] = function
+                elif not found:
+                    wram = core.area("WRAM")
+                    previous["function"] = (wram[ANIM_SEED["wDoFrameFunction"] - 0xC000]
+                                            | wram[ANIM_SEED["wDoFrameFunction"] - 0xC000 + 1] << 8)
+                return core.ordinal >= len(masks)
+
+            core.install_exec(on_exec)
+            core.run(len(masks) * 2 + 400, stop=stop)
+        return (found[0] if found else None), played
+
+    remaining = list(range(len(ids)))
+    schedule: list[str] = []
+    placed: dict[int, int] = {}
+    after, phase_start = at, False
+    while remaining:
+        phase, _played = replay(after, phase_start)
+        if phase is None:
+            missing = ", ".join(anims[index] for index in remaining)
+            raise SessionError(f"no duel animation wait after {after} in {len(masks)} ordinals is left for "
+                               f"{missing}; batches {', '.join(schedule) or 'none'}")
+        ordinal, size, queued = phase
+        batch = remaining[:max(0, capacity - queued)]
+        writes: list[tuple[int, int]] = []
+        for offset, index in enumerate(batch):
+            slot = (size + DUEL_ANIM_ENTRY_SIZE * offset) & DUEL_ANIM_BUFFER_MASK
+            side = PLAYER_TURN if index % 2 == 0 else OPPONENT_TURN
+            location = 1 if anims[index].endswith("_BENCH") else 0
+            entry = [ids[index], screen, side, location, 0, 0, 0, bank]
+            writes += [(ANIM_SEED["wDuelAnimBuffer"] + slot + byte, value) for byte, value in enumerate(entry)]
+        size_write = (ANIM_SEED["wDuelAnimBufferSize"],
+                      (size + DUEL_ANIM_ENTRY_SIZE * len(batch)) & DUEL_ANIM_BUFFER_MASK)
+        before = list(pokes.get(ordinal, []))
+        pokes[ordinal] = before + writes + [size_write]
+        _phase, played = replay(ordinal - 1, False)
+        kept = 0
+        for index in batch:
+            if played.get(ids[index], -1) >= ordinal:
+                kept += 1
+            else:
+                break
+        if kept == 0:
+            if before:
+                pokes[ordinal] = before
+            else:
+                del pokes[ordinal]
+        else:
+            size_write = (ANIM_SEED["wDuelAnimBufferSize"],
+                          (size + DUEL_ANIM_ENTRY_SIZE * kept) & DUEL_ANIM_BUFFER_MASK)
+            pokes[ordinal] = before + writes[:kept * DUEL_ANIM_ENTRY_SIZE] + [size_write]
+            for index in batch[:kept]:
+                placed[index] = ordinal
+            schedule.append(f"{kept}@{ordinal}")
+            remaining = remaining[kept:]
+        after, phase_start = ordinal, True
+    _phase, played = replay(at, False)
+    missing = [anim for anim, anim_id in zip(anims, ids, strict=True) if anim_id not in played]
+    if missing:
+        raise SessionError(f"the reference never played {', '.join(missing)}; batches {', '.join(schedule)}")
+    directory = session_dir(name)
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "input.txt").write_text("\n".join(str(m) for m in masks) + "\n")
+    (directory / "pokes.txt").write_text(refstream.pokes_text(pokes))
+    inherit_save(directory, base_meta["save"])
+    meta = {
+        "schema": 1, "name": name, "ordinals": len(masks),
+        "goal": goal or f"{len(anims)} duel animations appended to {base}'s animation waits from {at}",
+        "derived_from": base, "branch_ordinal": at, "batches": schedule,
+        "animations": {anim: played[anim_id] for anim, anim_id in zip(anims, ids, strict=True)},
+        "recorded": datetime.now(UTC).isoformat(timespec="seconds"),
+    }
+    (directory / "session.json").write_text(json.dumps(meta, indent=2, sort_keys=True) + "\n")
+    print(f"SESSION {name} ordinals={len(masks)} animations={len(anims)} batches={' '.join(schedule)} "
+          f"last={max(played[anim_id] for anim_id in ids)}")
+    return 0
+
+
 def deck_seed(name: str, *, base: str, at: int, deck: int, cards: list[int], goal: str,
               then: list[str] | None = None, discard: list[str] | None = None,
               poke_at: int | None = None, status: int | None = None, stage: int | None = None,
@@ -2459,6 +2654,14 @@ def main(argv: list[str] | None = None) -> int:
                              help="routine to watch for during the duel; its first ordinal goes to session.json")
     duel_parser.add_argument("--arrange", action="store_true",
                              help="treat --cards as a draw order: opening hand first, then the turn draws")
+    anim_parser = sub.add_parser("anim-seed", help="append duel animations to a duel's own animation wait")
+    anim_parser.add_argument("name")
+    anim_parser.add_argument("--from", dest="base", required=True)
+    anim_parser.add_argument("--at", type=int, required=True,
+                             help="ordinal inside the base duel's animation wait (DoFrame function UpdateQueuedAnimations)")
+    anim_parser.add_argument("--anims", required=True, help="comma-separated DUEL_ANIM_ constant names")
+    anim_parser.add_argument("--length", type=int, default=6000, help="DoFrames of the base kept after --at")
+    anim_parser.add_argument("--goal", default="")
     seed_parser = sub.add_parser("deck-seed", help="a player-controlled duel with a poked deck, as a search seed")
     seed_parser.add_argument("name")
     seed_parser.add_argument("--from", dest="base", default="practice-win")
@@ -2545,6 +2748,10 @@ def main(argv: list[str] | None = None) -> int:
                            prizes=args.prizes, period=args.period, tail=args.tail, goal=args.goal,
                            cards=load_cards(args.cards) if args.cards else None,
                            watch=set(args.watch) or None, arrange=args.arrange)
+        if args.command == "anim-seed":
+            return anim_seed(args.name, base=args.base, at=args.at,
+                             anims=[anim for anim in args.anims.split(",") if anim],
+                             length=args.length, goal=args.goal)
         if args.command == "deck-seed":
             return deck_seed(args.name, base=args.base, at=args.at, deck=args.deck,
                              cards=load_cards(args.cards), goal=args.goal,

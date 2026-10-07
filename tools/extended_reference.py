@@ -27,7 +27,7 @@ def main() -> int:
             failures.append(f"{name}: missing session")
             continue
         meta = json.loads((directory / "session.json").read_text())
-        length = int(meta.get("length", 0))
+        length = int(meta.get("ordinals", 0))
         confirmed = int(record.get("confirmed_ordinal", -1))
         if length < 1 or confirmed != length:
             failures.append(f"{name}: ratchet {confirmed} != length {length}")

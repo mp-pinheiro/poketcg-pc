@@ -165,7 +165,7 @@ CASES = {
                         0xCC63: b'\x00',
                         0xCC71: b'\x08',
                         0xCE39: b'\x14\x00',
-                        0xCAD3: b'H\x03',
+                        0xCAD3: b'\x22\x03',
                         0xCE05: b'\xaaU'},
             'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'read': {0xD4AD: 0x01, 0xCE05: 0x02},

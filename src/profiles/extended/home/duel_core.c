@@ -58,21 +58,23 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 	if (!location)
 		return (TrainerConvertResult){0, a, hl};
 
-	/* core.asm:7136-7148. `cp` never modifies a, so the fossil check falls through
-	 * with a = e; the second `cp CLEFAIRY_DOLL; ret nz` exits with a = e whenever
-	 * e is neither doll nor fossil. Only the fossil-with-nonzero-high path exits
-	 * with a = d. */
 	uint8_t id_hi = (uint8_t)(de >> 8);
 	uint8_t id_lo = (uint8_t)de;
-	if (id_lo == MYSTERIOUS_FOSSIL) {
-		if (id_hi != 0)
-			return (TrainerConvertResult){id_hi, a, hl};
-	} else {
-		if (id_lo != CLEFAIRY_DOLL)
-			return (TrainerConvertResult){id_lo, a, hl};
-		if (id_hi != 0)
-			return (TrainerConvertResult){id_hi, a, hl};
+	uint8_t mismatch;
+	if (id_hi != (uint8_t)(MYSTERIOUS_FOSSIL >> 8))
+		mismatch = id_hi;
+	else
+		mismatch = id_lo;
+	if (de == MYSTERIOUS_FOSSIL)
+		goto overwrite;
+	if (de != CLEFAIRY_DOLL) {
+		if (id_hi != (uint8_t)(CLEFAIRY_DOLL >> 8))
+			mismatch = id_hi;
+		else
+			mismatch = id_lo;
+		return (TrainerConvertResult){mismatch, a, hl};
 	}
+overwrite:
 
 	const uint8_t *table = trainer_to_pkmn_data();
 	gb_write8(hl, TYPE_PKMN_COLORLESS);

@@ -348,7 +348,7 @@ FindBasicEnergyCardsInLocationResult FindBasicEnergyCardsInLocation(uint8_t a)
 		if (location.a != wTempAI)
 			continue;
 
-		uint8_t card_id = GetCardIDFromDeckIndex(e);
+		CardId card_id = GetCardIDFromDeckIndex(e);
 		if (card_id >= DOUBLE_COLORLESS_ENERGY)
 			continue;
 
@@ -500,13 +500,14 @@ LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(CardId de)
 	gb_write8((uint16_t)(wTempCardIDToLook_ADDR + 1u), (uint8_t)(de >> 8));
 	(void)CreateHandCardList(0u);
 	uint8_t d = (uint8_t)(wDuelTempList_ADDR >> 8);
-	uint8_t *scan = wDuelTempList_PTR;
+	uint16_t scan = wDuelTempList_ADDR;
 	for (;;) {
-		uint8_t index = *scan++;
+		uint8_t index = gb_read8(scan++);
 		if (index == 0xFFu)
 			return (LookForCardIDInHandListResult){0xFFu, 0xC0u, d};
 		hTempCardIndex_ff98 = index;
-		CardId card_id = GetCardIDFromDeckIndex(index);
+		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		CardId card_id = card_id_read_at(wLoadedCard1ID_ADDR);
 		if (card_id == de)
 			return (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u, d};
 	}
@@ -514,16 +515,23 @@ LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(CardId de)
 /* <<< factory LookForCardIDInHandList_Bank8 */
 
 /* >>> factory LookForCardIDInHandAndPlayArea */
-LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(CardId de)
+typedef struct { uint8_t a; uint8_t f; uint8_t d; } LookForCardIDInHandAndPlayAreaWithDResult;
+static LookForCardIDInHandAndPlayAreaWithDResult look_for_card_id_in_hand_and_play_area_with_d(CardId de)
 {
 	LookForCardIDInHandListResult r1 = LookForCardIDInHandList_Bank8(de);
 	if (r1.f & 0x10u)
-		return (LookForCardIDInHandAndPlayAreaResult){r1.a, r1.f};
+		return (LookForCardIDInHandAndPlayAreaWithDResult){r1.a, r1.f, (uint8_t)(de >> 8)};
 	LookForCardIDInPlayAreaResult r2 = LookForCardIDInPlayArea_Bank8(de, PLAY_AREA_ARENA);
 	if (r2.f & 0x10u)
-		return (LookForCardIDInHandAndPlayAreaResult){r2.a, r2.f};
+		return (LookForCardIDInHandAndPlayAreaWithDResult){r2.a, r2.f, (uint8_t)(de >> 8)};
 	uint8_t f = (r2.a == 0u) ? 0x80u : 0u;
-	return (LookForCardIDInHandAndPlayAreaResult){r2.a, f};
+	return (LookForCardIDInHandAndPlayAreaWithDResult){r2.a, f, (uint8_t)(de >> 8)};
+}
+LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(CardId de)
+{
+	LookForCardIDInHandAndPlayAreaWithDResult r =
+		look_for_card_id_in_hand_and_play_area_with_d(de);
+	return (LookForCardIDInHandAndPlayAreaResult){r.a, r.f};
 }
 /* <<< factory LookForCardIDInHandAndPlayArea */
 
@@ -574,13 +582,14 @@ LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHan
 	LookForCardIDInHandListResult r2 = LookForCardIDInHandList_Bank8(bc);
 	if (!(r2.f & 0x10u))
 		return (LookForCardIDInDeck_GivenCardIDInHandResult){r2.a, r2.f, 0xC5u};
-	LookForCardIDInHandAndPlayAreaResult r3 = LookForCardIDInHandAndPlayArea(de);
+	LookForCardIDInHandAndPlayAreaWithDResult r3 =
+		look_for_card_id_in_hand_and_play_area_with_d(de);
 	if (r3.f & 0x10u) {
 		uint8_t f = (r3.a == 0u) ? 0x80u : 0u;
-		return (LookForCardIDInDeck_GivenCardIDInHandResult){r3.a, f, 0xC5u};
+		return (LookForCardIDInDeck_GivenCardIDInHandResult){r3.a, f, r3.d};
 	}
 	uint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);
-	return (LookForCardIDInDeck_GivenCardIDInHandResult){wTempAIPokemonCard, f, 0xC5u};
+	return (LookForCardIDInDeck_GivenCardIDInHandResult){wTempAIPokemonCard, f, r3.d};
 }
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHand */
 
@@ -595,16 +604,18 @@ LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_Given
 	if (!(r1.f & 0x10u))
 		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r1.a, r1.f, 0u};
 	wTempAIPokemonCard = r1.a;
-	LookForCardIDInHandAndPlayAreaResult r2 = LookForCardIDInHandAndPlayArea(bc);
+	LookForCardIDInHandAndPlayAreaWithDResult r2 =
+		look_for_card_id_in_hand_and_play_area_with_d(bc);
 	if (!(r2.f & 0x10u))
-		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r2.a, r2.f, 0xC5u};
-	LookForCardIDInHandAndPlayAreaResult r3 = LookForCardIDInHandAndPlayArea(de);
+		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r2.a, r2.f, r2.d};
+	LookForCardIDInHandAndPlayAreaWithDResult r3 =
+		look_for_card_id_in_hand_and_play_area_with_d(de);
 	if (r3.f & 0x10u) {
 		uint8_t f = (r3.a == 0u) ? 0x80u : 0u;
-		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f, 0xC5u};
+		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f, r3.d};
 	}
 	uint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);
-	return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){wTempAIPokemonCard, f, 0xC5u};
+	return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){wTempAIPokemonCard, f, r3.d};
 }
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
 

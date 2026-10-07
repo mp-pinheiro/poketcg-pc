@@ -2527,44 +2527,44 @@ typedef struct {
 
 /* data/duel/ai_trainer_card_logic.asm, in table order. */
 static const TrainerLogic trainer_logic[] = {
-	{0x07u, 0xDDu, decide_AIDecide_Potion_Phase07, play_AIPlay_Potion}, /* POTION */
-	{0x0Au, 0xDDu, decide_AIDecide_Potion_Phase10, play_AIPlay_Potion}, /* POTION */
-	{0x08u, 0xDEu, decide_AIDecide_SuperPotion1, play_AIPlay_SuperPotion}, /* SUPER_POTION */
-	{0x0Bu, 0xDEu, decide_AIDecide_SuperPotion2, play_AIPlay_SuperPotion}, /* SUPER_POTION */
-	{0x0Du, 0xD9u, decide_AIDecide_Defender1, play_AIPlay_Defender}, /* DEFENDER */
-	{0x0Eu, 0xD9u, decide_AIDecide_Defender2, play_AIPlay_Defender}, /* DEFENDER */
-	{0x0Du, 0xD8u, decide_AIDecide_PlusPower1, play_AIPlay_PlusPower}, /* PLUSPOWER */
-	{0x0Eu, 0xD8u, decide_AIDecide_PlusPower2, play_AIPlay_PlusPower}, /* PLUSPOWER */
-	{0x09u, 0xD2u, decide_AIDecide_Switch, play_AIPlay_Switch}, /* SWITCH */
-	{0x07u, 0xDBu, decide_AIDecide_GustOfWind, play_AIPlay_GustOfWind}, /* GUST_OF_WIND */
-	{0x0Au, 0xDBu, decide_AIDecide_GustOfWind, play_AIPlay_GustOfWind}, /* GUST_OF_WIND */
-	{0x04u, 0xC5u, decide_AIDecide_Bill, play_AIPlay_Bill}, /* BILL */
-	{0x05u, 0xD0u, decide_AIDecide_EnergyRemoval, play_AIPlay_EnergyRemoval}, /* ENERGY_REMOVAL */
-	{0x05u, 0xD1u, decide_AIDecide_SuperEnergyRemoval, play_AIPlay_SuperEnergyRemoval}, /* SUPER_ENERGY_REMOVAL */
-	{0x07u, 0xCAu, decide_AIDecide_PokemonBreeder, play_AIPlay_PokemonBreeder}, /* POKEMON_BREEDER */
-	{0x0Fu, 0xC3u, decide_AIDecide_ProfessorOak, play_AIPlay_ProfessorOak}, /* PROFESSOR_OAK */
-	{0x0Au, 0xCDu, decide_AIDecide_EnergyRetrieval, play_AIPlay_EnergyRetrieval}, /* ENERGY_RETRIEVAL */
-	{0x0Bu, 0xCEu, decide_AIDecide_SuperEnergyRetrieval, play_AIPlay_SuperEnergyRetrieval}, /* SUPER_ENERGY_RETRIEVAL */
-	{0x06u, 0xD3u, decide_AIDecide_PokemonCenter, play_AIPlay_PokemonCenter}, /* POKEMON_CENTER */
-	{0x07u, 0xC4u, decide_AIDecide_ImposterProfessorOak, play_AIPlay_ImposterProfessorOak}, /* IMPOSTER_PROFESSOR_OAK */
-	{0x0Cu, 0xCFu, decide_AIDecide_EnergySearch, play_AIPlay_EnergySearch}, /* ENERGY_SEARCH */
-	{0x03u, 0xD7u, decide_AIDecide_Pokedex, play_AIPlay_Pokedex}, /* POKEDEX */
-	{0x07u, 0xDFu, decide_AIDecide_FullHeal, play_AIPlay_FullHeal}, /* FULL_HEAL */
-	{0x0Au, 0xC6u, decide_AIDecide_MrFuji, play_AIPlay_MrFuji}, /* MR_FUJI */
-	{0x0Au, 0xD5u, decide_AIDecide_ScoopUp, play_AIPlay_ScoopUp}, /* SCOOP_UP */
-	{0x02u, 0xE1u, decide_AIDecide_Maintenance, play_AIPlay_Maintenance}, /* MAINTENANCE */
-	{0x03u, 0xE4u, decide_AIDecide_Recycle, play_AIPlay_Recycle}, /* RECYCLE */
-	{0x0Du, 0xC7u, decide_AIDecide_Lass, play_AIPlay_Lass}, /* LASS */
-	{0x04u, 0xDAu, decide_AIDecide_ItemFinder, play_AIPlay_ItemFinder}, /* ITEM_FINDER */
-	{0x01u, 0xC8u, decide_AIDecide_Imakuni, play_AIPlay_Imakuni}, /* IMAKUNI_CARD */
-	{0x01u, 0xE3u, decide_AIDecide_Gambler, play_AIPlay_Gambler}, /* GAMBLER */
-	{0x05u, 0xE0u, decide_AIDecide_Revive, play_AIPlay_Revive}, /* REVIVE */
-	{0x0Du, 0xE2u, decide_AIDecide_PokemonFlute, play_AIPlay_PokemonFlute}, /* POKEMON_FLUTE */
-	{0x05u, 0xCBu, decide_AIDecide_ClefairyDollOrMysteriousFossil, play_AIPlay_ClefairyDollOrMysteriousFossil}, /* CLEFAIRY_DOLL */
-	{0x05u, 0xCCu, decide_AIDecide_ClefairyDollOrMysteriousFossil, play_AIPlay_ClefairyDollOrMysteriousFossil}, /* MYSTERIOUS_FOSSIL */
-	{0x02u, 0xD4u, decide_AIDecide_Pokeball, play_AIPlay_Pokeball}, /* POKE_BALL */
-	{0x02u, 0xD6u, decide_AIDecide_ComputerSearch, play_AIPlay_ComputerSearch}, /* COMPUTER_SEARCH */
-	{0x02u, 0xC9u, decide_AIDecide_PokemonTrader, play_AIPlay_PokemonTrader}, /* POKEMON_TRADER */
+	{AI_TRAINER_CARD_PHASE_07, POTION, decide_AIDecide_Potion_Phase07, play_AIPlay_Potion}, /* POTION */
+	{AI_TRAINER_CARD_PHASE_10, POTION, decide_AIDecide_Potion_Phase10, play_AIPlay_Potion}, /* POTION */
+	{AI_TRAINER_CARD_PHASE_08, SUPER_POTION, decide_AIDecide_SuperPotion1, play_AIPlay_SuperPotion}, /* SUPER_POTION */
+	{AI_TRAINER_CARD_PHASE_11, SUPER_POTION, decide_AIDecide_SuperPotion2, play_AIPlay_SuperPotion}, /* SUPER_POTION */
+	{AI_TRAINER_CARD_PHASE_13, DEFENDER, decide_AIDecide_Defender1, play_AIPlay_Defender}, /* DEFENDER */
+	{AI_TRAINER_CARD_PHASE_14, DEFENDER, decide_AIDecide_Defender2, play_AIPlay_Defender}, /* DEFENDER */
+	{AI_TRAINER_CARD_PHASE_13, PLUSPOWER, decide_AIDecide_PlusPower1, play_AIPlay_PlusPower}, /* PLUSPOWER */
+	{AI_TRAINER_CARD_PHASE_14, PLUSPOWER, decide_AIDecide_PlusPower2, play_AIPlay_PlusPower}, /* PLUSPOWER */
+	{AI_TRAINER_CARD_PHASE_09, SWITCH, decide_AIDecide_Switch, play_AIPlay_Switch}, /* SWITCH */
+	{AI_TRAINER_CARD_PHASE_07, GUST_OF_WIND, decide_AIDecide_GustOfWind, play_AIPlay_GustOfWind}, /* GUST_OF_WIND */
+	{AI_TRAINER_CARD_PHASE_10, GUST_OF_WIND, decide_AIDecide_GustOfWind, play_AIPlay_GustOfWind}, /* GUST_OF_WIND */
+	{AI_TRAINER_CARD_PHASE_04, BILL, decide_AIDecide_Bill, play_AIPlay_Bill}, /* BILL */
+	{AI_TRAINER_CARD_PHASE_05, ENERGY_REMOVAL, decide_AIDecide_EnergyRemoval, play_AIPlay_EnergyRemoval}, /* ENERGY_REMOVAL */
+	{AI_TRAINER_CARD_PHASE_05, SUPER_ENERGY_REMOVAL, decide_AIDecide_SuperEnergyRemoval, play_AIPlay_SuperEnergyRemoval}, /* SUPER_ENERGY_REMOVAL */
+	{AI_TRAINER_CARD_PHASE_07, POKEMON_BREEDER, decide_AIDecide_PokemonBreeder, play_AIPlay_PokemonBreeder}, /* POKEMON_BREEDER */
+	{AI_TRAINER_CARD_PHASE_15, PROFESSOR_OAK, decide_AIDecide_ProfessorOak, play_AIPlay_ProfessorOak}, /* PROFESSOR_OAK */
+	{AI_TRAINER_CARD_PHASE_10, ENERGY_RETRIEVAL, decide_AIDecide_EnergyRetrieval, play_AIPlay_EnergyRetrieval}, /* ENERGY_RETRIEVAL */
+	{AI_TRAINER_CARD_PHASE_11, SUPER_ENERGY_RETRIEVAL, decide_AIDecide_SuperEnergyRetrieval, play_AIPlay_SuperEnergyRetrieval}, /* SUPER_ENERGY_RETRIEVAL */
+	{AI_TRAINER_CARD_PHASE_06, POKEMON_CENTER, decide_AIDecide_PokemonCenter, play_AIPlay_PokemonCenter}, /* POKEMON_CENTER */
+	{AI_TRAINER_CARD_PHASE_07, IMPOSTER_PROFESSOR_OAK, decide_AIDecide_ImposterProfessorOak, play_AIPlay_ImposterProfessorOak}, /* IMPOSTER_PROFESSOR_OAK */
+	{AI_TRAINER_CARD_PHASE_12, ENERGY_SEARCH, decide_AIDecide_EnergySearch, play_AIPlay_EnergySearch}, /* ENERGY_SEARCH */
+	{AI_TRAINER_CARD_PHASE_03, POKEDEX, decide_AIDecide_Pokedex, play_AIPlay_Pokedex}, /* POKEDEX */
+	{AI_TRAINER_CARD_PHASE_07, FULL_HEAL, decide_AIDecide_FullHeal, play_AIPlay_FullHeal}, /* FULL_HEAL */
+	{AI_TRAINER_CARD_PHASE_10, MR_FUJI, decide_AIDecide_MrFuji, play_AIPlay_MrFuji}, /* MR_FUJI */
+	{AI_TRAINER_CARD_PHASE_10, SCOOP_UP, decide_AIDecide_ScoopUp, play_AIPlay_ScoopUp}, /* SCOOP_UP */
+	{AI_TRAINER_CARD_PHASE_02, MAINTENANCE, decide_AIDecide_Maintenance, play_AIPlay_Maintenance}, /* MAINTENANCE */
+	{AI_TRAINER_CARD_PHASE_03, RECYCLE, decide_AIDecide_Recycle, play_AIPlay_Recycle}, /* RECYCLE */
+	{AI_TRAINER_CARD_PHASE_13, LASS, decide_AIDecide_Lass, play_AIPlay_Lass}, /* LASS */
+	{AI_TRAINER_CARD_PHASE_04, ITEM_FINDER, decide_AIDecide_ItemFinder, play_AIPlay_ItemFinder}, /* ITEM_FINDER */
+	{AI_TRAINER_CARD_PHASE_01, IMAKUNI_CARD, decide_AIDecide_Imakuni, play_AIPlay_Imakuni}, /* IMAKUNI_CARD */
+	{AI_TRAINER_CARD_PHASE_01, GAMBLER, decide_AIDecide_Gambler, play_AIPlay_Gambler}, /* GAMBLER */
+	{AI_TRAINER_CARD_PHASE_05, REVIVE, decide_AIDecide_Revive, play_AIPlay_Revive}, /* REVIVE */
+	{AI_TRAINER_CARD_PHASE_13, POKEMON_FLUTE, decide_AIDecide_PokemonFlute, play_AIPlay_PokemonFlute}, /* POKEMON_FLUTE */
+	{AI_TRAINER_CARD_PHASE_05, CLEFAIRY_DOLL, decide_AIDecide_ClefairyDollOrMysteriousFossil, play_AIPlay_ClefairyDollOrMysteriousFossil}, /* CLEFAIRY_DOLL */
+	{AI_TRAINER_CARD_PHASE_05, MYSTERIOUS_FOSSIL, decide_AIDecide_ClefairyDollOrMysteriousFossil, play_AIPlay_ClefairyDollOrMysteriousFossil}, /* MYSTERIOUS_FOSSIL */
+	{AI_TRAINER_CARD_PHASE_02, POKE_BALL, decide_AIDecide_Pokeball, play_AIPlay_Pokeball}, /* POKE_BALL */
+	{AI_TRAINER_CARD_PHASE_02, COMPUTER_SEARCH, decide_AIDecide_ComputerSearch, play_AIPlay_ComputerSearch}, /* COMPUTER_SEARCH */
+	{AI_TRAINER_CARD_PHASE_02, POKEMON_TRADER, decide_AIDecide_PokemonTrader, play_AIPlay_PokemonTrader}, /* POKEMON_TRADER */
 };
 
 static uint16_t relist_hand(void)
@@ -2599,16 +2599,18 @@ AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a)
 		wAITrainerCardToPlay = card;
 		if (card == 0xffu)
 			return (AIProcessHandTrainerCardsResult){0xffu, 0xc0u};
-		uint8_t phase = wAITrainerCardPhase;
+		uint8_t d = wAITrainerCardPhase;
 		for (size_t row = 0; row < sizeof trainer_logic / sizeof trainer_logic[0]; row++) {
 			const TrainerLogic *logic = &trainer_logic[row];
 			wCurrentAIFlags = 0u;
-			if (logic->phase != phase)
+			if (logic->phase != d)
 				continue;
 			(void)LoadCardDataToBuffer1_FromDeckIndex(wAITrainerCardToPlay);
 			CardId id = card_id_read_at(wLoadedCard1ID_ADDR);
 			if (id == SWITCH && (wPreviousAIFlags & AI_FLAG_USED_SWITCH) != 0u)
 				continue;
+			d = (uint8_t)(id >> 8);
+			e = (uint8_t)id;
 			if (id != logic->card)
 				continue;
 			hTempCardIndex_ff9f = wAITrainerCardToPlay;
@@ -2619,13 +2621,8 @@ AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a)
 				continue;
 			if ((AIChooseRandomlyNotToDoAction().f & 0x10u) != 0u)
 				continue;
-			TrainerDecision decision = logic->decide(phase, e);
-			/* trainer_cards.asm:12-98: the phase lives in d, the decide routine is
-			 * called through CallIndirect with no `push de`, and every refusal
-			 * (`jr nc, .inc_hl_by_4`, `jr c, .inc_hl_by_2`) rescans the rest of the
-			 * table against the decide routine's exit d. A played card jumps to
-			 * .loop_hand, which reloads d from wAITrainerCardPhase. */
-			phase = decision.d;
+			TrainerDecision decision = logic->decide(d, e);
+			d = decision.d;
 			e = decision.e;
 			if ((decision.f & 0x10u) == 0u)
 				continue;
@@ -2633,7 +2630,7 @@ AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a)
 			hTempCardIndex_ff9f = wAITrainerCardToPlay;
 			if ((AIMakeDecision(OPPACTION_PLAY_TRAINER, 0u, 0u, 0u, 0u).f & 0x10u) != 0u)
 				continue;
-			(void)logic->play(phase, e);
+			(void)logic->play(d, e);
 			wPreviousAIFlags = (uint8_t)(wPreviousAIFlags | wCurrentAIFlags);
 			if ((wPreviousAIFlags & AI_FLAG_MODIFIED_HAND) != 0u) {
 				e = (uint8_t)relist_hand();

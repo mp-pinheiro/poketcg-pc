@@ -175,9 +175,12 @@ static void adapt_ClearChangedTypesIfMuk(ProbeState *s)
 static void adapt_HandleStrikesBack_AgainstDamagingAttack(ProbeState *s)
 {
 	uint16_t de = (uint16_t)(s->d << 8 | s->e);
-	StrikesBackResult r = HandleStrikesBack_AgainstDamagingAttack(de);
+	StrikesBackResult r = HandleStrikesBack_AgainstDamagingAttack(de, s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
 }
 static void adapt_CheckRainDanceScenario(ProbeState *s) { RainDanceResult r = CheckRainDanceScenario(); s->a = r.a; s->f = r.f; }
 

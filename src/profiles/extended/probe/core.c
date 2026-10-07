@@ -827,7 +827,7 @@ static void adapt_SortTempHandByIDList(ProbeState *s)
 static void adapt_ApplyCardCGBAttributes(ProbeState *s)
 {
 	ApplyCardCGBAttributesResult r = ApplyCardCGBAttributes(s->a, (uint16_t)((uint16_t)s->d << 8 | s->e));
-	s->b = r.b; s->c = r.c; s->hl = r.hl;
+	s->b = r.b; s->c = r.c; s->d = (uint8_t)(r.de >> 8); s->e = (uint8_t)r.de; s->hl = r.hl;
 }
 /* <<< factory ApplyCardCGBAttributes */
 /* >>> factory SetCardPalette */
@@ -1692,7 +1692,8 @@ static void adapt_CheckIfSelectedAttackIsUnusable(ProbeState *s)
 /* >>> factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack */
 static void adapt_CheckForBenchIDAtHalfHPAndCanUseSecondAttack(ProbeState *s)
 {
-	CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult r = CheckForBenchIDAtHalfHPAndCanUseSecondAttack(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult r = CheckForBenchIDAtHalfHPAndCanUseSecondAttack(de, s->f, s->b, s->c, s->d, s->e, s->hl);
 	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
 }
 /* <<< factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack */

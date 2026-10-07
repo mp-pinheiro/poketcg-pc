@@ -791,7 +791,9 @@ static void adapt_UsePokemonPower(ProbeState *s)
 static void adapt_DrawYourOrOppPlayArea_ActiveCardGfx(ProbeState *s)
 {
 	uint16_t de = (uint16_t)((uint16_t)s->d << 8 | s->e);
-	DrawYourOrOppPlayArea_ActiveCardGfx(de);
+	de = DrawYourOrOppPlayArea_ActiveCardGfx(de);
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
 }
 /* <<< factory DrawYourOrOppPlayArea_ActiveCardGfx */
 

@@ -37,15 +37,21 @@ class Fixture:
     """One captured state (`session.py capture NAME --routine R`) as a case
     builder: `Fixture("practice-win-attack-entry").case(**{"C3C8": b"\\x00"})`."""
 
-    def __init__(self, name: str):
-        data = json.load(open(Path(__file__).resolve().parent.parent / "fixtures" / f"{name}.json"))
+    def __init__(self, name: str, directory: Path | None = None, holes: tuple[int, ...] = _HOLES,
+                 lcdc: int = 0xCABB):
+        folder = directory if directory is not None else Path(__file__).resolve().parent.parent / "fixtures"
+        data = json.load(open(folder / f"{name}.json"))
         self._load(name, data)
+        self.holes = holes
+        self.lcdc = lcdc
 
     @classmethod
     def from_capture(cls, data: dict) -> "Fixture":
         """A capture that never touched disk: the sweep's in-memory entries."""
         fixture = cls.__new__(cls)
         fixture._load(data.get("entry", "?"), data)
+        fixture.holes = _HOLES
+        fixture.lcdc = 0xCABB
         return fixture
 
     def _load(self, name: str, data: dict) -> None:
@@ -83,7 +89,7 @@ class Fixture:
         spans = {}
         for start, end in _SPANS:
             cursor = start
-            for hole in sorted(_HOLES):
+            for hole in sorted(self.holes):
                 if start <= hole < end:
                     spans[cursor] = bytes(wram[cursor - 0xC000:hole - 0xC000])
                     cursor = hole + 1
@@ -99,7 +105,7 @@ class Fixture:
             spans[0x8000] = self.vram
         # rLCDC from the game's own wLCDC mirror: the gbref lane runs a real PPU,
         # and with the LCD off its first `halt` would wait for a VBlank forever.
-        spans[0xFF40] = bytes([self.wram[0xCABB - 0xC000]])
+        spans[0xFF40] = bytes([self.wram[self.lcdc - 0xC000]])
         # The game's own SP: the gbref lane otherwise parks the stack at $FFFE, and
         # a deep call plus real interrupt frames would grow it down through
         # hKeysHeld and the rest of HRAM.

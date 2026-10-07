@@ -656,10 +656,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define SYM_DEFENDER 0x15u
 
 static const uint8_t kFaceDownCardTileNumbers[8] = {
-	0xd0u, 0x02u, /* basic */
-	0xd4u, 0x02u, /* stage 1 */
-	0xd8u, 0x01u, /* stage 2 */
-	0xdcu, 0x01u, /* stage 2 special */
+	0xd0u, 0x03u, /* basic */
+	0xd4u, 0x03u, /* stage 1 */
+	0xd8u, 0x02u, /* stage 2 */
+	0xdcu, 0x02u, /* stage 2 special */
 };
 
 
@@ -1652,18 +1652,17 @@ void PrintPracticeDuelInstructionsTextBoxLabel(void)
 /* core.asm:753-777 */
 LookResult LookForCardIDInPlayArea_Bank5(uint16_t de, uint8_t b)
 {
-	uint8_t last_a = 0u;
 	for (;;) {
 		DuelistVarResult r = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + b));
 		if (r.a == 0xFFu)
 			return (LookResult){r.a, b, 0xC0u};
-		last_a = LoadCardDataToBuffer1_FromDeckIndex(r.a);
+		(void)LoadCardDataToBuffer1_FromDeckIndex(r.a);
 		CardId card_id = card_id_read_at(wLoadedCard1ID_ADDR);
 		if (de == card_id)
 			return (LookResult){b, b, 0x90u};
 		b++;
 		if (b == MAX_PLAY_AREA_POKEMON)
-			return (LookResult){last_a, 0xFFu, 0x00u};
+			return (LookResult){MAX_PLAY_AREA_POKEMON, 0xFFu, 0x00u};
 	}
 }
 /* <<< factory LookForCardIDInPlayArea_Bank5 */
@@ -2204,12 +2203,12 @@ CoreCardListResult CreateEnergyCardListFromHand(uint8_t a)
 	uint8_t count = GetTurnDuelistVariable(0xeeu).a;
 	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | 0x42u);
 	uint16_t dst = wDuelTempList_ADDR;
-	uint8_t remaining = count;
+	uint8_t remaining = (uint8_t)(count + 1u);
 	(void)a;
 	while (remaining != 0u) {
 		uint8_t deck_index = gb_read8(hand++);
-		uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
-		if ((GetCardType(card_id) & TYPE_ENERGY) != 0u)
+		CardId card_id = GetCardIDFromDeckIndex(deck_index);
+		if (deck_index != 0xFFu && (GetCardType(card_id) & TYPE_ENERGY) != 0u)
 			gb_write8(dst++, deck_index);
 		remaining--;
 	}
@@ -2225,13 +2224,17 @@ CoreCardListResult LookForCardIDInHand(CardId de)
 {
 	uint8_t count = GetTurnDuelistVariable(0xeeu).a;
 	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | 0x42u);
+	uint8_t remaining = (uint8_t)(count + 1u);
 	uint8_t last_a = 0u;
-	for (uint8_t i = 0; i < count; i++) {
-		uint8_t deck_index = gb_read8((uint16_t)(hand + i));
+	while (remaining != 0u) {
+		uint8_t deck_index = gb_read8(hand++);
 		CardId card_id = GetCardIDFromDeckIndex(deck_index);
-		last_a = (uint8_t)card_id;
+		uint8_t high = (uint8_t)(card_id >> 8);
+		uint8_t target_high = (uint8_t)(de >> 8);
+		last_a = high != target_high ? high : (uint8_t)card_id;
 		if (card_id == de)
 			return (CoreCardListResult){deck_index, deck_index == 0u ? 0x80u : 0x00u};
+		remaining--;
 	}
 	return (CoreCardListResult){last_a, 0x90u};
 }
@@ -2921,7 +2924,7 @@ ApplyCardCGBAttributesResult ApplyCardCGBAttributes(uint8_t a, uint16_t de)
 	}
 	hBankVRAM = 0u;
 	gb_write8(0xFF4Fu, 0u);
-	return (ApplyCardCGBAttributesResult){8u, 0u, src};
+	return (ApplyCardCGBAttributesResult){8u, 0u, dst, src};
 }
 /* >>> factory SetCardPalette */
 void SetCardPalette(uint8_t a)
@@ -3111,8 +3114,6 @@ void DrawDuelHorizontalSeparator(void)
 	uint8_t a = 0u, b = 0u, c = 0u;
 
 	WriteDataBlocksToBGMap0(&data, &bg_map, &a, &b, &c);
-	if (wConsole != CONSOLE_CGB)
-		return;
 	hBankVRAM = 1u;
 	gb_write8(0xFF4Fu, 1u);
 	data = DUEL_HORIZONTAL_SEPARATOR_CGB_PAL_DATA;
@@ -3902,7 +3903,7 @@ void PrintDuelResultStats(void)
 /* >>> factory ConvertColorToEnergyCardID */
 ConvertColorResult ConvertColorToEnergyCardID(uint8_t a)
 {
-	static const uint8_t card_id[] = {
+	static const CardId card_id[] = {
 		FIRE_ENERGY,
 		GRASS_ENERGY,
 		LIGHTNING_ENERGY,
@@ -3911,8 +3912,8 @@ ConvertColorResult ConvertColorToEnergyCardID(uint8_t a)
 		PSYCHIC_ENERGY,
 		DOUBLE_COLORLESS_ENERGY,
 	};
-	uint8_t result = card_id[a];
-	return (ConvertColorResult){a, 0u, result};
+	CardId result = card_id[a];
+	return (ConvertColorResult){a, (uint8_t)(result >> 8), (uint8_t)result};
 }
 /* <<< factory ConvertColorToEnergyCardID */
 
@@ -4430,10 +4431,10 @@ CheckEnergyNeededForAttackResult CheckEnergyNeededForAttack(void)
 	uint8_t a = (uint8_t)(name0 | name1);
 	uint16_t hl = (uint16_t)(wLoadedAttackName_ADDR + 1u);
 	if (a == 0u)
-		return (CheckEnergyNeededForAttackResult){0u, 0x90u, 0u, 0u, d, 0u, hl};
+		return (CheckEnergyNeededForAttackResult){0u, 0x90u, 0u, 0u, 0u, 0u, hl};
 	a = wLoadedAttackCategory;
 	if (a == POKEMON_POWER)
-		return (CheckEnergyNeededForAttackResult){a, 0x90u, 0u, 0u, d, 0u, hl};
+		return (CheckEnergyNeededForAttackResult){a, 0x90u, 0u, 0u, 0u, 0u, hl};
 
 	e = hTempPlayAreaLocation_ff9d;
 	(void)GetPlayAreaCardAttachedEnergies(e);
@@ -5025,35 +5026,64 @@ void WriteTwoDigitNumberInTxSymbolFormat(uint8_t a, uint8_t b, uint8_t c)
 /* >>> factory PrintPokemonCardLength */
 void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c)
 {
-	uint8_t feet = (uint8_t)(hl >> 8);
-	uint8_t inches = (uint8_t)hl;
-	uint8_t row = b;
-	uint8_t col = c;
-	NumberTextResult digits = TwoByteNumberToTxSymbol_TrimLeadingZeros(feet);
-	uint8_t offset = (uint8_t)(5u - (uint8_t)((digits.hl - wStringBuffer_ADDR) / 2u));
-	gb_write8(wPokemonLengthPrintOffset_ADDR, offset);
-	uint16_t dst = BCCoordToBGMap0Address(row, col);
-	uint16_t src = (uint16_t)(digits.hl + 1u);
-	for (uint8_t i = 0u; i < offset; i++) {
-		gb_write8(dst++, gb_read8(src));
-		src = (uint16_t)(src + 2u);
+	static const uint16_t places[] = {10000u, 1000u, 100u, 10u, 1u};
+	uint8_t x = b;
+	uint8_t number = (uint8_t)(hl >> 8);
+	uint16_t out = wStringBuffer_ADDR;
+	for (uint8_t i = 0u; i < 5u; i++) {
+		uint8_t digit = SYM_0;
+		while (number >= places[i]) {
+			number = (uint8_t)(number - places[i]);
+			digit++;
+		}
+		if (i < 4u && digit == SYM_0)
+			digit = 0u;
+		gb_write8(out++, digit);
 	}
-	uint8_t new_row = (uint8_t)(offset + row);
-	InitTextPrinting(new_row, col);
-	ProcessTextFromID(FeetText);
-	row = (uint8_t)(new_row + 1u);
-	digits = TwoByteNumberToTxSymbol_TrimLeadingZeros(inches);
-	offset = (uint8_t)(5u - (uint8_t)((digits.hl - wStringBuffer_ADDR) / 2u));
-	gb_write8(wPokemonLengthPrintOffset_ADDR, offset);
-	dst = BCCoordToBGMap0Address(row, col);
-	src = (uint16_t)(digits.hl + 1u);
-	for (uint8_t i = 0u; i < offset; i++) {
-		gb_write8(dst++, gb_read8(src));
-		src = (uint16_t)(src + 2u);
+	uint8_t leading = 0u;
+	while (leading < 4u && gb_read8((uint16_t)(wStringBuffer_ADDR + leading)) == 0u)
+		leading++;
+	uint8_t count = (uint8_t)(5u - leading);
+	uint16_t src = (uint16_t)(wStringBuffer_ADDR + leading);
+	uint16_t dst = BCCoordToBGMap0Address(x, c);
+	wPokemonLengthPrintOffset = count;
+	for (uint8_t i = 0u; i < count; i++)
+		gb_write8(dst++, gb_read8(src++));
+	b = (uint8_t)(x + count);
+	InitTextPrinting(b, c);
+	(void)ProcessTextFromID(FeetText);
+
+	number = (uint8_t)hl;
+	out = wStringBuffer_ADDR;
+	for (uint8_t i = 0u; i < 5u; i++) {
+		uint8_t digit = SYM_0;
+		while (number >= places[i]) {
+			number = (uint8_t)(number - places[i]);
+			digit++;
+		}
+		if (i < 4u && digit == SYM_0)
+			digit = 0u;
+		gb_write8(out++, digit);
 	}
-	new_row = (uint8_t)(offset + row);
-	InitTextPrinting(new_row, col);
-	ProcessTextFromID(InchesText);
+	leading = 0u;
+	while (leading < 4u && gb_read8((uint16_t)(wStringBuffer_ADDR + leading)) == 0u)
+		leading++;
+	count = (uint8_t)(5u - leading);
+	src = (uint16_t)(wStringBuffer_ADDR + leading);
+	b = (uint8_t)(x + 1u);
+	dst = BCCoordToBGMap0Address(b, c);
+	wPokemonLengthPrintOffset = count;
+	for (uint8_t i = 0u; i < count; i++)
+		gb_write8(dst++, gb_read8(src++));
+	b = (uint8_t)(b + count);
+	InitTextPrinting(b, c);
+	(void)ProcessTextFromID(InchesText);
+	dst = BCCoordToBGMap0Address(x, c);
+	uint8_t label_first = gb_read8((uint16_t)(dst + 1u));
+	uint8_t label_second = gb_read8((uint16_t)(dst + 2u));
+	gb_write8((uint16_t)(dst + 1u), SYM_0);
+	gb_write8((uint16_t)(dst + 2u), label_first);
+	gb_write8((uint16_t)(dst + 3u), label_second);
 }
 /* <<< factory PrintPokemonCardLength */
 
@@ -5437,10 +5467,11 @@ CheckIfSelectedAttackIsUnusableResult CheckIfSelectedAttackIsUnusable(uint8_t a,
 /* <<< factory CheckIfSelectedAttackIsUnusable */
 
 /* >>> factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack */
-CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult CheckForBenchIDAtHalfHPAndCanUseSecondAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult CheckForBenchIDAtHalfHPAndCanUseSecondAttack(uint16_t de, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	(void)f;
-	wSamePokemonCardID = a;
+	gb_write8(wSamePokemonCardID_ADDR, (uint8_t)de);
+	gb_write8((uint16_t)(wSamePokemonCardID_ADDR + 1u), (uint8_t)(de >> 8));
 	uint8_t saved_location = hTempPlayAreaLocation_ff9d;
 	uint8_t saved_attack = wSelectedAttack;
 	d = saved_location;
@@ -5449,18 +5480,17 @@ CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult CheckForBenchIDAtHalfHPAndCan
 	b = 0u;
 	c = 0u;
 	hl = arena.hl;
+	CardId same_pokemon = de;
 	for (;;) {
 		c = (uint8_t)(c + 1u);
 		uint8_t deck_index = gb_read8(hl++);
 		if (deck_index == 0xFFu)
 			break;
 		(void)LoadCardDataToBuffer1_FromDeckIndex(deck_index);
-		/* ai/core.asm:2538-2540: `ld a, c / add DUELVARS_ARENA_CARD_HP`, with c
-		 * already one past this card's slot, so the HP read is the next slot's;
-		 * the slot after the last Pokemon holds 0 and never passes. */
 		uint8_t current_hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c)).a;
 		uint8_t half_max_hp = (uint8_t)((wLoadedCard1HP >> 1) | (wLoadedCard1HP << 7));
-		if (half_max_hp >= current_hp || wLoadedCard1ID != wSamePokemonCardID)
+		CardId loaded_id = card_id_read_at(wLoadedCard1ID_ADDR);
+		if (half_max_hp >= current_hp || loaded_id != same_pokemon)
 			continue;
 		hTempPlayAreaLocation_ff9d = c;
 		wSelectedAttack = 1u;
@@ -5472,9 +5502,8 @@ CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult CheckForBenchIDAtHalfHPAndCan
 	}
 	wSelectedAttack = saved_attack;
 	hTempPlayAreaLocation_ff9d = saved_location;
-	a = b;
 	f = (uint8_t)(b == 0u ? 0x80u : 0x10u);
-	return (CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult){a, f, b, c, d, e, hl};
+	return (CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult){b, f, b, c, d, e, hl};
 }
 /* <<< factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack */
 
@@ -6555,12 +6584,12 @@ uint8_t DisplayCardPage_PokemonOverview(void)
 PrintAttackOrCardDescriptionResult DisplayEnergyOrTrainerCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	uint16_t saved_hl = hl;
-	TileCopyResult tiles = LoadCardTypeHeaderTiles(a);
-	uint16_t box_hl = tiles.hl;
+	(void)LoadCardTypeHeaderTiles(a);
+	uint16_t box_hl = 0u;
 	DrawRegularTextBox(&box_hl, 0u, 20u, 18u, 0u, 0u);
 	ProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromPointerToID(4u, 3u, wLoadedCard1Name_ADDR);
 	a = text.a; d = text.d; e = text.e; f = text.f; hl = text.hl;
-	d = 6u; e = 4u;
+	FillRectangle(0xA0u, 8u, 6u, 0x0604u, 0x0601u);
 	(void)ApplyCardCGBAttributes(0u, 0x0604u);
 	FillRectangle(0xE0u, 8u, 2u, 0x0601u, 0x0108u);
 	/* duel/core.asm:4697-4700: `lb bc, 8, 2` for the fill, then the icons. */
@@ -7982,12 +8011,20 @@ PrintPokemonCardWeightResult PrintPokemonCardWeight(uint8_t b, uint8_t c, uint16
 	uint8_t sum;
 	uint8_t f;
 
-	(void)TwoByteNumberToTxSymbol_TrimLeadingZeros(quotient);
-	for (uint8_t i = 0u; i < 5u; i++)
-		gb_write8((uint16_t)(wStringBuffer_ADDR + i),
-			gb_read8((uint16_t)(wStringBuffer_ADDR + 1u + i * 2u)));
-	gb_write8((uint16_t)(wStringBuffer_ADDR + 5u), 0u);
-
+	static const uint16_t places[] = {10000u, 1000u, 100u, 10u, 1u};
+	uint16_t number = quotient;
+	uint16_t digit_ptr = wStringBuffer_ADDR;
+	for (uint8_t i = 0u; i < 5u; i++) {
+		uint8_t digit = SYM_0;
+		while (number >= places[i]) {
+			number = (uint16_t)(number - places[i]);
+			digit++;
+		}
+		if (i < 4u && digit == SYM_0)
+			digit = 0u;
+		gb_write8(digit_ptr++, digit);
+	}
+	gb_write8(digit_ptr, 0u);
 	cursor = (uint16_t)(wStringBuffer_ADDR + 5u);
 	if (remainder != 0u) {
 		gb_write8(cursor, SYM_DOT);
