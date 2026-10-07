@@ -1933,12 +1933,13 @@ Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 	uint8_t saved_e = e;
 	uint16_t saved_hl = hl;
 	MapScriptResult map = GetMapScriptPointer(MAP_SCRIPT_NPCS);
+	wMapScriptBank = map.a;
 	if (map.f & 0x10u) {
 		hl = map.hl;
 		for (;;) {
 			wTempPointer = (uint8_t)hl;
 			gb_write8((uint16_t)(wTempPointer_ADDR + 1u), (uint8_t)(hl >> 8));
-			wTempPointerBank = 4u;
+			wTempPointerBank = wMapScriptBank;
 			CopyBankedDataToDE(NPC_MAP_SIZE, wTempNPC_ADDR);
 			if (wTempNPC == 0u)
 				break;
@@ -2062,7 +2063,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
 	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, (ScriptCommand_ShowSamNormalMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
-	(void)SetEventValue(0x75u, 0u, 0u, choice);
+	(void)SetEventValue(EVENT_SAM_MENU_CHOICE, 0u, 0u, choice);
 	wMultichoiceTextboxResult_Sam = 0u;
 	return IncreaseScriptPointerBy1();
 }
@@ -2078,7 +2079,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, (ScriptCommand_ShowSamRulesMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
-	(void)SetEventValue(0x75u, 0u, 0u, choice);
+	(void)SetEventValue(EVENT_SAM_MENU_CHOICE, 0u, 0u, choice);
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_ShowSamRulesMultichoice */
@@ -2463,16 +2464,19 @@ JumpIfCardInCollectionResult ScriptCommand_JumpIfMan1RequestedCardOwned(uint8_t 
 	if ((cnt.f & 0x10u) != 0u) {
 		SetScriptControlByteFail();
 		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
-		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
+		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c,
+			(uint8_t)(card >> 8), (uint8_t)card};
 	}
 	SetScriptControlBytePass();
 	GetScriptArgsAfterPointerResult args = GetScriptArgs1AfterPointer();
 	if ((args.f & 0x80u) != 0u) {
 		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
-		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
+		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c,
+			(uint8_t)(card >> 8), (uint8_t)card};
 	}
 	(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
-	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
+	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c,
+		(uint8_t)(card >> 8), (uint8_t)card};
 }
 /* <<< factory ScriptCommand_JumpIfMan1RequestedCardOwned */
 
@@ -2485,16 +2489,19 @@ JumpIfCardInCollectionResult ScriptCommand_JumpIfMan1RequestedCardInCollection(u
 	if ((cnt.f & 0x10u) != 0u) {
 		SetScriptControlByteFail();
 		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
-		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
+		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c,
+			(uint8_t)(card >> 8), (uint8_t)card};
 	}
 	SetScriptControlBytePass();
 	GetScriptArgsAfterPointerResult args = GetScriptArgs1AfterPointer();
 	if ((args.f & 0x80u) != 0u) {
 		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
-		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
+		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c,
+			(uint8_t)(card >> 8), (uint8_t)card};
 	}
 	(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
-	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
+	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c,
+		(uint8_t)(card >> 8), (uint8_t)card};
 }
 /* <<< factory ScriptCommand_JumpIfMan1RequestedCardInCollection */
 
@@ -2514,10 +2521,11 @@ IncreaseScriptPointerResult ScriptCommand_PickChallengeCupPrizeCard(void)
 	if (index >= 2u)
 		index = (uint8_t)(Random((uint8_t)(CHALLENGE_CUP_PRIZE_CARD_COUNT - 2u)) + 2u);
 	const uint8_t *entry = rom_ptr(CHALLENGE_CUP_PRIZE_CARDS_BANK,
-	                               (uint16_t)(CHALLENGE_CUP_PRIZE_CARDS_ADDR + (uint16_t)index * 3u));
+	                               (uint16_t)(CHALLENGE_CUP_PRIZE_CARDS_ADDR + (uint16_t)index * 4u));
 	wCardReceived = entry[0];
-	gb_write8(wTxRam2_ADDR, entry[1]);
-	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), entry[2]);
+	gb_write8((uint16_t)(wCardReceived_ADDR + 1u), entry[1]);
+	gb_write8(wTxRam2_ADDR, entry[2]);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), entry[3]);
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_PickChallengeCupPrizeCard */
@@ -2542,11 +2550,12 @@ IncreaseScriptPointerResult ScriptCommand_PickLegendaryCard(void)
 	(void)MaxOutEventValue(event_entry[0], 0u, 0u, 0u);
 	const uint8_t *card_entry = rom_ptr(
 		LEGENDARY_CARDS_BANK,
-		(uint16_t)(LEGENDARY_CARDS_ADDR + (uint16_t)index * 3u)
+		(uint16_t)(LEGENDARY_CARDS_ADDR + (uint16_t)index * 4u)
 	);
 	wCardReceived = card_entry[0];
-	gb_write8(wTxRam2_ADDR, card_entry[1]);
-	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), card_entry[2]);
+	gb_write8((uint16_t)(wCardReceived_ADDR + 1u), card_entry[1]);
+	gb_write8(wTxRam2_ADDR, card_entry[2]);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), card_entry[3]);
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_PickLegendaryCard */
