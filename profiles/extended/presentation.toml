@@ -1,0 +1,23 @@
+schema = 1
+session_namespace = "tests/sessions/extended"
+ratchet = "tools/completion/session_ratchet_extended.json"
+
+[[surfaces]]
+name = "one-card page"
+routines = ["LoadLoaded1CardGfx", "SetCardPalette", "SetBGP5ToCardPalette", "ApplyCardCGBAttributes", "DrawLargePictureOfCard"]
+sessions = ["credits-extended"]
+
+[[surfaces]]
+name = "both duel cards"
+routines = ["DrawDuelMainScene", "SetBGP5ToCardPalette", "SetBGP2ToCardPalette", "SetCardPalette"]
+sessions = ["three-palette-screens"]
+
+[[surfaces]]
+name = "duelist portrait"
+routines = ["_DrawPortrait", "DrawPlayerPortrait", "DrawOpponentPortrait"]
+sessions = ["three-palette-screens", "deck-save"]
+
+[[surfaces]]
+name = "In Play Area screen"
+routines = ["DrawYourOrOppPlayArea_ActiveCardGfx"]
+sessions = ["three-palette-screens"]

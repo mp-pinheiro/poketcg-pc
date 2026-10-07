@@ -435,6 +435,9 @@ extended-boundary-gate:
 extended-animation-manifest:
     python3 tools/extended_animation.py --write
 
+extended-presentation-gate:
+    python3 tools/extended_presentation.py
+
 extended-animation-gate:
     python3 tools/extended_animation.py
 
