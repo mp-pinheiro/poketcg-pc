@@ -1,0 +1,12 @@
+{
+  "attack_animations": [
+    "ATK_ANIM_WHIRLWIND_ZIGZAG@12940"
+  ],
+  "branch_ordinal": 8612,
+  "derived_from": "ai-duel-fire-charge",
+  "goal": "1 attack animations substituted into ai-duel-fire-charge's attacks from 8612",
+  "name": "extended-attack-animations-2",
+  "ordinals": 22412,
+  "recorded": "2026-10-07T05:25:18+00:00",
+  "schema": 1
+}
