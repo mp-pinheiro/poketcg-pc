@@ -2453,6 +2453,7 @@ UsePokemonPowerResult UsePokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	e = before_damage.e;
 	hl = before_damage.hl;
 	hOppActionTableIndex = OPPACTION_DUEL_MAIN_SCENE;
+	a = OPPACTION_DUEL_MAIN_SCENE;
 	return (UsePokemonPowerResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory UsePokemonPower */

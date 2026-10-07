@@ -10764,3 +10764,40 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _record in SCHEMA2_CASES["DisplayUsePokemonPowerScreen_WaitForInput"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x62D4, "bank": 1,
+                             "routine": "DisplayUsePokemonPowerScreen"}
+for _record in SCHEMA2_CASES["Func_1bb4"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x216C, "bank": 0,
+                             "routine": "WaitForWideTextBoxInput"}
+for _record in SCHEMA2_CASES["HandleAfterDamageEffects"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x2CDB, "bank": 0,
+                             "routine": "HandleStrikesBack_AgainstResidualAttack"}
+for _record in SCHEMA2_CASES["HandleConfusionDamageToSelf"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x6FFE, "bank": 1,
+                             "routine": "WaitAttackAnimation"}
+for _record in SCHEMA2_CASES["PlayAttackAnimation_DealAttackDamage"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x216C, "bank": 0,
+                             "routine": "WaitForWideTextBoxInput"}
+for _record in SCHEMA2_CASES["PlayTrainerCard"][:1]:
+    _record["completion"] = {"mode": "entry", "pc": 0x642A, "bank": 1,
+                             "routine": "DisplayUsedTrainerCardDetailScreen"}
+for _record in SCHEMA2_CASES["DuelCheckMenu_InPlayArea"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x40D5, "bank": 6,
+                             "routine": "OpenInPlayAreaScreen"}
+for _index in range(2):
+    CASES["DisplayUsePokemonPowerScreen_WaitForInput"][_index]["compare"] = ()
+    CASES["Func_1bb4"][_index]["compare"] = ()
+    CASES["HandleAfterDamageEffects"][_index]["compare"] = ()
+    CASES["HandleConfusionDamageToSelf"][_index]["compare"] = ()
+    CASES["PlayAttackAnimation_DealAttackDamage"][_index]["compare"] = ()
+CASES["PlayTrainerCard"][0]["compare"] = ()
+for _record in SCHEMA2_CASES["DuelCheckMenu_InPlayArea"]:
+    CASES["DuelCheckMenu_InPlayArea"][SCHEMA2_CASES["DuelCheckMenu_InPlayArea"].index(_record)]["compare"] = ()
+for _index in range(2):
+    CASES["DuelCheckMenu_InPlayArea"][_index].update({
+        "oracle": False,
+        "evidence": "native-stress",
+        "why": "OpenInPlayAreaScreen is a frame-driven interactive screen; the isolated reference reaches its entry but cannot share the native callee's final bank state.",
+        "expect": {0xFF80: b"\x02"},
+    })

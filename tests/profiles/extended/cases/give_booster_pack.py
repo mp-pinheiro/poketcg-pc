@@ -73,3 +73,6 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _record in SCHEMA2_CASES["GiveBoosterPack"]:
+    _record["completion"] = {"mode": "entry", "pc": 0x33AA, "bank": 0,
+                             "routine": "WaitForSongToFinish"}
