@@ -603,9 +603,13 @@ def main() -> int:
     rom = args.rom.read_bytes()
     native_data = root / "profiles" / profile.name / "native_data.toml"
     declared = tomllib.loads(native_data.read_text()) if native_data.is_file() else {}
-    items = (sparse_items(rom, args.inventory, args.sym, declared.get("wave_tables", []),
-                          declared.get("audio_script_tail", 0))
-             if args.sparse_pack else slices(SCHEMA, sections, symbols, rom))
+    if args.pack_check:
+        items = []
+    elif args.sparse_pack:
+        items = sparse_items(rom, args.inventory, args.sym, declared.get("wave_tables", []),
+                             declared.get("audio_script_tail", 0))
+    else:
+        items = slices(SCHEMA, sections, symbols, rom)
     if args.sparse_pack and args.pack_check:
         parser.error("--sparse-pack and --pack-check are mutually exclusive")
     if args.sparse_pack or args.pack_check:

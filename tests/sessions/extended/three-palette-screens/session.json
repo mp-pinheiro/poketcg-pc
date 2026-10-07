@@ -1,0 +1,8 @@
+{
+  "derived_from": "ai-duel-fire-charge",
+  "goal": "ai-duel-fire-charge through the first knockout's play area screen: Sam's three-palette portrait at Duel_Init, both arena cards drawn with SetBGP5/SetBGP2ToCardPalette (24 palette bytes each) on the duel main scene, and the knocked-out side's play area screen (DrawYourOrOppPlayArea_ActiveCardGfx), all compared byte for byte",
+  "name": "three-palette-screens",
+  "ordinals": 25250,
+  "recorded": "2026-10-07T04:25:21+00:00",
+  "schema": 1
+}

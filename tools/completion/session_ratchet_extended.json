@@ -1,6 +1,6 @@
 {
   "ai-duel-fire-charge": {
-    "confirmed_ordinal": 24839
+    "confirmed_ordinal": 25258
   },
   "boot-menu": {
     "confirmed_ordinal": 1000
@@ -22,5 +22,8 @@
   },
   "practice-start": {
     "confirmed_ordinal": 7153
+  },
+  "three-palette-screens": {
+    "confirmed_ordinal": 25250
   }
 }
