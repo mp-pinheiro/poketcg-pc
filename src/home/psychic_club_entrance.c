@@ -96,7 +96,7 @@ void LoadClubEntrance(void)
 /* >>> factory ClubEntranceAfterDuel */
 ClubEntranceAfterDuelResult ClubEntranceAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, ClubEntranceAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(ClubEntranceAfterDuelTable);
 	return (ClubEntranceAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

@@ -157,7 +157,7 @@ void DeckMachineRoomCloseTextBox(void)
 /* >>> factory DeckMachineRoomAfterDuel */
 DeckMachineRoomAfterDuelResult DeckMachineRoomAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, DeckMachineRoomAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(DeckMachineRoomAfterDuelTable);
 	return (DeckMachineRoomAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

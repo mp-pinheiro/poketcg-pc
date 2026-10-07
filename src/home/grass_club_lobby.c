@@ -25,7 +25,7 @@
 /* >>> factory GrassClubLobbyAfterDuel */
 GrassClubLobbyAfterDuelResult GrassClubLobbyAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, GrassClubLobbyAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(GrassClubLobbyAfterDuelTable);
 	return (GrassClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

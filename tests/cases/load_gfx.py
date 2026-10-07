@@ -279,8 +279,8 @@ MUTATIONS["GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2"] = {
 }
 MUTATIONS["Func_803b9"] = {
     "source_symbol": "Func_803b9",
-    "before": "void Func_803b9(void)\n{\n\tuint8_t saved = hBankROM;\n\tBankswitchROM(0x20u);",
-    "after": "void Func_803b9(void)\n{\n\tuint8_t saved = hBankROM;\n\tBankswitchROM(0x21u);",
+    "before": "void Func_803b9(void)\n{\n\tuint8_t saved = hBankROM;\n\tBankswitchROM(GetMapDataPointer_BANK);",
+    "after": "void Func_803b9(void)\n{\n\tuint8_t saved = hBankROM;\n\tBankswitchROM((uint8_t)(GetMapDataPointer_BANK + 1u));",
     "case_ids": ["Func_803b9-0"],
 }
 MUTATIONS["GetTileOffsetPointerAndSwitchVRAM"] = {

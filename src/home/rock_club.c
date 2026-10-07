@@ -18,7 +18,7 @@
 /* >>> factory RockClubAfterDuel */
 RockClubAfterDuelResult RockClubAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, RockClubAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(RockClubAfterDuelTable);
 	return (RockClubAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

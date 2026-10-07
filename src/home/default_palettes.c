@@ -2,6 +2,7 @@
 #include "home/default_palettes.h"
 
 #include "generated/hram.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/duel_core.h"
 #include "home/lcd.h"
@@ -19,7 +20,7 @@ void SetDefaultPalettes(void)
 	gb_write8(wOBP1_ADDR, 0xE4u);
 	gb_write8(wTextBoxFrameType_ADDR, 4);
 	uint8_t bank = gb_read8(hBankROM_ADDR);
-	BankswitchROM(1);
+	BankswitchROM(SetDefaultConsolePalettes_BANK);
 	SetDefaultConsolePalettes();
 	BankswitchROM(bank);
 	FlushAllPalettes();

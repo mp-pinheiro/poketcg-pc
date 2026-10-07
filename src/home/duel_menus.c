@@ -3,6 +3,7 @@
 #include "home/play_area.h"
 
 #include "generated/hram.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
@@ -144,7 +145,7 @@ HandlePeekSelectionV2Result HandlePeekSelection(uint8_t f)
 void OpenDuelCheckMenu(void)
 {
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(2u);
+	BankswitchROM(_OpenDuelCheckMenu_BANK);
 	_OpenDuelCheckMenu();
 	BankswitchROM(saved_bank);
 }
@@ -156,7 +157,7 @@ uint8_t OpenInPlayAreaScreen_FromSelectButton(void)
 	uint8_t saved_bank = hBankROM;
 	OpenInPlayAreaScreenResult screen;
 
-	BankswitchROM(6u);
+	BankswitchROM(OpenInPlayAreaScreen_BANK);
 	wInPlayAreaFromSelectButton = 1u;
 	/* duel_menus.asm:11-20: the screen itself was missing between the flag
 	 * write and the bank restore. */

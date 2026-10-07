@@ -64,12 +64,6 @@
 #include "home/deck_configuration.h"
 #include "home/process_text.h"
 /* <<< part includes_SYM_SPACE */
-/* >>> part DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR */
-/* poketcg.sym / poketcg.map, bank 02:
- *   $5eaf HandleDeckConfirmationMenu.CardSelectionParams,
- *   $5e31 UpdateConfirmationCardScreen. */
-#define DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR (HandleDeckConfirmationMenu_ADDR + 0x6Du)
-/* <<< part DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR */
 /* >>> part CARD_LIST_MISSING_CARDS_ADDR */
 #define CARD_LIST_MISSING_CARDS_ADDR (HandleDeckMissingCardsList__DeckConfirmationCardSelectionParams_ADDR)
 /* <<< part CARD_LIST_MISSING_CARDS_ADDR */
@@ -828,7 +822,7 @@ handle_regular_card_page_input:
 	{
 		uint8_t saved = hBankROM;
 
-		BankswitchROM(0x01u);
+		BankswitchROM(OpenCardPage__input_loop_BANK);
 		OpenCardPage_input_loop(0u);
 		BankswitchROM(saved);
 	}

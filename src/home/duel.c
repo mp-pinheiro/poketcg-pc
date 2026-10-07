@@ -987,7 +987,7 @@ HandSortResult SortHandCardsByID(void)
  * are preserved. */
 uint8_t TranslateColorToWR(uint8_t a)
 {
-	return rom_ptr(0u, InvertedPowersOf2_ADDR)[a];
+	return rom_ptr(InvertedPowersOf2_BANK, InvertedPowersOf2_ADDR)[a];
 }
 /* <<< factory TranslateColorToWR */
 
@@ -1370,7 +1370,7 @@ MoveDiscardResult MoveDiscardPileCardToHand(uint8_t a)
 /* duel.asm:350-362. PowersOf2 (00:11B7) is `db $01..$80`. */
 CheckPrizeResult CheckPrizeTaken(uint8_t a)
 {
-	uint8_t mask = rom_ptr(0u, PowersOf2_ADDR)[a];
+	uint8_t mask = rom_ptr(PowersOf2_BANK, PowersOf2_ADDR)[a];
 	uint8_t comp = (uint8_t)~mask;
 	DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
 	uint8_t result = (uint8_t)(prizes.a & mask);
@@ -3627,7 +3627,7 @@ DealConfusionDamageToSelfResult DealRecoilDamageToSelf(uint8_t a, uint8_t f,
 void DuelCheckMenu_Glossary(void)
 {
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(6u);
+	BankswitchROM(OpenGlossaryScreen_BANK);
 	OpenGlossaryScreen();
 	BankswitchROM(saved_bank);
 }

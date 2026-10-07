@@ -190,7 +190,7 @@ return (FontTileResult){last, 0, 0, de, source};
 FontTileResult CreateHalfWidthFontTile(uint8_t d, uint8_t e)
 {
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(0x1d);
+	BankswitchROM(HalfWidthFont_BANK);
 	CopyHalfWidthCharacterToDE(e, wTextTileBuffer_ADDR);
 	CopyHalfWidthCharacterToDE(d, (uint16_t)(wTextTileBuffer_ADDR + 1));
 	for (uint8_t i = 0; i < TILE_SIZE_1BPP; i++) {

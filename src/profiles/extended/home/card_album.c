@@ -191,9 +191,9 @@ void CreateCardSetList(uint8_t a)
 }
 /* <<< factory CreateCardSetList */
 /* >>> factory CardAlbum */
-#define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS (CardAlbum_ADDR + 0xEDu)
-#define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum_ADDR + 0xF5u)
-#define CARD_ALBUM_BOOSTER_PACKS_MENU_DATA (CardAlbum_ADDR + 0x24Au)
+#define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS (CardAlbum__BoosterPackMenuParams_ADDR)
+#define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum__BoosterPackCardsMenuParams_ADDR)
+#define CARD_ALBUM_BOOSTER_PACKS_MENU_DATA (CardAlbum__BoosterPacksMenuData_ADDR)
 #define MENU_CANCEL 0xFFu
 #define PAD_B 0x02u
 #define PAD_START 0x08u

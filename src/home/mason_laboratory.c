@@ -118,7 +118,7 @@ PreloadTech5Result Preload_Tech5(uint16_t hl)
 /* >>> factory MasonLaboratoryAfterDuel */
 MasonLaboratoryAfterDuelResult MasonLaboratoryAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, MasonLaboratoryAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(MasonLaboratoryAfterDuelTable);
 	return (MasonLaboratoryAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

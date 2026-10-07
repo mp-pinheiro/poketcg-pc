@@ -188,7 +188,7 @@ void PokemonDomeLoadMap(void)
 /* >>> factory PokemonDomeAfterDuel */
 PokemonDomeAfterDuelResult PokemonDomeAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, PokemonDomeAfterDuel__after_duel_table_BANK);
 	/* pokemon_dome.asm PokemonDomeAfterDuel: the table lookup and `ret`; the
 	 * map's load-map script is not part of it. */
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(PokemonDomeAfterDuelTable);

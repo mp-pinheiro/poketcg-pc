@@ -172,7 +172,7 @@ void ProcessOWFrameset(uint16_t hl)
 void DoMapOWFrame(void)
 {
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(0x20u);
+	BankswitchROM(ProcessOWFrameset_BANK);
 	uint8_t map = gb_read8(wCurMap_ADDR);
 	uint8_t c = (uint8_t)(map * 4u);
 	uint8_t console = gb_read8(wConsole_ADDR);

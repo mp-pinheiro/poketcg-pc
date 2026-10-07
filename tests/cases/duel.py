@@ -2408,8 +2408,8 @@ MUTATIONS["CheckLoadedAttackFlag"] = {
 }
 MUTATIONS["CheckPrizeTaken"] = {
     "source_symbol": "CheckPrizeTaken",
-    "before": "\tuint8_t mask = rom_ptr(0u, PowersOf2_ADDR)[a];",
-    "after": "\tuint8_t mask = rom_ptr(0u, InvertedPowersOf2_ADDR)[a];",
+    "before": "\tuint8_t mask = rom_ptr(PowersOf2_BANK, PowersOf2_ADDR)[a];",
+    "after": "\tuint8_t mask = rom_ptr(PowersOf2_BANK, InvertedPowersOf2_ADDR)[a];",
     "case_ids": ["CheckPrizeTaken-0"],
 }
 MUTATIONS["ClearAllStatusConditions"] = {
@@ -2732,8 +2732,8 @@ MUTATIONS["SwapPlayAreaPokemon"] = {
 }
 MUTATIONS["TranslateColorToWR"] = {
     "source_symbol": "TranslateColorToWR",
-    "before": "\treturn rom_ptr(0u, InvertedPowersOf2_ADDR)[a];",
-    "after": "\treturn rom_ptr(0u, PowersOf2_ADDR)[a];",
+    "before": "\treturn rom_ptr(InvertedPowersOf2_BANK, InvertedPowersOf2_ADDR)[a];",
+    "after": "\treturn rom_ptr(InvertedPowersOf2_BANK, PowersOf2_ADDR)[a];",
     "case_ids": ["TranslateColorToWR-0"],
 }
 MUTATIONS["_GetCardIDFromDeckIndex"] = {

@@ -4,6 +4,7 @@
 
 #include "generated/constants.h"
 #include "generated/hram.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/sound.h"
 #include "home/switch_rom.h"
@@ -278,13 +279,13 @@ void OverworldDoFrameFunction(void)
 	if (wOverworldNPCFlags & (1u << HIDE_ALL_NPC_SPRITES))
 		return;
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(3u);
+	BankswitchROM(SetScreenScrollWram_BANK);
 	(void)SetScreenScrollWram();
 	Func_c554();
-	BankswitchROM(7u);
+	BankswitchROM(HandleAllNPCMovement_BANK);
 	HandleAllNPCMovement();
 	HandleAllSpriteAnimations();
-	BankswitchROM(32u);
+	BankswitchROM(DoLoadedFramesetSubgroupsFrame_BANK);
 	DoLoadedFramesetSubgroupsFrame();
 	(void)UpdateRNGSources();
 	BankswitchROM(saved_bank);
@@ -306,7 +307,7 @@ uint8_t GameEvent_Duel(void)
 	 * does itself. */
 	uint8_t saved_bank = hBankROM;
 
-	BankswitchROM(1u);
+	BankswitchROM(StartDuel_VSAIOpp_BANK);
 	StartDuel_VSAIOpp();
 	BankswitchROM(saved_bank);
 	return 0x10u;

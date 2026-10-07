@@ -113,7 +113,7 @@ void PlayIntroSequence(void)
 		if (wIntroSequencePalsNeedUpdate != 0u)
 			Func_10d74();
 		uint8_t saved_bank = hBankROM;
-		BankswitchROM(7u);
+		BankswitchROM(ExecuteIntroSequenceCmd_BANK);
 		(void)ExecuteIntroSequenceCmd();
 		BankswitchROM(saved_bank);
 		if (wSequenceDelay == 0xFFu)

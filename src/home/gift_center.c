@@ -22,10 +22,10 @@
 #define GIFT_CENTER_BANK 0x04u
 /* <<< part GIFT_CENTER_BANK */
 /* >>> part GIFT_CENTER_TEXT_POINTERS */
-#define GIFT_CENTER_TEXT_POINTERS (ScriptCommand_SetChallengeHallNPCCoords_ADDR + 0x1Au)
+#define GIFT_CENTER_TEXT_POINTERS (GiftCenterMenu__GiftCenterTextPointers_ADDR)
 /* <<< part GIFT_CENTER_TEXT_POINTERS */
 /* >>> part GIFT_CENTER_MENU_PARAMS */
-#define GIFT_CENTER_MENU_PARAMS (ScriptCommand_SetChallengeHallNPCCoords_ADDR + 0x22u)
+#define GIFT_CENTER_MENU_PARAMS (GiftCenterMenu__GiftCenterMenuParams_ADDR)
 /* <<< part GIFT_CENTER_MENU_PARAMS */
 
 

@@ -88,7 +88,7 @@ WaterClubMovePlayerResult WaterClubMovePlayer(uint8_t b, uint8_t c, uint16_t hl)
 /* >>> factory WaterClubAfterDuel */
 WaterClubAfterDuelResult WaterClubAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, WaterClubAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(WaterClubAfterDuelTable);
 	return (WaterClubAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

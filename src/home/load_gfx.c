@@ -252,7 +252,7 @@ MapDataPointerResult GetMapDataPointer(uint8_t a, uint8_t l)
 	uint16_t offset = (uint16_t)a * 4u;
 	uint16_t result;
 	uint8_t f;
-	BankswitchROM(0x20);
+	BankswitchROM(GfxTablePointers_BANK);
 	table = (uint16_t)(gb_read8(base) | ((uint16_t)gb_read8((uint16_t)(base + 1u)) << 8));
 	BankswitchROM(saved);
 	result = (uint16_t)(table + offset);
@@ -287,7 +287,7 @@ uint8_t LoadSpriteGfx(uint8_t a)
 		wTempPointerBank = ROM_MINT_SPRITE_BANK;
 		total = GetFarByte(ROM_MINT_SPRITE_BANK, MINT_ASSET_ADDR);
 	} else {
-		BankswitchROM(0x20u);
+		BankswitchROM(GetMapDataPointer_BANK);
 		uint16_t hl = GetMapDataPointer(a, GFX_TABLE_SPRITES).hl;
 		LoadGraphicsPointerFromHL(&hl);
 		total = gb_read8(hl);
@@ -373,7 +373,7 @@ void Func_80238(void)
 		wTempPointerBank = mint_bank;
 		wTotalNumTiles = GetFarByte(mint_bank, MINT_ASSET_ADDR);
 	} else {
-		BankswitchROM(0x20u);
+		BankswitchROM(GetMapDataPointer_BANK);
 		uint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;
 		LoadGraphicsPointerFromHL(&hl);
 		wTotalNumTiles = gb_read8(hl);
@@ -452,7 +452,7 @@ LoadTilesetChunkResult LoadTilesetGfx_CopyGfxData(uint8_t b, uint8_t c)
 void Func_803b9(void)
 {
 	uint8_t saved = hBankROM;
-	BankswitchROM(0x20u);
+	BankswitchROM(GetMapDataPointer_BANK);
 	uint16_t hl = GetMapDataPointer(wCurTilemap, GFX_TABLE_TILEMAPS).hl;
 	LoadGraphicsPointerFromHL(&hl);
 	wCurTileset = gb_read8(hl);
@@ -543,7 +543,7 @@ void LoadPaletteDataToBuffer(uint8_t a)
 		}
 	}
 	uint8_t saved = hBankROM;
-	BankswitchROM(0x20u);
+	BankswitchROM(GetMapDataPointer_BANK);
 	uint16_t hl = GetMapDataPointer(a, GFX_TABLE_PALETTES).hl;
 	uint8_t size;
 	uint16_t count;

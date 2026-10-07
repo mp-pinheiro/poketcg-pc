@@ -6878,14 +6878,14 @@ Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void)
 	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
 	{
 		uint8_t saved = hBankROM;
-		BankswitchROM(0x01);
+		BankswitchROM(DisplayEnergyDiscardScreen_BANK);
 		DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
 		BankswitchROM(saved);
 	}
 	HandleEnergyDiscardMenuInputResult menu;
 	{
 		uint8_t saved = hBankROM;
-		BankswitchROM(0x01);
+		BankswitchROM(HandleEnergyDiscardMenuInput_BANK);
 		menu = HandleEnergyDiscardMenuInput();
 		BankswitchROM(saved);
 	}
@@ -6927,7 +6927,7 @@ DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void)
 {
 	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
 	uint8_t saved = hBankROM;
-	BankswitchROM(0x01);
+	BankswitchROM(DisplayEnergyDiscardScreen_BANK);
 	DisplayEnergyDiscardScreen(0x00);
 	BankswitchROM(saved);
 	HandleEnergyDiscardMenuInputResult result = HandleEnergyDiscardMenuInput();
@@ -6944,10 +6944,10 @@ void FlamesOfRage_PlayerSelectEffect(void)
 	(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);
 	hCurSelectionItem = 0u;
 	(void)CreateListOfFireEnergyAttachedToArena();
-	{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }
+	{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardScreen_BANK); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }
 	for (;;) {
 		HandleEnergyDiscardMenuInputResult menu;
-		{ uint8_t saved = hBankROM; BankswitchROM(0x01); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
+		{ uint8_t saved = hBankROM; BankswitchROM(HandleEnergyDiscardMenuInput_BANK); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
 		if ((menu.f & 0x10u) != 0u)
 			return;
 		uint16_t hl = GetNextPositionInTempList();
@@ -6955,7 +6955,7 @@ void FlamesOfRage_PlayerSelectEffect(void)
 		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
 		if (hCurSelectionItem >= 2u)
 			return;
-		{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
+		{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardMenu_BANK); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
 	}
 }
 /* <<< factory FlamesOfRage_PlayerSelectEffect */
@@ -7424,7 +7424,7 @@ Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)
 	(void)CreateListOfFireEnergyAttachedToArena();
 	{
 		uint8_t saved = hBankROM;
-		BankswitchROM(0x01u);
+		BankswitchROM(DisplayEnergyDiscardScreen_BANK);
 		DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
 		BankswitchROM(saved);
 	}
@@ -7434,7 +7434,7 @@ Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)
 		HandleEnergyDiscardMenuInputResult input;
 		{
 			uint8_t saved = hBankROM;
-			BankswitchROM(0x01u);
+			BankswitchROM(HandleEnergyDiscardMenuInput_BANK);
 			input = HandleEnergyDiscardMenuInput();
 			BankswitchROM(saved);
 		}
@@ -7446,7 +7446,7 @@ Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)
 			break;
 		{
 			uint8_t saved = hBankROM;
-			BankswitchROM(0x01u);
+			BankswitchROM(DisplayEnergyDiscardMenu_BANK);
 			DisplayEnergyDiscardMenu();
 			BankswitchROM(saved);
 		}
@@ -7487,12 +7487,12 @@ void FireSpin_PlayerSelectEffect(void)
 	hCurSelectionItem = 0u;
 	(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
 	(void)SortCardsInDuelTempListByID(0u, 0u, 0u);
-	{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }
+	{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardScreen_BANK); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }
 	uint8_t denominator = 2u;
 	wEnergyDiscardMenuDenominator = denominator;
 	for (;;) {
 		HandleEnergyDiscardMenuInputResult menu;
-		{ uint8_t saved = hBankROM; BankswitchROM(0x01u); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
+		{ uint8_t saved = hBankROM; BankswitchROM(HandleEnergyDiscardMenuInput_BANK); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
 		if ((menu.f & 0x10u) != 0u)
 			return;
 		uint16_t hl = GetNextPositionInTempList();
@@ -7501,7 +7501,7 @@ void FireSpin_PlayerSelectEffect(void)
 		if (hCurSelectionItem >= 2u)
 			return;
 		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
-		{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
+		{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardMenu_BANK); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
 	}
 }
 /* <<< factory FireSpin_PlayerSelectEffect */
@@ -10952,7 +10952,7 @@ ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint
 		IsPlayerTurnResult turn = IsPlayerTurn();
 		if ((turn.f & 0x10u) == 0u) {
 			uint8_t saved = hBankROM;
-			BankswitchROM(0x01u);
+			BankswitchROM(DisplayCardDetailScreen_BANK);
 			(void)DisplayCardDetailScreen(card, WasPlacedInTheHandText);
 			BankswitchROM(saved);
 		}
@@ -11051,7 +11051,7 @@ ShuffleCardsInDeckResult PokeBall_AddToHandEffect(uint8_t a, uint8_t f, uint8_t 
 		IsPlayerTurnResult turn = IsPlayerTurn();
 		if ((turn.f & 0x10u) == 0u) {
 			uint8_t saved = hBankROM;
-			BankswitchROM(0x01u);
+			BankswitchROM(DisplayCardDetailScreen_BANK);
 			(void)DisplayCardDetailScreen(card, WasPlacedInTheHandText);
 			BankswitchROM(saved);
 		}
@@ -11695,11 +11695,11 @@ HandlePokemonAndEnergySelectionScreenResult HandlePokemonAndEnergySelectionScree
 {
 	for (;;) {
 		uint8_t saved = hBankROM;
-		BankswitchROM(0x01u);
+		BankswitchROM(HasAlivePokemonInPlayArea_BANK);
 		(void)HasAlivePokemonInPlayArea();
 		BankswitchROM(saved);
 
-		BankswitchROM(0x01u);
+		BankswitchROM(OpenPlayAreaScreenForSelection_BANK);
 		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
 		if ((screen.f & 0x10u) != 0u) {
 			BankswitchROM(saved);
@@ -11714,11 +11714,11 @@ HandlePokemonAndEnergySelectionScreenResult HandlePokemonAndEnergySelectionScree
 		}
 
 		(void)CreateArenaOrBenchEnergyCardList(hCurMenuItem);
-		BankswitchROM(0x01u);
+		BankswitchROM(DisplayEnergyDiscardScreen_BANK);
 		DisplayEnergyDiscardScreen(hCurMenuItem);
 		BankswitchROM(saved);
 		HandleEnergyDiscardMenuInputResult input;
-		BankswitchROM(0x01u);
+		BankswitchROM(HandleEnergyDiscardMenuInput_BANK);
 		input = HandleEnergyDiscardMenuInput();
 		BankswitchROM(saved);
 		hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
@@ -12332,12 +12332,12 @@ HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(v
 	hCurSelectionItem = 3u;
 	for (;;) {
 		uint8_t saved_bank = hBankROM;
-		BankswitchROM(0x01u);
+		BankswitchROM(HasAlivePokemonInPlayArea_BANK);
 		(void)HasAlivePokemonInPlayArea();
 		BankswitchROM(saved_bank);
 
 		saved_bank = hBankROM;
-		BankswitchROM(0x01u);
+		BankswitchROM(OpenPlayAreaScreenForSelection_BANK);
 		while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
 		}
 		BankswitchROM(saved_bank);
@@ -12355,11 +12355,11 @@ HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(v
 
 		hPlayAreaEffectTarget = hTempPlayAreaLocation_ff9d;
 		saved_bank = hBankROM;
-		BankswitchROM(0x01u);
+		BankswitchROM(DisplayEnergyDiscardScreen_BANK);
 		(void)CreateArenaOrBenchEnergyCardList(hTempPlayAreaLocation_ff9d);
 		BankswitchROM(saved_bank);
 		saved_bank = hBankROM;
-		BankswitchROM(0x01u);
+		BankswitchROM(DisplayEnergyDiscardScreen_BANK);
 		DisplayEnergyDiscardScreen(hTempPlayAreaLocation_ff9d);
 		BankswitchROM(saved_bank);
 		wEnergyDiscardMenuDenominator = 2u;
@@ -12367,7 +12367,7 @@ HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(v
 		for (;;) {
 			HandleEnergyDiscardMenuInputResult menu;
 			saved_bank = hBankROM;
-			BankswitchROM(0x01u);
+			BankswitchROM(HandleEnergyDiscardMenuInput_BANK);
 			menu = HandleEnergyDiscardMenuInput();
 			BankswitchROM(saved_bank);
 			if ((menu.f & 0x10u) != 0u) {
@@ -12376,7 +12376,7 @@ HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(v
 					break;
 				uint8_t numerator = wEnergyDiscardMenuNumerator;
 				saved_bank = hBankROM;
-				BankswitchROM(0x01u);
+				BankswitchROM(DisplayEnergyDiscardScreen_BANK);
 				DisplayEnergyDiscardScreen(hTempPlayAreaLocation_ff9d);
 				BankswitchROM(saved_bank);
 				wEnergyDiscardMenuDenominator = 2u;
@@ -12391,7 +12391,7 @@ HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(v
 			if (hCurSelectionItem >= 5u || wDuelTempList == 0xffu)
 				break;
 			saved_bank = hBankROM;
-			BankswitchROM(0x01u);
+			BankswitchROM(DisplayEnergyDiscardMenu_BANK);
 			DisplayEnergyDiscardMenu();
 			BankswitchROM(saved_bank);
 		}

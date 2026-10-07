@@ -889,7 +889,7 @@ void Start(uint8_t a)
 	gb_write8(rIF, 0);
 	gb_write8(rIE, 0);
 	(void)ZeroRAM();
-	BankswitchROM(1u);
+	BankswitchROM(GameLoop_BANK);
 	BankswitchSRAM(0u);
 	hBankVRAM = 0u;
 	gb_write8(rVBK, 0xFEu);

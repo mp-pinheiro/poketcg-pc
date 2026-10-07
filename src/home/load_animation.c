@@ -343,7 +343,7 @@ void Func_3e31(void)
 {
 	uint8_t saved_bank = hBankROM;
 	HandleAllSpriteAnimations();
-	BankswitchROM(0x20u);
+	BankswitchROM(DoLoadedFramesetSubgroupsFrame_BANK);
 	DoLoadedFramesetSubgroupsFrame();
 	BankswitchROM(saved_bank);
 }

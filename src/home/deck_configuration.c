@@ -1019,7 +1019,7 @@ DrawListCursorResult DrawListCursor_Visible(void)
 void CountNumberOfCardsForEachCardType(void)
 {
 	uint16_t hl = wCardFilterCounts_ADDR;
-	const uint8_t *de = rom_ptr(2u, CardTypeFilters_ADDR);
+	const uint8_t *de = rom_ptr(CardTypeFilters_BANK, CardTypeFilters_ADDR);
 	uint8_t type;
 	while ((type = *de++) != 0xFFu)
 		gb_write8(hl++, CountNumberOfCardsOfType(type));
@@ -1959,7 +1959,7 @@ handle_regular_card_page_input:
 	{
 		uint8_t saved = hBankROM;
 
-		BankswitchROM(0x01u);
+		BankswitchROM(OpenCardPage__input_loop_BANK);
 		OpenCardPage_input_loop(0u);
 		BankswitchROM(saved);
 	}

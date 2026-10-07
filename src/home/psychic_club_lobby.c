@@ -49,7 +49,7 @@ PsychicClubLobbyLoadMapResult PsychicClubLobbyLoadMap(uint8_t b, uint8_t c, uint
 /* >>> factory PsychicClubLobbyAfterDuel */
 PsychicClubLobbyAfterDuelResult PsychicClubLobbyAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, PsychicClubLobbyAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(PsychicClubLobbyAfterDuelTable);
 	return (PsychicClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

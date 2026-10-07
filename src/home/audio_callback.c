@@ -1,6 +1,7 @@
 /* >>> part includes */
 #include "home/audio_callback.h"
 
+#include "generated/rom.h"
 #include "home/switch_rom.h"
 /* <<< part includes */
 
@@ -9,7 +10,7 @@
  * returns through the local tail, which restores the normal audio bank $3d. */
 void Bankswitch3dTo3f(void)
 {
-	BankswitchROM(0x3Fu);
-	BankswitchROM(0x3Du);
+	BankswitchROM(SFX_UpdateSFX_BANK);
+	BankswitchROM(Music1_Update_BANK);
 }
 /* <<< factory Bankswitch3dTo3f */

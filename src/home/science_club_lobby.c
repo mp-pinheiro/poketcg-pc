@@ -30,7 +30,7 @@
 /* >>> factory ScienceClubLobbyAfterDuel */
 ScienceClubLobbyAfterDuelResult ScienceClubLobbyAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, ScienceClubLobbyAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(ScienceClubLobbyAfterDuelTable);
 	return (ScienceClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

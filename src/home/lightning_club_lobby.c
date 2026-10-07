@@ -22,7 +22,7 @@
 /* >>> factory LightningClubLobbyAfterDuel */
 LightningClubLobbyAfterDuelResult LightningClubLobbyAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, LightningClubLobbyAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(LightningClubLobbyAfterDuelTable);
 	return (LightningClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

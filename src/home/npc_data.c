@@ -220,7 +220,7 @@ SetNPCDialogNameResult SetNPCDialogName(uint8_t a, uint8_t f, uint8_t b, uint8_t
 	uint8_t half = (uint8_t)(((addr & 0x0FFFu) + NPC_DATA_NAME_TEXT) > 0x0FFFu ? 0x20u : 0u);
 	uint8_t carry = (uint8_t)(sum > 0xFFFFu ? 0x10u : 0u);
 	addr = (uint16_t)sum;
-	gb_write8(0x2000u, 0x04u);
+	gb_write8(0x2000u, NPCHeaderPointers_BANK);
 	uint8_t lo = gb_read8(addr);
 	wCurrentNPCNameTx = lo;
 	uint8_t hi = gb_read8((uint16_t)(addr + 1u));

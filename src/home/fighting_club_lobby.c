@@ -25,7 +25,7 @@
 /* >>> factory FightingClubLobbyAfterDuel */
 FightingClubLobbyAfterDuelResult FightingClubLobbyAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, FightingClubLobbyAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(FightingClubLobbyAfterDuelTable);
 	return (FightingClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

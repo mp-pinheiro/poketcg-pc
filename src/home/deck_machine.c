@@ -1849,7 +1849,7 @@ GiftCenter_ReceiveCardResult GiftCenter_ReceiveCard(void)
 	SaveGame();
 
 	wCardListVisibleOffset = 0u;
-	BankswitchROM(2u);
+	BankswitchROM(InitCardSelectionParams_BANK);
 	uint16_t params = DATA_B04A_ADDR;
 	(void)InitCardSelectionParams(0u, &params);
 	PrintReceivedTheseCardsText();
@@ -1891,7 +1891,7 @@ card_page:
 	PrintReceivedTheseCardsText();
 	PrintCardSelectionList();
 	EnableLCD();
-	BankswitchROM(2u);
+	BankswitchROM(InitCardSelectionParams_BANK);
 	params = DATA_B04A_ADDR;
 	(void)InitCardSelectionParams(0u, &params);
 	entries = wNumEntriesInCurFilter;

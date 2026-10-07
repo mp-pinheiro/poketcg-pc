@@ -81,16 +81,16 @@
 #include "mem.h"
 /* <<< part includes_INPUT_CUR_DECK_DECK1_DATA */
 /* >>> part INPUT_CUR_DECK_DECK1_DATA */
-#define INPUT_CUR_DECK_DECK1_DATA (PrintCardSetListEntries_ADDR + 0x69u)
+#define INPUT_CUR_DECK_DECK1_DATA (Deck1Data_ADDR)
 /* <<< part INPUT_CUR_DECK_DECK1_DATA */
 /* >>> part INPUT_CUR_DECK_DECK2_DATA */
-#define INPUT_CUR_DECK_DECK2_DATA (PrintCardSetListEntries_ADDR + 0x72u)
+#define INPUT_CUR_DECK_DECK2_DATA (Deck2Data_ADDR)
 /* <<< part INPUT_CUR_DECK_DECK2_DATA */
 /* >>> part INPUT_CUR_DECK_DECK3_DATA */
-#define INPUT_CUR_DECK_DECK3_DATA (PrintCardSetListEntries_ADDR + 0x7Bu)
+#define INPUT_CUR_DECK_DECK3_DATA (Deck3Data_ADDR)
 /* <<< part INPUT_CUR_DECK_DECK3_DATA */
 /* >>> part INPUT_CUR_DECK_DECK4_DATA */
-#define INPUT_CUR_DECK_DECK4_DATA (PrintCardSetListEntries_ADDR + 0x84u)
+#define INPUT_CUR_DECK_DECK4_DATA (Deck4Data_ADDR)
 /* <<< part INPUT_CUR_DECK_DECK4_DATA */
 
 /* >>> part includes_DECK_BUILDING_PARAMS_ADDR */
@@ -231,7 +231,7 @@ Func_9001Result Func_9001(uint16_t hl)
 /* >>> factory LoadHandCardsIcon */
 LoadHandCardsIconResult LoadHandCardsIcon(void)
 {
-	gb_write8(0x2000u, 0x02u);
+	gb_write8(0x2000u, HandCardsGfx_BANK);
 	uint16_t hl = HandCardsGfx;
 	uint16_t de = v0Tiles2_dest;
 	CopyListFromHLToDE(&hl, &de);
@@ -360,7 +360,7 @@ void InputCurDeckName(void)
 	 * hBankROM, so a callee's own save/restore put the caller's bank back
 	 * mid-call and the naming screen read its question text from bank 2. */
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(6u);
+	BankswitchROM(InputDeckName_BANK);
 	(void)InputDeckName(MAX_DECK_NAME_LENGTH, 4u, 1u,
 		(uint8_t)(wCurDeckName_ADDR >> 8), (uint8_t)wCurDeckName_ADDR, question);
 	BankswitchROM(saved_bank);

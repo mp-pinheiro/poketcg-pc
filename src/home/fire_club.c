@@ -18,7 +18,7 @@
 /* >>> factory FireClubAfterDuel */
 FireClubAfterDuelResult FireClubAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, FireClubAfterDuel__after_duel_table_BANK);
 	FindEndOfDuelScriptResult r = FindEndOfDuelScript(FireClubAfterDuelTable);
 	return (FireClubAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }

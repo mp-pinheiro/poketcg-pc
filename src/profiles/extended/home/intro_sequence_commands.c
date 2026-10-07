@@ -68,7 +68,7 @@ ExecuteIntroSequenceCmdResult ExecuteIntroSequenceCmd(void)
 			return result;
 		}
 
-		BankswitchROM(7u);
+		BankswitchROM(ExecuteIntroSequenceCmd_BANK);
 		uint16_t command_ptr = (uint16_t)(wSequenceCmdPtr |
 			((uint16_t)gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u)) << 8));
 		uint8_t target_low = gb_read8(command_ptr);

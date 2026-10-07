@@ -461,7 +461,7 @@ NoDamageOrEffectCheckResult CheckNoDamageOrEffect(uint16_t hl)
 
 	gb_write8(wNoDamageOrEffect_ADDR, (uint8_t)(val | 0x80u));
 	uint8_t offset = (uint8_t)((val - 1u) * 2u);
-	const uint8_t *entry = rom_ptr(0u, (uint16_t)(NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR + offset));
+	const uint8_t *entry = rom_ptr(NoDamageOrEffectTextIDTable_BANK, (uint16_t)(NO_DAMAGE_OR_EFFECT_TEXT_ID_TABLE_ADDR + offset));
 	uint16_t id = (uint16_t)(entry[0] | (uint16_t)entry[1] << 8);
 	return (NoDamageOrEffectCheckResult){offset == 0 ? 0x90u : 0x10u, id};
 }

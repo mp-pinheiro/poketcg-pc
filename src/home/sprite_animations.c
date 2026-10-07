@@ -2,6 +2,7 @@
 #include "home/sprite_animations.h"
 #include "generated/constants.h"
 #include "generated/hram.h"
+#include "generated/rom.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/copy.h"
@@ -391,7 +392,7 @@ uint8_t Func_12c4f(uint8_t a, uint8_t d)
 	wWhichVRAMBank = 0;
 	wVRAMTileOffset = d;
 	uint8_t saved = hBankROM;
-	BankswitchROM(0x20u);
+	BankswitchROM(LoadSpriteGfx_BANK);
 	uint8_t result = LoadSpriteGfx(a);
 	BankswitchROM(saved);
 	return result;

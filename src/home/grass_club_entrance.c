@@ -48,7 +48,7 @@ FindEndOfDuelScriptResult FindEndOfDuelScript(uint16_t hl)
 /* >>> factory GrassClubEntranceAfterDuel */
 FindEndOfDuelScriptResult GrassClubEntranceAfterDuel(void)
 {
-	gb_write8(0x2000u, 0x03u);
+	gb_write8(0x2000u, GrassClubEntranceAfterDuelTable_BANK);
 	return FindEndOfDuelScript(GrassClubEntranceAfterDuelTable);
 }
 /* <<< factory GrassClubEntranceAfterDuel */

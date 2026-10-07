@@ -11,18 +11,6 @@
 /* >>> part DECK_CARD_STRIDE */
 #define DECK_CARD_STRIDE DECK_COMPRESSED_STRUCT_SIZE
 /* <<< part DECK_CARD_STRIDE */
-/* >>> part INPUT_CUR_DECK_DECK1_DATA */
-#define INPUT_CUR_DECK_DECK1_DATA Deck1Data_ADDR
-/* <<< part INPUT_CUR_DECK_DECK1_DATA */
-/* >>> part INPUT_CUR_DECK_DECK2_DATA */
-#define INPUT_CUR_DECK_DECK2_DATA Deck2Data_ADDR
-/* <<< part INPUT_CUR_DECK_DECK2_DATA */
-/* >>> part INPUT_CUR_DECK_DECK3_DATA */
-#define INPUT_CUR_DECK_DECK3_DATA Deck3Data_ADDR
-/* <<< part INPUT_CUR_DECK_DECK3_DATA */
-/* >>> part INPUT_CUR_DECK_DECK4_DATA */
-#define INPUT_CUR_DECK_DECK4_DATA Deck4Data_ADDR
-/* <<< part INPUT_CUR_DECK_DECK4_DATA */
 /* --- factory CopyDeckFromSRAM */
 /* --- factory Func_9001 */
 /* >>> factory WriteCardListsTerminatorBytes */

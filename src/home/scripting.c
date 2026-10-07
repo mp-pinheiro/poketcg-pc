@@ -2195,7 +2195,7 @@ IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void)
 /* >>> factory ScriptCommand_ShowSamNormalMultichoice */
 IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
 {
-	BankswitchROM(3u);
+	BankswitchROM(ShowMultichoiceTextbox_BANK);
 	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, (ScriptCommand_ShowSamNormalMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
 	(void)menu;
@@ -2210,7 +2210,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 {
 	/* scripting.asm:1716-1730 passes `.multichoice_menu_args`, the table that
 	 * follows the routine in bank 3 ($03:532B). */
-	BankswitchROM(3u);
+	BankswitchROM(ShowMultichoiceTextbox_BANK);
 	ShowMultichoiceTextboxResult menu =
 		ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, (ScriptCommand_ShowSamRulesMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_Sam;
@@ -2223,7 +2223,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 /* >>> factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice */
 IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)
 {
-	BankswitchROM(3u);
+	BankswitchROM(ShowMultichoiceTextbox_BANK);
 	(void)ShowMultichoiceTextbox(0u, (ScriptCommand_ChooseDeckToDuelAgainstMultichoice__multichoice_menu_args_ADDR));
 	uint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;
 	(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);
