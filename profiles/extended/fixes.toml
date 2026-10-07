@@ -12,6 +12,14 @@ heading = "Cards in AI decks that are not supposed to be placed as Prize cards a
 kind = "code"
 routines = ["SetUpBossStartingHandAndDeck"]
 
+[[fixes.reverts]]
+routine = "SetUpBossStartingHandAndDeck"
+source = "src/profiles/extended/home/boss_deck_set_up.c"
+before = "\t\tif (entry == CARD_LIST_TERMINATOR || entry == card)\n\t\t\treturn (uint8_t)(entry == card);"
+after = "\t\tif (entry == CARD_LIST_TERMINATOR || entry == card)\n\t\t\treturn 0u;"
+case = "tests/profiles/extended/cases/boss_deck_set_up.py"
+index = 1
+
 [[fixes]]
 heading = "AI score modifiers for retreating are never used"
 kind = "code"
@@ -92,6 +100,14 @@ heading = "AI has flawed logic when considering the Earthquake attack"
 kind = "code"
 routines = ["HandleSpecialAIAttacks"]
 
+[[fixes.reverts]]
+routine = "HandleSpecialAIAttacks"
+source = "src/profiles/extended/home/special_attacks.c"
+before = "\t\t\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(e + DUELVARS_ARENA_CARD_HP));\n\t\t\tif (hp.a >= 20u)\n\t\t\t\tcontinue;\n\t\t\td++;\n\t\t}\n\t\tSwapTurn();\n\t\tuint8_t prizes = CountPrizes();\n\t\tSwapTurn();"
+after = "\t\t\tDuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(e + DUELVARS_ARENA_CARD_HP));\n\t\t\thl = hp.hl;\n\t\t\tif (hp.a >= 20u)\n\t\t\t\tcontinue;\n\t\t\td++;\n\t\t}\n\t\tuint8_t prizes = CountPrizes();"
+case = "tests/profiles/extended/cases/special_attacks.py"
+index = 1
+
 [[fixes]]
 heading = "AI has flawed logic when considering evolutions"
 kind = "code"
@@ -101,6 +117,14 @@ routines = ["AIDecideEvolution"]
 heading = "AI might disregard AI info flags"
 kind = "code"
 routines = ["AIDecideBenchPokemonToSwitchTo", "AIDecideEvolution"]
+
+[[fixes.reverts]]
+routine = "AIDecideEvolution"
+source = "src/profiles/extended/home/hand_pokemon.c"
+before = "\t\t\telse if ((wLoadedCard1AIInfo & 0x0Fu) == AI_INFO_ENCOURAGE_EVO)"
+after = "\t\t\telse if (wLoadedCard1AIInfo == AI_INFO_ENCOURAGE_EVO)"
+case = "tests/profiles/extended/cases/hand_pokemon.py"
+index = 1
 
 [[fixes]]
 heading = "Attack damage is not correctly halved"

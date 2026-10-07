@@ -89,10 +89,14 @@ def main() -> int:
                         help="ninja build dir whose probe is rebuilt in place")
     parser.add_argument("--runner", type=Path,
                         default=ROOT / "tools/oracle/gbref/build/gbref_runner")
+    parser.add_argument("--mutation", type=Path,
+                        help="JSON file with source, source_symbol, before and after, used instead of the case module's MUTATIONS entry")
+    parser.add_argument("--receipt", type=Path,
+                        help="receipt path (default tools/oracle/mutation_receipts/<fn>.json)")
     args = parser.parse_args()
     case_path = (ROOT / args.case).resolve()
     module = load_case(case_path)
-    mutation = module.MUTATIONS[args.fn]
+    mutation = json.loads(args.mutation.read_text()) if args.mutation else module.MUTATIONS[args.fn]
     home_sources = {path.stem: path for path in PROFILE.home_sources(ROOT)}
     default_source = home_sources.get(case_path.stem, ROOT / "src" / "home" / f"{case_path.stem}.c")
     source_value = mutation.get("source", default_source.relative_to(ROOT).as_posix())
@@ -172,15 +176,19 @@ def main() -> int:
     if restored.returncode != 0 or comparison_status(restored) != "PASS":
         raise SystemExit(f"MUTATION_RESTORE_FAILED: {restored.stdout or restored.stderr}")
 
-    receipt = ROOT / "tools/oracle/mutation_receipts"
-    receipt.mkdir(parents=True, exist_ok=True)
+    receipt = args.receipt if args.receipt else ROOT / "tools/oracle/mutation_receipts" / f"{args.fn}.json"
+    if not receipt.is_absolute():
+        receipt = ROOT / receipt
+    receipt.parent.mkdir(parents=True, exist_ok=True)
     output = {
         "fn": args.fn, "case": str(args.case), "index": args.index,
         "status": "RED", "baseline": baseline.stdout,
         "output": result.stdout or result.stderr,
         "restored": restored.stdout,
     }
-    (receipt / f"{args.fn}.json").write_text(json.dumps(output, indent=2) + "\n")
+    if args.mutation:
+        output["mutation"] = mutation
+    receipt.write_text(json.dumps(output, indent=2) + "\n")
     print(f"MUTATION_RED fn={args.fn} index={args.index}")
     return 0
 

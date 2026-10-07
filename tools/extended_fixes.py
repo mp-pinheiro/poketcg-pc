@@ -4,19 +4,24 @@
 Every `### ` heading of poketcg-extended/bugs_and_glitches.md must have one
 row in profiles/extended/fixes.toml. A `code` row names the Extended routines
 the fix changed: each must be an Extended function, have oracle cases in the
-Extended case modules, and pass in the scoreboard. A `data` row is a fix to
-text, graphics or map data, which the native port reads from the
-ROM-derived data pack, so the pack check is its evidence. A `removed` row
-belongs to a feature the profile removed (Card Pop!).
+Extended case modules, pass in the scoreboard, and have a revert: a mutation
+that puts the vanilla behavior back into the port, with a receipt under
+tools/oracle/fix_receipts proving an Extended case fails on it (`--prove`
+writes the receipts). A `data` row is a fix to text, graphics or map data,
+which the native port reads from the ROM-derived data pack, so the pack check
+is its evidence. A `removed` row belongs to a feature the profile removed
+(Card Pop!).
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import subprocess
 import sys
+import tempfile
 import tomllib
 from pathlib import Path
 
@@ -28,6 +33,8 @@ from tools.profiles import get_profile
 SOURCE = ROOT / "poketcg-extended" / "bugs_and_glitches.md"
 FIXES = ROOT / "profiles" / "extended" / "fixes.toml"
 SCOREBOARD = ROOT / "build-extended" / "completion" / "scoreboard.json"
+RECEIPTS = ROOT / "tools" / "oracle" / "fix_receipts"
+REVERT_KEYS = ("routine", "source", "before", "after", "case", "index")
 KINDS = {"code", "data", "removed"}
 
 
@@ -54,10 +61,41 @@ def scoreboard_status(path: Path) -> dict[str, str]:
     return status
 
 
+def revert_receipt(revert: dict) -> Path:
+    canonical = json.dumps({key: revert.get(key) for key in REVERT_KEYS}, sort_keys=True)
+    return RECEIPTS / f"{revert.get('routine')}-{hashlib.sha256(canonical.encode()).hexdigest()[:12]}.json"
+
+
+def revert_proven(revert: dict) -> bool:
+    path = revert_receipt(revert)
+    return path.is_file() and json.loads(path.read_text()).get("status") == "RED"
+
+
+def prove(revert: dict, build: Path) -> str:
+    mutation = {"source": revert["source"], "source_symbol": revert["routine"],
+                "before": revert["before"], "after": revert["after"]}
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as handle:
+        json.dump(mutation, handle)
+    try:
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "tools" / "run_mutation.py"), revert["routine"], revert["case"],
+             "--build", str(build), "--index", str(revert["index"]), "--mutation", handle.name,
+             "--receipt", str(revert_receipt(revert))],
+            cwd=ROOT, capture_output=True, text=True, check=False)
+    finally:
+        Path(handle.name).unlink()
+    lines = [line for line in (result.stdout + result.stderr).splitlines() if line.startswith("MUTATION_")]
+    return lines[-1] if lines else f"MUTATION_EXECUTION_FAILED: rc={result.returncode}"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--fixes", type=Path, default=FIXES)
     parser.add_argument("--scoreboard", type=Path, default=SCOREBOARD)
+    parser.add_argument("--prove", action="store_true",
+                        help="run every revert without a current receipt through tools/run_mutation.py")
+    parser.add_argument("--build", type=Path, default=ROOT / "build-extended",
+                        help="Extended ninja build dir whose probe --prove rebuilds")
     args = parser.parse_args()
     profile = get_profile("extended", ROOT)
     document = tomllib.loads(args.fixes.read_text())
@@ -87,6 +125,7 @@ def main() -> int:
         if kind == "code":
             if not routines:
                 failures.append(f"{heading}: a code fix names no routine")
+            reverts = row.get("reverts", [])
             for routine in routines:
                 if routine not in functions:
                     failures.append(f"{heading}: {routine} is not an Extended function")
@@ -94,6 +133,18 @@ def main() -> int:
                     failures.append(f"{heading}: {routine} has no Extended oracle cases")
                 elif status.get(routine) != "pass":
                     failures.append(f"{heading}: {routine} is {status.get(routine, 'not scored')} in the scoreboard")
+                if not any(revert.get("routine") == routine for revert in reverts):
+                    failures.append(f"{heading}: {routine} has no revert")
+            for revert in reverts:
+                missing = [key for key in REVERT_KEYS if key not in revert]
+                if missing:
+                    failures.append(f"{heading}: revert lacks {', '.join(missing)}")
+                    continue
+                if args.prove and not revert_proven(revert):
+                    print(f"{heading}: {revert['routine']}: {prove(revert, args.build)}")
+                if not revert_proven(revert):
+                    failures.append(f"{heading}: {revert['routine']} revert has no RED receipt "
+                                    f"({revert_receipt(revert).relative_to(ROOT)})")
         elif kind == "removed":
             removed = set(profile.removed_basenames)
             if "card_pop" not in removed:
