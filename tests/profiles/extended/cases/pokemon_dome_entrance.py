@@ -37,7 +37,7 @@ CASES = {
             'read': {0xD27F: 0x01, 0xD310: 0x02, 0xD120: 0x0100}},
     ],
     'Script_f631.ows_f63c': [
-        {'wram': {0xD3CB: b'\x00'}, 'read': {0xD3CB: 0x01}},
+        {'wram': {0xD3CB: b'\x00'}, 'read': {0xD3CB: 0x01, 0xCE09: 0x02, 0xCE0B: 0x02}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -45,8 +45,7 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xD3CB: b'\x00'},
-            'read': {0xD3CB: 0x01}},
+            'read': {0xD3CB: 0x01, 0xCE09: 0x02, 0xCE0B: 0x02}},
         {   'a': 0x3C,
             'f': 0x00,
             'b': 0x76,
@@ -54,8 +53,7 @@ CASES = {
             'd': 0x1E,
             'e': 0x11,
             'hl': 0x763C,
-            'wram': {0xD3CB: b'\x00'},
-            'read': {0xD3CB: 0x01}},
+            'read': {0xD3CB: 0x01, 0xCE09: 0x02, 0xCE0B: 0x02}},
     ],
     'Script_f631': [
         {   'a': 0x00,
