@@ -1,0 +1,9 @@
+{
+  "fn": "DuelCheckMenu_InPlayArea",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DuelCheckMenu_InPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"52760\": \"aa\", \"52774\": \"00\", \"65408\": \"06\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DuelCheckMenu_InPlayArea\", \"mismatches\": {\"bus\": {\"address\": 52774, \"reference\": \"aa0006\", \"native\": \"aa0106\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52760, 1], [52774, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"DuelCheckMenu_InPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"52760\": \"aa\", \"52774\": \"00\", \"65408\": \"06\"}}, \"status\": \"PASS\"}\n"
+}

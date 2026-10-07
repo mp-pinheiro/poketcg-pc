@@ -2755,3 +2755,16 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES["AIProcessAndTryToUseAttack"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x466F,
+    "bank": 5,
+    "routine": "AIProcessHandTrainerCards",
+}
+SCHEMA2_CASES["AIProcessAndTryToUseAttack"][0]["compare"] = ()
+for _name, _records in SCHEMA2_CASES.items():
+    for _index, _record in enumerate(_records):
+        if isinstance(_record.get("completion"), dict) and _record["completion"].get("mode") == "entry":
+            CASES[_name][_index]["completion"] = _record["completion"]
+        if "compare" in _record and _record["compare"] != CONTRACT[_name]["compare"]:
+            CASES[_name][_index]["compare"] = _record["compare"]

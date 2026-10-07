@@ -3355,7 +3355,10 @@ void _OpenDuelCheckMenu(void)
 void DuelCheckMenu_InPlayArea(void)
 {
 	wInPlayAreaFromSelectButton = 0u;
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(OpenInPlayAreaScreen_BANK);
 	OpenInPlayAreaScreen();
+	BankswitchROM(saved_bank);
 }
 /* <<< factory DuelCheckMenu_InPlayArea */
 

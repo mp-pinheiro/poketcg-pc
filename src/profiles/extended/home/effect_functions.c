@@ -10624,15 +10624,17 @@ DevolutionSpray_PlayerSelectionResult DevolutionSpray_PlayerSelection(void)
 	(void)DrawWideTextBox_WaitForInput(ChooseEvolutionCardAndPressAButtonToDevolveText);
 	hCurSelectionItem = 1u;
 	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+	uint8_t entry_f = alive.f;
 
 	CardOneStageBelowResult below;
 	for (;;) {
 		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
 		if ((screen.f & 0x10u) != 0u)
-			return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
+			return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)((entry_f & 0x80u) | 0x10u)};
 		below = GetCardOneStageBelow(0u, 0u);
 		if ((below.f & 0x10u) == 0u)
 			break;
+		entry_f = below.f;
 	}
 
 	uint8_t location = hTempPlayAreaLocation_ff9d;

@@ -1564,6 +1564,12 @@ MUTATIONS = {
         'source': 'src/profiles/extended/home/substatus.c'},
 }
 
+for _records in CASES.values():
+    for _record in _records:
+        _seeds = _record.get("wram", {})
+        if 0xCCBE in _seeds and len(_seeds.get(0xCAC1, b"")) > 0xCCBD - 0xCAC1:
+            _seeds[0xCAC1] = _seeds[0xCAC1][:0xCCBD - 0xCAC1]
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["HandleSandAttackOrSmokescreenSubstatus"][4]["completion"] = {"mode": "return"}

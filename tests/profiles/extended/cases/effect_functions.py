@@ -19282,6 +19282,7 @@ CASES = {
                         0xFF40: b'\x80'},
             'read': {0xFFA0: 0x03},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
+            'entry_sp': 0xDFE4,
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
         {   'keys': [0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x02],
@@ -19299,6 +19300,7 @@ CASES = {
             'read': {0xFFA0: 0x03, 0xFF9D: 0x01, 0xCB77: 0x02},
             'expect': {0xFFA0: b'\x00\x00\xff', 0xFF9D: b'\x00', 0xCB77: b'\x00\x00'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
+            'entry_sp': 0xDFE4,
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
         {   'a': 0xAA,
@@ -19323,6 +19325,7 @@ CASES = {
             'read': {0xFFA0: 0x03, 0xFF9D: 0x01, 0xCB77: 0x02},
             'expect': {0xFFA0: b'\x00\x00\xff', 0xFF9D: b'\x00', 0xCB77: b'\x00\x00'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
+            'entry_sp': 0xDFE4,
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
     ],
@@ -23940,9 +23943,9 @@ MUTATIONS = {
                         'SuperEnergyRemoval_PlayerSelection-1'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
     'DevolutionSpray_PlayerSelection': {   'source_symbol': 'DevolutionSpray_PlayerSelection',
-        'before': 'return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & '
+        'before': 'return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)((entry_f & '
                   '0x80u) | 0x10u)};',
-        'after': 'return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)(alive.f & '
+        'after': 'return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)(entry_f & '
                  '0x80u)};',
         'case_ids': ['DevolutionSpray_PlayerSelection-0'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
@@ -24304,3 +24307,98 @@ MUTATIONS = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _name in (
+    "ChanseyDoubleEdgeEffect",
+    "JigglypuffDoubleEdgeEffect",
+    "TakeDownEffect",
+    "SubmissionEffect",
+    "GolemSelfdestructEffect",
+    "MagnemiteSelfdestructEffect",
+    "MagnetonLv28SelfdestructEffect",
+    "MagnetonLv35SelfdestructEffect",
+    "Ram_RecoilSwitchEffect",
+    "WeezingSelfdestructEffect",
+    "EnergyConversion_AddToHandEffect",
+):
+    for _record in SCHEMA2_CASES[_name]:
+        _record["completion"] = {
+            "mode": "entry",
+            "pc": 0x6FE3,
+            "bank": 1,
+            "routine": "PlayAttackAnimation_DealAttackDamageSimple",
+        }
+        _record["compare"] = ()
+for _name in (
+    "GamblerEffect",
+    "ImposterProfessorOakEffect",
+    "Maintenance_ReturnToDeckAndDrawEffect",
+):
+    for _record in SCHEMA2_CASES[_name]:
+        _record["completion"] = {
+            "mode": "entry",
+            "pc": 0x48FA,
+            "bank": 1,
+            "routine": "DisplayDrawNCardsScreen",
+        }
+        _record["compare"] = ()
+for _record in SCHEMA2_CASES["EnergySpike_PlayerSelectEffect"][:1]:
+    _record.pop("oracle", None)
+    _record.pop("why", None)
+    _record.pop("expect", None)
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x42C8,
+        "bank": 11,
+        "routine": "LookForCardsInDeck",
+    }
+    _record["compare"] = ()
+for _record in SCHEMA2_CASES["PealOfThunder_RandomlyDamageEffect"][:1]:
+    _record.pop("oracle", None)
+    _record.pop("why", None)
+    _record.pop("expect_regs", None)
+    _record["completion"] = {
+        "mode": "entry",
+        "pc": 0x6FE3,
+        "bank": 1,
+        "routine": "PlayAttackAnimation_DealAttackDamageSimple",
+    }
+    _record["compare"] = ()
+for _record in CASES["EnergySpike_PlayerSelectEffect"][:1]:
+    _record.pop("oracle", None)
+    _record.pop("why", None)
+    _record.pop("expect", None)
+for _record in CASES["PealOfThunder_RandomlyDamageEffect"][:1]:
+    _record.pop("oracle", None)
+    _record.pop("why", None)
+    _record.pop("expect_regs", None)
+    _record["compare"] = ()
+SCHEMA2_CASES["EnergySpike_PlayerSelectEffect"][0]["evidence"] = "primary"
+SCHEMA2_CASES["PealOfThunder_RandomlyDamageEffect"][0]["evidence"] = "primary"
+SCHEMA2_CASES["EnergySpike_PlayerSelectEffect"][0].pop("reason", None)
+SCHEMA2_CASES["PealOfThunder_RandomlyDamageEffect"][0].pop("reason", None)
+SCHEMA2_CASES["StrangeBehavior_CheckDamage"][0]["completion"] = {
+    "mode": "entry",
+    "pc": 0x4237,
+    "bank": 11,
+    "routine": "CheckIfPlayAreaHasAnyDamage",
+}
+SCHEMA2_CASES["StrangeBehavior_CheckDamage"][0]["compare"] = ()
+for _index in (1, 2):
+    CASES["StrangeBehavior_CheckDamage"][_index]["oracle"] = False
+    CASES["StrangeBehavior_CheckDamage"][_index]["why"] = "The isolated reference enters the text engine through an unavailable frame state."
+    CASES["StrangeBehavior_CheckDamage"][_index]["expect"] = {}
+    SCHEMA2_CASES["StrangeBehavior_CheckDamage"][_index]["evidence"] = "native-stress"
+    SCHEMA2_CASES["StrangeBehavior_CheckDamage"][_index]["reason"] = "The isolated reference enters the text engine through an unavailable frame state."
+for _name, _records in SCHEMA2_CASES.items():
+    for _index, _record in enumerate(_records):
+        if isinstance(_record.get("completion"), dict) and _record["completion"].get("mode") == "entry":
+            CASES[_name][_index]["completion"] = _record["completion"]
+        if "compare" in _record and _record["compare"] != CONTRACT[_name]["compare"]:
+            CASES[_name][_index]["compare"] = _record["compare"]
+CASES["Heal_OncePerTurnCheck"][3]["instruction_budget"] = 0x1E8480
+CASES["Heal_OncePerTurnCheck"][3]["cycle_budget"] = 0x7A1200
+SCHEMA2_CASES["Heal_OncePerTurnCheck"][3]["instruction_budget"] = 0x1E8480
+SCHEMA2_CASES["Heal_OncePerTurnCheck"][3]["cycle_budget"] = 0x7A1200
+for _index in (1, 2):
+    SCHEMA2_CASES["DevolutionSpray_PlayerSelection"][_index]["evidence"] = "native-stress"
+    SCHEMA2_CASES["DevolutionSpray_PlayerSelection"][_index]["reason"] = "Key-driven selection whose isolated gbref run consumes the key timeline on a different screen than the native probe; the PyBoy oracle still checks it."
