@@ -287,12 +287,51 @@ def audio_tail_spans(inventory_spans: list[dict[str, object]], tail: int) -> lis
     return spans
 
 
+def engine_bank_arg_spans(sym_path: Path, rom: bytes, handlers: list[str],
+                          inventory_spans: list[dict[str, object]]) -> list[tuple[str, int, int, int]]:
+    sym_line = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
+    symbols: dict[str, tuple[int, int]] = {}
+    for line in sym_path.read_text().splitlines():
+        match = sym_line.match(line.strip())
+        if match:
+            symbols.setdefault(match.group(3), (int(match.group(1), 16), int(match.group(2), 16)))
+    if handlers and "SFX_CommandTable" not in symbols:
+        raise ValueError("engine bank argument handlers need symbol SFX_CommandTable")
+    data = [span for span in inventory_spans if span.get("kind") == "data"]
+    streams = [span for span in data if str(span.get("section", "")).lower().startswith("sfx")
+               and not str(span.get("symbol", "")).endswith("CommandTable")]
+    spans = []
+    for handler in handlers:
+        if handler not in symbols:
+            raise ValueError(f"engine bank argument handler {handler} is not a symbol of this profile")
+        bank, address = symbols[handler]
+        table_bank, table = symbols["SFX_CommandTable"]
+        base = rom_offset(table_bank, table)
+        commands = [index for index in range(16)
+                    if rom[base + 2 * index] | rom[base + 2 * index + 1] << 8 == address]
+        if len(commands) != 1:
+            raise ValueError(f"engine bank argument handler {handler} is not one SFX_CommandTable entry")
+        covered = [(span["address"], span["address"] + span["length"]) for span in data if span["bank"] == bank]
+        reads = set()
+        for span in streams:
+            start = rom_offset(span["bank"], span["address"])
+            for offset in range(span["length"]):
+                argument = span["address"] + offset + 1
+                if rom[start + offset] >> 4 == commands[0] and argument < 0x8000 and not any(
+                        low <= argument < high for low, high in covered):
+                    reads.add(argument)
+        for argument in sorted(reads):
+            spans.append((f"{handler.lower()}_arg_{argument:04x}", bank, argument, 1))
+    return spans
+
+
 def sparse_items(
     rom: bytes,
     inventory_path: Path,
     sym_path: Path,
     wave_tables: list[str] | None = None,
     audio_tail: int = 0,
+    engine_bank_args: list[str] | None = None,
 ) -> list[tuple[dict[str, str], Section, bytes]]:
     try:
         inventory = json.loads(inventory_path.read_text())
@@ -325,7 +364,8 @@ def sparse_items(
     for name, bank, address, length in (
             tuple(native_data_spans(sym_path, rom, spans)) + tuple(script_entry_spans(rom, sym_path))
             + tuple(wave_table_spans(sym_path, rom, wave_tables or [], spans))
-            + tuple(audio_tail_spans(spans, audio_tail))):
+            + tuple(audio_tail_spans(spans, audio_tail))
+            + tuple(engine_bank_arg_spans(sym_path, rom, engine_bank_args or [], spans))):
         start = rom_offset(bank, address)
         end = start + length
         if length < 1 or end > len(rom):
@@ -607,7 +647,7 @@ def main() -> int:
         items = []
     elif args.sparse_pack:
         items = sparse_items(rom, args.inventory, args.sym, declared.get("wave_tables", []),
-                             declared.get("audio_script_tail", 0))
+                             declared.get("audio_script_tail", 0), declared.get("engine_bank_args", []))
     else:
         items = slices(SCHEMA, sections, symbols, rom)
     if args.sparse_pack and args.pack_check:

@@ -1,4 +1,5 @@
 schema = 1
 wave_tables = ["SFX_WaveInstruments"]
 audio_script_tail = 2
-why = "SFX_wave takes its table index from the command byte's low nibble (0-15), and Extended's SFX data reaches index 14, whose table word ($3423) points into home ROM; GetAudioCmdAndArgs reads a command and its two argument bytes, so a channel script that ends at its section boundary reads up to two bytes past it"
+engine_bank_args = ["SFX_sweep"]
+why = "SFX_wave takes its table index from the command byte's low nibble (0-15), and Extended's SFX data reaches index 14, whose table word ($3423) points into home ROM; GetAudioCmdAndArgs reads a command and its two argument bytes, so a channel script that ends at its section boundary reads up to two bytes past it; SFX_sweep reads its argument with ld a, [hli] while the audio engine's own bank is mapped instead of wSFXBank, so a sweep command in a bank $44 or $45 SFX script reads the engine bank's byte at the argument address"
