@@ -1,10 +1,10 @@
 {
-  "confirmed_ordinal": 0,
-  "first_ordinal": 27455,
+  "confirmed_ordinal": 24412,
+  "first_ordinal": 12940,
   "kind": "animation",
-  "last_ordinal": 27775,
+  "last_ordinal": 13471,
   "name": "ATK_ANIM_GUILLOTINE",
-  "session": "ai-duel-grass-carriers",
-  "status": "fail",
+  "session": "extended-attack-animations",
+  "status": "pass",
   "value": 119
 }

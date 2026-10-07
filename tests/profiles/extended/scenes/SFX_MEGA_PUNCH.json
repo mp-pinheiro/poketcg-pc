@@ -1,10 +1,10 @@
 {
-  "confirmed_ordinal": 0,
-  "first_ordinal": 28067,
+  "confirmed_ordinal": 24412,
+  "first_ordinal": 15881,
   "kind": "sfx",
-  "last_ordinal": 28067,
+  "last_ordinal": 15881,
   "name": "SFX_MEGA_PUNCH",
-  "session": "ai-duel-fighting-carriers",
-  "status": "fail",
+  "session": "extended-attack-animations",
+  "status": "pass",
   "value": 95
 }

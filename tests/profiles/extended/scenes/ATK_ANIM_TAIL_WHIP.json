@@ -1,0 +1,10 @@
+{
+  "confirmed_ordinal": 24412,
+  "first_ordinal": 19900,
+  "kind": "animation",
+  "last_ordinal": 20359,
+  "name": "ATK_ANIM_TAIL_WHIP",
+  "session": "extended-attack-animations",
+  "status": "pass",
+  "value": 112
+}

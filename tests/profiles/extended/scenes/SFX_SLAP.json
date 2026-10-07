@@ -1,10 +1,10 @@
 {
-  "confirmed_ordinal": 0,
-  "first_ordinal": 13043,
+  "confirmed_ordinal": 24412,
+  "first_ordinal": 18401,
   "kind": "sfx",
-  "last_ordinal": 13043,
+  "last_ordinal": 18401,
   "name": "SFX_SLAP",
-  "session": "ai-duel-water-carriers",
-  "status": "fail",
+  "session": "extended-attack-animations",
+  "status": "pass",
   "value": 102
 }

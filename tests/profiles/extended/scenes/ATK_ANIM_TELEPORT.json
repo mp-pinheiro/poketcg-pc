@@ -1,0 +1,10 @@
+{
+  "confirmed_ordinal": 24412,
+  "first_ordinal": 21436,
+  "kind": "animation",
+  "last_ordinal": 21751,
+  "name": "ATK_ANIM_TELEPORT",
+  "session": "extended-attack-animations",
+  "status": "pass",
+  "value": 129
+}

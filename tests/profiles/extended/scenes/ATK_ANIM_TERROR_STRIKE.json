@@ -1,0 +1,10 @@
+{
+  "confirmed_ordinal": 24412,
+  "first_ordinal": 22084,
+  "kind": "animation",
+  "last_ordinal": 22615,
+  "name": "ATK_ANIM_TERROR_STRIKE",
+  "session": "extended-attack-animations",
+  "status": "pass",
+  "value": 144
+}
