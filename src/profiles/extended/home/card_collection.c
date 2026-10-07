@@ -16,9 +16,11 @@ static void add_deck_cards(uint16_t de)
 {
 	if ((uint8_t)(gb_read8(de) | gb_read8((uint16_t)(de + 1u))) == 0u)
 		return;
-	de = (uint16_t)(de + 24); /* DECK_NAME_SIZE: sDeck1Cards - sDeck1Name */
-	for (uint8_t i = 0; i < 60; i++) { /* DECK_SIZE */
-		CardId card = card_id_read(&de);
+	uint16_t source = (uint16_t)(de + 24u);
+	uint16_t cards = wCurDeckCards_ADDR;
+	DecompressSRAMDeck(source, cards);
+	for (uint8_t i = 0; i < 60; i++) {
+		CardId card = card_id_read(&cards);
 		uint16_t hl = CARD_SLOT(wTempCardCollection_ADDR, card);
 		gb_write8(hl, (uint8_t)(gb_read8(hl) + 1));
 	}
@@ -79,7 +81,7 @@ uint16_t GetAmountOfCardsOwned(void)
 	uint16_t hl = 0u;
 	uint16_t de = sDeck1Cards_ADDR;
 	for (uint8_t i = 0u; i < 4u; i++) {
-		if (card_id_read_at((uint16_t)(de + DECK_NAME_SIZE)) != 0u)
+		if (card_id_read_at(de) != 0u)
 			hl = (uint16_t)(hl + DECK_SIZE);
 		de = (uint16_t)(de + (sDeck2Cards_ADDR - sDeck1Cards_ADDR));
 	}
@@ -105,7 +107,7 @@ CardCountResult GetCardCountInCollectionAndDecks(CardId id)
 	uint8_t matches = 0u;
 	uint16_t de = sDeck1Cards_ADDR;
 	for (uint8_t i = 0u; i < 4u; i++) {
-		uint16_t compressed = (uint16_t)(de + DECK_NAME_SIZE);
+		uint16_t compressed = de;
 		if (card_id_read_at(compressed) != 0u) {
 			DecompressSRAMDeck(compressed, wCurDeckCards_ADDR);
 			uint16_t cards = wCurDeckCards_ADDR;

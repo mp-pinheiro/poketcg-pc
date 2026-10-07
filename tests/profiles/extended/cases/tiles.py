@@ -303,10 +303,12 @@ MUTATIONS = {
         'case_ids': ['LoadPlacingThePrizesScreenTiles-0'],
         'source': 'src/profiles/extended/home/tiles.c'},
     'LoadDeckAndDiscardPileIcons': {   'source_symbol': 'LoadDeckAndDiscardPileIcons',
-        'before': 'TileCopyResult LoadDeckAndDiscardPileIcons(void)\n{',
+        'before': 'TileCopyResult LoadDeckAndDiscardPileIcons(void)\n'
+                  '{\n'
+                  '\treturn load_deck_and_discard_pile_icons();',
         'after': 'TileCopyResult LoadDeckAndDiscardPileIcons(void)\n'
                  '{\n'
-                 '\tgb_write8(0xdff0u, 0xFFu);',
+                 '\treturn (TileCopyResult){0u, 0u};',
         'case_ids': ['LoadDeckAndDiscardPileIcons-0'],
         'source': 'src/profiles/extended/home/tiles.c'},
     'LoadDuelCoinTossResultTiles': {   'source_symbol': 'LoadDuelCoinTossResultTiles',

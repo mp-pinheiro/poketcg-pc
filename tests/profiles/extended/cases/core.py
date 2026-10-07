@@ -43659,8 +43659,8 @@ MUTATIONS = {
         'source': 'src/profiles/extended/home/core.c'},
     'CheckIfActivePokemonCanUseAnyNonResidualAttack': {
         'source_symbol': 'CheckIfActivePokemonCanUseAnyNonResidualAttack',
-        'before': 'wSelectedAttack = SECOND_ATTACK;',
-        'after': 'wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;',
+        'before': 'a = 0u;',
+        'after': 'a = 1u;',
         'case_ids': ['CheckIfActivePokemonCanUseAnyNonResidualAttack-0',
                      'CheckIfActivePokemonCanUseAnyNonResidualAttack-1'],
         'source': 'src/profiles/extended/home/core.c'},

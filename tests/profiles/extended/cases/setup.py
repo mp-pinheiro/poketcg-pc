@@ -147,8 +147,13 @@ CASES = {
                         0xCABB: 0x01}},
     ],
     'ZeroRAM': [
-        {   'wram': {0xC000: b'\xaa\xbb', 0xDA22: b'\xcc\xdd', 0xFF80: b'\x11\x02', 0xFFED: b'3D'},
-            'read': {0xC000: 0x02, 0xDA22: 0x02, 0xFF80: 0x02, 0xFFED: 0x02}},
+        {   'oracle': False,
+            'evidence': 'primary',
+            'why': 'ZeroRAM clears the full WRAM and HRAM ranges before returning; the live oracle '
+                   'frame budget expires during the 8 KiB WRAM loop.',
+            'wram': {0xC000: b'\xaa\xbb', 0xDA22: b'\xcc\xdd', 0xFF80: b'\x11\x02', 0xFFED: b'3D'},
+            'read': {0xC000: 0x02, 0xDA22: 0x02, 0xFF80: 0x02, 0xFFED: 0x02},
+            'expect': {0xC000: b'\x00\x00', 0xDA22: b'\x00\x00', 0xFF80: b'\x00\x00', 0xFFED: b'\x00\x00'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -156,8 +161,13 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
+            'oracle': False,
+            'evidence': 'primary',
+            'why': 'The poisoned ZeroRAM case reaches the same non-returning WRAM clear loop before '
+                   'the live oracle frame budget expires.',
             'wram': {0xC000: b'\xff', 0xDA23: b'\xff', 0xFF80: b'\xff', 0xFFEF: b'\xff'},
-            'read': {0xC000: 0x01, 0xDA23: 0x01, 0xFF80: 0x01, 0xFFEF: 0x01}},
+            'read': {0xC000: 0x01, 0xDA23: 0x01, 0xFF80: 0x01, 0xFFEF: 0x01},
+            'expect': {0xC000: b'\x00', 0xDA23: b'\x00', 0xFF80: b'\x00', 0xFFEF: b'\x00'}},
     ],
 }
 

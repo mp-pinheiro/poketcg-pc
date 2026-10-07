@@ -479,6 +479,9 @@ CheckCardInSetAndRarityResult CheckCardInSetAndRarity(uint8_t b, uint8_t c, uint
 	wBoosterCurrentCardType = r.type;
 	wBoosterCurrentCardRarity = r.rarity;
 	wBoosterCurrentCardSet = r.set;
+	if (r.carry != 0u)
+		return (CheckCardInSetAndRarityResult){
+			wBoosterCurrentRarity, 0x10u, b, c, d, e, hl};
 
 	uint8_t rarity = wBoosterCurrentCardRarity;
 	uint8_t cur_rarity = wBoosterCurrentRarity;

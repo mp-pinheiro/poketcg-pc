@@ -505,14 +505,14 @@ void HandleStartMenu(void)
 	DrawPlayerPortrait(14u, 1u); /* menus/start.asm:229 lb bc, 14, 1 */
 	static const uint8_t params[17] = {
 		0x00u, 0x00u, 0x0Eu, 0x04u, 0x02u, 0x02u,
-		0x6Cu, 0x03u, 0xFFu, 0x01u, 0x02u, 0x02u, 0x01u,
+		(uint8_t)NewGameText, 0x03u, 0xFFu, 0x01u, 0x02u, 0x02u, 0x01u,
 		SYM_CURSOR_R, SYM_SPACE, 0x00u, 0x00u
 	};
 	for (uint8_t i = 0u; i < 17u; ++i)
 		gb_write8((uint16_t)(wStartMenuParams_ADDR + i), params[i]);
 	uint8_t item_count = 1u;
 	uint8_t box_height = 4u;
-	uint8_t text_id = 0x6Cu;
+	uint8_t text_id = (uint8_t)NewGameText;
 	if (wHasSaveData != 0u) {
 		item_count = (uint8_t)(item_count + 2u);
 		box_height = (uint8_t)(box_height + 4u);
@@ -579,7 +579,7 @@ void HandleStartMenu(void)
 			return;
 		}
 		if (wHasSaveData == 0u)
-			choice = (uint8_t)(choice + 2u);
+			choice = (uint8_t)(choice + 1u);
 		wStartMenuChoice = choice;
 		return;
 	}

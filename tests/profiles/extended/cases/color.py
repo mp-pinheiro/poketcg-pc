@@ -921,18 +921,22 @@ MUTATIONS = {
         'case_ids': ['FadeScreenFromWhite.BackupPalsAndSetWhite-0'],
         'source': 'src/profiles/extended/home/color.c'},
     'SetWhitePalettes': {   'source_symbol': 'SetWhitePalettes',
-        'before': '\tgb_write8(wBGP_ADDR, 0u);',
-        'after': '\tgb_write8(wBGP_ADDR, 1u);',
+        'before': 'void SetWhitePalettes(void)\n'
+                  '{\n'
+                  '\tgb_write8(wBGP_ADDR, 0u);',
+        'after': 'void SetWhitePalettes(void)\n'
+                 '{\n'
+                 '\tgb_write8(wBGP_ADDR, 1u);',
         'case_ids': ['SetWhitePalettes-0'],
         'source': 'src/profiles/extended/home/color.c'},
     'Func_10d17': {   'source_symbol': 'Func_10d17',
-        'before': '\tgb_write8(wBGP_ADDR, 0u);',
-        'after': '\tgb_write8(wBGP_ADDR, 1u);',
+        'before': '\twhite_cgb(wBackgroundPalettesCGB_ADDR, 64u);',
+        'after': '\twhite_cgb(wBackgroundPalettesCGB_ADDR, 32u);',
         'case_ids': ['Func_10d17-0'],
         'source': 'src/profiles/extended/home/color.c'},
     'Func_10d50': {   'source_symbol': 'Func_10d50',
-        'before': '\twhite_cgb(wTempBackgroundPalettesCGB_ADDR, 32u);',
-        'after': '\twhite_cgb(wTempBackgroundPalettesCGB_ADDR, 64u);',
+        'before': '\twhite_cgb(wTempBackgroundPalettesCGB_ADDR, 64u);',
+        'after': '\twhite_cgb(wTempBackgroundPalettesCGB_ADDR, 32u);',
         'case_ids': ['Func_10d50-0'],
         'source': 'src/profiles/extended/home/color.c'},
     'FadeScreenFromWhite': {   'source_symbol': 'FadeScreenFromWhite',

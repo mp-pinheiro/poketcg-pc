@@ -7294,6 +7294,8 @@ CheckIfActivePokemonCanUseAnyNonResidualAttackResult CheckIfActivePokemonCanUseA
 		if (a == 0u)
 			return (CheckIfActivePokemonCanUseAnyNonResidualAttackResult){0u, FLAG_C, b, c, d, e, hl};
 	}
+	if ((f & FLAG_C) != 0u)
+		a = 0u;
 	return (CheckIfActivePokemonCanUseAnyNonResidualAttackResult){
 		a, (a == 0u) ? FLAG_Z : 0u, b, c, d, e, hl};
 }

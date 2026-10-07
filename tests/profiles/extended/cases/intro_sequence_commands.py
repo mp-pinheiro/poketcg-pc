@@ -41,7 +41,12 @@ CASES = {
             'hl': 0x1234,
             'wram': {0xD622: b'?', 0xCAB4: b'\x02', 0xD616: b'\x06\x05\x04\x03\x02\x01\x00'},
             'read': {0xD4BC: 0x01}},
-        {   'wram': {   0xC000: b'\x00\x92\x93\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+        {   'oracle': False,
+            'evidence': 'primary',
+            'why': 'The poisoned scratch-world case places the synthesized call frame outside the '
+                   'oracle capture range and cannot be executed live.',
+            'expect': {},
+            'wram': {   0xC000: b'\x00\x92\x93\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xb8'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'

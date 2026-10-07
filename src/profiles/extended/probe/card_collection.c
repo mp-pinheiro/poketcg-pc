@@ -1,19 +1,14 @@
 #include "home/card_collection.h"
 #include "probe.h"
-static CardId probe_card_id(const ProbeState *s)
-{
-	return (CardId)(((uint16_t)s->d << 8) | s->e);
-}
 
 static void adapt_CreateTempCardCollection(ProbeState *s)
 {
 	(void)s;
 	CreateTempCardCollection();
 }
-
 static void adapt_AddCardToCollection(ProbeState *s)
 {
-	AddCardToCollection(probe_card_id(s));
+	AddCardToCollection((CardId)(((uint16_t)s->d << 8) | s->e));
 }
 
 static void adapt_GetCardAlbumProgress(ProbeState *s)
@@ -32,21 +27,23 @@ static void adapt_GetAmountOfCardsOwned(ProbeState *s)
 
 static void adapt_GetCardCountInCollectionAndDecks(ProbeState *s)
 {
-	CardCountResult r = GetCardCountInCollectionAndDecks(probe_card_id(s));
+	CardCountResult r = GetCardCountInCollectionAndDecks(
+		(CardId)(((uint16_t)s->d << 8) | s->e));
 	s->a = r.a;
 	s->f = r.f;
 }
 
 static void adapt_GetCardCountInCollection(ProbeState *s)
 {
-	CardCountResult r = GetCardCountInCollection(probe_card_id(s));
+	CardCountResult r = GetCardCountInCollection(
+		(CardId)(((uint16_t)s->d << 8) | s->e));
 	s->a = r.a;
 	s->f = r.f;
 }
 
 static void adapt_RemoveCardFromCollection(ProbeState *s)
 {
-	RemoveCardFromCollection(probe_card_id(s));
+	RemoveCardFromCollection((CardId)(((uint16_t)s->d << 8) | s->e));
 }
 
 const ProbeEntry probe_entries_card_collection[] = {

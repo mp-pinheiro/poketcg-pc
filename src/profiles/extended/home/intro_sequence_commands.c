@@ -337,11 +337,9 @@ void LoadOpeningScene(uint8_t a, uint8_t b, uint8_t c)
 IntroSequenceCmdLoadSceneResult IntroSequenceCmd_LoadCharizardScene(void)
 {
 	LoadOpeningScene(SCENE_CHARIZARD_INTRO, 6u, 3u);
-	return (IntroSequenceCmdLoadSceneResult){6u, 3u, 0x7Fu, 0xFFu};
+	return (IntroSequenceCmdLoadSceneResult){0u, 0x20u, 0x7Fu, 0xFFu};
 }
 /* <<< factory IntroSequenceCmd_LoadCharizardScene */
-
-/* >>> factory IntroSequenceCmd_LoadTitleScreenScene */
 IntroSequenceCmdLoadTitleScreenSceneResult IntroSequenceCmd_LoadTitleScreenScene(void)
 {
 	LoadOpeningScene(SCENE_TITLE_SCREEN, 0u, 0u);
@@ -354,7 +352,7 @@ IntroSequenceCmdLoadTitleScreenSceneResult IntroSequenceCmd_LoadTitleScreenScene
 IntroSequenceCmdLoadSceneResult IntroSequenceCmd_LoadAerodactylScene(void)
 {
 	LoadOpeningScene(SCENE_AERODACTYL_INTRO, 6u, 3u);
-	return (IntroSequenceCmdLoadSceneResult){6u, 3u, 0x7Fu, 0xFFu};
+	return (IntroSequenceCmdLoadSceneResult){0u, 0x20u, 0x7Fu, 0xFFu};
 }
 /* <<< factory IntroSequenceCmd_LoadAerodactylScene */
 
@@ -362,7 +360,7 @@ IntroSequenceCmdLoadSceneResult IntroSequenceCmd_LoadAerodactylScene(void)
 IntroSequenceCmdLoadSceneResult IntroSequenceCmd_LoadScytherScene(void)
 {
 	LoadOpeningScene(SCENE_SCYTHER_INTRO, 6u, 3u);
-	return (IntroSequenceCmdLoadSceneResult){6u, 3u, 0x7Fu, 0xFFu};
+	return (IntroSequenceCmdLoadSceneResult){0u, 0x20u, 0x7Fu, 0xFFu};
 }
 /* <<< factory IntroSequenceCmd_LoadScytherScene */
 

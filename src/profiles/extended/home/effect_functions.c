@@ -1298,7 +1298,7 @@ void BankswitchROM(uint8_t bank);
 #define SHIFT_MENU_DATA ShiftMenuData_ADDR /* ShiftMenuData, bank $0b */
 #define COLOR_TILE_AND_BGP ColorTileAndBGP_ADDR /* ColorTileAndBGP, bank $0b */
 #define SHIFT_LIST_ITEM_TO_COLOR ShiftListItemToColor_ADDR /* ShiftListItemToColor, bank $0b */
-#define HANDLE_DEFENDING_ATTACK_MENU_PARAMS (HandleDefendingPokemonAttackSelection_ADDR + 0x71u)
+#define HANDLE_DEFENDING_ATTACK_MENU_PARAMS (HandleDefendingPokemonAttackSelection_ADDR + 0x63u)
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */

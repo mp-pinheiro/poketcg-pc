@@ -248,7 +248,7 @@ void Func_10d17(void)
 		gb_write8((uint16_t)(wTempBackgroundPalettesCGB_ADDR + i),
 			  gb_read8((uint16_t)(wBackgroundPalettesCGB_ADDR + i)));
 	gb_write8(wBGP_ADDR, 0u);
-	white_cgb(wBackgroundPalettesCGB_ADDR, 32u);
+	white_cgb(wBackgroundPalettesCGB_ADDR, 64u);
 	FlushAllPalettes();
 	gb_write8(wd317_ADDR, 0x10u);
 }
@@ -258,7 +258,7 @@ void Func_10d50(void)
 	gb_write8(wTempBGP_ADDR, 0u);
 	gb_write8(wTempOBP0_ADDR, gb_read8(wOBP0_ADDR));
 	gb_write8(wTempOBP1_ADDR, gb_read8(wOBP1_ADDR));
-	white_cgb(wTempBackgroundPalettesCGB_ADDR, 32u);
+	white_cgb(wTempBackgroundPalettesCGB_ADDR, 64u);
 	gb_write8(wd317_ADDR, 0x10u);
 }
 

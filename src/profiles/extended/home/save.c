@@ -305,10 +305,14 @@ void UpdateAlbumProgress(uint16_t de)
 	AlbumProgress ap = GetCardAlbumProgress();
 
 	EnableSRAM();
-	gb_write8(wTotalNumCardsCollected_ADDR, ap.d);
-	gb_write8(de, ap.d);
-	gb_write8(wTotalNumCardsToCollect_ADDR, ap.e);
-	gb_write8((uint16_t)(de + 1), ap.e);
+	gb_write8(wTotalNumCardsCollected_ADDR, ap.e);
+	gb_write8((uint16_t)(wTotalNumCardsCollected_ADDR + 1u), ap.d);
+	gb_write8(de, ap.e);
+	gb_write8((uint16_t)(de + 1u), ap.d);
+	gb_write8(wTotalNumCardsToCollect_ADDR, ap.c);
+	gb_write8((uint16_t)(wTotalNumCardsToCollect_ADDR + 1u), ap.b);
+	gb_write8((uint16_t)(de + 2u), ap.c);
+	gb_write8((uint16_t)(de + 3u), ap.b);
 	DisableSRAM();
 }
 
@@ -316,7 +320,11 @@ void UpdateAlbumProgress(uint16_t de)
 void LoadAlbumProgressFromSRAM(uint16_t de)
 {
 	gb_write8(wTotalNumCardsCollected_ADDR, gb_read8(de));
-	gb_write8(wTotalNumCardsToCollect_ADDR, gb_read8((uint16_t)(de + 1)));
+	gb_write8((uint16_t)(wTotalNumCardsCollected_ADDR + 1u),
+		  gb_read8((uint16_t)(de + 1u)));
+	gb_write8(wTotalNumCardsToCollect_ADDR, gb_read8((uint16_t)(de + 2u)));
+	gb_write8((uint16_t)(wTotalNumCardsToCollect_ADDR + 1u),
+		  gb_read8((uint16_t)(de + 3u)));
 }
 
 /* ValidateBackupGeneralSaveData:: save.asm:183-199 */

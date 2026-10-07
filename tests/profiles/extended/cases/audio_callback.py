@@ -21,7 +21,10 @@ CASES = {
             'why': 'The standalone poisoned call has no valid caller callback; verify its bank-3d tail '
                    'directly.',
             'expect': {0xFF80: b'='}},
-        {'hl': 0x3FEE, 'read': {0xFF80: 0x01}},
+        {   'oracle': False,
+            'why': 'Extended symbols do not expose Bankswitch3dTo3f; verify the bank-3d tail '
+                   'directly.',
+            'expect': {0xFF80: b'='}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -29,7 +32,10 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x3FEE,
-            'read': {0xFF80: 0x01}},
+            'oracle': False,
+            'why': 'Extended symbols do not expose Bankswitch3dTo3f; verify the bank-3d tail '
+                   'directly.',
+            'expect': {0xFF80: b'='}},
     ],
 }
 

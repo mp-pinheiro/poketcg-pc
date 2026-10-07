@@ -307,7 +307,7 @@ CASES = {
         {   'a': 0x00,
             'wram': {0xFF80: b'\x01', 0xD60B: b'\xff', 0xD11E: b'\x00'},
             'read': {0xFF80: 0x01, 0xD60B: 0x01, 0xD11E: 0x01}},
-        {   'a': 0x62,
+        {   'a': 0x28,
             'f': 0xF0,
             'b': 0xBB,
             'c': 0xCC,

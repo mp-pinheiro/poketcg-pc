@@ -258,11 +258,10 @@ CASES = {
             'cycle_budget': 0x7A1200},
     ],
     'Start': [
-        {   'oracle': True,
+        {   'oracle': False,
             'evidence': 'primary',
-            'why': 'The boot prefix initializes RAM, hardware, palettes, timer, serial state, DMA, and '
-                   'SRAM before the non-returning GameLoop jump; the initial byte and tile fill are '
-                   'asserted.',
+            'why': 'The boot prefix reaches the non-returning GameLoop jump after initializing the '
+                   'asserted wInitialA and tile-fill bytes.',
             'a': 0x01,
             'wram': {0xCAB3: b'\xff', 0xCAB6: b'\xff'},
             'read': {0xCAB3: 0x01, 0xCAB6: 0x01},
@@ -276,10 +275,10 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'oracle': True,
+            'oracle': False,
             'evidence': 'primary',
-            'why': 'The boot prefix must preserve the incoming A value in wInitialA and initialize the '
-                   'tile fill with poisoned entry registers before the non-returning GameLoop jump.',
+            'why': 'Poisoned entry registers still reach the non-returning GameLoop jump after the '
+                   'asserted boot-prefix writes.',
             'wram': {0xCAB3: b'\xff', 0xCAB6: b'\xff'},
             'read': {0xCAB3: 0x01, 0xCAB6: 0x01},
             'expect': {0xCAB3: b'\xaa', 0xCAB6: b' '},

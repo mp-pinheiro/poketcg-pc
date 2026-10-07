@@ -13,9 +13,9 @@
 
 #include "home/lcd.h"
 
-#define QUEUE_ADDR 0xd423u
+#define QUEUE_ADDR wAnimationQueue_ADDR
 #define QUEUE_LENGTH 7u
-#define BUFFER_ADDR 0xd42cu
+#define BUFFER_ADDR wDuelAnimBuffer_ADDR
 #define STRUCT_SIZE 8u
 #define BUFFER_MASK 0x7fu
 #define UPDATE_ADDR UpdateQueuedAnimations_ADDR

@@ -55,9 +55,20 @@
 #define AUD2LEN_TIMER 0x3Fu
 #define AUD3WAVE_SIZE 16u
 
+static uint8_t rom_read8(uint16_t addr)
+{
+	return *rom_ptr(MUSIC_BANK, addr);
+}
+
+static uint16_t rom_read16(uint16_t addr)
+{
+	return (uint16_t)(rom_read8(addr) |
+		((uint16_t)rom_read8((uint16_t)(addr + 1u)) << 8u));
+}
 static uint16_t read16(uint16_t addr)
 {
-	return (uint16_t)(gb_read8(addr) | ((uint16_t)gb_read8((uint16_t)(addr + 1u)) << 8u));
+	return (uint16_t)(gb_read8(addr) |
+		((uint16_t)gb_read8((uint16_t)(addr + 1u)) << 8u));
 }
 
 static void write16(uint16_t addr, uint16_t value)
@@ -286,17 +297,17 @@ void StopAllChannels(void)
 void BeginSong(uint8_t a)
 {
 	g_rom_bank = MUSIC_BANK;
-	uint16_t header = read16((uint16_t)(ADR_SONG_HEADER_POINTERS + (uint16_t)a * 2u));
-	uint8_t mask = gb_read8(header);
+	uint16_t header = rom_read16((uint16_t)(ADR_SONG_HEADER_POINTERS + (uint16_t)a * 2u));
+	uint8_t mask = rom_read8(header);
 	header = (uint16_t)(header + 1u);
-	uint8_t bank = gb_read8(header);
+	uint8_t bank = rom_read8(header);
 	header = (uint16_t)(header + 1u);
 	wCurSongBank = bank;
 	uint16_t bc = header;
 	for (uint8_t ch = 0u; ch < 4u; ch++) {
 		if ((mask & (uint8_t)(1u << ch)) == 0u)
 			continue;
-		uint16_t stream = read16(bc);
+		uint16_t stream = rom_read16(bc);
 		bc = (uint16_t)(bc + 2u);
 		write16(channel_word_addr(wMusicChannelPointers_ADDR, ch), stream);
 		write16(channel_word_addr(wMusicMainLoopStart_ADDR, ch), stream);
@@ -309,7 +320,7 @@ void BeginSong(uint8_t a)
 		gb_write8(channel_addr(wMusicVibratoDelay_ADDR, ch), 0u);
 		gb_write8(channel_addr(wMusicPitchOffset_ADDR, ch), 0u);
 		write16((uint16_t)(wMusicChannelStackPointers_ADDR + (uint16_t)ch * 2u),
-		        read16((uint16_t)(ADR_CHANNEL_LOOP_STACKS + (uint16_t)ch * 2u)));
+		        rom_read16((uint16_t)(ADR_CHANNEL_LOOP_STACKS + (uint16_t)ch * 2u)));
 		gb_write8(channel_addr(wMusicEcho_ADDR, ch), ch < 2u ? 0x08u : 0x40u);
 	}
 	wddf2 = 0u;

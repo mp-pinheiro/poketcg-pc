@@ -1270,7 +1270,8 @@ SetNextNPCAndScriptResult SetNextNPCAndScript(uint16_t bc, uint16_t hl)
 	wScriptNPC = wLoadedNPCTempIndex;
 	SetNewScriptNPCResult npc = SetNewScriptNPC(hl);
 	SetNextScript(wNextScriptBank, bc);
-	return (SetNextNPCAndScriptResult){npc.a, npc.f, (uint8_t)(bc >> 8), (uint8_t)bc, npc.hl};
+	return (SetNextNPCAndScriptResult){OWMODE_SCRIPT, npc.f,
+		(uint8_t)(bc >> 8), (uint8_t)bc, npc.hl};
 }
 /* <<< factory SetNextNPCAndScript */
 

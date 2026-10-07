@@ -58,13 +58,13 @@ uint16_t FillRectangle(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl
  * and DuelBoxMessages live one bank past BANK_FONTS (0x1e), the rest share
  * BANK_FONTS (0x1d) with the far-pointer offset already subtracted, matching
  * how each caller in tiles.asm encodes them (see CopyFontsOrDuelGraphicsTiles). */
-#define DUEL_OTHER_GFX 0x4008u
+#define DUEL_OTHER_GFX DuelOtherGraphics_ADDR
 #define DUEL_BOX_MESSAGES DuelBoxMessages_ADDR
 #define SYMBOLS_FONT_FAR 0x2968u
 #define SYMBOLS_FONT_TILES 0x38u
 #define DUEL_CARD_HEADER_GFX_FAR 0x2ce8u
-#define DUEL_CGB_SYMBOL_GFX_FAR 0x37f8u
-#define LOAD_CARD_SET2_TILES_TABLE 0x2085u
+#define DUEL_CGB_SYMBOL_GFX_FAR (DuelCgbSymbolGraphics_ADDR - 0x4000u)
+#define LOAD_CARD_SET2_TILES_TABLE (LoadCardSet2Tiles_ADDR + 0x1Fu)
 
 static uint16_t far_ptr_bank(uint16_t hl, uint8_t *bank)
 {

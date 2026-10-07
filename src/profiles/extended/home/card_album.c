@@ -8,6 +8,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* >>> factory statics */
+#include "home/card_id_bus.h"
 
 #include "generated/wram.h"
 #include "home/bg_map.h"
@@ -93,7 +94,8 @@ GetFirstOwnedCardIndexResult GetFirstOwnedCardIndex(void)
 
 static uint16_t card_album_append_list_index(uint16_t index, uint8_t b)
 {
-	uint8_t card = gb_read8((uint16_t)(wFilteredCardList_ADDR + index - 1u));
+	uint16_t card_addr = (uint16_t)(wFilteredCardList_ADDR + (index - 1u) * 2u);
+	CardId card = card_id_read_at(card_addr);
 	uint16_t hl = (uint16_t)(wCurDeckName_ADDR + 2u);
 	if (card <= DOUBLE_COLORLESS_ENERGY) {
 		CalculateOnesAndTensDigits(card);
@@ -137,40 +139,40 @@ PrintCardSetListEntriesResult PrintCardSetListEntries(void)
 {
 	uint8_t y = gb_read8(wCardListCoords_ADDR);
 	uint8_t x = gb_read8((uint16_t)(wCardListCoords_ADDR + 1u));
-	uint8_t visible_offset = wCardListVisibleOffset;
-	(void)WriteByteToBGMap0(visible_offset != 0u ? SYM_CURSOR_U : SYM_BOX_TOP_R, 19u, (uint8_t)(y - 2u));
-	uint16_t index = visible_offset;
+	uint16_t index = wCardListVisibleOffset;
 	uint8_t b = wNumVisibleCardListEntries;
-	uint8_t tile;
+	(void)WriteByteToBGMap0(
+		index != 0u ? SYM_CURSOR_U : SYM_BOX_TOP_R, 19u, (uint8_t)(y - 2u));
 	for (;;) {
 		if (b == 0u) {
-			uint16_t hl = (uint16_t)(wFilteredCardList_ADDR + index);
-			if (gb_read8(hl) == 0u) {
-				wUnableToScrollDown = TRUE;
-				tile = SYM_BOX_BTM_R;
-			} else {
-				wUnableToScrollDown = FALSE;
-				tile = SYM_CURSOR_D;
-			}
-			(void)WriteByteToBGMap0(tile, 19u, 17u);
+			uint16_t hl = (uint16_t)(wFilteredCardList_ADDR + index * 2u);
+			uint8_t low = gb_read8(hl++);
+			uint8_t high = gb_read8(hl);
+			wUnableToScrollDown = (uint8_t)((low | high) == 0u);
+			(void)WriteByteToBGMap0(
+				wUnableToScrollDown ? SYM_BOX_BTM_R : SYM_CURSOR_D, 19u, 17u);
 			return (PrintCardSetListEntriesResult){ .hl = hl };
 		}
-		uint8_t card = gb_read8((uint16_t)(wFilteredCardList_ADDR + index));
-		index = (uint16_t)((index & 0xff00u) | ((index + 1u) & 0xffu));
+		uint16_t list_addr =
+			(uint16_t)(wFilteredCardList_ADDR + index * 2u);
+		CardId card = card_id_read_at(list_addr);
+		index++;
 		if (card == 0u) {
 			wUnableToScrollDown = TRUE;
 			(void)WriteByteToBGMap0(SYM_BOX_BTM_R, 19u, 17u);
-			return (PrintCardSetListEntriesResult){ .hl = index };
+			return (PrintCardSetListEntriesResult){
+				.hl = (uint16_t)(wFilteredCardList_ADDR + index * 2u + 1u)};
 		}
 		AddCardIDToVisibleList(b, card);
 		LoadCardDataToBuffer1_FromCardID(card);
-		if (gb_read8((uint16_t)(wOwnedCardsCountList_ADDR + index - 1u)) == CARD_NOT_OWNED) {
+		if (gb_read8((uint16_t)(wOwnedCardsCountList_ADDR + index - 1u))
+			== CARD_NOT_OWNED) {
 			uint16_t de = wDefaultText_ADDR;
 			for (uint8_t i = 0; i < CARD_ALBUM_EMPTY_SLOT_DASHES; i++)
 				gb_write8(de++, CARD_ALBUM_EMPTY_SLOT_DASH);
 			gb_write8(de, TX_END);
 		} else {
-			(void)CopyCardNameAndLevel(13u, b, (uint8_t)index, x, card);
+			(void)CopyCardNameAndLevel(13u, b, (uint8_t)index, x, (uint8_t)card);
 		}
 		InitTextPrinting(x, y);
 		uint16_t text = card_album_append_list_index(index, b);
@@ -181,70 +183,72 @@ PrintCardSetListEntriesResult PrintCardSetListEntries(void)
 		y = (uint8_t)(y + 2u);
 	}
 }
-/* <<< factory PrintCardSetListEntries */
 
 /* >>> factory CreateCardSetList */
 void CreateCardSetList(uint8_t a)
 {
 	uint8_t set = a;
-	uint8_t l = 0;
+	ClearMemory_Bank2((uint8_t)((MAX_NUM_CARDS_PER_TYPE + 1u) * 2u),
+		wFilteredCardList_ADDR);
+	ClearMemory_Bank2(DECK_SIZE, wOwnedCardsCountList_ADDR);
+	wOwnedPhantomCardFlags = 0u;
 
-	ClearMemory_Bank2(0x3cu, 0xCEDAu);
-	ClearMemory_Bank2(0x3cu, 0xCF68u);
-	gb_write8(0xCFE2u, 0);
-
-	for (uint16_t card_id = 1; card_id <= 0xE4u; ++card_id) {
-		uint8_t e = (uint8_t)card_id;
-		LoadCardDataToBuffer1_FromCardID(e);
-		if (((gb_read8(0xCC2Au) & 0xF0u) >> 4) != set)
+	uint16_t list_index = 0u;
+	for (CardId card_id = 1u; card_id <= NUM_CARDS; card_id++) {
+		LoadCardDataToBuffer1_FromCardID(card_id);
+		if (((uint8_t)(wLoadedCard1Set & 0xF0u) >> 4) != set)
 			continue;
-
-		if (e == 0x0Au || e == 0xA1u) {
-			uint8_t bit = (e == 0x0Au) ? 0x01u : 0x02u;
-			if (gb_read8(0xC000u + e) != 0x80u) {
-				uint8_t flags = gb_read8(0xCFE2u);
-				gb_write8(0xCFE2u, (uint8_t)(flags | bit));
-			}
+		if (card_id == VENUSAUR_LV64) {
+			if (gb_read8((uint16_t)(wTempCardCollection_ADDR + card_id))
+				!= CARD_NOT_OWNED)
+				wOwnedPhantomCardFlags |= 0x01u;
 			continue;
 		}
-
-		gb_write8(0xCEDAu + l, e);
-		gb_write8(0xCF68u + l, gb_read8(0xC000u + e));
-		++l;
+		if (card_id == MEW_LV15) {
+			if (gb_read8((uint16_t)(wTempCardCollection_ADDR + card_id))
+				!= CARD_NOT_OWNED)
+				wOwnedPhantomCardFlags |= 0x02u;
+			continue;
+		}
+		uint16_t list_addr = (uint16_t)(wFilteredCardList_ADDR + list_index * 2u);
+		gb_write8(list_addr, (uint8_t)card_id);
+		gb_write8((uint16_t)(list_addr + 1u), (uint8_t)(card_id >> 8));
+		gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + list_index),
+			gb_read8((uint16_t)(wTempCardCollection_ADDR + card_id)));
+		list_index++;
 	}
 
 	if (set == 0u) {
-		for (uint8_t e = 1; e < 7u; ++e) {
-			gb_write8(0xCEDAu + l, e);
-			gb_write8(0xCF68u + l, gb_read8(0xC000u + e));
-			++l;
+		for (CardId card_id = 1u; card_id < 7u; card_id++) {
+			uint16_t list_addr =
+				(uint16_t)(wFilteredCardList_ADDR + list_index * 2u);
+			gb_write8(list_addr, (uint8_t)card_id);
+			gb_write8((uint16_t)(list_addr + 1u), (uint8_t)(card_id >> 8));
+			gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + list_index),
+				gb_read8((uint16_t)(wTempCardCollection_ADDR + card_id)));
+			list_index++;
 		}
-	} else if (set == 0x02u) {
-		uint8_t e = 7u;
-		gb_write8(0xCEDAu + l, e);
-		gb_write8(0xCF68u + l, gb_read8(0xC000u + e));
-		++l;
+	} else if (set == CARD_SET_MYSTERY) {
+		CardId card_id = DOUBLE_COLORLESS_ENERGY;
+		uint16_t list_addr =
+			(uint16_t)(wFilteredCardList_ADDR + list_index * 2u);
+		gb_write8(list_addr, (uint8_t)card_id);
+		gb_write8((uint16_t)(list_addr + 1u), (uint8_t)(card_id >> 8));
+		gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + list_index),
+			gb_read8((uint16_t)(wTempCardCollection_ADDR + card_id)));
+		list_index++;
 	}
 
-	uint8_t flags = gb_read8(0xCFE2u);
-	if (flags & 0x01u) {
-		gb_write8(0xCEDAu + l, 0x0Au);
-		gb_write8(0xCF68u + l, 1u);
-		++l;
-	}
-	if (flags & 0x02u) {
-		gb_write8(0xCEDAu + l, 0xA1u);
-		gb_write8(0xCF68u + l, 1u);
-		++l;
-	}
-
-	uint8_t c = (uint8_t)(l - 1u);
-	while (gb_read8(0xCF68u + c) == 0x80u)
-		--c;
-	++c;
-	gb_write8(0xCEAEu, c);
-	gb_write8(0xCEDAu + c, 0);
-	gb_write8(0xCF68u + c, 0xFFu);
+	uint8_t c = (uint8_t)(list_index - 1u);
+	while (gb_read8((uint16_t)(wOwnedCardsCountList_ADDR + c))
+		== CARD_NOT_OWNED)
+		c--;
+	c++;
+	wNumEntriesInCurFilter = c;
+	gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + c), 0xFFu);
+	uint16_t terminator = (uint16_t)(wFilteredCardList_ADDR + (uint16_t)c * 2u);
+	gb_write8(terminator, 0u);
+	gb_write8((uint16_t)(terminator + 1u), 0u);
 }
 /* <<< factory CreateCardSetList */
 
@@ -448,7 +452,7 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 /* >>> factory CardAlbum */
 #define CARD_ALBUM_BOOSTER_PACK_MENU_PARAMS (CardAlbum_ADDR + 0xEFu)
 #define CARD_ALBUM_BOOSTER_PACK_CARDS_MENU_PARAMS (CardAlbum_ADDR + 0xF7u)
-#define CARD_ALBUM_BOOSTER_PACKS_MENU_DATA 0x6B62u
+#define CARD_ALBUM_BOOSTER_PACKS_MENU_DATA (CardAlbum_ADDR + 0x24Au)
 #define MENU_CANCEL 0xFFu
 #define PAD_B 0x02u
 #define PAD_START 0x08u
