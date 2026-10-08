@@ -12,11 +12,10 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
-from profiles import Profile, ProfileError, get_profile, load_catalog, symbol_table
-
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from tools.gen_constants import constant_names, evaluate  # noqa: E402
+from tools.profiles import Profile, ProfileError, get_profile, load_catalog, symbol_table  # noqa: E402
 
 SYM_RE = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
 ROM_LITERAL_RE = re.compile(r"\b0[xX]([4-7][0-9A-Fa-f]{3})[uU]?\b")
@@ -34,6 +33,8 @@ ARITHMETIC_RE = re.compile(r"[0-9+\-*/()<>&|^~ ]+")
 FUNCTION_RE = re.compile(r"^[A-Za-z_][\w \t\*]*?\b([A-Za-z_]\w*)\s*\([^;{}]*\)\s*\{", re.MULTILINE)
 BLOCK_RE = re.compile(r"^/\* (>>>|---|===) (?:factory|part) (\w+) \*/[ \t]*$", re.MULTILINE)
 PROBE_ROW_RE = re.compile(r'\{\s*"([A-Za-z_][A-Za-z0-9_.]*)"\s*,\s*adapt_\w+\s*\}')
+EQUS_RE = re.compile(r'^\s*DEF\s+(\w+)\s+EQUS\s+"([^"]*)"', re.MULTILINE)
+BYTE_OF_RE = re.compile(r"\b(HIGH|LOW)\((\w+)\)")
 BYTE_MNEMONICS = frozenset({"CP", "AND", "OR", "XOR", "SUB", "ADD", "ADC", "SBC", "DB"})
 REGISTERS8 = frozenset({"A", "B", "C", "D", "E", "H", "L", "[HL]"})
 REGISTERS16 = frozenset({"BC", "DE", "HL", "SP"})
@@ -94,15 +95,41 @@ def parse_routines(source: Path) -> dict[str, Routine]:
     return result
 
 
+def byte_of(values: dict[str, int], match: re.Match[str]) -> str:
+    value = values.get(match.group(2))
+    if value is None:
+        return match.group(0)
+    return str(value >> 8 & 0xFF if match.group(1) == "HIGH" else value & 0xFF)
+
+
+def string_constants(checkout: Path, known: dict[str, int]) -> dict[str, int]:
+    pending: dict[str, str] = {}
+    for path in sorted((checkout / "src" / "constants").glob("*.asm")):
+        for name, expression in EQUS_RE.findall(path.read_text(errors="replace")):
+            pending[name.upper()] = NUMBER_RE.sub(canonical_number, expression).upper().replace(" ", "")
+    resolved: dict[str, int] = {}
+    while pending:
+        values = {**known, **resolved}
+        unresolved = len(pending)
+        for name, expression in list(pending.items()):
+            text = BYTE_OF_RE.sub(lambda match: byte_of(values, match), expression)
+            folded = fold(IDENT_RE.sub(lambda match: str(values.get(match.group(0), match.group(0))), text), 0xFFFF)
+            if folded.isdigit():
+                resolved[name] = int(folded)
+                del pending[name]
+        if len(pending) == unresolved:
+            break
+    return resolved
+
+
 def load_tree(profile: Profile, checkout: Path) -> Tree:
     constants = {name.upper(): value for name, value in evaluate(checkout, constant_names(checkout)).items()}
     for name, value in BUILTIN_CONSTANTS.items():
         constants.setdefault(name, value)
-    addresses = sorted(
-        (address, name.upper())
-        for name, (_, address) in symbol_table_at(profile, checkout).items()
-        if "." not in name and address >= 0x8000
-    )
+    labels = {name.upper(): address for name, (_, address) in symbol_table_at(profile, checkout).items() if "." not in name}
+    for name, value in string_constants(checkout, {**labels, **constants}).items():
+        constants.setdefault(name, value)
+    addresses = sorted((address, name) for name, address in labels.items() if address >= 0x8000)
     return Tree(parse_routines(checkout / "src"), constants, addresses)
 
 
