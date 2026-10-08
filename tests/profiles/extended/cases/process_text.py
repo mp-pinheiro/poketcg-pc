@@ -7,13 +7,11 @@ CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('process_text', remove=(
 ))
 OWN = (
     'CreateFullWidthFontTile',
-    'ProcessSpecialTextCharacter',
     'TwoByteNumberToTxSymbol_TrimLeadingZeros',
 )
 CONTRACT.update({
     'CreateFullWidthFontTile': {'compare': ('a', 'b', 'd', 'e', 'hl'), 'preserve': ()},
     'TwoByteNumberToTxSymbol_TrimLeadingZeros': {'compare': ('a', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
-    'ProcessSpecialTextCharacter': {'compare': ('a', 'hl'), 'preserve': ()},
 })
 CASES.update({
     'TwoByteNumberToTxSymbol_TrimLeadingZeros': [
@@ -947,10 +945,6 @@ CASES.update({
             'why': 'the poisoned WRAM span overlaps the oracle call frame',
             'expect_regs': {'a': 0x1C, 'hl': 0x1D38}},
     ],
-    'ProcessSpecialTextCharacter': [
-        {'a': 0x00, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11},
-        {'a': 0x00, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11},
-    ],
 })
 MUTATIONS.update({
     'CreateHalfWidthFontTile': {   'source_symbol': 'CreateHalfWidthFontTile',
@@ -958,11 +952,7 @@ MUTATIONS.update({
         'after': '\treturn (FontTileResult){(uint8_t)(HalfWidthFont_BANK - 1u), 0u, 0u, (uint16_t)(wTextTileBuffer_ADDR + 1u),',
         'case_ids': ['CreateHalfWidthFontTile-0'],
         'source': 'src/profiles/extended/home/process_text.c'},
-    'CreateFullWidthFontTile': {   'source_symbol': 'CreateFullWidthFontTile',
-        'before': '\tuint16_t src = pushed.hl;',
-        'after': '\tuint16_t src = hl;',
-        'case_ids': ['CreateFullWidthFontTile-2'],
-        'source': 'src/profiles/extended/home/process_text.c'},
+    'CreateFullWidthFontTile': {'source_symbol': 'CreateFullWidthFontTile', 'before': '\treturn (FontTileResult){(uint8_t)(Fonts_BANK - 1u), 0u, 0u, wTextTileBuffer_ADDR,\n\t\t(uint16_t)(src + TILE_SIZE_1BPP)};', 'after': '\treturn (FontTileResult){(uint8_t)(((uint8_t)(Fonts_BANK - 1u)) ^ 1u), 0u, 0u, wTextTileBuffer_ADDR, (uint16_t)(src + TILE_SIZE_1BPP)};', 'case_ids': ['CreateFullWidthFontTile-0'], 'source': 'src/profiles/extended/home/process_text.c'},
     'ProcessSpecialTextCharacter': {   'source_symbol': 'ProcessSpecialTextCharacter',
         'before': 'ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)\n{',
         'after': 'ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)\n'

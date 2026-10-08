@@ -2453,17 +2453,10 @@ MUTATIONS.update({
                         'CheckIfSelectedDeckMachineEntryIsEmpty-1'],
         'source': 'src/profiles/extended/home/deck_machine.c'},
     'CheckIfHasEnoughCardsToBuildDeck': {'source_symbol': 'CheckIfHasEnoughCardsToBuildDeck', 'before': 'if (owned == 0u || owned == CARD_NOT_OWNED)', 'after': 'if (owned == 0u && owned == CARD_NOT_OWNED)', 'case_ids': ['CheckIfHasEnoughCardsToBuildDeck-0', 'CheckIfHasEnoughCardsToBuildDeck-2', 'CheckIfHasEnoughCardsToBuildDeck-3'], 'source': 'src/profiles/extended/home/deck_machine.c'},
-    'GetSavedDeckCount': {'source_symbol': 'GetSavedDeckCount', 'before': 'i * DECK_COMPRESSED_STRUCT_SIZE', 'after': 'i * (DECK_COMPRESSED_STRUCT_SIZE - 1u)', 'case_ids': ['GetSavedDeckCount-1', 'GetSavedDeckCount-3', 'GetSavedDeckCount-4'], 'source': 'src/profiles/extended/home/deck_machine.c'},
+    'GetSavedDeckCount': {'source_symbol': 'GetSavedDeckCount', 'before': '\twNumSavedDecks = count;', 'after': '\twNumSavedDecks = (uint8_t)((count) ^ 1u);', 'case_ids': ['GetSavedDeckCount-0'], 'source': 'src/profiles/extended/home/deck_machine.c'},
     'FindFirstEmptyDeckSlot': {'source_symbol': 'FindFirstEmptyDeckSlot', 'before': 'return (FindFirstEmptyDeckSlotResult){i, 0x80u, hl};', 'after': 'return (FindFirstEmptyDeckSlotResult){(uint8_t)(i + 1u), 0x80u, hl};', 'case_ids': ['FindFirstEmptyDeckSlot-0'], 'source': 'src/profiles/extended/home/deck_machine.c'},
     'CheckIfCanBuildSavedDeck': {'source_symbol': 'CheckIfCanBuildSavedDeck', 'before': 'DeckBuildCheckResult r = CheckIfHasEnoughCardsToBuildDeck(&cards);\n\treturn r;', 'after': 'DeckBuildCheckResult r = CheckIfHasEnoughCardsToBuildDeck(&cards);\n\tr.a = (uint8_t)(r.a + 1u);\n\treturn r;', 'case_ids': ['CheckIfCanBuildSavedDeck-0', 'CheckIfCanBuildSavedDeck-1'], 'source': 'src/profiles/extended/home/deck_machine.c'},
-    'PrintDeckMachineEntry': {   'source_symbol': 'PrintDeckMachineEntry',
-        'before': '\tProcessTextResult printed = ProcessText(&text_hl);\n'
-                  '\treturn (PrintDeckMachineEntryResult){printed.a, (uint8_t)(printed.f & '
-                  '0x80u)};',
-        'after': '\tProcessTextResult printed = ProcessText(&text_hl);\n'
-                 '\treturn (PrintDeckMachineEntryResult){printed.a, 0u};',
-        'case_ids': ['PrintDeckMachineEntry-2'],
-        'source': 'src/profiles/extended/home/deck_machine.c'},
+    'PrintDeckMachineEntry': {'source_symbol': 'PrintDeckMachineEntry', 'before': '\treturn missing;', 'after': '\treturn (uint8_t)((missing) ^ 1u);', 'case_ids': ['PrintDeckMachineEntry-2'], 'source': 'src/profiles/extended/home/deck_machine.c'},
     'HandleDeckMissingCardsList': {   'source_symbol': 'HandleDeckMissingCardsList',
         'before': 'gb_write8(wCardListUpdateFunction_ADDR, '
                   '(uint8_t)CARD_LIST_UPDATE_FUNCTION_ADDR);',

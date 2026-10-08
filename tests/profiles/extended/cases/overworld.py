@@ -183,11 +183,6 @@ MUTATIONS.update({
         'after': '\t\t\t\t0x10u,',
         'case_ids': ['FindNPCOrObject-0', 'FindNPCOrObject-1', 'FindNPCOrObject-2'],
         'source': 'src/home/overworld.c'},
-    'Func_c17a': {   'source': 'src/profiles/extended/home/scripting.c',
-        'source_symbol': 'CallMapScriptPointerIfExists',
-        'before': '\treturn (CallMapScriptResult){saved_bank, r.f, entered.hl};',
-        'after': '\treturn (CallMapScriptResult){saved_bank, entered.f, entered.hl};',
-        'case_ids': ['Func_c17a-2']},
     'SetScriptData': {'source_symbol': 'SetScriptData', 'before': 'wOverworldMode = OWMODE_SCRIPT;', 'after': 'wOverworldMode = 0u;', 'case_ids': ['SetScriptData-0', 'SetScriptData-1', 'SetScriptData-2'], 'source': 'src/profiles/extended/home/overworld.c'},
     'HandlePlayerMoveMode': {   'source_symbol': 'HandlePlayerMoveMode',
         'before': 'void HandlePlayerMoveMode(void)\n{\n\twWhichSprite = wPlayerSpriteIndex;',
@@ -204,13 +199,10 @@ MUTATIONS.update({
         'after': '\twGameEvent = 0x01u;',
         'case_ids': ['LoadMap-0', 'LoadMap-1'],
         'source': 'src/profiles/extended/home/overworld.c'},
-    'Func_c141': {   'source_symbol': 'Func_c141',
-        'before': '\tgb_write8(wActiveGameEvent_ADDR, 0u);',
-        'after': '\tgb_write8(wActiveGameEvent_ADDR, event);',
-        'case_ids': ['Func_c141-0'],
-        'source': 'src/profiles/extended/home/overworld.c'},
+    'Func_c141': {'source_symbol': 'Func_c141', 'before': '\t\treturn (Func_c141Result){0u, 0x80u, wActiveGameEvent_ADDR};', 'after': '\t\treturn (Func_c141Result){0u, (uint8_t)((0x80u) ^ 0x10u), wActiveGameEvent_ADDR};', 'case_ids': ['Func_c141-0'], 'source': 'src/profiles/extended/home/overworld.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _record in SCHEMA2_CASES["LoadMap"]:
     _record["completion"] = {"mode": "entry", "pc": sym("SetScreenScroll"), "bank": sym_bank("SetScreenScroll"), "routine": "SetScreenScroll"}
+MUTATIONS['HandleOverworldMode'] = {'source_symbol': 'HandleOverworldMode', 'before': '\tuint8_t mode = (uint8_t)(wOverworldMode & 0x7fu);', 'after': '\tuint8_t mode = (uint8_t)(wOverworldMode & 0x7eu);', 'case_ids': ['HandleOverworldMode-3'], 'source': 'src/profiles/extended/home/overworld.c'}

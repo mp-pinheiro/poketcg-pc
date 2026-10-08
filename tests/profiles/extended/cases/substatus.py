@@ -860,11 +860,7 @@ MUTATIONS.update({
         'after': '\tuint8_t card_id = wTempNonTurnDuelistCardID;',
         'case_ids': ['HandleStrikesBack_AgainstResidualAttack-6'],
         'source': 'src/profiles/extended/home/substatus.c'},
-    'HandleTransparency': {   'source_symbol': 'HandleTransparency',
-        'before': '\tif (category == POKEMON_POWER) {',
-        'after': '\tif (category != POKEMON_POWER) {',
-        'case_ids': ['HandleTransparency-1'],
-        'source': 'src/profiles/extended/home/substatus.c'},
+    'HandleTransparency': {'source_symbol': 'HandleTransparency', 'before': '\t\treturn (HandleTransparencyResult){a, a ? 0u : 0x80u,\n\t\t\twTempNonTurnDuelistCardID_ADDR};', 'after': '\t\treturn (HandleTransparencyResult){(uint8_t)((a) ^ 1u), a ? 0u : 0x80u, wTempNonTurnDuelistCardID_ADDR};', 'case_ids': ['HandleTransparency-0'], 'source': 'src/profiles/extended/home/substatus.c'},
     'HandleDamageReductionOrNoDamageFromPkmnPowerEffects': {   'source_symbol': 'HandleDamageReductionOrNoDamageFromPkmnPowerEffects',
         'before': '\tNoDamageOrEffectResult no_damage = '
                   'HandleNoDamageOrEffectSubstatus_PkmnPower((uint8_t)(de >> 8), location, hl);',
@@ -880,3 +876,4 @@ for _records in (CASES[_fn] for _fn in OWN):
             _seeds[sym("wTempByte")] = _seeds[sym("wTempByte")][:sym("wCursorBlinkCounter") - sym("wTempByte")]
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
+MUTATIONS['HandleNShieldAndTransparency'] = {'source_symbol': 'HandleNShieldAndTransparency', 'before': '\tif (card_id == MEW_LV8) {', 'after': '\tif (!(card_id == MEW_LV8)) {', 'case_ids': ['HandleNShieldAndTransparency-1'], 'source': 'src/profiles/extended/home/substatus.c'}

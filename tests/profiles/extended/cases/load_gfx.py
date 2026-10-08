@@ -1,5 +1,5 @@
 """Extended oracle-diff cases for load_gfx: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import sym
+from tests.cases._symbols import VRAM_START, sym
 from tests.cases._inherit import inherit
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('load_gfx', remove=(
     'Func_80238',
@@ -9,14 +9,12 @@ OWN = (
     'LoadPaletteDataToBuffer',
     'LoadTilemap',
     'LoadTilemap.InitAndDecompressBGMap',
-    'LoadTilesetGfx',
     'LoadTilesetGfx.CopyGfxData',
     '_DrawPortrait',
 )
 CONTRACT.update({
     'LoadTilemap': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'LoadTilemap.InitAndDecompressBGMap': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
-    'LoadTilesetGfx': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'LoadTilesetGfx.CopyGfxData': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'LoadPaletteDataToBuffer': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     '_DrawPortrait': {'compare': (), 'preserve': ()},
@@ -60,17 +58,6 @@ CASES.update({
                         sym("wBGMapHeight"): b'\x01',
                         sym("wCurTilemap"): b'\x00',
                         sym("hBankROM"): b' '}},
-    ],
-    'LoadTilesetGfx': [
-        {'wram': {sym("hBankROM"): b' '}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {sym("hBankROM"): b' '}},
     ],
     'LoadTilesetGfx.CopyGfxData': [
         {   'oracle': False,
@@ -158,11 +145,7 @@ MUTATIONS.update({
         'after': '\tuint16_t src = (uint16_t)(state16(wTempPointer_ADDR) + 1u);',
         'case_ids': ['LoadGfxDataFromTempPointer-0'],
         'source': 'src/profiles/extended/home/load_gfx.c'},
-    'LoadTilesetGfx': {   'source_symbol': 'LoadTilesetGfx',
-        'before': '\tLoadGraphicsPointerFromHL(&hl);',
-        'after': '\t(void)hl;',
-        'case_ids': ['LoadTilesetGfx-0'],
-        'source': 'src/profiles/extended/home/load_gfx.c'},
+    'LoadTilesetGfx': {'source_symbol': 'LoadTilesetGfx', 'before': '\tLoadGraphicsPointerFromHL(&hl);', 'after': '\t(void)0;', 'case_ids': ['LoadTilesetGfx-0'], 'source': 'src/profiles/extended/home/load_gfx.c'},
     'LoadTilesetGfx.LoadTileGfx': {   'source_symbol': 'LoadTilesetGfx.LoadTileGfx',
         'before': '\tif (LoadTilesetGfx_CopyGfxData(1, 0).f & 0x80u)',
         'after': '\tif (LoadTilesetGfx_CopyGfxData(1, 1).f & 0x80u)',
@@ -185,16 +168,10 @@ MUTATIONS.update({
         'after': '\tuint8_t count = (uint8_t)(gb_read8(wLoadedPalData_ADDR) + 1u);',
         'case_ids': ['LoadOBPalette-0'],
         'source': 'src/profiles/extended/home/load_gfx.c'},
-    'LoadPaletteDataToBuffer': {   'source_symbol': 'LoadPaletteDataToBuffer',
-        'before': '\tcount = (uint16_t)size * 8u + 1u;',
-        'after': '\tcount = (uint16_t)size * 8u + 2u;',
-        'case_ids': ['LoadPaletteDataToBuffer-0'],
-        'source': 'src/profiles/extended/home/load_gfx.c'},
-    '_DrawPortrait': {   'source_symbol': '_DrawPortrait',
-        'before': '\twBGMapCGBMode = 1u;',
-        'after': '\twBGMapCGBMode = 0u;',
-        'case_ids': ['_DrawPortrait-0', '_DrawPortrait-1'],
-        'source': 'src/profiles/extended/home/load_gfx.c'},
+    'LoadPaletteDataToBuffer': {'source_symbol': 'LoadPaletteDataToBuffer', 'before': '\tCopyBankedDataToDE(count, de);\n\tBankswitchROM(saved);', 'after': '\tCopyBankedDataToDE(count, de);\n\t(void)0;', 'case_ids': ['LoadPaletteDataToBuffer-0'], 'source': 'src/profiles/extended/home/load_gfx.c'},
+    '_DrawPortrait': {'source_symbol': '_DrawPortrait', 'before': '\t\t\tgb_write8((uint16_t)(row + x), tile++);', 'after': '\t\t\tgb_write8((uint16_t)(row + x), (uint8_t)((tile++) ^ 1u));', 'case_ids': ['_DrawPortrait-0'], 'source': 'src/profiles/extended/home/load_gfx.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
+for _record in SCHEMA2_CASES["_DrawPortrait"]:
+    _record.setdefault("bus", {}).update({VRAM_START: 0x2000})

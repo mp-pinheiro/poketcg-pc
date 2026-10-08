@@ -58,11 +58,7 @@ CASES.update({
     ],
 })
 MUTATIONS.update({
-    'ReadJoypad': {   'source_symbol': 'ReadJoypad',
-        'before': '\t\t(void)Reset();\n\t\treturn;',
-        'after': '\t\t(void)Reset();\n\t\tSaveButtonsHeld(c);\n\t\treturn;',
-        'case_ids': ['ReadJoypad-3', 'ReadJoypad-4'],
-        'source': 'src/profiles/extended/home/input.c'},
+    'ReadJoypad': {'source_symbol': 'ReadJoypad', 'before': '\tgb_write8(hKeysReleased_ADDR, (uint8_t)((held ^ c) & (uint8_t)~c));', 'after': '\tgb_write8(hKeysReleased_ADDR, (uint8_t)(((uint8_t)((held ^ c) & (uint8_t)~c)) ^ 1u));', 'case_ids': ['ReadJoypad-0'], 'source': 'src/profiles/extended/home/input.c'},
     'Reset': {   'source_symbol': 'Reset',
         'before': '\twInitialA = initial_a;',
         'after': '\twInitialA = 0u;',

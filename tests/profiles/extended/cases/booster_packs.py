@@ -1,8 +1,9 @@
 """Extended oracle-diff cases for booster_packs: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import sym
+from tests.cases._symbols import sym, sym_pointer
 from tests.cases._inherit import inherit
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('booster_packs')
 OWN = (
+    'GenerateBoosterEnergies',
     'GenerateFightingEnergy',
     'GenerateFireEnergy',
     'GenerateGrassEnergy',
@@ -24,6 +25,23 @@ CONTRACT.update({
     'GenerateLightningEnergy': {'compare': ('a', 'f'), 'preserve': ()},
     'GeneratePsychicEnergy': {'compare': ('a', 'f'), 'preserve': ()},
     'GenerateWaterEnergy': {'compare': ('a', 'f'), 'preserve': ()},
+    'GenerateBoosterEnergies': {'compare': (), 'preserve': ()},
+})
+_BOOSTER_ENERGY_STATE = {sym("wTempCardCollection"): b'\x00' * 0x10, sym("wBoosterTempEnergiesDrawn"): b'\x00' * 0x16,
+                         sym("wBoosterCurrentCard"): b'\x00\x00'}
+_BOOSTER_ENERGY_READ = {sym("wTempCardCollection"): 0x10, sym("wBoosterTempEnergiesDrawn"): 0x16, sym("wBoosterCurrentCard"): 2}
+CASES.update({
+    'GenerateBoosterEnergies': [
+        {'wram': {**_BOOSTER_ENERGY_STATE, sym("wBoosterData_EnergyFunctionPointer"): sym_pointer("GenerateGrassEnergy")},
+         'read': dict(_BOOSTER_ENERGY_READ)},
+        {'wram': {**_BOOSTER_ENERGY_STATE, sym("wBoosterData_EnergyFunctionPointer"): sym_pointer("GenerateEnergyBoosterLightningFire")},
+         'read': dict(_BOOSTER_ENERGY_READ)},
+        {'wram': {**_BOOSTER_ENERGY_STATE, sym("wBoosterData_EnergyFunctionPointer"): b'\x00\x00'},
+         'read': dict(_BOOSTER_ENERGY_READ)},
+        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234,
+         'wram': {**_BOOSTER_ENERGY_STATE, sym("wBoosterData_EnergyFunctionPointer"): sym_pointer("GenerateRandomEnergy")},
+         'read': dict(_BOOSTER_ENERGY_READ)},
+    ],
 })
 CASES.update({
     'GenerateFightingEnergy': [
@@ -65,7 +83,7 @@ MUTATIONS.update({
     'AddBoosterEnergyToDrawnEnergies': {'source_symbol': 'AddBoosterEnergyToDrawnEnergies', 'before': 'card_id_write(&current, a);', 'after': 'card_id_write(&current, (CardId)(a + 1u));', 'case_ids': ['AddBoosterEnergyToDrawnEnergies-0', 'AddBoosterEnergyToDrawnEnergies-1', 'AddBoosterEnergyToDrawnEnergies-2', 'AddBoosterEnergyToDrawnEnergies-3'], 'source': 'src/profiles/extended/home/booster_packs.c'},
     'GenerateRandomEnergy': {'source_symbol': 'GenerateRandomEnergy', 'before': 'return AddBoosterEnergyToDrawnEnergies((CardId)(random + 1u));', 'after': 'return AddBoosterEnergyToDrawnEnergies((CardId)(random + 2u));', 'case_ids': ['GenerateRandomEnergy-0', 'GenerateRandomEnergy-1', 'GenerateRandomEnergy-2', 'GenerateRandomEnergy-3'], 'source': 'src/profiles/extended/home/booster_packs.c'},
     'PutEnergiesAndNonEnergiesTogether': {'source_symbol': 'PutEnergiesAndNonEnergiesTogether', 'before': 'if (card == 0u)', 'after': 'if (card != 0u)', 'case_ids': ['PutEnergiesAndNonEnergiesTogether-0', 'PutEnergiesAndNonEnergiesTogether-1', 'PutEnergiesAndNonEnergiesTogether-2', 'PutEnergiesAndNonEnergiesTogether-3'], 'source': 'src/profiles/extended/home/booster_packs.c'},
-    'GenerateBoosterEnergies': {'source_symbol': 'GenerateBoosterEnergies', 'before': '(void)GenerateGrassEnergy();', 'after': '(void)GenerateFireEnergy();', 'case_ids': ['GenerateBoosterEnergies-0', 'GenerateBoosterEnergies-1'], 'source': 'src/profiles/extended/home/booster_packs.c'},
+    'GenerateBoosterEnergies': {'source_symbol': 'GenerateBoosterEnergies', 'before': '\tuint8_t hi = gb_read8((uint16_t)(ptr_addr + 1u));', 'after': '\tuint8_t hi = gb_read8((uint16_t)(ptr_addr + 0x0u));', 'case_ids': ['GenerateBoosterEnergies-0'], 'source': 'src/profiles/extended/home/booster_packs.c'},
     'CheckCardAlreadyDrawn': {'source_symbol': 'CheckCardAlreadyDrawn', 'before': 'uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);', 'after': 'uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card + 1u);', 'case_ids': ['CheckCardAlreadyDrawn-1', 'CheckCardAlreadyDrawn-2'], 'source': 'src/profiles/extended/home/booster_packs.c'},
     'FindCardsInSetAndRarity': {'source_symbol': 'FindCardsInSetAndRarity', 'before': 'for (CardId card_id = 1u; card_id <= NUM_CARDS; card_id++) {', 'after': 'for (CardId card_id = 1u; card_id < NUM_CARDS; card_id++) {', 'case_ids': ['FindCardsInSetAndRarity-0', 'FindCardsInSetAndRarity-1'], 'source': 'src/profiles/extended/home/booster_packs.c'},
     'GenerateFightingEnergy': {'source_symbol': 'GenerateFightingEnergy',
@@ -101,3 +119,6 @@ MUTATIONS.update({
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
+MUTATIONS['AddBoosterCardToDrawnEnergies'] = {'source_symbol': 'AddBoosterCardToDrawnEnergies', 'before': '\treturn (AddBoosterCardToDrawnEnergiesResult){result.a, result.f};', 'after': '\treturn (AddBoosterCardToDrawnEnergiesResult){(uint8_t)((result.a) ^ 1u), result.f};', 'case_ids': ['AddBoosterCardToDrawnEnergies-0'], 'source': 'src/profiles/extended/home/booster_packs.c'}
+MUTATIONS['CheckCardInSetAndRarity'] = {'source_symbol': 'CheckCardInSetAndRarity', 'before': '\t\treturn (CheckCardInSetAndRarityResult){\n\t\t\twBoosterCurrentRarity, 0x10u, b, c, d, e, hl};', 'after': '\t\treturn (CheckCardInSetAndRarityResult){(uint8_t)((wBoosterCurrentRarity) ^ 1u), 0x10u, b, c, d, e, hl};', 'case_ids': ['CheckCardInSetAndRarity-0'], 'source': 'src/profiles/extended/home/booster_packs.c'}
+MUTATIONS['GenerateRandomEnergyBooster'] = {'source_symbol': 'GenerateRandomEnergyBooster', 'before': '\treturn (AddBoosterEnergyToDrawnEnergiesResult){0u, 0x80u, last.d, last.e};', 'after': '\treturn (AddBoosterEnergyToDrawnEnergiesResult){(uint8_t)((0u) ^ 1u), 0x80u, last.d, last.e};', 'case_ids': ['GenerateRandomEnergyBooster-0'], 'source': 'src/profiles/extended/home/booster_packs.c'}

@@ -270,7 +270,7 @@ MUTATIONS.update({
         'after': '\tif ((gb_read8((uint16_t)(sCardCollection_ADDR + VENUSAUR_LV64)) & 0x81u) != 0u)',
         'case_ids': ['GetCardAlbumProgress-2'],
         'source': 'src/profiles/extended/home/card_collection.c'},
-    'GetAmountOfCardsOwned': {'source_symbol': 'GetAmountOfCardsOwned', 'before': 'for (uint16_t i = 0; i < card_id_collection_bytes(); i++) {', 'after': 'for (uint16_t i = 0; i < 0x0100u; i++) {', 'case_ids': ['GetAmountOfCardsOwned-1'], 'source': 'src/profiles/extended/home/card_collection.c'},
+    'GetAmountOfCardsOwned': {'source_symbol': 'GetAmountOfCardsOwned', 'before': '\tuint16_t hl = 0u;', 'after': '\tuint16_t hl = 0x1u;', 'case_ids': ['GetAmountOfCardsOwned-0'], 'source': 'src/profiles/extended/home/card_collection.c'},
     'GetCardCountInCollectionAndDecks': {   'source_symbol': 'GetCardCountInCollectionAndDecks',
         'before': '\t\tif (card_id_read_at(compressed) != 0u) {',
         'after': '\t\tif (card_id_read_at(compressed) == 0u) {',

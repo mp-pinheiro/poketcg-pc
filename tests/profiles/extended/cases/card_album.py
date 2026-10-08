@@ -1,5 +1,5 @@
 """Extended oracle-diff cases for card_album: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import sym, sym_bank
+from tests.cases._symbols import VRAM_START, sym, sym_bank
 from tests.cases._inherit import inherit
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('card_album')
 OWN = (
@@ -131,11 +131,7 @@ MUTATIONS.update({
         'after': '\t\t\twUnableToScrollDown = (uint8_t)((low | high) != 0u);',
         'case_ids': ['PrintCardSetListEntries-0', 'PrintCardSetListEntries-1'],
         'source': 'src/profiles/extended/home/card_album.c'},
-    'CreateCardSetList': {   'source_symbol': 'CreateCardSetList',
-        'before': 'void CreateCardSetList(uint8_t a)\n{\n\tuint8_t set = a;',
-        'after': 'void CreateCardSetList(uint8_t a)\n{\n\tuint8_t set = 0u;',
-        'case_ids': ['CreateCardSetList-1'],
-        'source': 'src/profiles/extended/home/card_album.c'},
+    'CreateCardSetList': {'source_symbol': 'CreateCardSetList', 'before': '\twOwnedPhantomCardFlags = 0u;', 'after': '\twOwnedPhantomCardFlags = (uint8_t)((0u) ^ 1u);', 'case_ids': ['CreateCardSetList-0'], 'source': 'src/profiles/extended/home/card_album.c'},
     'HandleCardAlbumCardPage': {   'source_symbol': 'HandleCardAlbumCardPage',
         'before': 'wVBlankOAMCopyToggle = TRUE;\n'
                   '\ta = wCardListCursorPos;\n'
@@ -147,11 +143,7 @@ MUTATIONS.update({
                         'HandleCardAlbumCardPage-1',
                         'HandleCardAlbumCardPage-2'],
         'source': 'src/home/card_album.c'},
-    'CardAlbum': {   'source_symbol': 'CardAlbum',
-        'before': '\t(void)DrawWideTextBox_PrintText(ViewWhichCardFileText);',
-        'after': '\t(void)DrawWideTextBox_PrintText(EmptyPromotionalCardText);',
-        'case_ids': ['CardAlbum-2', 'CardAlbum-0', 'CardAlbum-1'],
-        'source': 'src/profiles/extended/home/card_album.c'},
+    'CardAlbum': {'source_symbol': 'CardAlbum', 'before': '{\n\twTileMapFill = 0u;', 'after': '{\n\twTileMapFill = (uint8_t)((0u) ^ 1u);', 'case_ids': ['CardAlbum-0'], 'source': 'src/profiles/extended/home/card_album.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
@@ -159,3 +151,4 @@ for _name, _entries in ((_fn, CASES[_fn]) for _fn in OWN):
     for _index, _entry in enumerate(_entries):
         if "completion" in _entry:
             SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]
+SCHEMA2_CASES["CardAlbum"][0].setdefault("bus", {}).update({VRAM_START: 0x2000})

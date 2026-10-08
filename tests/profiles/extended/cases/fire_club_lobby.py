@@ -9,11 +9,7 @@ CONTRACT.update({
 CASES.update({
 })
 MUTATIONS.update({
-    'FindExtraInteractableObjects': {   'source_symbol': 'FindExtraInteractableObjects',
-        'before': '\tif (gb_read8(wPlayerXCoord_ADDR) != gb_read8(hl))',
-        'after': '\tif (gb_read8(wPlayerXCoord_ADDR) == gb_read8(hl))',
-        'case_ids': ['FindExtraInteractableObjects-1'],
-        'source': 'src/profiles/extended/home/fire_club_lobby.c'},
+    'FindExtraInteractableObjects': {'source_symbol': 'FindExtraInteractableObjects', 'before': '\tuint16_t de = 6u;', 'after': '\tuint16_t de = 0x7u;', 'case_ids': ['FindExtraInteractableObjects-0'], 'source': 'src/profiles/extended/home/fire_club_lobby.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

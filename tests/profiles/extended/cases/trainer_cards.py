@@ -2534,11 +2534,7 @@ MUTATIONS.update({
         'after': '(wanted == 0u && type < TYPE_ENERGY)',
         'case_ids': ['AIDecide_Pokedex-5'],
         'source': 'src/profiles/extended/home/trainer_cards.c'},
-    'AIDecide_EnergyRetrieval': {   'source_symbol': 'AIDecide_EnergyRetrieval',
-        'before': '\twce06 = dup.a;',
-        'after': '\twce06 = 0u;',
-        'case_ids': ['AIDecide_EnergyRetrieval-1', 'AIDecide_EnergyRetrieval-2'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
+    'AIDecide_EnergyRetrieval': {'source_symbol': 'AIDecide_EnergyRetrieval', 'before': '\t\treturn (AIDecideEnergyRetrievalResult){hand_energy.a, (uint8_t)(hand_energy.a == 0u ? 0x80u : 0u), d};', 'after': '\t\treturn (AIDecideEnergyRetrievalResult){(uint8_t)((hand_energy.a) ^ 1u), (uint8_t)(hand_energy.a == 0u ? 0x80u : 0u), d};', 'case_ids': ['AIDecide_EnergyRetrieval-0'], 'source': 'src/profiles/extended/home/trainer_cards.c'},
     'AIDecide_PokemonTrader_LegendaryArticuno': {   'source_symbol': 'AIDecide_PokemonTrader_LegendaryArticuno',
         'before': '\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(CHANSEY);',
         'after': '\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DITTO);',
@@ -2556,13 +2552,8 @@ MUTATIONS.update({
         'case_ids': [   'AIDecide_PokemonTrader_Flamethrower-0',
                         'AIDecide_PokemonTrader_Flamethrower-1'],
         'source': 'src/profiles/extended/home/trainer_cards.c'},
-    'AIDecide_EnergySearch': {   'source_symbol': 'AIDecide_EnergySearch',
-        'before': '\t\treturn (AIDecideEnergySearchResult){scan.a,\n'
-                  '\t\t\t(uint8_t)(scan.a == 0u ? 0x80u : 0x00u), scan.d};',
-        'after': '\t\treturn (AIDecideEnergySearchResult){scan.a, scan.f, scan.d};',
-        'case_ids': ['AIDecide_EnergySearch-3'],
-        'source': 'src/profiles/extended/home/trainer_cards.c'},
-    '_AIProcessHandTrainerCards': {'source_symbol': '_AIProcessHandTrainerCards', 'before': '(void)logic->play(d, e);', 'after': '(void)logic;', 'case_ids': ['_AIProcessHandTrainerCards-0'], 'source': 'src/profiles/extended/home/trainer_cards.c'},
+    'AIDecide_EnergySearch': {'source_symbol': 'AIDecide_EnergySearch', 'before': '\t\t\treturn (AIEnergySearchScanResult){e, (uint8_t)(0xC0u | 0x10u), d, e};', 'after': '\t\t\treturn (AIEnergySearchScanResult){(uint8_t)((e) ^ 1u), (uint8_t)(0xC0u | 0x10u), d, e};', 'case_ids': ['AIDecide_EnergySearch-0'], 'source': 'src/profiles/extended/home/trainer_cards.c'},
+    '_AIProcessHandTrainerCards': {'source_symbol': '_AIProcessHandTrainerCards', 'before': '\t\t\treturn (AIProcessHandTrainerCardsResult){0xffu, 0xc0u};', 'after': '\t\t\treturn (AIProcessHandTrainerCardsResult){(uint8_t)((0xffu) ^ 1u), 0xc0u};', 'case_ids': ['_AIProcessHandTrainerCards-0'], 'source': 'src/profiles/extended/home/trainer_cards.c'},
     'AIDecide_ScoopUp': {   'source_symbol': 'AIDecide_ScoopUp',
         'before': '\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;\n'
                   '\tDuelistVarResult count = '
@@ -2616,3 +2607,4 @@ def _full_heal_case(status):
 CASES["AIDecide_FullHeal"] += [_full_heal_case(0x03), _full_heal_case(0x01)]
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
+MUTATIONS['AIDecide_Pokeball'] = {'source_symbol': 'AIDecide_Pokeball', 'before': '\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, JIGGLYPUFF_LV12);\n\t\td = 0u;\n\t\treturn (AIDecide_PokeballResult){r.a, r.f, d};', 'after': '\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, JIGGLYPUFF_LV12);\n\t\td = 0u;\n\t\treturn (AIDecide_PokeballResult){(uint8_t)((r.a) ^ 1u), r.f, d};', 'case_ids': ['AIDecide_Pokeball-1'], 'source': 'src/profiles/extended/home/trainer_cards.c'}

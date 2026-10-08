@@ -1,5 +1,5 @@
 """Extended oracle-diff cases for effect_functions: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import STACK_TOP, WRAMX_START, sym, sym_bank
+from tests.cases._symbols import STACK_CANARY, STACK_TOP, WRAMX_START, sym, sym_bank
 from tests.cases._inherit import inherit
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 _COIN_FIXTURE = {
@@ -231,7 +231,6 @@ OWN = (
     'FurySwipes10_MultiplierEffect',
     'FurySwipes20_AIEffect',
     'FurySwipes20_MultiplierEffect',
-    'GamblerEffect',
     'GrowlEffect',
     'GustOfWind_SwitchEffect',
     'HardenEffect',
@@ -264,7 +263,6 @@ CONTRACT.update({
     'CheckIfDefendingPokemonHasAnyAttack': {'compare': ('f',), 'preserve': ()},
     'GustOfWind_SwitchEffect': {'compare': (), 'preserve': ()},
     'FoulGas_PoisonOrConfusionEffect': {'compare': ('f',), 'preserve': ()},
-    'GamblerEffect': {'compare': (), 'preserve': ()},
     'LassEffect': {'compare': (), 'preserve': ()},
     'Recycle_PlayerSelection': {'compare': ('a', 'f'), 'preserve': ()},
     'PokeBall_PlayerSelection': {'compare': ('a', 'f'), 'preserve': ()},
@@ -1318,61 +1316,6 @@ CASES.update({
             'f': 0x00,
             'hl': 0x482A},
     ],
-    'GamblerEffect': [
-        {   'keys': [0x00, 0x01],
-            'wram': {   sym("wPlayerDuelistType"): b'\x00',
-                        sym("wDuelType"): b'\x00',
-                        sym("wDuelDisplayedScreen"): b'\x06',
-                        sym("wLCDC"): b'\x00',
-                        sym("wCoinTossTotalNum"): b'\xff',
-                        sym("wCoinTossNumHeads"): b'\xff',
-                        sym("wCoinTossDuelistType"): b'\xff',
-                        sym("wCoinTossNumTossed"): b'\x01',
-                        sym("wCoinTossScreenTextID"): b'\xf0\x00'},
-            'read': {   sym("wCoinTossTotalNum"): 0x01,
-                        sym("wCoinTossNumHeads"): 0x01,
-                        sym("wCoinTossDuelistType"): 0x01,
-                        sym("wCoinTossNumTossed"): 0x01,
-                        sym("wCoinTossScreenTextID"): 0x02,
-                        sym("wDuelDisplayedScreen"): 0x01,
-                        sym("wNumCardsTryingToDraw"): 0x01,
-                        sym("wNumCardsBeingDrawn"): 0x01},
-            'setup': [   {'fn': 'SwapTurn'},
-                         {'fn': 'CopyDMAFunction'},
-                         {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'keys': [0x00, 0x01],
-            'wram': {   sym("wPlayerDuelistType"): b'\x00',
-                        sym("wDuelType"): b'\x00',
-                        sym("wDuelDisplayedScreen"): b'\x06',
-                        sym("wLCDC"): b'\x00',
-                        sym("wCoinTossTotalNum"): b'\xff',
-                        sym("wCoinTossNumHeads"): b'\xff',
-                        sym("wCoinTossDuelistType"): b'\xff',
-                        sym("wCoinTossNumTossed"): b'\x01',
-                        sym("wCoinTossScreenTextID"): b'\xf0\x00'},
-            'read': {   sym("wCoinTossTotalNum"): 0x01,
-                        sym("wCoinTossNumHeads"): 0x01,
-                        sym("wCoinTossDuelistType"): 0x01,
-                        sym("wCoinTossNumTossed"): 0x01,
-                        sym("wCoinTossScreenTextID"): 0x02,
-                        sym("wDuelDisplayedScreen"): 0x01,
-                        sym("wNumCardsTryingToDraw"): 0x01,
-                        sym("wNumCardsBeingDrawn"): 0x01},
-            'setup': [   {'fn': 'SwapTurn'},
-                         {'fn': 'CopyDMAFunction'},
-                         {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
     'LassEffect': [
         {   'keys': [0x00, 0x01],
             'wram': {   sym("hWhoseTurn"): b'\xc2',
@@ -2072,11 +2015,7 @@ MUTATIONS.update({
                  '\tSetDefiniteDamage(ATimes10((uint8_t)(damage + 1u)));',
         'case_ids': ['DragonairSlam_MultiplierEffect-0', 'DragonairSlam_MultiplierEffect-1'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
-    'GustOfWind_SwitchEffect': {   'source_symbol': 'GustOfWind_SwitchEffect',
-        'before': '\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, f, b, c, d, e, hl);',
-        'after': '\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, f, b, c, 0u, 0u, hl);',
-        'case_ids': ['GustOfWind_SwitchEffect-2'],
-        'source': 'src/profiles/extended/home/effect_functions.c'},
+    'GustOfWind_SwitchEffect': {'source_symbol': 'GustOfWind_SwitchEffect', 'before': '\tgb_write8(wDuelDisplayedScreen_ADDR, 0u);', 'after': '\tgb_write8(wDuelDisplayedScreen_ADDR, (uint8_t)((0u) ^ 1u));', 'case_ids': ['GustOfWind_SwitchEffect-0'], 'source': 'src/profiles/extended/home/effect_functions.c'},
     'Confusion50PercentEffect': {   'source_symbol': 'Confusion50PercentEffect',
         'before': 'uint8_t Confusion50PercentEffect(void)\n'
                   '{\n'
@@ -2394,11 +2333,7 @@ MUTATIONS.update({
                         'FoulGas_PoisonOrConfusionEffect-1',
                         'FoulGas_PoisonOrConfusionEffect-2'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
-    'GamblerEffect': {   'source_symbol': 'GamblerEffect',
-        'before': '\tuint8_t draw_count = hTemp_ffa0 != 0u ? 8u : 1u;',
-        'after': '\tuint8_t draw_count = hTemp_ffa0 != 0u ? 7u : 2u;',
-        'case_ids': ['GamblerEffect-0', 'GamblerEffect-1'],
-        'source': 'src/profiles/extended/home/effect_functions.c'},
+    'GamblerEffect': {'source_symbol': 'GamblerEffect', 'before': '\thTemp_ffa0 = toss.a;', 'after': '\thTemp_ffa0 = (uint8_t)((toss.a) ^ 1u);', 'case_ids': ['GamblerEffect-0'], 'source': 'src/profiles/extended/home/effect_functions.c'},
     'SpitPoison_Poison50PercentEffect': {   'source_symbol': 'SpitPoison_Poison50PercentEffect',
         'before': 'SpitPoison_Poison50PercentEffectResult '
                   'SpitPoison_Poison50PercentEffect(uint16_t hl)\n'
@@ -2576,11 +2511,7 @@ MUTATIONS.update({
                  '\thTempPlayAreaLocation_ff9d = (uint8_t)(selected + 1u);',
         'case_ids': ['DuelistSelectForcedSwitch-0', 'DuelistSelectForcedSwitch-1'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
-    'PealOfThunder_RandomlyDamageEffect': {   'source_symbol': 'PealOfThunder_RandomlyDamageEffect',
-        'before': '\t(void)RandomlyDamagePlayAreaPokemon(30u);',
-        'after': '\t(void)RandomlyDamagePlayAreaPokemon(20u);',
-        'case_ids': ['PealOfThunder_RandomlyDamageEffect-0'],
-        'source': 'src/profiles/extended/home/effect_functions.c'},
+    'PealOfThunder_RandomlyDamageEffect': {'source_symbol': 'PealOfThunder_RandomlyDamageEffect', 'before': 'PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{', 'after': 'PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\tgb_write8(0xdff0u, 0xFFu);', 'case_ids': ['PealOfThunder_RandomlyDamageEffect-0'], 'source': 'src/profiles/extended/home/effect_functions.c'},
     'DevolutionSpray_PlayerSelection': {   'source_symbol': 'DevolutionSpray_PlayerSelection',
         'before': 'return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)((entry_f & '
                   '0x80u) | 0x10u)};',
@@ -2598,11 +2529,7 @@ MUTATIONS.update({
         'after': 'ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_WITHDRAW);',
         'case_ids': ['StiffenEffect-0', 'StiffenEffect-1'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
-    'SupersonicEffect': {'source_symbol': 'SupersonicEffect',
-        'before': 'uint8_t f = Confusion50PercentEffect();',
-        'after': 'uint8_t f = Poison50PercentEffect();',
-        'case_ids': ['SupersonicEffect-0', 'SupersonicEffect-1'],
-        'source': 'src/profiles/extended/home/effect_functions.c'},
+    'SupersonicEffect': {'source_symbol': 'SupersonicEffect', 'before': '\tif ((f & 0x10u) == 0u)', 'after': '\tif (!((f & 0x10u) == 0u))', 'case_ids': ['SupersonicEffect-0'], 'source': 'src/profiles/extended/home/effect_functions.c'},
     'FurySwipes10_AIEffect': {'source_symbol': 'FurySwipes10_AIEffect',
         'before': 'SetExpectedAIDamage(15u, 0u, 30u);',
         'after': 'SetExpectedAIDamage(16u, 0u, 30u);',
@@ -2673,11 +2600,7 @@ MUTATIONS.update({
         'after': 'SUBSTATUS2_GROWL',
         'case_ids': ['SmokescreenEffect-0', 'SmokescreenEffect-1'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
-    'Flamethrower_CheckEnergy': {'source_symbol': 'Flamethrower_CheckEnergy',
-        'before': 'effect_compare(energy, 1u)',
-        'after': 'effect_compare(energy, 2u)',
-        'case_ids': ['Flamethrower_CheckEnergy-0', 'Flamethrower_CheckEnergy-1', 'Flamethrower_CheckEnergy-2'],
-        'source': 'src/profiles/extended/home/effect_functions.c'},
+    'Flamethrower_CheckEnergy': {'source_symbol': 'Flamethrower_CheckEnergy', 'before': '\t\tenergy, effect_compare(energy, 1u), NotEnoughFireEnergyText};', 'after': '\t\tenergy, effect_compare(energy, 0x0u), NotEnoughFireEnergyText};', 'case_ids': ['Flamethrower_CheckEnergy-0'], 'source': 'src/profiles/extended/home/effect_functions.c'},
     'Flamethrower_PlayerSelectEffect': {'source_symbol': 'Flamethrower_PlayerSelectEffect',
         'before': 'return PlayerPickFireEnergyCardToDiscard();',
         'after': 'return (PlayerPickFireEnergyCardToDiscardResult){0u, 0u};',
@@ -2788,11 +2711,7 @@ MUTATIONS.update({
         'after': 'TossCoin(IfTailsDamageToYourselfTooText, 31u);',
         'case_ids': ['Thunder_Recoil50PercentEffect-0', 'Thunder_Recoil50PercentEffect-1'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
-    'Thunder_RecoilEffect': {'source_symbol': 'Thunder_RecoilEffect',
-        'before': 'DealRecoilDamageToSelf(30u, f, d, e);',
-        'after': 'DealRecoilDamageToSelf(31u, f, d, e);',
-        'case_ids': ['Thunder_RecoilEffect-0', 'Thunder_RecoilEffect-1'],
-        'source': 'src/profiles/extended/home/effect_functions.c'},
+    'Thunder_RecoilEffect': {'source_symbol': 'Thunder_RecoilEffect', 'before': '\t\treturn (ThunderRecoilEffectResult){coin, 0x00u};', 'after': '\t\treturn (ThunderRecoilEffectResult){(uint8_t)((coin) ^ 1u), 0x00u};', 'case_ids': ['Thunder_RecoilEffect-0'], 'source': 'src/profiles/extended/home/effect_functions.c'},
     'GrowlEffect': {'source_symbol': 'GrowlEffect',
         'before': 'SUBSTATUS2_GROWL',
         'after': 'SUBSTATUS2_SMOKESCREEN',
@@ -2809,16 +2728,8 @@ MUTATIONS.update({
         'case_ids': ['Sonicboom_NullEffect-0', 'Sonicboom_NullEffect-1'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
     'HyperBeam_PlayerSelectEffect': {'source_symbol': 'HyperBeam_PlayerSelectEffect', 'before': 'hTemp_ffa0 = 0xffu;', 'after': 'hTemp_ffa0 = 0x00u;', 'case_ids': ['HyperBeam_PlayerSelectEffect-0', 'HyperBeam_PlayerSelectEffect-1', 'HyperBeam_PlayerSelectEffect-2'], 'source': 'src/profiles/extended/home/effect_functions.c'},
-    'HyperBeam_AISelectEffect': {'source_symbol': 'HyperBeam_AISelectEffect',
-        'before': 'hTemp_ffa0 = selected.a;',
-        'after': 'hTemp_ffa0 = 0xffu;',
-        'case_ids': ['HyperBeam_AISelectEffect-0', 'HyperBeam_AISelectEffect-1', 'HyperBeam_AISelectEffect-2'],
-        'source': 'src/profiles/extended/home/effect_functions.c'},
-    'HyperBeam_DiscardEffect': {'source_symbol': 'HyperBeam_DiscardEffect',
-        'before': 'gb_write8(effect.hl, LAST_TURN_EFFECT_DISCARD_ENERGY);',
-        'after': 'gb_write8(effect.hl, 0u);',
-        'case_ids': ['HyperBeam_DiscardEffect-0', 'HyperBeam_DiscardEffect-1', 'HyperBeam_DiscardEffect-2'],
-        'source': 'src/profiles/extended/home/effect_functions.c'},
+    'HyperBeam_AISelectEffect': {'source_symbol': 'HyperBeam_AISelectEffect', 'before': '\thTemp_ffa0 = selected.a;', 'after': '\thTemp_ffa0 = (uint8_t)((selected.a) ^ 1u);', 'case_ids': ['HyperBeam_AISelectEffect-0'], 'source': 'src/profiles/extended/home/effect_functions.c'},
+    'HyperBeam_DiscardEffect': {'source_symbol': 'HyperBeam_DiscardEffect', 'before': '\tif (no_effect.f & 0x10u)', 'after': '\tif (!(no_effect.f & 0x10u))', 'case_ids': ['HyperBeam_DiscardEffect-2'], 'source': 'src/profiles/extended/home/effect_functions.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
@@ -2846,14 +2757,6 @@ for _name in (
         _record["compare"] = ()
         CASES[_name][_index]["completion"] = dict(_completion)
         CASES[_name][_index]["compare"] = ()
-for _record in SCHEMA2_CASES["GamblerEffect"]:
-    _record["completion"] = {
-        "mode": "entry",
-        "pc": sym("DisplayDrawNCardsScreen"),
-        "bank": sym_bank("DisplayDrawNCardsScreen"),
-        "routine": "DisplayDrawNCardsScreen",
-    }
-    _record["compare"] = ()
 for _record in SCHEMA2_CASES["EnergySpike_PlayerSelectEffect"][:1]:
     _record.pop("oracle", None)
     _record.pop("why", None)
@@ -2895,3 +2798,5 @@ for _name, _records in ((_fn, SCHEMA2_CASES[_fn]) for _fn in OWN):
             CASES[_name][_index]["completion"] = _record["completion"]
         if "compare" in _record and _record["compare"] != CONTRACT[_name]["compare"]:
             CASES[_name][_index]["compare"] = _record["compare"]
+SCHEMA2_CASES["PealOfThunder_RandomlyDamageEffect"][0].setdefault("bus", {}).update(
+    {sym("wPlayerDuelVariables"): 0x100, sym("wOpponentDuelVariables"): 0x100, STACK_CANARY: 1})

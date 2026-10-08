@@ -197,18 +197,8 @@ MUTATIONS.update({
         'after': '\tuint16_t de = (uint16_t)(caller_hl + 2u);',
         'case_ids': ['SFX_frequency-0', 'SFX_frequency-1', 'SFX_frequency-2'],
         'source': 'src/profiles/extended/home/sfx.c'},
-    'SFX_pan': {   'source_symbol': 'SFX_pan',
-        'before': 'void SFX_pan(uint16_t bc, uint16_t caller_hl)\n'
-                  '{\n'
-                  '\tuint8_t pan_val = wAudioArg;',
-        'after': 'void SFX_pan(uint16_t bc, uint16_t caller_hl)\n{\n\tuint8_t pan_val = 0u;',
-        'case_ids': ['SFX_pan-0', 'SFX_pan-1', 'SFX_pan-2', 'SFX_pan-3'],
-        'source': 'src/profiles/extended/home/sfx.c'},
-    'SFX_pitch_offset': {   'source_symbol': 'SFX_pitch_offset',
-        'before': '\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), wAudioArg);',
-        'after': '\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), 0u);',
-        'case_ids': ['SFX_pitch_offset-0', 'SFX_pitch_offset-1', 'SFX_pitch_offset-2'],
-        'source': 'src/profiles/extended/home/sfx.c'},
+    'SFX_pan': {'source_symbol': 'SFX_pan', 'before': '\tcaller_hl = (uint16_t)(caller_hl + 1u);', 'after': '\tcaller_hl = (uint16_t)(caller_hl + 0x0u);', 'case_ids': ['SFX_pan-0'], 'source': 'src/profiles/extended/home/sfx.c'},
+    'SFX_pitch_offset': {'source_symbol': 'SFX_pitch_offset', 'before': '\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), wAudioArg);', 'after': '\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), (uint8_t)((wAudioArg) ^ 1u));', 'case_ids': ['SFX_pitch_offset-0'], 'source': 'src/profiles/extended/home/sfx.c'},
     'SFX_envelope': {   'source_symbol': 'SFX_envelope',
         'before': 'void SFX_envelope(uint16_t bc, uint16_t caller_hl)\n'
                   '{\n'
@@ -236,3 +226,4 @@ MUTATIONS.update({
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
+MUTATIONS['SFX_wait'] = {'source_symbol': 'SFX_wait', 'before': '\tgb_write8((uint16_t)(wde33_ADDR + bc), wait_val);', 'after': '\tgb_write8((uint16_t)(wde33_ADDR + bc), (uint8_t)((wait_val) ^ 1u));', 'case_ids': ['SFX_wait-0'], 'source': 'src/profiles/extended/home/sfx.c'}

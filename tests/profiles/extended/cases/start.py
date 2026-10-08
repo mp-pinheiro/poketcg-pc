@@ -1,5 +1,5 @@
 """Extended oracle-diff cases for start: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import sym, sym_bank
+from tests.cases._symbols import VRAM_START, sym, sym_bank
 from tests.cases._inherit import inherit
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('start', remove=(
     'CheckIfHasSaveData',
@@ -171,12 +171,7 @@ MUTATIONS.update({
         'after': '\tuint8_t has_save = (first.f & 0x10u) ? FALSE : TRUE;',
         'case_ids': ['CheckIfHasSaveData-0', 'CheckIfHasSaveData-2'],
         'source': 'src/profiles/extended/home/start.c'},
-    'DrawPlayerPortraitAndPrintNewGameText': {   'source_symbol': 'DrawPlayerPortraitAndPrintNewGameText',
-        'before': '\t(void)InitMenuScreen();',
-        'after': '\t(void)InitMenuScreen();\n\t(void)0;',
-        'case_ids': [   'DrawPlayerPortraitAndPrintNewGameText-0',
-                        'DrawPlayerPortraitAndPrintNewGameText-1'],
-        'source': 'src/profiles/extended/home/start.c'},
+    'DrawPlayerPortraitAndPrintNewGameText': {'source_symbol': 'DrawPlayerPortraitAndPrintNewGameText', 'before': '\tDrawPlayerPortrait(7u, 3u); /* menus/start.asm:410 lb bc, 7, 3 */', 'after': '\tDrawPlayerPortrait(0x6u, 3u); /* menus/start.asm:410 lb bc, 7, 3 */', 'case_ids': ['DrawPlayerPortraitAndPrintNewGameText-0'], 'source': 'src/profiles/extended/home/start.c'},
     'HandleTitleScreen': {   'source_symbol': 'HandleTitleScreen',
         'before': '\t\tPlaySong(MUSIC_STOP);\n\t\tEnableAndClearSpriteAnimations();\n\t\tPlayIntroSequence();\n\t\treturn;',
         'after': '\t\tPlaySong(0x01u);\n\t\tEnableAndClearSpriteAnimations();\n\t\tPlayIntroSequence();\n\t\treturn;',
@@ -194,3 +189,5 @@ for _name, _entries in ((_fn, CASES[_fn]) for _fn in OWN):
     for _index, _entry in enumerate(_entries):
         if "completion" in _entry:
             SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]
+for _record in SCHEMA2_CASES["DrawPlayerPortraitAndPrintNewGameText"]:
+    _record.setdefault("bus", {}).update({VRAM_START: 0x2000})

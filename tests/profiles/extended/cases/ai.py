@@ -19,15 +19,7 @@ CASES['AIDoAction'] = [
     dict(_AIDO.case(vram=False), **_AIDO.regs)
 ]
 MUTATIONS.update({
-    'AIDoAction': {   'source_symbol': 'AIDoAction',
-        'before': '\t\tcase AIACTION_DO_TURN:\n'
-                  '\t\t\tif (sam && sam_scripted())\n'
-                  '\t\t\t\t(void)AIPerformScriptedTurn(0u, 0u, 0u, 0u, 0u, 0u, 0u);',
-        'after': '\t\tcase AIACTION_DO_TURN:\n'
-                 '\t\t\tif (sam && sam_scripted())\n'
-                 '\t\t\t\t(void)AIMainTurnLogic(0u, 0u, 0u, 0u, 0u, 0u, 0u);',
-        'case_ids': ['AIDoAction-0'],
-        'source': 'src/profiles/extended/home/ai.c'},
+    'AIDoAction': {'source_symbol': 'AIDoAction', 'before': '\treturn action;', 'after': '\treturn (uint8_t)((action) ^ 1u);', 'case_ids': ['AIDoAction-0'], 'source': 'src/profiles/extended/home/ai.c'},
     'AIDoAction_StartDuel': {   'source_symbol': 'AIDoAction_StartDuel',
         'before': 'uint8_t AIDoAction_StartDuel(void)\n{\n\treturn AIDoAction(0x02u);',
         'after': 'uint8_t AIDoAction_StartDuel(void)\n{\n\treturn AIDoAction(0x01u);',

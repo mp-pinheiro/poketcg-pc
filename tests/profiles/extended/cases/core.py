@@ -10052,11 +10052,7 @@ CASES['PracticeDuelVerify_Turn1'] += [
     {'wram': {sym("hWhoseTurn"): b'\xc2', sym("wTempCardID_ccc2"): b'S\x01'}},
 ]
 MUTATIONS.update({
-    'SaveDuelDataToDE': {   'source_symbol': 'SaveDuelDataToDE',
-        'before': 'gb_write8(base, TRUE);',
-        'after': 'gb_write8(base, 0u);',
-        'case_ids': ['SaveDuelDataToDE-0'],
-        'source': 'src/profiles/extended/home/core.c'},
+    'SaveDuelDataToDE': {'source_symbol': 'SaveDuelDataToDE', 'before': '\tgb_write8((uint16_t)(base + 2), d);', 'after': '\tgb_write8((uint16_t)(base + 2), (uint8_t)((d) ^ 1u));', 'case_ids': ['SaveDuelDataToDE-0'], 'source': 'src/profiles/extended/home/core.c'},
     'LoadPlayerDeck': {   'source_symbol': 'LoadPlayerDeck',
         'before': 'de = (uint16_t)(de + sDeck1Cards_ADDR);',
         'after': 'de = (uint16_t)(de + sDeck1Cards_ADDR + 1u);',
@@ -10135,21 +10131,13 @@ MUTATIONS.update({
         'after': 'GetCardIDFromDeckIndex(index) != card_id',
         'case_ids': ['LookForCardIDInLocation_Bank5-0', 'LookForCardIDInLocation_Bank5-1'],
         'source': 'src/profiles/extended/home/core.c'},
-    'PracticeDuel_VerifyPlayerTurnActions': {   'source_symbol': 'PracticeDuel_VerifyPlayerTurnActions',
-        'before': '\treturn (PracticeDuelTurnActionsResult){FLAG_C};',
-        'after': '\treturn (PracticeDuelTurnActionsResult){0u};',
-        'case_ids': ['PracticeDuel_VerifyPlayerTurnActions-0', 'PracticeDuel_VerifyPlayerTurnActions-1'],
-        'source': 'src/profiles/extended/home/core.c'},
+    'PracticeDuel_VerifyPlayerTurnActions': {'source_symbol': 'PracticeDuel_VerifyPlayerTurnActions', 'before': '\tif ((f & 0x10u) == 0u)', 'after': '\tif (!((f & 0x10u) == 0u))', 'case_ids': ['PracticeDuel_VerifyPlayerTurnActions-0'], 'source': 'src/profiles/extended/home/core.c'},
     'RemoveCardIDInList': {   'source_symbol': 'RemoveCardIDInList',
         'before': 'GetCardIDFromDeckIndex(index) != de',
         'after': 'GetCardIDFromDeckIndex(index) == de',
         'case_ids': ['RemoveCardIDInList-0', 'RemoveCardIDInList-1'],
         'source': 'src/profiles/extended/home/core.c'},
-    'SortTempHandByIDList': {   'source_symbol': 'SortTempHandByIDList',
-        'before': '\t\treturn (SortTempHandResult){0u, 0x80u, b, c, d, e, hl};',
-        'after': '\t\treturn (SortTempHandResult){0u, 0x80u, b, 0u, d, e, hl};',
-        'case_ids': ['SortTempHandByIDList-1', 'SortTempHandByIDList-2'],
-        'source': 'src/profiles/extended/home/core.c'},
+    'SortTempHandByIDList': {'source_symbol': 'SortTempHandByIDList', 'before': '\t\treturn (SortTempHandResult){0u, 0x80u, b, c, d, e, hl};', 'after': '\t\treturn (SortTempHandResult){(uint8_t)((0u) ^ 1u), 0x80u, b, c, d, e, hl};', 'case_ids': ['SortTempHandByIDList-0'], 'source': 'src/profiles/extended/home/core.c'},
     'ApplyCardCGBAttributes': {   'source_symbol': 'ApplyCardCGBAttributes',
         'before': 'SafeCopyDataHLtoDE(&src, &dst, 8u);',
         'after': 'SafeCopyDataHLtoDE(&src, &dst, 0u);',
@@ -10194,11 +10182,7 @@ MUTATIONS.update({
                         'PrintPracticeDuelNumberedInstruction-1',
                         'PrintPracticeDuelNumberedInstruction-2'],
         'source': 'src/home/core.c'},
-    'PrintReturnCardsToDeckDrawAgain': {   'source_symbol': 'PrintReturnCardsToDeckDrawAgain',
-        'before': '\tWaitResult wait = DrawWideTextBox_WaitForInput(ReturnCardsToDeckAndDrawAgainText);',
-        'after': '\tWaitResult wait = DrawWideTextBox_WaitForInput(0u);',
-        'case_ids': ['PrintReturnCardsToDeckDrawAgain-0', 'PrintReturnCardsToDeckDrawAgain-1'],
-        'source': 'src/profiles/extended/home/core.c'},
+    'PrintReturnCardsToDeckDrawAgain': {'source_symbol': 'PrintReturnCardsToDeckDrawAgain', 'before': '\treturn (PrintReturnCardsToDeckDrawAgainResult){\n\t\twait.a, wait.b, wait.c, wait.f, wait.hl, (uint16_t)((uint16_t)wait.d << 8 | wait.e)};', 'after': '\treturn (PrintReturnCardsToDeckDrawAgainResult){(uint8_t)((wait.a) ^ 1u), wait.b, wait.c, wait.f, wait.hl, (uint16_t)((uint16_t)wait.d << 8 | wait.e)};', 'case_ids': ['PrintReturnCardsToDeckDrawAgain-0'], 'source': 'src/profiles/extended/home/core.c'},
     'PracticeDuelVerify_Turn3': {   'source_symbol': 'PracticeDuelVerify_Turn3',
         'before': '\tif (card != SEAKING) {',
         'after': '\tif (card == SEAKING) {',
@@ -10225,17 +10209,7 @@ MUTATIONS.update({
         'after': '\t\treturn 0x80u;\n\t}\n\tif (total1 == 2u',
         'case_ids': ['LookForEnergyNeededInHand-0'],
         'source': 'src/home/core.c'},
-    'PrintAttackOrPkmnPowerInformation': {   'source_symbol': 'PrintAttackOrPkmnPowerInformation',
-        'before': '\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, '
-                  'text_hl);\n'
-                  '\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, '
-                  'text.e, text.f, text.hl};',
-        'after': '\t\tProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, '
-                 'text_hl);\n'
-                 '\t\treturn (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, '
-                 'text.e, 0x00u, text.hl};',
-        'case_ids': ['PrintAttackOrPkmnPowerInformation-0'],
-        'source': 'src/profiles/extended/home/core.c'},
+    'PrintAttackOrPkmnPowerInformation': {'source_symbol': 'PrintAttackOrPkmnPowerInformation', 'before': '\t\treturn (PrintAttackOrPkmnPowerInformationResult){0u, b, c, d, e, 0x80u, hl};', 'after': '\t\treturn (PrintAttackOrPkmnPowerInformationResult){(uint8_t)((0u) ^ 1u), b, c, d, e, 0x80u, hl};', 'case_ids': ['PrintAttackOrPkmnPowerInformation-1'], 'source': 'src/profiles/extended/home/core.c'},
     'PrintPokemonCardLength': {   'source_symbol': 'PrintPokemonCardLength',
         'before': '\t\tx = (uint8_t)(x + 1u);',
         'after': '\t\tx = (uint8_t)(x + 2u);',
@@ -10258,13 +10232,7 @@ MUTATIONS.update({
                  '\t}',
         'case_ids': ['CardListFunction-1', 'CardListFunction-5'],
         'source': 'src/profiles/extended/home/core.c'},
-    'CheckForBenchIDAtHalfHPAndCanUseSecondAttack': {   'source_symbol': 'CheckForBenchIDAtHalfHPAndCanUseSecondAttack',
-        'before': '\t\tuint8_t current_hp = '
-                  'GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c)).a;',
-        'after': '\t\tuint8_t current_hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP '
-                 '+ c - 1u)).a;',
-        'case_ids': ['CheckForBenchIDAtHalfHPAndCanUseSecondAttack-3'],
-        'source': 'src/profiles/extended/home/core.c'},
+    'CheckForBenchIDAtHalfHPAndCanUseSecondAttack': {'source_symbol': 'CheckForBenchIDAtHalfHPAndCanUseSecondAttack', 'before': '\treturn (CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult){b, f, b, c, d, e, hl};', 'after': '\treturn (CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult){(uint8_t)((b) ^ 1u), f, b, c, d, e, hl};', 'case_ids': ['CheckForBenchIDAtHalfHPAndCanUseSecondAttack-0'], 'source': 'src/profiles/extended/home/core.c'},
     'CountNumberOfSetUpBenchPokemon': {   'source_symbol': 'CountNumberOfSetUpBenchPokemon',
         'before': '\t\t\tCheckCardEvolutionInHandOrDeckResult evolution = '
                   'CheckCardEvolutionInHandOrDeck(deck_index);',
@@ -10272,7 +10240,7 @@ MUTATIONS.update({
                  'CheckCardEvolutionInHandOrDeck(card.a);',
         'case_ids': ['CountNumberOfSetUpBenchPokemon-2'],
         'source': 'src/home/core.c'},
-    'DrawCardPageSurroundingBox': {'source_symbol': 'DrawCardPageSurroundingBox', 'before': 'FillRectangle(0xA0u, 8u, 6u,', 'after': 'FillRectangle(0xA1u, 8u, 6u,', 'case_ids': ['DrawCardPageSurroundingBox-0', 'DrawCardPageSurroundingBox-1'], 'source': 'src/profiles/extended/home/core.c'},
+    'DrawCardPageSurroundingBox': {'source_symbol': 'DrawCardPageSurroundingBox', 'before': '\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);', 'after': '\t(void)0;', 'case_ids': ['DrawCardPageSurroundingBox-2'], 'source': 'src/profiles/extended/home/core.c'},
     'PrintPokemonCardPageGenericInformation': {'source_symbol': 'PrintPokemonCardPageGenericInformation', 'before': 'WriteByteToBGMap0((uint8_t)(color + 1u), 18u, 1u);', 'after': 'WriteByteToBGMap0((uint8_t)(color + 2u), 18u, 1u);', 'case_ids': ['PrintPokemonCardPageGenericInformation-0', 'PrintPokemonCardPageGenericInformation-1'], 'source': 'src/profiles/extended/home/core.c'},
     'DisplayNoBasicPokemonInHandScreen': {'source_symbol': 'DisplayNoBasicPokemonInHandScreen', 'before': 'uint8_t count = CountCardsInDuelTempList().a;', 'after': 'uint8_t count = (uint8_t)(CountCardsInDuelTempList().a + 1u);', 'case_ids': ['DisplayNoBasicPokemonInHandScreen-0', 'DisplayNoBasicPokemonInHandScreen-1'], 'source': 'src/profiles/extended/home/core.c'},
     'PrintAndLoadAttacksToDuelTempList': {   'source_symbol': 'PrintAndLoadAttacksToDuelTempList',
@@ -10386,21 +10354,9 @@ MUTATIONS.update({
         'after': '\twOpponentDeckID = 0u;',
         'case_ids': ['StartDuel_VSAIOpp-0', 'StartDuel_VSAIOpp-1'],
         'source': 'src/profiles/extended/home/core.c'},
-    'ReplaceKnockedOutPokemon': {   'source_symbol': 'ReplaceKnockedOutPokemon',
-        'before': '\t(void)SwapPlayAreaPokemon(hTempPlayAreaLocation_ff9d, PLAY_AREA_ARENA);',
-        'after': '',
-        'case_ids': ['ReplaceKnockedOutPokemon-0'],
-        'source': 'src/profiles/extended/home/core.c'},
-    'DuelMainInterface': {   'source_symbol': 'DuelMainInterface',
-        'before': '\twSkipDuelistIsThinkingDelay = 0u;',
-        'after': '\twSkipDuelistIsThinkingDelay = 1u;',
-        'case_ids': ['DuelMainInterface-0', 'DuelMainInterface-1'],
-        'source': 'src/profiles/extended/home/core.c'},
-    'PlayEnergyCard': {   'source_symbol': 'PlayEnergyCard',
-        'before': '\tif (set_played)\n\t\twAlreadyPlayedEnergy = TRUE;',
-        'after': '\tif (set_played)\n\t\twAlreadyPlayedEnergy = 0u;',
-        'case_ids': ['PlayEnergyCard-0'],
-        'source': 'src/profiles/extended/home/core.c'},
+    'ReplaceKnockedOutPokemon': {'source_symbol': 'ReplaceKnockedOutPokemon', 'before': '\t\treturn (ReplaceKnockedOutPokemonResult){hp.a, hp.a == 0u ? FLAG_Z : 0u, b, c, d, e, hp.hl};', 'after': '\t\treturn (ReplaceKnockedOutPokemonResult){(uint8_t)((hp.a) ^ 1u), hp.a == 0u ? FLAG_Z : 0u, b, c, d, e, hp.hl};', 'case_ids': ['ReplaceKnockedOutPokemon-1'], 'source': 'src/profiles/extended/home/core.c'},
+    'DuelMainInterface': {'source_symbol': 'DuelMainInterface', 'before': '\t\tPrintDuelMenuAndHandleInput();', 'after': '\t\t(void)0;', 'case_ids': ['DuelMainInterface-0'], 'source': 'src/profiles/extended/home/core.c'},
+    'PlayEnergyCard': {'source_symbol': 'PlayEnergyCard', 'before': '\t\tif (wAlreadyPlayedEnergy != 0u) {', 'after': '\t\tif (!(wAlreadyPlayedEnergy != 0u)) {', 'case_ids': ['PlayEnergyCard-0'], 'source': 'src/profiles/extended/home/core.c'},
     'OppAction_ForceSwitchActive': {   'source_symbol': 'OppAction_ForceSwitchActive',
         'before': 'void OppAction_ForceSwitchActive(void)\n'
                   '{\n'
@@ -10577,3 +10533,4 @@ for _name, _entries in ((_fn, CASES[_fn]) for _fn in OWN):
     for _index, _entry in enumerate(_entries):
         if "completion" in _entry:
             SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]
+MUTATIONS['DuelMenu_Retreat'] = {'source_symbol': 'DuelMenu_Retreat', 'before': '\thTemp_ffa0 = status;', 'after': '\thTemp_ffa0 = (uint8_t)((status) ^ 1u);', 'case_ids': ['DuelMenu_Retreat-0'], 'source': 'src/profiles/extended/home/core.c'}

@@ -9,9 +9,7 @@ CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('scripting', remove=(
     'Script_GiftCenterClerk',
 ))
 OWN = (
-    'Func_c9c7',
     'ScriptCommand_PrintVariableNPCText',
-    'ScriptCommand_ShowCardReceivedScreen',
     'SetNextNPCAndScript',
     'SetNextScript',
     'ShowMultichoiceTextbox',
@@ -25,10 +23,8 @@ CONTRACT.update({
     'preserve': ('b', 'c', 'd', 'e', 'hl'),
     'wram_out': True},
     'ScriptCommand_JumpIfCardOwned': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
-    'Func_c9c7': {'compare': (), 'preserve': ()},
     'ScriptCommand_PrintVariableNPCText': {'compare': ('a', 'f', 'c'), 'preserve': ()},
     'ShowMultichoiceTextbox': {'compare': ('a', 'f', 'b', 'c', 'e', 'hl'), 'preserve': ()},
-    'ScriptCommand_ShowCardReceivedScreen': {'compare': (), 'preserve': ()},
     'ScriptCommand_JumpIfMan1RequestedCardOwned': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
     'ScriptCommand_JumpIfMan1RequestedCardInCollection': {'compare': ('a', 'f', 'b', 'c'), 'preserve': ()},
 })
@@ -110,9 +106,6 @@ CASES.update({
                         sym("wNextScript"): b'\x00\x00',
                         sym("wOverworldMode"): b'\x00'},
             'expect': {sym("wScriptNPC"): b'\x00', sym("wNextScript"): b'\xad\xde', sym("wOverworldMode"): b'\x03'}},
-    ],
-    'Func_c9c7': [
-        {'wram': {sym("wCurMap"): b'\x00'}, 'read': {sym("wCurMap"): 0x01}},
     ],
     'ScriptCommand_PrintVariableNPCText': [
         {   'b': 0x01,
@@ -215,41 +208,6 @@ CASES.update({
             'why': 'The isolated poisoned pointer intentionally has no valid multichoice table.',
             'expect_regs': {'a': 0x00}},
     ],
-    'ScriptCommand_ShowCardReceivedScreen': [
-        {   'oracle': False,
-            'why': 'ShowPromotionalCardScreen enters its frame-driven card detail '
-                   'wait, which the isolated oracle cannot complete.',
-            'b': 0x00,
-            'c': 0x1E,
-            'wram': {sym("wCardReceived"): b'C\x00', sym("wScriptPointer"): b'\x6e\x7a'},
-            'expect': {sym("wCardReceived"): b'C\x00', sym("wScriptPointer"): b'\x71\x7a'}},
-        {   'oracle': False,
-            'why': 'ShowPromotionalCardScreen enters its frame-driven card detail '
-                   'wait, which the isolated oracle cannot complete.',
-            'b': 0x00,
-            'c': 0x00,
-            'wram': {sym("wCardReceived"): b'C\x01', sym("wScriptPointer"): b'\x6e\x7a'},
-            'expect': {sym("wCardReceived"): b'C\x01', sym("wScriptPointer"): b'\x71\x7a'}},
-        {   'oracle': False,
-            'why': 'ShowPromotionalCardScreen enters its frame-driven card detail '
-                   'wait, which the isolated oracle cannot complete.',
-            'b': 0xFF,
-            'c': 0xFF,
-            'wram': {sym("wCardReceived"): b'\x00\x00', sym("wScriptPointer"): b'\x6e\x7a'},
-            'expect': {sym("wCardReceived"): b'\x00\x00', sym("wScriptPointer"): b'\x71\x7a'}},
-        {   'oracle': False,
-            'why': 'ShowPromotionalCardScreen enters its frame-driven card detail '
-                   'wait, which the isolated oracle cannot complete.',
-            'a': 0xAA,
-            'f': 0xF0,
-            'b': 0x01,
-            'c': 0xFF,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {sym("wCardReceived"): b'C\x00', sym("wScriptPointer"): b'\x6e\x7a'},
-            'expect': {sym("wCardReceived"): b'C\x00', sym("wScriptPointer"): b'\x71\x7a'}},
-    ],
 })
 MUTATIONS.update({
     'ScriptCommand_GiveCard': {   'source_symbol': 'ScriptCommand_GiveCard',
@@ -297,16 +255,8 @@ MUTATIONS.update({
         'after': '\treturn (ExecuteNPCMovementResult){pointer.a, pointer.f, 0u, pointer.c};',
         'case_ids': ['ExecuteNPCMovement-0', 'ExecuteNPCMovement-1'],
         'source': 'src/home/scripting.c'},
-    'ScriptCommand_JumpIfCardOwned': {   'source_symbol': 'ScriptCommand_JumpIfCardOwned',
-        'before': '\tCardCountResult cnt = GetCardCountInCollectionAndDecks(card);',
-        'after': '\tCardCountResult cnt = GetCardCountInCollection(card);',
-        'case_ids': ['ScriptCommand_JumpIfCardOwned-5'],
-        'source': 'src/profiles/extended/home/scripting.c'},
-    'Func_c9c7': {   'source_symbol': 'Func_c9c7',
-        'before': '\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_CLOSE_TEXTBOX);',
-        'after': '\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_AFTER_DUEL);',
-        'case_ids': ['Func_c9c7-0'],
-        'source': 'src/profiles/extended/home/scripting.c'},
+    'ScriptCommand_JumpIfCardOwned': {'source_symbol': 'ScriptCommand_JumpIfCardOwned', 'before': '\t\treturn (JumpIfCardInCollectionResult){r.a, r.f, 0u, r.c,', 'after': '\t\treturn (JumpIfCardInCollectionResult){r.a, r.f, 0x1u, r.c,', 'case_ids': ['ScriptCommand_JumpIfCardOwned-0'], 'source': 'src/profiles/extended/home/scripting.c'},
+    'Func_c9c7': {'source_symbol': 'Func_c9c7', 'before': '\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_CLOSE_TEXTBOX);', 'after': '\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_AFTER_DUEL);', 'case_ids': ['Func_c9c7-0'], 'source': 'src/profiles/extended/home/scripting.c'},
     'Func_c9b8': {   'source_symbol': 'Func_c9b8',
         'before': 'CallMapScriptResult Func_c9b8(void)\n'
                   '{\n'
@@ -346,14 +296,7 @@ MUTATIONS.update({
                  '\twd416 = (uint8_t)(a ^ 1u);',
         'case_ids': ['ShowMultichoiceTextbox-0', 'ShowMultichoiceTextbox-1'],
         'source': 'src/home/scripting.c'},
-    'ScriptCommand_ShowCardReceivedScreen': {   'source_symbol': 'ScriptCommand_ShowCardReceivedScreen',
-        'before': '\treturn IncreaseScriptPointerBy3();',
-        'after': '\treturn IncreaseScriptPointerBy2();',
-        'case_ids': [   'ScriptCommand_ShowCardReceivedScreen-0',
-                        'ScriptCommand_ShowCardReceivedScreen-1',
-                        'ScriptCommand_ShowCardReceivedScreen-2',
-                        'ScriptCommand_ShowCardReceivedScreen-3'],
-        'source': 'src/profiles/extended/home/scripting.c'},
+    'ScriptCommand_ShowCardReceivedScreen': {'source_symbol': 'ScriptCommand_ShowCardReceivedScreen', 'before': '\tif ((uint8_t)(c & b) == 0xFFu)', 'after': '\tif (!((uint8_t)(c & b) == 0xFFu))', 'case_ids': ['ScriptCommand_ShowCardReceivedScreen-0'], 'source': 'src/profiles/extended/home/scripting.c'},
     'CallMapScriptPointerIfExists': {
         'source': 'src/profiles/extended/home/scripting.c',
         'source_symbol': 'CallMapScriptPointerIfExists',
@@ -404,20 +347,9 @@ MUTATIONS.update({
         'case_ids': ['Func_d4fb-1', 'Func_d4fb-2'],
         'source': 'src/profiles/extended/home/scripting.c'},
 })
-_PRIMARY_ENTRY_COMPLETIONS = {
-    'ScriptCommand_ShowCardReceivedScreen': {'mode': 'entry', 'pc': sym("Func_c2a3"), 'bank': sym_bank("Func_c2a3"), 'routine': 'Func_c2a3'},
-}
-for _name, _completion in _PRIMARY_ENTRY_COMPLETIONS.items():
-    _record = CASES[_name][0]
-    _record.pop('oracle', None)
-    _record.pop('why', None)
-    _record.pop('expect', None)
-    _record['evidence'] = 'primary'
-    _record['completion'] = _completion
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
-for _name, _completion in _PRIMARY_ENTRY_COMPLETIONS.items():
-    SCHEMA2_CASES[_name][0]['completion'] = _completion
 for _record in SCHEMA2_CASES["ShowMultichoiceTextbox"][:3]:
     _record["completion"] = {"mode": "entry", "pc": sym("Func_c241"), "bank": sym_bank("Func_c241"), "routine": "Func_c241"}
 MUTATIONS["ScriptCommand_ChooseDeckToDuelAgainstMultichoice"]["source"] = "src/home/scripting.c"
+MUTATIONS['ScriptCommand_JumpIfCardInCollection'] = {'source_symbol': 'ScriptCommand_JumpIfCardInCollection', 'before': '\t\treturn (JumpIfCardInCollectionResult){r.a, r.f, 0u, r.c,', 'after': '\t\treturn (JumpIfCardInCollectionResult){r.a, r.f, 0x1u, r.c,', 'case_ids': ['ScriptCommand_JumpIfCardInCollection-0'], 'source': 'src/profiles/extended/home/scripting.c'}
