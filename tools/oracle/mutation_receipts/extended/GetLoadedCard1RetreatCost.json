@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"GetLoadedCard1RetreatCost\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"00ff\", \"50108\": \"ff\", \"50176\": \"b601\", \"52226\": \"03\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"GetLoadedCard1RetreatCost\", \"mismatches\": {\"a\": [3, 2]}}\n",
-  "restored": "{\"fn\": \"GetLoadedCard1RetreatCost\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"00ff\", \"50108\": \"ff\", \"50176\": \"b601\", \"52226\": \"03\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"GetLoadedCard1RetreatCost\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"00ff\", \"50108\": \"ff\", \"50176\": \"b601\", \"52226\": \"03\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetLoadedCard1RetreatCost",
+    "before": "\t\tif (id == DODRIO)",
+    "after": "\t\tif ((uint8_t)id == DODRIO)",
+    "case_ids": [
+      "GetLoadedCard1RetreatCost-6"
+    ],
+    "source": "src/profiles/extended/home/substatus.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "fee0f65c410c67a3aea1b87b1e0c373449d5cfa42734dded80b0aae5e1b5e098",
+    "case_sha256": "e2a57ab4170409a95e9a63c56b9b9201102f56296a62ef2e0f70551057bd65ff",
+    "schema_sha256": "9212bc839ffa862a12317c0c03cec5825c4c99754ffd35274115066a2de77918",
+    "mutation_sha256": "f8fa5cf1e9ecc11f9461fe2370a01916643eb2626ebc1a6aad9b3e7f0f2f4c25",
+    "source": "src/profiles/extended/home/substatus.c",
+    "source_symbol": "GetLoadedCard1RetreatCost",
+    "case": "tests/profiles/extended/cases/substatus.py",
+    "fn": "GetLoadedCard1RetreatCost",
+    "index": 6
+  }
 }

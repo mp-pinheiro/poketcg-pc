@@ -1,0 +1,31 @@
+{
+  "fn": "DrawOpponentPortrait",
+  "case": "tests/profiles/extended/cases/load_animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawOpponentPortrait\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53534\": \"00\", \"54795\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawOpponentPortrait\", \"mismatches\": {\"bus\": {\"address\": 54795, \"reference\": \"000001\", \"native\": \"000101\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53534, 1], [54795, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawOpponentPortrait\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53534\": \"00\", \"54795\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawOpponentPortrait",
+    "before": "\twCurPortrait = a;",
+    "after": "\twCurPortrait = (uint8_t)(a ^ 1u);",
+    "case_ids": [
+      "DrawOpponentPortrait-0",
+      "DrawOpponentPortrait-1"
+    ],
+    "source": "src/profiles/extended/home/load_animation.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "fd2f61c1d8b0d3f72086b3d3b7d47f2546de745c577c0adab7bcdec08a92b147",
+    "case_sha256": "fd89cccc8743b6692e9876ede5847a11cd8354f76f4bd88dae2fb65a1c7a7a09",
+    "schema_sha256": "eb09589acc700b3b42e7f64c095b77924aadfe10a0dfb0d195da955742c049ab",
+    "mutation_sha256": "328aa431cba13139ccefeb439ecc2ad535602cf0aad48e3d7dabcfb700606b25",
+    "source": "src/profiles/extended/home/load_animation.c",
+    "source_symbol": "DrawOpponentPortrait",
+    "case": "tests/profiles/extended/cases/load_animation.py",
+    "fn": "DrawOpponentPortrait",
+    "index": 0
+  }
+}

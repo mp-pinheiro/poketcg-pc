@@ -1,0 +1,30 @@
+{
+  "fn": "DrawPlayArea_PrizeCards",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawPlayArea_PrizeCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38912\": \"e0e1\", \"38944\": \"e2e3\", \"38976\": \"0000\", \"39008\": \"0000\"}}, \"wram\": {\"50404\": \"01\", \"50416\": \"00000002\", \"51892\": \"00\", \"52146\": \"02\", \"52758\": \"c4\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawPlayArea_PrizeCards\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawPlayArea_PrizeCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38912\": \"e0e1\", \"38944\": \"e2e3\", \"38976\": \"0000\", \"39008\": \"0000\"}}, \"wram\": {\"50404\": \"01\", \"50416\": \"00000002\", \"51892\": \"00\", \"52146\": \"02\", \"52758\": \"c4\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawPlayArea_PrizeCards",
+    "before": "\t\tgb_write8(0xFF4Fu, 1u);",
+    "after": "\t\tgb_write8(0xFF4Fu, (uint8_t)((1u) ^ 1u));",
+    "case_ids": [
+      "DrawPlayArea_PrizeCards-0"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "0b9a1794ab59b56173ab2750bfc89c1a0d0123385edd2ff5488b609910851edd",
+    "mutation_sha256": "397b398fae2952aa091e05b927fc80cade1fd7e225d5be32119cfb0be95213a8",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "DrawPlayArea_PrizeCards",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "DrawPlayArea_PrizeCards",
+    "index": 0
+  }
+}

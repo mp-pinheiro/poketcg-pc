@@ -1,0 +1,30 @@
+{
+  "fn": "ProcessSpecialTextCharacter",
+  "case": "tests/profiles/extended/cases/process_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ProcessSpecialTextCharacter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52403\": \"00\", \"52408\": \"00\", \"57328\": \"00\", \"65450\": \"0000\", \"65455\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ProcessSpecialTextCharacter\", \"mismatches\": {\"bus\": {\"address\": 57328, \"reference\": \"000000000000\", \"native\": \"0000ff000000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[52403, 1], [52408, 1], [57328, 1], [65450, 2], [65455, 1]]}}}\n",
+  "restored": "{\"fn\": \"ProcessSpecialTextCharacter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52403\": \"00\", \"52408\": \"00\", \"57328\": \"00\", \"65450\": \"0000\", \"65455\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ProcessSpecialTextCharacter",
+    "before": "ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)\n{",
+    "after": "ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)\n{\n\tgb_write8(0xdff0u, 0xFFu);",
+    "case_ids": [
+      "ProcessSpecialTextCharacter-0"
+    ],
+    "source": "src/profiles/extended/home/process_text.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3fd461efbd36224af44731a36b7d2c2371bbdaea427ba3e66372220b94bd66d8",
+    "case_sha256": "704bb6b5f592ed6181309e32fed28cc4bfbb03607f75e012eac5d1e66e581888",
+    "schema_sha256": "58e150a8095a9d0f2ab088262220967e0583e0bcbc9293d1fc9335d1881298ba",
+    "mutation_sha256": "353720093ec3e96501a5aabdb1d20f6e92f65fba121f3372de2440d0141758ed",
+    "source": "src/profiles/extended/home/process_text.c",
+    "source_symbol": "ProcessSpecialTextCharacter",
+    "case": "tests/profiles/extended/cases/process_text.py",
+    "fn": "ProcessSpecialTextCharacter",
+    "index": 0
+  }
+}

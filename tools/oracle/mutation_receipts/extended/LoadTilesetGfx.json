@@ -1,0 +1,30 @@
+{
+  "fn": "LoadTilesetGfx",
+  "case": "tests/profiles/extended/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadTilesetGfx\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54449\": \"886d21\", \"54453\": \"0000\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadTilesetGfx\", \"mismatches\": {\"bus\": {\"address\": 54449, \"reference\": \"886d210000\", \"native\": \"920c000000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[54449, 3], [54453, 2], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadTilesetGfx\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54449\": \"886d21\", \"54453\": \"0000\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadTilesetGfx",
+    "before": "\tLoadGraphicsPointerFromHL(&hl);",
+    "after": "\t(void)0;",
+    "case_ids": [
+      "LoadTilesetGfx-0"
+    ],
+    "source": "src/profiles/extended/home/load_gfx.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "816567d699d17fd03c643ea7967567c6350191cfa5c0ff88c4796f225881ff73",
+    "case_sha256": "09db4865b2a0b218dfd2d00e606efeeeba98a69ed2fa004e2260e31afd252252",
+    "schema_sha256": "33289f3d31b21237e0061a225b6950e17f39339ad84263cb4ae0120358cf89a3",
+    "mutation_sha256": "c1a44cbf0afbdd4b7b719076f60caa5ac406eb445ab262c396f23309a83179e2",
+    "source": "src/profiles/extended/home/load_gfx.c",
+    "source_symbol": "LoadTilesetGfx",
+    "case": "tests/profiles/extended/cases/load_gfx.py",
+    "fn": "LoadTilesetGfx",
+    "index": 0
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "fn": "ApplyDamageModifiers_DamageToSelf",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplyDamageModifiers_DamageToSelf\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 10, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49876\": \"00\", \"49897\": \"8080\", \"49904\": \"00\", \"50176\": \"08\", \"52324\": \"0a00\", \"52332\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplyDamageModifiers_DamageToSelf\", \"mismatches\": {\"e\": [10, 0]}}\n",
+  "restored": "{\"fn\": \"ApplyDamageModifiers_DamageToSelf\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 10, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49876\": \"00\", \"49897\": \"8080\", \"49904\": \"00\", \"50176\": \"08\", \"52324\": \"0a00\", \"52332\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ApplyDamageModifiers_DamageToSelf",
+    "before": "\tuint8_t nonzero = (uint8_t)(hi_byte | lo);",
+    "after": "\tuint8_t nonzero = (uint8_t)(hi_byte & lo);",
+    "case_ids": [
+      "ApplyDamageModifiers_DamageToSelf-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "e9d29dc7767235771b1e7649c0910c50e7a00816a4e5251f2b49ae95a2d4f2f8",
+    "mutation_sha256": "95a49c70d7bf07d6ffa77cb98bbdd3f0cd59c10207beea9ff6c9d7ebc5f354b9",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "ApplyDamageModifiers_DamageToSelf",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "ApplyDamageModifiers_DamageToSelf",
+    "index": 1
+  }
+}

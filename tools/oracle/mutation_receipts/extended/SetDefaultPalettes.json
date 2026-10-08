@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"SetDefaultPalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51900\": \"e4e4e400\", \"52385\": \"01\", \"65351\": \"e4e4e4\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"SetDefaultPalettes\", \"mismatches\": {\"bus\": {\"address\": 51902, \"reference\": \"00e4e4e40001e4e4\", \"native\": \"00e4e4e50001e4e4\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[51892, 1], [51900, 4], [52385, 1], [65351, 3], [65408, 1]]}}}\n",
-  "restored": "{\"fn\": \"SetDefaultPalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51900\": \"e4e4e400\", \"52385\": \"01\", \"65351\": \"e4e4e4\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"SetDefaultPalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51900\": \"e4e4e400\", \"52385\": \"01\", \"65351\": \"e4e4e4\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SetDefaultPalettes",
+    "before": "gb_write8(wOBP1_ADDR, 0xE4u);",
+    "after": "gb_write8(wOBP1_ADDR, 0xE5u);",
+    "case_ids": [
+      "SetDefaultPalettes-0",
+      "SetDefaultPalettes-1",
+      "SetDefaultPalettes-2"
+    ],
+    "source": "src/profiles/extended/home/default_palettes.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "1c64c286db23d0ebbd0f71cbcc8d2463d69a14e74939cba8452afa2fe1fa4d87",
+    "case_sha256": "3b5ae78e235a6211180eff7243414be93ef5676c9468d25b29beeed2ca8f0cef",
+    "schema_sha256": "d09584809f2e2be508e57db346c6b2c3ef11419b499ef0ab5fd83fa3f84483a9",
+    "mutation_sha256": "66a34ca6519c3c72ffbe817f1db4fd45c4e5180211505baadbf2868fee0baff1",
+    "source": "src/profiles/extended/home/default_palettes.c",
+    "source_symbol": "SetDefaultPalettes",
+    "case": "tests/profiles/extended/cases/default_palettes.py",
+    "fn": "SetDefaultPalettes",
+    "index": 0
+  }
 }

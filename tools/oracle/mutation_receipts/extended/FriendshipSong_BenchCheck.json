@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"FriendshipSong_BenchCheck\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 150, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"FriendshipSong_BenchCheck\", \"mismatches\": {\"f\": [144, 128]}}\n",
-  "restored": "{\"fn\": \"FriendshipSong_BenchCheck\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 150, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"FriendshipSong_BenchCheck\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 150, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FriendshipSong_BenchCheck",
+    "before": "count.a >= 6u",
+    "after": "count.a > 6u",
+    "case_ids": [
+      "FriendshipSong_BenchCheck-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "6def4bc6613ffe05b56249b65b128b346d9f3581e320effaeaa764b555c76ca7",
+    "mutation_sha256": "00e830c18ed2d2afeef2aaf422cd0339243a95d2ba2f7043a9838c20f2114fe0",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "FriendshipSong_BenchCheck",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "FriendshipSong_BenchCheck",
+    "index": 2
+  }
 }

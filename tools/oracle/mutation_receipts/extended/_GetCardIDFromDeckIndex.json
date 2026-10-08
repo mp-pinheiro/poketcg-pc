@@ -1,0 +1,30 @@
+{
+  "fn": "_GetCardIDFromDeckIndex",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_GetCardIDFromDeckIndex\", \"registers\": {\"a\": 195, \"b\": 0, \"c\": 0, \"d\": 2, \"e\": 86, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50307, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50306\": \"5602\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_GetCardIDFromDeckIndex\", \"mismatches\": {\"d\": [2, 0], \"e\": [86, 0], \"hl\": [50307, 50309]}}\n",
+  "restored": "{\"fn\": \"_GetCardIDFromDeckIndex\", \"registers\": {\"a\": 195, \"b\": 0, \"c\": 0, \"d\": 2, \"e\": 86, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50307, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50306\": \"5602\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "_GetCardIDFromDeckIndex",
+    "before": "uint16_t slot = card_id_index_address(deck, a);",
+    "after": "uint16_t slot = card_id_index_address(deck, (uint8_t)(a + 1u));",
+    "case_ids": [
+      "_GetCardIDFromDeckIndex-1"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "0a61594d3bff0894f3c801c0752f9c2dfb8fda73239e8963af27a55d21db58a5",
+    "mutation_sha256": "72424b29f7fc80f2787b5d0000f1c9a8401de6a0dc9faea69721da78c8af771a",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "_GetCardIDFromDeckIndex",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "_GetCardIDFromDeckIndex",
+    "index": 1
+  }
+}

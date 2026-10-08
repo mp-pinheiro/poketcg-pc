@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"SwordsDanceEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52335, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52335\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"SwordsDanceEffect\", \"mismatches\": {\"hl\": [52335, 232]}}\n",
-  "restored": "{\"fn\": \"SwordsDanceEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52335, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52335\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"SwordsDanceEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52335, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52335\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SwordsDanceEffect",
+    "before": "if (card_id != SCYTHER)",
+    "after": "if (card_id == SCYTHER)",
+    "case_ids": [
+      "SwordsDanceEffect-0",
+      "SwordsDanceEffect-1",
+      "SwordsDanceEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "1ed36738e743328e79cc3919b4fd59b21cb763cf832028c435178b1bb9b4caa0",
+    "mutation_sha256": "c7c1b39e5217ca6bfbc8257e0ee6e8286458e9b9dd84f0b60bb9ca8e7d77940e",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "SwordsDanceEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "SwordsDanceEffect",
+    "index": 0
+  }
 }

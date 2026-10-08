@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"StrangeBehavior_SelectAndSwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"52086\": \"01\", \"52096\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"StrangeBehavior_SelectAndSwapEffect\", \"mismatches\": {\"bus\": {\"address\": 52086, \"reference\": \"ff01010100c2\", \"native\": \"ff01010000c2\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49851, 1], [49903, 1], [49905, 1], [52086, 1], [52096, 1], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"StrangeBehavior_SelectAndSwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"52086\": \"01\", \"52096\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"StrangeBehavior_SelectAndSwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"52086\": \"01\", \"52096\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "StrangeBehavior_SelectAndSwapEffect",
+    "before": "\t\t(void)PrintPlayAreaCardList_EnableLCD();\n\t\treturn;",
+    "after": "\t\treturn;",
+    "case_ids": [
+      "StrangeBehavior_SelectAndSwapEffect-0",
+      "StrangeBehavior_SelectAndSwapEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "bd973ad18795e5798f825df9fc41c49c540f5f0758698a122a2fb18849cc5730",
+    "mutation_sha256": "9dd9e8bad33874e5900f93c4327b13e462523ecd6f9440ed069820127be27966",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "StrangeBehavior_SelectAndSwapEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "StrangeBehavior_SelectAndSwapEffect",
+    "index": 0
+  }
 }

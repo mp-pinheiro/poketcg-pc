@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"LoadTitleScreenSprites\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54462\": \"00\", \"54465\": \"00\", \"54478\": \"01\", \"54481\": \"04\", \"54494\": \"02\", \"54497\": \"08\", \"54510\": \"03\", \"54513\": \"0c\", \"54526\": \"04\", \"54529\": \"10\", \"54542\": \"05\", \"54545\": \"14\", \"54558\": \"06\", \"54561\": \"18\", \"54806\": \"00010203040506\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"LoadTitleScreenSprites\", \"mismatches\": {\"bus\": {\"address\": 54462, \"reference\": \"0000010402\", \"native\": \"0100020403\", \"reference_size\": 21, \"native_size\": 21, \"spans\": [[54462, 1], [54465, 1], [54478, 1], [54481, 1], [54494, 1], [54497, 1], [54510, 1], [54513, 1], [54526, 1], [54529, 1], [54542, 1], [54545, 1], [54558, 1], [54561, 1], [54806, 7]]}}}\n",
-  "restored": "{\"fn\": \"LoadTitleScreenSprites\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54462\": \"00\", \"54465\": \"00\", \"54478\": \"01\", \"54481\": \"04\", \"54494\": \"02\", \"54497\": \"08\", \"54510\": \"03\", \"54513\": \"0c\", \"54526\": \"04\", \"54529\": \"10\", \"54542\": \"05\", \"54545\": \"14\", \"54558\": \"06\", \"54561\": \"18\", \"54806\": \"00010203040506\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"LoadTitleScreenSprites\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54462\": \"00\", \"54465\": \"00\", \"54478\": \"01\", \"54481\": \"04\", \"54494\": \"02\", \"54497\": \"08\", \"54510\": \"03\", \"54513\": \"0c\", \"54526\": \"04\", \"54529\": \"10\", \"54542\": \"05\", \"54545\": \"14\", \"54558\": \"06\", \"54561\": \"18\", \"54806\": \"00010203040506\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadTitleScreenSprites",
+    "before": "gb_write8(property, (uint8_t)(gb_read8(property) | index));",
+    "after": "gb_write8(property, (uint8_t)(gb_read8(property) | (uint8_t)(index + 1u)));",
+    "case_ids": [
+      "LoadTitleScreenSprites-0",
+      "LoadTitleScreenSprites-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "b7d30211522153b2b22e46644b341c5cca769d565f067069348419550a431f47",
+    "case_sha256": "8b0dc11085800aef6f82a8fadbb2507d36d493c24866da55ab78c39f09e6fa4c",
+    "schema_sha256": "ee081d44ca6b23990d3c8f4a63494b31204926d23082f56d943635b2dcc9deea",
+    "mutation_sha256": "4c99fabf9335cf8c2c77fe7c60e66b5de33f07a06ce37617c9f8de843724f693",
+    "source": "src/profiles/extended/home/intro.c",
+    "source_symbol": "LoadTitleScreenSprites",
+    "case": "tests/profiles/extended/cases/intro.py",
+    "fn": "LoadTitleScreenSprites",
+    "index": 0
+  }
 }

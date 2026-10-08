@@ -1,0 +1,30 @@
+{
+  "fn": "DisplayEnergyDiscardScreen",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayEnergyDiscardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"49870\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"49904\": \"00\", \"50176\": \"08\", \"50432\": \"ff\", \"51892\": \"00\", \"51899\": \"80\", \"52087\": \"0000\", \"52110\": \"00\", \"52132\": \"0100\", \"52403\": \"3e88\", \"52408\": \"01\", \"52509\": \"04\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayEnergyDiscardScreen\", \"mismatches\": {\"bus\": {\"address\": 52132, \"reference\": \"8000000001003e8801\", \"native\": \"8000000002003e8801\", \"reference_size\": 20, \"native_size\": 20, \"spans\": [[49851, 1], [49864, 1], [49870, 1], [49882, 1], [49888, 1], [49904, 1], [50176, 1], [50432, 1], [51892, 1], [51899, 1], [52087, 2], [52110, 1], [52132, 2], [52403, 2], [52408, 1], [52509, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"DisplayEnergyDiscardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"49870\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"49904\": \"00\", \"50176\": \"08\", \"50432\": \"ff\", \"51892\": \"00\", \"51899\": \"80\", \"52087\": \"0000\", \"52110\": \"00\", \"52132\": \"0100\", \"52403\": \"3e88\", \"52408\": \"01\", \"52509\": \"04\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DisplayEnergyDiscardScreen",
+    "before": "\twEnergyDiscardMenuDenominator = 1u;",
+    "after": "\twEnergyDiscardMenuDenominator = 2u;",
+    "case_ids": [
+      "DisplayEnergyDiscardScreen-0",
+      "DisplayEnergyDiscardScreen-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "a7430581a5b609a4b1e1f3081b3890ee9b4530288c4d7e171752050f4c2e348f",
+    "mutation_sha256": "0f670bef1d7993b1140c194959a74104eedf73c11ab7af4d5c2d8d206a2adfe0",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "DisplayEnergyDiscardScreen",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "DisplayEnergyDiscardScreen",
+    "index": 0
+  }
+}

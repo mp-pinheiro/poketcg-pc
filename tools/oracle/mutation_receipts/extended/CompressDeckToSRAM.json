@@ -1,0 +1,31 @@
+{
+  "fn": "CompressDeckToSRAM",
+  "case": "tests/profiles/extended/cases/load_deck.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CompressDeckToSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"0100020003010400050006010700080009010a000b000c010d000e000f0110001100120113001400150116001700180119001a001b011c001d001e011f0020002101220023002401250026002701280029002a012b002c002d012e002f0030013100320033013400350036013700380039013a003b003c01\", \"50432\": \"24010203040506070892090a0b0c0d0e0f1049111213141516171824191a1b1c1d1e1f2092212223242526272849292a2b2c2d2e2f3024313233343536373890393a3b3c\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CompressDeckToSRAM\", \"mismatches\": {\"bus\": {\"address\": 50495, \"reference\": \"3536373890393a3b3c\", \"native\": \"3536373809393a3b3c\", \"reference_size\": 188, \"native_size\": 188, \"spans\": [[49408, 120], [50432, 68]]}}}\n",
+  "restored": "{\"fn\": \"CompressDeckToSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"0100020003010400050006010700080009010a000b000c010d000e000f0110001100120113001400150116001700180119001a001b011c001d001e011f0020002101220023002401250026002701280029002a012b002c002d012e002f0030013100320033013400350036013700380039013a003b003c01\", \"50432\": \"24010203040506070892090a0b0c0d0e0f1049111213141516171824191a1b1c1d1e1f2092212223242526272849292a2b2c2d2e2f3024313233343536373890393a3b3c\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CompressDeckToSRAM",
+    "before": "gb_write8(destination++, (uint8_t)(command << 4));",
+    "after": "gb_write8(destination++, command);",
+    "case_ids": [
+      "CompressDeckToSRAM-1",
+      "CompressDeckToSRAM-2"
+    ],
+    "source": "src/profiles/extended/home/load_deck.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "1772b619d245e347a0936446dc8a01cb43c9ce0ee8bc8c7a6e105ddedde55924",
+    "case_sha256": "b4dade67d55b6879b15f3a771560da54b8c997b10f84fdfddbfb2a4105cf37ff",
+    "schema_sha256": "e4fdee9128f5b5cdaa118bfa8ff0160495c09a0b736d23077635d2bc6d009ec6",
+    "mutation_sha256": "112d594501fccbf37c943122dc06f89937d0818c4f23530354dbb1702536013a",
+    "source": "src/profiles/extended/home/load_deck.c",
+    "source_symbol": "CompressDeckToSRAM",
+    "case": "tests/profiles/extended/cases/load_deck.py",
+    "fn": "CompressDeckToSRAM",
+    "index": 1
+  }
+}

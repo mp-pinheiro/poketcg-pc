@@ -5,5 +5,29 @@
   "status": "RED",
   "baseline": "{\"fn\": \"LoadNPCSpriteData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54169\": \"01\", \"54175\": \"200002\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"LoadNPCSpriteData\", \"mismatches\": {\"a\": [0, 3], \"bus\": {\"address\": 54169, \"reference\": \"0001200002\", \"native\": \"0002000320\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51892, 1], [54169, 1], [54175, 3]]}}}\n",
-  "restored": "{\"fn\": \"LoadNPCSpriteData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54169\": \"01\", \"54175\": \"200002\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"LoadNPCSpriteData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54169\": \"01\", \"54175\": \"200002\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadNPCSpriteData",
+    "before": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, header.hl);",
+    "after": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + 1u));",
+    "case_ids": [
+      "LoadNPCSpriteData-0",
+      "LoadNPCSpriteData-1",
+      "LoadNPCSpriteData-2",
+      "LoadNPCSpriteData-3"
+    ],
+    "source": "src/profiles/extended/home/npc_data.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2c72e74cb486fe753f8f79e86a06edde95631acf7abd4769bd7cb41bdd14975f",
+    "case_sha256": "b6573b452871fbf9122cd667c2491eebd1839ef12049b8c1f17793b1dfaae953",
+    "schema_sha256": "07baeb9cafe832c4d11713c45b817f86f860b689df56ee3b3365ba355ffa2526",
+    "mutation_sha256": "e8d6d552725509bf8552d9a19a97b09b199ef3efa1a1a48dbdb7c47a8e244e4c",
+    "source": "src/profiles/extended/home/npc_data.c",
+    "source_symbol": "LoadNPCSpriteData",
+    "case": "tests/profiles/extended/cases/npc_data.py",
+    "fn": "LoadNPCSpriteData",
+    "index": 0
+  }
 }

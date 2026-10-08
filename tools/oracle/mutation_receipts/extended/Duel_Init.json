@@ -1,0 +1,33 @@
+{
+  "fn": "Duel_Init",
+  "case": "tests/profiles/extended/cases/duel_init.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Duel_Init\", \"registers\": {\"a\": 65, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52160\": \"017600\", \"52164\": \"00\", \"52385\": \"01\", \"52741\": \"b3017600\", \"53504\": \"ff\", \"53886\": \"41\", \"55204\": \"80\", \"65344\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Duel_Init\", \"mismatches\": {\"bus\": {\"address\": 52385, \"reference\": \"0176000001b3017600\", \"native\": \"0176000000b3017600\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[51899, 1], [52160, 3], [52164, 1], [52385, 1], [52741, 4], [53504, 1], [53886, 1], [55204, 1], [65344, 1]]}}}\n",
+  "restored": "{\"fn\": \"Duel_Init\", \"registers\": {\"a\": 65, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52160\": \"017600\", \"52164\": \"00\", \"52385\": \"01\", \"52741\": \"b3017600\", \"53504\": \"ff\", \"53886\": \"41\", \"55204\": \"80\", \"65344\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Duel_Init",
+    "before": "\twTextBoxFrameType = 1u;",
+    "after": "\twTextBoxFrameType = 0u;",
+    "case_ids": [
+      "Duel_Init-0",
+      "Duel_Init-1",
+      "Duel_Init-2",
+      "Duel_Init-3"
+    ],
+    "source": "src/profiles/extended/home/duel_init.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "88314647adb55999cbd362b2ad338480e40413aa376e3fa1ce5b28df7e2a4f8a",
+    "case_sha256": "7cc2ef27ee9260fa5ecd0ef0dc499cf30c6d8e9ec19b394833a03fe2a4e32b01",
+    "schema_sha256": "bf220bfc2b7bfb920bab390ed35f202c18864318800807046f800acd138847db",
+    "mutation_sha256": "1a2d8d28e659ed0151913d01d67a0f38450983e8e94c417ae92144010e667c9e",
+    "source": "src/profiles/extended/home/duel_init.c",
+    "source_symbol": "Duel_Init",
+    "case": "tests/profiles/extended/cases/duel_init.py",
+    "fn": "Duel_Init",
+    "index": 0
+  }
+}

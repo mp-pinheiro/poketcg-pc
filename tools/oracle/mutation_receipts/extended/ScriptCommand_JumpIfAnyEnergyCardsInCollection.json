@@ -1,0 +1,32 @@
+{
+  "fn": "ScriptCommand_JumpIfAnyEnergyCardsInCollection",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_JumpIfAnyEnergyCardsInCollection\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 8, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41216\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"03c50000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfAnyEnergyCardsInCollection\", \"mismatches\": {\"bus\": {\"address\": 54276, \"reference\": \"03c50000\", \"native\": \"03c5ff00\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54274, 4]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfAnyEnergyCardsInCollection\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 8, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41216\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"03c50000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_JumpIfAnyEnergyCardsInCollection",
+    "before": "\tif (total == 0u) {",
+    "after": "\tif (total != 0u) {",
+    "case_ids": [
+      "ScriptCommand_JumpIfAnyEnergyCardsInCollection-0",
+      "ScriptCommand_JumpIfAnyEnergyCardsInCollection-1",
+      "ScriptCommand_JumpIfAnyEnergyCardsInCollection-2",
+      "ScriptCommand_JumpIfAnyEnergyCardsInCollection-3"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "91ec7d61723d1609ca305ee2c0774c6594d8d13ce9d92a84d0dfac882a72a3b5",
+    "mutation_sha256": "47669d2f9b71392d5bccfef6f953e100bd1e91b9972e058ddec18f76d38292ae",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_JumpIfAnyEnergyCardsInCollection",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_JumpIfAnyEnergyCardsInCollection",
+    "index": 0
+  }
+}

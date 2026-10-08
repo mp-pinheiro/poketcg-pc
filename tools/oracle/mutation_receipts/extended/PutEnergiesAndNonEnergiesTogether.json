@@ -1,0 +1,33 @@
+{
+  "fn": "PutEnergiesAndNonEnergiesTogether",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PutEnergiesAndNonEnergiesTogether\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 51, \"d\": 68, \"e\": 85, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 9320, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"00\", \"50198\": \"00\", \"54871\": \"77\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PutEnergiesAndNonEnergiesTogether\", \"mismatches\": {\"bus\": {\"address\": 54871, \"reference\": \"000077\", \"native\": \"000000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50176, 1], [50198, 1], [54871, 1]]}}}\n",
+  "restored": "{\"fn\": \"PutEnergiesAndNonEnergiesTogether\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 51, \"d\": 68, \"e\": 85, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 9320, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"00\", \"50198\": \"00\", \"54871\": \"77\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PutEnergiesAndNonEnergiesTogether",
+    "before": "if (card == 0u)",
+    "after": "if (card != 0u)",
+    "case_ids": [
+      "PutEnergiesAndNonEnergiesTogether-0",
+      "PutEnergiesAndNonEnergiesTogether-1",
+      "PutEnergiesAndNonEnergiesTogether-2",
+      "PutEnergiesAndNonEnergiesTogether-3"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "5e94f8b34e8e37ad209404d680fdd72d141bfabd07c371451a0adb334abd56b4",
+    "mutation_sha256": "1714967d80c50a12bdd5fd613b931ebbd4f74d48011af185d4f269da3098c4d0",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "PutEnergiesAndNonEnergiesTogether",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "PutEnergiesAndNonEnergiesTogether",
+    "index": 0
+  }
+}

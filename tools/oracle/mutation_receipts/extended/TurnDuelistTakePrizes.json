@@ -1,0 +1,29 @@
+{
+  "fn": "TurnDuelistTakePrizes",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TurnDuelistTakePrizes\", \"registers\": {\"a\": 62, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50156, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"0a\", \"49901\": \"0305\", \"49980\": \"000000000000\", \"50106\": \"37\", \"50156\": \"3e0003\", \"50161\": \"81\", \"50560\": \"052d0500052000203200000000000000\", \"51899\": \"80\", \"52134\": \"06\", \"52152\": \"01\", \"52163\": \"00\", \"52342\": \"01\", \"65344\": \"80\", \"65408\": \"01\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TurnDuelistTakePrizes\", \"mismatches\": {\"bus\": {\"address\": 52134, \"reference\": \"000000800601000180\", \"native\": \"000000800701000180\", \"reference_size\": 38, \"native_size\": 38, \"spans\": [[49850, 1], [49901, 2], [49980, 6], [50106, 1], [50156, 3], [50161, 1], [50560, 16], [51899, 1], [52134, 1], [52152, 1], [52163, 1], [52342, 1], [65344, 1], [65408, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"TurnDuelistTakePrizes\", \"registers\": {\"a\": 62, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50156, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"0a\", \"49901\": \"0305\", \"49980\": \"000000000000\", \"50106\": \"37\", \"50156\": \"3e0003\", \"50161\": \"81\", \"50560\": \"052d0500052000203200000000000000\", \"51899\": \"80\", \"52134\": \"06\", \"52152\": \"01\", \"52163\": \"00\", \"52342\": \"01\", \"65344\": \"80\", \"65408\": \"01\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "TurnDuelistTakePrizes",
+    "before": "\t\twTempNumRemainingPrizeCards = CountPrizes();",
+    "after": "\t\twTempNumRemainingPrizeCards = (uint8_t)(CountPrizes() + 1u);",
+    "case_ids": [
+      "TurnDuelistTakePrizes-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "8cd0c3bfb443f82f5c6981475c1bd7750b5c37984b60f2e45bfb1a801d56f74f",
+    "mutation_sha256": "f471c64163ee725ec16a48a77e34047d04593933a6e3ca7c5b2fd566ac7205a4",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "TurnDuelistTakePrizes",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "TurnDuelistTakePrizes",
+    "index": 0
+  }
+}

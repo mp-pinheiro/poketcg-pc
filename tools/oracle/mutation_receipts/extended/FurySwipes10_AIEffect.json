@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"FurySwipes10_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"0f00001e\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"FurySwipes10_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"0f00001e\", \"native\": \"1000001e\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52324, 4]]}}}\n",
-  "restored": "{\"fn\": \"FurySwipes10_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"0f00001e\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"FurySwipes10_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"0f00001e\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FurySwipes10_AIEffect",
+    "before": "SetExpectedAIDamage(15u, 0u, 30u);",
+    "after": "SetExpectedAIDamage(16u, 0u, 30u);",
+    "case_ids": [
+      "FurySwipes10_AIEffect-0",
+      "FurySwipes10_AIEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "8a8b6a061664fc386e736e01e43747fa2c612687276f7e6053ad1342a97a8d84",
+    "mutation_sha256": "86af6347f86d81298d4955f64c8b92f1506dde61d5d5051640b86a646105bfb0",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "FurySwipes10_AIEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "FurySwipes10_AIEffect",
+    "index": 0
+  }
 }

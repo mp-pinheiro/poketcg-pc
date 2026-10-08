@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"RapidashStomp_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1a00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"RapidashStomp_DamageBoostEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"000001001a00010100\", \"native\": \"000001001b00010100\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 2], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"RapidashStomp_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1a00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"RapidashStomp_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1a00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "RapidashStomp_DamageBoostEffect",
+    "before": "void RapidashStomp_DamageBoostEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoinRoutineResult toss = TossCoin(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(10u);",
+    "after": "void RapidashStomp_DamageBoostEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoinRoutineResult toss = TossCoin(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(11u);",
+    "case_ids": [
+      "RapidashStomp_DamageBoostEffect-0"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "8707b63f9a966aed06141a76f12fe928e87500f7d20ff44d2ff12519d40664cf",
+    "mutation_sha256": "0f49dac11c421fecfc66f6291754e8c4f2674b92ce1717b2dd604a8b1e09b2e5",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "RapidashStomp_DamageBoostEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "RapidashStomp_DamageBoostEffect",
+    "index": 0
+  }
 }

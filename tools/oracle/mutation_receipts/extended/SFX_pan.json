@@ -1,0 +1,30 @@
+{
+  "fn": "SFX_pan",
+  "case": "tests/profiles/extended/cases/sfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SFX_pan\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"f0\", \"55208\": \"ee\", \"55215\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SFX_pan\", \"mismatches\": {\"bus\": {\"address\": 55215, \"reference\": \"f0eeff\", \"native\": \"f0eefe\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49408, 1], [55208, 1], [55215, 1]]}}}\n",
+  "restored": "{\"fn\": \"SFX_pan\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"f0\", \"55208\": \"ee\", \"55215\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SFX_pan",
+    "before": "\tcaller_hl = (uint16_t)(caller_hl + 1u);",
+    "after": "\tcaller_hl = (uint16_t)(caller_hl + 0x0u);",
+    "case_ids": [
+      "SFX_pan-0"
+    ],
+    "source": "src/profiles/extended/home/sfx.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c0b144c8415e396832c40188cb47b8e5f62a195a5625c1f79ecac31050982e72",
+    "case_sha256": "6d2dd40da23171a416124f75fdff52827fd4a56bcd72ffd87aa576d60c1f5230",
+    "schema_sha256": "193a41e91609be1e37fd406811894a46c451235ad4909bd7026160f1559b3313",
+    "mutation_sha256": "66105518654de19d92d2178b46e4b32c2b32766f06539b18318ff52d4640e5e6",
+    "source": "src/profiles/extended/home/sfx.c",
+    "source_symbol": "SFX_pan",
+    "case": "tests/profiles/extended/cases/sfx.py",
+    "fn": "SFX_pan",
+    "index": 0
+  }
+}

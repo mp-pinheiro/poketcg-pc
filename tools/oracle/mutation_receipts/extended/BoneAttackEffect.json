@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"BoneAttackEffect\", \"registers\": {\"a\": 11, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49910, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"0b\", \"49905\": \"00\", \"49910\": \"0b\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"BoneAttackEffect\", \"mismatches\": {\"bus\": {\"address\": 49896, \"reference\": \"0b000b8000\", \"native\": \"0c000c8000\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49896, 1], [49905, 1], [49910, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"BoneAttackEffect\", \"registers\": {\"a\": 11, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49910, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"0b\", \"49905\": \"00\", \"49910\": \"0b\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"BoneAttackEffect\", \"registers\": {\"a\": 11, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49910, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"0b\", \"49905\": \"00\", \"49910\": \"0b\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "BoneAttackEffect",
+    "before": "\tuint16_t written = ApplySubstatus2ToDefendingCard(SUBSTATUS2_BONE_ATTACK, hl);",
+    "after": "\tuint16_t written = ApplySubstatus2ToDefendingCard(0x0cu, hl);",
+    "case_ids": [
+      "BoneAttackEffect-0",
+      "BoneAttackEffect-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "52de857fa1821585e774936dbd300b6fd10ece891398720c97912a18915d369c",
+    "mutation_sha256": "45c2fdd53a0a2300baf019e6eb5d6000061f7f0d96279d8567501d1677b14e46",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "BoneAttackEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "BoneAttackEffect",
+    "index": 0
+  }
 }

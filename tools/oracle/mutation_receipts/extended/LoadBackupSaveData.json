@@ -1,0 +1,30 @@
+{
+  "fn": "LoadBackupSaveData",
+  "case": "tests/profiles/extended/cases/save.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadBackupSaveData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47104\": \"0800b3000b3d00000b1825323f4c53596673808d9aa7b4c1ced5dce3dbe2e9f0f7fe050c131a2100f5020f1c0c363d444b525960676e757c838a919843505d6a71787f868d949ba2a97784910000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c5ccd3dae1e8eff6fd040b121920272e353c434a51585f666d747b828990979ea5acb3bac1c8cfd6dde4ebf2f900070e151c232a31383f464d545b626970777e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}, \"2\": {\"47104\": \"0800b3000b3d00000b1825323f4c53596673808d9aa7b4c1ced5dce3dbe2e9f0f7fe050c131a2100f5020f1c0c363d444b525960676e757c838a919843505d6a71787f868d949ba2a97784910000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c5ccd3dae1e8eff6fd040b121920272e353c434a51585f666d747b828990979ea5acb3bac1c8cfd6dde4ebf2f900070e151c232a31383f464d545b626970777e\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54201\": \"0b\", \"54209\": \"0000c5ccd3dae1e8eff6fd040b121920272e353c434a51585f666d747b828990979ea5acb3bac1c8cfd6dde4ebf2f900070e151c232a31383f464d545b626970\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadBackupSaveData\", \"mismatches\": {\"bus\": {\"address\": 54211, \"reference\": \"0b0000c5ccd3dae1\", \"native\": \"0b00000000000000\", \"reference_size\": 66, \"native_size\": 66, \"spans\": [[54201, 1], [54209, 64], [65408, 1]]}, \"sram\": {\"byte\": 0, \"reference\": \"0800b3000b\", \"native\": \"0000000000\"}}}\n",
+  "restored": "{\"fn\": \"LoadBackupSaveData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47104\": \"0800b3000b3d00000b1825323f4c53596673808d9aa7b4c1ced5dce3dbe2e9f0f7fe050c131a2100f5020f1c0c363d444b525960676e757c838a919843505d6a71787f868d949ba2a97784910000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c5ccd3dae1e8eff6fd040b121920272e353c434a51585f666d747b828990979ea5acb3bac1c8cfd6dde4ebf2f900070e151c232a31383f464d545b626970777e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}, \"2\": {\"47104\": \"0800b3000b3d00000b1825323f4c53596673808d9aa7b4c1ced5dce3dbe2e9f0f7fe050c131a2100f5020f1c0c363d444b525960676e757c838a919843505d6a71787f868d949ba2a97784910000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c5ccd3dae1e8eff6fd040b121920272e353c434a51585f666d747b828990979ea5acb3bac1c8cfd6dde4ebf2f900070e151c232a31383f464d545b626970777e\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54201\": \"0b\", \"54209\": \"0000c5ccd3dae1e8eff6fd040b121920272e353c434a51585f666d747b828990979ea5acb3bac1c8cfd6dde4ebf2f900070e151c232a31383f464d545b626970\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadBackupSaveData",
+    "before": "\tLoadBackupGeneralSaveData();",
+    "after": "\t;",
+    "case_ids": [
+      "LoadBackupSaveData-2"
+    ],
+    "source": "src/profiles/extended/home/save.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "9dd3779e9cbb0ac5b0743c7460657e58a34c69ef6082a8bd4c2565992d0e3b8a",
+    "case_sha256": "7399134acf39fcf86e0e505810175105092539929d597c9cb7938c91caae9f46",
+    "schema_sha256": "77929e88517b431f98d9cb108926cfa9b7d5260e22dc0489467e52369df3fd2c",
+    "mutation_sha256": "a660686cca8a8cc0e0f3d64d5f83c5c6a7aa51b8e5b38acbb51574b757ee1acb",
+    "source": "src/profiles/extended/home/save.c",
+    "source_symbol": "LoadBackupSaveData",
+    "case": "tests/profiles/extended/cases/save.py",
+    "fn": "LoadBackupSaveData",
+    "index": 2
+  }
+}

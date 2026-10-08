@@ -1,0 +1,30 @@
+{
+  "fn": "AIDecide_Revive",
+  "case": "tests/profiles/extended/cases/trainer_cards.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_Revive\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49901\": \"01\", \"49903\": \"00\", \"50176\": \"87\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_Revive\", \"mismatches\": {\"a\": [0, 255], \"f\": [144, 0]}}\n",
+  "restored": "{\"fn\": \"AIDecide_Revive\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49901\": \"01\", \"49903\": \"00\", \"50176\": \"87\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AIDecide_Revive",
+    "before": "if (card_id == HITMONCHAN || card_id == HITMONLEE ||\n\t\t    card_id == TAUROS || card_id == KANGASKHAN)",
+    "after": "if (card_id == HITMONCHAN ||\n\t\t    card_id == TAUROS || card_id == KANGASKHAN)",
+    "case_ids": [
+      "AIDecide_Revive-2"
+    ],
+    "source": "src/profiles/extended/home/trainer_cards.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3badf508a4e599b2f2e67f7bf0d243f331f6a88af0963a2cb4682c2c7e1a1bf7",
+    "case_sha256": "5e43a5ddd8e45cb4c6da392394b7929204077f7ef553d8ea6f0c3653d65ad921",
+    "schema_sha256": "fe23d5bcffcb2f2423e5fe18417c2c4df4d6917b99c7c679bf3876a7c4483c92",
+    "mutation_sha256": "bd0748f5561ec49464a79e4503f37a379a48121d5fcb6f426faf8c51fcf5e164",
+    "source": "src/profiles/extended/home/trainer_cards.c",
+    "source_symbol": "AIDecide_Revive",
+    "case": "tests/profiles/extended/cases/trainer_cards.py",
+    "fn": "AIDecide_Revive",
+    "index": 2
+  }
+}

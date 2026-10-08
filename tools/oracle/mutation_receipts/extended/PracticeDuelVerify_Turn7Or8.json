@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"PracticeDuelVerify_Turn7Or8\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52333\": \"56\", \"52340\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"PracticeDuelVerify_Turn7Or8\", \"mismatches\": {\"f\": [192, 16]}}\n",
-  "restored": "{\"fn\": \"PracticeDuelVerify_Turn7Or8\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52333\": \"56\", \"52340\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"PracticeDuelVerify_Turn7Or8\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52333\": \"56\", \"52340\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PracticeDuelVerify_Turn7Or8",
+    "before": "card_id_read_at(wTempCardID_ccc2_ADDR) != STARMIE",
+    "after": "card_id_read_at(wTempCardID_ccc2_ADDR) != 0x57u",
+    "case_ids": [
+      "PracticeDuelVerify_Turn7Or8-0",
+      "PracticeDuelVerify_Turn7Or8-1",
+      "PracticeDuelVerify_Turn7Or8-2"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "d08308a445d9a1ab1c204e5711abfb8d40ba17d4acb119ae09f0ff969fdff4c4",
+    "mutation_sha256": "a0f26a74bacb765d6d56503e2fd72b75b4e1afb7c63415c2df4e2a97f1cf6abb",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "PracticeDuelVerify_Turn7Or8",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "PracticeDuelVerify_Turn7Or8",
+    "index": 0
+  }
 }

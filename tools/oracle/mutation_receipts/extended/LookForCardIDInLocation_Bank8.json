@@ -1,0 +1,30 @@
+{
+  "fn": "LookForCardIDInLocation_Bank8",
+  "case": "tests/profiles/extended/cases/common.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LookForCardIDInLocation_Bank8\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 42, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"50181\": \"2a\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardIDInLocation_Bank8\", \"mismatches\": {\"a\": [60, 61]}}\n",
+  "restored": "{\"fn\": \"LookForCardIDInLocation_Bank8\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 42, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"50181\": \"2a\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LookForCardIDInLocation_Bank8",
+    "before": "\treturn (LookForCardIDInLocationBank8Result){DECK_SIZE, 0x00u};",
+    "after": "\treturn (LookForCardIDInLocationBank8Result){(uint8_t)((DECK_SIZE) ^ 1u), 0x00u};",
+    "case_ids": [
+      "LookForCardIDInLocation_Bank8-0"
+    ],
+    "source": "src/profiles/extended/home/common.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "95b282434e5e4e369eb36fcdc2613760962124b2124d0017d6b2e2395e5c4d5b",
+    "case_sha256": "2798dd2d32532395acc04b475fa91700dc0af6bcc95b89dee95466f908dfb654",
+    "schema_sha256": "bc70026aecf782825e02e850c548a368a25cf046f8c31019b76fe7704bb625a1",
+    "mutation_sha256": "686a33f9c6b85bde52eabdea29f26c252bfb330977107e48b01c607b65912fe7",
+    "source": "src/profiles/extended/home/common.c",
+    "source_symbol": "LookForCardIDInLocation_Bank8",
+    "case": "tests/profiles/extended/cases/common.py",
+    "fn": "LookForCardIDInLocation_Bank8",
+    "index": 0
+  }
+}

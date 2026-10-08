@@ -1,0 +1,30 @@
+{
+  "fn": "PrintDeckAndHandIconsAndNumberOfCards",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintDeckAndHandIconsAndNumberOfCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38978\": \"f8f900000000f4f5000000000000000000000000000000000000000000000000fafb2d002700f6f72d24\", \"39207\": \"f4f500000000f8f9000000000000000000000000000000000000000000000000f6f72d242700fafb2d0025\"}, \"1\": {\"38978\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"39207\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"wram\": {\"49408\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"49850\": \"0a\", \"49902\": \"02\", \"50106\": \"08\", \"50158\": \"04\", \"51892\": \"02\", \"52119\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintDeckAndHandIconsAndNumberOfCards\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintDeckAndHandIconsAndNumberOfCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38978\": \"f8f900000000f4f5000000000000000000000000000000000000000000000000fafb2d002700f6f72d24\", \"39207\": \"f4f500000000f8f9000000000000000000000000000000000000000000000000f6f72d242700fafb2d0025\"}, \"1\": {\"38978\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"39207\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"wram\": {\"49408\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"49850\": \"0a\", \"49902\": \"02\", \"50106\": \"08\", \"50158\": \"04\", \"51892\": \"02\", \"52119\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PrintDeckAndHandIconsAndNumberOfCards",
+    "before": "uint16_t data = DECK_AND_HAND_ICONS_TILE_DATA;",
+    "after": "uint16_t data = (uint16_t)(DECK_AND_HAND_ICONS_TILE_DATA + 1u);",
+    "case_ids": [
+      "PrintDeckAndHandIconsAndNumberOfCards-1"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "6266ca34eac0de575406ec8f33d2c0a17d4237acf5dff601a92c07a2fdd55eb2",
+    "mutation_sha256": "c8b0afb63a31e9f583ca3dd31b3a85e4cbedc19a89f7d4d6886458310566db88",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "PrintDeckAndHandIconsAndNumberOfCards",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "PrintDeckAndHandIconsAndNumberOfCards",
+    "index": 1
+  }
+}

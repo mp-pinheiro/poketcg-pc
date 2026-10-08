@@ -1,0 +1,30 @@
+{
+  "fn": "CountCardIDInLocation",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountCardIDInLocation\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49724, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"100010\", \"50176\": \"010201\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountCardIDInLocation\", \"mismatches\": {\"hl\": [49724, 49740]}}\n",
+  "restored": "{\"fn\": \"CountCardIDInLocation\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49724, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"100010\", \"50176\": \"010201\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CountCardIDInLocation",
+    "before": "\tuint16_t base = (uint16_t)((hl & 0xFF00u) | DUELVARS_CARD_LOCATIONS);",
+    "after": "\tuint16_t base = hl;",
+    "case_ids": [
+      "CountCardIDInLocation-3"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "797c41867a70678f558cbae7201d3fdbb0a1051e522d5aa0859e351b73aa0967",
+    "mutation_sha256": "08b0fb0127c37ea284df4feba368de4d42c65a15b5bbdb2000a036538744cdb7",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "CountCardIDInLocation",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "CountCardIDInLocation",
+    "index": 3
+  }
+}

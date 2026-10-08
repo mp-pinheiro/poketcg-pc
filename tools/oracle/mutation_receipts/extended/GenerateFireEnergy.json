@@ -1,0 +1,31 @@
+{
+  "fn": "GenerateFireEnergy",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateFireEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateFireEnergy\", \"mismatches\": {\"bus\": {\"address\": 50198, \"reference\": \"0002\", \"native\": \"0001\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49152, 1], [50198, 1]]}}}\n",
+  "restored": "{\"fn\": \"GenerateFireEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GenerateFireEnergy",
+    "before": "\treturn AddBoosterEnergyToDrawnEnergies(FIRE_ENERGY);",
+    "after": "\treturn AddBoosterEnergyToDrawnEnergies(GRASS_ENERGY);",
+    "case_ids": [
+      "GenerateFireEnergy-0",
+      "GenerateFireEnergy-1"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "05c689daddc32db94a8458185d13e3dc9bb965be7f5283fb13f7816adc23a861",
+    "mutation_sha256": "dff8e3bfefbcfe49773491c6a4979816d60bf89f259775bf4a3022c7b654d829",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "GenerateFireEnergy",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "GenerateFireEnergy",
+    "index": 0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "fn": "PauseSong",
+  "case": "tests/profiles/extended/cases/sound.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PauseSong\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55204\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PauseSong\", \"mismatches\": {\"bus\": {\"address\": 55204, \"reference\": \"01\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[55204, 1]]}}}\n",
+  "restored": "{\"fn\": \"PauseSong\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55204\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PauseSong",
+    "before": "\t_PauseSong();",
+    "after": "\t_ResumeSong();",
+    "case_ids": [
+      "PauseSong-0"
+    ],
+    "source": "src/profiles/extended/home/sound.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dbe94a8977d1fcc23b3fc6b0fd1345c1582bdbbdd0f6d5438da8aac042145e21",
+    "case_sha256": "7e67c2d505eab72275a393cda6ef3773afa06da3ac1c28072e60ee09d8b37f2c",
+    "schema_sha256": "da8d6794cfc17fdc32fe6e8402a0a5e7bb7cb97eabffb542d5315a264c6b26ed",
+    "mutation_sha256": "a1cee190c9417c66b6a472939552cf70be00bff6205a826c534420700600fb95",
+    "source": "src/profiles/extended/home/sound.c",
+    "source_symbol": "PauseSong",
+    "case": "tests/profiles/extended/cases/sound.py",
+    "fn": "PauseSong",
+    "index": 0
+  }
+}

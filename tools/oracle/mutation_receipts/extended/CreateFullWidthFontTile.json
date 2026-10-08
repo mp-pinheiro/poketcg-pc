@@ -1,0 +1,30 @@
+{
+  "fn": "CreateFullWidthFontTile",
+  "case": "tests/profiles/extended/cases/process_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateFullWidthFontTile\", \"registers\": {\"a\": 28, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 162, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 16392, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateFullWidthFontTile\", \"mismatches\": {\"a\": [28, 29]}}\n",
+  "restored": "{\"fn\": \"CreateFullWidthFontTile\", \"registers\": {\"a\": 28, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 162, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 16392, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CreateFullWidthFontTile",
+    "before": "\treturn (FontTileResult){(uint8_t)(Fonts_BANK - 1u), 0u, 0u, wTextTileBuffer_ADDR,\n\t\t(uint16_t)(src + TILE_SIZE_1BPP)};",
+    "after": "\treturn (FontTileResult){(uint8_t)(((uint8_t)(Fonts_BANK - 1u)) ^ 1u), 0u, 0u, wTextTileBuffer_ADDR, (uint16_t)(src + TILE_SIZE_1BPP)};",
+    "case_ids": [
+      "CreateFullWidthFontTile-0"
+    ],
+    "source": "src/profiles/extended/home/process_text.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3fd461efbd36224af44731a36b7d2c2371bbdaea427ba3e66372220b94bd66d8",
+    "case_sha256": "704bb6b5f592ed6181309e32fed28cc4bfbb03607f75e012eac5d1e66e581888",
+    "schema_sha256": "9b90c2f299d351732fb8fa6dc80198b40426646e0b04277d6cfbc313f0d1693d",
+    "mutation_sha256": "d071cbccd51f059c3465566d74f0f1dc1dd214406d739912879aa4f509db9fc1",
+    "source": "src/profiles/extended/home/process_text.c",
+    "source_symbol": "CreateFullWidthFontTile",
+    "case": "tests/profiles/extended/cases/process_text.py",
+    "fn": "CreateFullWidthFontTile",
+    "index": 0
+  }
+}

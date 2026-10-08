@@ -1,0 +1,29 @@
+{
+  "fn": "CheckEnergyNeededForAttackAfterDiscard",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckEnergyNeededForAttackAfterDiscard\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52340\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckEnergyNeededForAttackAfterDiscard\", \"mismatches\": {\"f\": [144, 48]}}\n",
+  "restored": "{\"fn\": \"CheckEnergyNeededForAttackAfterDiscard\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52340\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckEnergyNeededForAttackAfterDiscard",
+    "before": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x80u : 0u) | 0x10u);",
+    "after": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x20u : 0u) | 0x10u);",
+    "case_ids": [
+      "CheckEnergyNeededForAttackAfterDiscard-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "f540f482a52dbce6ec6d956de03d2f6507c9a1b59c9a1dd95ed21cbce9a0cfb2",
+    "mutation_sha256": "45c23eb5e9f875d4a13a7eed818075e0750ecef47d1991707e10c92e44ce59da",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "CheckEnergyNeededForAttackAfterDiscard",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "CheckEnergyNeededForAttackAfterDiscard",
+    "index": 0
+  }
+}

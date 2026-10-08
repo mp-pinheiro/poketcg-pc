@@ -4,6 +4,27 @@
   "index": 0,
   "status": "RED",
   "baseline": "{\"fn\": \"HandleMoveModeAPress\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 2, \"d\": 0, \"e\": 85, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 30248, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53427\": \"5c4a\", \"53430\": \"43044404\", \"54044\": \"011204\", \"54049\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"HandleMoveModeAPress\", \"mismatches\": {\"a\": [1, 165], \"f\": [16, 0], \"d\": [0, 255], \"hl\": [30248, 21413], \"bus\": {\"address\": 53427, \"reference\": \"5c4a430444\", \"native\": \"0000000000\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[53427, 2], [53430, 4], [54044, 3], [54049, 1], [65408, 1]]}}}\n",
-  "restored": "{\"fn\": \"HandleMoveModeAPress\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 2, \"d\": 0, \"e\": 85, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 30248, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53427\": \"5c4a\", \"53430\": \"43044404\", \"54044\": \"011204\", \"54049\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleMoveModeAPress\", \"mismatches\": {\"d\": [0, 255], \"hl\": [30248, 21413], \"bus\": {\"address\": 53427, \"reference\": \"5c4a430444\", \"native\": \"0000000000\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[53427, 2], [53430, 4], [54044, 3], [54049, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleMoveModeAPress\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 2, \"d\": 0, \"e\": 85, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 30248, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53427\": \"5c4a\", \"53430\": \"43044404\", \"54044\": \"011204\", \"54049\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleMoveModeAPress",
+    "before": "\tuint8_t object_direction = wPlayerDirection;",
+    "after": "\tuint8_t object_direction = 0xffu;",
+    "case_ids": [
+      "HandleMoveModeAPress-0",
+      "HandleMoveModeAPress-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef1bcdb48e01772d7e313c69019555977ba81523be88d656bd87784682b76c71",
+    "case_sha256": "b5de8465d520214b3350dbee5712400fcbec3a657612f86e9ef6c763b22e00cd",
+    "schema_sha256": "ac8f0801077939086a16caae12c0755cde15e0fceaa0179d0b052e00ec09ccc7",
+    "mutation_sha256": "7cdce80e3117ed4846b9e153823b93edd68b34873bafad31b05f3a2e8cb8cd65",
+    "source": "src/profiles/extended/home/script.c",
+    "source_symbol": "HandleMoveModeAPress",
+    "case": "tests/profiles/extended/cases/script.py",
+    "fn": "HandleMoveModeAPress",
+    "index": 0
+  }
 }

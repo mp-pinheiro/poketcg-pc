@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AIDecide_Maintenance\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 205, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49986\": \"000102ff\", \"50158\": \"03\", \"50296\": \"080030003000\", \"51914\": \"060804\", \"52152\": \"34\", \"52637\": \"00\", \"52640\": \"0201\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_Maintenance\", \"mismatches\": {\"a\": [1, 0]}}\n",
-  "restored": "{\"fn\": \"AIDecide_Maintenance\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 205, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49986\": \"000102ff\", \"50158\": \"03\", \"50296\": \"080030003000\", \"51914\": \"060804\", \"52152\": \"34\", \"52637\": \"00\", \"52640\": \"0201\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AIDecide_Maintenance\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 205, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49986\": \"000102ff\", \"50158\": \"03\", \"50296\": \"080030003000\", \"51914\": \"060804\", \"52152\": \"34\", \"52637\": \"00\", \"52640\": \"0201\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AIDecide_Maintenance",
+    "before": "\t\treturn (AIDecideMaintenanceResult){card, 0x90u,\n\t\t\t(uint8_t)(wce1a_ADDR >> 8)};",
+    "after": "\t\treturn (AIDecideMaintenanceResult){0u, 0x90u,\n\t\t\t(uint8_t)(wce1a_ADDR >> 8)};",
+    "case_ids": [
+      "AIDecide_Maintenance-2",
+      "AIDecide_Maintenance-4",
+      "AIDecide_Maintenance-5"
+    ],
+    "source": "src/profiles/extended/home/trainer_cards.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3badf508a4e599b2f2e67f7bf0d243f331f6a88af0963a2cb4682c2c7e1a1bf7",
+    "case_sha256": "5e43a5ddd8e45cb4c6da392394b7929204077f7ef553d8ea6f0c3653d65ad921",
+    "schema_sha256": "6230709ac87b39d42d42a063a16d1cbc293512b1cd982e1260cc5faa2aa60023",
+    "mutation_sha256": "344be585cbd94c3d08e62ac8632a2840f93fc93d0b877289e2f55412c36b183a",
+    "source": "src/profiles/extended/home/trainer_cards.c",
+    "source_symbol": "AIDecide_Maintenance",
+    "case": "tests/profiles/extended/cases/trainer_cards.py",
+    "fn": "AIDecide_Maintenance",
+    "index": 2
+  }
 }

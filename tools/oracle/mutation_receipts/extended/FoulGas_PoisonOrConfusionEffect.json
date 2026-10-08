@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"FoulGas_PoisonOrConfusionEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"51923\": \"c932\", \"52147\": \"00\", \"52347\": \"03c20f80\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"FoulGas_PoisonOrConfusionEffect\", \"mismatches\": {\"bus\": {\"address\": 52349, \"reference\": \"320003c20f80010100\", \"native\": \"320003c2f001010100\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [51923, 2], [52147, 1], [52347, 4], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"FoulGas_PoisonOrConfusionEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"51923\": \"c932\", \"52147\": \"00\", \"52347\": \"03c20f80\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"FoulGas_PoisonOrConfusionEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"51923\": \"c932\", \"52147\": \"00\", \"52347\": \"03c20f80\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FoulGas_PoisonOrConfusionEffect",
+    "before": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) == 0u)",
+    "after": "uint8_t FoulGas_PoisonOrConfusionEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(PoisonedIfHeadsConfusedIfTailsText, 0u);\n\tif ((toss.f & 0x10u) != 0u)",
+    "case_ids": [
+      "FoulGas_PoisonOrConfusionEffect-0",
+      "FoulGas_PoisonOrConfusionEffect-1",
+      "FoulGas_PoisonOrConfusionEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "24fbba468bb563b296d9bdf2da87d1c8341a4654f235ddab36f408ff78d0bebb",
+    "mutation_sha256": "aa1d2534ffe0dca8fce9ff7785ed43b098246dfff45a7a20d6344af65b0a4ec7",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "FoulGas_PoisonOrConfusionEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "FoulGas_PoisonOrConfusionEffect",
+    "index": 0
+  }
 }

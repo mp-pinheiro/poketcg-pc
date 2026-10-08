@@ -5,5 +5,29 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AppendCurrentCardToHL\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 50419, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"1200\", \"54871\": \"12\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AppendCurrentCardToHL\", \"mismatches\": {\"hl\": [50419, 54873], \"bus\": {\"address\": 50416, \"reference\": \"120012\", \"native\": \"000000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50416, 2], [54871, 1]]}}}\n",
-  "restored": "{\"fn\": \"AppendCurrentCardToHL\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 50419, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"1200\", \"54871\": \"12\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AppendCurrentCardToHL\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 50419, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"1200\", \"54871\": \"12\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AppendCurrentCardToHL",
+    "before": "if (card == 0u)\n\t\t\tbreak;",
+    "after": "if (card != 0u)\n\t\t\tbreak;",
+    "case_ids": [
+      "AppendCurrentCardToHL-0",
+      "AppendCurrentCardToHL-1",
+      "AppendCurrentCardToHL-2",
+      "AppendCurrentCardToHL-3"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "78f0e9196bf3115bd7ebd101c6a4ec0529753e03376dd38eceed0958de010092",
+    "mutation_sha256": "13380f723597c3019fa9a023f7cabbeb3f94e61a69597113ee33a145881b626d",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "AppendCurrentCardToHL",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "AppendCurrentCardToHL",
+    "index": 0
+  }
 }

@@ -1,0 +1,31 @@
+{
+  "fn": "DrawCardSymbol",
+  "case": "tests/profiles/extended/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawCardSymbol\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 5, \"e\": 5, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39043\": \"d0d1\", \"39075\": \"d2d3\"}, \"1\": {\"39043\": \"0303\", \"39075\": \"0303\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawCardSymbol\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawCardSymbol\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 5, \"e\": 5, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39043\": \"d0d1\", \"39075\": \"d2d3\"}, \"1\": {\"39043\": \"0303\", \"39075\": \"0303\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawCardSymbol",
+    "before": "\tuint8_t attr = gb_read8((uint16_t)(entry + 1));",
+    "after": "\tuint8_t attr = 0u;",
+    "case_ids": [
+      "DrawCardSymbol-0",
+      "DrawCardSymbol-1"
+    ],
+    "source": "src/profiles/extended/home/menus.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "75ea2c9f49c32076d01a600dd9012575d43233ce9dbf118da94fc407cb70af68",
+    "case_sha256": "aaf693440f514f44cec9fe8a6c50c50c2477baf34c4584fdb1a1728c0be908cc",
+    "schema_sha256": "33e4fb796b5a9b46be94b1207761c47a24aa83f9b3dd7f8349294dc9d548e3e8",
+    "mutation_sha256": "41463b6eda757e2ebe89b1030416fa9e2653f92ebc895017fcf95b5dd7af6f03",
+    "source": "src/profiles/extended/home/menus.c",
+    "source_symbol": "DrawCardSymbol",
+    "case": "tests/profiles/extended/cases/menus.py",
+    "fn": "DrawCardSymbol",
+    "index": 0
+  }
+}

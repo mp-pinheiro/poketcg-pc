@@ -1,0 +1,33 @@
+{
+  "fn": "GenerateRandomEnergy",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateRandomEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"50198\": \"01\", \"51914\": \"000001\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateRandomEnergy\", \"mismatches\": {\"e\": [1, 2], \"bus\": {\"address\": 49153, \"reference\": \"000100000000\", \"native\": \"000001000000\", \"reference_size\": 260, \"native_size\": 260, \"spans\": [[49152, 256], [50198, 1], [51914, 3]]}}}\n",
+  "restored": "{\"fn\": \"GenerateRandomEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"50198\": \"01\", \"51914\": \"000001\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GenerateRandomEnergy",
+    "before": "return AddBoosterEnergyToDrawnEnergies((CardId)(random + 1u));",
+    "after": "return AddBoosterEnergyToDrawnEnergies((CardId)(random + 2u));",
+    "case_ids": [
+      "GenerateRandomEnergy-0",
+      "GenerateRandomEnergy-1",
+      "GenerateRandomEnergy-2",
+      "GenerateRandomEnergy-3"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "a42e410bc99ecb8c2f11b7fa4f5a8273ebc258334d8a768a83b335ddc867a073",
+    "mutation_sha256": "d17caa5c28ae2d888fb881dbe487f06d96b54d935443fefb8de5a0cbd28c03e2",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "GenerateRandomEnergy",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "GenerateRandomEnergy",
+    "index": 0
+  }
+}

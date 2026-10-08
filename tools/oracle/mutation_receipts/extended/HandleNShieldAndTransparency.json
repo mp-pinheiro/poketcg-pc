@@ -1,0 +1,30 @@
+{
+  "fn": "HandleNShieldAndTransparency",
+  "case": "tests/profiles/extended/cases/substatus.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleNShieldAndTransparency\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 49851, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"50126\": \"01\", \"50177\": \"a0\", \"50432\": \"ff\", \"51899\": \"00\", \"52341\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleNShieldAndTransparency\", \"mismatches\": {\"f\": [128, 144], \"bus\": {\"address\": 51899, \"reference\": \"0101a0ff0000c2\", \"native\": \"0101a0ff8005c2\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49851, 1], [50126, 1], [50177, 1], [50432, 1], [51899, 1], [52341, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleNShieldAndTransparency\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 49851, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"50126\": \"01\", \"50177\": \"a0\", \"50432\": \"ff\", \"51899\": \"00\", \"52341\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleNShieldAndTransparency",
+    "before": "\tif (card_id == MEW_LV8) {",
+    "after": "\tif (!(card_id == MEW_LV8)) {",
+    "case_ids": [
+      "HandleNShieldAndTransparency-1"
+    ],
+    "source": "src/profiles/extended/home/substatus.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "fee0f65c410c67a3aea1b87b1e0c373449d5cfa42734dded80b0aae5e1b5e098",
+    "case_sha256": "e2a57ab4170409a95e9a63c56b9b9201102f56296a62ef2e0f70551057bd65ff",
+    "schema_sha256": "bedce1a52f3bc05874baf6244597c4c31bd6c8a7acfde7448da6aca8c08d8f64",
+    "mutation_sha256": "09de9c2934fab34d24096d0cc6949aae9f880a5638520ef428c1535dc62951c9",
+    "source": "src/profiles/extended/home/substatus.c",
+    "source_symbol": "HandleNShieldAndTransparency",
+    "case": "tests/profiles/extended/cases/substatus.py",
+    "fn": "HandleNShieldAndTransparency",
+    "index": 1
+  }
+}

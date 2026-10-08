@@ -1,0 +1,30 @@
+{
+  "fn": "PlaySong",
+  "case": "tests/profiles/extended/cases/sound.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlaySong\", \"registers\": {\"a\": 30, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55204\": \"1e\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlaySong\", \"mismatches\": {\"bus\": {\"address\": 55204, \"reference\": \"1e\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[55204, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlaySong\", \"registers\": {\"a\": 30, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55204\": \"1e\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PlaySong",
+    "before": "\t_PlaySong(a);",
+    "after": "\t_PlaySong(0u);",
+    "case_ids": [
+      "PlaySong-1"
+    ],
+    "source": "src/profiles/extended/home/sound.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dbe94a8977d1fcc23b3fc6b0fd1345c1582bdbbdd0f6d5438da8aac042145e21",
+    "case_sha256": "7e67c2d505eab72275a393cda6ef3773afa06da3ac1c28072e60ee09d8b37f2c",
+    "schema_sha256": "99796e09b0d709351292a9b7e9344d4b3c7b115cc2abf7019e99de7ce67a92cf",
+    "mutation_sha256": "3160c0fb9d4817b57ed056089e438b66bc0c8b30d5cb3d2c60019d3c44e2292d",
+    "source": "src/profiles/extended/home/sound.c",
+    "source_symbol": "PlaySong",
+    "case": "tests/profiles/extended/cases/sound.py",
+    "fn": "PlaySong",
+    "index": 1
+  }
+}

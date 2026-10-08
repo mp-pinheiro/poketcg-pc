@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DisplayOpponentUsedAttackScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52085\": \"01\", \"52333\": \"08\", \"52340\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DisplayOpponentUsedAttackScreen\", \"mismatches\": {\"bus\": {\"address\": 52085, \"reference\": \"00010800\", \"native\": \"00000800\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51899, 1], [52085, 1], [52333, 1], [52340, 1]]}}}\n",
-  "restored": "{\"fn\": \"DisplayOpponentUsedAttackScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52085\": \"01\", \"52333\": \"08\", \"52340\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DisplayOpponentUsedAttackScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52085\": \"01\", \"52333\": \"08\", \"52340\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DisplayOpponentUsedAttackScreen",
+    "before": "\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;",
+    "after": "\twCardPageNumber = 0u;",
+    "case_ids": [
+      "DisplayOpponentUsedAttackScreen-0"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "21739dd99aa7cb3d8a7c4dec063ef525dfa9a7b5425d0d3a6d321ba0a432540c",
+    "mutation_sha256": "0408b87e567f375db3fac97598bdbe107374bb05a005b4cd74da85d8634b18e7",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "DisplayOpponentUsedAttackScreen",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "DisplayOpponentUsedAttackScreen",
+    "index": 0
+  }
 }

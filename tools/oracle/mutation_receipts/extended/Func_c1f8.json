@@ -1,0 +1,32 @@
+{
+  "fn": "Func_c1f8",
+  "case": "tests/profiles/extended/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c1f8\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"40966\": \"0000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52749\": \"00\", \"53413\": \"000000\", \"53423\": \"00\", \"53502\": \"0000\", \"53512\": \"00\", \"54181\": \"00\", \"54286\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c1f8\", \"mismatches\": {\"bus\": {\"address\": 54181, \"reference\": \"000000000000\", \"native\": \"000000000100\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[52749, 1], [53413, 3], [53423, 1], [53502, 2], [53512, 1], [54181, 1], [54286, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_c1f8\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"40966\": \"0000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52749\": \"00\", \"53413\": \"000000\", \"53423\": \"00\", \"53502\": \"0000\", \"53512\": \"00\", \"54181\": \"00\", \"54286\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Func_c1f8",
+    "before": "\twRonaldIsInMap = 0u;",
+    "after": "\twRonaldIsInMap = 1u;",
+    "case_ids": [
+      "Func_c1f8-0",
+      "Func_c1f8-1",
+      "Func_c1f8-2"
+    ],
+    "source": "src/profiles/extended/home/overworld.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "4135fef9f8fa19c4ec0b073e0d1f7ac4bb7a7393ddccffe46c53d48f664b278c",
+    "case_sha256": "adc0037e39c0eeedfa9fe76181048e81a053df4b5b1c76b75752bfddf6d4071c",
+    "schema_sha256": "321256966096aa5ea9e6adb2056d74cee9c21c0b30539a25a0bd27e9ecc90233",
+    "mutation_sha256": "2ba1559e41b6e989e0a0d28a81157eeb31aaca4c51db577043c39308cc02bc5c",
+    "source": "src/profiles/extended/home/overworld.c",
+    "source_symbol": "Func_c1f8",
+    "case": "tests/profiles/extended/cases/overworld.py",
+    "fn": "Func_c1f8",
+    "index": 0
+  }
+}

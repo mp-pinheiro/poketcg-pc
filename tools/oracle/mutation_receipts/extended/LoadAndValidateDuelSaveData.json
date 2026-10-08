@@ -1,0 +1,32 @@
+{
+  "fn": "LoadAndValidateDuelSaveData",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadAndValidateDuelSaveData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadAndValidateDuelSaveData\", \"mismatches\": {\"f\": [144, 192]}}\n",
+  "restored": "{\"fn\": \"LoadAndValidateDuelSaveData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadAndValidateDuelSaveData",
+    "before": "if (duel.f & 0x10u)",
+    "after": "if (!(duel.f & 0x10u))",
+    "case_ids": [
+      "LoadAndValidateDuelSaveData-0",
+      "LoadAndValidateDuelSaveData-1",
+      "LoadAndValidateDuelSaveData-2"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "12a6040a44cccb83a72f6e22a91477ac5a9c037fb7268a594983a8bc6f8ae9ff",
+    "mutation_sha256": "110befd497e7a4e77fa2c59a91e56c56ad5d233acc7a1a8cae38462b631327a3",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "LoadAndValidateDuelSaveData",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "LoadAndValidateDuelSaveData",
+    "index": 0
+  }
+}

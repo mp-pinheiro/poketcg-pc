@@ -1,0 +1,30 @@
+{
+  "fn": "DuelMenu_Retreat",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DuelMenu_Retreat\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {\"0\": {\"39296\": \"181c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c19\"}}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49864\": \"28\", \"49903\": \"0100\", \"50176\": \"08\", \"51899\": \"80\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DuelMenu_Retreat\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"000880c200\", \"native\": \"000880c201\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49664, 1], [49851, 1], [49864, 1], [49903, 2], [50176, 1], [51899, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"DuelMenu_Retreat\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {\"0\": {\"39296\": \"181c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c19\"}}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49864\": \"28\", \"49903\": \"0100\", \"50176\": \"08\", \"51899\": \"80\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DuelMenu_Retreat",
+    "before": "\thTemp_ffa0 = status;",
+    "after": "\thTemp_ffa0 = (uint8_t)((status) ^ 1u);",
+    "case_ids": [
+      "DuelMenu_Retreat-0"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "057c146d2ca7a4e61c3c8f4736f77c13bcb1c45769d7e4b00970180a04401268",
+    "mutation_sha256": "557ef296f8fb60f8320b35c83247b8ce9854c618ee48fac441c2ced7c51bdf3e",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "DuelMenu_Retreat",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "DuelMenu_Retreat",
+    "index": 0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "fn": "HyperBeam_DiscardEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HyperBeam_DiscardEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50168, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"00\", \"49790\": \"00\", \"49901\": \"01\", \"49912\": \"00\", \"52341\": \"00\", \"65431\": \"c2\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HyperBeam_DiscardEffect\", \"mismatches\": {\"hl\": [50168, 49408]}}\n",
+  "restored": "{\"fn\": \"HyperBeam_DiscardEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50168, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"00\", \"49790\": \"00\", \"49901\": \"01\", \"49912\": \"00\", \"52341\": \"00\", \"65431\": \"c2\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HyperBeam_DiscardEffect",
+    "before": "\tif (no_effect.f & 0x10u)",
+    "after": "\tif (!(no_effect.f & 0x10u))",
+    "case_ids": [
+      "HyperBeam_DiscardEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "bac4521916994dc2a4c59db1b53e7939b6c2146af4bf21acbb49fb0655c2953d",
+    "mutation_sha256": "ca589ee6bdd08058090a7774d3e6cd6f09d19336d00968939d3bd953c04606d6",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "HyperBeam_DiscardEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "HyperBeam_DiscardEffect",
+    "index": 2
+  }
+}

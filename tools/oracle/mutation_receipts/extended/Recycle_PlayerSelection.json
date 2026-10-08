@@ -1,0 +1,30 @@
+{
+  "fn": "Recycle_PlayerSelection",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Recycle_PlayerSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01000001\", \"52756\": \"0000\", \"65432\": \"e1\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Recycle_PlayerSelection\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"010000e1ff\", \"native\": \"010000e100\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49905, 1], [51899, 1], [51914, 3], [52147, 1], [52514, 4], [52756, 2], [65432, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Recycle_PlayerSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01000001\", \"52756\": \"0000\", \"65432\": \"e1\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Recycle_PlayerSelection",
+    "before": "hTempList = 0xFFu;\n\treturn (RecyclePlayerSelectionResult){0xFFu, 0x00u};",
+    "after": "hTempList = 0x00u;\n\treturn (RecyclePlayerSelectionResult){0xFFu, 0x00u};",
+    "case_ids": [
+      "Recycle_PlayerSelection-0"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "acd02640880598bceed63d26b22d498836cc2b5b29df2e76372ff9fb50d067bd",
+    "mutation_sha256": "51abcdf9f9b528892c2ac45f739de5e6c98f8b8ef964f3dca7448758b5b40e93",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Recycle_PlayerSelection",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Recycle_PlayerSelection",
+    "index": 0
+  }
+}

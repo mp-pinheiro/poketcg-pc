@@ -1,0 +1,30 @@
+{
+  "fn": "FindFirstEmptyDeckSlot",
+  "case": "tests/profiles/extended/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FindFirstEmptyDeckSlot\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 41753, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {\"0\": {\"41752\": \"00\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FindFirstEmptyDeckSlot\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"FindFirstEmptyDeckSlot\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 41753, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {\"0\": {\"41752\": \"00\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FindFirstEmptyDeckSlot",
+    "before": "return (FindFirstEmptyDeckSlotResult){i, 0x80u, hl};",
+    "after": "return (FindFirstEmptyDeckSlotResult){(uint8_t)(i + 1u), 0x80u, hl};",
+    "case_ids": [
+      "FindFirstEmptyDeckSlot-0"
+    ],
+    "source": "src/profiles/extended/home/deck_machine.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2b37b66976ac6d28a2eecf10fef74a52fb30302660c6e5e02a8c8d15a150de01",
+    "case_sha256": "7c75bc1440b4b0b30278f49c753bf254357f2f1513ca1c523d756a5e3fe70735",
+    "schema_sha256": "83550b400f05c27dfc36e43f246861e2aafb68f65cc2a1bfd7783ff7dd61044c",
+    "mutation_sha256": "ed62f5e7b73abce764fb85811e4a4b8ab1261c14b677547765debe4f81133a7d",
+    "source": "src/profiles/extended/home/deck_machine.c",
+    "source_symbol": "FindFirstEmptyDeckSlot",
+    "case": "tests/profiles/extended/cases/deck_machine.py",
+    "fn": "FindFirstEmptyDeckSlot",
+    "index": 0
+  }
+}

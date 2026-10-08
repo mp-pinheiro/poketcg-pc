@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"CreateCurDeckUniqueCardList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 215, \"e\": 48, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52940, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52874\": \"01\", \"52936\": \"0100\", \"55084\": \"0100\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"CreateCurDeckUniqueCardList\", \"mismatches\": {\"bus\": {\"address\": 52874, \"reference\": \"0101000100\", \"native\": \"0201000100\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[52874, 1], [52936, 2], [55084, 2]]}}}\n",
-  "restored": "{\"fn\": \"CreateCurDeckUniqueCardList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 215, \"e\": 48, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52940, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52874\": \"01\", \"52936\": \"0100\", \"55084\": \"0100\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"CreateCurDeckUniqueCardList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 215, \"e\": 48, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52940, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52874\": \"01\", \"52936\": \"0100\", \"55084\": \"0100\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CreateCurDeckUniqueCardList",
+    "before": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 0u;",
+    "after": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 1u;",
+    "case_ids": [
+      "CreateCurDeckUniqueCardList-0",
+      "CreateCurDeckUniqueCardList-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "1b0289fe3608835e0ea75aeac7acdc8ecb40298427fb254f383145e5555c2f4b",
+    "mutation_sha256": "1ce7a4375189aee995d1ce052e51352245b472c5628376346de7cfb1a46b2494",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "CreateCurDeckUniqueCardList",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "CreateCurDeckUniqueCardList",
+    "index": 0
+  }
 }

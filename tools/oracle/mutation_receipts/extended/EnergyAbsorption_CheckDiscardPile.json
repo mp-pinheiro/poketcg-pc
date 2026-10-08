@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"EnergyAbsorption_CheckDiscardPile\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 147, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"EnergyAbsorption_CheckDiscardPile\", \"mismatches\": {\"hl\": [147, 149]}}\n",
-  "restored": "{\"fn\": \"EnergyAbsorption_CheckDiscardPile\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 147, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"EnergyAbsorption_CheckDiscardPile\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 147, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "EnergyAbsorption_CheckDiscardPile",
+    "before": "ThereAreNoEnergyCardsInDiscardPileText, list.f",
+    "after": "NoCardsLeftInTheDeckText, list.f",
+    "case_ids": [
+      "EnergyAbsorption_CheckDiscardPile-0",
+      "EnergyAbsorption_CheckDiscardPile-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "d67ea0561427de806cadb2be2d34f20ed8c709c73ce5d29e29065ebe13cd5980",
+    "mutation_sha256": "d51463dfe8dda2e2b377949314d7a63d343f66d9da93c30295aa68d7acc5179e",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "EnergyAbsorption_CheckDiscardPile",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "EnergyAbsorption_CheckDiscardPile",
+    "index": 0
+  }
 }

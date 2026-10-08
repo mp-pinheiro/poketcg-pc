@@ -1,0 +1,30 @@
+{
+  "fn": "CreateEnergyCardListFromHand",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateEnergyCardListFromHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49730\": \"00ff00\", \"49902\": \"01\", \"50176\": \"01\", \"50432\": \"00ff00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateEnergyCardListFromHand\", \"mismatches\": {\"a\": [0, 255], \"f\": [0, 144], \"bus\": {\"address\": 50432, \"reference\": \"ff00010100ff00c2\", \"native\": \"ff000101ff0000c2\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49730, 3], [49902, 1], [50176, 1], [50432, 3], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CreateEnergyCardListFromHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49730\": \"00ff00\", \"49902\": \"01\", \"50176\": \"01\", \"50432\": \"00ff00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CreateEnergyCardListFromHand",
+    "before": "if ((GetCardType(card_id) & TYPE_ENERGY) != 0u)",
+    "after": "if ((GetCardType(card_id) & TYPE_ENERGY) == 0u)",
+    "case_ids": [
+      "CreateEnergyCardListFromHand-1"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "5a890f37e1ed7a58caeff9e2cf82f7366f5259384d8ed4cdc1c438c65c036fae",
+    "mutation_sha256": "8f5d8e5043b325b9133c135830266f7b912d0b71f0e504fa94a4a4fc8d675b4b",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "CreateEnergyCardListFromHand",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "CreateEnergyCardListFromHand",
+    "index": 1
+  }
+}

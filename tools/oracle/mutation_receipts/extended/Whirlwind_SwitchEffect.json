@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Whirlwind_SwitchEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Whirlwind_SwitchEffect\", \"mismatches\": {\"a\": [255, 1], \"f\": [192, 0]}}\n",
-  "restored": "{\"fn\": \"Whirlwind_SwitchEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Whirlwind_SwitchEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Whirlwind_SwitchEffect",
+    "before": "return HandleSwitchDefendingPokemonEffect(hTemp_ffa0);",
+    "after": "return HandleSwitchDefendingPokemonEffect((uint8_t)(hTemp_ffa0 + 1u));",
+    "case_ids": [
+      "Whirlwind_SwitchEffect-0",
+      "Whirlwind_SwitchEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "617ab100d574288d09b1b7d7d2673de3714da8aae6e2049a226519e750c8e2c9",
+    "mutation_sha256": "86b0740954d096d738fbbea26f12e55323adaa5170b7f002956c4d066b5cad3d",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Whirlwind_SwitchEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Whirlwind_SwitchEffect",
+    "index": 0
+  }
 }

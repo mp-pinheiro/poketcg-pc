@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ClefableMetronome_CheckAttacks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ClefableMetronome_CheckAttacks\", \"mismatches\": {\"hl\": [169, 170]}}\n",
-  "restored": "{\"fn\": \"ClefableMetronome_CheckAttacks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ClefableMetronome_CheckAttacks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ClefableMetronome_CheckAttacks",
+    "before": "\treturn (ClefableMetronomeCheckAttacksResult){r.f, NoAttackMayBeChosenText};",
+    "after": "\treturn (ClefableMetronomeCheckAttacksResult){r.f, (uint16_t)(NoAttackMayBeChosenText + 1u)};",
+    "case_ids": [
+      "ClefableMetronome_CheckAttacks-0",
+      "ClefableMetronome_CheckAttacks-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "5e6c139526c92f1599c2dfa5357d90c88e4c51e7c2ef250f5d5363aad4f2abef",
+    "mutation_sha256": "b92ff589f061cad75864faa7824ab135452b20f6638f997b5143d769c31a2f46",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "ClefableMetronome_CheckAttacks",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "ClefableMetronome_CheckAttacks",
+    "index": 0
+  }
 }

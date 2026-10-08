@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"PrintDamageText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"2203\", \"52323\": \"00\", \"52337\": \"08\", \"52741\": \"0000\", \"52793\": \"0100\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"PrintDamageText\", \"mismatches\": {\"bus\": {\"address\": 52741, \"reference\": \"2203000800000100\", \"native\": \"2203000801000100\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51923, 2], [52323, 1], [52337, 1], [52741, 2], [52793, 2]]}}}\n",
-  "restored": "{\"fn\": \"PrintDamageText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"2203\", \"52323\": \"00\", \"52337\": \"08\", \"52741\": \"0000\", \"52793\": \"0100\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"PrintDamageText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"2203\", \"52323\": \"00\", \"52337\": \"08\", \"52741\": \"0000\", \"52793\": \"0100\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PrintDamageText",
+    "before": "\tgb_write8(wTxRam2_ADDR, 0u);",
+    "after": "\tgb_write8(wTxRam2_ADDR, 1u);",
+    "case_ids": [
+      "PrintDamageText-0",
+      "PrintDamageText-1"
+    ],
+    "source": "src/profiles/extended/home/commands.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "64b808594a07c8a4fb98abe4b1279866bf816506776511a52cf843ff3948a832",
+    "case_sha256": "c37727fa1a23a72fd70c8679988826ac42a4f0a6befcae8695709ad1c2c7c040",
+    "schema_sha256": "445151ef51d476e5619a4e45b9e8e2243621e333188a7b74f336d44614d715c4",
+    "mutation_sha256": "f7bae76f5e245054148d0be6e70cc55f0bf07e142c9a740bae7b925fba3d5d6d",
+    "source": "src/profiles/extended/home/commands.c",
+    "source_symbol": "PrintDamageText",
+    "case": "tests/profiles/extended/cases/commands.py",
+    "fn": "PrintDamageText",
+    "index": 0
+  }
 }

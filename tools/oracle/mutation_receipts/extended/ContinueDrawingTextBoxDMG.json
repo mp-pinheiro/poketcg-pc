@@ -1,0 +1,30 @@
+{
+  "fn": "ContinueDrawingTextBoxDMG",
+  "case": "tests/profiles/extended/cases/text_box.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ContinueDrawingTextBoxDMG\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 38976, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"1e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ContinueDrawingTextBoxDMG\", \"mismatches\": {\"bus\": {\"address\": 38945, \"reference\": \"0000001a1d1d1b0000\", \"native\": \"0000001a1e1e1b0000\", \"reference_size\": 64, \"native_size\": 64, \"spans\": [[38912, 64]]}}}\n",
+  "restored": "{\"fn\": \"ContinueDrawingTextBoxDMG\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 38976, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"38912\": \"1e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ContinueDrawingTextBoxDMG",
+    "before": "\tdraw_line(hl, 0x1du, 0x1au, 0x1bu, b);",
+    "after": "\tdraw_line(hl, 0x1eu, 0x1au, 0x1bu, b);",
+    "case_ids": [
+      "ContinueDrawingTextBoxDMG-0"
+    ],
+    "source": "src/profiles/extended/home/text_box.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "d1317ba46a3b0722bf6421dd34fa317d2d2751f1a691b0f1a0f6c2111ad4ba53",
+    "case_sha256": "a5313d38db93ee630cc844548ed9795cf1b5f0a1bddaef14573c78d32b16ae73",
+    "schema_sha256": "c8403a4c975d98037d6867c0954eb2453bf669a40d79f9cc64318d914989004d",
+    "mutation_sha256": "26167d9de478201b0844bbdf6aaefe1fc6ad89815b597ec16d9d06ba500dfddc",
+    "source": "src/profiles/extended/home/text_box.c",
+    "source_symbol": "ContinueDrawingTextBoxDMG",
+    "case": "tests/profiles/extended/cases/text_box.py",
+    "fn": "ContinueDrawingTextBoxDMG",
+    "index": 0
+  }
+}

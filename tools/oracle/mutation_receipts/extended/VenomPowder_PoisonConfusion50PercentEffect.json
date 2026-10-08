@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"VenomPowder_PoisonConfusion50PercentEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52347\": \"06c20f80\", \"52383\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"VenomPowder_PoisonConfusion50PercentEffect\", \"mismatches\": {\"bus\": {\"address\": 52347, \"reference\": \"0000010006c20f8000\", \"native\": \"000001000000000000\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52347, 4], [52383, 1], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"VenomPowder_PoisonConfusion50PercentEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52347\": \"06c20f80\", \"52383\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"VenomPowder_PoisonConfusion50PercentEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52347\": \"06c20f80\", \"52383\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "VenomPowder_PoisonConfusion50PercentEffect",
+    "before": "uint8_t VenomPowder_PoisonConfusion50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(VenomPowderCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;",
+    "after": "uint8_t VenomPowder_PoisonConfusion50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(VenomPowderCheckText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;",
+    "case_ids": [
+      "VenomPowder_PoisonConfusion50PercentEffect-0",
+      "VenomPowder_PoisonConfusion50PercentEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "ee8a49f39a9cd450f306952ac2170d535aa484e8b2a1c7363c5ae4871e7ce134",
+    "mutation_sha256": "a969174716d0c253d7d6b0339ee950ee7188d586dd58ffb4069684abe9a1b9bb",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "VenomPowder_PoisonConfusion50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "VenomPowder_PoisonConfusion50PercentEffect",
+    "index": 0
+  }
 }

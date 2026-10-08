@@ -1,0 +1,30 @@
+{
+  "fn": "GetMusicCommandAndArgs",
+  "case": "tests/profiles/extended/cases/music.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetMusicCommandAndArgs\", \"registers\": {\"a\": 208, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"d00102\", \"55561\": \"d00102\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetMusicCommandAndArgs\", \"mismatches\": {\"hl\": [49409, 49410]}}\n",
+  "restored": "{\"fn\": \"GetMusicCommandAndArgs\", \"registers\": {\"a\": 208, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"d00102\", \"55561\": \"d00102\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetMusicCommandAndArgs",
+    "before": "\t*hl = (uint16_t)(*hl + 1u);",
+    "after": "\t*hl = (uint16_t)(*hl + 2u);",
+    "case_ids": [
+      "GetMusicCommandAndArgs-1"
+    ],
+    "source": "src/profiles/extended/home/music.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "4a9d9d8083d06202c3451e0f08509423a80c0b8d27677abef6589e63e3904c26",
+    "case_sha256": "534cd65f6b236e7be6ea2cad8e77a03ec3b714375d3624ab861e261f45719e34",
+    "schema_sha256": "2e490ade529c3248ef3447c088fe28d9a5387aa88ba26d5fb2c280cb98c98dd5",
+    "mutation_sha256": "740eacbea9a7571cf99d85bb3d8376430e15d2d57bc35dc72e5191f551b3dec3",
+    "source": "src/profiles/extended/home/music.c",
+    "source_symbol": "GetMusicCommandAndArgs",
+    "case": "tests/profiles/extended/cases/music.py",
+    "fn": "GetMusicCommandAndArgs",
+    "index": 1
+  }
+}

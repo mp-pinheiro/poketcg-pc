@@ -1,0 +1,30 @@
+{
+  "fn": "GetChannelStackPointer",
+  "case": "tests/profiles/extended/cases/music.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetChannelStackPointer\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55318\": \"000000c200000000\", \"55320\": \"00c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetChannelStackPointer\", \"mismatches\": {\"hl\": [49664, 0]}}\n",
+  "restored": "{\"fn\": \"GetChannelStackPointer\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55318\": \"000000c200000000\", \"55320\": \"00c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetChannelStackPointer",
+    "before": "\treturn read16((uint16_t)(wMusicChannelStackPointers_ADDR + (uint16_t)ch * 2u));",
+    "after": "\treturn read16((uint16_t)(wMusicChannelStackPointers_ADDR + (uint16_t)(ch + 1u) * 2u));",
+    "case_ids": [
+      "GetChannelStackPointer-1"
+    ],
+    "source": "src/profiles/extended/home/music.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "4a9d9d8083d06202c3451e0f08509423a80c0b8d27677abef6589e63e3904c26",
+    "case_sha256": "534cd65f6b236e7be6ea2cad8e77a03ec3b714375d3624ab861e261f45719e34",
+    "schema_sha256": "d5a23bd9beb2fe2e8d40ed365d5255f893e1a302db083538f8b58f6484c81ad8",
+    "mutation_sha256": "dfb1be0ee77d771b47ecaf31ec6b84ae44a61a0c38b803bc3d27d8710351f89c",
+    "source": "src/profiles/extended/home/music.c",
+    "source_symbol": "GetChannelStackPointer",
+    "case": "tests/profiles/extended/cases/music.py",
+    "fn": "GetChannelStackPointer",
+    "index": 1
+  }
+}

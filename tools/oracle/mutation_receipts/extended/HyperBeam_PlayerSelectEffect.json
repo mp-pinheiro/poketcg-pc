@@ -1,0 +1,32 @@
+{
+  "fn": "HyperBeam_PlayerSelectEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HyperBeam_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff00\", \"51899\": \"00\", \"65431\": \"c2\", \"65440\": \"ff\", \"65458\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HyperBeam_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"ff0000c2ff00\", \"native\": \"ff0000c20000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[50432, 2], [51899, 1], [65431, 1], [65440, 1], [65458, 1]]}}}\n",
+  "restored": "{\"fn\": \"HyperBeam_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff00\", \"51899\": \"00\", \"65431\": \"c2\", \"65440\": \"ff\", \"65458\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HyperBeam_PlayerSelectEffect",
+    "before": "hTemp_ffa0 = 0xffu;",
+    "after": "hTemp_ffa0 = 0x00u;",
+    "case_ids": [
+      "HyperBeam_PlayerSelectEffect-0",
+      "HyperBeam_PlayerSelectEffect-1",
+      "HyperBeam_PlayerSelectEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "874a5f9618eb8b7f24818e706c6500594b279165549a1c4763715bd14652d833",
+    "mutation_sha256": "db0a1ded3c0e8df5b61fb4aaa98b12e83aef1090f2c39ef8deeaba295e9ef894",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "HyperBeam_PlayerSelectEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "HyperBeam_PlayerSelectEffect",
+    "index": 1
+  }
+}

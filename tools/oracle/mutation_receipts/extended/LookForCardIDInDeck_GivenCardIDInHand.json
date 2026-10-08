@@ -1,0 +1,30 @@
+{
+  "fn": "LookForCardIDInDeck_GivenCardIDInHand",
+  "case": "tests/profiles/extended/cases/common.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LookForCardIDInDeck_GivenCardIDInHand\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 171, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardIDInDeck_GivenCardIDInHand\", \"mismatches\": {\"a\": [60, 61]}}\n",
+  "restored": "{\"fn\": \"LookForCardIDInDeck_GivenCardIDInHand\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 171, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LookForCardIDInDeck_GivenCardIDInHand",
+    "before": "\t\treturn (LookForCardIDInDeck_GivenCardIDInHandResult){r1.a, r1.f, 0u};",
+    "after": "\t\treturn (LookForCardIDInDeck_GivenCardIDInHandResult){(uint8_t)((r1.a) ^ 1u), r1.f, 0u};",
+    "case_ids": [
+      "LookForCardIDInDeck_GivenCardIDInHand-0"
+    ],
+    "source": "src/profiles/extended/home/common.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "95b282434e5e4e369eb36fcdc2613760962124b2124d0017d6b2e2395e5c4d5b",
+    "case_sha256": "2798dd2d32532395acc04b475fa91700dc0af6bcc95b89dee95466f908dfb654",
+    "schema_sha256": "13a11a68302d270b414ed1c73f5abb72932e54a1a2c3c3d4c670a0b18ef43687",
+    "mutation_sha256": "b83664012df0eee8e0332eab8424f021e5696c8bccc737904d85fc1839aa2739",
+    "source": "src/profiles/extended/home/common.c",
+    "source_symbol": "LookForCardIDInDeck_GivenCardIDInHand",
+    "case": "tests/profiles/extended/cases/common.py",
+    "fn": "LookForCardIDInDeck_GivenCardIDInHand",
+    "index": 0
+  }
+}

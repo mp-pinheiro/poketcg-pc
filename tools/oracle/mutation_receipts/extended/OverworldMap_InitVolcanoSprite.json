@@ -1,0 +1,30 @@
+{
+  "fn": "OverworldMap_InitVolcanoSprite",
+  "case": "tests/profiles/extended/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_InitVolcanoSprite\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"54461\": \"01008010002e294a4b514b29674b0d00\", \"54789\": \"01\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_InitVolcanoSprite\", \"mismatches\": {\"bus\": {\"address\": 54463, \"reference\": \"0101008010002e29\", \"native\": \"0101000080102e29\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[51892, 1], [54461, 16], [54789, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_InitVolcanoSprite\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"54461\": \"01008010002e294a4b514b29674b0d00\", \"54789\": \"01\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "OverworldMap_InitVolcanoSprite",
+    "before": "uint16_t coords = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);",
+    "after": "uint16_t coords = GetSpriteAnimBufferProperty((uint8_t)(SPRITE_ANIM_COORD_X + 1u));",
+    "case_ids": [
+      "OverworldMap_InitVolcanoSprite-0",
+      "OverworldMap_InitVolcanoSprite-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "d8abe037bdf286cbd276d4fe01835d79d07d4532eba88c89495fd67e017bbb66",
+    "case_sha256": "dd09e6932a80d5c41259529c7e2778608a0889b2acbe9eb869c8577a8aaa8fe3",
+    "schema_sha256": "41c77837df82b1d0f3f8ee82ec29057f7a2def74283d50786690bddc2e671e73",
+    "mutation_sha256": "ab6da3883987d6a1446772a5783762d751a9ab1bc9e8ab2a9b187544fc1bc8ad",
+    "source": "src/profiles/extended/home/overworld_map.c",
+    "source_symbol": "OverworldMap_InitVolcanoSprite",
+    "case": "tests/profiles/extended/cases/overworld_map.py",
+    "fn": "OverworldMap_InitVolcanoSprite",
+    "index": 0
+  }
+}

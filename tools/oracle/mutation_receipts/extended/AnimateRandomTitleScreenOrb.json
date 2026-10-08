@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AnimateRandomTitleScreenOrb\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54460\": \"00\", \"54818\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AnimateRandomTitleScreenOrb\", \"mismatches\": {\"a\": [1, 2]}}\n",
-  "restored": "{\"fn\": \"AnimateRandomTitleScreenOrb\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54460\": \"00\", \"54818\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AnimateRandomTitleScreenOrb\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54460\": \"00\", \"54818\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AnimateRandomTitleScreenOrb",
+    "before": "\t\treturn a;",
+    "after": "\t\treturn (uint8_t)(a + 1u);",
+    "case_ids": [
+      "AnimateRandomTitleScreenOrb-0"
+    ],
+    "source": "src/profiles/extended/home/intro_sequence_commands.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "b55f6afb0cd401100b513939b68f2a59a572d2e3f962792a30c47a5f5d831879",
+    "case_sha256": "136c6170783f0d15f06e9d6e5fd12e484dc8704cd85d3afad73fd210a62c3a0a",
+    "schema_sha256": "69bff1ec924670bcc1d0b145d7333f5d23d5139e8b37184d746333831eb82ed1",
+    "mutation_sha256": "1ba054dcd120b4cbf3ac69462058872f88df7320ab445308cfc4d83bd9252cc8",
+    "source": "src/profiles/extended/home/intro_sequence_commands.c",
+    "source_symbol": "AnimateRandomTitleScreenOrb",
+    "case": "tests/profiles/extended/cases/intro_sequence_commands.py",
+    "fn": "AnimateRandomTitleScreenOrb",
+    "index": 0
+  }
 }

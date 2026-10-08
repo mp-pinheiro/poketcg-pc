@@ -1,0 +1,31 @@
+{
+  "fn": "GetEventVar",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetEventVar\", \"registers\": {\"a\": 64, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 54272, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54208\": \"40\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetEventVar\", \"mismatches\": {\"a\": [64, 32], \"bus\": {\"address\": 54208, \"reference\": \"40\", \"native\": \"20\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[54208, 1]]}}}\n",
+  "restored": "{\"fn\": \"GetEventVar\", \"registers\": {\"a\": 64, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 54272, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54208\": \"40\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetEventVar",
+    "before": "uint16_t bc = (uint16_t)a * 2u;",
+    "after": "uint16_t bc = (uint16_t)a * 4u;",
+    "case_ids": [
+      "GetEventVar-1",
+      "GetEventVar-3",
+      "GetEventVar-4"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "0f13affb0faf8085682d1080d2e9592c00156c31ee7f48da095d3e84acb1829b",
+    "mutation_sha256": "5c3dc3c78ef3782db7c5552f2cb15db8221638f9674dfe497127ceeac7a8df4e",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "GetEventVar",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "GetEventVar",
+    "index": 1
+  }
+}

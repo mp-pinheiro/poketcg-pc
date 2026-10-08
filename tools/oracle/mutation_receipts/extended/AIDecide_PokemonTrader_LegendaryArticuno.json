@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AIDecide_PokemonTrader_LegendaryArticuno\", \"registers\": {\"a\": 10, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49674\": \"010100\", \"49730\": \"0a0b\", \"49851\": \"ff\", \"49902\": \"02\", \"50196\": \"b800b8004b00\", \"50432\": \"0b0aff0000000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_PokemonTrader_LegendaryArticuno\", \"mismatches\": {\"a\": [10, 255], \"f\": [16, 0]}}\n",
-  "restored": "{\"fn\": \"AIDecide_PokemonTrader_LegendaryArticuno\", \"registers\": {\"a\": 10, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49674\": \"010100\", \"49730\": \"0a0b\", \"49851\": \"ff\", \"49902\": \"02\", \"50196\": \"b800b8004b00\", \"50432\": \"0b0aff0000000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AIDecide_PokemonTrader_LegendaryArticuno\", \"registers\": {\"a\": 10, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49674\": \"010100\", \"49730\": \"0a0b\", \"49851\": \"ff\", \"49902\": \"02\", \"50196\": \"b800b8004b00\", \"50432\": \"0b0aff0000000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AIDecide_PokemonTrader_LegendaryArticuno",
+    "before": "\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(CHANSEY);",
+    "after": "\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DITTO);",
+    "case_ids": [
+      "AIDecide_PokemonTrader_LegendaryArticuno-1"
+    ],
+    "source": "src/profiles/extended/home/trainer_cards.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3badf508a4e599b2f2e67f7bf0d243f331f6a88af0963a2cb4682c2c7e1a1bf7",
+    "case_sha256": "5e43a5ddd8e45cb4c6da392394b7929204077f7ef553d8ea6f0c3653d65ad921",
+    "schema_sha256": "ca3ccf0200fcc982b155717d2db65c72b9108e80c7fc481a19eebf526c9bfae4",
+    "mutation_sha256": "69979775ff560f25c33e3cf52ebd0447d406f4cf4e5ffc1b1569fd5aaaa170de",
+    "source": "src/profiles/extended/home/trainer_cards.c",
+    "source_symbol": "AIDecide_PokemonTrader_LegendaryArticuno",
+    "case": "tests/profiles/extended/cases/trainer_cards.py",
+    "fn": "AIDecide_PokemonTrader_LegendaryArticuno",
+    "index": 1
+  }
 }

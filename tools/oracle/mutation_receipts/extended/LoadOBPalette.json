@@ -1,0 +1,30 @@
+{
+  "fn": "LoadOBPalette",
+  "case": "tests/profiles/extended/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadOBPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52016\": \"9c6394420821000000001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c03\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadOBPalette\", \"mismatches\": {\"bus\": {\"address\": 52016, \"reference\": \"9c63944208\", \"native\": \"0000000000\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[52016, 64], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadOBPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52016\": \"9c6394420821000000001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c0300001c009c019c03\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadOBPalette",
+    "before": "\tuint8_t count = gb_read8(wLoadedPalData_ADDR);",
+    "after": "\tuint8_t count = (uint8_t)(gb_read8(wLoadedPalData_ADDR) + 1u);",
+    "case_ids": [
+      "LoadOBPalette-0"
+    ],
+    "source": "src/profiles/extended/home/load_gfx.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "816567d699d17fd03c643ea7967567c6350191cfa5c0ff88c4796f225881ff73",
+    "case_sha256": "09db4865b2a0b218dfd2d00e606efeeeba98a69ed2fa004e2260e31afd252252",
+    "schema_sha256": "d83198f519c8faaf0e03ef855ea7be651476a03c16aaf6b70eef8e59e9253e1f",
+    "mutation_sha256": "6de6d74bcc514bea4b688be601122526a02d8cb0504c2556123d907c09f436ea",
+    "source": "src/profiles/extended/home/load_gfx.c",
+    "source_symbol": "LoadOBPalette",
+    "case": "tests/profiles/extended/cases/load_gfx.py",
+    "fn": "LoadOBPalette",
+    "index": 0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "fn": "LoadSelectedCardGfx",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadSelectedCardGfx\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"35328\": \"ffff80ff80ff80ff80ff80ff80ff80ff81fe83fc87f887f887f88ff08ff08ff09ee08ff08ef08ff09ee08ff09ee08ff09ae0bdc09ae09de09ae0bdc0bec0bdc09ae0bdc09ae094e09ae0b4c0aac090c09ee0bfc0bcc0fd80bac0f980bac0ffffffff00ff01fe2bd457a8af505fa0bf4081fe02fd05fa0bf457a82fd05fa0be405da0be407d80ba407c80ba407c80ba407480b8407480b8407480b8407080b8407080e000c000c000800080000000000028005400aa005500aa007500eb00ffffffff2ad555aafe00f8005400a8004000fd00ea00d400a9005201a106420d051a023d053a037d077b077f0fff0fff1eff1fff3fff3fff3fff38ff3f7f1f7f1f7f0f3f073f031f000f00070003000100000000000083004e00bf007f00ff00fffffffff300f500f300e500eb004600aa0040000f007f007f80bf407e81bb476f9fff3f7fffc7fff7fafbfcfdfefdfe1bfdc3fcf2fdf9fff9ff73ff12ff80ffc0ffe3fff7fff7fff7ff1fff1eff1eff0e7f000f00004000a8005500aa00ff00ffffffff97008b0017002b0015002a0005000000f000fe00ef1cbd7efdfefeffffdffebfbd7efd7ec873fe0fbf7fffffdae1ef1f7fffffffffffffff3dc36e9ffffffffffffffffffffff8ff00ff00ff00fe00f0000001000a005500aa00ff00ffffffff54abaa557f001f002a0015000200af0057002b009500ca00e5005200a90014800c0056008e4016e0cfe0ffe07fe0fff0fff0fff0fff8fff8fef87ef8f6f8fcf0f4e8e8d050a0a14002c005800a0015002b005700af007f00ff00ff00ffffffff00ff807fd42bea15f50afa05fd027e01bf005f002f0015000b0005000a00be017d02ba055d023e015d023a055d021e011d020e010700070003000100010040002000d000a8005400a8005400ba00fd00fe00fd00fe00ff00fe00ff00ffffffff01ff01ff01ff01ff01ff01ff01ff817fc13fe11fe11fe11ff10ff10ff10f7907f10f710ff10f7907f10f7907f10f5907bd035907b9075907bd035d033d03e917f50b7907750b39073d0339071d031d031f011d039f015d039f013d03ffff\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadSelectedCardGfx\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"LoadSelectedCardGfx\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"35328\": \"ffff80ff80ff80ff80ff80ff80ff80ff81fe83fc87f887f887f88ff08ff08ff09ee08ff08ef08ff09ee08ff09ee08ff09ae0bdc09ae09de09ae0bdc0bec0bdc09ae0bdc09ae094e09ae0b4c0aac090c09ee0bfc0bcc0fd80bac0f980bac0ffffffff00ff01fe2bd457a8af505fa0bf4081fe02fd05fa0bf457a82fd05fa0be405da0be407d80ba407c80ba407c80ba407480b8407480b8407480b8407080b8407080e000c000c000800080000000000028005400aa005500aa007500eb00ffffffff2ad555aafe00f8005400a8004000fd00ea00d400a9005201a106420d051a023d053a037d077b077f0fff0fff1eff1fff3fff3fff3fff38ff3f7f1f7f1f7f0f3f073f031f000f00070003000100000000000083004e00bf007f00ff00fffffffff300f500f300e500eb004600aa0040000f007f007f80bf407e81bb476f9fff3f7fffc7fff7fafbfcfdfefdfe1bfdc3fcf2fdf9fff9ff73ff12ff80ffc0ffe3fff7fff7fff7ff1fff1eff1eff0e7f000f00004000a8005500aa00ff00ffffffff97008b0017002b0015002a0005000000f000fe00ef1cbd7efdfefeffffdffebfbd7efd7ec873fe0fbf7fffffdae1ef1f7fffffffffffffff3dc36e9ffffffffffffffffffffff8ff00ff00ff00fe00f0000001000a005500aa00ff00ffffffff54abaa557f001f002a0015000200af0057002b009500ca00e5005200a90014800c0056008e4016e0cfe0ffe07fe0fff0fff0fff0fff8fff8fef87ef8f6f8fcf0f4e8e8d050a0a14002c005800a0015002b005700af007f00ff00ff00ffffffff00ff807fd42bea15f50afa05fd027e01bf005f002f0015000b0005000a00be017d02ba055d023e015d023a055d021e011d020e010700070003000100010040002000d000a8005400a8005400ba00fd00fe00fd00fe00ff00fe00ff00ffffffff01ff01ff01ff01ff01ff01ff01ff817fc13fe11fe11fe11ff10ff10ff10f7907f10f710ff10f7907f10f7907f10f5907bd035907b9075907bd035d033d03e917f50b7907750b39073d0339071d031d031f011d039f015d039f013d03ffff\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadSelectedCardGfx",
+    "before": "LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x200u));",
+    "after": "LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x201u));",
+    "case_ids": [
+      "LoadSelectedCardGfx-0",
+      "LoadSelectedCardGfx-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "571b70334a4c93720c8a99355f3ff777aa05da0a857be3ab93b86bedbe4ec4c8",
+    "mutation_sha256": "b953d0612fd1d4ab9ce5cb99cfaa09850d90f9a6ae9815288e2a8d5052bdcd51",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "LoadSelectedCardGfx",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "LoadSelectedCardGfx",
+    "index": 0
+  }
+}

@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"BoyfriendsEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00010203ff\", \"50176\": \"1910191910\", \"52324\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"BoyfriendsEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"1019191000c2\", \"native\": \"1019191001c2\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49851, 5], [50176, 5], [52324, 1], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"BoyfriendsEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00010203ff\", \"50176\": \"1910191910\", \"52324\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"BoyfriendsEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00010203ff\", \"50176\": \"1910191910\", \"52324\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "BoyfriendsEffect",
+    "before": "AddToDamage(ATimes10((uint8_t)(c << 1)));",
+    "after": "AddToDamage(ATimes10((uint8_t)(c << 1)) + 1u);",
+    "case_ids": [
+      "BoyfriendsEffect-0",
+      "BoyfriendsEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "f54c57a8700691fa005e7e55038a3ba2a700f00343fa54c6acb2828d80800a08",
+    "mutation_sha256": "760c56f8e1a4d21d0b1c7abd18e5dd296fc1ec24e216d750b39988d144af3bd5",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "BoyfriendsEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "BoyfriendsEffect",
+    "index": 0
+  }
 }

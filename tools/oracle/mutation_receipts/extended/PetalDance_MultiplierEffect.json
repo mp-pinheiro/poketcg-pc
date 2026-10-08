@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"PetalDance_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"020002\", \"52147\": \"00\", \"52324\": \"50005050\", \"52348\": \"c3f0010000000000\", \"52514\": \"03020003\", \"52745\": \"2800\", \"52756\": \"0000\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"PetalDance_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52745, \"reference\": \"0302000328000000c3\", \"native\": \"0302000340000000c3\", \"reference_size\": 28, \"native_size\": 28, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 4], [52348, 8], [52514, 4], [52745, 2], [52756, 2], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"PetalDance_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"020002\", \"52147\": \"00\", \"52324\": \"50005050\", \"52348\": \"c3f0010000000000\", \"52514\": \"03020003\", \"52745\": \"2800\", \"52756\": \"0000\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"PetalDance_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"020002\", \"52147\": \"00\", \"52324\": \"50005050\", \"52348\": \"c3f0010000000000\", \"52514\": \"03020003\", \"52745\": \"2800\", \"52756\": \"0000\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PetalDance_MultiplierEffect",
+    "before": "void PetalDance_MultiplierEffect(void)\n{\n\tLoadTxRam3(40u);",
+    "after": "void PetalDance_MultiplierEffect(void)\n{\n\tLoadTxRam3(0x40u);",
+    "case_ids": [
+      "PetalDance_MultiplierEffect-0",
+      "PetalDance_MultiplierEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "bbf13aa08795dfd85e1f0eb83b870d7ebf510e16463dbfb068f5df49cf71e9ef",
+    "mutation_sha256": "a48ed1e4082cbc8ca439d7b61bbd5a6bb854c29875235f49d1c2f064b24dcf4c",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "PetalDance_MultiplierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "PetalDance_MultiplierEffect",
+    "index": 0
+  }
 }

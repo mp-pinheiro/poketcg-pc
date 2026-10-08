@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Peek_OncePerTurnCheck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 184, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Peek_OncePerTurnCheck\", \"mismatches\": {\"f\": [128, 16], \"hl\": [184, 174]}}\n",
-  "restored": "{\"fn\": \"Peek_OncePerTurnCheck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 184, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Peek_OncePerTurnCheck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 184, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"50108\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Peek_OncePerTurnCheck",
+    "before": "if (flags.a & USED_PKMN_POWER_THIS_TURN)",
+    "after": "if (!(flags.a & USED_PKMN_POWER_THIS_TURN))",
+    "case_ids": [
+      "Peek_OncePerTurnCheck-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "cb48d4756706ef2d2bd641ab1ab06f1a4fa2509a3afa93a459012b56973d3a7c",
+    "mutation_sha256": "6238dff891c65585ecbb5bb93d843217ec4544ccc1edbca0d504892f05b4149c",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Peek_OncePerTurnCheck",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Peek_OncePerTurnCheck",
+    "index": 0
+  }
 }

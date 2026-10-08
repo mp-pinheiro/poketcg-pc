@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"WithdrawEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"1000\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"4f00000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"WithdrawEffect\", \"mismatches\": {\"bus\": {\"address\": 49895, \"reference\": \"001000000080\", \"native\": \"000f00000080\", \"reference_size\": 24, \"native_size\": 24, \"spans\": [[49383, 1], [49895, 2], [49905, 1], [49910, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52323, 5], [52379, 1], [52514, 4], [52756, 2], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"WithdrawEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"1000\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"4f00000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"WithdrawEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"1000\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"4f00000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "WithdrawEffect",
+    "before": "ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_WITHDRAW);",
+    "after": "ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_STIFFEN);",
+    "case_ids": [
+      "WithdrawEffect-0",
+      "WithdrawEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "ed63ab26c74aa2090030ad1ec5695283dfb75d20d55d9106ea86d91d6ed21363",
+    "mutation_sha256": "7fdb67bfd9f3b935a07f712fe612188d8466bd7c5c2168dd561a8f268878491e",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "WithdrawEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "WithdrawEffect",
+    "index": 0
+  }
 }

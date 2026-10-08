@@ -1,9 +1,34 @@
 {
   "fn": "GetMapScriptPointer",
   "case": "tests/profiles/extended/cases/script.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"GetMapScriptPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54044\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"GetMapScriptPointer\", \"registers\": {\"a\": 39, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54044\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"GetMapScriptPointer\", \"mismatches\": {\"f\": [128, 16]}}\n",
-  "restored": "{\"fn\": \"GetMapScriptPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54044\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"GetMapScriptPointer\", \"registers\": {\"a\": 39, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54044\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetMapScriptPointer",
+    "before": "uint8_t f = found == 0u ? 0x80u : 0x10u;",
+    "after": "uint8_t f = found == 0u ? 0x10u : 0x80u;",
+    "case_ids": [
+      "GetMapScriptPointer-2",
+      "GetMapScriptPointer-0",
+      "GetMapScriptPointer-1",
+      "GetMapScriptPointer-3",
+      "GetMapScriptPointer-4"
+    ],
+    "source": "src/profiles/extended/home/script.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef1bcdb48e01772d7e313c69019555977ba81523be88d656bd87784682b76c71",
+    "case_sha256": "b5de8465d520214b3350dbee5712400fcbec3a657612f86e9ef6c763b22e00cd",
+    "schema_sha256": "e3231468ed758584c1e3d5ff846e196e3e7b0c897c5ee73154a60e3ee1f99601",
+    "mutation_sha256": "8b92b33ed5b39dd630cd5c1678d6cceb3629d99daf2b3f89efca731977bfe0a6",
+    "source": "src/profiles/extended/home/script.c",
+    "source_symbol": "GetMapScriptPointer",
+    "case": "tests/profiles/extended/cases/script.py",
+    "fn": "GetMapScriptPointer",
+    "index": 2
+  }
 }

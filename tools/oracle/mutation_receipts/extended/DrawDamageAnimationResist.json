@@ -1,0 +1,30 @@
+{
+  "fn": "DrawDamageAnimationResist",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawDamageAnimationResist\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54436\": \"0417\", \"54437\": \"17\", \"65408\": \"07\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawDamageAnimationResist\", \"mismatches\": {\"bus\": {\"address\": 54437, \"reference\": \"041707\", \"native\": \"041807\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54436, 2], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawDamageAnimationResist\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54436\": \"0417\", \"54437\": \"17\", \"65408\": \"07\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawDamageAnimationResist",
+    "before": "wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 18u);",
+    "after": "wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 19u);",
+    "case_ids": [
+      "DrawDamageAnimationResist-0",
+      "DrawDamageAnimationResist-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "7445c5edd077599ab934ce1a2ef612980ff36044359f94bc4b814451e4494d7f",
+    "mutation_sha256": "8a6c7cca47c227e6da3c7000b5b2f5dd6235e747168c74ca21012b6cf45833c2",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "DrawDamageAnimationResist",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "DrawDamageAnimationResist",
+    "index": 0
+  }
+}

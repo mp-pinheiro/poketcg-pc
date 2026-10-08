@@ -1,0 +1,32 @@
+{
+  "fn": "ScriptCommand_RemoveAllEnergyCardsFromCollection",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_RemoveAllEnergyCardsFromCollection\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 8, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41216\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"11c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_RemoveAllEnergyCardsFromCollection\", \"mismatches\": {\"sram\": {\"byte\": 1, \"reference\": \"000000000000\", \"native\": \"000100000000\"}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_RemoveAllEnergyCardsFromCollection\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 8, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41216\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"11c5\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_RemoveAllEnergyCardsFromCollection",
+    "before": "\tuint16_t card = GRASS_ENERGY;",
+    "after": "\tuint16_t card = FIRE_ENERGY;",
+    "case_ids": [
+      "ScriptCommand_RemoveAllEnergyCardsFromCollection-1",
+      "ScriptCommand_RemoveAllEnergyCardsFromCollection-2",
+      "ScriptCommand_RemoveAllEnergyCardsFromCollection-3"
+    ],
+    "source": "src/profiles/extended/home/scripting.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "2f42f482419dbf421c7cfaad40ec6a51eaaf5c6cd6786694fffeb1034a51b723",
+    "mutation_sha256": "f7152f8d01fd4c24be77f3c4813526f5f0dc8f91d34eb6d5a95574ed4bc57ea2",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_RemoveAllEnergyCardsFromCollection",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_RemoveAllEnergyCardsFromCollection",
+    "index": 1
+  }
+}

@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DragoniteLv41Slam_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"3c\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DragoniteLv41Slam_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"3c\", \"native\": \"5a\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52324, 1]]}}}\n",
-  "restored": "{\"fn\": \"DragoniteLv41Slam_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"3c\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DragoniteLv41Slam_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"3c\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DragoniteLv41Slam_MultiplierEffect",
+    "before": "void DragoniteLv41Slam_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);",
+    "after": "void DragoniteLv41Slam_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimesResult result = TossCoinATimes(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);",
+    "case_ids": [
+      "DragoniteLv41Slam_MultiplierEffect-0",
+      "DragoniteLv41Slam_MultiplierEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "76b5165e9d7544ca50cd44c2bef83861ce247398c4ff1935bd772d6eaf95f67d",
+    "mutation_sha256": "9155b3d770efc3ddc69f7f45916410fffeed218bb99e793def4e44c561e3405a",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "DragoniteLv41Slam_MultiplierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "DragoniteLv41Slam_MultiplierEffect",
+    "index": 0
+  }
 }

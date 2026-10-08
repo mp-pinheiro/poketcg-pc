@@ -1,0 +1,29 @@
+{
+  "fn": "_ExecuteGameEvent",
+  "case": "tests/profiles/extended/cases/map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_ExecuteGameEvent\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53410\": \"00\", \"53502\": \"55\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_ExecuteGameEvent\", \"mismatches\": {\"f\": [16, 240], \"bus\": {\"address\": 53502, \"reference\": \"0055\", \"native\": \"0006\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53410, 1], [53502, 1]]}}}\n",
+  "restored": "{\"fn\": \"_ExecuteGameEvent\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53410\": \"00\", \"53502\": \"55\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "_ExecuteGameEvent",
+    "before": "uint8_t _ExecuteGameEvent(void)\n{\n\tuint8_t event = wGameEvent;",
+    "after": "uint8_t _ExecuteGameEvent(void)\n{\n\tuint8_t event = 7u;",
+    "case_ids": [
+      "_ExecuteGameEvent-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "be93af9b06f88dd4fa6924c642d05cf39088ae3048701721a11afd3dc08f01c4",
+    "case_sha256": "9ba4ea960193a486ad25492259dff57255e70e35a182346d81609c34d4d363eb",
+    "schema_sha256": "30b8d248f21c6785ea328fad3f981ddfd1f2b111389217c94cd5e5c46b0aa599",
+    "mutation_sha256": "275d473ae1a3686885dd724379baf18ba4f6aed25357a881eb4329cece24af67",
+    "source": "src/profiles/extended/home/map.c",
+    "source_symbol": "_ExecuteGameEvent",
+    "case": "tests/profiles/extended/cases/map.py",
+    "fn": "_ExecuteGameEvent",
+    "index": 0
+  }
+}

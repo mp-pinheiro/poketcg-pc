@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DevolutionBeam_DevolveEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51906\": \"00\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DevolutionBeam_DevolveEffect\", \"mismatches\": {\"bus\": {\"address\": 51906, \"reference\": \"00ff\", \"native\": \"01ff\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51906, 1], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"DevolutionBeam_DevolveEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51906\": \"00\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DevolutionBeam_DevolveEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51906\": \"00\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DevolutionBeam_DevolveEffect",
+    "before": "void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e)\n{\n\tuint8_t target = hTemp_ffa0;\n\tif (target == 0xffu) {\n\t\treturn;\n\t}",
+    "after": "void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e)\n{\n\tuint8_t target = hTemp_ffa0;\n\tif (target == 0xffu) {\n\t\twDuelDisplayedScreen = 1u;\n\t\treturn;\n\t}",
+    "case_ids": [
+      "DevolutionBeam_DevolveEffect-0",
+      "DevolutionBeam_DevolveEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "4ddfad632fb848c35ee07f22b161d1207ac99b7d88cd28eb39874de1401aa365",
+    "mutation_sha256": "62ce95082c08a4842b9f457bbdbb511b65d17c8538d90f8c0f45911479877a2a",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "DevolutionBeam_DevolveEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "DevolutionBeam_DevolveEffect",
+    "index": 0
+  }
 }

@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Rage_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"05\", \"50176\": \"01\", \"52324\": \"c100c1c1\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Rage_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"000501c100c1c1c2\", \"native\": \"00050101000101c2\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49851, 1], [49864, 1], [50176, 1], [52324, 4], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"Rage_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"05\", \"50176\": \"01\", \"52324\": \"c100c1c1\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Rage_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"05\", \"50176\": \"01\", \"52324\": \"c100c1c1\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Rage_AIEffect",
+    "before": "Rage_DamageBoostEffect();\n\tSetDefiniteAIDamage();",
+    "after": "Rage_DamageBoostEffect();\n\tSetDefiniteDamage(1u);",
+    "case_ids": [
+      "Rage_AIEffect-0",
+      "Rage_AIEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "45aa58b9203b73f7ee03fbe13c8cb894fdb8a7e5e0018e0734f9f80fe26172bc",
+    "mutation_sha256": "c4255819b8c8eb4da77312a7c7394665d0032fa810b246b65af009832bb4bc14",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Rage_AIEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Rage_AIEffect",
+    "index": 0
+  }
 }

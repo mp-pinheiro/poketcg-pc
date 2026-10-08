@@ -1,0 +1,30 @@
+{
+  "fn": "PokeBall_PlayerSelection",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PokeBall_PlayerSelection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"49905\": \"00\", \"51899\": \"80\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01000001\", \"52756\": \"0000\", \"65432\": \"01\", \"65440\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PokeBall_PlayerSelection\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"010000010000\", \"native\": \"010000010100\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[49850, 1], [49905, 1], [51899, 1], [51914, 3], [52147, 1], [52514, 4], [52756, 2], [65432, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"PokeBall_PlayerSelection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"49905\": \"00\", \"51899\": \"80\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01000001\", \"52756\": \"0000\", \"65432\": \"01\", \"65440\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PokeBall_PlayerSelection",
+    "before": "PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)\n{\n\tTossCoinATimesResult toss = TossCoinATimes(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);\n\thTempList = toss.a;",
+    "after": "PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)\n{\n\tTossCoinATimesResult toss = TossCoinATimes(1u, 0u, 0u, 0u, 0u, TrainerCardSuccessCheckText, 0u);\n\thTempList = (uint8_t)(toss.a ^ 1u);",
+    "case_ids": [
+      "PokeBall_PlayerSelection-0"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "c1d2a27bbd96f034d7c5dec0e9331fb11ba0c8a805c348e59491387a30dd860b",
+    "mutation_sha256": "d4c202157f06fcd0b8b468820892aab2bf4f3aaa457027f944acf0f1eedfdaa8",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "PokeBall_PlayerSelection",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "PokeBall_PlayerSelection",
+    "index": 0
+  }
+}

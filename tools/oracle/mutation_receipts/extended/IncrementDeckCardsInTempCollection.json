@@ -1,0 +1,32 @@
+{
+  "fn": "IncrementDeckCardsInTempCollection",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"IncrementDeckCardsInTempCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49153\": \"0101\", \"49664\": \"01020100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"IncrementDeckCardsInTempCollection\", \"mismatches\": {\"bus\": {\"address\": 49153, \"reference\": \"0101010201\", \"native\": \"3901010201\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49153, 2], [49664, 4]]}}}\n",
+  "restored": "{\"fn\": \"IncrementDeckCardsInTempCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49153\": \"0101\", \"49664\": \"01020100\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "IncrementDeckCardsInTempCollection",
+    "before": "uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + id);",
+    "after": "uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + id + 1u);",
+    "case_ids": [
+      "IncrementDeckCardsInTempCollection-0",
+      "IncrementDeckCardsInTempCollection-1",
+      "IncrementDeckCardsInTempCollection-2"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "d852c05b253258faa383f2e3072ba6865d466ef0638d73e4dfb421e213b322ae",
+    "mutation_sha256": "2d887f29d655275c4f9e32ce5ffc41cd9f4ed2e023b2cd2073011b016896c92e",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "IncrementDeckCardsInTempCollection",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "IncrementDeckCardsInTempCollection",
+    "index": 0
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "fn": "ScriptCommand_PickNextMan1RequestedCard",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_PickNextMan1RequestedCard\", \"registers\": {\"a\": 197, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"d42f43\", \"54217\": \"2b1f\", \"54274\": \"01c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_PickNextMan1RequestedCard\", \"mismatches\": {\"bus\": {\"address\": 51914, \"reference\": \"d42f432b1f\", \"native\": \"ccfe3d810f\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51914, 3], [54217, 2], [54274, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_PickNextMan1RequestedCard\", \"registers\": {\"a\": 197, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"d42f43\", \"54217\": \"2b1f\", \"54274\": \"01c5\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_PickNextMan1RequestedCard",
+    "before": "\t} while ((mask & flags) != 0u);",
+    "after": "\t} while (0);",
+    "case_ids": [
+      "ScriptCommand_PickNextMan1RequestedCard-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "201249d806659bc924282214d73ebd3e9bc49410203e8916c1d529c679a1b126",
+    "mutation_sha256": "e8fc0b84734599be8185cacb96a6f7d72b7305d26138f00d50cc8121c4281d8a",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_PickNextMan1RequestedCard",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_PickNextMan1RequestedCard",
+    "index": 1
+  }
+}

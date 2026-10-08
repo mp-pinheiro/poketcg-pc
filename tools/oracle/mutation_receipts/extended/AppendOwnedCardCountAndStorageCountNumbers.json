@@ -1,0 +1,31 @@
+{
+  "fn": "AppendOwnedCardCountAndStorageCountNumbers",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AppendOwnedCardCountAndStorageCountNumbers\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 99, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"414205000520052e05000520\", \"52875\": \"01020300\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AppendOwnedCardCountAndStorageCountNumbers\", \"mismatches\": {\"bus\": {\"address\": 50423, \"reference\": \"000520052e05000520\", \"native\": \"000520050505000520\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[50416, 12], [52875, 4]]}}}\n",
+  "restored": "{\"fn\": \"AppendOwnedCardCountAndStorageCountNumbers\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 99, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"414205000520052e05000520\", \"52875\": \"01020300\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AppendOwnedCardCountAndStorageCountNumbers",
+    "before": "gb_write8(walk++, SYM_SLASH);",
+    "after": "gb_write8(walk++, TX_SYMBOL);",
+    "case_ids": [
+      "AppendOwnedCardCountAndStorageCountNumbers-0",
+      "AppendOwnedCardCountAndStorageCountNumbers-1"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "140386b8d438cc9d04894bbee5670fc1286c3307dea57b92ca22ef2b95825fbf",
+    "mutation_sha256": "d51535b763ac5f9fde0a71fce8dfcc13817ecedec6ee2039394ac2f39a833e14",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "AppendOwnedCardCountAndStorageCountNumbers",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "AppendOwnedCardCountAndStorageCountNumbers",
+    "index": 0
+  }
+}

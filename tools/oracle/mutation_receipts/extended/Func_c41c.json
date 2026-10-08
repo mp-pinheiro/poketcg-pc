@@ -1,0 +1,31 @@
+{
+  "fn": "Func_c41c",
+  "case": "tests/profiles/extended/cases/overworld.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c41c\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53794\": \"50601010\", \"53796\": \"1010\", \"54047\": \"90a0\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c41c\", \"mismatches\": {\"bus\": {\"address\": 53794, \"reference\": \"5060101090\", \"native\": \"0060101090\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[53794, 4], [54047, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_c41c\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53794\": \"50601010\", \"53796\": \"1010\", \"54047\": \"90a0\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Func_c41c",
+    "before": "wSCXBuffer = (uint8_t)(wPlayerXCoordPixels - 0x40u);",
+    "after": "wSCXBuffer = (uint8_t)(wPlayerXCoordPixels + 0x40u);",
+    "case_ids": [
+      "Func_c41c-1",
+      "Func_c41c-2",
+      "Func_c41c-3"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "4135fef9f8fa19c4ec0b073e0d1f7ac4bb7a7393ddccffe46c53d48f664b278c",
+    "case_sha256": "adc0037e39c0eeedfa9fe76181048e81a053df4b5b1c76b75752bfddf6d4071c",
+    "schema_sha256": "9e1fa1e626adb42da0f16def156c0c6422cc26f9a3843dcd7d577e694e6269bd",
+    "mutation_sha256": "f69ca6719174c24add8192e83ca2f2453c7e4fe39d70f3f74d144e9c9bdc513c",
+    "source": "src/profiles/extended/home/overworld.c",
+    "source_symbol": "Func_c41c",
+    "case": "tests/profiles/extended/cases/overworld.py",
+    "fn": "Func_c41c",
+    "index": 1
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "fn": "GustOfWind_SwitchEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GustOfWind_SwitchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51906\": \"00\", \"52793\": \"0000\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GustOfWind_SwitchEffect\", \"mismatches\": {\"bus\": {\"address\": 51906, \"reference\": \"8000000080\", \"native\": \"8001000080\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51899, 1], [51906, 1], [52793, 2], [65344, 1]]}}}\n",
+  "restored": "{\"fn\": \"GustOfWind_SwitchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51906\": \"00\", \"52793\": \"0000\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GustOfWind_SwitchEffect",
+    "before": "\tgb_write8(wDuelDisplayedScreen_ADDR, 0u);",
+    "after": "\tgb_write8(wDuelDisplayedScreen_ADDR, (uint8_t)((0u) ^ 1u));",
+    "case_ids": [
+      "GustOfWind_SwitchEffect-0"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "9314517cff0350c9c0ad1d475188b8185273d89b08803488993d9aa8fadadf1f",
+    "mutation_sha256": "16edff2c053011dcb0d1ead5ca22b4422b0326563028f7f1a8fffeb62c60ccfc",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "GustOfWind_SwitchEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "GustOfWind_SwitchEffect",
+    "index": 0
+  }
+}

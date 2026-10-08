@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"GrowlEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50166, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50152\": \"12\", \"50166\": \"12\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"GrowlEffect\", \"mismatches\": {\"bus\": {\"address\": 50152, \"reference\": \"1212c2\", \"native\": \"0101c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50152, 1], [50166, 1], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"GrowlEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50166, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50152\": \"12\", \"50166\": \"12\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"GrowlEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50166, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50152\": \"12\", \"50166\": \"12\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GrowlEffect",
+    "before": "SUBSTATUS2_GROWL",
+    "after": "SUBSTATUS2_SMOKESCREEN",
+    "case_ids": [
+      "GrowlEffect-0",
+      "GrowlEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "3180470d82a0b0f03d61cff15befcc1a325c96043fb3b5899df027cb0f0e740a",
+    "mutation_sha256": "a22760c24ad859a38df69e180a94ec2625db48a2eabea1eb4ccbc8777eaf6e82",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "GrowlEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "GrowlEffect",
+    "index": 0
+  }
 }

@@ -1,0 +1,30 @@
+{
+  "fn": "Func_c943",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c943\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54044\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c943\", \"mismatches\": {\"hl\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"Func_c943\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54044\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Func_c943",
+    "before": "\treturn (Func_c943Result){post.a, post.f, saved_b, saved_c, saved_d, saved_e, saved_hl};",
+    "after": "\treturn (Func_c943Result){post.a, post.f, saved_b, saved_c, saved_d, saved_e, (uint16_t)(saved_hl + 1u)};",
+    "case_ids": [
+      "Func_c943-0",
+      "Func_c943-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "9dd57da111e4ac41d6d99edb04d403ec006e8881389bf9b8be955d9aa2bf616a",
+    "mutation_sha256": "34163120037e1570c626341ed162c9cc4a01187a124646d2265562d68d7acce8",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "Func_c943",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "Func_c943",
+    "index": 0
+  }
+}

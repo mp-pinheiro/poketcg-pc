@@ -1,0 +1,30 @@
+{
+  "fn": "LoadOWMapForCreditsSequence",
+  "case": "tests/profiles/extended/cases/credits_sequence_commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadOWMapForCreditsSequence\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54044\": \"00\", \"54455\": \"0000\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadOWMapForCreditsSequence\", \"mismatches\": {\"bus\": {\"address\": 65426, \"reference\": \"0000000000\", \"native\": \"0000000100\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[54044, 1], [54455, 2], [65426, 2]]}}}\n",
+  "restored": "{\"fn\": \"LoadOWMapForCreditsSequence\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54044\": \"00\", \"54455\": \"0000\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadOWMapForCreditsSequence",
+    "before": "void LoadOWMapForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\t(void)d;\n\tEmptyScreen();\n\thSCX = c;",
+    "after": "void LoadOWMapForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\t(void)d;\n\tEmptyScreen();\n\thSCX = (uint8_t)(c + 1u);",
+    "case_ids": [
+      "LoadOWMapForCreditsSequence-0",
+      "LoadOWMapForCreditsSequence-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "0e1cdf065a5903ca532712de827f6bb85ae98c0a90972e847558007e3a40ae1d",
+    "case_sha256": "ccadc2169d077716bd3dc07b27888b290630d13dd96c65eb49b5b505d42cfc38",
+    "schema_sha256": "79a2db0a159f84c8b3411df855a2eb0f2284c54637a5304ffe0d17935f9e4575",
+    "mutation_sha256": "6839a6fa79127196160e13c43e6858e223734e466504a06cc939ee7477a02d76",
+    "source": "src/profiles/extended/home/credits_sequence_commands.c",
+    "source_symbol": "LoadOWMapForCreditsSequence",
+    "case": "tests/profiles/extended/cases/credits_sequence_commands.py",
+    "fn": "LoadOWMapForCreditsSequence",
+    "index": 0
+  }
+}

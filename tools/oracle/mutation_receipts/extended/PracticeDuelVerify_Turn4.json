@@ -5,5 +5,29 @@
   "status": "RED",
   "baseline": "{\"fn\": \"PracticeDuelVerify_Turn4\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"12\", \"49903\": \"03\", \"50176\": \"03\", \"52333\": \"54\", \"52340\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"PracticeDuelVerify_Turn4\", \"mismatches\": {\"f\": [192, 16]}}\n",
-  "restored": "{\"fn\": \"PracticeDuelVerify_Turn4\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"12\", \"49903\": \"03\", \"50176\": \"03\", \"52333\": \"54\", \"52340\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"PracticeDuelVerify_Turn4\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"12\", \"49903\": \"03\", \"50176\": \"03\", \"52333\": \"54\", \"52340\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PracticeDuelVerify_Turn4",
+    "before": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) != 3u)",
+    "after": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) == 3u)",
+    "case_ids": [
+      "PracticeDuelVerify_Turn4-0",
+      "PracticeDuelVerify_Turn4-1",
+      "PracticeDuelVerify_Turn4-2",
+      "PracticeDuelVerify_Turn4-3",
+      "PracticeDuelVerify_Turn4-4"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "8def8d04a7fe073e3f8d01f782910bf64fa5e86cd61070cd1ded1041a22fcb7f",
+    "mutation_sha256": "5c87752e36cb246847611c17fd643954490fccdf11ffd593593ed44f55239c78",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "PracticeDuelVerify_Turn4",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "PracticeDuelVerify_Turn4",
+    "index": 0
+  }
 }

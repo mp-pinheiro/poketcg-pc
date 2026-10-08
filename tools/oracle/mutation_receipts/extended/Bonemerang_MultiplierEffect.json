@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Bonemerang_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Bonemerang_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52514, \"reference\": \"1e001e1e020100021e\", \"native\": \"1e001e1e010100021e\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 4], [52514, 4], [52745, 2], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"Bonemerang_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Bonemerang_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Bonemerang_MultiplierEffect",
+    "before": "void Bonemerang_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);",
+    "after": "void Bonemerang_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimesResult result = TossCoinATimes(1u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);",
+    "case_ids": [
+      "Bonemerang_MultiplierEffect-0",
+      "Bonemerang_MultiplierEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "f1acd6ef45e330ae1413f7eb315bb83bfeb07b82243f8915b9b0b016eed4aec9",
+    "mutation_sha256": "323979a90f2589204062b8bcef6794e35a55adc196c9ab392434eafdcfd25317",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Bonemerang_MultiplierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Bonemerang_MultiplierEffect",
+    "index": 0
+  }
 }

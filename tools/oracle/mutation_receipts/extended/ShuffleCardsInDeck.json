@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ShuffleCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3b\", \"50688\": \"00\", \"51906\": \"09\", \"52147\": \"00\", \"52749\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ShuffleCardsInDeck\", \"mismatches\": {\"a\": [0, 1]}}\n",
-  "restored": "{\"fn\": \"ShuffleCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3b\", \"50688\": \"00\", \"51906\": \"09\", \"52147\": \"00\", \"52749\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ShuffleCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3b\", \"50688\": \"00\", \"51906\": \"09\", \"52147\": \"00\", \"52749\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ShuffleCardsInDeck",
+    "before": "\treturn (ShuffleCardsInDeckResult){sd.a, sd.b, sd.c, sd.d, sd.e, sd.f, sd.hl};",
+    "after": "\treturn (ShuffleCardsInDeckResult){anim.a, sd.b, sd.c, sd.d, sd.e, sd.f, sd.hl};",
+    "case_ids": [
+      "ShuffleCardsInDeck-0",
+      "ShuffleCardsInDeck-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "aeed6ec3696350b9c386bb789486eddb004c74b748d0bab975b6573cf9b54ee1",
+    "mutation_sha256": "db97fbe20c9cd2ddc28c92de2ed58e1ec6b954d8c2727fc885a29fd708cad308",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "ShuffleCardsInDeck",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "ShuffleCardsInDeck",
+    "index": 0
+  }
 }

@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"LookForCardIDInPlayArea_Bank8\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"50176\": \"0100\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardIDInPlayArea_Bank8\", \"mismatches\": {\"a\": [0, 255], \"f\": [144, 192], \"b\": [0, 1]}}\n",
-  "restored": "{\"fn\": \"LookForCardIDInPlayArea_Bank8\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"50176\": \"0100\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"LookForCardIDInPlayArea_Bank8\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"50176\": \"0100\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LookForCardIDInPlayArea_Bank8",
+    "before": "== (uint8_t)de\n\t\t    && gb_read8((uint16_t)(wTempCardIDToLook_ADDR + 1u)) == (uint8_t)(de >> 8))",
+    "after": "== gb_read8(wLoadedCard1ID_ADDR)\n\t\t    && gb_read8((uint16_t)(wTempCardIDToLook_ADDR + 1u)) == gb_read8((uint16_t)(wLoadedCard1ID_ADDR + 1u)))",
+    "case_ids": [
+      "LookForCardIDInPlayArea_Bank8-6"
+    ],
+    "source": "src/profiles/extended/home/common.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "95b282434e5e4e369eb36fcdc2613760962124b2124d0017d6b2e2395e5c4d5b",
+    "case_sha256": "2798dd2d32532395acc04b475fa91700dc0af6bcc95b89dee95466f908dfb654",
+    "schema_sha256": "d915d005ed8aa998f831741bb1cee051440ddfbffc03c5929111834453e7cd06",
+    "mutation_sha256": "9634ee53d35020ab26b85fb69bcef19baf14b1fc8165450d3d7a2fd301ec5e26",
+    "source": "src/profiles/extended/home/common.c",
+    "source_symbol": "LookForCardIDInPlayArea_Bank8",
+    "case": "tests/profiles/extended/cases/common.py",
+    "fn": "LookForCardIDInPlayArea_Bank8",
+    "index": 6
+  }
 }

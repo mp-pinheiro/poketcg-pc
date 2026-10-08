@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Amnesia_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"50296\": \"08\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Amnesia_AISelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"0008c200\", \"native\": \"0008c2ff\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[50107, 1], [50296, 1], [65431, 1], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"Amnesia_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"50296\": \"08\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Amnesia_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"50296\": \"08\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Amnesia_AISelectEffect",
+    "before": "hTemp_ffa0 = attack;",
+    "after": "hTemp_ffa0 = 0xffu;",
+    "case_ids": [
+      "Amnesia_AISelectEffect-0",
+      "Amnesia_AISelectEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "255d1a32271b69e4aaafcef2c7a96c143112f4e944c2fb24d2d7ec793e2bdec7",
+    "mutation_sha256": "a92b3bd9d2d59e6d430f9facac36958e5ef92167ae4d684063924f02627d4c36",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Amnesia_AISelectEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Amnesia_AISelectEffect",
+    "index": 0
+  }
 }

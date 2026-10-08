@@ -1,0 +1,30 @@
+{
+  "fn": "ProcessPlayedPokemonCard",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ProcessPlayedPokemonCard\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 112, \"frame_budget_reached\": 0, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"08\", \"52335\": \"08\", \"65431\": \"c200\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ProcessPlayedPokemonCard\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"ProcessPlayedPokemonCard\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 112, \"frame_budget_reached\": 0, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"08\", \"52335\": \"08\", \"65431\": \"c200\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ProcessPlayedPokemonCard",
+    "before": "\t\t\treturn (DuelRoutineResult){category, f, b, c, d, e, hl};",
+    "after": "\t\t\treturn (DuelRoutineResult){(uint8_t)((category) ^ 1u), f, b, c, d, e, hl};",
+    "case_ids": [
+      "ProcessPlayedPokemonCard-0"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "2e8deab9743d87ac458eed0c0729a3568d6101da1fdd16c17597914959c87f3b",
+    "mutation_sha256": "2054643c93757a9a9f4b09fc7a531428c4d3cbf31cf50a506599a6f99bb0eab8",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "ProcessPlayedPokemonCard",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "ProcessPlayedPokemonCard",
+    "index": 0
+  }
+}

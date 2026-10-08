@@ -1,0 +1,31 @@
+{
+  "fn": "CheckIfThereAreAnyBasicCardsInDeck",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfThereAreAnyBasicCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 52938, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52936\": \"0800\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfThereAreAnyBasicCardsInDeck\", \"mismatches\": {\"f\": [144, 128], \"e\": [8, 0]}}\n",
+  "restored": "{\"fn\": \"CheckIfThereAreAnyBasicCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 52938, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52936\": \"0800\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckIfThereAreAnyBasicCardsInDeck",
+    "before": "if (card == 0u)",
+    "after": "if (card == 8u)",
+    "case_ids": [
+      "CheckIfThereAreAnyBasicCardsInDeck-1",
+      "CheckIfThereAreAnyBasicCardsInDeck-4"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "1524ce76d709159acba7f2cdacd0d3f715d89eb66052a109d89ed28635d00b37",
+    "mutation_sha256": "f273fbe6f850c7095af2bcb61cdb1d7f9e77f52d2641d57fad83f5b7f4551478",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "CheckIfThereAreAnyBasicCardsInDeck",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "CheckIfThereAreAnyBasicCardsInDeck",
+    "index": 1
+  }
+}

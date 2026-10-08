@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"LeekSlap_NoDamage50PercentEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52324\": \"00000000\", \"52514\": \"01000002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"LeekSlap_NoDamage50PercentEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"000181000000000001\", \"native\": \"000181000100010101\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 4], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"LeekSlap_NoDamage50PercentEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52324\": \"00000000\", \"52514\": \"01000002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"LeekSlap_NoDamage50PercentEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52324\": \"00000000\", \"52514\": \"01000002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LeekSlap_NoDamage50PercentEffect",
+    "before": "uint8_t LeekSlap_NoDamage50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(DamageCheckIfTailsNoDamageText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;\n\tSetDefiniteDamage(0u);",
+    "after": "uint8_t LeekSlap_NoDamage50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(DamageCheckIfTailsNoDamageText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;\n\tSetDefiniteDamage(1u);",
+    "case_ids": [
+      "LeekSlap_NoDamage50PercentEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "1db8619dbe07c45330efa8e6de9c9350181a70a34838d47e2e3312d8debfaf70",
+    "mutation_sha256": "a8722a69f14954a080d2181a9e1e8e64fb62d68232961debfb8d5215bedfa41a",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "LeekSlap_NoDamage50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "LeekSlap_NoDamage50PercentEffect",
+    "index": 1
+  }
 }

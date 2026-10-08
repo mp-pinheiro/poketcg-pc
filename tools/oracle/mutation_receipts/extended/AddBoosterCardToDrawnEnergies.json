@@ -1,0 +1,30 @@
+{
+  "fn": "AddBoosterCardToDrawnEnergies",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddBoosterCardToDrawnEnergies\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49170\": \"01\", \"50198\": \"1200\", \"54871\": \"12\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddBoosterCardToDrawnEnergies\", \"mismatches\": {\"a\": [192, 193]}}\n",
+  "restored": "{\"fn\": \"AddBoosterCardToDrawnEnergies\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49170\": \"01\", \"50198\": \"1200\", \"54871\": \"12\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AddBoosterCardToDrawnEnergies",
+    "before": "\treturn (AddBoosterCardToDrawnEnergiesResult){result.a, result.f};",
+    "after": "\treturn (AddBoosterCardToDrawnEnergiesResult){(uint8_t)((result.a) ^ 1u), result.f};",
+    "case_ids": [
+      "AddBoosterCardToDrawnEnergies-0"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "2d5300ca9a6115aececff0de0a83f41d08ace6c12bc33c1e8d8315cf4c39471b",
+    "mutation_sha256": "ac2827647f7ebf226194ee8256a77c56ab56b0f6821b936d4095487c956d4d36",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "AddBoosterCardToDrawnEnergies",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "AddBoosterCardToDrawnEnergies",
+    "index": 0
+  }
+}

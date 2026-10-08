@@ -1,0 +1,30 @@
+{
+  "fn": "CopyAttackDataAndDamage_FromCardID",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyAttackDataAndDamage_FromCardID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 100, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52331, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52305\": \"000000c900000000000000c366080000000000\", \"52333\": \"00\", \"52340\": \"00\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyAttackDataAndDamage_FromCardID\", \"mismatches\": {\"bus\": {\"address\": 52307, \"reference\": \"000000c9000000\", \"native\": \"0000086900a207\", \"reference_size\": 22, \"native_size\": 22, \"spans\": [[52305, 19], [52333, 1], [52340, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyAttackDataAndDamage_FromCardID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 100, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52331, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52305\": \"000000c900000000000000c366080000000000\", \"52333\": \"00\", \"52340\": \"00\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CopyAttackDataAndDamage_FromCardID",
+    "before": "\tLoadCardDataToBuffer1_FromCardID((CardId)de);",
+    "after": "\tLoadCardDataToBuffer1_FromCardID((CardId)(de ^ 1u));",
+    "case_ids": [
+      "CopyAttackDataAndDamage_FromCardID-0"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "ec53ea200ff9731a0e01569385055cde772908a52d9f02d0923e845890dd2431",
+    "mutation_sha256": "7ad5c67608b71ffb85476dc115db612d291619037091c26a2d26e79a86cb6717",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "CopyAttackDataAndDamage_FromCardID",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "CopyAttackDataAndDamage_FromCardID",
+    "index": 0
+  }
+}

@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"QuickAttack_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"14000a1e\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"QuickAttack_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"14000a1e\", \"native\": \"15000a1e\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52324, 4]]}}}\n",
-  "restored": "{\"fn\": \"QuickAttack_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"14000a1e\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"QuickAttack_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"14000a1e\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "QuickAttack_AIEffect",
+    "before": "SetExpectedAIDamage(20u, 10u, 30u);",
+    "after": "SetExpectedAIDamage(21u, 10u, 30u);",
+    "case_ids": [
+      "QuickAttack_AIEffect-0",
+      "QuickAttack_AIEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "f565cd31dbd10255faf5411f1f97c49a6d93b600ad62b94ec8fcfa189b0686b0",
+    "mutation_sha256": "1b1a009ced0ce705b1b5ce36de293d176886c4bb3a1166e4818468ddc1e6d1bf",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "QuickAttack_AIEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "QuickAttack_AIEffect",
+    "index": 0
+  }
 }

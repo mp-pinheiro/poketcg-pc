@@ -5,5 +5,29 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ScriptCommand_PickChallengeCupPrizeCard\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52741\": \"8c03\", \"54225\": \"10\", \"54274\": \"01c5\", \"54917\": \"9e\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_PickChallengeCupPrizeCard\", \"mismatches\": {\"bus\": {\"address\": 54917, \"reference\": \"031001c59e\", \"native\": \"031001c500\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[52741, 2], [54225, 1], [54274, 2], [54917, 1]]}}}\n",
-  "restored": "{\"fn\": \"ScriptCommand_PickChallengeCupPrizeCard\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52741\": \"8c03\", \"54225\": \"10\", \"54274\": \"01c5\", \"54917\": \"9e\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ScriptCommand_PickChallengeCupPrizeCard\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52741\": \"8c03\", \"54225\": \"10\", \"54274\": \"01c5\", \"54917\": \"9e\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_PickChallengeCupPrizeCard",
+    "before": "\twCardReceived = entry[0];",
+    "after": "\twCardReceived = entry[1];",
+    "case_ids": [
+      "ScriptCommand_PickChallengeCupPrizeCard-0",
+      "ScriptCommand_PickChallengeCupPrizeCard-1",
+      "ScriptCommand_PickChallengeCupPrizeCard-2",
+      "ScriptCommand_PickChallengeCupPrizeCard-3"
+    ],
+    "source": "src/profiles/extended/home/scripting.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "a2d04c3a8730d41f454a607f47cefda8fd132b20cc3619fd0a7b942937a81ebd",
+    "mutation_sha256": "74fa61bfc1d88b2caf3f02264adfcb46e7cfec02d405b75914bd5a3fdc1df543",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_PickChallengeCupPrizeCard",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_PickChallengeCupPrizeCard",
+    "index": 0
+  }
 }

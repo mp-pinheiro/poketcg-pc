@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AgilityEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"0c00\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"5200000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AgilityEffect\", \"mismatches\": {\"bus\": {\"address\": 49895, \"reference\": \"000c00000080\", \"native\": \"000d00000080\", \"reference_size\": 24, \"native_size\": 24, \"spans\": [[49383, 1], [49895, 2], [49905, 1], [49910, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52323, 5], [52379, 1], [52514, 4], [52756, 2], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"AgilityEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"0c00\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"5200000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AgilityEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"0c00\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"5200000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AgilityEffect",
+    "before": "ApplySubstatus1ToAttackingCard(SUBSTATUS1_AGILITY);",
+    "after": "ApplySubstatus1ToAttackingCard(SUBSTATUS1_FLY);",
+    "case_ids": [
+      "AgilityEffect-0",
+      "AgilityEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "887f8d124baf46f2291ac9c2eb09669fc9552585d70b9d32027f77d1c8d51a59",
+    "mutation_sha256": "fa406373124ba6eb1928c7d4d22a894132b340e2849fcb02fe1f5c4b784a70d3",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "AgilityEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "AgilityEffect",
+    "index": 0
+  }
 }

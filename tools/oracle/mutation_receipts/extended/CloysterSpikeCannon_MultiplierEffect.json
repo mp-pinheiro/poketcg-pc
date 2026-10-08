@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"CloysterSpikeCannon_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"CloysterSpikeCannon_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"000001001e001e1e02\", \"native\": \"000001002800282802\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 4], [52514, 4], [52745, 2], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"CloysterSpikeCannon_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"CloysterSpikeCannon_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CloysterSpikeCannon_MultiplierEffect",
+    "before": "void CloysterSpikeCannon_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);\n\tuint8_t damage = result.a;\n\tdamage = (uint8_t)(damage + damage);\n\tdamage = (uint8_t)(damage + result.a);\n\tSetDefiniteDamage(ATimes10(damage));\n}",
+    "after": "void CloysterSpikeCannon_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);\n\tuint8_t damage = result.a;\n\tdamage = (uint8_t)(damage + damage);\n\tdamage = (uint8_t)(damage + result.a);\n\tSetDefiniteDamage(ATimes10((uint8_t)(damage + 1u)));\n}",
+    "case_ids": [
+      "CloysterSpikeCannon_MultiplierEffect-0",
+      "CloysterSpikeCannon_MultiplierEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "a92ad394bb8e592a757838c9f8762f87b47fdbc9ac1d63fe740a1133f7051550",
+    "mutation_sha256": "c4371c11e93f662dafb4cc503bf2c2a47a5812b9aedb831203187d7d2d883841",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "CloysterSpikeCannon_MultiplierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "CloysterSpikeCannon_MultiplierEffect",
+    "index": 0
+  }
 }

@@ -1,0 +1,31 @@
+{
+  "fn": "GenerateTwoTypesEnergyBooster",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateTwoTypesEnergyBooster\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 50420, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49170\": \"00\", \"49194\": \"00\", \"50198\": \"12\", \"50416\": \"122a\", \"54876\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateTwoTypesEnergyBooster\", \"mismatches\": {\"bus\": {\"address\": 50198, \"reference\": \"000012122a0000\", \"native\": \"000013122a0000\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49170, 1], [49194, 1], [50198, 1], [50416, 2], [54876, 3]]}}}\n",
+  "restored": "{\"fn\": \"GenerateTwoTypesEnergyBooster\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 50420, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49170\": \"00\", \"49194\": \"00\", \"50198\": \"12\", \"50416\": \"122a\", \"54876\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GenerateTwoTypesEnergyBooster",
+    "before": "(void)AddBoosterEnergyToDrawnEnergies(card);",
+    "after": "(void)AddBoosterEnergyToDrawnEnergies((uint8_t)(card + 1u));",
+    "case_ids": [
+      "GenerateTwoTypesEnergyBooster-0",
+      "GenerateTwoTypesEnergyBooster-1",
+      "GenerateTwoTypesEnergyBooster-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "c90a91aca82fd026d77d5b8abd7aae1623d08d426ecd2fa122bca236080de612",
+    "mutation_sha256": "ad64f6bf3e88f0c243af60a8e8a2ea19412d40853bf7036a3518b6baeb8ed0d4",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "GenerateTwoTypesEnergyBooster",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "GenerateTwoTypesEnergyBooster",
+    "index": 0
+  }
+}

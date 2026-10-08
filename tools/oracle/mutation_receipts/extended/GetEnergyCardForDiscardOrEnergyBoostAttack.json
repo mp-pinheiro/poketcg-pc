@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"registers\": {\"a\": 2, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52240\": \"01df02ae07001008002800000002000000af07b007000014007347000200015900000000000000000000000000000000000000018000b107010d02049600b207\", \"52340\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"mismatches\": {\"b\": [1, 0]}}\n",
-  "restored": "{\"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"registers\": {\"a\": 2, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52240\": \"01df02ae07001008002800000002000000af07b007000014007347000200015900000000000000000000000000000000000000018000b107010d02049600b207\", \"52340\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"registers\": {\"a\": 2, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52240\": \"01df02ae07001008002800000002000000af07b007000014007347000200015900000000000000000000000000000000000000018000b107010d02049600b207\", \"52340\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetEnergyCardForDiscardOrEnergyBoostAttack",
+    "before": "return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, TRUE, FALSE, e, f};",
+    "after": "return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, FALSE, FALSE, e, f};",
+    "case_ids": [
+      "GetEnergyCardForDiscardOrEnergyBoostAttack-0"
+    ],
+    "source": "src/profiles/extended/home/energy.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "220d3fa425c962b9c96f17a27986f88d3b01bdfb061f1e03a44abc193c69201e",
+    "case_sha256": "3ed47c87ec76362189accd4956b4df385da998e915a9b51e8a908c61eb4de01a",
+    "schema_sha256": "e005c4e7582fe2d75fb89b0ebadc8b560e86f2a4ba7d35b985ac1793ad12f36d",
+    "mutation_sha256": "548e68497c6193c901298155430dcbafb46a409db954905cf5a8863fa66a2d6f",
+    "source": "src/profiles/extended/home/energy.c",
+    "source_symbol": "GetEnergyCardForDiscardOrEnergyBoostAttack",
+    "case": "tests/profiles/extended/cases/energy.py",
+    "fn": "GetEnergyCardForDiscardOrEnergyBoostAttack",
+    "index": 0
+  }
 }

@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"EnergyAbsorption_AddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49667\": \"10\", \"49790\": \"00\", \"49901\": \"0001\", \"50432\": \"0000\", \"65431\": \"c2\", \"65440\": \"03ff\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"EnergyAbsorption_AddToHandEffect\", \"mismatches\": {\"bus\": {\"address\": 49667, \"reference\": \"1000000100\", \"native\": \"0100000100\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49667, 1], [49790, 1], [49901, 2], [50432, 2], [65431, 1], [65440, 2]]}}}\n",
-  "restored": "{\"fn\": \"EnergyAbsorption_AddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49667\": \"10\", \"49790\": \"00\", \"49901\": \"0001\", \"50432\": \"0000\", \"65431\": \"c2\", \"65440\": \"03ff\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"EnergyAbsorption_AddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49667\": \"10\", \"49790\": \"00\", \"49901\": \"0001\", \"50432\": \"0000\", \"65431\": \"c2\", \"65440\": \"03ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "EnergyAbsorption_AddToHandEffect",
+    "before": "gb_write8(location.hl, CARD_LOCATION_ARENA);",
+    "after": "gb_write8(location.hl, CARD_LOCATION_HAND);",
+    "case_ids": [
+      "EnergyAbsorption_AddToHandEffect-1",
+      "EnergyAbsorption_AddToHandEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "5b4b2da3b63d1572c6049ed6990c76de4bddc8d5df37677fafb04966b74d59bb",
+    "mutation_sha256": "5cacd8907f5354d4701d0381e5a0b9aa49977c01a9ebb8604fed90c433aff08f",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "EnergyAbsorption_AddToHandEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "EnergyAbsorption_AddToHandEffect",
+    "index": 1
+  }
 }

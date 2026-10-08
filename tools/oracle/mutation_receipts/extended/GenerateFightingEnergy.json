@@ -1,0 +1,31 @@
+{
+  "fn": "GenerateFightingEnergy",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateFightingEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 5, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateFightingEnergy\", \"mismatches\": {\"bus\": {\"address\": 50198, \"reference\": \"0005\", \"native\": \"0002\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49152, 1], [50198, 1]]}}}\n",
+  "restored": "{\"fn\": \"GenerateFightingEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 5, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GenerateFightingEnergy",
+    "before": "\treturn AddBoosterEnergyToDrawnEnergies(FIGHTING_ENERGY);",
+    "after": "\treturn AddBoosterEnergyToDrawnEnergies(FIRE_ENERGY);",
+    "case_ids": [
+      "GenerateFightingEnergy-0",
+      "GenerateFightingEnergy-1"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "53c4ce9f058b5406833687ce9a3db2684433cec1ecf59bf44759d235a0c4ab19",
+    "mutation_sha256": "1ce3a0ffeea5958a631e20e690b83aae91a15968b68c47216a7ee889dc3b20c1",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "GenerateFightingEnergy",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "GenerateFightingEnergy",
+    "index": 0
+  }
+}

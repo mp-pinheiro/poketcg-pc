@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Start\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51891\": \"01\", \"51894\": \"20\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Start\", \"mismatches\": {\"bus\": {\"address\": 51891, \"reference\": \"0120\", \"native\": \"ff20\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51891, 1], [51894, 1]]}}}\n",
-  "restored": "{\"fn\": \"Start\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51891\": \"01\", \"51894\": \"20\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Start\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51891\": \"01\", \"51894\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Start",
+    "before": "wInitialA = a;",
+    "after": "wInitialA = 0xFFu;",
+    "case_ids": [
+      "Start-0",
+      "Start-1"
+    ],
+    "source": "src/profiles/extended/home/start.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c75b9af0da9c150b45667cc51f17c8008a657903c126b73bda5a78873a89ca42",
+    "case_sha256": "8aefaed433b8b5063fc4aa53566c2e640512e0e9b5ac136d30b2399270381c57",
+    "schema_sha256": "56e0c20dd9d0fe4fe38ea401c2a1c49ea03b0fd2a58dd711cdf5596914963464",
+    "mutation_sha256": "d1394345bcccfc4ea7d150c19246c512195099b1dc3a275f1cef291aabadf74c",
+    "source": "src/profiles/extended/home/start.c",
+    "source_symbol": "Start",
+    "case": "tests/profiles/extended/cases/start.py",
+    "fn": "Start",
+    "index": 0
+  }
 }

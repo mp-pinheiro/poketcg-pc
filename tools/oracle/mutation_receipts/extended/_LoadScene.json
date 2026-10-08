@@ -1,0 +1,31 @@
+{
+  "fn": "_LoadScene",
+  "case": "tests/profiles/extended/cases/scenes.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_LoadScene\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51900\": \"00\", \"53534\": \"77\", \"53886\": \"22\", \"54724\": \"00\", \"54793\": \"0810\", \"54799\": \"00000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_LoadScene\", \"mismatches\": {\"bus\": {\"address\": 53534, \"reference\": \"00007722000810\", \"native\": \"00000022000810\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[51892, 1], [51900, 1], [53534, 1], [53886, 1], [54724, 1], [54793, 2], [54799, 4]]}}}\n",
+  "restored": "{\"fn\": \"_LoadScene\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51900\": \"00\", \"53534\": \"77\", \"53886\": \"22\", \"54724\": \"00\", \"54793\": \"0810\", \"54799\": \"00000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "_LoadScene",
+    "before": "\twCurTilemap = saved_tilemap;",
+    "after": "\twCurTilemap = 0u;",
+    "case_ids": [
+      "_LoadScene-0",
+      "_LoadScene-1"
+    ],
+    "source": "src/profiles/extended/home/scenes.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2c672f2f49449a69153d333d022b04e27ad8f8643aa77b8208cfbd76a0044b94",
+    "case_sha256": "669e802e5bfaf7e5070beec068b7583af6887fff6bf98d081b6dcf77908b2d42",
+    "schema_sha256": "636cff99a214988bfb48208c489853549a64d9ba5e1fe5439236529d8b10bbed",
+    "mutation_sha256": "f25c33865db1082c5de0fcc844df9b8cdf0983b92b6924288e3aae8a91e10112",
+    "source": "src/profiles/extended/home/scenes.c",
+    "source_symbol": "_LoadScene",
+    "case": "tests/profiles/extended/cases/scenes.py",
+    "fn": "_LoadScene",
+    "index": 1
+  }
+}

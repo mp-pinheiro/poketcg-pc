@@ -1,0 +1,31 @@
+{
+  "fn": "CopyNBytesFromHLToDE_Long",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyNBytesFromHLToDE_Long\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 1, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"42\", \"49664\": \"42\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyNBytesFromHLToDE_Long\", \"mismatches\": {\"bus\": {\"address\": 49664, \"reference\": \"4242\", \"native\": \"4243\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49408, 1], [49664, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyNBytesFromHLToDE_Long\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 1, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"42\", \"49664\": \"42\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CopyNBytesFromHLToDE_Long",
+    "before": "\t\tgb_write8(dst++, gb_read8(src++));",
+    "after": "\t\tgb_write8(dst++, (uint8_t)(gb_read8(src++) + 1u));",
+    "case_ids": [
+      "CopyNBytesFromHLToDE_Long-0",
+      "CopyNBytesFromHLToDE_Long-1"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "fb65b278e60ce4ceb0253a585a1b9760cab16fdc7165f9979486bdc42916f32c",
+    "mutation_sha256": "9ed102318bc3cbed2b252cbdfb29b447e0b545e72d8b7e52f12c68ebc3f65203",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "CopyNBytesFromHLToDE_Long",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "CopyNBytesFromHLToDE_Long",
+    "index": 0
+  }
+}

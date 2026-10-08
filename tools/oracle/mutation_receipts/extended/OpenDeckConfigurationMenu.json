@@ -1,0 +1,32 @@
+{
+  "fn": "OpenDeckConfigurationMenu",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenDeckConfigurationMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52760\": \"000000ff\", \"52813\": \"00\", \"53206\": \"0753\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenDeckConfigurationMenu\", \"mismatches\": {\"completion\": [\"HandleDeckConfigurationMenu\", \"return\"], \"bus\": {\"address\": 52813, \"reference\": \"000000ff000753\", \"native\": \"000000ffff0753\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51899, 1], [52760, 4], [52813, 1], [53206, 2]]}}}\n",
+  "restored": "{\"fn\": \"OpenDeckConfigurationMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52760\": \"000000ff\", \"52813\": \"00\", \"53206\": \"0753\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "OpenDeckConfigurationMenu",
+    "before": "\treturn OpenDeckConfigurationMenu_SkipInit();",
+    "after": "\treturn (DeckBuildScreenResult){0u, 0u};",
+    "case_ids": [
+      "OpenDeckConfigurationMenu-0",
+      "OpenDeckConfigurationMenu-1",
+      "OpenDeckConfigurationMenu-2"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "9b08fb8b99a1ef62fe34a57ba74ea0281125870bb308013e309f4c137c41b9f2",
+    "mutation_sha256": "c7e6bd6fffea6a89bc01fdbd21c1c99e72790c80ca9d3a5d1b8cd3c3dfe36661",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "OpenDeckConfigurationMenu",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "OpenDeckConfigurationMenu",
+    "index": 0
+  }
+}

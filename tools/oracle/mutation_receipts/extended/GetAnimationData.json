@@ -1,0 +1,31 @@
+{
+  "fn": "GetAnimationData",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetAnimationData\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 19740, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54287\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetAnimationData\", \"mismatches\": {\"hl\": [19740, 19741]}}\n",
+  "restored": "{\"fn\": \"GetAnimationData\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 19740, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54287\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetAnimationData",
+    "before": "uint16_t offset = (uint16_t)animation * 5u;",
+    "after": "uint16_t offset = (uint16_t)animation * 6u;",
+    "case_ids": [
+      "GetAnimationData-1",
+      "GetAnimationData-2"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "bd70a708c218a36598ea06dcda373a34a1647740829602d75bae45c37b4d17fd",
+    "mutation_sha256": "09c212b84280e96c096463fb387ff1c438ef68390ca5d999725656df6148cb0a",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "GetAnimationData",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "GetAnimationData",
+    "index": 1
+  }
+}

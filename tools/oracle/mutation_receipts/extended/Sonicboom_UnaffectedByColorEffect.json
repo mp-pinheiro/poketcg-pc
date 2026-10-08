@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Sonicboom_UnaffectedByColorEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52325, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"0080\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Sonicboom_UnaffectedByColorEffect\", \"mismatches\": {\"bus\": {\"address\": 52325, \"reference\": \"0080\", \"native\": \"0004\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52324, 2]]}}}\n",
-  "restored": "{\"fn\": \"Sonicboom_UnaffectedByColorEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52325, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"0080\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Sonicboom_UnaffectedByColorEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52325, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"0080\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Sonicboom_UnaffectedByColorEffect",
+    "before": "1u << UNAFFECTED_BY_WEAKNESS_RESISTANCE_F",
+    "after": "1u << RESISTANCE",
+    "case_ids": [
+      "Sonicboom_UnaffectedByColorEffect-0",
+      "Sonicboom_UnaffectedByColorEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "4dd39e54f02fdd5ae2c3ac25b5fb878ae6083b9263ccd44eafee360bb7de4e7e",
+    "mutation_sha256": "0ef3c8091dce10d05ffc7da72b577a5f9300f59d67bb31dcf207b1715687a9d7",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Sonicboom_UnaffectedByColorEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Sonicboom_UnaffectedByColorEffect",
+    "index": 0
+  }
 }

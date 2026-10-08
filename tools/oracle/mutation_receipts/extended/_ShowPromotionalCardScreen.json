@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"_ShowPromotionalCardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 30, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52178\": \"1f08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"_ShowPromotionalCardScreen\", \"mismatches\": {\"bus\": {\"address\": 52178, \"reference\": \"1f08c2\", \"native\": \"2608c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52178, 2], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"_ShowPromotionalCardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 30, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52178\": \"1f08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"_ShowPromotionalCardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 30, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52178\": \"1f08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "_ShowPromotionalCardScreen",
+    "before": "\t\tLoadCardDataToBuffer1_FromCardID(card);\n\t\tPauseSong();",
+    "after": "\t\tLoadCardDataToBuffer1_FromCardID((uint8_t)(card + 1u));\n\t\tPauseSong();",
+    "case_ids": [
+      "_ShowPromotionalCardScreen-0",
+      "_ShowPromotionalCardScreen-1"
+    ],
+    "source": "src/profiles/extended/home/promotional_card.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3fd24c9396dead2bd754a2d49f001a4761e0e0bf33c09be264d676bd9f03be72",
+    "case_sha256": "9df759c372134b16fcfe2e24b9ba788151e59de081ddc53e2d0ae3c65ede2e88",
+    "schema_sha256": "9c5521691529fc42e7a82dd72ac3be6172f43898cb14c7f24043f9451679cab0",
+    "mutation_sha256": "d4cdb7aacd360b585dae6db67e43466ba4a39a768b49134fef52d0be1c4ab03c",
+    "source": "src/profiles/extended/home/promotional_card.c",
+    "source_symbol": "_ShowPromotionalCardScreen",
+    "case": "tests/profiles/extended/cases/promotional_card.py",
+    "fn": "_ShowPromotionalCardScreen",
+    "index": 0
+  }
 }

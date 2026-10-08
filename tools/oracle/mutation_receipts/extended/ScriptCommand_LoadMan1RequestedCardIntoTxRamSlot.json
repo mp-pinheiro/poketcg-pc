@@ -1,0 +1,30 @@
+{
+  "fn": "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52743\": \"a007\", \"54217\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot\", \"mismatches\": {\"bus\": {\"address\": 52743, \"reference\": \"a00701\", \"native\": \"070001\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52743, 2], [54217, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52743\": \"a007\", \"54217\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot",
+    "before": "\tuint8_t shifted = (uint8_t)(c << 1);",
+    "after": "\tuint8_t shifted = c;",
+    "case_ids": [
+      "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot-0",
+      "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "c0383b940f65c88c6200f22817712bb6d373ad04edd6bc34e43566f46f76d72b",
+    "mutation_sha256": "7d215ea6683d372a8dd12a9b25f1ccd96af12143e2bd1a29e66ad9851798051f",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot",
+    "index": 0
+  }
+}

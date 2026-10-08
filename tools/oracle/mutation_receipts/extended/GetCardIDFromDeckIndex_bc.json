@@ -1,0 +1,30 @@
+{
+  "fn": "GetCardIDFromDeckIndex_bc",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetCardIDFromDeckIndex_bc\", \"registers\": {\"a\": 194, \"b\": 1, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"3401\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetCardIDFromDeckIndex_bc\", \"mismatches\": {\"b\": [1, 0], \"c\": [52, 0]}}\n",
+  "restored": "{\"fn\": \"GetCardIDFromDeckIndex_bc\", \"registers\": {\"a\": 194, \"b\": 1, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"3401\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetCardIDFromDeckIndex_bc",
+    "before": "DeckCardResult GetCardIDFromDeckIndex_bc(uint8_t a, uint16_t hl)\n{\n\tCardId id = GetCardIDFromDeckIndex(a);",
+    "after": "DeckCardResult GetCardIDFromDeckIndex_bc(uint8_t a, uint16_t hl)\n{\n\tCardId id = GetCardIDFromDeckIndex((uint8_t)(a + 1u));",
+    "case_ids": [
+      "GetCardIDFromDeckIndex_bc-0"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "f80b814015165e03f96e9a2ca2f8aac1d53f626ea3acac0cc4eb213ec5eddba5",
+    "mutation_sha256": "0a8eb03b1ef14266b9bba919895f6882f1c7b73d4d9edd9394f19b96f83cec12",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "GetCardIDFromDeckIndex_bc",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "GetCardIDFromDeckIndex_bc",
+    "index": 0
+  }
+}

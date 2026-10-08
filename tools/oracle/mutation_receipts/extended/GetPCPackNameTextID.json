@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"GetPCPackNameTextID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 3, \"e\": 15, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"GetPCPackNameTextID\", \"mismatches\": {\"e\": [15, 16]}}\n",
-  "restored": "{\"fn\": \"GetPCPackNameTextID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 3, \"e\": 15, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"GetPCPackNameTextID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 3, \"e\": 15, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetPCPackNameTextID",
+    "before": "uint16_t GetPCPackNameTextID(uint8_t a)\n{\n\treturn kPCPackNameTextIDs[a];\n}",
+    "after": "uint16_t GetPCPackNameTextID(uint8_t a)\n{\n\treturn kPCPackNameTextIDs[(uint8_t)(a + 1u)];\n}",
+    "case_ids": [
+      "GetPCPackNameTextID-0",
+      "GetPCPackNameTextID-1",
+      "GetPCPackNameTextID-2"
+    ],
+    "source": "src/profiles/extended/home/mail.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "7c52b7fee8de27b3bf16d96c7b887fd55aebd1703486f5da4a8dd2fd49c848bc",
+    "case_sha256": "b053aaec022e415dfec5736de69a066eebd02ee1279e745ecfdb096978810aff",
+    "schema_sha256": "7a135897e068ba6b8ba43c4b4742ca75a33b2f535af7b00ac7cf6f3bfdcdeea7",
+    "mutation_sha256": "ff79eb4e5e0004946a04ec04bc21f67d85210301af87ac6a8611bf7d7a515a0d",
+    "source": "src/profiles/extended/home/mail.c",
+    "source_symbol": "GetPCPackNameTextID",
+    "case": "tests/profiles/extended/cases/mail.py",
+    "fn": "GetPCPackNameTextID",
+    "index": 0
+  }
 }

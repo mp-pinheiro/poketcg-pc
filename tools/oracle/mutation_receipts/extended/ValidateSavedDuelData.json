@@ -1,0 +1,31 @@
+{
+  "fn": "ValidateSavedDuelData",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ValidateSavedDuelData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 48127, \"palette\": {}, \"ram_bank\": 2, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"2\": {\"48126\": \"00\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ValidateSavedDuelData\", \"mismatches\": {\"f\": [144, 16], \"hl\": [48127, 48950]}}\n",
+  "restored": "{\"fn\": \"ValidateSavedDuelData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 48127, \"palette\": {}, \"ram_bank\": 2, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"2\": {\"48126\": \"00\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ValidateSavedDuelData",
+    "before": "if (valid != 0u)",
+    "after": "if (valid == 0u)",
+    "case_ids": [
+      "ValidateSavedDuelData-0",
+      "ValidateSavedDuelData-1"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "4b84b154cc4b4daae6af49b07b2e23361b1a51a88373a57e658f33a9da3c7196",
+    "mutation_sha256": "f6eacbd45b1eb26d3b39e4beb36f800c6c225b01f4fa9e77babc667ecc1d9057",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "ValidateSavedDuelData",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "ValidateSavedDuelData",
+    "index": 0
+  }
+}

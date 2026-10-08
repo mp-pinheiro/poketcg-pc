@@ -1,0 +1,31 @@
+{
+  "fn": "GenerateGrassEnergy",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateGrassEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateGrassEnergy\", \"mismatches\": {\"bus\": {\"address\": 50198, \"reference\": \"0001\", \"native\": \"0004\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49152, 1], [50198, 1]]}}}\n",
+  "restored": "{\"fn\": \"GenerateGrassEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GenerateGrassEnergy",
+    "before": "\treturn AddBoosterEnergyToDrawnEnergies(GRASS_ENERGY);",
+    "after": "\treturn AddBoosterEnergyToDrawnEnergies(LIGHTNING_ENERGY);",
+    "case_ids": [
+      "GenerateGrassEnergy-0",
+      "GenerateGrassEnergy-1"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "d9566e188ee91cd9236042a5b54b4f3a7755220ff8077829f5190ab6ee72156f",
+    "mutation_sha256": "a4288dbbca7eb560bc041e6ba8b41bf175d45da0bea485a05e2104221f5591fc",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "GenerateGrassEnergy",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "GenerateGrassEnergy",
+    "index": 0
+  }
+}

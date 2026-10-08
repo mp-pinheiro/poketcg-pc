@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ConvertSpecialTrainerCardToPokemon\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ConvertSpecialTrainerCardToPokemon\", \"mismatches\": {\"a\": [6, 0]}}\n",
-  "restored": "{\"fn\": \"ConvertSpecialTrainerCardToPokemon\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ConvertSpecialTrainerCardToPokemon\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ConvertSpecialTrainerCardToPokemon",
+    "before": "\tif (card_type != TYPE_TRAINER)",
+    "after": "\tif (card_type == TYPE_TRAINER)",
+    "case_ids": [
+      "ConvertSpecialTrainerCardToPokemon-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "db3fc766f3ed55106bab02a23547ce06340a1d7522043325f8e93a8d694705f6",
+    "case_sha256": "b0eceb1fae6c617ccf4c0bef738ad914beb76aef65618523156da62067c88612",
+    "schema_sha256": "e16efaaf264c5252a0601142e0a797f2e3fc918cf621c00e113804ac7c7ac30e",
+    "mutation_sha256": "8aa0b2a62ec186eb2fef53df9fe66432192812342cda0bbc4bc5bf095cac3be8",
+    "source": "src/profiles/extended/home/duel_core.c",
+    "source_symbol": "ConvertSpecialTrainerCardToPokemon",
+    "case": "tests/profiles/extended/cases/duel_core.py",
+    "fn": "ConvertSpecialTrainerCardToPokemon",
+    "index": 0
+  }
 }

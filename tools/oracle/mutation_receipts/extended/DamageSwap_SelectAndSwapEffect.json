@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DamageSwap_SelectAndSwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"51899\": \"80\", \"52086\": \"01\", \"52096\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DamageSwap_SelectAndSwapEffect\", \"mismatches\": {\"bus\": {\"address\": 51899, \"reference\": \"ff0101800100c2\", \"native\": \"ff0101000000c2\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49851, 1], [49903, 1], [49905, 1], [51899, 1], [52086, 1], [52096, 1], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"DamageSwap_SelectAndSwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"51899\": \"80\", \"52086\": \"01\", \"52096\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DamageSwap_SelectAndSwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"51899\": \"80\", \"52086\": \"01\", \"52096\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DamageSwap_SelectAndSwapEffect",
+    "before": "void DamageSwap_SelectAndSwapEffect(void)\n{\n\tDuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tif (turn.a != DUELIST_TYPE_PLAYER) {\n\t\tSetupPlayAreaScreen();\n\t\t(void)PrintPlayAreaCardList_EnableLCD();",
+    "after": "void DamageSwap_SelectAndSwapEffect(void)\n{\n\tDuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tif (turn.a != DUELIST_TYPE_PLAYER) {\n\t\tSetupPlayAreaScreen();",
+    "case_ids": [
+      "DamageSwap_SelectAndSwapEffect-0",
+      "DamageSwap_SelectAndSwapEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "0553bd60847cbf50fbd88b8296bfd50707fae35faa31ded77c87c3862f1c06b5",
+    "mutation_sha256": "73034b79ef63159c401bcdce6f060a5904acdb1d5f6e5c2a8cfdbc23d19700ab",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "DamageSwap_SelectAndSwapEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "DamageSwap_SelectAndSwapEffect",
+    "index": 0
+  }
 }

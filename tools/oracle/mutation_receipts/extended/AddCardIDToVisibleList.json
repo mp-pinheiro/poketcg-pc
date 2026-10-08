@@ -1,0 +1,30 @@
+{
+  "fn": "AddCardIDToVisibleList",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddCardIDToVisibleList\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 42, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52846\": \"0000000000002a\", \"52860\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddCardIDToVisibleList\", \"mismatches\": {\"bus\": {\"address\": 52852, \"reference\": \"000000002a05\", \"native\": \"00000000002a\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[52846, 7], [52860, 1]]}}}\n",
+  "restored": "{\"fn\": \"AddCardIDToVisibleList\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 42, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52846\": \"0000000000002a\", \"52860\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AddCardIDToVisibleList",
+    "before": "uint8_t offset = (uint8_t)(num_entries - b);",
+    "after": "uint8_t offset = (uint8_t)(num_entries + b);",
+    "case_ids": [
+      "AddCardIDToVisibleList-0",
+      "AddCardIDToVisibleList-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "54a56599e0d66d1eba14bda32b4a384b80dc390fc50a2f392a3a2ee89e670f7a",
+    "mutation_sha256": "613fa250fc5548b310e5897e391a27ff512f1b96410278b48fafc67d55b8887c",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "AddCardIDToVisibleList",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "AddCardIDToVisibleList",
+    "index": 0
+  }
+}

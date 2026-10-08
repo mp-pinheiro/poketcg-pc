@@ -1,0 +1,32 @@
+{
+  "fn": "ScriptCommand_SetSpriteAttributes",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_SetSpriteAttributes\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"54167\": \"01\", \"54179\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_SetSpriteAttributes\", \"mismatches\": {\"c\": [3, 2]}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_SetSpriteAttributes\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"54167\": \"01\", \"54179\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_SetSpriteAttributes",
+    "before": "\tIncreaseScriptPointerResult r = IncreaseScriptPointerBy3();",
+    "after": "\tIncreaseScriptPointerResult r = IncreaseScriptPointerBy2();",
+    "case_ids": [
+      "ScriptCommand_SetSpriteAttributes-1",
+      "ScriptCommand_SetSpriteAttributes-2",
+      "ScriptCommand_SetSpriteAttributes-3"
+    ],
+    "source": "src/profiles/extended/home/scripting.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "6985b65579636d8838bac3b5e6261114878d6aa2b19dce28729e85a75a4a31f7",
+    "mutation_sha256": "3655d5b124ce08150aba67122bb41b882029a9fd0d99d94a49a04e7bf36a5d34",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_SetSpriteAttributes",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_SetSpriteAttributes",
+    "index": 1
+  }
+}

@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Amnesia_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"50296\": \"08\", \"50432\": \"0000\", \"51899\": \"80\", \"65431\": \"c2\", \"65458\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Amnesia_PlayerSelectEffect\", \"mismatches\": {\"f\": [128, 0], \"bus\": {\"address\": 50432, \"reference\": \"0008000080c200\", \"native\": \"0008ff0000c200\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[50107, 1], [50296, 1], [50432, 2], [51899, 1], [65431, 1], [65458, 1]]}}}\n",
-  "restored": "{\"fn\": \"Amnesia_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"50296\": \"08\", \"50432\": \"0000\", \"51899\": \"80\", \"65431\": \"c2\", \"65458\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Amnesia_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"50296\": \"08\", \"50432\": \"0000\", \"51899\": \"80\", \"65431\": \"c2\", \"65458\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Amnesia_PlayerSelectEffect",
+    "before": "return PlayerPickAttackForAmnesia();",
+    "after": "return (PlayerPickAttackForAmnesiaResult){0u, 0u};",
+    "case_ids": [
+      "Amnesia_PlayerSelectEffect-0",
+      "Amnesia_PlayerSelectEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "dc200a05b7838582b531a03e5e17cc0bdcde5508c533e7e8243760555a57a011",
+    "mutation_sha256": "8c162db19a6824ba783af05ae0d701216354b99ee03ddc96192b4f5e172faf41",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Amnesia_PlayerSelectEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Amnesia_PlayerSelectEffect",
+    "index": 0
+  }
 }

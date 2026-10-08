@@ -5,5 +5,30 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"030000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"mismatches\": {\"bus\": {\"address\": 54276, \"reference\": \"030000\", \"native\": \"0300ff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54274, 3]]}}}\n",
-  "restored": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"030000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardOwned\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"030000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_JumpIfMan1RequestedCardOwned",
+    "before": "\tCardCountResult cnt = GetCardCountInCollectionAndDecks(card);\n\tif ((cnt.f & 0x10u) != 0u) {",
+    "after": "\tCardCountResult cnt = GetCardCountInCollectionAndDecks(card);\n\tif ((cnt.f & 0x10u) == 0u) {",
+    "case_ids": [
+      "ScriptCommand_JumpIfMan1RequestedCardOwned-0",
+      "ScriptCommand_JumpIfMan1RequestedCardOwned-1",
+      "ScriptCommand_JumpIfMan1RequestedCardOwned-2",
+      "ScriptCommand_JumpIfMan1RequestedCardOwned-3",
+      "ScriptCommand_JumpIfMan1RequestedCardOwned-4"
+    ],
+    "source": "src/profiles/extended/home/scripting.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "5d3c04589c7f63e1104a0a9897bdfee3476fada2228b743d9dcac2e3b1819d73",
+    "mutation_sha256": "1f526c6207ccfd3516c3e37ee10f5938d1821c3abbfb6c927ca7173589fd45cb",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_JumpIfMan1RequestedCardOwned",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_JumpIfMan1RequestedCardOwned",
+    "index": 0
+  }
 }

@@ -1,0 +1,31 @@
+{
+  "fn": "AIDecide_ScoopUp",
+  "case": "tests/profiles/extended/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_ScoopUp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50655\": \"01\", \"65431\": \"c5\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_ScoopUp\", \"mismatches\": {\"bus\": {\"address\": 65437, \"reference\": \"01c500\", \"native\": \"01c501\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50655, 1], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIDecide_ScoopUp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50655\": \"01\", \"65431\": \"c5\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AIDecide_ScoopUp",
+    "before": "\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u)",
+    "after": "\thTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u)",
+    "case_ids": [
+      "AIDecide_ScoopUp-0",
+      "AIDecide_ScoopUp-1"
+    ],
+    "source": "src/profiles/extended/home/trainer_cards.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3badf508a4e599b2f2e67f7bf0d243f331f6a88af0963a2cb4682c2c7e1a1bf7",
+    "case_sha256": "5e43a5ddd8e45cb4c6da392394b7929204077f7ef553d8ea6f0c3653d65ad921",
+    "schema_sha256": "acdd2d75bfe7681cc7292920b0cd4a5e521f8795db43b0e8b1221cfc056970e4",
+    "mutation_sha256": "87c7d6a29cf4b39c0de559e23f2876c282f32b53e659d6f9adc68935fa099a6b",
+    "source": "src/profiles/extended/home/trainer_cards.c",
+    "source_symbol": "AIDecide_ScoopUp",
+    "case": "tests/profiles/extended/cases/trainer_cards.py",
+    "fn": "AIDecide_ScoopUp",
+    "index": 0
+  }
+}

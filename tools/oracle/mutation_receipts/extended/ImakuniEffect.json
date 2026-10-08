@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ImakuniEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49904\": \"01\", \"50176\": \"08\", \"52793\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ImakuniEffect\", \"mismatches\": {\"bus\": {\"address\": 49904, \"reference\": \"0001080000c2\", \"native\": \"0000080000c2\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49851, 1], [49904, 1], [50176, 1], [52793, 2], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"ImakuniEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49904\": \"01\", \"50176\": \"08\", \"52793\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ImakuniEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49904\": \"01\", \"50176\": \"08\", \"52793\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ImakuniEffect",
+    "before": "\tstatus.a = (uint8_t)((status.a & PSN_DBLPSN) | CONFUSED);",
+    "after": "\tstatus.a = (uint8_t)(status.a & PSN_DBLPSN);",
+    "case_ids": [
+      "ImakuniEffect-0",
+      "ImakuniEffect-3",
+      "ImakuniEffect-4"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "2f4d889eb50f865407a6a945cf703a5fde482e159927375ee6cb6c8e0910041c",
+    "mutation_sha256": "49da9a4d16390167e6f97e6f87cfa1bbda57effa7af8fa96060ef162d5e32aaa",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "ImakuniEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "ImakuniEffect",
+    "index": 0
+  }
 }

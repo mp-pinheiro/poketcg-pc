@@ -1,0 +1,29 @@
+{
+  "fn": "LoadSpriteGfx",
+  "case": "tests/profiles/extended/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadSpriteGfx\", \"registers\": {\"a\": 20, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadSpriteGfx\", \"mismatches\": {\"a\": [20, 21]}}\n",
+  "restored": "{\"fn\": \"LoadSpriteGfx\", \"registers\": {\"a\": 20, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadSpriteGfx",
+    "before": "\treturn total;",
+    "after": "\treturn 1u + total;",
+    "case_ids": [
+      "LoadSpriteGfx-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "816567d699d17fd03c643ea7967567c6350191cfa5c0ff88c4796f225881ff73",
+    "case_sha256": "09db4865b2a0b218dfd2d00e606efeeeba98a69ed2fa004e2260e31afd252252",
+    "schema_sha256": "74c12d24e9a39399e5b6e35de50ba4bf53424652e491f53ecbb981e4ce3f3013",
+    "mutation_sha256": "5403e852ed25fda91f3b7caa1b293f8c89ea48dd0633ae8f07217c27bb17054a",
+    "source": "src/profiles/extended/home/load_gfx.c",
+    "source_symbol": "LoadSpriteGfx",
+    "case": "tests/profiles/extended/cases/load_gfx.py",
+    "fn": "LoadSpriteGfx",
+    "index": 0
+  }
+}

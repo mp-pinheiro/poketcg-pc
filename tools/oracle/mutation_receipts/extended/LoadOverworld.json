@@ -1,0 +1,29 @@
+{
+  "fn": "LoadOverworld",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadOverworld\", \"registers\": {\"a\": 3, \"b\": 83, \"c\": 111, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54209\": \"0000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadOverworld\", \"mismatches\": {\"bus\": {\"address\": 54223, \"reference\": \"00000000e000000000\", \"native\": \"000000000000000000\", \"reference_size\": 64, \"native_size\": 64, \"spans\": [[54209, 64]]}}}\n",
+  "restored": "{\"fn\": \"LoadOverworld\", \"registers\": {\"a\": 3, \"b\": 83, \"c\": 111, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54209\": \"0000000000000000000000000000e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadOverworld",
+    "before": "(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);\n\t} else if (GetEventValue(EVENT_CHALLENGE_CUP_2_STATE)",
+    "after": "(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, 0u);\n\t} else if (GetEventValue(EVENT_CHALLENGE_CUP_2_STATE)",
+    "case_ids": [
+      "LoadOverworld-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "97f1be81c43aa5ce37319bdc3846aa2a8044d2bc70abb31e383864cb61823ffb",
+    "mutation_sha256": "62a290086841d41c2aa9e749b094b9671293fc3e24e35a8836c69c331bc9fb62",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "LoadOverworld",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "LoadOverworld",
+    "index": 1
+  }
+}

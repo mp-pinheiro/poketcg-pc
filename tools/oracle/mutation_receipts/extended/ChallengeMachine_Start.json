@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ChallengeMachine_Start\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 1, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47682\": \"e39500\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52406\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_Start\", \"mismatches\": {\"bus\": {\"address\": 52406, \"reference\": \"00\", \"native\": \"01\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52406, 1]]}}}\n",
-  "restored": "{\"fn\": \"ChallengeMachine_Start\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 1, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47682\": \"e39500\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52406\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ChallengeMachine_Start\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 1, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47682\": \"e39500\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52406\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ChallengeMachine_Start",
+    "before": "void ChallengeMachine_Start(void)\n{\n\twLineSeparation = DOUBLE_SPACED;",
+    "after": "void ChallengeMachine_Start(void)\n{\n\twLineSeparation = 0x01u;",
+    "case_ids": [
+      "ChallengeMachine_Start-0",
+      "ChallengeMachine_Start-1"
+    ],
+    "source": "src/profiles/extended/home/challenge_machine.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "0975e29478c2fa6a78968eb5783bc6d603c3d14a2048ea4f395253d6324ef9fe",
+    "case_sha256": "99c54d5faa98f312008620b8c338a1cfab84b8526a2567b6c582e0b8faa2d035",
+    "schema_sha256": "5fd93e863bb8023677bc699e034b73810d4f3f600554b0638a0838e25e3d5b01",
+    "mutation_sha256": "71247bb590e582455f3c7160320e0594693bc6cc39b14994f67339704f541526",
+    "source": "src/profiles/extended/home/challenge_machine.c",
+    "source_symbol": "ChallengeMachine_Start",
+    "case": "tests/profiles/extended/cases/challenge_machine.py",
+    "fn": "ChallengeMachine_Start",
+    "index": 0
+  }
 }

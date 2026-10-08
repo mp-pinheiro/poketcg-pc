@@ -1,0 +1,31 @@
+{
+  "fn": "DealConfusionDamageToSelf",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DealConfusionDamageToSelf\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49864\": \"30\", \"52324\": \"1000\", \"52332\": \"00\", \"52335\": \"01\", \"52337\": \"01\", \"52341\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DealConfusionDamageToSelf\", \"mismatches\": {\"bus\": {\"address\": 49864, \"reference\": \"3010000001\", \"native\": \"2f11000001\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49864, 1], [52324, 2], [52332, 1], [52335, 1], [52337, 1], [52341, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"DealConfusionDamageToSelf\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49864\": \"30\", \"52324\": \"1000\", \"52332\": \"00\", \"52335\": \"01\", \"52337\": \"01\", \"52341\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DealConfusionDamageToSelf",
+    "before": "\tgb_write8(wDamage_ADDR, a);\n\tgb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);",
+    "after": "\tgb_write8(wDamage_ADDR, (uint8_t)(a + 1u));\n\tgb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);",
+    "case_ids": [
+      "DealConfusionDamageToSelf-0",
+      "DealConfusionDamageToSelf-2",
+      "DealConfusionDamageToSelf-3"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "7afe1cb76b2568ea6e0344d2ad6f391647d8695421c9bfb97463b56cc9cd3eb4",
+    "mutation_sha256": "615ea680662caa3440f28f54ab9a4cfed7a837068a9890bfe1b8fdbc047cc909",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "DealConfusionDamageToSelf",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "DealConfusionDamageToSelf",
+    "index": 0
+  }
+}

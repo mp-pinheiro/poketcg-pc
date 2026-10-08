@@ -1,0 +1,30 @@
+{
+  "fn": "GenerateBoosterEnergies",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateBoosterEnergies\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00010000000000000000000000000000\", \"50198\": \"01000000000000000000000000000000000000000000\", \"54871\": \"0100\", \"54901\": \"0a62\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateBoosterEnergies\", \"mismatches\": {\"bus\": {\"address\": 49153, \"reference\": \"000100000000\", \"native\": \"000000000000\", \"reference_size\": 42, \"native_size\": 42, \"spans\": [[49152, 16], [50198, 22], [54871, 2], [54901, 2]]}}}\n",
+  "restored": "{\"fn\": \"GenerateBoosterEnergies\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00010000000000000000000000000000\", \"50198\": \"01000000000000000000000000000000000000000000\", \"54871\": \"0100\", \"54901\": \"0a62\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GenerateBoosterEnergies",
+    "before": "\tuint8_t hi = gb_read8((uint16_t)(ptr_addr + 1u));",
+    "after": "\tuint8_t hi = gb_read8((uint16_t)(ptr_addr + 0x0u));",
+    "case_ids": [
+      "GenerateBoosterEnergies-0"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "ed433a66715262998166540cb25a04940f6baa8913b9a3aae1a6afb944536dc2",
+    "mutation_sha256": "5b7037e98049754b8637f64b739ecf26380f20ef5222ea5b58943b517c54586d",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "GenerateBoosterEnergies",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "GenerateBoosterEnergies",
+    "index": 0
+  }
+}

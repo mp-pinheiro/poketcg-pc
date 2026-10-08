@@ -1,0 +1,32 @@
+{
+  "fn": "OpenDeckConfirmationMenu",
+  "case": "tests/profiles/extended/cases/deck_selection.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenDeckConfirmationMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 163, \"e\": 24, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 41728, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41728\": \"00\", \"41752\": \"010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\"}}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38945\": \"00000000\"}}, \"wram\": {\"50296\": \"0100\", \"50432\": \"34\", \"51899\": \"80\", \"52812\": \"00\", \"52814\": \"00\", \"52819\": \"02\", \"52837\": \"3c0000000000000000\", \"52860\": \"023c\", \"52863\": \"e25c\", \"52867\": \"00\", \"52874\": \"02\", \"52936\": \"01000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001\", \"53179\": \"00\", \"53223\": \"02\", \"55084\": \"0100\", \"65423\": \"02\", \"65431\": \"c2\", \"65459\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenDeckConfirmationMenu\", \"mismatches\": {\"bus\": {\"address\": 50296, \"reference\": \"0100348000\", \"native\": \"9900ff8000\", \"reference_size\": 90, \"native_size\": 90, \"spans\": [[50296, 2], [50432, 1], [51899, 1], [52812, 1], [52814, 1], [52819, 1], [52837, 9], [52860, 2], [52863, 2], [52867, 1], [52874, 1], [52936, 61], [53179, 1], [53223, 1], [55084, 2], [65423, 1], [65431, 1], [65459, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenDeckConfirmationMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 163, \"e\": 24, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 41728, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41728\": \"00\", \"41752\": \"010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\"}}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38945\": \"00000000\"}}, \"wram\": {\"50296\": \"0100\", \"50432\": \"34\", \"51899\": \"80\", \"52812\": \"00\", \"52814\": \"00\", \"52819\": \"02\", \"52837\": \"3c0000000000000000\", \"52860\": \"023c\", \"52863\": \"e25c\", \"52867\": \"00\", \"52874\": \"02\", \"52936\": \"01000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001000100010001\", \"53179\": \"00\", \"53223\": \"02\", \"55084\": \"0100\", \"65423\": \"02\", \"65431\": \"c2\", \"65459\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "OpenDeckConfirmationMenu",
+    "before": "\twTotalCardCount = DECK_SIZE;",
+    "after": "\twTotalCardCount = 0u;",
+    "case_ids": [
+      "OpenDeckConfirmationMenu-0",
+      "OpenDeckConfirmationMenu-1",
+      "OpenDeckConfirmationMenu-2"
+    ],
+    "source": "src/profiles/extended/home/deck_selection.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "51d0ff492f0eb35724b6c2e0f6443b7c9775b19a72e755418477e21d43bff0dc",
+    "case_sha256": "b93b40bdd40b4844f425d50044a37953a37adde3a3ecd0ee0c0007175976dd0b",
+    "schema_sha256": "aa5aef3bbb1162bc3868ae7100c8207ce0e7cb0cb1f83b647c7bce7fba2dcb1e",
+    "mutation_sha256": "412b7b566ba637a705d8ce5e260d8b63672c099b38fbabaef76ed34bdb1b1a1e",
+    "source": "src/profiles/extended/home/deck_selection.c",
+    "source_symbol": "OpenDeckConfirmationMenu",
+    "case": "tests/profiles/extended/cases/deck_selection.py",
+    "fn": "OpenDeckConfirmationMenu",
+    "index": 0
+  }
+}

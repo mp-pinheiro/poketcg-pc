@@ -1,0 +1,32 @@
+{
+  "fn": "InitVariablesToBeginDuel",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitVariablesToBeginDuel\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40969\": \"a5\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"80\", \"50161\": \"55\", \"52144\": \"0000\", \"52147\": \"80\", \"52153\": \"ffffff\", \"52373\": \"00\", \"52384\": \"a5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitVariablesToBeginDuel\", \"mismatches\": {\"bus\": {\"address\": 52147, \"reference\": \"8055000080ffffff00\", \"native\": \"8055000000ffffff00\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49905, 1], [50161, 1], [52144, 2], [52147, 1], [52153, 3], [52373, 1], [52384, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitVariablesToBeginDuel\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40969\": \"a5\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"80\", \"50161\": \"55\", \"52144\": \"0000\", \"52147\": \"80\", \"52153\": \"ffffff\", \"52373\": \"00\", \"52384\": \"a5\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "InitVariablesToBeginDuel",
+    "before": "a = wPlayerDuelistType;\n\tif ((a & DUELIST_TYPE_AI_OPP) == 0u)",
+    "after": "a = wPlayerDuelistType;\n\tif ((a & 0x40u) == 0u)",
+    "case_ids": [
+      "InitVariablesToBeginDuel-1",
+      "InitVariablesToBeginDuel-3",
+      "InitVariablesToBeginDuel-5"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "23455809016c6a0b150756296e9e93a0c37955e5158b0b2c7cf31504436f6656",
+    "mutation_sha256": "cb4d0837cf6523d2f201776b3d0d77642bf3875e618d49c73a13f6d7900efef9",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "InitVariablesToBeginDuel",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "InitVariablesToBeginDuel",
+    "index": 1
+  }
+}

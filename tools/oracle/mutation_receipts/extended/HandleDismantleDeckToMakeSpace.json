@@ -1,0 +1,30 @@
+{
+  "fn": "HandleDismantleDeckToMakeSpace",
+  "case": "tests/profiles/extended/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleDismantleDeckToMakeSpace\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53393\": \"00\", \"65409\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleDismantleDeckToMakeSpace\", \"mismatches\": {\"a\": [255, 0]}}\n",
+  "restored": "{\"fn\": \"HandleDismantleDeckToMakeSpace\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53393\": \"00\", \"65409\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleDismantleDeckToMakeSpace",
+    "before": "\t\t\t\treturn (HandleDismantleDeckToMakeSpaceResult){hCurMenuItem, 0x90u};",
+    "after": "\t\t\t\treturn (HandleDismantleDeckToMakeSpaceResult){0u, 0x90u};",
+    "case_ids": [
+      "HandleDismantleDeckToMakeSpace-0",
+      "HandleDismantleDeckToMakeSpace-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2b37b66976ac6d28a2eecf10fef74a52fb30302660c6e5e02a8c8d15a150de01",
+    "case_sha256": "7c75bc1440b4b0b30278f49c753bf254357f2f1513ca1c523d756a5e3fe70735",
+    "schema_sha256": "c96aee6e9e473aefcb087c28c5dd7f935e9cedb7252978a4963ee82c37b0cda2",
+    "mutation_sha256": "35a3195a26006389ef82f82d4c2f23d4ce0d1cbd904aa653d75d1b7c2b603f83",
+    "source": "src/profiles/extended/home/deck_machine.c",
+    "source_symbol": "HandleDismantleDeckToMakeSpace",
+    "case": "tests/profiles/extended/cases/deck_machine.py",
+    "fn": "HandleDismantleDeckToMakeSpace",
+    "index": 0
+  }
+}

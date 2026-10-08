@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AIDecide_FullHeal\", \"registers\": {\"a\": 4, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49904\": \"04\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_FullHeal\", \"mismatches\": {\"a\": [4, 0], \"f\": [16, 128]}}\n",
-  "restored": "{\"fn\": \"AIDecide_FullHeal\", \"registers\": {\"a\": 4, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49904\": \"04\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AIDecide_FullHeal\", \"registers\": {\"a\": 4, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49904\": \"04\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AIDecide_FullHeal",
+    "before": "\tuint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;\n\tif (status == 0u)\n\t\treturn (AIDecideFullHealResult){0u, 0x80u, d};",
+    "after": "\tuint8_t status = 0u;\n\tif (status == 0u)\n\t\treturn (AIDecideFullHealResult){0u, 0x80u, d};",
+    "case_ids": [
+      "AIDecide_FullHeal-1",
+      "AIDecide_FullHeal-2"
+    ],
+    "source": "src/profiles/extended/home/trainer_cards.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3badf508a4e599b2f2e67f7bf0d243f331f6a88af0963a2cb4682c2c7e1a1bf7",
+    "case_sha256": "5e43a5ddd8e45cb4c6da392394b7929204077f7ef553d8ea6f0c3653d65ad921",
+    "schema_sha256": "74b5009fd2b1cffe901b32a7767d3b7ea670d8fad1697b43212f2edd2d9b5ef0",
+    "mutation_sha256": "f3c24f87ea1f8a75743ade0d3347e1db72df4ffebb2216f422dcc323b9d2092b",
+    "source": "src/profiles/extended/home/trainer_cards.c",
+    "source_symbol": "AIDecide_FullHeal",
+    "case": "tests/profiles/extended/cases/trainer_cards.py",
+    "fn": "AIDecide_FullHeal",
+    "index": 1
+  }
 }

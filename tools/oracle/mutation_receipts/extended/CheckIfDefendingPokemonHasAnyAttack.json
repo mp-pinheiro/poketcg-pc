@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"CheckIfDefendingPokemonHasAnyAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"52264\": \"c3\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfDefendingPokemonHasAnyAttack\", \"mismatches\": {\"f\": [0, 1]}}\n",
-  "restored": "{\"fn\": \"CheckIfDefendingPokemonHasAnyAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"52264\": \"c3\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"CheckIfDefendingPokemonHasAnyAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"00\", \"52264\": \"c3\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckIfDefendingPokemonHasAnyAttack",
+    "before": "f = (uint8_t)(category == 0u ? 0x80u : 0x00u);",
+    "after": "f = (uint8_t)(category == 0u ? 0x80u : 0x01u);",
+    "case_ids": [
+      "CheckIfDefendingPokemonHasAnyAttack-0",
+      "CheckIfDefendingPokemonHasAnyAttack-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "b330d252804af274e2b831a8b3c3bcb6f02bd30adc97fcf30d1dce57620f014d",
+    "mutation_sha256": "e64c019db672a9dd59f9c2f644fef6744f45994cd3c78118553dfaceff56643a",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "CheckIfDefendingPokemonHasAnyAttack",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "CheckIfDefendingPokemonHasAnyAttack",
+    "index": 0
+  }
 }

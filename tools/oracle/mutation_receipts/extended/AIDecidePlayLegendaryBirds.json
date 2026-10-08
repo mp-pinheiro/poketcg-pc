@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AIDecidePlayLegendaryBirds\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"38\", \"52152\": \"00\", \"52182\": \"40\", \"52548\": \"20\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AIDecidePlayLegendaryBirds\", \"mismatches\": {\"bus\": {\"address\": 52548, \"reference\": \"38004020c2\", \"native\": \"38004000c2\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49850, 1], [52152, 1], [52182, 1], [52548, 1], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"AIDecidePlayLegendaryBirds\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"38\", \"52152\": \"00\", \"52182\": \"40\", \"52548\": \"20\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AIDecidePlayLegendaryBirds\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"38\", \"52152\": \"00\", \"52182\": \"40\", \"52548\": \"20\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AIDecidePlayLegendaryBirds",
+    "before": "void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = wOpponentDeckID;",
+    "after": "void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = LEGENDARY_ZAPDOS_DECK_ID;",
+    "case_ids": [
+      "AIDecidePlayLegendaryBirds-0",
+      "AIDecidePlayLegendaryBirds-5"
+    ],
+    "source": "src/profiles/extended/home/hand_pokemon.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "f2882e2fad2a3a91c4f36f07893d32d2cd4da8a0acb9707ad534f9cd65decb5a",
+    "case_sha256": "a6ce1ff11796a045d4339147adf1604a9e53208cd32c1c06d3716b5f734a4fc2",
+    "schema_sha256": "098e7215324fff14e82c87d75a5e0075d2028f89fca07f834c77caee9b1ec358",
+    "mutation_sha256": "64d66b0de073e2b9f5a460e2e0df0fa16068987176ef9278e79cee390918ce17",
+    "source": "src/profiles/extended/home/hand_pokemon.c",
+    "source_symbol": "AIDecidePlayLegendaryBirds",
+    "case": "tests/profiles/extended/cases/hand_pokemon.py",
+    "fn": "AIDecidePlayLegendaryBirds",
+    "index": 0
+  }
 }

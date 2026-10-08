@@ -1,0 +1,30 @@
+{
+  "fn": "CheckIfCurrentDeckWasChanged",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfCurrentDeckWasChanged\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52861\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfCurrentDeckWasChanged\", \"mismatches\": {\"f\": [16, 0]}}\n",
+  "restored": "{\"fn\": \"CheckIfCurrentDeckWasChanged\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52861\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckIfCurrentDeckWasChanged",
+    "before": "return (CheckIfCurrentDeckWasChangedResult){total, 0x10u};",
+    "after": "return (CheckIfCurrentDeckWasChangedResult){total, 0x00u};",
+    "case_ids": [
+      "CheckIfCurrentDeckWasChanged-0",
+      "CheckIfCurrentDeckWasChanged-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "b0be20a5d810af0581c84d9e8bd8a37c7526d942cf0adf87114dce9aa3d27cf3",
+    "mutation_sha256": "d81edbd4a43eb0db3a194ac1880776c3c0b1e70994a318e8344564f1eacc0aab",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "CheckIfCurrentDeckWasChanged",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "CheckIfCurrentDeckWasChanged",
+    "index": 0
+  }
+}

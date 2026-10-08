@@ -1,0 +1,31 @@
+{
+  "fn": "FindCardsInSetAndRarity",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FindCardsInSetAndRarity\", \"registers\": {\"a\": 229, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 229, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49153\": \"010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\", \"53536\": \"00\", \"54871\": \"e4\", \"54879\": \"000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FindCardsInSetAndRarity\", \"mismatches\": {\"bus\": {\"address\": 54871, \"reference\": \"01010100e400000000\", \"native\": \"01010100e300000000\", \"reference_size\": 239, \"native_size\": 239, \"spans\": [[49153, 228], [53536, 1], [54871, 1], [54879, 9]]}}}\n",
+  "restored": "{\"fn\": \"FindCardsInSetAndRarity\", \"registers\": {\"a\": 229, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 229, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49153\": \"010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\", \"53536\": \"00\", \"54871\": \"e4\", \"54879\": \"000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FindCardsInSetAndRarity",
+    "before": "for (CardId card_id = 1u; card_id <= NUM_CARDS; card_id++) {",
+    "after": "for (CardId card_id = 1u; card_id < NUM_CARDS; card_id++) {",
+    "case_ids": [
+      "FindCardsInSetAndRarity-0",
+      "FindCardsInSetAndRarity-1"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "ac7d6c957cda2660a8606face29db777f3fecd4c8a3e1a6433084eaac5f24226",
+    "mutation_sha256": "7dc7e5fcffbd2f2320397f00a9b092d5a00c494f2ae876e7370730a5649ec829",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "FindCardsInSetAndRarity",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "FindCardsInSetAndRarity",
+    "index": 0
+  }
+}

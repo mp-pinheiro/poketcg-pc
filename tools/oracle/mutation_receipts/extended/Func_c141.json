@@ -1,0 +1,30 @@
+{
+  "fn": "Func_c141",
+  "case": "tests/profiles/extended/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c141\", \"registers\": {\"a\": 0, \"b\": 5, \"c\": 0, \"d\": 211, \"e\": 4, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 53423, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53420\": \"00\", \"53423\": \"00\", \"54044\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c141\", \"mismatches\": {\"f\": [128, 144]}}\n",
+  "restored": "{\"fn\": \"Func_c141\", \"registers\": {\"a\": 0, \"b\": 5, \"c\": 0, \"d\": 211, \"e\": 4, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 53423, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53420\": \"00\", \"53423\": \"00\", \"54044\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Func_c141",
+    "before": "\t\treturn (Func_c141Result){0u, 0x80u, wActiveGameEvent_ADDR};",
+    "after": "\t\treturn (Func_c141Result){0u, (uint8_t)((0x80u) ^ 0x10u), wActiveGameEvent_ADDR};",
+    "case_ids": [
+      "Func_c141-0"
+    ],
+    "source": "src/profiles/extended/home/overworld.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "4135fef9f8fa19c4ec0b073e0d1f7ac4bb7a7393ddccffe46c53d48f664b278c",
+    "case_sha256": "adc0037e39c0eeedfa9fe76181048e81a053df4b5b1c76b75752bfddf6d4071c",
+    "schema_sha256": "0d0c6601be6bc7b8fc15c3b73d228504f9e9f6d6d0ba6273ac60451b0356b930",
+    "mutation_sha256": "a1f243850a7148b304847ea35a660d19a491d8df8765f4512443f39d18003b61",
+    "source": "src/profiles/extended/home/overworld.c",
+    "source_symbol": "Func_c141",
+    "case": "tests/profiles/extended/cases/overworld.py",
+    "fn": "Func_c141",
+    "index": 0
+  }
+}

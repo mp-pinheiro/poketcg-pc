@@ -1,0 +1,32 @@
+{
+  "fn": "OverworldMap_InitCursorSprite",
+  "case": "tests/profiles/extended/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_InitCursorSprite\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"54043\": \"03\", \"54056\": \"002f0300\", \"54209\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"54460\": \"0001000000002f29a84baf4b29974b0580\", \"54461\": \"01000000002f29a84baf4b29974b0580\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_InitCursorSprite\", \"mismatches\": {\"bus\": {\"address\": 54476, \"reference\": \"29974b0580\", \"native\": \"29974b0500\", \"reference_size\": 87, \"native_size\": 87, \"spans\": [[51892, 1], [54043, 1], [54056, 4], [54209, 64], [54460, 17]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_InitCursorSprite\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"54043\": \"03\", \"54056\": \"002f0300\", \"54209\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"54460\": \"0001000000002f29a84baf4b29974b0580\", \"54461\": \"01000000002f29a84baf4b29974b0580\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "OverworldMap_InitCursorSprite",
+    "before": "\tuint16_t flags = GetSpriteAnimBufferProperty(SPRITE_ANIM_FLAGS);",
+    "after": "\tuint16_t flags = GetSpriteAnimBufferProperty((uint8_t)(SPRITE_ANIM_FLAGS + 1u));",
+    "case_ids": [
+      "OverworldMap_InitCursorSprite-0",
+      "OverworldMap_InitCursorSprite-1",
+      "OverworldMap_InitCursorSprite-2",
+      "OverworldMap_InitCursorSprite-3"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "d8abe037bdf286cbd276d4fe01835d79d07d4532eba88c89495fd67e017bbb66",
+    "case_sha256": "dd09e6932a80d5c41259529c7e2778608a0889b2acbe9eb869c8577a8aaa8fe3",
+    "schema_sha256": "8fe790a560651ead89d678b4d51a8edbcec19794f4a27a266e1fc4f322a30a1a",
+    "mutation_sha256": "6b86ecd5968e1e07dd61962ed244b02bc415eea85eb506bfb601cce4595521e6",
+    "source": "src/profiles/extended/home/overworld_map.c",
+    "source_symbol": "OverworldMap_InitCursorSprite",
+    "case": "tests/profiles/extended/cases/overworld_map.py",
+    "fn": "OverworldMap_InitCursorSprite",
+    "index": 0
+  }
+}

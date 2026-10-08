@@ -1,0 +1,30 @@
+{
+  "fn": "DrawPortrait",
+  "case": "tests/profiles/extended/cases/load_animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawPortrait\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53534\": \"ff\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawPortrait\", \"mismatches\": {\"bus\": {\"address\": 65408, \"reference\": \"ff01\", \"native\": \"ff20\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53534, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawPortrait\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53534\": \"ff\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawPortrait",
+    "before": "\tBankswitchROM(saved);",
+    "after": "\t(void)0;",
+    "case_ids": [
+      "DrawPortrait-0"
+    ],
+    "source": "src/profiles/extended/home/load_animation.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "fd2f61c1d8b0d3f72086b3d3b7d47f2546de745c577c0adab7bcdec08a92b147",
+    "case_sha256": "fd89cccc8743b6692e9876ede5847a11cd8354f76f4bd88dae2fb65a1c7a7a09",
+    "schema_sha256": "d2132fc39be116652694d6a8c3b42060d4414a02863461311f7c7b9a8fe01b7b",
+    "mutation_sha256": "0b2ce29c07be3b17fce4614b6c823cc882a5b0894cff2f7b608c3ba31d628e84",
+    "source": "src/profiles/extended/home/load_animation.c",
+    "source_symbol": "DrawPortrait",
+    "case": "tests/profiles/extended/cases/load_animation.py",
+    "fn": "DrawPortrait",
+    "index": 0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "fn": "CopyDeckData",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyDeckData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 118, \"d\": 193, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 50297, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"3c0700003040\", \"50176\": \"070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700\", \"52375\": \"3040\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyDeckData\", \"mismatches\": {\"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"CopyDeckData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 118, \"d\": 193, \"e\": 5, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 50297, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"3c0700003040\", \"50176\": \"070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700070007000700\", \"52375\": \"3040\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CopyDeckData",
+    "before": "f = a == 0u ? 0x80u : 0x10u;",
+    "after": "f = a == 0u ? 0x00u : 0x10u;",
+    "case_ids": [
+      "CopyDeckData-2"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "d1e11bf902620eb0db237cc09c532b715cb0bc3b79cb9cdadadd0cf19305c94c",
+    "mutation_sha256": "5d1f01c4172e396c52081ee9b53aac2f21a5fb95ace67a393851e09cc16d5bfd",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "CopyDeckData",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "CopyDeckData",
+    "index": 2
+  }
+}

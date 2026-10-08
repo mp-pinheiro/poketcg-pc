@@ -1,0 +1,30 @@
+{
+  "fn": "Func_1d705",
+  "case": "tests/profiles/extended/cases/credits.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_1d705\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54836\": \"91019101\", \"54852\": \"00\", \"65345\": \"c0\", \"65349\": \"00\", \"65535\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_1d705\", \"mismatches\": {\"bus\": {\"address\": 54836, \"reference\": \"9101910100\", \"native\": \"9001910100\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[54836, 4], [54852, 1], [65345, 1], [65349, 1], [65535, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_1d705\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54836\": \"91019101\", \"54852\": \"00\", \"65345\": \"c0\", \"65349\": \"00\", \"65535\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Func_1d705",
+    "before": "wd647 = 0x91u;",
+    "after": "wd647 = 0x90u;",
+    "case_ids": [
+      "Func_1d705-0",
+      "Func_1d705-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "11b4c18deabb463bef619b9454926c8beace33ba7e16b2aaddadf2c1a5e43ad2",
+    "case_sha256": "76c22e6d9a6eab5db4335b16b9d55b02616a03277cc07d04faa6b76486641486",
+    "schema_sha256": "db2064e48e724c284908de54ad4c28ee33fff51990b4969ab040c69403100872",
+    "mutation_sha256": "bb8188e615fea49f81a0997c06f19d23075e5a43a4b6949469e89bb47199551a",
+    "source": "src/profiles/extended/home/credits.c",
+    "source_symbol": "Func_1d705",
+    "case": "tests/profiles/extended/cases/credits.py",
+    "fn": "Func_1d705",
+    "index": 0
+  }
+}

@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Func_10d17\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"03\", \"51900\": \"001bb4\", \"51952\": \"ff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f\", \"53889\": \"e41bb4000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f10\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Func_10d17\", \"mismatches\": {\"bus\": {\"address\": 51984, \"reference\": \"ff7fff7fff7fff7fff\", \"native\": \"ff7fff7f2021222324\", \"reference_size\": 264, \"native_size\": 264, \"spans\": [[51892, 1], [51900, 3], [51952, 128], [53889, 132]]}}}\n",
-  "restored": "{\"fn\": \"Func_10d17\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"03\", \"51900\": \"001bb4\", \"51952\": \"ff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f\", \"53889\": \"e41bb4000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f10\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Func_10d17\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"03\", \"51900\": \"001bb4\", \"51952\": \"ff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f\", \"53889\": \"e41bb4000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f10\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Func_10d17",
+    "before": "\twhite_cgb(wBackgroundPalettesCGB_ADDR, 64u);",
+    "after": "\twhite_cgb(wBackgroundPalettesCGB_ADDR, 32u);",
+    "case_ids": [
+      "Func_10d17-0"
+    ],
+    "source": "src/profiles/extended/home/color.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "d18354380db4c70e782a92f2f174a0153f295b11aa82500ca71d6bdef439b4f4",
+    "case_sha256": "7d0f6e7f58c570831515fedd5dc609216c3598d758bf5c99db6ac52cf82d499a",
+    "schema_sha256": "39cc942d8190755d6162883dd49b5d1c8ff9efe6e15b2e8ed8bf2ef9e2a87ffa",
+    "mutation_sha256": "42d061e6bd642756d32a749d29787a1d89fa55b01eab90d00a3a27fd3778a564",
+    "source": "src/profiles/extended/home/color.c",
+    "source_symbol": "Func_10d17",
+    "case": "tests/profiles/extended/cases/color.py",
+    "fn": "Func_10d17",
+    "index": 0
+  }
 }

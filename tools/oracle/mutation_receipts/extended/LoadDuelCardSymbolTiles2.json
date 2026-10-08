@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"LoadDuelCardSymbolTiles2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 142, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 28904, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"36160\": \"0000ffff8080818182838487888e909e0000fefe02020202828242c222e212f2a0bcb8be888e888e888f8f8f8080ffff0afa3afa22e222e222e2e2e20202fefe0000ffff8080818182838487888e909d0000fefe02020202828242c222e21272a0bfb8be888d888c888f8f8f8080ffff0a7a3afa22e2226222e2e2e20202fefe0000ffff8080bfbfa0a0a0afa0afbcbd0000fefe0202fafa0a0a0afa0afa7afa8485848584858485848587878080ffff42c242c242c242c242c2c2c20202fefe\"}}, \"wram\": {\"51892\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"LoadDuelCardSymbolTiles2\", \"mismatches\": {\"hl\": [28904, 28905], \"vram\": \"reference/native state differs\"}}\n",
-  "restored": "{\"fn\": \"LoadDuelCardSymbolTiles2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 142, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 28904, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"36160\": \"0000ffff8080818182838487888e909e0000fefe02020202828242c222e212f2a0bcb8be888e888e888f8f8f8080ffff0afa3afa22e222e222e2e2e20202fefe0000ffff8080818182838487888e909d0000fefe02020202828242c222e21272a0bfb8be888d888c888f8f8f8080ffff0a7a3afa22e2226222e2e2e20202fefe0000ffff8080bfbfa0a0a0afa0afbcbd0000fefe0202fafa0a0a0afa0afa7afa8485848584858485848587878080ffff42c242c242c242c242c2c2c20202fefe\"}}, \"wram\": {\"51892\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"LoadDuelCardSymbolTiles2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 142, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 28904, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"36160\": \"0000ffff8080818182838487888e909e0000fefe02020202828242c222e212f2a0bcb8be888e888e888f8f8f8080ffff0afa3afa22e222e222e2e2e20202fefe0000ffff8080818182838487888e909d0000fefe02020202828242c222e21272a0bfb8be888d888c888f8f8f8080ffff0a7a3afa22e2226222e2e2e20202fefe0000ffff8080bfbfa0a0a0afa0afbcbd0000fefe0202fafa0a0a0afa0afa7afa8485848584858485848587878080ffff42c242c242c242c242c2c2c20202fefe\"}}, \"wram\": {\"51892\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadDuelCardSymbolTiles2",
+    "before": "\tuint16_t hl = (uint16_t)(DUEL_CGB_SYMBOL_GFX_FAR + 0x40u);",
+    "after": "\tuint16_t hl = (uint16_t)(DUEL_CGB_SYMBOL_GFX_FAR + 0x41u);",
+    "case_ids": [
+      "LoadDuelCardSymbolTiles2-0"
+    ],
+    "source": "src/profiles/extended/home/tiles.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "0abe524638756a06f22f94d72faaf844221353e03cbcb7e2d380d6e0a0131a4c",
+    "case_sha256": "ce8d6fe6c4891d3431b70186cb329a7bbbd3138a961fef1059fb44a553d1f4c5",
+    "schema_sha256": "a7e5a956f75c8035bef9888b9093ce139e7be3b953339b4d4ddd20bb1db01d52",
+    "mutation_sha256": "7695d961a418cd3706562db7f5b29889e68cd04c58a8b9a9bfe7456cea3aabf6",
+    "source": "src/profiles/extended/home/tiles.c",
+    "source_symbol": "LoadDuelCardSymbolTiles2",
+    "case": "tests/profiles/extended/cases/tiles.py",
+    "fn": "LoadDuelCardSymbolTiles2",
+    "index": 0
+  }
 }

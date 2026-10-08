@@ -1,0 +1,30 @@
+{
+  "fn": "ChooseInitialArenaAndBenchPokemon",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChooseInitialArenaAndBenchPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"00\", \"49905\": \"ff\", \"52152\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChooseInitialArenaAndBenchPokemon\", \"mismatches\": {\"bus\": {\"address\": 49905, \"reference\": \"00ff01c2\", \"native\": \"000001c2\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49850, 1], [49905, 1], [52152, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ChooseInitialArenaAndBenchPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"00\", \"49905\": \"ff\", \"52152\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ChooseInitialArenaAndBenchPokemon",
+    "before": "gb_write8(duelist.hl, duelist_type);",
+    "after": "gb_write8(duelist.hl, 0u);",
+    "case_ids": [
+      "ChooseInitialArenaAndBenchPokemon-0"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "7e23ec3a788580b99a58fc8dd3aa9900c25f7c43b784d049257b7d769903f12d",
+    "mutation_sha256": "bcadca8e7edc603e98da07330b09bac3a7c8098b1a8707f78ec355e12686192d",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "ChooseInitialArenaAndBenchPokemon",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "ChooseInitialArenaAndBenchPokemon",
+    "index": 0
+  }
+}

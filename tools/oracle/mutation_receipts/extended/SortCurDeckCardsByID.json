@@ -1,0 +1,32 @@
+{
+  "fn": "SortCurDeckCardsByID",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SortCurDeckCardsByID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50296\": \"03010200\", \"50432\": \"0100ff00\", \"52936\": \"02000301\", \"65431\": \"c2\", \"65433\": \"02c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SortCurDeckCardsByID\", \"mismatches\": {\"bus\": {\"address\": 50296, \"reference\": \"0301020001\", \"native\": \"9998970001\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[50296, 4], [50432, 4], [52936, 4], [65431, 1], [65433, 2]]}}}\n",
+  "restored": "{\"fn\": \"SortCurDeckCardsByID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50296\": \"03010200\", \"50432\": \"0100ff00\", \"52936\": \"02000301\", \"65431\": \"c2\", \"65433\": \"02c5\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SortCurDeckCardsByID",
+    "before": "SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)\n{\n\tuint16_t src = wCurDeckCards_ADDR;",
+    "after": "SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)\n{\n\tuint16_t src = wOpponentDeck_ADDR;",
+    "case_ids": [
+      "SortCurDeckCardsByID-0",
+      "SortCurDeckCardsByID-1",
+      "SortCurDeckCardsByID-2",
+      "SortCurDeckCardsByID-3"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "3847eb88e39e4e17fcbac5bec46883d7f2dd8e251817c9549d0d7d4bbcd9cef3",
+    "mutation_sha256": "a3219527c6b83a2332a9810865ec668c28401fd2ac112d84b6024053876522ff",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "SortCurDeckCardsByID",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "SortCurDeckCardsByID",
+    "index": 0
+  }
+}

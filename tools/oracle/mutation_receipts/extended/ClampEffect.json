@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ClampEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52323\": \"000000\", \"52347\": \"00000000\", \"52379\": \"02\", \"52514\": \"01000002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ClampEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"018100000000000000\", \"native\": \"018100000100000000\", \"reference_size\": 21, \"native_size\": 21, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52323, 3], [52347, 4], [52379, 1], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"ClampEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52323\": \"000000\", \"52347\": \"00000000\", \"52379\": \"02\", \"52514\": \"01000002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ClampEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52323\": \"000000\", \"52347\": \"00000000\", \"52379\": \"02\", \"52514\": \"01000002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ClampEffect",
+    "before": "\twLoadedAttackAnimation = ATK_ANIM_NONE;\n\tSetDefiniteDamage(0u);",
+    "after": "\twLoadedAttackAnimation = ATK_ANIM_NONE;\n\tSetDefiniteDamage(1u);",
+    "case_ids": [
+      "ClampEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "ea418e68286951948fd37a9f87215db7b910c657a952b0d292820217fdd1292e",
+    "mutation_sha256": "99abc3279fb082ce5626e03c544fcac40991b628c94ffc4f060cd844cf194211",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "ClampEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "ClampEffect",
+    "index": 1
+  }
 }

@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"HandleColorChangeScreen\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52377\": \"01\", \"52741\": \"00\", \"52743\": \"00\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"HandleColorChangeScreen\", \"mismatches\": {\"a\": [1, 0], \"f\": [0, 128]}}\n",
-  "restored": "{\"fn\": \"HandleColorChangeScreen\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52377\": \"01\", \"52741\": \"00\", \"52743\": \"00\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"HandleColorChangeScreen\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52377\": \"01\", \"52741\": \"00\", \"52743\": \"00\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleColorChangeScreen",
+    "before": "\t\tuint8_t color = gb_read8((uint16_t)(SHIFT_LIST_ITEM_TO_COLOR + input.a));",
+    "after": "\t\tuint8_t color = gb_read8((uint16_t)(SHIFT_LIST_ITEM_TO_COLOR + input.a + 1u));",
+    "case_ids": [
+      "HandleColorChangeScreen-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "d55be0f8814641909e18320a24ffd0f14ebac4978cf1218cb44cec37308153e1",
+    "mutation_sha256": "a4604a51e98aa0eb150f6afa82051c3517c594d299a4aa6b858b98122480dfdc",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "HandleColorChangeScreen",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "HandleColorChangeScreen",
+    "index": 0
+  }
 }

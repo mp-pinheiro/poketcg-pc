@@ -1,0 +1,30 @@
+{
+  "fn": "SortCardsInListByID",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SortCardsInListByID\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 2, \"d\": 197, \"e\": 2, \"f\": 32, \"frame_budget_reached\": 0, \"hl\": 50435, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"010002000300\", \"50432\": \"000102ff\", \"65431\": \"c2\", \"65433\": \"03c50300\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SortCardsInListByID\", \"mismatches\": {\"bus\": {\"address\": 50432, \"reference\": \"02000300000102ffc2\", \"native\": \"02000300010102ffc2\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[50176, 6], [50432, 4], [65431, 1], [65433, 4]]}}}\n",
+  "restored": "{\"fn\": \"SortCardsInListByID\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 2, \"d\": 197, \"e\": 2, \"f\": 32, \"frame_budget_reached\": 0, \"hl\": 50435, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"010002000300\", \"50432\": \"000102ff\", \"65431\": \"c2\", \"65433\": \"03c50300\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SortCardsInListByID",
+    "before": "\t\tgb_write8(ptr, gb_read8(lowest_pos));",
+    "after": "\t\tgb_write8(ptr, (uint8_t)((gb_read8(lowest_pos)) ^ 1u));",
+    "case_ids": [
+      "SortCardsInListByID-0"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "56c3fbe3be3616ebc62797a4dfd43040334e6c90ce0c621eeddcdeb098ac3aa6",
+    "mutation_sha256": "58be56e24ae7535370b86d6b009d9e91c1ddae450fcb2fbbe78b46aa95db6822",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "SortCardsInListByID",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "SortCardsInListByID",
+    "index": 0
+  }
+}

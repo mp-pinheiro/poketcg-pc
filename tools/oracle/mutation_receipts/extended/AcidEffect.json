@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AcidEffect\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49910, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"09\", \"49905\": \"00\", \"49910\": \"09\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AcidEffect\", \"mismatches\": {\"bus\": {\"address\": 49896, \"reference\": \"0900098000\", \"native\": \"0c000c8000\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49896, 1], [49905, 1], [49910, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"AcidEffect\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49910, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"09\", \"49905\": \"00\", \"49910\": \"09\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AcidEffect\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49910, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"09\", \"49905\": \"00\", \"49910\": \"09\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AcidEffect",
+    "before": "\tuint16_t written = ApplySubstatus2ToDefendingCard(SUBSTATUS2_ACID, hl);",
+    "after": "\tuint16_t written = ApplySubstatus2ToDefendingCard(0x0cu, hl);",
+    "case_ids": [
+      "AcidEffect-0",
+      "AcidEffect-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "5ed37d4370d99e5cf1496aa2ba52fc7e20a7b9b17ade9731ecf833481d9a4589",
+    "mutation_sha256": "4f49a8670e65c23f6f4a3676924faf63627d120ddd68acb90f718c12821c8a33",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "AcidEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "AcidEffect",
+    "index": 0
+  }
 }

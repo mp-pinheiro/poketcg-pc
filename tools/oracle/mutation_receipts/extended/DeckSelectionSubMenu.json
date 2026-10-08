@@ -1,0 +1,30 @@
+{
+  "fn": "DeckSelectionSubMenu",
+  "case": "tests/profiles/extended/cases/deck_selection.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DeckSelectionSubMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52825\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DeckSelectionSubMenu\", \"mismatches\": {\"bus\": {\"address\": 52825, \"reference\": \"80000000\", \"native\": \"80010000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51899, 1], [52825, 3]]}}}\n",
+  "restored": "{\"fn\": \"DeckSelectionSubMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52825\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DeckSelectionSubMenu",
+    "before": "\t(void)ResetCheckMenuCursorPositionAndBlink();",
+    "after": "\t(void)ResetCheckMenuCursorPositionAndBlink();\n\twCheckMenuCursorXPosition = 1u;",
+    "case_ids": [
+      "DeckSelectionSubMenu-0",
+      "DeckSelectionSubMenu-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "51d0ff492f0eb35724b6c2e0f6443b7c9775b19a72e755418477e21d43bff0dc",
+    "case_sha256": "b93b40bdd40b4844f425d50044a37953a37adde3a3ecd0ee0c0007175976dd0b",
+    "schema_sha256": "3da701c50213fd63945f88064399384e5bb0252dd9020c3d0786b0b8eb98c818",
+    "mutation_sha256": "a2eedb88077edcd2f2f274c749950a934e7a40bf6f3dd0a84b77ab7664131f01",
+    "source": "src/profiles/extended/home/deck_selection.c",
+    "source_symbol": "DeckSelectionSubMenu",
+    "case": "tests/profiles/extended/cases/deck_selection.py",
+    "fn": "DeckSelectionSubMenu",
+    "index": 0
+  }
+}

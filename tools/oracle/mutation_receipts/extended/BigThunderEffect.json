@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"BigThunderEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 20, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"0a\", \"49903\": \"01\", \"50107\": \"00\", \"50120\": \"50\", \"50159\": \"01\", \"50176\": \"01\", \"50296\": \"01\", \"51899\": \"00\", \"51914\": \"020002\", \"52323\": \"82\", \"52341\": \"00\", \"52372\": \"01\", \"52792\": \"01\", \"54288\": \"ffffffffffffffff\", \"54425\": \"0800\", \"54445\": \"ff\", \"65431\": \"c2\", \"65437\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"BigThunderEffect\", \"mismatches\": {\"a\": [1, 0], \"f\": [0, 128], \"bus\": {\"address\": 49864, \"reference\": \"000a01005001\", \"native\": \"005001005001\", \"reference_size\": 29, \"native_size\": 29, \"spans\": [[49851, 1], [49864, 1], [49903, 1], [50107, 1], [50120, 1], [50159, 1], [50176, 1], [50296, 1], [51899, 1], [51914, 3], [52323, 1], [52341, 1], [52372, 1], [52792, 1], [54288, 8], [54425, 2], [54445, 1], [65431, 1], [65437, 1]]}}}\n",
-  "restored": "{\"fn\": \"BigThunderEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 20, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"0a\", \"49903\": \"01\", \"50107\": \"00\", \"50120\": \"50\", \"50159\": \"01\", \"50176\": \"01\", \"50296\": \"01\", \"51899\": \"00\", \"51914\": \"020002\", \"52323\": \"82\", \"52341\": \"00\", \"52372\": \"01\", \"52792\": \"01\", \"54288\": \"ffffffffffffffff\", \"54425\": \"0800\", \"54445\": \"ff\", \"65431\": \"c2\", \"65437\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"BigThunderEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 20, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"0a\", \"49903\": \"01\", \"50107\": \"00\", \"50120\": \"50\", \"50159\": \"01\", \"50176\": \"01\", \"50296\": \"01\", \"51899\": \"00\", \"51914\": \"020002\", \"52323\": \"82\", \"52341\": \"00\", \"52372\": \"01\", \"52792\": \"01\", \"54288\": \"ffffffffffffffff\", \"54425\": \"0800\", \"54445\": \"ff\", \"65431\": \"c2\", \"65437\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "BigThunderEffect",
+    "before": "RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\treturn RandomlyDamagePlayAreaPokemon(70u);",
+    "after": "RandomlyDamagePlayAreaPokemonResult BigThunderEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)\n{\n\treturn RandomlyDamagePlayAreaPokemon(0u);",
+    "case_ids": [
+      "BigThunderEffect-0",
+      "BigThunderEffect-1",
+      "BigThunderEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "39e2d932db2f91c9be8002e77147d71bd71783ea0829341cae5ce73c8c418173",
+    "mutation_sha256": "5ac6912762002f3a62a7401d72fbff8a3c0363af2f5618a6dd97adf2879e761f",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "BigThunderEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "BigThunderEffect",
+    "index": 0
+  }
 }

@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"TantrumEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52323\": \"29\", \"52347\": \"03c3f001\", \"52514\": \"01000002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"TantrumEffect\", \"mismatches\": {\"bus\": {\"address\": 52323, \"reference\": \"000181002903c3f001\", \"native\": \"000181002a03c3f001\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52323, 1], [52347, 4], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"TantrumEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52323\": \"29\", \"52347\": \"03c3f001\", \"52514\": \"01000002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"TantrumEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52323\": \"29\", \"52347\": \"03c3f001\", \"52514\": \"01000002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "TantrumEffect",
+    "before": "uint8_t TantrumEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(IfTailsYourPokemonBecomesConfusedText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;\n\twLoadedAttackAnimation = ATK_ANIM_MULTIPLE_SLASH;",
+    "after": "uint8_t TantrumEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(IfTailsYourPokemonBecomesConfusedText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;\n\twLoadedAttackAnimation = 0x2au;",
+    "case_ids": [
+      "TantrumEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "57c81116bfb8cb2f7cdd7453e18a2f73f028ba1007fb7d3d8a0963329a5a2283",
+    "mutation_sha256": "06bb8b18b9d541a249c7a019f78298cb5d591f25c4cc602aa8c368c91cb0b648",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "TantrumEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "TantrumEffect",
+    "index": 1
+  }
 }

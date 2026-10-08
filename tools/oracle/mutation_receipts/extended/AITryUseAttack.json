@@ -1,0 +1,30 @@
+{
+  "fn": "AITryUseAttack",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AITryUseAttack\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52111\": \"00\", \"52131\": \"01\", \"52145\": \"01\", \"52340\": \"00\", \"65431\": \"c3\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AITryUseAttack\", \"mismatches\": {\"bus\": {\"address\": 52340, \"reference\": \"0000010100c30000\", \"native\": \"0000010101c30001\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51899, 1], [52111, 1], [52131, 1], [52145, 1], [52340, 1], [65431, 1], [65439, 2]]}}}\n",
+  "restored": "{\"fn\": \"AITryUseAttack\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52111\": \"00\", \"52131\": \"01\", \"52145\": \"01\", \"52340\": \"00\", \"65431\": \"c3\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AITryUseAttack",
+    "before": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = e;",
+    "after": "\tuint8_t e = wSelectedAttack;\n\thTemp_ffa0 = (uint8_t)(e + 1u);",
+    "case_ids": [
+      "AITryUseAttack-0",
+      "AITryUseAttack-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "cf582a2f3a99dd56fde498bea0b370794e5b02c57494ff3865a5b509ff1f4443",
+    "mutation_sha256": "6a0e615ac81fa4c04e96aa96d0e330f495cf12230e8b27ce8b0d251906a1a96a",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "AITryUseAttack",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "AITryUseAttack",
+    "index": 0
+  }
+}

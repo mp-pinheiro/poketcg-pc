@@ -1,0 +1,31 @@
+{
+  "fn": "SFX_loop",
+  "case": "tests/profiles/extended/cases/sfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SFX_loop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"12f0\", \"55394\": \"00\", \"55398\": \"01c4\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SFX_loop\", \"mismatches\": {\"bus\": {\"address\": 55398, \"reference\": \"12f00001c4\", \"native\": \"12f0000001\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50176, 2], [55394, 1], [55398, 2]]}}}\n",
+  "restored": "{\"fn\": \"SFX_loop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"12f0\", \"55394\": \"00\", \"55398\": \"01c4\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SFX_loop",
+    "before": "void SFX_loop(uint16_t bc, uint16_t caller_de)\n{\n\tuint16_t store_addr = (uint16_t)(wde43_ADDR + bc + bc);",
+    "after": "void SFX_loop(uint16_t bc, uint16_t caller_de)\n{\n\tuint16_t store_addr = (uint16_t)(wde43_ADDR + bc + bc + 1u);",
+    "case_ids": [
+      "SFX_loop-0",
+      "SFX_loop-1",
+      "SFX_loop-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c0b144c8415e396832c40188cb47b8e5f62a195a5625c1f79ecac31050982e72",
+    "case_sha256": "6d2dd40da23171a416124f75fdff52827fd4a56bcd72ffd87aa576d60c1f5230",
+    "schema_sha256": "b945001f10aa16f45d8a7df6b7738f513337f2233ac4fae6de83e9dc170a6ab9",
+    "mutation_sha256": "84e89f0ee582400e58c50da55b94821d991fb367e55dac9aa8ee12b74cb180e3",
+    "source": "src/profiles/extended/home/sfx.c",
+    "source_symbol": "SFX_loop",
+    "case": "tests/profiles/extended/cases/sfx.py",
+    "fn": "SFX_loop",
+    "index": 0
+  }
+}

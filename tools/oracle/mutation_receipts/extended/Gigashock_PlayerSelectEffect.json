@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Gigashock_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"0001\", \"50120\": \"2020\", \"50159\": \"02\", \"50296\": \"0809\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65440\": \"01ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Gigashock_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65441, \"reference\": \"8080c201ff02\", \"native\": \"8080c2010002\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[50107, 2], [50120, 2], [50159, 1], [50296, 2], [51899, 1], [65344, 1], [65431, 1], [65440, 2], [65458, 1]]}}}\n",
-  "restored": "{\"fn\": \"Gigashock_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"0001\", \"50120\": \"2020\", \"50159\": \"02\", \"50296\": \"0809\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65440\": \"01ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Gigashock_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"0001\", \"50120\": \"2020\", \"50159\": \"02\", \"50296\": \"0809\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65440\": \"01ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Gigashock_PlayerSelectEffect",
+    "before": "\t\t\t\tgb_write8(GetNextPositionInTempList(), 0xffu);",
+    "after": "\t\t\t\tgb_write8(GetNextPositionInTempList(), 0x00u);",
+    "case_ids": [
+      "Gigashock_PlayerSelectEffect-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "c2e8476c495a9cb36eed7d0258b246319c769ab1806fd07d557baaabadf56b24",
+    "mutation_sha256": "35b2029edd8eb348bcfb9d14ea501b83ef7f105f734a43b3b5e47a4f244b20e8",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Gigashock_PlayerSelectEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Gigashock_PlayerSelectEffect",
+    "index": 2
+  }
 }

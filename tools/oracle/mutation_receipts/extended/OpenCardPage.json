@@ -1,0 +1,30 @@
+{
+  "fn": "OpenCardPage",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenCardPage\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52085\": \"01\", \"52095\": \"02\", \"52101\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenCardPage\", \"mismatches\": {\"bus\": {\"address\": 52095, \"reference\": \"80010201\", \"native\": \"80010001\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51899, 1], [52085, 1], [52095, 1], [52101, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenCardPage\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52085\": \"01\", \"52095\": \"02\", \"52101\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "OpenCardPage",
+    "before": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, a);",
+    "after": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, 0u);",
+    "case_ids": [
+      "OpenCardPage-0",
+      "OpenCardPage-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "16e2673ea3c3d43bd569d59750a66ab3a670027ecb0aa9d53f920839c089ef61",
+    "mutation_sha256": "6f87fa3d5e8cc2a0780f6c402227028943e4dde08f281f2a2460ac402b028448",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "OpenCardPage",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "OpenCardPage",
+    "index": 0
+  }
+}

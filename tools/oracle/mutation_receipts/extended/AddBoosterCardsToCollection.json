@@ -1,0 +1,30 @@
+{
+  "fn": "AddBoosterCardsToCollection",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddBoosterCardsToCollection\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 22136, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {\"0\": {\"41216\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"2a00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddBoosterCardsToCollection\", \"mismatches\": {\"sram\": {\"byte\": 42, \"reference\": \"000000000100000000\", \"native\": \"000000000000000000\"}}}\n",
+  "restored": "{\"fn\": \"AddBoosterCardsToCollection\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 22136, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {\"0\": {\"41216\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"2a00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AddBoosterCardsToCollection",
+    "before": "\t\tAddCardToCollection(card);",
+    "after": "\t\t(void)card;",
+    "case_ids": [
+      "AddBoosterCardsToCollection-0",
+      "AddBoosterCardsToCollection-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "d6e2f2fe982f70cfa1f165a50a8f833a973225550f1e3f9518d74a033eb175b3",
+    "mutation_sha256": "91b3fbc2c4024f2b8db0c92937505206bb92435e93d1b696de2339b8be668d34",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "AddBoosterCardsToCollection",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "AddBoosterCardsToCollection",
+    "index": 1
+  }
+}

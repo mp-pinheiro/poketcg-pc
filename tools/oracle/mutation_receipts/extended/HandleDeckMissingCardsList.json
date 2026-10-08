@@ -1,0 +1,32 @@
+{
+  "fn": "HandleDeckMissingCardsList",
+  "case": "tests/profiles/extended/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleDeckMissingCardsList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 169, \"e\": 168, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 43408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"43408\": \"00\", \"43432\": \"010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\"}}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51920\": \"c9\", \"52812\": \"00\", \"52814\": \"0000030200010f000000\", \"52815\": \"00030200010f000000\", \"52827\": \"00\", \"52837\": \"3c0000000000000000\", \"52860\": \"013c\", \"52863\": \"456a030300\", \"52936\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"53179\": \"0000000000000000\", \"53212\": \"6f02\", \"53223\": \"01\", \"55084\": \"6f02000000000000\", \"65423\": \"00\", \"65459\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleDeckMissingCardsList\", \"mismatches\": {\"bus\": {\"address\": 52863, \"reference\": \"0000013c456a030300\", \"native\": \"0000013c466a030300\", \"reference_size\": 112, \"native_size\": 112, \"spans\": [[51892, 1], [51920, 1], [52812, 1], [52814, 10], [52827, 1], [52837, 9], [52860, 2], [52863, 5], [52936, 61], [53179, 8], [53212, 2], [53223, 1], [55084, 8], [65423, 1], [65459, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleDeckMissingCardsList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 169, \"e\": 168, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 43408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"43408\": \"00\", \"43432\": \"010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\"}}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51920\": \"c9\", \"52812\": \"00\", \"52814\": \"0000030200010f000000\", \"52815\": \"00030200010f000000\", \"52827\": \"00\", \"52837\": \"3c0000000000000000\", \"52860\": \"013c\", \"52863\": \"456a030300\", \"52936\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"53179\": \"0000000000000000\", \"53212\": \"6f02\", \"53223\": \"01\", \"55084\": \"6f02000000000000\", \"65423\": \"00\", \"65459\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleDeckMissingCardsList",
+    "before": "gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)CARD_LIST_UPDATE_FUNCTION_ADDR);",
+    "after": "gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)(CARD_LIST_UPDATE_FUNCTION_ADDR + 1u));",
+    "case_ids": [
+      "HandleDeckMissingCardsList-0",
+      "HandleDeckMissingCardsList-1",
+      "HandleDeckMissingCardsList-2"
+    ],
+    "source": "src/profiles/extended/home/deck_machine.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2b37b66976ac6d28a2eecf10fef74a52fb30302660c6e5e02a8c8d15a150de01",
+    "case_sha256": "7c75bc1440b4b0b30278f49c753bf254357f2f1513ca1c523d756a5e3fe70735",
+    "schema_sha256": "189065494f4267437d9b4478b540ff95c2200b62daaf7b2afe4b4a500b13039b",
+    "mutation_sha256": "77f8ce38308f31db3005ea860e5a82c874ee1117934a3870c569f326662c23d9",
+    "source": "src/profiles/extended/home/deck_machine.c",
+    "source_symbol": "HandleDeckMissingCardsList",
+    "case": "tests/profiles/extended/cases/deck_machine.py",
+    "fn": "HandleDeckMissingCardsList",
+    "index": 0
+  }
+}

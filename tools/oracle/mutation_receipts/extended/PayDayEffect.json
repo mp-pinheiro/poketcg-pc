@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"PayDayEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"51899\": \"80\", \"51906\": \"07\", \"51914\": \"000001\", \"52147\": \"00\", \"52151\": \"01\", \"52514\": \"010100\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"PayDayEffect\", \"mismatches\": {\"bus\": {\"address\": 51906, \"reference\": \"3c800700000100\", \"native\": \"3c800000000100\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[49850, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52151, 1], [52514, 3], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"PayDayEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"51899\": \"80\", \"51906\": \"07\", \"51914\": \"000001\", \"52147\": \"00\", \"52151\": \"01\", \"52514\": \"010100\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"PayDayEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"51899\": \"80\", \"51906\": \"07\", \"51914\": \"000001\", \"52147\": \"00\", \"52151\": \"01\", \"52514\": \"010100\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PayDayEffect",
+    "before": "void PayDayEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(IfHeadsDraw1CardFromDeckText, 0u);\n\tif ((toss.f & 0x10u) != 0u) {",
+    "after": "void PayDayEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(IfHeadsDraw1CardFromDeckText, 0u);\n\tif ((toss.f & 0x10u) == 0u) {",
+    "case_ids": [
+      "PayDayEffect-0",
+      "PayDayEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "e9abe9037547878978cd1930eed72467ef45e8fa964b379aa07ddf329a54ff80",
+    "mutation_sha256": "58f018ceb93b18e18e33b93f5d507e4fb320a0a88cbec8ac893f337b580fe3a6",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "PayDayEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "PayDayEffect",
+    "index": 0
+  }
 }

@@ -1,0 +1,30 @@
+{
+  "fn": "SetupSound",
+  "case": "tests/profiles/extended/cases/sound.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetupSound\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55204\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetupSound\", \"mismatches\": {\"bus\": {\"address\": 55204, \"reference\": \"80\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[55204, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetupSound\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55204\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SetupSound",
+    "before": "\t_SetupSound();",
+    "after": "\t_PauseSong();",
+    "case_ids": [
+      "SetupSound-0"
+    ],
+    "source": "src/profiles/extended/home/sound.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dbe94a8977d1fcc23b3fc6b0fd1345c1582bdbbdd0f6d5438da8aac042145e21",
+    "case_sha256": "7e67c2d505eab72275a393cda6ef3773afa06da3ac1c28072e60ee09d8b37f2c",
+    "schema_sha256": "d545bd15ee0bdd2ae45ae0b2aecc759cef0a114f0cc1c7d4b66b273c6c0d7f00",
+    "mutation_sha256": "0551f4fb900084e155b60b7fb43e6086df2047dd20c9ea0df97a71cd7d038033",
+    "source": "src/profiles/extended/home/sound.c",
+    "source_symbol": "SetupSound",
+    "case": "tests/profiles/extended/cases/sound.py",
+    "fn": "SetupSound",
+    "index": 0
+  }
+}

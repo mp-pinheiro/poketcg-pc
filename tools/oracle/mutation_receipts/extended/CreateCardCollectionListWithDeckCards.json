@@ -1,0 +1,29 @@
+{
+  "fn": "CreateCardCollectionListWithDeckCards",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateCardCollectionListWithDeckCards\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41217\": \"0506\", \"41752\": \"010200\", \"41936\": \"020100\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49153\": \"060700000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateCardCollectionListWithDeckCards\", \"mismatches\": {\"bus\": {\"address\": 49154, \"reference\": \"060700000000\", \"native\": \"060600000000\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49153, 9]]}}}\n",
+  "restored": "{\"fn\": \"CreateCardCollectionListWithDeckCards\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41217\": \"0506\", \"41752\": \"010200\", \"41936\": \"020100\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49153\": \"060700000000000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CreateCardCollectionListWithDeckCards",
+    "before": "IncrementDeckCardsInTempCollection(sDeck1Cards_ADDR);",
+    "after": "IncrementDeckCardsInTempCollection(sDeck2Cards_ADDR);",
+    "case_ids": [
+      "CreateCardCollectionListWithDeckCards-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "3f367b66547d81ffc822612772940a6db343d64cf6da3edbbb05d03fb2593531",
+    "mutation_sha256": "7ef7b7fcdc99421cd0b5492b4a1d13385be55acc047f25d646d577337a251aaa",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "CreateCardCollectionListWithDeckCards",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "CreateCardCollectionListWithDeckCards",
+    "index": 1
+  }
+}

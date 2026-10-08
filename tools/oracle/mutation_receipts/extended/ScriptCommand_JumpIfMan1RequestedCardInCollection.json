@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardInCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"030000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfMan1RequestedCardInCollection\", \"mismatches\": {\"bus\": {\"address\": 54276, \"reference\": \"030000\", \"native\": \"0300ff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54274, 3]]}}}\n",
-  "restored": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardInCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"030000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfMan1RequestedCardInCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"030000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_JumpIfMan1RequestedCardInCollection",
+    "before": "\tCardCountResult cnt = GetCardCountInCollection(card);\n\tif ((cnt.f & 0x10u) != 0u) {",
+    "after": "\tCardCountResult cnt = GetCardCountInCollection(card);\n\tif ((cnt.f & 0x10u) == 0u) {",
+    "case_ids": [
+      "ScriptCommand_JumpIfMan1RequestedCardInCollection-0",
+      "ScriptCommand_JumpIfMan1RequestedCardInCollection-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "a21aa1a9555942aaa914e416b66a5cc0a76f35a6124483a2600ccd5ac349eebe",
+    "mutation_sha256": "d68d68265871914f8de1cc851f080439757e1edec046f138491bf5133737898b",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_JumpIfMan1RequestedCardInCollection",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_JumpIfMan1RequestedCardInCollection",
+    "index": 0
+  }
 }

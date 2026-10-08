@@ -1,0 +1,29 @@
+{
+  "fn": "CaseHalfWidthLetter",
+  "case": "tests/profiles/extended/cases/process_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CaseHalfWidthLetter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 97, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CaseHalfWidthLetter\", \"mismatches\": {\"a\": [0, 65], \"e\": [97, 65]}}\n",
+  "restored": "{\"fn\": \"CaseHalfWidthLetter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 97, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CaseHalfWidthLetter",
+    "before": "\tuint8_t a = wUppercaseHalfWidthLetters;",
+    "after": "\tuint8_t a = (wUppercaseHalfWidthLetters) ^ 1u;",
+    "case_ids": [
+      "CaseHalfWidthLetter-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3fd461efbd36224af44731a36b7d2c2371bbdaea427ba3e66372220b94bd66d8",
+    "case_sha256": "704bb6b5f592ed6181309e32fed28cc4bfbb03607f75e012eac5d1e66e581888",
+    "schema_sha256": "99ad305a0daddc450badb08f9ab4f3bf7a4fc0ebd0f392d28c964b059c638b15",
+    "mutation_sha256": "6394b8338e51dd0f33435073e1f7ea53ae8f9e90e8312b65f7b1a0f79379f2dd",
+    "source": "src/profiles/extended/home/process_text.c",
+    "source_symbol": "CaseHalfWidthLetter",
+    "case": "tests/profiles/extended/cases/process_text.py",
+    "fn": "CaseHalfWidthLetter",
+    "index": 0
+  }
+}

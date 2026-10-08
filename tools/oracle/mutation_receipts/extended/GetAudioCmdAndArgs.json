@@ -1,0 +1,30 @@
+{
+  "fn": "GetAudioCmdAndArgs",
+  "case": "tests/profiles/extended/cases/audio.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetAudioCmdAndArgs\", \"registers\": {\"a\": 208, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"d01234\", \"55561\": \"d01234\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetAudioCmdAndArgs\", \"mismatches\": {\"bus\": {\"address\": 55562, \"reference\": \"d01234d01234\", \"native\": \"d01234d03434\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49408, 3], [55561, 3]]}}}\n",
+  "restored": "{\"fn\": \"GetAudioCmdAndArgs\", \"registers\": {\"a\": 208, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"d01234\", \"55561\": \"d01234\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetAudioCmdAndArgs",
+    "before": "\tgb_write8(wAudioArg_ADDR, arg0);",
+    "after": "\tgb_write8(wAudioArg_ADDR, arg1);",
+    "case_ids": [
+      "GetAudioCmdAndArgs-1"
+    ],
+    "source": "src/profiles/extended/home/audio.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3cb5fc0a2a845c0f6380ee8db57d72175356e505b825a1b83e1aa6ff92c548e6",
+    "case_sha256": "f3e6e42a2fe94a6952bf9383094812cb8a5b635e8bb56ef3e35f8966f8ed9511",
+    "schema_sha256": "94067e00487f7667e28a590dd996c664d998105707e5725ec89eecc07eccec43",
+    "mutation_sha256": "fb31a7cc88a22df86af07e32362fff78046b63dac90d7f90d685e5f5d2b6e1d3",
+    "source": "src/profiles/extended/home/audio.c",
+    "source_symbol": "GetAudioCmdAndArgs",
+    "case": "tests/profiles/extended/cases/audio.py",
+    "fn": "GetAudioCmdAndArgs",
+    "index": 1
+  }
+}

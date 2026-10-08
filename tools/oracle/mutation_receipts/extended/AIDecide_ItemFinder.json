@@ -1,0 +1,30 @@
+{
+  "fn": "AIDecide_ItemFinder",
+  "case": "tests/profiles/extended/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_ItemFinder\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49901\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_ItemFinder\", \"mismatches\": {\"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"AIDecide_ItemFinder\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49901\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AIDecide_ItemFinder",
+    "before": "return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), d};",
+    "after": "return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 1u ? 0x80u : 0u), d};",
+    "case_ids": [
+      "AIDecide_ItemFinder-0",
+      "AIDecide_ItemFinder-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3badf508a4e599b2f2e67f7bf0d243f331f6a88af0963a2cb4682c2c7e1a1bf7",
+    "case_sha256": "5e43a5ddd8e45cb4c6da392394b7929204077f7ef553d8ea6f0c3653d65ad921",
+    "schema_sha256": "92a5a7dc289b83039f4009bc950dde83c711500f979d6cbdad9b1b960f87941c",
+    "mutation_sha256": "1ba102d287ee7509b3b1751b8a084beef51c1f9f35c874ea35a60d90c49ec002",
+    "source": "src/profiles/extended/home/trainer_cards.c",
+    "source_symbol": "AIDecide_ItemFinder",
+    "case": "tests/profiles/extended/cases/trainer_cards.py",
+    "fn": "AIDecide_ItemFinder",
+    "index": 0
+  }
+}

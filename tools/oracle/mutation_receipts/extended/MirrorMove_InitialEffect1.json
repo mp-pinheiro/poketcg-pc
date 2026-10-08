@@ -1,0 +1,31 @@
+{
+  "fn": "MirrorMove_InitialEffect1",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MirrorMove_InitialEffect1\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 170, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49907\": \"00000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MirrorMove_InitialEffect1\", \"mismatches\": {\"hl\": [170, 171]}}\n",
+  "restored": "{\"fn\": \"MirrorMove_InitialEffect1\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 170, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49907\": \"00000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "MirrorMove_InitialEffect1",
+    "before": "return (MirrorMoveInitialEffect1Result){0x90u, YouDidNotReceiveAnAttackToMirrorMoveText};",
+    "after": "return (MirrorMoveInitialEffect1Result){0x90u, (uint16_t)(YouDidNotReceiveAnAttackToMirrorMoveText + 1u)};",
+    "case_ids": [
+      "MirrorMove_InitialEffect1-0",
+      "MirrorMove_InitialEffect1-5"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "dc54624efbff8432b255f5c9d671b8223ad8069da8e106bb860b78184a4ff4d6",
+    "mutation_sha256": "d40fafd33ad283d722882a6c3d311724c707f69bb4f35342032f331934fcb136",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "MirrorMove_InitialEffect1",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "MirrorMove_InitialEffect1",
+    "index": 0
+  }
+}

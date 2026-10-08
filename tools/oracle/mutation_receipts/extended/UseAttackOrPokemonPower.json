@@ -1,0 +1,30 @@
+{
+  "fn": "UseAttackOrPokemonPower",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UseAttackOrPokemonPower\", \"registers\": {\"a\": 21, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50161\": \"00\", \"52147\": \"00\", \"52154\": \"01022a\", \"52316\": \"040000\", \"52333\": \"2a\", \"52340\": \"01\", \"65431\": \"c2\", \"65439\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UseAttackOrPokemonPower\", \"mismatches\": {\"bus\": {\"address\": 52154, \"reference\": \"000001022a0400\", \"native\": \"000000022a0400\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[50161, 1], [52147, 1], [52154, 3], [52316, 3], [52333, 1], [52340, 1], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"UseAttackOrPokemonPower\", \"registers\": {\"a\": 21, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50161\": \"00\", \"52147\": \"00\", \"52154\": \"01022a\", \"52316\": \"040000\", \"52333\": \"2a\", \"52340\": \"01\", \"65431\": \"c2\", \"65439\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "UseAttackOrPokemonPower",
+    "before": "DuelRoutineResult UseAttackOrPokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = wSelectedAttack;\n\twPlayerAttackingAttackIndex = a;",
+    "after": "DuelRoutineResult UseAttackOrPokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = wSelectedAttack;\n\twPlayerAttackingAttackIndex = (uint8_t)(a ^ 1u);",
+    "case_ids": [
+      "UseAttackOrPokemonPower-0",
+      "UseAttackOrPokemonPower-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "8f598e9c588e8b4d31fc70a56baebb98b0af5400d6a41e0e8c3fd7d7f7e3f42d",
+    "mutation_sha256": "600cb9fc2c75f34c439c1cf4c4a3d18688c29dadf76b5144d775977267cd8a43",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "UseAttackOrPokemonPower",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "UseAttackOrPokemonPower",
+    "index": 0
+  }
+}

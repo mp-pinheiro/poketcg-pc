@@ -1,0 +1,31 @@
+{
+  "fn": "DisplayPlayerNamingScreen",
+  "case": "tests/profiles/extended/cases/naming.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayPlayerNamingScreen\", \"registers\": {\"a\": 27, \"b\": 0, \"c\": 16, \"d\": 160, \"e\": 16, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 26515, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40976\": \"033c03300341033a00000000f5fa661b\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"00000000000000000000000000000000\", \"51914\": \"d7cc03\", \"53259\": \"000000000000000000000000\", \"65424\": \"41\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayPlayerNamingScreen\", \"mismatches\": {\"hl\": [26515, 50416], \"sram\": {\"byte\": 0, \"reference\": \"033c033003\", \"native\": \"0000000000\"}}}\n",
+  "restored": "{\"fn\": \"DisplayPlayerNamingScreen\", \"registers\": {\"a\": 27, \"b\": 0, \"c\": 16, \"d\": 160, \"e\": 16, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 26515, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40976\": \"033c03300341033a00000000f5fa661b\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"00000000000000000000000000000000\", \"51914\": \"d7cc03\", \"53259\": \"000000000000000000000000\", \"65424\": \"41\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DisplayPlayerNamingScreen",
+    "before": "\tif (gb_read8(hl) == 0u)",
+    "after": "\tif (gb_read8(hl) != 0u)",
+    "case_ids": [
+      "DisplayPlayerNamingScreen-0",
+      "DisplayPlayerNamingScreen-1"
+    ],
+    "source": "src/profiles/extended/home/naming.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "30a8cb5e26a0cf22eb79daefe8e2a5e3f56c0aaa99b5577937651a05236d4677",
+    "case_sha256": "230460083527e7c1b4731e750e6c33adde891b600b997b83c15f9ad712f0c924",
+    "schema_sha256": "9f9b43fbb73c4df3d17a0fa66ee3c1cdce6da3f503fcebc63699e5935982f5aa",
+    "mutation_sha256": "86addb0b437ca398624f3b2074b6c44fd87328cc074ca8205c25317a429e6a34",
+    "source": "src/profiles/extended/home/naming.c",
+    "source_symbol": "DisplayPlayerNamingScreen",
+    "case": "tests/profiles/extended/cases/naming.py",
+    "fn": "DisplayPlayerNamingScreen",
+    "index": 0
+  }
+}

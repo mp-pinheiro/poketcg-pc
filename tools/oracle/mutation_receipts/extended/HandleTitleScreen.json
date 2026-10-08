@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"HandleTitleScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"54804\": \"01\", \"55204\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"HandleTitleScreen\", \"mismatches\": {\"bus\": {\"address\": 55204, \"reference\": \"0100\", \"native\": \"0101\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54804, 1], [55204, 1]]}}}\n",
-  "restored": "{\"fn\": \"HandleTitleScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"54804\": \"01\", \"55204\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"HandleTitleScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"54804\": \"01\", \"55204\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleTitleScreen",
+    "before": "\t\tPlaySong(MUSIC_STOP);\n\t\tEnableAndClearSpriteAnimations();\n\t\tPlayIntroSequence();\n\t\treturn;",
+    "after": "\t\tPlaySong(0x01u);\n\t\tEnableAndClearSpriteAnimations();\n\t\tPlayIntroSequence();\n\t\treturn;",
+    "case_ids": [
+      "HandleTitleScreen-0",
+      "HandleTitleScreen-1"
+    ],
+    "source": "src/profiles/extended/home/start.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c75b9af0da9c150b45667cc51f17c8008a657903c126b73bda5a78873a89ca42",
+    "case_sha256": "8aefaed433b8b5063fc4aa53566c2e640512e0e9b5ac136d30b2399270381c57",
+    "schema_sha256": "caa5ffd8caaf7451418a3cfed425ec7d79fa8911c9bcad1ae0c11126ab2b2764",
+    "mutation_sha256": "04a08829b0fbd7e94c4f558118981d9bc286cac748a887cd00a51c923e26ab1d",
+    "source": "src/profiles/extended/home/start.c",
+    "source_symbol": "HandleTitleScreen",
+    "case": "tests/profiles/extended/cases/start.py",
+    "fn": "HandleTitleScreen",
+    "index": 0
+  }
 }

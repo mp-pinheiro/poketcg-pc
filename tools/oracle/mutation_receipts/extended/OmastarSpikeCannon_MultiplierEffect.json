@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"OmastarSpikeCannon_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"OmastarSpikeCannon_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52514, \"reference\": \"1e001e1e020100021e\", \"native\": \"1e001e1e010100021e\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 4], [52514, 4], [52745, 2], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"OmastarSpikeCannon_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"OmastarSpikeCannon_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1e001e1e\", \"52514\": \"02010002\", \"52745\": \"1e00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "OmastarSpikeCannon_MultiplierEffect",
+    "before": "void OmastarSpikeCannon_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);\n\tuint8_t damage = result.a;\n\tdamage = (uint8_t)(damage + damage);\n\tdamage = (uint8_t)(damage + result.a);\n\tSetDefiniteDamage(ATimes10(damage));\n}",
+    "after": "void OmastarSpikeCannon_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimesResult result = TossCoinATimes(1u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);\n\tuint8_t damage = result.a;\n\tdamage = (uint8_t)(damage + damage);\n\tdamage = (uint8_t)(damage + result.a);\n\tSetDefiniteDamage(ATimes10(damage));\n}",
+    "case_ids": [
+      "OmastarSpikeCannon_MultiplierEffect-0",
+      "OmastarSpikeCannon_MultiplierEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "79e160bb565959cf27de73a865cf2b25881d9e67fca1d3c7d7ff04c89d081669",
+    "mutation_sha256": "2995f89282c72c138ae12c3984794b5179bb82acfb78f9d60337d74aaed505db",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "OmastarSpikeCannon_MultiplierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "OmastarSpikeCannon_MultiplierEffect",
+    "index": 0
+  }
 }

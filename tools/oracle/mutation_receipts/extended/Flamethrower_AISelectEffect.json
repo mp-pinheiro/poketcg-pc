@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Flamethrower_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ffff\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Flamethrower_AISelectEffect\", \"mismatches\": {\"bus\": {\"address\": 50432, \"reference\": \"ffffff\", \"native\": \"03ffff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50432, 2], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"Flamethrower_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ffff\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Flamethrower_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ffff\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Flamethrower_AISelectEffect",
+    "before": "void Flamethrower_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();",
+    "after": "void Flamethrower_AISelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;",
+    "case_ids": [
+      "Flamethrower_AISelectEffect-0",
+      "Flamethrower_AISelectEffect-1",
+      "Flamethrower_AISelectEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "f1fcd9db85361d3799da67b9a174b308a413184ed845bbe3e8c094f51364dfcb",
+    "mutation_sha256": "6aaf17af9f246aa62dbc33d70bf651ebffa1672ea25077c7f4cecffcab9f92df",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Flamethrower_AISelectEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Flamethrower_AISelectEffect",
+    "index": 2
+  }
 }

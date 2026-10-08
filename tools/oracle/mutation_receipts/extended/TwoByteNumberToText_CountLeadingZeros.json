@@ -1,0 +1,29 @@
+{
+  "fn": "TwoByteNumberToText_CountLeadingZeros",
+  "case": "tests/profiles/extended/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TwoByteNumberToText_CountLeadingZeros\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 202, \"e\": 165, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51876, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51872\": \"303030303000\", \"52408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TwoByteNumberToText_CountLeadingZeros\", \"mismatches\": {\"d\": [202, 0], \"e\": [165, 0], \"hl\": [51876, 51880], \"bus\": {\"address\": 51872, \"reference\": \"3030303030\", \"native\": \"0500050005\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51872, 6], [52408, 1]]}}}\n",
+  "restored": "{\"fn\": \"TwoByteNumberToText_CountLeadingZeros\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 202, \"e\": 165, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 51876, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51872\": \"303030303000\", \"52408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "TwoByteNumberToText_CountLeadingZeros",
+    "before": "\tif (wFontWidth == 0)",
+    "after": "\tif (wFontWidth != 0)",
+    "case_ids": [
+      "TwoByteNumberToText_CountLeadingZeros-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "561aaca3b0d9c03513c41bdc073564cc73dafb2d5422bc7b74ad1351083a9707",
+    "case_sha256": "1854c67d9e33f7723292306316f978de07d974edea526df1c7e67a1c575b320f",
+    "schema_sha256": "3af4a700bb4cf3459908452004fba693a5d90c8f329422552fd5fd568200deab",
+    "mutation_sha256": "f31c48d4bf61dd4c3d6d69d5ac67209438afd56482580aa72c60910c0f0056eb",
+    "source": "src/profiles/extended/home/print_text.c",
+    "source_symbol": "TwoByteNumberToText_CountLeadingZeros",
+    "case": "tests/profiles/extended/cases/print_text.py",
+    "fn": "TwoByteNumberToText_CountLeadingZeros",
+    "index": 0
+  }
+}

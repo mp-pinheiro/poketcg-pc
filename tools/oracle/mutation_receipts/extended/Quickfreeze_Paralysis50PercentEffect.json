@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Quickfreeze_Paralysis50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51914\": \"000001\", \"52147\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Quickfreeze_Paralysis50PercentEffect\", \"mismatches\": {\"f\": [128, 0]}}\n",
-  "restored": "{\"fn\": \"Quickfreeze_Paralysis50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51914\": \"000001\", \"52147\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Quickfreeze_Paralysis50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51914\": \"000001\", \"52147\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Quickfreeze_Paralysis50PercentEffect",
+    "before": "uint8_t Quickfreeze_Paralysis50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(ParalysisCheckText, 0u);\n\tuint8_t result_f;\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\tDrawDuelMainScene();\n\t\t(void)PrintFailedEffectText();\n\t\tresult_f = WaitForWideTextBoxInput().f;\n\t} else {\n\t\tQueueStatusConditionResult paralysis = ParalysisEffect();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\tuint8_t turn = hWhoseTurn;\n\t\tuint16_t animation_hl = (uint16_t)(((uint16_t)turn << 8) | (wStatusConditionQueueIndex_ADDR & 0xffu));\n\t\tPlayAttackAnimation(turn, paralysis.f, location, 0u, 0u, 0u, animation_hl);\n\t\tPlayStatusConditionQueueAnimations();\n\t\tWaitAttackAnimation();\n\t\t(void)ApplyStatusConditionQueue();\n\t\tDrawDuelHUDs();\n\t\tPrintFailedEffectTextResult failed = PrintFailedEffectText();\n\t\tresult_f = failed.f;\n\t\tif ((failed.f & 0x10u) != 0u)\n\t\t\tresult_f = WaitForWideTextBoxInput().f;\n\t}\n\treturn result_f;\n}",
+    "after": "uint8_t Quickfreeze_Paralysis50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(ParalysisCheckText, 0u);\n\tuint8_t result_f;\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\tDrawDuelMainScene();\n\t\t(void)PrintFailedEffectText();\n\t\tresult_f = WaitForWideTextBoxInput().f;\n\t} else {\n\t\tQueueStatusConditionResult paralysis = ParalysisEffect();\n\t\tuint8_t location = hTempPlayAreaLocation_ff9d;\n\t\tuint8_t turn = hWhoseTurn;\n\t\tuint16_t animation_hl = (uint16_t)(((uint16_t)turn << 8) | (wStatusConditionQueueIndex_ADDR & 0xffu));\n\t\tPlayAttackAnimation(turn, paralysis.f, location, 0u, 0u, 0u, animation_hl);\n\t\tPlayStatusConditionQueueAnimations();\n\t\tWaitAttackAnimation();\n\t\t(void)ApplyStatusConditionQueue();\n\t\tDrawDuelHUDs();\n\t\tPrintFailedEffectTextResult failed = PrintFailedEffectText();\n\t\tresult_f = failed.f;\n\t\tif ((failed.f & 0x10u) != 0u)\n\t\t\tresult_f = WaitForWideTextBoxInput().f;\n\t}\n\treturn 0x00u;\n}",
+    "case_ids": [
+      "Quickfreeze_Paralysis50PercentEffect-0",
+      "Quickfreeze_Paralysis50PercentEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "f7a3b2502aa2055408f009892e1e8e8041fc0f68a4d2d13ccac95de1fb6d32c5",
+    "mutation_sha256": "7ebfc7eac9af35d0cacddb9b5e57cc1ab791dfeb904f651e547f8bc184b58f97",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Quickfreeze_Paralysis50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Quickfreeze_Paralysis50PercentEffect",
+    "index": 0
+  }
 }

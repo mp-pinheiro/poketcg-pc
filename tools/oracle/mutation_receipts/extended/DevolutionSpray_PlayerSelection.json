@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DevolutionSpray_PlayerSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49851\": \"00\", \"49864\": \"28\", \"49870\": \"01\", \"49903\": \"01\", \"50176\": \"0908\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"ff\", \"65440\": \"000000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DevolutionSpray_PlayerSelection\", \"mismatches\": {\"f\": [16, 0]}}\n",
-  "restored": "{\"fn\": \"DevolutionSpray_PlayerSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49851\": \"00\", \"49864\": \"28\", \"49870\": \"01\", \"49903\": \"01\", \"50176\": \"0908\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"ff\", \"65440\": \"000000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DevolutionSpray_PlayerSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"1010\", \"49851\": \"00\", \"49864\": \"28\", \"49870\": \"01\", \"49903\": \"01\", \"50176\": \"0908\", \"51899\": \"80\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"ff\", \"65440\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DevolutionSpray_PlayerSelection",
+    "before": "return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)((entry_f & 0x80u) | 0x10u)};",
+    "after": "return (DevolutionSpray_PlayerSelectionResult){screen.a, (uint8_t)(entry_f & 0x80u)};",
+    "case_ids": [
+      "DevolutionSpray_PlayerSelection-0"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "2e26479fc795209b237084881679535537a473cbb670ebb5f48ae76c7b9a0ac0",
+    "mutation_sha256": "33bc539df90a8d65ba6ed5967eb0ad911b14103f53e02fb76aae2930f94a57f4",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "DevolutionSpray_PlayerSelection",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "DevolutionSpray_PlayerSelection",
+    "index": 0
+  }
 }

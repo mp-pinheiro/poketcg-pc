@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"MainMenu_ContinueFromDiary\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"55204\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"MainMenu_ContinueFromDiary\", \"mismatches\": {\"bus\": {\"address\": 55204, \"reference\": \"00\", \"native\": \"08\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[55204, 1]]}}}\n",
-  "restored": "{\"fn\": \"MainMenu_ContinueFromDiary\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"55204\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"MainMenu_ContinueFromDiary\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"55204\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "MainMenu_ContinueFromDiary",
+    "before": "uint8_t MainMenu_ContinueFromDiary(void)\n{\n\tPlaySong(MUSIC_STOP);",
+    "after": "uint8_t MainMenu_ContinueFromDiary(void)\n{\n\tPlaySong(MUSIC_CARD_POP);",
+    "case_ids": [
+      "MainMenu_ContinueFromDiary-0",
+      "MainMenu_ContinueFromDiary-1"
+    ],
+    "source": "src/profiles/extended/home/main_menu.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "38ac78c42f6ccb7bf007b63a8cd3cad66f053fe5cd2cdfb024874fdd43df85c8",
+    "case_sha256": "bddaa8679234223484c54585c319db6c8b2691dd0c5da01152eab6eb0c96981a",
+    "schema_sha256": "4ca082f1eeca88bbf783264fd06fe9f71e0605e5abda0b8e3cfcef2d50256de1",
+    "mutation_sha256": "dcdb6b1217f88bcb6f68e03086386f312c444ac9ec70ef890393ccccfaed132e",
+    "source": "src/profiles/extended/home/main_menu.c",
+    "source_symbol": "MainMenu_ContinueFromDiary",
+    "case": "tests/profiles/extended/cases/main_menu.py",
+    "fn": "MainMenu_ContinueFromDiary",
+    "index": 0
+  }
 }

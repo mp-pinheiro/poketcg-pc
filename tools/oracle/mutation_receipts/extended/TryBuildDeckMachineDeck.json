@@ -1,0 +1,31 @@
+{
+  "fn": "TryBuildDeckMachineDeck",
+  "case": "tests/profiles/extended/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryBuildDeckMachineDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"42096\": \"410000000000000000000000000000000000000000000000010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52827\": \"00\", \"53212\": \"3502\", \"53262\": \"70a4\", \"53365\": \"00\", \"53393\": \"00\", \"65409\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryBuildDeckMachineDeck\", \"mismatches\": {\"bus\": {\"address\": 53212, \"reference\": \"8000350270a400\", \"native\": \"8000360270a400\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[51899, 1], [52827, 1], [53212, 2], [53262, 2], [53365, 1], [53393, 1], [65409, 1]]}}}\n",
+  "restored": "{\"fn\": \"TryBuildDeckMachineDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"42096\": \"410000000000000000000000000000000000000000000000010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52827\": \"00\", \"53212\": \"3502\", \"53262\": \"70a4\", \"53365\": \"00\", \"53393\": \"00\", \"65409\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "TryBuildDeckMachineDeck",
+    "before": "gb_write8(wCardConfirmationText_ADDR,\n\t\t\t\t(uint8_t)TheseCardsAreNeededToBuildThisDeckText);",
+    "after": "gb_write8(wCardConfirmationText_ADDR,\n\t\t\t\t(uint8_t)(TheseCardsAreNeededToBuildThisDeckText + 1u));",
+    "case_ids": [
+      "TryBuildDeckMachineDeck-0",
+      "TryBuildDeckMachineDeck-1"
+    ],
+    "source": "src/profiles/extended/home/deck_machine.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2b37b66976ac6d28a2eecf10fef74a52fb30302660c6e5e02a8c8d15a150de01",
+    "case_sha256": "7c75bc1440b4b0b30278f49c753bf254357f2f1513ca1c523d756a5e3fe70735",
+    "schema_sha256": "24ca880b0892314ecd4aaa491c46f2cf389317bceb3ea2fe32f6dcafc45d207c",
+    "mutation_sha256": "cdc06b6586fdb982c0ed888d567771864aaeb242c31236650a4d5d08e212ed56",
+    "source": "src/profiles/extended/home/deck_machine.c",
+    "source_symbol": "TryBuildDeckMachineDeck",
+    "case": "tests/profiles/extended/cases/deck_machine.py",
+    "fn": "TryBuildDeckMachineDeck",
+    "index": 0
+  }
+}

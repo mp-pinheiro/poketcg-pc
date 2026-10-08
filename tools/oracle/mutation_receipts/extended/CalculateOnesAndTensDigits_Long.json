@@ -1,0 +1,31 @@
+{
+  "fn": "CalculateOnesAndTensDigits_Long",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CalculateOnesAndTensDigits_Long\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 1, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52832\": \"2020202021\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CalculateOnesAndTensDigits_Long\", \"mismatches\": {\"bus\": {\"address\": 52836, \"reference\": \"2020202021\", \"native\": \"2020202020\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[52832, 5]]}}}\n",
+  "restored": "{\"fn\": \"CalculateOnesAndTensDigits_Long\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 1, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52832\": \"2020202021\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CalculateOnesAndTensDigits_Long",
+    "before": "\t\twhile (hl >= places[i]) {",
+    "after": "\t\twhile (hl > places[i]) {",
+    "case_ids": [
+      "CalculateOnesAndTensDigits_Long-0",
+      "CalculateOnesAndTensDigits_Long-1"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "b5a54f3ccc6f32eb5031a308bba223b12f599d1fccd7130733ebe58041fda0ab",
+    "mutation_sha256": "d80a84ea4c2a16e2cb19096e06dda333494ac52dfb3a76d9fd123edeecec6a27",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "CalculateOnesAndTensDigits_Long",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "CalculateOnesAndTensDigits_Long",
+    "index": 1
+  }
+}

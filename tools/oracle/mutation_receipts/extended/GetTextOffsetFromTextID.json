@@ -1,0 +1,29 @@
+{
+  "fn": "GetTextOffsetFromTextID",
+  "case": "tests/profiles/extended/cases/print_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetTextOffsetFromTextID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 25078, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 13, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetTextOffsetFromTextID\", \"mismatches\": {\"hl\": [25078, 16417]}}\n",
+  "restored": "{\"fn\": \"GetTextOffsetFromTextID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 25078, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 13, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetTextOffsetFromTextID",
+    "before": "\tuint16_t index = (uint16_t)(text_id * 3u);",
+    "after": "\tuint16_t index = (uint16_t)(text_id * 4u);",
+    "case_ids": [
+      "GetTextOffsetFromTextID-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "561aaca3b0d9c03513c41bdc073564cc73dafb2d5422bc7b74ad1351083a9707",
+    "case_sha256": "1854c67d9e33f7723292306316f978de07d974edea526df1c7e67a1c575b320f",
+    "schema_sha256": "f5d0c456139f9dc57ef5ae2f979d0a262e11a1b6ef75dac1a77b89d11b75d88f",
+    "mutation_sha256": "c1ce707678291759367471919c8bbec1e50e65710f3bdaede33ef3658c88cdc2",
+    "source": "src/profiles/extended/home/print_text.c",
+    "source_symbol": "GetTextOffsetFromTextID",
+    "case": "tests/profiles/extended/cases/print_text.py",
+    "fn": "GetTextOffsetFromTextID",
+    "index": 0
+  }
+}

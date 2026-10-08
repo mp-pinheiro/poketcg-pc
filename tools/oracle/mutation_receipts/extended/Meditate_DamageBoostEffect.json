@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Meditate_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"05\", \"50176\": \"01\", \"52324\": \"00000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Meditate_DamageBoostEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"00050100000000c2\", \"native\": \"00050101000000c2\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49851, 1], [49864, 1], [50176, 1], [52324, 4], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"Meditate_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"05\", \"50176\": \"01\", \"52324\": \"00000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Meditate_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"05\", \"50176\": \"01\", \"52324\": \"00000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Meditate_DamageBoostEffect",
+    "before": "AddToDamage(damage.a);",
+    "after": "AddToDamage(1u);",
+    "case_ids": [
+      "Meditate_DamageBoostEffect-0",
+      "Meditate_DamageBoostEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "2964259392e062982a04ac2be7e7481439616a72ec26b8e3d80feb8fb5e2983a",
+    "mutation_sha256": "51e5b89e6740df59848520a1db830b45f895a463ce4a48c945d484e644b81358",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Meditate_DamageBoostEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Meditate_DamageBoostEffect",
+    "index": 0
+  }
 }

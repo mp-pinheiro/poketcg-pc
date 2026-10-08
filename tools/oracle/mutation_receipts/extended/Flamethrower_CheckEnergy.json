@@ -1,0 +1,30 @@
+{
+  "fn": "Flamethrower_CheckEnergy",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Flamethrower_CheckEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"frame_budget_reached\": 0, \"hl\": 165, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52166\": \"0000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Flamethrower_CheckEnergy\", \"mismatches\": {\"f\": [112, 192]}}\n",
+  "restored": "{\"fn\": \"Flamethrower_CheckEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"frame_budget_reached\": 0, \"hl\": 165, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52166\": \"0000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Flamethrower_CheckEnergy",
+    "before": "\t\tenergy, effect_compare(energy, 1u), NotEnoughFireEnergyText};",
+    "after": "\t\tenergy, effect_compare(energy, 0x0u), NotEnoughFireEnergyText};",
+    "case_ids": [
+      "Flamethrower_CheckEnergy-0"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "98c8296714c2a8a2f3eb0142f63e0f5614c1d7a4bbcf1154b965be0ebff4b107",
+    "mutation_sha256": "69d78178f550501ffc36241e2ac775360c7c06f931ebc465022b0d5041c12b33",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Flamethrower_CheckEnergy",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Flamethrower_CheckEnergy",
+    "index": 0
+  }
+}

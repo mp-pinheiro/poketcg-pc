@@ -1,0 +1,29 @@
+{
+  "fn": "HandleAIEnergyScoringForRepeatedBenchPokemon",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleAIEnergyScoringForRepeatedBenchPokemon\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAIEnergyScoringForRepeatedBenchPokemon\", \"mismatches\": {\"f\": [192, 0]}}\n",
+  "restored": "{\"fn\": \"HandleAIEnergyScoringForRepeatedBenchPokemon\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleAIEnergyScoringForRepeatedBenchPokemon",
+    "before": "return (HandleAIEnergyScoringForRepeatedBenchPokemonResult){0xFFu, 0xC0u};",
+    "after": "return (HandleAIEnergyScoringForRepeatedBenchPokemonResult){0xFFu, 0x00u};",
+    "case_ids": [
+      "HandleAIEnergyScoringForRepeatedBenchPokemon-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "52ee4ba2c672942a3eea41b539b216af880d526ec5219c13377231879ab3d2e8",
+    "mutation_sha256": "8b535e8f2a970dc4ec7dfb125cb08e7ce5d6f9b82961903e5fbd3e32d9a33ad3",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "HandleAIEnergyScoringForRepeatedBenchPokemon",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "HandleAIEnergyScoringForRepeatedBenchPokemon",
+    "index": 0
+  }
+}

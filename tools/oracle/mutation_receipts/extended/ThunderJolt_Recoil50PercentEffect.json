@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ThunderJolt_Recoil50PercentEffect\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 10, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ThunderJolt_Recoil50PercentEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"0002000001\", \"native\": \"0002000002\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52514, 4], [52756, 2], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"ThunderJolt_Recoil50PercentEffect\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 10, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ThunderJolt_Recoil50PercentEffect\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 10, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ThunderJolt_Recoil50PercentEffect",
+    "before": "ThunderJolt_Recoil50PercentEffectResult ThunderJolt_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoinRoutineResult toss = TossCoin(IfTailsDamageToYourselfTooText, 10u);\n\thTemp_ffa0 = toss.a;",
+    "after": "ThunderJolt_Recoil50PercentEffectResult ThunderJolt_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoinRoutineResult toss = TossCoin(IfTailsDamageToYourselfTooText, 10u);\n\thTemp_ffa0 = (uint8_t)(toss.a + 1u);",
+    "case_ids": [
+      "ThunderJolt_Recoil50PercentEffect-0",
+      "ThunderJolt_Recoil50PercentEffect-1",
+      "ThunderJolt_Recoil50PercentEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "a784733651d3e91a17a470ab9bb52903e404d0b4b3514f2ec3cd91f3d65c38e9",
+    "mutation_sha256": "12bf045897571932691a802383bcc26c0600a946032c84a01f8e487115f4a0a1",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "ThunderJolt_Recoil50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "ThunderJolt_Recoil50PercentEffect",
+    "index": 0
+  }
 }

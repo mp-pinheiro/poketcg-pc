@@ -1,0 +1,30 @@
+{
+  "fn": "Func_c4b9",
+  "case": "tests/profiles/extended/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c4b9\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53419\": \"05\", \"54044\": \"00\", \"54049\": \"0200001800\", \"54455\": \"0400\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c4b9\", \"mismatches\": {\"bus\": {\"address\": 54049, \"reference\": \"0005000200001800\", \"native\": \"0005000500001800\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[51892, 1], [53419, 1], [54044, 1], [54049, 5], [54455, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_c4b9\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53419\": \"05\", \"54044\": \"00\", \"54049\": \"0200001800\", \"54455\": \"0400\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Func_c4b9",
+    "before": "if (cur_map != OVERWORLD_MAP)\n\t\tdir = wTempPlayerDirection;",
+    "after": "if (cur_map == OVERWORLD_MAP)\n\t\tdir = wTempPlayerDirection;",
+    "case_ids": [
+      "Func_c4b9-0",
+      "Func_c4b9-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "4135fef9f8fa19c4ec0b073e0d1f7ac4bb7a7393ddccffe46c53d48f664b278c",
+    "case_sha256": "adc0037e39c0eeedfa9fe76181048e81a053df4b5b1c76b75752bfddf6d4071c",
+    "schema_sha256": "9c82d3a75e75dcbd6b882f7654c7cfd908ce56add083b725e7976081cd39a0ba",
+    "mutation_sha256": "4c434651d6b841f36f7a3ddb9c5aaa6b1d5cf6691f99e4c5de20aeacddb20c8f",
+    "source": "src/profiles/extended/home/overworld.c",
+    "source_symbol": "Func_c4b9",
+    "case": "tests/profiles/extended/cases/overworld.py",
+    "fn": "Func_c4b9",
+    "index": 0
+  }
+}

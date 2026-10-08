@@ -1,0 +1,32 @@
+{
+  "fn": "TryAddCardToDeck",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryAddCardToDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52861\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryAddCardToDeck\", \"mismatches\": {\"f\": [144, 0]}}\n",
+  "restored": "{\"fn\": \"TryAddCardToDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52861\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "TryAddCardToDeck",
+    "before": "\t\treturn (TryAddCardToDeckResult){wTotalCardCount, 0x90u};",
+    "after": "\t\treturn (TryAddCardToDeckResult){wTotalCardCount, 0x00u};",
+    "case_ids": [
+      "TryAddCardToDeck-0",
+      "TryAddCardToDeck-1",
+      "TryAddCardToDeck-2"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "c18ab1862f3c1fe1ced1cb314f2613a8838eef273509a4f34401b44ac1def2e1",
+    "mutation_sha256": "d42715735fe20430c75f7ca6696b1445239c4a4357cc3bcac674da50802ce3cf",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "TryAddCardToDeck",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "TryAddCardToDeck",
+    "index": 0
+  }
+}

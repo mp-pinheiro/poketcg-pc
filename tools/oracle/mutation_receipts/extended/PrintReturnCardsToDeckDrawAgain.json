@@ -1,0 +1,30 @@
+{
+  "fn": "PrintReturnCardsToDeckDrawAgain",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintReturnCardsToDeckDrawAgain\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 17, \"d\": 18, \"e\": 17, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintReturnCardsToDeckDrawAgain\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"PrintReturnCardsToDeckDrawAgain\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 17, \"d\": 18, \"e\": 17, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PrintReturnCardsToDeckDrawAgain",
+    "before": "\treturn (PrintReturnCardsToDeckDrawAgainResult){\n\t\twait.a, wait.b, wait.c, wait.f, wait.hl, (uint16_t)((uint16_t)wait.d << 8 | wait.e)};",
+    "after": "\treturn (PrintReturnCardsToDeckDrawAgainResult){(uint8_t)((wait.a) ^ 1u), wait.b, wait.c, wait.f, wait.hl, (uint16_t)((uint16_t)wait.d << 8 | wait.e)};",
+    "case_ids": [
+      "PrintReturnCardsToDeckDrawAgain-0"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "1df943d57c5c8cd47e67349707634437d6c43de1415cba82b87b76ed256cae8c",
+    "mutation_sha256": "a8884da6620ab9293a97da100e6d2e576116ec52191cf9a801194660ccd74d59",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "PrintReturnCardsToDeckDrawAgain",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "PrintReturnCardsToDeckDrawAgain",
+    "index": 0
+  }
+}

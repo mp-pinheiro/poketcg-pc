@@ -1,0 +1,30 @@
+{
+  "fn": "Music_f4967",
+  "case": "tests/profiles/extended/cases/music.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music_f4967\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 1, \"d\": 86, \"e\": 120, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music_f4967\", \"mismatches\": {\"e\": [120, 121]}}\n",
+  "restored": "{\"fn\": \"Music_f4967\", \"registers\": {\"a\": 170, \"b\": 0, \"c\": 1, \"d\": 86, \"e\": 120, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Music_f4967",
+    "before": "\tuint16_t frequency = de;",
+    "after": "\tuint16_t frequency = (uint16_t)(de + 1u);",
+    "case_ids": [
+      "Music_f4967-1"
+    ],
+    "source": "src/profiles/extended/home/music.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "4a9d9d8083d06202c3451e0f08509423a80c0b8d27677abef6589e63e3904c26",
+    "case_sha256": "534cd65f6b236e7be6ea2cad8e77a03ec3b714375d3624ab861e261f45719e34",
+    "schema_sha256": "57ee5d8e84d8c55ebf325244216fbd2befc7f0a33cab6a1c155e76fc757e88f6",
+    "mutation_sha256": "1835a16e81c0e43b654861584f7f1fc3904f658e9ccf19a9fdbb035725cc5abf",
+    "source": "src/profiles/extended/home/music.c",
+    "source_symbol": "Music_f4967",
+    "case": "tests/profiles/extended/cases/music.py",
+    "fn": "Music_f4967",
+    "index": 1
+  }
+}

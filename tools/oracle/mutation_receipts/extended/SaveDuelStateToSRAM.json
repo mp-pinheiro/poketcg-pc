@@ -1,0 +1,30 @@
+{
+  "fn": "SaveDuelStateToSRAM",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SaveDuelStateToSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {\"0\": {\"40968\": \"01\"}, \"3\": {\"40960\": \"050900\", \"40976\": \"016de500\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50107\": \"00\", \"50176\": \"08\", \"50296\": \"09\", \"52144\": \"05\", \"52147\": \"00\", \"52335\": \"08\", \"52337\": \"09\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SaveDuelStateToSRAM\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"0105090001\", \"native\": \"0205090001\"}}}\n",
+  "restored": "{\"fn\": \"SaveDuelStateToSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {\"0\": {\"40968\": \"01\"}, \"3\": {\"40960\": \"050900\", \"40976\": \"016de500\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50107\": \"00\", \"50176\": \"08\", \"50296\": \"09\", \"52144\": \"05\", \"52147\": \"00\", \"52335\": \"08\", \"52337\": \"09\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SaveDuelStateToSRAM",
+    "before": "gb_write8(s0a008_ADDR, (uint8_t)(old + 1u));",
+    "after": "gb_write8(s0a008_ADDR, (uint8_t)(old + 2u));",
+    "case_ids": [
+      "SaveDuelStateToSRAM-0",
+      "SaveDuelStateToSRAM-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "b7c359d723f0df76568be50e65019beac8b3af0a6f404566930c8c6c1c5cd036",
+    "mutation_sha256": "2062edbfabc1feebca1b0cd3e4ad725e62177c8c09555c4b85145047cad1a67b",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "SaveDuelStateToSRAM",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "SaveDuelStateToSRAM",
+    "index": 0
+  }
+}

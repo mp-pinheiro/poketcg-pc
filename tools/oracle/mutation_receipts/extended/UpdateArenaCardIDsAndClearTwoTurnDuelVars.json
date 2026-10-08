@@ -1,0 +1,31 @@
+{
+  "fn": "UpdateArenaCardIDsAndClearTwoTurnDuelVars",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateArenaCardIDsAndClearTwoTurnDuelVars\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50107\": \"01\", \"50162\": \"0000000000000000ff\", \"50176\": \"12\", \"50297\": \"34\", \"52335\": \"12\", \"52337\": \"00\", \"52347\": \"00\", \"52372\": \"00\", \"52378\": \"0000\", \"52381\": \"000000\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateArenaCardIDsAndClearTwoTurnDuelVars\", \"mismatches\": {\"bus\": {\"address\": 52383, \"reference\": \"0000000000c200\", \"native\": \"0000000001c200\", \"reference_size\": 24, \"native_size\": 24, \"spans\": [[49851, 1], [50107, 1], [50162, 9], [50176, 1], [50297, 1], [52335, 1], [52337, 1], [52347, 1], [52372, 1], [52378, 2], [52381, 3], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"UpdateArenaCardIDsAndClearTwoTurnDuelVars\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50107\": \"01\", \"50162\": \"0000000000000000ff\", \"50176\": \"12\", \"50297\": \"34\", \"52335\": \"12\", \"52337\": \"00\", \"52347\": \"00\", \"52372\": \"00\", \"52378\": \"0000\", \"52381\": \"000000\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "UpdateArenaCardIDsAndClearTwoTurnDuelVars",
+    "before": "wNoEffectFromWhichStatus = 0;",
+    "after": "wNoEffectFromWhichStatus = 1;",
+    "case_ids": [
+      "UpdateArenaCardIDsAndClearTwoTurnDuelVars-0",
+      "UpdateArenaCardIDsAndClearTwoTurnDuelVars-1"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "2f2253b23bc83182cb1a35452e1d36d77fc99fc8aa0b2bf5425d1f4576482eb2",
+    "mutation_sha256": "a4d4d75127014ef2632bad74be719c5e06349a40e24831446606717a08adc83a",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "UpdateArenaCardIDsAndClearTwoTurnDuelVars",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "UpdateArenaCardIDsAndClearTwoTurnDuelVars",
+    "index": 0
+  }
+}

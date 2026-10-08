@@ -1,0 +1,30 @@
+{
+  "fn": "LoadGfxDataFromTempPointer",
+  "case": "tests/profiles/extended/cases/load_gfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadGfxDataFromTempPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"32768\": \"00000714212e3b4855626f7c8996a3b0\"}}, \"wram\": {\"49154\": \"0714212e3b4855626f7c8996a3b0bdca\", \"54447\": \"008000c0001001000000\", \"65359\": \"fe\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadGfxDataFromTempPointer\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"LoadGfxDataFromTempPointer\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"32768\": \"00000714212e3b4855626f7c8996a3b0\"}}, \"wram\": {\"49154\": \"0714212e3b4855626f7c8996a3b0bdca\", \"54447\": \"008000c0001001000000\", \"65359\": \"fe\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadGfxDataFromTempPointer",
+    "before": "\tuint16_t src = state16(wTempPointer_ADDR);",
+    "after": "\tuint16_t src = (uint16_t)(state16(wTempPointer_ADDR) + 1u);",
+    "case_ids": [
+      "LoadGfxDataFromTempPointer-0"
+    ],
+    "source": "src/profiles/extended/home/load_gfx.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "816567d699d17fd03c643ea7967567c6350191cfa5c0ff88c4796f225881ff73",
+    "case_sha256": "09db4865b2a0b218dfd2d00e606efeeeba98a69ed2fa004e2260e31afd252252",
+    "schema_sha256": "e3bf2dd30e2fb9609a3c6c6eccf22b064b0c18443a56e0d68778022e5e94572a",
+    "mutation_sha256": "7ad9dc13cca4ee7892acb2a9d3bb5a9989b08a76c3ca9744d96628d180140658",
+    "source": "src/profiles/extended/home/load_gfx.c",
+    "source_symbol": "LoadGfxDataFromTempPointer",
+    "case": "tests/profiles/extended/cases/load_gfx.py",
+    "fn": "LoadGfxDataFromTempPointer",
+    "index": 0
+  }
+}

@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Func_fc26c\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55206\": \"8005\", \"55415\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Func_fc26c\", \"mismatches\": {\"bus\": {\"address\": 55206, \"reference\": \"800500\", \"native\": \"810500\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[55206, 2], [55415, 1]]}}}\n",
-  "restored": "{\"fn\": \"Func_fc26c\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55206\": \"8005\", \"55415\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Func_fc26c\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"55206\": \"8005\", \"55415\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Func_fc26c",
+    "before": "\twCurSfxID = 0x80;",
+    "after": "\twCurSfxID = 0x81;",
+    "case_ids": [
+      "Func_fc26c-0",
+      "Func_fc26c-1"
+    ],
+    "source": "src/profiles/extended/home/sfx.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c0b144c8415e396832c40188cb47b8e5f62a195a5625c1f79ecac31050982e72",
+    "case_sha256": "6d2dd40da23171a416124f75fdff52827fd4a56bcd72ffd87aa576d60c1f5230",
+    "schema_sha256": "e11e32e8fafcbbf8ea7de8ecf391299a4a549dc01a244f3f03a69383075b0f0a",
+    "mutation_sha256": "fa8c368426e6a35ecb76393e56f1029625f687f2831bfddd45cd66339daf6afa",
+    "source": "src/profiles/extended/home/sfx.c",
+    "source_symbol": "Func_fc26c",
+    "case": "tests/profiles/extended/cases/sfx.py",
+    "fn": "Func_fc26c",
+    "index": 0
+  }
 }

@@ -1,0 +1,30 @@
+{
+  "fn": "CountNumberOfCardsOfType",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountNumberOfCardsOfType\", \"registers\": {\"a\": 0, \"b\": 170, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountNumberOfCardsOfType\", \"mismatches\": {\"a\": [0, 1], \"c\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"CountNumberOfCardsOfType\", \"registers\": {\"a\": 0, \"b\": 170, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CountNumberOfCardsOfType",
+    "before": "uint8_t count = 0u;",
+    "after": "uint8_t count = 1u;",
+    "case_ids": [
+      "CountNumberOfCardsOfType-2"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "eec868b5d332cff872ff959fcfc2579379b002fb699d3e5c378a5108d9dc7831",
+    "mutation_sha256": "0a3f038f5d26ebbbea07ccba7ad9af38abfc6b697f6231033bb43d91957af44b",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "CountNumberOfCardsOfType",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "CountNumberOfCardsOfType",
+    "index": 2
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "fn": "OppAction_ForceSwitchActive",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OppAction_ForceSwitchActive\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"0001\", \"50120\": \"2020\", \"50159\": \"02\", \"50296\": \"0809\", \"51899\": \"80\", \"52094\": \"0000010101\", \"52098\": \"01\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OppAction_ForceSwitchActive\", \"mismatches\": {\"bus\": {\"address\": 52098, \"reference\": \"000001010180c201\", \"native\": \"000001010080c201\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[50107, 2], [50120, 2], [50159, 1], [50296, 2], [51899, 1], [52094, 5], [65344, 1], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"OppAction_ForceSwitchActive\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50107\": \"0001\", \"50120\": \"2020\", \"50159\": \"02\", \"50296\": \"0809\", \"51899\": \"80\", \"52094\": \"0000010101\", \"52098\": \"01\", \"65344\": \"80\", \"65431\": \"c2\", \"65437\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "OppAction_ForceSwitchActive",
+    "before": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 1u;",
+    "after": "void OppAction_ForceSwitchActive(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);\n\tSwapTurn();\n\t(void)HasAlivePokemonInBench();\n\twPlayAreaSelectAction = 0u;",
+    "case_ids": [
+      "OppAction_ForceSwitchActive-0",
+      "OppAction_ForceSwitchActive-1"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "c5768321547380fcb620824a2500d1066085af3f03a2c57a0c40054b2687a450",
+    "mutation_sha256": "da6cc3c6c10a32c613ba1c596cc63cb7e3e708306306b40918fc6f06c363ead1",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "OppAction_ForceSwitchActive",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "OppAction_ForceSwitchActive",
+    "index": 0
+  }
+}

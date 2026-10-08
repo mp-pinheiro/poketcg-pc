@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DuelCheckMenu_InPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"52760\": \"aa\", \"52774\": \"00\", \"65408\": \"06\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DuelCheckMenu_InPlayArea\", \"mismatches\": {\"bus\": {\"address\": 52774, \"reference\": \"aa0006\", \"native\": \"aa0106\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52760, 1], [52774, 1], [65408, 1]]}}}\n",
-  "restored": "{\"fn\": \"DuelCheckMenu_InPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"52760\": \"aa\", \"52774\": \"00\", \"65408\": \"06\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DuelCheckMenu_InPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"52760\": \"aa\", \"52774\": \"00\", \"65408\": \"06\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DuelCheckMenu_InPlayArea",
+    "before": "void DuelCheckMenu_InPlayArea(void)\n{\n\twInPlayAreaFromSelectButton = 0u;",
+    "after": "void DuelCheckMenu_InPlayArea(void)\n{\n\twInPlayAreaFromSelectButton = 1u;",
+    "case_ids": [
+      "DuelCheckMenu_InPlayArea-0",
+      "DuelCheckMenu_InPlayArea-1"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "61cadd68d0c90c46dcae3706ed859eeee505d634ed5848e78292c696ffd33654",
+    "mutation_sha256": "a98f7b4c784c3f8dfb9bda093b31a264ad9e79841fbeafe344beffea35a18327",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "DuelCheckMenu_InPlayArea",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "DuelCheckMenu_InPlayArea",
+    "index": 0
+  }
 }

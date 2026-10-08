@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Flamethrower_DiscardEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49790\": \"0500\", \"49901\": \"01\", \"65431\": \"c2\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Flamethrower_DiscardEffect\", \"mismatches\": {\"bus\": {\"address\": 49790, \"reference\": \"050001c205\", \"native\": \"000001c205\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49790, 2], [49901, 1], [65431, 1], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"Flamethrower_DiscardEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49790\": \"0500\", \"49901\": \"01\", \"65431\": \"c2\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Flamethrower_DiscardEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49790\": \"0500\", \"49901\": \"01\", \"65431\": \"c2\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Flamethrower_DiscardEffect",
+    "before": "PutCardInDiscardPile(hTemp_ffa0);",
+    "after": "PutCardInDiscardPile(0u);",
+    "case_ids": [
+      "Flamethrower_DiscardEffect-0",
+      "Flamethrower_DiscardEffect-1",
+      "Flamethrower_DiscardEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "5d7e621c21b99b20dd2735cbbd1a35f9fed9c29b293e7bebe6bf725fce0dc570",
+    "mutation_sha256": "1bc9f7ba67cc703e8ed6a47c2be2ef9603c131790acb5b09ee89b8c04d2f6910",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Flamethrower_DiscardEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Flamethrower_DiscardEffect",
+    "index": 1
+  }
 }

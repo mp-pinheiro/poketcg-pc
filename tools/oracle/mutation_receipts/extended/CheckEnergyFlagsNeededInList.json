@@ -1,0 +1,33 @@
+{
+  "fn": "CheckEnergyFlagsNeededInList",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckEnergyFlagsNeededInList\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckEnergyFlagsNeededInList\", \"mismatches\": {\"a\": [255, 0]}}\n",
+  "restored": "{\"fn\": \"CheckEnergyFlagsNeededInList\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckEnergyFlagsNeededInList",
+    "before": "return (EnergyFlagsResult){0xffu, 0u, required};",
+    "after": "return (EnergyFlagsResult){0u, 0u, required};",
+    "case_ids": [
+      "CheckEnergyFlagsNeededInList-0",
+      "CheckEnergyFlagsNeededInList-1",
+      "CheckEnergyFlagsNeededInList-2",
+      "CheckEnergyFlagsNeededInList-3"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "69dcadf163d238792487867f32189e5d4144a93bcca659a78a380eece0ca77e8",
+    "mutation_sha256": "18e5d5fc295b329273845c91aadf7ae61fd1d648e00db111511290851d6d5e05",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "CheckEnergyFlagsNeededInList",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "CheckEnergyFlagsNeededInList",
+    "index": 0
+  }
+}

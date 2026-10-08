@@ -1,0 +1,30 @@
+{
+  "fn": "SaveDeckInDeckSaveMachine",
+  "case": "tests/profiles/extended/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SaveDeckInDeckSaveMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41728\": \"410000000000000000000000000000000000000000000000010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010141000000\", \"42096\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53262\": \"70a4\", \"53363\": \"00\", \"53365\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SaveDeckInDeckSaveMachine\", \"mismatches\": {\"f\": [144, 128]}}\n",
+  "restored": "{\"fn\": \"SaveDeckInDeckSaveMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41728\": \"410000000000000000000000000000000000000000000000010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010141000000\", \"42096\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53262\": \"70a4\", \"53363\": \"00\", \"53365\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SaveDeckInDeckSaveMachine",
+    "before": "\t\t\tuint8_t f = (uint8_t)((waited.f & 0x80u) | 0x10u);\n\t\t\treturn (SaveDeckInDeckSaveMachineResult){a, f};",
+    "after": "\t\t\tuint8_t f = (uint8_t)((waited.f & 0x80u) | 0x00u);\n\t\t\treturn (SaveDeckInDeckSaveMachineResult){a, f};",
+    "case_ids": [
+      "SaveDeckInDeckSaveMachine-0",
+      "SaveDeckInDeckSaveMachine-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2b37b66976ac6d28a2eecf10fef74a52fb30302660c6e5e02a8c8d15a150de01",
+    "case_sha256": "7c75bc1440b4b0b30278f49c753bf254357f2f1513ca1c523d756a5e3fe70735",
+    "schema_sha256": "cbe7433e4d14c6201f3283499aebfb35174314b8b93d91d13dac988a85aede14",
+    "mutation_sha256": "90fd8c019e26fc39b711f496bb7a77602ad83d85f234e4b948460870f2ade0cd",
+    "source": "src/profiles/extended/home/deck_machine.c",
+    "source_symbol": "SaveDeckInDeckSaveMachine",
+    "case": "tests/profiles/extended/cases/deck_machine.py",
+    "fn": "SaveDeckInDeckSaveMachine",
+    "index": 0
+  }
+}

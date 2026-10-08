@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"PlayLoadedDuelAnimation\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51904\": \"01\", \"51923\": \"c932\", \"54286\": \"000100ffffffffffff\", \"54296\": \"80\", \"54444\": \"01\", \"54724\": \"00014f0009\", \"54789\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"PlayLoadedDuelAnimation\", \"mismatches\": {\"bus\": {\"address\": 54725, \"reference\": \"ff800100014f000901\", \"native\": \"ff800100024f001001\", \"reference_size\": 20, \"native_size\": 20, \"spans\": [[51904, 1], [51923, 2], [54286, 9], [54296, 1], [54444, 1], [54724, 5], [54789, 1]]}}}\n",
-  "restored": "{\"fn\": \"PlayLoadedDuelAnimation\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51904\": \"01\", \"51923\": \"c932\", \"54286\": \"000100ffffffffffff\", \"54296\": \"80\", \"54444\": \"01\", \"54724\": \"00014f0009\", \"54789\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"PlayLoadedDuelAnimation\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51904\": \"01\", \"51923\": \"c932\", \"54286\": \"000100ffffffffffff\", \"54296\": \"80\", \"54444\": \"01\", \"54724\": \"00014f0009\", \"54789\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PlayLoadedDuelAnimation",
+    "before": "    ClearSpriteVRAMBuffer();\n    ZeroObjectPositions();\n    write(wVBlankOAMCopyToggle_ADDR, 1u);",
+    "after": "    ZeroObjectPositions();\n    write(wVBlankOAMCopyToggle_ADDR, 1u);",
+    "case_ids": [
+      "PlayLoadedDuelAnimation-1"
+    ],
+    "source": "src/profiles/extended/home/duel_animation_core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "49303f8a8dea95ca1059cf181711ee18f47c7954b9e8c0933b6268c09392dec5",
+    "case_sha256": "fb5ce3539679416a2be6ea11cc91ed921725c97fbc08ab946f4b809e3ad32d24",
+    "schema_sha256": "8971a06710edc9724d21dde76429c52dbbcddf6f1593dbc7a5165831dc931ae8",
+    "mutation_sha256": "b206f68178479011316d998aa2b20e40503964d0516b691abcefe896fd53a594",
+    "source": "src/profiles/extended/home/duel_animation_core.c",
+    "source_symbol": "PlayLoadedDuelAnimation",
+    "case": "tests/profiles/extended/cases/duel_animation_core.py",
+    "fn": "PlayLoadedDuelAnimation",
+    "index": 1
+  }
 }

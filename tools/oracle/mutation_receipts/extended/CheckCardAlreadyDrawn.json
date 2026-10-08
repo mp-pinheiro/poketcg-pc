@@ -1,0 +1,31 @@
+{
+  "fn": "CheckCardAlreadyDrawn",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckCardAlreadyDrawn\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49155\": \"01\", \"54871\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckCardAlreadyDrawn\", \"mismatches\": {\"a\": [1, 0], \"f\": [144, 0]}}\n",
+  "restored": "{\"fn\": \"CheckCardAlreadyDrawn\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49155\": \"01\", \"54871\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckCardAlreadyDrawn",
+    "before": "uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);",
+    "after": "uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card + 1u);",
+    "case_ids": [
+      "CheckCardAlreadyDrawn-1",
+      "CheckCardAlreadyDrawn-2"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "ddfdecc3d28496808b98f9eed8c15cc7d652a58c478e7608833575f5644946ae",
+    "mutation_sha256": "34778e55f15874a68db455c97bec4ae389f0356d466754f6299f3c5f3264578c",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "CheckCardAlreadyDrawn",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "CheckCardAlreadyDrawn",
+    "index": 1
+  }
+}

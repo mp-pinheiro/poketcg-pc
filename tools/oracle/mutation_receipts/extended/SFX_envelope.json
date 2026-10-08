@@ -1,0 +1,33 @@
+{
+  "fn": "SFX_envelope",
+  "case": "tests/profiles/extended/cases/sfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SFX_envelope\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"40f0\", \"55374\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SFX_envelope\", \"mismatches\": {\"bus\": {\"address\": 55374, \"reference\": \"40f080\", \"native\": \"40f000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49408, 2], [55374, 1]]}}}\n",
+  "restored": "{\"fn\": \"SFX_envelope\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"40f0\", \"55374\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SFX_envelope",
+    "before": "void SFX_envelope(uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t store_addr = (uint16_t)(wde2b_ADDR + bc);",
+    "after": "void SFX_envelope(uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t store_addr = (uint16_t)(wde2b_ADDR + bc + 1u);",
+    "case_ids": [
+      "SFX_envelope-0",
+      "SFX_envelope-1",
+      "SFX_envelope-2",
+      "SFX_envelope-3"
+    ],
+    "source": "src/profiles/extended/home/sfx.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c0b144c8415e396832c40188cb47b8e5f62a195a5625c1f79ecac31050982e72",
+    "case_sha256": "6d2dd40da23171a416124f75fdff52827fd4a56bcd72ffd87aa576d60c1f5230",
+    "schema_sha256": "0df0685254df95a6f83f4d339a60c8f80ccb153da498eceeb081177a21a0a974",
+    "mutation_sha256": "2b2cce7557f59e0a1b75c4aa399ed3524b090ad0627506b5e1d71bf37c9277d0",
+    "source": "src/profiles/extended/home/sfx.c",
+    "source_symbol": "SFX_envelope",
+    "case": "tests/profiles/extended/cases/sfx.py",
+    "fn": "SFX_envelope",
+    "index": 0
+  }
+}

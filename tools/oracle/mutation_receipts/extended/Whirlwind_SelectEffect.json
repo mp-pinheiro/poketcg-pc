@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Whirlwind_SelectEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Whirlwind_SelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"01c2ff\", \"native\": \"01c2fe\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50159, 1], [65431, 1], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"Whirlwind_SelectEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Whirlwind_SelectEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Whirlwind_SelectEffect",
+    "before": "hTemp_ffa0 = 0xffu;\n\t\treturn (WhirlwindSelectEffectResult){0xffu, 0x70u};",
+    "after": "hTemp_ffa0 = 0xfeu;\n\t\treturn (WhirlwindSelectEffectResult){0xffu, 0x70u};",
+    "case_ids": [
+      "Whirlwind_SelectEffect-0",
+      "Whirlwind_SelectEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "c70bf9ab74d415749b33fa98fff57d0e2032efe6f42a5ed963cfc8fa0c17c7ee",
+    "mutation_sha256": "0dcba37364eb241ef287e9d47d519baeca24268afd150c4fb619ebc622d9042a",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Whirlwind_SelectEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Whirlwind_SelectEffect",
+    "index": 0
+  }
 }

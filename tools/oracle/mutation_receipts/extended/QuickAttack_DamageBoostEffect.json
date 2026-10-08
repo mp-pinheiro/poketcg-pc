@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"QuickAttack_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"0000\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"0014000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"QuickAttack_DamageBoostEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"000100001400000000\", \"native\": \"000100001500000000\", \"reference_size\": 24, \"native_size\": 24, \"spans\": [[49383, 1], [49895, 2], [49905, 1], [49910, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52323, 5], [52379, 1], [52514, 4], [52756, 2], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"QuickAttack_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"0000\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"0014000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"QuickAttack_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49383\": \"00\", \"49895\": \"0000\", \"49905\": \"00\", \"49910\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"0014000000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "QuickAttack_DamageBoostEffect",
+    "before": "AddToDamage(20u);",
+    "after": "AddToDamage(21u);",
+    "case_ids": [
+      "QuickAttack_DamageBoostEffect-0",
+      "QuickAttack_DamageBoostEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "58eee9fc2c7a1105977a10f7d31c65e03cd45bc66069faccf94508adc5a3a2e9",
+    "mutation_sha256": "94458f46ecc90787b2d0ee8fb68c976ce72a2a5885f5c1ed64cee10bd6f6162b",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "QuickAttack_DamageBoostEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "QuickAttack_DamageBoostEffect",
+    "index": 0
+  }
 }

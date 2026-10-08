@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"EnergyTrans_TransferEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"52096\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"EnergyTrans_TransferEffect\", \"mismatches\": {\"a\": [1, 0]}}\n",
-  "restored": "{\"fn\": \"EnergyTrans_TransferEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"52096\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"EnergyTrans_TransferEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"52096\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "EnergyTrans_TransferEffect",
+    "before": "\t\tuint8_t result = PrintPlayAreaCardList_EnableLCD().a;\n\t\treturn result;",
+    "after": "\t\treturn 0u;",
+    "case_ids": [
+      "EnergyTrans_TransferEffect-0",
+      "EnergyTrans_TransferEffect-1",
+      "EnergyTrans_TransferEffect-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "68485f84e885135645a0e573c7b80146fece804289820495ace980d7d0e98855",
+    "mutation_sha256": "2ebd9930f677dce676c6831cfbe217324c34384fc0f5c1e1af4683ac97e8a20c",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "EnergyTrans_TransferEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "EnergyTrans_TransferEffect",
+    "index": 0
+  }
 }

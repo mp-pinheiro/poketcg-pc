@@ -3,7 +3,29 @@
   "case": "tests/profiles/extended/cases/common.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"ShowPromotionalCardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 30, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"52178\": \"1f08\", \"52402\": \"45\", \"52404\": \"8880\", \"65431\": \"c2\", \"65448\": \"9f\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"ShowPromotionalCardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 30, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"52178\": \"1f08\", \"52402\": \"45\", \"52404\": \"8880\", \"65431\": \"c2\", \"65448\": \"9f\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ShowPromotionalCardScreen\", \"mismatches\": {\"bus\": {\"address\": 52178, \"reference\": \"1f08458880\", \"native\": \"26084b8880\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[52178, 2], [52402, 1], [52404, 2], [65431, 1], [65448, 1]]}}}\n",
-  "restored": "{\"fn\": \"ShowPromotionalCardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 30, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"52178\": \"1f08\", \"52402\": \"45\", \"52404\": \"8880\", \"65431\": \"c2\", \"65448\": \"9f\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ShowPromotionalCardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 30, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"52178\": \"1f08\", \"52402\": \"45\", \"52404\": \"8880\", \"65431\": \"c2\", \"65448\": \"9f\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ShowPromotionalCardScreen",
+    "before": "void ShowPromotionalCardScreen(CardId de)\n{\n\t_ShowPromotionalCardScreen(de);",
+    "after": "void ShowPromotionalCardScreen(CardId de)\n{\n\t_ShowPromotionalCardScreen((CardId)(de + 1u));",
+    "case_ids": [
+      "ShowPromotionalCardScreen-0",
+      "ShowPromotionalCardScreen-1"
+    ],
+    "source": "src/profiles/extended/home/common.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "95b282434e5e4e369eb36fcdc2613760962124b2124d0017d6b2e2395e5c4d5b",
+    "case_sha256": "2798dd2d32532395acc04b475fa91700dc0af6bcc95b89dee95466f908dfb654",
+    "schema_sha256": "2c50ca7db72bb2427f89b344ac727f56df01cb2d6b0944f3f939e5b16fa32417",
+    "mutation_sha256": "f431a015f6208b0be0a9330dd387e7b47b3533e55ea037b53a09e6e3c3d2a3eb",
+    "source": "src/profiles/extended/home/common.c",
+    "source_symbol": "ShowPromotionalCardScreen",
+    "case": "tests/profiles/extended/cases/common.py",
+    "fn": "ShowPromotionalCardScreen",
+    "index": 0
+  }
 }

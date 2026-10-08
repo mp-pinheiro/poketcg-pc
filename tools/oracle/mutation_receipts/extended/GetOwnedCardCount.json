@@ -1,0 +1,30 @@
+{
+  "fn": "GetOwnedCardCount",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetOwnedCardCount\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 99, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52875\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetOwnedCardCount\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"GetOwnedCardCount\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 99, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52875\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetOwnedCardCount",
+    "before": "\t\t\treturn (GetOwnedCardCountResult){0u, (uint8_t)(id >> 8)};",
+    "after": "\t\t\treturn (GetOwnedCardCountResult){(uint8_t)((0u) ^ 1u), (uint8_t)(id >> 8)};",
+    "case_ids": [
+      "GetOwnedCardCount-0"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "c3ee43d5a47f360f7642aa31ce83c29ee95c174fe51938466b28690e13e75063",
+    "mutation_sha256": "f3ba304deecd883132d2e2f246224a176a1e764d967b06fa5d15ddd256b95be9",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "GetOwnedCardCount",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "GetOwnedCardCount",
+    "index": 0
+  }
+}

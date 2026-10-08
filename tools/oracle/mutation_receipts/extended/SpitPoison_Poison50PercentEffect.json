@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"SpitPoison_Poison50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 52347, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"00\", \"52347\": \"03c20f80\", \"52379\": \"00\", \"52383\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"SpitPoison_Poison50PercentEffect\", \"mismatches\": {\"hl\": [52347, 0], \"bus\": {\"address\": 52323, \"reference\": \"000001000003c20f80\", \"native\": \"000001008c00000000\", \"reference_size\": 20, \"native_size\": 20, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52323, 1], [52347, 4], [52379, 1], [52383, 1], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"SpitPoison_Poison50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 52347, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"00\", \"52347\": \"03c20f80\", \"52379\": \"00\", \"52383\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"SpitPoison_Poison50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 52347, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"00\", \"52347\": \"03c20f80\", \"52379\": \"00\", \"52383\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SpitPoison_Poison50PercentEffect",
+    "before": "SpitPoison_Poison50PercentEffectResult SpitPoison_Poison50PercentEffect(uint16_t hl)\n{\n\tTossCoinRoutineResult toss = TossCoin(PoisonCheckText, hl);\n\tif ((toss.f & 0x10u) != 0u) {",
+    "after": "SpitPoison_Poison50PercentEffectResult SpitPoison_Poison50PercentEffect(uint16_t hl)\n{\n\tTossCoinRoutineResult toss = TossCoin(PoisonCheckText, hl);\n\tif ((toss.f & 0x10u) == 0u) {",
+    "case_ids": [
+      "SpitPoison_Poison50PercentEffect-0",
+      "SpitPoison_Poison50PercentEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "f1b770c1ff9afcdaa96bec535a67187d3f193bc9c65424db57fcf30deeaedb43",
+    "mutation_sha256": "934ee73545eb98ab09f2a6ff5d91893e02d62b40f765f12026a3e7c8bbe2e5ba",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "SpitPoison_Poison50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "SpitPoison_Poison50PercentEffect",
+    "index": 0
+  }
 }

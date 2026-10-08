@@ -1,0 +1,30 @@
+{
+  "fn": "GetCardAlbumProgress",
+  "case": "tests/profiles/extended/cases/card_collection.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetCardAlbumProgress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 228, \"d\": 2, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"41216\": \"01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetCardAlbumProgress\", \"mismatches\": {\"c\": [228, 227]}}\n",
+  "restored": "{\"fn\": \"GetCardAlbumProgress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 228, \"d\": 2, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"41216\": \"01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetCardAlbumProgress",
+    "before": "\tif ((gb_read8((uint16_t)(sCardCollection_ADDR + VENUSAUR_LV64)) & 0x80u) != 0u)",
+    "after": "\tif ((gb_read8((uint16_t)(sCardCollection_ADDR + VENUSAUR_LV64)) & 0x81u) != 0u)",
+    "case_ids": [
+      "GetCardAlbumProgress-2"
+    ],
+    "source": "src/profiles/extended/home/card_collection.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c73adf0ef9b603258215e04207908aac37be98d88f8c081d181952b5f8189bbb",
+    "case_sha256": "753e94f3db19be04e1480a53d25f3d6626e14d164d21db451bbc30a53ddd5017",
+    "schema_sha256": "03fde0d68aa58e6e6d256ff8b51e5321b3b2328d18eac9c0945896785dc210a7",
+    "mutation_sha256": "5c942c788285d2f12c174c06e95d14714b8d6a125bdd56cf32bc89e8774e9054",
+    "source": "src/profiles/extended/home/card_collection.c",
+    "source_symbol": "GetCardAlbumProgress",
+    "case": "tests/profiles/extended/cases/card_collection.py",
+    "fn": "GetCardAlbumProgress",
+    "index": 2
+  }
+}

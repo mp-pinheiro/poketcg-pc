@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ExecuteNextSFXCommand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"f0\", \"55215\": \"fe\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ExecuteNextSFXCommand\", \"mismatches\": {\"bus\": {\"address\": 55215, \"reference\": \"f0fe\", \"native\": \"f0ff\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49408, 1], [55215, 1]]}}}\n",
-  "restored": "{\"fn\": \"ExecuteNextSFXCommand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"f0\", \"55215\": \"fe\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ExecuteNextSFXCommand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"f0\", \"55215\": \"fe\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ExecuteNextSFXCommand",
+    "before": "\t\tcase 15u:",
+    "after": "\t\tcase 14u:",
+    "case_ids": [
+      "ExecuteNextSFXCommand-0",
+      "ExecuteNextSFXCommand-1",
+      "ExecuteNextSFXCommand-3"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c0b144c8415e396832c40188cb47b8e5f62a195a5625c1f79ecac31050982e72",
+    "case_sha256": "6d2dd40da23171a416124f75fdff52827fd4a56bcd72ffd87aa576d60c1f5230",
+    "schema_sha256": "cdc1837eafaad386469d934d60e2960a8791d9d64023212d2193d622c9c71cab",
+    "mutation_sha256": "21dcfad6c49c7e293a55b937afb7e32403e16528052c06612649cc516c059dd1",
+    "source": "src/profiles/extended/home/sfx.c",
+    "source_symbol": "ExecuteNextSFXCommand",
+    "case": "tests/profiles/extended/cases/sfx.py",
+    "fn": "ExecuteNextSFXCommand",
+    "index": 0
+  }
 }

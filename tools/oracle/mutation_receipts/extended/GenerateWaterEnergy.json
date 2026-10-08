@@ -1,0 +1,31 @@
+{
+  "fn": "GenerateWaterEnergy",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateWaterEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 3, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateWaterEnergy\", \"mismatches\": {\"bus\": {\"address\": 50198, \"reference\": \"0003\", \"native\": \"0005\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49152, 1], [50198, 1]]}}}\n",
+  "restored": "{\"fn\": \"GenerateWaterEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 3, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GenerateWaterEnergy",
+    "before": "\treturn AddBoosterEnergyToDrawnEnergies(WATER_ENERGY);",
+    "after": "\treturn AddBoosterEnergyToDrawnEnergies(FIGHTING_ENERGY);",
+    "case_ids": [
+      "GenerateWaterEnergy-0",
+      "GenerateWaterEnergy-1"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "539c9dc8678b191a02ec1ce9f18cd32f2531525710eac233352b1daea1465134",
+    "mutation_sha256": "2a67b962328d2bed6e701948cbc10627dfec32c1b483369160b46158624f7b1b",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "GenerateWaterEnergy",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "GenerateWaterEnergy",
+    "index": 0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "fn": "DrawRegularTextBox",
+  "case": "tests/profiles/extended/cases/text_box.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawRegularTextBox\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 39008, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38912\": \"181c1c19000000000000000000000000000000000000000000000000000000001e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\"}, \"1\": {\"38912\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"wram\": {\"38912\": \"181c1c19000000000000000000000000000000000000000000000000000000001e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\", \"51892\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawRegularTextBox\", \"mismatches\": {\"bus\": {\"address\": 38915, \"reference\": \"181c1c1900000000\", \"native\": \"181c1c1800000000\", \"reference_size\": 97, \"native_size\": 97, \"spans\": [[38912, 96], [51892, 1]]}, \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawRegularTextBox\", \"registers\": {\"a\": 0, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 39008, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38912\": \"181c1c19000000000000000000000000000000000000000000000000000000001e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\"}, \"1\": {\"38912\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"wram\": {\"38912\": \"181c1c19000000000000000000000000000000000000000000000000000000001e00001f000000000000000000000000000000000000000000000000000000001a1d1d1b00000000000000000000000000000000000000000000000000000000\", \"51892\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawRegularTextBox",
+    "before": "\tdraw_line(hl, SYM_BOX_TOP, SYM_BOX_TOP_L, SYM_BOX_TOP_R, b);",
+    "after": "\tdraw_line(hl, SYM_BOX_TOP, SYM_BOX_TOP_L, SYM_BOX_TOP_L, b);",
+    "case_ids": [
+      "DrawRegularTextBox-0"
+    ],
+    "source": "src/profiles/extended/home/text_box.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "d1317ba46a3b0722bf6421dd34fa317d2d2751f1a691b0f1a0f6c2111ad4ba53",
+    "case_sha256": "a5313d38db93ee630cc844548ed9795cf1b5f0a1bddaef14573c78d32b16ae73",
+    "schema_sha256": "978adf402d5ecd90dfc9138a458b9071cabc3475294220467fb8cef5ef73de52",
+    "mutation_sha256": "6d09eb67a9441eda151fad0aaeac04812f389ab6abeeab85a38b025ead6608ff",
+    "source": "src/profiles/extended/home/text_box.c",
+    "source_symbol": "DrawRegularTextBox",
+    "case": "tests/profiles/extended/cases/text_box.py",
+    "fn": "DrawRegularTextBox",
+    "index": 0
+  }
+}

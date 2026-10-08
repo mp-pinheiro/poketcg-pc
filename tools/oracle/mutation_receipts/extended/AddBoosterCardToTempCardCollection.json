@@ -1,0 +1,33 @@
+{
+  "fn": "AddBoosterCardToTempCardCollection",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddBoosterCardToTempCardCollection\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"01\", \"54871\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddBoosterCardToTempCardCollection\", \"mismatches\": {\"bus\": {\"address\": 49152, \"reference\": \"0100\", \"native\": \"0200\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49152, 1], [54871, 1]]}}}\n",
+  "restored": "{\"fn\": \"AddBoosterCardToTempCardCollection\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"01\", \"54871\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AddBoosterCardToTempCardCollection",
+    "before": "uint8_t value = (uint8_t)(old + 1u);",
+    "after": "uint8_t value = (uint8_t)(old + 2u);",
+    "case_ids": [
+      "AddBoosterCardToTempCardCollection-0",
+      "AddBoosterCardToTempCardCollection-1",
+      "AddBoosterCardToTempCardCollection-2",
+      "AddBoosterCardToTempCardCollection-3"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "b068ca457736f01654b1ece74bef620f041f9abd289af8b3b552755efa855cba",
+    "mutation_sha256": "62d7ac8234e91880d626e3231121a04ed115d4ccc67ff960c2858718e1bef934",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "AddBoosterCardToTempCardCollection",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "AddBoosterCardToTempCardCollection",
+    "index": 0
+  }
+}

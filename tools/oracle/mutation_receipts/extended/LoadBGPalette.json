@@ -1,0 +1,31 @@
+{
+  "fn": "LoadBGPalette",
+  "case": "tests/profiles/extended/cases/load_gfx.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadBGPalette\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51952\": \"ff7f944208210000ff7f4803697c0114ff7f4803e1010114ff7f591acf000114ff7f48031f000114ff7f4803591a0114ff7fbf03591a0114ff7f591a697c0114\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadBGPalette\", \"mismatches\": {\"bus\": {\"address\": 51952, \"reference\": \"ff7f944208\", \"native\": \"0000000000\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[51952, 64], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadBGPalette\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51952\": \"ff7f944208210000ff7f4803697c0114ff7f4803e1010114ff7f591acf000114ff7f48031f000114ff7f4803591a0114ff7fbf03591a0114ff7f591a697c0114\", \"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadBGPalette",
+    "before": "\tuint8_t count = gb_read8(wLoadedPalData_ADDR);",
+    "after": "\tuint8_t count = (uint8_t)(gb_read8(wLoadedPalData_ADDR) + 1u);",
+    "case_ids": [
+      "LoadBGPalette-0",
+      "LoadBGPalette-1"
+    ],
+    "source": "src/profiles/extended/home/load_gfx.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "816567d699d17fd03c643ea7967567c6350191cfa5c0ff88c4796f225881ff73",
+    "case_sha256": "09db4865b2a0b218dfd2d00e606efeeeba98a69ed2fa004e2260e31afd252252",
+    "schema_sha256": "9922467cbbae61535837edc0adbdd4ce09d6cb7885edae5b21240c59dbae98f2",
+    "mutation_sha256": "47ea3d12e025971afa4b4b63111a8c2331e3526ca00af89b4bd01445b9a2abfe",
+    "source": "src/profiles/extended/home/load_gfx.c",
+    "source_symbol": "LoadBGPalette",
+    "case": "tests/profiles/extended/cases/load_gfx.py",
+    "fn": "LoadBGPalette",
+    "index": 1
+  }
+}

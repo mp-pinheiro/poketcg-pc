@@ -1,0 +1,30 @@
+{
+  "fn": "ScriptCommand_JumpIfEnoughCardsOwned",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_JumpIfEnoughCardsOwned\", \"registers\": {\"a\": 197, \"b\": 255, \"c\": 5, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"05c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfEnoughCardsOwned\", \"mismatches\": {\"b\": [255, 0]}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfEnoughCardsOwned\", \"registers\": {\"a\": 197, \"b\": 255, \"c\": 5, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54274\": \"05c5\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_JumpIfEnoughCardsOwned",
+    "before": "\tif (owned >= target) {",
+    "after": "\tif (owned < target) {",
+    "case_ids": [
+      "ScriptCommand_JumpIfEnoughCardsOwned-1",
+      "ScriptCommand_JumpIfEnoughCardsOwned-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "010dc915295ffbc4abd2a3200f447b98ba8e13c0074967bd172ba00e7e2ef41d",
+    "mutation_sha256": "3f0289491a7f908b307937ec14230df8822f18cb7e13aa112ace9bde07673f07",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_JumpIfEnoughCardsOwned",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_JumpIfEnoughCardsOwned",
+    "index": 1
+  }
+}

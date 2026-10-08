@@ -1,0 +1,30 @@
+{
+  "fn": "FindDuplicateCards",
+  "case": "tests/profiles/extended/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FindDuplicateCards\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 51457, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51456\": \"ff\", \"52630\": \"ffff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FindDuplicateCards\", \"mismatches\": {\"f\": [144, 16]}}\n",
+  "restored": "{\"fn\": \"FindDuplicateCards\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 51457, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51456\": \"ff\", \"52630\": \"ffff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FindDuplicateCards",
+    "before": "return (FindDupResult){0xFFu, 0x90u, outer, d};",
+    "after": "return (FindDupResult){0xFFu, 0x10u, outer, d};",
+    "case_ids": [
+      "FindDuplicateCards-0",
+      "FindDuplicateCards-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3badf508a4e599b2f2e67f7bf0d243f331f6a88af0963a2cb4682c2c7e1a1bf7",
+    "case_sha256": "5e43a5ddd8e45cb4c6da392394b7929204077f7ef553d8ea6f0c3653d65ad921",
+    "schema_sha256": "f3770c8e3a146a40bcca916d2dbb8c32b4683e586ba99cc3be445d6fc63ecf60",
+    "mutation_sha256": "55aefec8901916c6c089e07857befd854d63580bd5b5c5cbe7c777cb741cfd39",
+    "source": "src/profiles/extended/home/trainer_cards.c",
+    "source_symbol": "FindDuplicateCards",
+    "case": "tests/profiles/extended/cases/trainer_cards.py",
+    "fn": "FindDuplicateCards",
+    "index": 0
+  }
+}

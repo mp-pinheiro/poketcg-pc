@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Rampage_Confusion50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1000\", \"52347\": \"00000000\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Rampage_Confusion50PercentEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"000001001000000000\", \"native\": \"000001001100000000\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 2], [52347, 4], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"Rampage_Confusion50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1000\", \"52347\": \"00000000\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Rampage_Confusion50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"1000\", \"52347\": \"00000000\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Rampage_Confusion50PercentEffect",
+    "before": "void Rampage_Confusion50PercentEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage(damage.a);",
+    "after": "void Rampage_Confusion50PercentEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage((uint8_t)(damage.a + 1u));",
+    "case_ids": [
+      "Rampage_Confusion50PercentEffect-0",
+      "Rampage_Confusion50PercentEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "6b7e0a56da7f23a1c43885aff5313e018f4f7248a3f6ae0b42a7bae90e5fa0c1",
+    "mutation_sha256": "cf89bd2c7a65a269277dbad88ad107c6a33970c2cb054eadc9eaa5ed645eeee2",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Rampage_Confusion50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Rampage_Confusion50PercentEffect",
+    "index": 0
+  }
 }

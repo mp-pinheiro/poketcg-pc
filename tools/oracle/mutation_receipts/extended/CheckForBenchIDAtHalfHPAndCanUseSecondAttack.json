@@ -1,0 +1,30 @@
+{
+  "fn": "CheckForBenchIDAtHalfHPAndCanUseSecondAttack",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckForBenchIDAtHalfHPAndCanUseSecondAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 3, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 49852, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"52340\": \"00\", \"65431\": \"c2\", \"65437\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckForBenchIDAtHalfHPAndCanUseSecondAttack\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"CheckForBenchIDAtHalfHPAndCanUseSecondAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 3, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 49852, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"52340\": \"00\", \"65431\": \"c2\", \"65437\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckForBenchIDAtHalfHPAndCanUseSecondAttack",
+    "before": "\treturn (CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult){b, f, b, c, d, e, hl};",
+    "after": "\treturn (CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult){(uint8_t)((b) ^ 1u), f, b, c, d, e, hl};",
+    "case_ids": [
+      "CheckForBenchIDAtHalfHPAndCanUseSecondAttack-0"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "58b371faafd87a2dc4b80fd4838d0cafe5ff69c3cacfa95a99d092a1d4d5bd86",
+    "mutation_sha256": "8627377a9ad0045ed0e3c5a4b9175e71dc6e82e3f99adb6349c0441c4b72bae9",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "CheckForBenchIDAtHalfHPAndCanUseSecondAttack",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "CheckForBenchIDAtHalfHPAndCanUseSecondAttack",
+    "index": 0
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "fn": "GeneratePsychicEnergy",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GeneratePsychicEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 6, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"06\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GeneratePsychicEnergy\", \"mismatches\": {\"bus\": {\"address\": 50198, \"reference\": \"0006\", \"native\": \"0003\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49152, 1], [50198, 1]]}}}\n",
+  "restored": "{\"fn\": \"GeneratePsychicEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 6, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"06\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GeneratePsychicEnergy",
+    "before": "\treturn AddBoosterEnergyToDrawnEnergies(PSYCHIC_ENERGY);",
+    "after": "\treturn AddBoosterEnergyToDrawnEnergies(WATER_ENERGY);",
+    "case_ids": [
+      "GeneratePsychicEnergy-0",
+      "GeneratePsychicEnergy-1"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "3dc03d3eb2331760c9be829ad8343aa47bcb7dccf2c54d1389eaf5e0c21c8886",
+    "mutation_sha256": "27d355d2a4bce34968a81a257667285fae7ac0d10bc9a4123ea87973f30c1cdc",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "GeneratePsychicEnergy",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "GeneratePsychicEnergy",
+    "index": 0
+  }
+}

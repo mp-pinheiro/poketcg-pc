@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"LeerEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"06\", \"49905\": \"00\", \"49910\": \"06\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"74\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"LeerEffect\", \"mismatches\": {\"bus\": {\"address\": 52323, \"reference\": \"000001007400010100\", \"native\": \"000001007500010100\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[49896, 1], [49905, 1], [49910, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52323, 1], [52379, 1], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"LeerEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"06\", \"49905\": \"00\", \"49910\": \"06\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"74\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"LeerEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"06\", \"49905\": \"00\", \"49910\": \"06\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"74\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LeerEffect",
+    "before": "\twLoadedAttackAnimation = ATK_ANIM_LEER;\n\tApplySubstatus2ToDefendingCard(SUBSTATUS2_LEER, hl);",
+    "after": "\twLoadedAttackAnimation = 0x75u;\n\tApplySubstatus2ToDefendingCard(SUBSTATUS2_LEER, hl);",
+    "case_ids": [
+      "LeerEffect-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "9a1472e602dcb227039c6fc053b9f8cb95ab9a30901aa95b94df302d2130389d",
+    "mutation_sha256": "bf9319ef97536c68cc960cd31813807283ad482706551386e1e6b07b0baa3f35",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "LeerEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "LeerEffect",
+    "index": 0
+  }
 }

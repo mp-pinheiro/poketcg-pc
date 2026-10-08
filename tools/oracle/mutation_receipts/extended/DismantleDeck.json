@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DismantleDeck\", \"registers\": {\"a\": 68, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41216\": \"3a000100\", \"41728\": \"00000000000000000000000000000000\", \"41752\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52512\": \"00\", \"52827\": \"0001010000\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DismantleDeck\", \"mismatches\": {\"sram\": {\"byte\": 4, \"reference\": \"3a0001000000000000\", \"native\": \"3a0001004100000000\"}}}\n",
-  "restored": "{\"fn\": \"DismantleDeck\", \"registers\": {\"a\": 68, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41216\": \"3a000100\", \"41728\": \"00000000000000000000000000000000\", \"41752\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52512\": \"00\", \"52827\": \"0001010000\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DismantleDeck\", \"registers\": {\"a\": 68, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41216\": \"3a000100\", \"41728\": \"00000000000000000000000000000000\", \"41752\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52512\": \"00\", \"52827\": \"0001010000\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DismantleDeck",
+    "before": "\t\tClearMemory_Bank2(NAME_BUFFER_LENGTH, name);",
+    "after": "\t\tClearMemory_Bank2(NAME_BUFFER_LENGTH, (uint16_t)(name + 1u));",
+    "case_ids": [
+      "DismantleDeck-0",
+      "DismantleDeck-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "11a0a5e7ea3cba47f74fcf3f9f0838779e70f49ee6e7887563dc8f8f2ec6600b",
+    "mutation_sha256": "c347ee60ede10c97fafc98481fb0d95027cb580aae4ae67216aeb8e98215bfc5",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "DismantleDeck",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "DismantleDeck",
+    "index": 0
+  }
 }

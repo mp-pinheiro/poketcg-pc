@@ -1,0 +1,30 @@
+{
+  "fn": "FindExtraInteractableObjects",
+  "case": "tests/profiles/extended/cases/fire_club_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FindExtraInteractableObjects\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 6, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FindExtraInteractableObjects\", \"mismatches\": {\"e\": [6, 7]}}\n",
+  "restored": "{\"fn\": \"FindExtraInteractableObjects\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 6, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50416, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FindExtraInteractableObjects",
+    "before": "\tuint16_t de = 6u;",
+    "after": "\tuint16_t de = 0x7u;",
+    "case_ids": [
+      "FindExtraInteractableObjects-0"
+    ],
+    "source": "src/profiles/extended/home/fire_club_lobby.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "759445f2558eb79cdf91e90d84faad66a9ffa4ccae9411b3aab79c52a37fac9d",
+    "case_sha256": "56573bc564fb73d5333a10e2a6e3fe1d56b96dd13c1949b4fdf7c4ba45755672",
+    "schema_sha256": "cbac4d068641613a003d5e1d26be8413bc6248bf9080c1cc9399e02abd31c3b6",
+    "mutation_sha256": "0e5df4afc13322c82ac3db48739979371abd3610f4e09e7303b17dc1b0a4bb67",
+    "source": "src/profiles/extended/home/fire_club_lobby.c",
+    "source_symbol": "FindExtraInteractableObjects",
+    "case": "tests/profiles/extended/cases/fire_club_lobby.py",
+    "fn": "FindExtraInteractableObjects",
+    "index": 0
+  }
+}

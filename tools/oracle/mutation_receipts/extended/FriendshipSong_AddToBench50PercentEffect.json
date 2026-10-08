@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 17, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"00000000\", \"49850\": \"0000\", \"49851\": \"00\", \"49903\": \"01\", \"49905\": \"00\", \"50176\": \"08010101\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01000002\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"mismatches\": {\"e\": [17, 52]}}\n",
-  "restored": "{\"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 17, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"00000000\", \"49850\": \"0000\", \"49851\": \"00\", \"49903\": \"01\", \"49905\": \"00\", \"50176\": \"08010101\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01000002\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"FriendshipSong_AddToBench50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 17, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"00000000\", \"49850\": \"0000\", \"49851\": \"00\", \"49903\": \"01\", \"49905\": \"00\", \"50176\": \"08010101\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01000002\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FriendshipSong_AddToBench50PercentEffect",
+    "before": "\t\tWaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);\n\t\treturn (FriendshipSong_AddToBench50PercentEffectResult){none.d, none.e};",
+    "after": "\t\tWaitResult none = DrawWideTextBox_WaitForInput(NoneCameText);\n\t\treturn (FriendshipSong_AddToBench50PercentEffectResult){d, e};",
+    "case_ids": [
+      "FriendshipSong_AddToBench50PercentEffect-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "f41977b076ef3e6cf4328d28e963c3f657045f0df21f500e0611455c8b12858e",
+    "mutation_sha256": "81d286a58dc08b59923b995249b268e925e7ed6badb76dbb61edb56ebeda8c7a",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "FriendshipSong_AddToBench50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "FriendshipSong_AddToBench50PercentEffect",
+    "index": 0
+  }
 }

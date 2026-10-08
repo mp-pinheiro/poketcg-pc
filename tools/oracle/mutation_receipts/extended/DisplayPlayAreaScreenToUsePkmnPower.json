@@ -1,0 +1,31 @@
+{
+  "fn": "DisplayPlayAreaScreenToUsePkmnPower",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayPlayAreaScreenToUsePkmnPower\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"00\", \"51899\": \"80\", \"52093\": \"00\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayPlayAreaScreenToUsePkmnPower\", \"mismatches\": {\"bus\": {\"address\": 52093, \"reference\": \"008000c3\", \"native\": \"008001c3\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49903, 1], [51899, 1], [52093, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"DisplayPlayAreaScreenToUsePkmnPower\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"00\", \"51899\": \"80\", \"52093\": \"00\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DisplayPlayAreaScreenToUsePkmnPower",
+    "before": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 0u);",
+    "after": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 1u);",
+    "case_ids": [
+      "DisplayPlayAreaScreenToUsePkmnPower-0",
+      "DisplayPlayAreaScreenToUsePkmnPower-1"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "32014ff94193669cb30d1688609f973f3809c07d1224403c5eabb400832399de",
+    "mutation_sha256": "b01f247d0e5b2e295e74b581f599df4ba6c00285a5743457051cbd7126ead669",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "DisplayPlayAreaScreenToUsePkmnPower",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "DisplayPlayAreaScreenToUsePkmnPower",
+    "index": 0
+  }
+}

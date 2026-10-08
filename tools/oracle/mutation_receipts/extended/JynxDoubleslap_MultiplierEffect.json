@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"JynxDoubleslap_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"0a000a0a\", \"52514\": \"0201cd02\", \"52745\": \"0a00\", \"52756\": \"0000\", \"65431\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"JynxDoubleslap_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52745, \"reference\": \"0201cd020a00000001\", \"native\": \"0201cd020b00000001\", \"reference_size\": 20, \"native_size\": 20, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 4], [52514, 4], [52745, 2], [52756, 2], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"JynxDoubleslap_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"0a000a0a\", \"52514\": \"0201cd02\", \"52745\": \"0a00\", \"52756\": \"0000\", \"65431\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"JynxDoubleslap_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"0a000a0a\", \"52514\": \"0201cd02\", \"52745\": \"0a00\", \"52756\": \"0000\", \"65431\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "JynxDoubleslap_MultiplierEffect",
+    "before": "void JynxDoubleslap_MultiplierEffect(void)\n{\n\tLoadTxRam3(10u);",
+    "after": "void JynxDoubleslap_MultiplierEffect(void)\n{\n\tLoadTxRam3(11u);",
+    "case_ids": [
+      "JynxDoubleslap_MultiplierEffect-0",
+      "JynxDoubleslap_MultiplierEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "c76d2a0d6b2bb918f236e2e9e5f87335cd154e9622df65331afce45403ca036d",
+    "mutation_sha256": "c67aabec1ff60fc0aa1efc8284547e431d252fc48d462230879b6b3449b4b51b",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "JynxDoubleslap_MultiplierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "JynxDoubleslap_MultiplierEffect",
+    "index": 0
+  }
 }

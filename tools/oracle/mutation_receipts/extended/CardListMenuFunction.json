@@ -1,0 +1,31 @@
+{
+  "fn": "CardListMenuFunction",
+  "case": "tests/profiles/extended/cases/menus.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CardListMenuFunction\", \"registers\": {\"a\": 8, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52414\": \"01\", \"52418\": \"03\", \"52423\": \"02\", \"52425\": \"05\", \"52427\": \"8456\", \"52509\": \"ff\", \"52511\": \"55\", \"65408\": \"01\", \"65425\": \"08\", \"65457\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CardListMenuFunction\", \"mismatches\": {\"a\": [8, 0], \"f\": [16, 0]}}\n",
+  "restored": "{\"fn\": \"CardListMenuFunction\", \"registers\": {\"a\": 8, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52414\": \"01\", \"52418\": \"03\", \"52423\": \"02\", \"52425\": \"05\", \"52427\": \"8456\", \"52509\": \"ff\", \"52511\": \"55\", \"65408\": \"01\", \"65425\": \"08\", \"65457\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CardListMenuFunction",
+    "before": "\tif (list_fn == CARD_LIST_FUNCTION) {\n\t\tCardListFunctionResult r = CardListFunction();\n\t\treturn (CardListMenuFunctionResult){r.a, r.f};\n\t}",
+    "after": "\tif (list_fn == CARD_LIST_FUNCTION)\n\t\treturn (CardListMenuFunctionResult){0u, 0x00u};",
+    "case_ids": [
+      "CardListMenuFunction-4",
+      "CardListMenuFunction-5"
+    ],
+    "source": "src/profiles/extended/home/menus.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "75ea2c9f49c32076d01a600dd9012575d43233ce9dbf118da94fc407cb70af68",
+    "case_sha256": "aaf693440f514f44cec9fe8a6c50c50c2477baf34c4584fdb1a1728c0be908cc",
+    "schema_sha256": "e79a76e3afc4a9e28ab72f342ac76a7d369292f02c6557e5f1e27ea1d6862586",
+    "mutation_sha256": "f48b3675fbe1df7dc1ca16e08a984496279511c56c53e0d433925a968484811e",
+    "source": "src/profiles/extended/home/menus.c",
+    "source_symbol": "CardListMenuFunction",
+    "case": "tests/profiles/extended/cases/menus.py",
+    "fn": "CardListMenuFunction",
+    "index": 4
+  }
+}

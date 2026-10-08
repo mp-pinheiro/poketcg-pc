@@ -1,0 +1,30 @@
+{
+  "fn": "SFX_pitch_offset",
+  "case": "tests/profiles/extended/cases/sfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SFX_pitch_offset\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"12f0\", \"55378\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SFX_pitch_offset\", \"mismatches\": {\"bus\": {\"address\": 55378, \"reference\": \"12f000\", \"native\": \"12f001\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49408, 2], [55378, 1]]}}}\n",
+  "restored": "{\"fn\": \"SFX_pitch_offset\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"12f0\", \"55378\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SFX_pitch_offset",
+    "before": "\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), wAudioArg);",
+    "after": "\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), (uint8_t)((wAudioArg) ^ 1u));",
+    "case_ids": [
+      "SFX_pitch_offset-0"
+    ],
+    "source": "src/profiles/extended/home/sfx.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c0b144c8415e396832c40188cb47b8e5f62a195a5625c1f79ecac31050982e72",
+    "case_sha256": "6d2dd40da23171a416124f75fdff52827fd4a56bcd72ffd87aa576d60c1f5230",
+    "schema_sha256": "4d3bebba4e9c413b01b41ec8b2fb1a3a59434581cc3541ad46b8b587a29bcf93",
+    "mutation_sha256": "966d8e2c7a5afdb86bb50d219d355608fe416a5614ed5f0a95194c444f84bc09",
+    "source": "src/profiles/extended/home/sfx.c",
+    "source_symbol": "SFX_pitch_offset",
+    "case": "tests/profiles/extended/cases/sfx.py",
+    "fn": "SFX_pitch_offset",
+    "index": 0
+  }
+}

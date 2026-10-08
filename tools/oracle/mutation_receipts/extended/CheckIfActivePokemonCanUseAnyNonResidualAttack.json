@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"CheckIfActivePokemonCanUseAnyNonResidualAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 4, \"d\": 0, \"e\": 2, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52541, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49920\": \"10\", \"50107\": \"00\", \"50120\": \"00\", \"50176\": \"be\", \"50296\": \"be\", \"52324\": \"1e000000\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfActivePokemonCanUseAnyNonResidualAttack\", \"mismatches\": {\"a\": [0, 1], \"f\": [128, 0]}}\n",
-  "restored": "{\"fn\": \"CheckIfActivePokemonCanUseAnyNonResidualAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 4, \"d\": 0, \"e\": 2, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52541, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49920\": \"10\", \"50107\": \"00\", \"50120\": \"00\", \"50176\": \"be\", \"50296\": \"be\", \"52324\": \"1e000000\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"CheckIfActivePokemonCanUseAnyNonResidualAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 4, \"d\": 0, \"e\": 2, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52541, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49920\": \"10\", \"50107\": \"00\", \"50120\": \"00\", \"50176\": \"be\", \"50296\": \"be\", \"52324\": \"1e000000\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckIfActivePokemonCanUseAnyNonResidualAttack",
+    "before": "a = 0u;",
+    "after": "a = 1u;",
+    "case_ids": [
+      "CheckIfActivePokemonCanUseAnyNonResidualAttack-0",
+      "CheckIfActivePokemonCanUseAnyNonResidualAttack-1"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "0a2a7737fdb6ef58f71476d86403be9bf16387062de655546c5d91b5c92e0b47",
+    "mutation_sha256": "f7f26ae7e67157100599d7c5d6fd2552a611ccced0f8a474e2d1c20cb0e1b1f6",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "CheckIfActivePokemonCanUseAnyNonResidualAttack",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "CheckIfActivePokemonCanUseAnyNonResidualAttack",
+    "index": 0
+  }
 }

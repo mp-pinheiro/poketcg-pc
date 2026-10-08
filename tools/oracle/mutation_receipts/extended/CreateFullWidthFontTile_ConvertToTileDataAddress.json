@@ -1,0 +1,29 @@
+{
+  "fn": "CreateFullWidthFontTile_ConvertToTileDataAddress",
+  "case": "tests/profiles/extended/cases/process_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateFullWidthFontTile_ConvertToTileDataAddress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 16, \"d\": 204, \"e\": 162, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateFullWidthFontTile_ConvertToTileDataAddress\", \"mismatches\": {\"hl\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"CreateFullWidthFontTile_ConvertToTileDataAddress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 16, \"d\": 204, \"e\": 162, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CreateFullWidthFontTile_ConvertToTileDataAddress",
+    "before": "\tuint16_t address = ConvertTileNumberToTileDataAddress(&b, &c);",
+    "after": "\tuint16_t address = (ConvertTileNumberToTileDataAddress(&b, &c)) ^ 1u;",
+    "case_ids": [
+      "CreateFullWidthFontTile_ConvertToTileDataAddress-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3fd461efbd36224af44731a36b7d2c2371bbdaea427ba3e66372220b94bd66d8",
+    "case_sha256": "704bb6b5f592ed6181309e32fed28cc4bfbb03607f75e012eac5d1e66e581888",
+    "schema_sha256": "95194651a6e7d47aa23df4a957e1919df1b7e6ab9890f39b59ec5218b52a5be8",
+    "mutation_sha256": "b39d1d44f900e3963f7fc6fc76ec439aca0410aef9010f31b9ab60cd743ae2ad",
+    "source": "src/profiles/extended/home/process_text.c",
+    "source_symbol": "CreateFullWidthFontTile_ConvertToTileDataAddress",
+    "case": "tests/profiles/extended/cases/process_text.py",
+    "fn": "CreateFullWidthFontTile_ConvertToTileDataAddress",
+    "index": 0
+  }
+}

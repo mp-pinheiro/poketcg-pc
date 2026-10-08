@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DetermineAIScoreOfAttackEnergyRequirement\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\", \"49851\": \"07\", \"52340\": \"00\", \"52548\": \"00\", \"52600\": \"ff\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DetermineAIScoreOfAttackEnergyRequirement\", \"mismatches\": {\"bus\": {\"address\": 52340, \"reference\": \"ffffff070000ffc200\", \"native\": \"ffffff070100ffc200\", \"reference_size\": 66, \"native_size\": 66, \"spans\": [[49664, 60], [49851, 1], [52340, 1], [52548, 1], [52600, 1], [65431, 1], [65437, 1]]}}}\n",
-  "restored": "{\"fn\": \"DetermineAIScoreOfAttackEnergyRequirement\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\", \"49851\": \"07\", \"52340\": \"00\", \"52548\": \"00\", \"52600\": \"ff\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DetermineAIScoreOfAttackEnergyRequirement\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\", \"49851\": \"07\", \"52340\": \"00\", \"52548\": \"00\", \"52600\": \"ff\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DetermineAIScoreOfAttackEnergyRequirement",
+    "before": "void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)\n{\n\twSelectedAttack = a;",
+    "after": "void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)\n{\n\twSelectedAttack = (uint8_t)(a ^ 1u);",
+    "case_ids": [
+      "DetermineAIScoreOfAttackEnergyRequirement-0",
+      "DetermineAIScoreOfAttackEnergyRequirement-1",
+      "DetermineAIScoreOfAttackEnergyRequirement-2"
+    ],
+    "source": "src/profiles/extended/home/energy.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "220d3fa425c962b9c96f17a27986f88d3b01bdfb061f1e03a44abc193c69201e",
+    "case_sha256": "3ed47c87ec76362189accd4956b4df385da998e915a9b51e8a908c61eb4de01a",
+    "schema_sha256": "3cb636e61abfa4b654a75aca6f7a7942c5679ab13c20e0d340e17b5b74ea2516",
+    "mutation_sha256": "85f1c5076b2b95ff5e8aa4155bd6ac75d43182590a6e46a0c484c94b9144a030",
+    "source": "src/profiles/extended/home/energy.c",
+    "source_symbol": "DetermineAIScoreOfAttackEnergyRequirement",
+    "case": "tests/profiles/extended/cases/energy.py",
+    "fn": "DetermineAIScoreOfAttackEnergyRequirement",
+    "index": 0
+  }
 }

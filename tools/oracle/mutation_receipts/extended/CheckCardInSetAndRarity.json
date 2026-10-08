@@ -1,0 +1,30 @@
+{
+  "fn": "CheckCardInSetAndRarity",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckCardInSetAndRarity\", \"registers\": {\"a\": 1, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 17493, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54874\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckCardInSetAndRarity\", \"mismatches\": {\"a\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"CheckCardInSetAndRarity\", \"registers\": {\"a\": 1, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 17493, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54874\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckCardInSetAndRarity",
+    "before": "\t\treturn (CheckCardInSetAndRarityResult){\n\t\t\twBoosterCurrentRarity, 0x10u, b, c, d, e, hl};",
+    "after": "\t\treturn (CheckCardInSetAndRarityResult){(uint8_t)((wBoosterCurrentRarity) ^ 1u), 0x10u, b, c, d, e, hl};",
+    "case_ids": [
+      "CheckCardInSetAndRarity-0"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "caddbde2c4ac82fcb815fa36102fc514f0ddc54e1a7ab604e24c3d22ae78a48d",
+    "mutation_sha256": "89b6c932baf03c3f10db11eea5ce7574f55451f2019ae58c2c212eee02efd6d9",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "CheckCardInSetAndRarity",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "CheckCardInSetAndRarity",
+    "index": 0
+  }
+}

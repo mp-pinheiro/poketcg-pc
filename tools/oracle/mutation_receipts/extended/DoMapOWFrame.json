@@ -1,0 +1,31 @@
+{
+  "fn": "DoMapOWFrame",
+  "case": "tests/profiles/extended/cases/animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DoMapOWFrame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54023\": \"1303ffffffff\", \"54044\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DoMapOWFrame\", \"mismatches\": {\"bus\": {\"address\": 54023, \"reference\": \"001303ffffff\", \"native\": \"00ffffffffff\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51892, 1], [54023, 6], [54044, 1]]}}}\n",
+  "restored": "{\"fn\": \"DoMapOWFrame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54023\": \"1303ffffffff\", \"54044\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DoMapOWFrame",
+    "before": "\tuint8_t c = (uint8_t)(map * 2u);",
+    "after": "\tuint8_t c = (uint8_t)(map * 2u + 1u);",
+    "case_ids": [
+      "DoMapOWFrame-0",
+      "DoMapOWFrame-1"
+    ],
+    "source": "src/profiles/extended/home/animation.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "18d106d85d79ddcdce453668a126f41a98c40077af0de2971c51a551163c626f",
+    "case_sha256": "02f17c5e499d79bdc09aae8cf4f56133bfd92711307bada0bd499ae71a1a770c",
+    "schema_sha256": "081c08906b8b2b14a0fa6743c24ff04b79b200af963ffe40db61207e8316b810",
+    "mutation_sha256": "d72513874ced35fdde1d010d46ab346e176c40ce7d38a90a2e3a24b1d9594cf1",
+    "source": "src/profiles/extended/home/animation.c",
+    "source_symbol": "DoMapOWFrame",
+    "case": "tests/profiles/extended/cases/animation.py",
+    "fn": "DoMapOWFrame",
+    "index": 0
+  }
+}

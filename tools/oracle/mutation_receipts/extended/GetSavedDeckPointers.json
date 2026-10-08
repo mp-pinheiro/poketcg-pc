@@ -1,0 +1,30 @@
+{
+  "fn": "GetSavedDeckPointers",
+  "case": "tests/profiles/extended/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetSavedDeckPointers\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 208, \"e\": 114, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 46696, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53262\": \"70a4cca428a584a5e0a53ca698a6f4a650a7aca708a864a8c0a81ca978a9d4a930aa8caae8aa44aba0abfcab58acb4ac10ad6cadc8ad24ae80aedcae38af94aff0af4cb0a8b004b160b1bcb118b274b2d0b22cb388b3e4b340b49cb4f8b454b5b0b50cb6aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetSavedDeckPointers\", \"mismatches\": {\"bus\": {\"address\": 53262, \"reference\": \"70a4cca428\", \"native\": \"a470a4cca5\", \"reference_size\": 120, \"native_size\": 120, \"spans\": [[53262, 120]]}}}\n",
+  "restored": "{\"fn\": \"GetSavedDeckPointers\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 208, \"e\": 114, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 46696, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53262\": \"70a4cca428a584a5e0a53ca698a6f4a650a7aca708a864a8c0a81ca978a9d4a930aa8caae8aa44aba0abfcab58acb4ac10ad6cadc8ad24ae80aedcae38af94aff0af4cb0a8b004b160b1bcb118b274b2d0b22cb388b3e4b340b49cb4f8b454b5b0b50cb6aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetSavedDeckPointers",
+    "before": "gb_write8(d++, (uint8_t)h);\n\t\tgb_write8(d++, (uint8_t)(h >> 8));",
+    "after": "gb_write8(d++, (uint8_t)(h >> 8));\n\t\tgb_write8(d++, (uint8_t)h);",
+    "case_ids": [
+      "GetSavedDeckPointers-0",
+      "GetSavedDeckPointers-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2b37b66976ac6d28a2eecf10fef74a52fb30302660c6e5e02a8c8d15a150de01",
+    "case_sha256": "7c75bc1440b4b0b30278f49c753bf254357f2f1513ca1c523d756a5e3fe70735",
+    "schema_sha256": "9a5fadbb9114d203587015a253114cf4f05450df974b912564dea0713524c0f5",
+    "mutation_sha256": "7aa577a19aa13d4da5d5291fdd2e28faeecdc97f40595d98ed7cfb37a311ce10",
+    "source": "src/profiles/extended/home/deck_machine.c",
+    "source_symbol": "GetSavedDeckPointers",
+    "case": "tests/profiles/extended/cases/deck_machine.py",
+    "fn": "GetSavedDeckPointers",
+    "index": 0
+  }
+}

@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"LoadClubEntrance\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54071\": \"000102030405060708090a0b0108090a0b0c0d0e0f101112020f1011021314151617181903161718191a1b1c1d1e1f20041d1e1f2021222324252627052425262728292a2b2c2d2e062b2c2d2e2f3031323334350732333435363738393a3b3c\", \"54169\": \"02\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"LoadClubEntrance\", \"mismatches\": {\"bus\": {\"address\": 54099, \"reference\": \"020f10110213141516\", \"native\": \"020f10111213141516\", \"reference_size\": 97, \"native_size\": 97, \"spans\": [[54071, 96], [54169, 1]]}}}\n",
-  "restored": "{\"fn\": \"LoadClubEntrance\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54071\": \"000102030405060708090a0b0108090a0b0c0d0e0f101112020f1011021314151617181903161718191a1b1c1d1e1f20041d1e1f2021222324252627052425262728292a2b2c2d2e062b2c2d2e2f3031323334350732333435363738393a3b3c\", \"54169\": \"02\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"LoadClubEntrance\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54071\": \"000102030405060708090a0b0108090a0b0c0d0e0f101112020f1011021314151617181903161718191a1b1c1d1e1f20041d1e1f2021222324252627052425262728292a2b2c2d2e062b2c2d2e2f3031323334350732333435363738393a3b3c\", \"54169\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadClubEntrance",
+    "before": "\twTempNPC = NPC_RONALD1;",
+    "after": "\twTempNPC = NPC_RONALD2;",
+    "case_ids": [
+      "LoadClubEntrance-0",
+      "LoadClubEntrance-1"
+    ],
+    "source": "src/profiles/extended/home/psychic_club_entrance.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2954af2777661fc26adb74c2445fa705a6ad86307d00859d55448c61d74ae783",
+    "case_sha256": "2a56bcf392459a751c838d04d4a93a29323c80ae0c2d0cc9e4d802cfabbb9a98",
+    "schema_sha256": "f8aaa00c86979b311cbfc97430df4354e0c77767f4d10193766cfc6d9aad29d0",
+    "mutation_sha256": "b855f36bd4829720570572218a10c785ecb70bc6dc7aab5e5fed69d5e4ede716",
+    "source": "src/profiles/extended/home/psychic_club_entrance.c",
+    "source_symbol": "LoadClubEntrance",
+    "case": "tests/profiles/extended/cases/psychic_club_entrance.py",
+    "fn": "LoadClubEntrance",
+    "index": 0
+  }
 }

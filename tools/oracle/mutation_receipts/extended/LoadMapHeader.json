@@ -1,0 +1,33 @@
+{
+  "fn": "LoadMapHeader",
+  "case": "tests/profiles/extended/cases/load_map_header.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadMapHeader\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53502\": \"09\", \"53534\": \"01aa\", \"53884\": \"0002\", \"54044\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadMapHeader\", \"mismatches\": {\"bus\": {\"address\": 53534, \"reference\": \"000901aa000201\", \"native\": \"000900aa000201\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51892, 1], [53502, 1], [53534, 2], [53884, 2], [54044, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadMapHeader\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53502\": \"09\", \"53534\": \"01aa\", \"53884\": \"0002\", \"54044\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadMapHeader",
+    "before": "\tgb_write8(wCurTilemap_ADDR, header[0]);",
+    "after": "\tgb_write8(wCurTilemap_ADDR, header[1]);",
+    "case_ids": [
+      "LoadMapHeader-0",
+      "LoadMapHeader-1",
+      "LoadMapHeader-2",
+      "LoadMapHeader-3"
+    ],
+    "source": "src/profiles/extended/home/load_map_header.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "9f1c1fec0de24152c3970aa62d602465883807a436c60150a1398ae47ad65530",
+    "case_sha256": "0d065f8e3dc5a49eb141a86991ccf5548722f2c7422cd56bda07139c28f0151e",
+    "schema_sha256": "201d13c8c7f787e88ebee19b075007a485d567183fcc716051d986eab270fe2d",
+    "mutation_sha256": "15eceda2bd67db0864989a1107e87ac03f53d71144b80c513b636ad72c7c4243",
+    "source": "src/profiles/extended/home/load_map_header.c",
+    "source_symbol": "LoadMapHeader",
+    "case": "tests/profiles/extended/cases/load_map_header.py",
+    "fn": "LoadMapHeader",
+    "index": 2
+  }
+}

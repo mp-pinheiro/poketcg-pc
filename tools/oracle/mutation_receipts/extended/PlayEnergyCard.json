@@ -1,0 +1,30 @@
+{
+  "fn": "PlayEnergyCard",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayEnergyCard\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49664\": \"100000000001\", \"49730\": \"05\", \"49851\": \"00\", \"49864\": \"28\", \"49902\": \"0101\", \"50176\": \"080101010101\", \"51899\": \"80\", \"52149\": \"00\", \"52151\": \"0080\", \"65431\": \"c205\", \"65437\": \"ff\", \"65440\": \"aabb\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayEnergyCard\", \"mismatches\": {\"bus\": {\"address\": 65437, \"reference\": \"0080c205ffaabb\", \"native\": \"0080c20500aabb\", \"reference_size\": 26, \"native_size\": 26, \"spans\": [[49664, 6], [49730, 1], [49851, 1], [49864, 1], [49902, 2], [50176, 6], [51899, 1], [52149, 1], [52151, 2], [65431, 2], [65437, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"PlayEnergyCard\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"49664\": \"100000000001\", \"49730\": \"05\", \"49851\": \"00\", \"49864\": \"28\", \"49902\": \"0101\", \"50176\": \"080101010101\", \"51899\": \"80\", \"52149\": \"00\", \"52151\": \"0080\", \"65431\": \"c205\", \"65437\": \"ff\", \"65440\": \"aabb\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PlayEnergyCard",
+    "before": "\t\tif (wAlreadyPlayedEnergy != 0u) {",
+    "after": "\t\tif (!(wAlreadyPlayedEnergy != 0u)) {",
+    "case_ids": [
+      "PlayEnergyCard-0"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "0b6d7caf65a9db8a3b11a52b52c6974d3187bccc2f88c0bc63fb996c96d2000a",
+    "mutation_sha256": "5de50f0e1c93bc5621cf7c49b8e8e4bf7b0249e7a9bfe4aeab1911baba494b74",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "PlayEnergyCard",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "PlayEnergyCard",
+    "index": 0
+  }
+}

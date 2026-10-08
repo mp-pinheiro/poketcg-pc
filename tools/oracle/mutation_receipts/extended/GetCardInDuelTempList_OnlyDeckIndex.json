@@ -1,0 +1,29 @@
+{
+  "fn": "GetCardInDuelTempList_OnlyDeckIndex",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetCardInDuelTempList_OnlyDeckIndex\", \"registers\": {\"a\": 9, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50434\": \"09\", \"65432\": \"09\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetCardInDuelTempList_OnlyDeckIndex\", \"mismatches\": {\"a\": [9, 0], \"bus\": {\"address\": 65432, \"reference\": \"0909\", \"native\": \"0900\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[50434, 1], [65432, 1]]}}}\n",
+  "restored": "{\"fn\": \"GetCardInDuelTempList_OnlyDeckIndex\", \"registers\": {\"a\": 9, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50434\": \"09\", \"65432\": \"09\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetCardInDuelTempList_OnlyDeckIndex",
+    "before": "DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl)\n{\n\tuint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR + a));",
+    "after": "DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl)\n{\n\tuint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR - a));",
+    "case_ids": [
+      "GetCardInDuelTempList_OnlyDeckIndex-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "f332d97fdfc80202b2179083237e1900001153f440092294f5683d4048215339",
+    "mutation_sha256": "23b2a06afdfe10bfd644ec908bd5809ed8c9dc1f8d449e8c85fab21e08703772",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "GetCardInDuelTempList_OnlyDeckIndex",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "GetCardInDuelTempList_OnlyDeckIndex",
+    "index": 1
+  }
+}

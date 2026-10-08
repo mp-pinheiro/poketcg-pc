@@ -1,0 +1,30 @@
+{
+  "fn": "CountPokemonWithActivePkmnPowerInBothPlayAreas",
+  "case": "tests/profiles/extended/cases/substatus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountPokemonWithActivePkmnPowerInBothPlayAreas\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"50107\": \"00ff\", \"50176\": \"01\", \"50296\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountPokemonWithActivePkmnPowerInBothPlayAreas\", \"mismatches\": {\"a\": [2, 0], \"f\": [16, 128]}}\n",
+  "restored": "{\"fn\": \"CountPokemonWithActivePkmnPowerInBothPlayAreas\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"50107\": \"00ff\", \"50176\": \"01\", \"50296\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CountPokemonWithActivePkmnPowerInBothPlayAreas",
+    "before": "\tuint8_t count = (uint8_t)(turn.a + other.a);",
+    "after": "\tuint8_t count = (uint8_t)(turn.a - other.a);",
+    "case_ids": [
+      "CountPokemonWithActivePkmnPowerInBothPlayAreas-0"
+    ],
+    "source": "src/profiles/extended/home/substatus.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "fee0f65c410c67a3aea1b87b1e0c373449d5cfa42734dded80b0aae5e1b5e098",
+    "case_sha256": "e2a57ab4170409a95e9a63c56b9b9201102f56296a62ef2e0f70551057bd65ff",
+    "schema_sha256": "3873a2e2d549dfb0f3ef43087a94f3ff2d5bad49affba0cbf878afd9b79c79dd",
+    "mutation_sha256": "f78198b5d9fe1cf295f6dce2f2832158e6964437947d68a03bb77f6feb1e8c5d",
+    "source": "src/profiles/extended/home/substatus.c",
+    "source_symbol": "CountPokemonWithActivePkmnPowerInBothPlayAreas",
+    "case": "tests/profiles/extended/cases/substatus.py",
+    "fn": "CountPokemonWithActivePkmnPowerInBothPlayAreas",
+    "index": 0
+  }
+}

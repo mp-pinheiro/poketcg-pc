@@ -1,0 +1,31 @@
+{
+  "fn": "ScriptCommand_RemoveMan1RequestedCardFromCollection",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_RemoveMan1RequestedCardFromCollection\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41221\": \"01\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54217\": \"05\", \"54274\": \"01c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_RemoveMan1RequestedCardFromCollection\", \"mismatches\": {\"c\": [1, 2], \"bus\": {\"address\": 54274, \"reference\": \"0501c5\", \"native\": \"0502c5\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54217, 1], [54274, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_RemoveMan1RequestedCardFromCollection\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"41221\": \"01\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54217\": \"05\", \"54274\": \"01c5\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ScriptCommand_RemoveMan1RequestedCardFromCollection",
+    "before": "\treturn IncreaseScriptPointerBy1();",
+    "after": "\treturn IncreaseScriptPointerBy2();",
+    "case_ids": [
+      "ScriptCommand_RemoveMan1RequestedCardFromCollection-0",
+      "ScriptCommand_RemoveMan1RequestedCardFromCollection-1"
+    ],
+    "source": "src/profiles/extended/home/scripting.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "866f2e2a311cece573583de0d07c1d3cc68c55823ef0fe91a56d9295eb28bf31",
+    "mutation_sha256": "3fec243f5b68dc7ba40a9e63a95e00fd67b8c7594a1da45dbae17ce920a45f1c",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "ScriptCommand_RemoveMan1RequestedCardFromCollection",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "ScriptCommand_RemoveMan1RequestedCardFromCollection",
+    "index": 0
+  }
+}

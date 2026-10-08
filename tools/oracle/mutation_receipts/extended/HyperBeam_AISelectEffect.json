@@ -1,0 +1,30 @@
+{
+  "fn": "HyperBeam_AISelectEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HyperBeam_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HyperBeam_AISelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"ffff\", \"native\": \"fffe\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[50432, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"HyperBeam_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HyperBeam_AISelectEffect",
+    "before": "\thTemp_ffa0 = selected.a;",
+    "after": "\thTemp_ffa0 = (uint8_t)((selected.a) ^ 1u);",
+    "case_ids": [
+      "HyperBeam_AISelectEffect-0"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "e921f56af8e128071c0d1ab74baa052e8c4ea35cf76f185e82e4c292ed76cffc",
+    "mutation_sha256": "e016dfe1ed2bb3a1c00b3acbfa6366c4cb15bc56f09b8ad3e8036049e83d934b",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "HyperBeam_AISelectEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "HyperBeam_AISelectEffect",
+    "index": 0
+  }
+}

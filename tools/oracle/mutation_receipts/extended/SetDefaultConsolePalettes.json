@@ -1,0 +1,31 @@
+{
+  "fn": "SetDefaultConsolePalettes",
+  "case": "tests/profiles/extended/cases/duel_core.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetDefaultConsolePalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51936\": \"00000000000000000000000000000000\", \"52385\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetDefaultConsolePalettes\", \"mismatches\": {\"bus\": {\"address\": 52385, \"reference\": \"0000000001\", \"native\": \"0000000000\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[51892, 1], [51936, 16], [52385, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetDefaultConsolePalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51936\": \"00000000000000000000000000000000\", \"52385\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SetDefaultConsolePalettes",
+    "before": "\tgb_write8(wTextBoxFrameType_ADDR, 1u);",
+    "after": "\tgb_write8(wTextBoxFrameType_ADDR, 0u);",
+    "case_ids": [
+      "SetDefaultConsolePalettes-2",
+      "SetDefaultConsolePalettes-3"
+    ],
+    "source": "src/profiles/extended/home/duel_core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "db3fc766f3ed55106bab02a23547ce06340a1d7522043325f8e93a8d694705f6",
+    "case_sha256": "b0eceb1fae6c617ccf4c0bef738ad914beb76aef65618523156da62067c88612",
+    "schema_sha256": "4e221cdc88b60e1ea053972d197bda80e5d977829850000c46300a225be7bafb",
+    "mutation_sha256": "2abd23742a41e492a455b11b4b43fcea5dbd60535ae2884a5c5041e11f7c1043",
+    "source": "src/profiles/extended/home/duel_core.c",
+    "source_symbol": "SetDefaultConsolePalettes",
+    "case": "tests/profiles/extended/cases/duel_core.py",
+    "fn": "SetDefaultConsolePalettes",
+    "index": 2
+  }
+}

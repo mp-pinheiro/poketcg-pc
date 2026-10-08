@@ -1,0 +1,30 @@
+{
+  "fn": "SetOWMapEvent_SRAMOrVRAM",
+  "case": "tests/profiles/extended/cases/map_events.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetOWMapEvent_SRAMOrVRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53534\": \"00\", \"53536\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"54032\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetOWMapEvent_SRAMOrVRAM\", \"mismatches\": {\"bus\": {\"address\": 54032, \"reference\": \"0000000001\", \"native\": \"0000000000\", \"reference_size\": 259, \"native_size\": 259, \"spans\": [[51892, 1], [53534, 1], [53536, 256], [54032, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetOWMapEvent_SRAMOrVRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53534\": \"00\", \"53536\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"54032\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SetOWMapEvent_SRAMOrVRAM",
+    "before": "\tgb_write8((uint16_t)(wOWMapEvents_ADDR + event_index), TRUE);",
+    "after": "\tgb_write8((uint16_t)(wOWMapEvents_ADDR + event_index), 0u);",
+    "case_ids": [
+      "SetOWMapEvent_SRAMOrVRAM-0",
+      "SetOWMapEvent_SRAMOrVRAM-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "e19eba718fd95767f9db6e2c2e6596c9bf907a08820847046ea293e88380ae4a",
+    "case_sha256": "ea7fa7724b8fc5e905ce69468af1137870a790f54dd20c56e754855446291eac",
+    "schema_sha256": "a3191a67e1f62360f0f26512c0d784e26a8c5a277f65858a6c69d997ee169814",
+    "mutation_sha256": "b52302a0fcec1ba26ddc33dbfe6f2fd8c4420b8231a516e526974426a7ce2371",
+    "source": "src/profiles/extended/home/map_events.c",
+    "source_symbol": "SetOWMapEvent_SRAMOrVRAM",
+    "case": "tests/profiles/extended/cases/map_events.py",
+    "fn": "SetOWMapEvent_SRAMOrVRAM",
+    "index": 0
+  }
+}

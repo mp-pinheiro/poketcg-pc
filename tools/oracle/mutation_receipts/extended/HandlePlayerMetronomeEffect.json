@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"HandlePlayerMetronomeEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"01\", \"51899\": \"80\", \"51906\": \"01\", \"52154\": \"000000\", \"52309\": \"0000\", \"52333\": \"00\", \"52340\": \"00\", \"52382\": \"00\", \"52781\": \"0000\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"HandlePlayerMetronomeEffect\", \"mismatches\": {\"bus\": {\"address\": 52382, \"reference\": \"00000000000000c200\", \"native\": \"00000000010000c200\", \"reference_size\": 15, \"native_size\": 15, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [52154, 3], [52309, 2], [52333, 1], [52340, 1], [52382, 1], [52781, 2], [65431, 1], [65439, 1]]}}}\n",
-  "restored": "{\"fn\": \"HandlePlayerMetronomeEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"01\", \"51899\": \"80\", \"51906\": \"01\", \"52154\": \"000000\", \"52309\": \"0000\", \"52333\": \"00\", \"52340\": \"00\", \"52382\": \"00\", \"52781\": \"0000\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"HandlePlayerMetronomeEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"01\", \"51899\": \"80\", \"51906\": \"01\", \"52154\": \"000000\", \"52309\": \"0000\", \"52333\": \"00\", \"52340\": \"00\", \"52382\": \"00\", \"52781\": \"0000\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandlePlayerMetronomeEffect",
+    "before": "uint8_t HandlePlayerMetronomeEffect(uint8_t a)\n{\n\twMetronomeEnergyCost = a;",
+    "after": "uint8_t HandlePlayerMetronomeEffect(uint8_t a)\n{\n\twMetronomeEnergyCost = (uint8_t)(a + 1u);",
+    "case_ids": [
+      "HandlePlayerMetronomeEffect-0",
+      "HandlePlayerMetronomeEffect-1",
+      "HandlePlayerMetronomeEffect-2",
+      "HandlePlayerMetronomeEffect-3"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "198b778acbe607b5db3603849db9752b0f4b89f984c89a77bd147a8cd70d1f15",
+    "mutation_sha256": "3b111d0ed257e11f8bae6defaada60e22fc8b47bde6de0b5aeeae135a53a520b",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "HandlePlayerMetronomeEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "HandlePlayerMetronomeEffect",
+    "index": 0
+  }
 }

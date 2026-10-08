@@ -1,0 +1,32 @@
+{
+  "fn": "CheckIfHasEnoughCardsToBuildDeck",
+  "case": "tests/profiles/extended/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfHasEnoughCardsToBuildDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"49408\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfHasEnoughCardsToBuildDeck\", \"mismatches\": {\"a\": [0, 60], \"f\": [144, 0], \"hl\": [49409, 49528], \"bus\": {\"address\": 49152, \"reference\": \"0000\", \"native\": \"c400\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49152, 1], [49408, 1]]}}}\n",
+  "restored": "{\"fn\": \"CheckIfHasEnoughCardsToBuildDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"49408\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CheckIfHasEnoughCardsToBuildDeck",
+    "before": "if (owned == 0u || owned == CARD_NOT_OWNED)",
+    "after": "if (owned == 0u && owned == CARD_NOT_OWNED)",
+    "case_ids": [
+      "CheckIfHasEnoughCardsToBuildDeck-0",
+      "CheckIfHasEnoughCardsToBuildDeck-2",
+      "CheckIfHasEnoughCardsToBuildDeck-3"
+    ],
+    "source": "src/profiles/extended/home/deck_machine.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2b37b66976ac6d28a2eecf10fef74a52fb30302660c6e5e02a8c8d15a150de01",
+    "case_sha256": "7c75bc1440b4b0b30278f49c753bf254357f2f1513ca1c523d756a5e3fe70735",
+    "schema_sha256": "6ffa3fe3342869209c3fc8f766e81141c352209ad73f6722c5aa7be922d3145a",
+    "mutation_sha256": "a075e8b5647eb4410cb2c837762a738d414b3bcd016107f2166d3ac5496344cd",
+    "source": "src/profiles/extended/home/deck_machine.c",
+    "source_symbol": "CheckIfHasEnoughCardsToBuildDeck",
+    "case": "tests/profiles/extended/cases/deck_machine.py",
+    "fn": "CheckIfHasEnoughCardsToBuildDeck",
+    "index": 0
+  }
+}

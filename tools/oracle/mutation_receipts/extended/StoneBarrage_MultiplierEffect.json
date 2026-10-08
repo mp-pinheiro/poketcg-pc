@@ -1,0 +1,31 @@
+{
+  "fn": "StoneBarrage_MultiplierEffect",
+  "case": "tests/profiles/extended/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"StoneBarrage_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"1fd808\", \"52147\": \"00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"StoneBarrage_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52756, \"reference\": \"1fd808000000\", \"native\": \"1fd808000100\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52756, 2]]}}}\n",
+  "restored": "{\"fn\": \"StoneBarrage_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"1fd808\", \"52147\": \"00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "StoneBarrage_MultiplierEffect",
+    "before": "*gb_ptr(wCoinTossScreenTextID_ADDR) = 0x00u;",
+    "after": "*gb_ptr(wCoinTossScreenTextID_ADDR) = 0x01u;",
+    "case_ids": [
+      "StoneBarrage_MultiplierEffect-0",
+      "StoneBarrage_MultiplierEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "a88dcbaeb987bf1d0d1055ac783685fb1e113e7a02749a3d0a7e007c50e2c4e1",
+    "mutation_sha256": "c237a4f39f48655347eccf21dad7746b2990c068227ace42dd3c973854778dba",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "StoneBarrage_MultiplierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "StoneBarrage_MultiplierEffect",
+    "index": 0
+  }
+}

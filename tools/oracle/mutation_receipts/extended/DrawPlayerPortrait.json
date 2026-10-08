@@ -1,0 +1,30 @@
+{
+  "fn": "DrawPlayerPortrait",
+  "case": "tests/profiles/extended/cases/load_animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawPlayerPortrait\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53534\": \"00\", \"54795\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawPlayerPortrait\", \"mismatches\": {\"bus\": {\"address\": 54795, \"reference\": \"000001\", \"native\": \"000101\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53534, 1], [54795, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawPlayerPortrait\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53534\": \"00\", \"54795\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawPlayerPortrait",
+    "before": "\twCurPortrait = PORTRAIT_PLAYER;",
+    "after": "\twCurPortrait = (uint8_t)((PORTRAIT_PLAYER) ^ 1u);",
+    "case_ids": [
+      "DrawPlayerPortrait-0"
+    ],
+    "source": "src/profiles/extended/home/load_animation.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "fd2f61c1d8b0d3f72086b3d3b7d47f2546de745c577c0adab7bcdec08a92b147",
+    "case_sha256": "fd89cccc8743b6692e9876ede5847a11cd8354f76f4bd88dae2fb65a1c7a7a09",
+    "schema_sha256": "e9fe91463b3087d65914ef80696f8dbd935b0358f35c12399bde94057f26097d",
+    "mutation_sha256": "6153a00fede96dd02d49a86944736b6fbec658814c4139aaa73e570282f3ef07",
+    "source": "src/profiles/extended/home/load_animation.c",
+    "source_symbol": "DrawPlayerPortrait",
+    "case": "tests/profiles/extended/cases/load_animation.py",
+    "fn": "DrawPlayerPortrait",
+    "index": 0
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "fn": "CreateFilteredCardList",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateFilteredCardList\", \"registers\": {\"a\": 8, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 68, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 21862, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"52824\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateFilteredCardList\", \"mismatches\": {\"bus\": {\"address\": 52824, \"reference\": \"0000000000\", \"native\": \"0000000001\", \"reference_size\": 241, \"native_size\": 241, \"spans\": [[49152, 240], [52824, 1]]}}}\n",
+  "restored": "{\"fn\": \"CreateFilteredCardList\", \"registers\": {\"a\": 8, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 68, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 21862, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"52824\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CreateFilteredCardList",
+    "before": "gb_write8(wNumEntriesInCurFilter_ADDR, out_index);",
+    "after": "gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)(out_index + 1u));",
+    "case_ids": [
+      "CreateFilteredCardList-0",
+      "CreateFilteredCardList-1"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "033515756cd54b939682ac69a817030469d05142931ab9a57694240a72d2b939",
+    "mutation_sha256": "6403f19121aafa8c902c38de880a2149a3fb9e6b73309bd6a82f5b77211929f2",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "CreateFilteredCardList",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "CreateFilteredCardList",
+    "index": 0
+  }
+}

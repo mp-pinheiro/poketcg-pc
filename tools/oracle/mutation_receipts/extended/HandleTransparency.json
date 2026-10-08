@@ -1,0 +1,30 @@
+{
+  "fn": "HandleTransparency",
+  "case": "tests/profiles/extended/cases/substatus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleTransparency\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52337, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52337\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleTransparency\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"HandleTransparency\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 52337, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52337\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleTransparency",
+    "before": "\t\treturn (HandleTransparencyResult){a, a ? 0u : 0x80u,\n\t\t\twTempNonTurnDuelistCardID_ADDR};",
+    "after": "\t\treturn (HandleTransparencyResult){(uint8_t)((a) ^ 1u), a ? 0u : 0x80u, wTempNonTurnDuelistCardID_ADDR};",
+    "case_ids": [
+      "HandleTransparency-0"
+    ],
+    "source": "src/profiles/extended/home/substatus.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "fee0f65c410c67a3aea1b87b1e0c373449d5cfa42734dded80b0aae5e1b5e098",
+    "case_sha256": "e2a57ab4170409a95e9a63c56b9b9201102f56296a62ef2e0f70551057bd65ff",
+    "schema_sha256": "cc6c400a19766cb1b45087fa8b0b167ebb41b649e5902979832ff2d108091b5b",
+    "mutation_sha256": "6867f3726da7d2dfd8998bc6755db90037608291b972bdfb055a2f1e42beb8d4",
+    "source": "src/profiles/extended/home/substatus.c",
+    "source_symbol": "HandleTransparency",
+    "case": "tests/profiles/extended/cases/substatus.py",
+    "fn": "HandleTransparency",
+    "index": 0
+  }
+}

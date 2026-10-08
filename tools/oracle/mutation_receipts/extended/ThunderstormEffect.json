@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ThunderstormEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"00ff\", \"65441\": \"ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ThunderstormEffect\", \"mismatches\": {\"bus\": {\"address\": 65458, \"reference\": \"01c200ff02\", \"native\": \"01c200ff01\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50159, 1], [65431, 1], [65440, 2], [65458, 1]]}}}\n",
-  "restored": "{\"fn\": \"ThunderstormEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"00ff\", \"65441\": \"ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ThunderstormEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"00ff\", \"65441\": \"ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ThunderstormEffect",
+    "before": "void ThunderstormEffect(void)\n{\n\thCurSelectionItem = 1u;",
+    "after": "void ThunderstormEffect(void)\n{\n\thCurSelectionItem = 0u;",
+    "case_ids": [
+      "ThunderstormEffect-0",
+      "ThunderstormEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "7fcdf36c6d5bf9be1ac1f493e2e6ed35b4f9001c444137be25de9c81bf9ec88b",
+    "mutation_sha256": "e1d8585e3dc5f8e983020f64c2859bd831981d6367f5e234451b112245c1d366",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "ThunderstormEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "ThunderstormEffect",
+    "index": 0
+  }
 }

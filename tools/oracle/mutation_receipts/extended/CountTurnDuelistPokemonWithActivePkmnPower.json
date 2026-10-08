@@ -1,0 +1,30 @@
+{
+  "fn": "CountTurnDuelistPokemonWithActivePkmnPower",
+  "case": "tests/profiles/extended/cases/substatus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountTurnDuelistPokemonWithActivePkmnPower\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"50176\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountTurnDuelistPokemonWithActivePkmnPower\", \"mismatches\": {\"a\": [1, 0], \"f\": [16, 128]}}\n",
+  "restored": "{\"fn\": \"CountTurnDuelistPokemonWithActivePkmnPower\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00ff\", \"50176\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CountTurnDuelistPokemonWithActivePkmnPower",
+    "before": "\tif (arena != 0xFF) {",
+    "after": "\tif (arena == 0xFF) {",
+    "case_ids": [
+      "CountTurnDuelistPokemonWithActivePkmnPower-0"
+    ],
+    "source": "src/profiles/extended/home/substatus.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "fee0f65c410c67a3aea1b87b1e0c373449d5cfa42734dded80b0aae5e1b5e098",
+    "case_sha256": "e2a57ab4170409a95e9a63c56b9b9201102f56296a62ef2e0f70551057bd65ff",
+    "schema_sha256": "a976bf5ba26b14d0754aeb7b23fa0e0e9510e58d084b1eb2b9047ffa950eb992",
+    "mutation_sha256": "9ce03c4f9ceece1680f92ea07d23a14e52aed54ce14aebe6dcd04da9c569b20f",
+    "source": "src/profiles/extended/home/substatus.c",
+    "source_symbol": "CountTurnDuelistPokemonWithActivePkmnPower",
+    "case": "tests/profiles/extended/cases/substatus.py",
+    "fn": "CountTurnDuelistPokemonWithActivePkmnPower",
+    "index": 0
+  }
+}

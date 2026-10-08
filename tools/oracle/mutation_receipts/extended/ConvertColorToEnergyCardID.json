@@ -1,0 +1,31 @@
+{
+  "fn": "ConvertColorToEnergyCardID",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ConvertColorToEnergyCardID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ConvertColorToEnergyCardID\", \"mismatches\": {\"e\": [2, 3]}}\n",
+  "restored": "{\"fn\": \"ConvertColorToEnergyCardID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 2, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ConvertColorToEnergyCardID",
+    "before": "return (ConvertColorResult){a, (uint8_t)(result >> 8), (uint8_t)result};",
+    "after": "return (ConvertColorResult){a, (uint8_t)(result >> 8), (uint8_t)(result ^ 1u)};",
+    "case_ids": [
+      "ConvertColorToEnergyCardID-0",
+      "ConvertColorToEnergyCardID-1"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "63b756c7209e4a6b31055655fe9183e0968f81abf454d867ab1e14d9343f54ba",
+    "mutation_sha256": "cccdd4d14a549fc093d06fdfa38c2bbec12f8440047f92e79dd43f9557e2a6e3",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "ConvertColorToEnergyCardID",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "ConvertColorToEnergyCardID",
+    "index": 0
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "fn": "OneByteNumberToTxSymbol_TrimLeadingZeros",
+  "case": "tests/profiles/extended/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OneByteNumberToTxSymbol_TrimLeadingZeros\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50560, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50560\": \"002000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OneByteNumberToTxSymbol_TrimLeadingZeros\", \"mismatches\": {\"bus\": {\"address\": 50560, \"reference\": \"002000\", \"native\": \"202000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50560, 3]]}}}\n",
+  "restored": "{\"fn\": \"OneByteNumberToTxSymbol_TrimLeadingZeros\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50560, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50560\": \"002000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "OneByteNumberToTxSymbol_TrimLeadingZeros",
+    "before": "\t\tgb_write8(result.hl, SYM_SPACE);",
+    "after": "\t\t;",
+    "case_ids": [
+      "OneByteNumberToTxSymbol_TrimLeadingZeros-0",
+      "OneByteNumberToTxSymbol_TrimLeadingZeros-1"
+    ],
+    "source": "src/profiles/extended/home/menus.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "75ea2c9f49c32076d01a600dd9012575d43233ce9dbf118da94fc407cb70af68",
+    "case_sha256": "aaf693440f514f44cec9fe8a6c50c50c2477baf34c4584fdb1a1728c0be908cc",
+    "schema_sha256": "4ffd82b2ce8f07cb3e180185f7772b295ed1c080eb40e1ea3806c581a70ccd54",
+    "mutation_sha256": "3eff3ba97b20db751ba0bb1871b7ee7058c0f2c3c3f7fd0ba8236f8a1fab6ef9",
+    "source": "src/profiles/extended/home/menus.c",
+    "source_symbol": "OneByteNumberToTxSymbol_TrimLeadingZeros",
+    "case": "tests/profiles/extended/cases/menus.py",
+    "fn": "OneByteNumberToTxSymbol_TrimLeadingZeros",
+    "index": 0
+  }
+}

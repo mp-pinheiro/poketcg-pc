@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ClearChangedTypesIfMuk\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49876\": \"010203040506\", \"50132\": \"0708090a0b0c\", \"50176\": \"2701\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ClearChangedTypesIfMuk\", \"mismatches\": {\"bus\": {\"address\": 49876, \"reference\": \"000102030405\", \"native\": \"000000000000\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[49851, 1], [49876, 6], [50132, 6], [50176, 2], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"ClearChangedTypesIfMuk\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49876\": \"010203040506\", \"50132\": \"0708090a0b0c\", \"50176\": \"2701\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ClearChangedTypesIfMuk\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49876\": \"010203040506\", \"50132\": \"0708090a0b0c\", \"50176\": \"2701\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ClearChangedTypesIfMuk",
+    "before": "\tif (id != MUK)",
+    "after": "\tif ((uint8_t)id != MUK)",
+    "case_ids": [
+      "ClearChangedTypesIfMuk-3"
+    ],
+    "source": "src/profiles/extended/home/substatus.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "fee0f65c410c67a3aea1b87b1e0c373449d5cfa42734dded80b0aae5e1b5e098",
+    "case_sha256": "e2a57ab4170409a95e9a63c56b9b9201102f56296a62ef2e0f70551057bd65ff",
+    "schema_sha256": "38378c5d6a81b3733c94e2c3742ef62b962960e16a7d2fd63f28999ea95fad2f",
+    "mutation_sha256": "edc84d7ffd13dceee2bc9b160a7b09d5689bdcec4e4fb396792f78e56f2f5c3f",
+    "source": "src/profiles/extended/home/substatus.c",
+    "source_symbol": "ClearChangedTypesIfMuk",
+    "case": "tests/profiles/extended/cases/substatus.py",
+    "fn": "ClearChangedTypesIfMuk",
+    "index": 3
+  }
 }

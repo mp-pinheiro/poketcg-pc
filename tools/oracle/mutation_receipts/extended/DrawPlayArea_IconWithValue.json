@@ -1,0 +1,30 @@
+{
+  "fn": "DrawPlayArea_IconWithValue",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawPlayArea_IconWithValue\", \"registers\": {\"a\": 212, \"b\": 42, \"c\": 51, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50418, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"0f02\", \"50560\": \"052d0524052200\", \"51892\": \"00\", \"52832\": \"2224\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawPlayArea_IconWithValue\", \"mismatches\": {\"bus\": {\"address\": 50561, \"reference\": \"0f02052d05240522\", \"native\": \"0f02052e05240522\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[50416, 2], [50560, 7], [51892, 1], [52832, 2]]}}}\n",
+  "restored": "{\"fn\": \"DrawPlayArea_IconWithValue\", \"registers\": {\"a\": 212, \"b\": 42, \"c\": 51, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 50418, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50416\": \"0f02\", \"50560\": \"052d0524052200\", \"51892\": \"00\", \"52832\": \"2224\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawPlayArea_IconWithValue",
+    "before": "\tgb_write8((uint16_t)(wDefaultText_ADDR + 1u), SYM_CROSS);",
+    "after": "\tgb_write8((uint16_t)(wDefaultText_ADDR + 1u), 0x2Eu);",
+    "case_ids": [
+      "DrawPlayArea_IconWithValue-0",
+      "DrawPlayArea_IconWithValue-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "acc19f36f72c3a473d47029c9ff3e77437e7b9bf9d0562ad731fa02df2b03a54",
+    "mutation_sha256": "377d0999e586221704f80c2c80f0e2da36569563d851e04cdf7821b9a53215e9",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "DrawPlayArea_IconWithValue",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "DrawPlayArea_IconWithValue",
+    "index": 0
+  }
+}

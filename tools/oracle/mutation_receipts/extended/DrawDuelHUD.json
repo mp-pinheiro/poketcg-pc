@@ -1,0 +1,29 @@
+{
+  "fn": "DrawDuelHUD",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawDuelHUD\", \"registers\": {\"a\": 170, \"b\": 3, \"c\": 1, \"d\": 152, \"e\": 105, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38979\": \"171717171717000000000000\", \"39011\": \"171717171717000000000000\"}}, \"wram\": {\"49851\": \"00\", \"49864\": \"28\", \"49900\": \"00\", \"49903\": \"01\", \"50176\": \"01\", \"51899\": \"00\", \"52087\": \"0301\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawDuelHUD\", \"mismatches\": {\"e\": [105, 111], \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawDuelHUD\", \"registers\": {\"a\": 170, \"b\": 3, \"c\": 1, \"d\": 152, \"e\": 105, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38979\": \"171717171717000000000000\", \"39011\": \"171717171717000000000000\"}}, \"wram\": {\"49851\": \"00\", \"49864\": \"28\", \"49900\": \"00\", \"49903\": \"01\", \"50176\": \"01\", \"51899\": \"00\", \"52087\": \"0301\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawDuelHUD",
+    "before": "\tdst = (uint16_t)(row + TILEMAP_WIDTH); src = (uint16_t)(wDefaultText_ADDR + 6u);",
+    "after": "\tdst = (uint16_t)(dst + TILEMAP_WIDTH); src = (uint16_t)(wDefaultText_ADDR + 6u);",
+    "case_ids": [
+      "DrawDuelHUD-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "406ba9a1f4a003cddb95a50c9d956c5968484b916fcbd927029dd5fa50ba269f",
+    "mutation_sha256": "2b38d064fd7787532bcfbdfb7350abb1213ef2897f2de0ad96914b4fcab97248",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "DrawDuelHUD",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "DrawDuelHUD",
+    "index": 2
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "fn": "SetBGP2ToCardPalette",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetBGP2ToCardPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51968\": \"112233000000000000000000000000000000000000000000\", \"52649\": \"112233\", \"52673\": \"02030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetBGP2ToCardPalette\", \"mismatches\": {\"bus\": {\"address\": 51968, \"reference\": \"1122330000\", \"native\": \"0000000000\", \"reference_size\": 75, \"native_size\": 75, \"spans\": [[51968, 24], [52649, 3], [52673, 48]]}}}\n",
+  "restored": "{\"fn\": \"SetBGP2ToCardPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51968\": \"112233000000000000000000000000000000000000000000\", \"52649\": \"112233\", \"52673\": \"02030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f3031\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SetBGP2ToCardPalette",
+    "before": "SetCardPalette(2u);",
+    "after": "SetCardPalette(3u);",
+    "case_ids": [
+      "SetBGP2ToCardPalette-0",
+      "SetBGP2ToCardPalette-1"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "a8844faa2fd7de028ee02e9ce7ad1488c128c202d4b49ed410a53baf461696a3",
+    "mutation_sha256": "f26cbaeb22bb9bc143a18513f730a2dfcb414e9dd1e8fd8b5029e2fe09b81f5c",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "SetBGP2ToCardPalette",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "SetBGP2ToCardPalette",
+    "index": 0
+  }
+}

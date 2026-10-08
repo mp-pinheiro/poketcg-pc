@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Heal_RemoveDamageEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49856\": \"00002000000000001e\", \"49858\": \"20\", \"49864\": \"1e\", \"49870\": \"01\", \"49903\": \"01\", \"49905\": \"80\", \"50176\": \"08\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01008002\", \"65431\": \"c2\", \"65437\": \"00\", \"65440\": \"000000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Heal_RemoveDamageEffect\", \"mismatches\": {\"bus\": {\"address\": 49858, \"reference\": \"100000002000000000\", \"native\": \"100000000000000000\", \"reference_size\": 30, \"native_size\": 30, \"spans\": [[49664, 1], [49851, 1], [49856, 9], [49870, 1], [49903, 1], [49905, 1], [50176, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52514, 4], [65431, 1], [65437, 1], [65440, 3]]}}}\n",
-  "restored": "{\"fn\": \"Heal_RemoveDamageEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49856\": \"00002000000000001e\", \"49858\": \"20\", \"49864\": \"1e\", \"49870\": \"01\", \"49903\": \"01\", \"49905\": \"80\", \"50176\": \"08\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01008002\", \"65431\": \"c2\", \"65437\": \"00\", \"65440\": \"000000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Heal_RemoveDamageEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"49851\": \"00\", \"49856\": \"00002000000000001e\", \"49858\": \"20\", \"49864\": \"1e\", \"49870\": \"01\", \"49903\": \"01\", \"49905\": \"80\", \"50176\": \"08\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52147\": \"00\", \"52514\": \"01008002\", \"65431\": \"c2\", \"65437\": \"00\", \"65440\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Heal_RemoveDamageEffect",
+    "before": "\tgb_write8(flags.hl, (uint8_t)(flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));",
+    "after": "\tgb_write8(flags.hl, flags.a);",
+    "case_ids": [
+      "Heal_RemoveDamageEffect-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "c9804897f583f28595423494860d0fc5cf8413461895d39a6107a924eee3db8f",
+    "mutation_sha256": "b6db6937a93bd920ca99a4614bb49e9cfee67b1e32cb49764289df1af88ae6bf",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Heal_RemoveDamageEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Heal_RemoveDamageEffect",
+    "index": 0
+  }
 }

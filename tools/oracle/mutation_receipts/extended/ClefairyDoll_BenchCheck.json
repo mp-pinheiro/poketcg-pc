@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ClefairyDoll_BenchCheck\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 150, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ClefairyDoll_BenchCheck\", \"mismatches\": {\"f\": [144, 128]}}\n",
-  "restored": "{\"fn\": \"ClefairyDoll_BenchCheck\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 150, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ClefairyDoll_BenchCheck\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 150, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ClefairyDoll_BenchCheck",
+    "before": "uint8_t f = (uint8_t)(count.a >= 6u ? 0x10u : 0x00u);",
+    "after": "uint8_t f = (uint8_t)(count.a > 6u ? 0x10u : 0x00u);",
+    "case_ids": [
+      "ClefairyDoll_BenchCheck-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "67583a2f333c2ce7ac915f10cc6e3d5c41ee1253078d26886aae5faa7e228ad3",
+    "mutation_sha256": "b791b37b721bf625c7c8744a67e9ddcbbd5cf29f87dbb6c811ad2611c78a5c16",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "ClefairyDoll_BenchCheck",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "ClefairyDoll_BenchCheck",
+    "index": 2
+  }
 }

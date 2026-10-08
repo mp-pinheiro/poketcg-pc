@@ -1,0 +1,30 @@
+{
+  "fn": "LoadAlbumProgressFromSRAM",
+  "case": "tests/profiles/extended/cases/save.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadAlbumProgressFromSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 184, \"e\": 252, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 4, \"sram\": {\"0\": {\"47356\": \"2a37\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54202\": \"2a\", \"54204\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadAlbumProgressFromSRAM\", \"mismatches\": {\"bus\": {\"address\": 54204, \"reference\": \"2a00\", \"native\": \"2a37\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54202, 1], [54204, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadAlbumProgressFromSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 184, \"e\": 252, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 4, \"sram\": {\"0\": {\"47356\": \"2a37\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54202\": \"2a\", \"54204\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LoadAlbumProgressFromSRAM",
+    "before": "\tgb_write8(wTotalNumCardsToCollect_ADDR, gb_read8((uint16_t)(de + 2u)));",
+    "after": "\tgb_write8(wTotalNumCardsToCollect_ADDR, gb_read8((uint16_t)(de + 1u)));",
+    "case_ids": [
+      "LoadAlbumProgressFromSRAM-2"
+    ],
+    "source": "src/profiles/extended/home/save.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "9dd3779e9cbb0ac5b0743c7460657e58a34c69ef6082a8bd4c2565992d0e3b8a",
+    "case_sha256": "7399134acf39fcf86e0e505810175105092539929d597c9cb7938c91caae9f46",
+    "schema_sha256": "b0c808fc212f9998325a0768755583364172dfae5dffe7434b3b64f9d2e902cc",
+    "mutation_sha256": "00042ad98b214e3df6560b38c711ceec5baf8f1c8c2f2e7dba0c579fde6eb09f",
+    "source": "src/profiles/extended/home/save.c",
+    "source_symbol": "LoadAlbumProgressFromSRAM",
+    "case": "tests/profiles/extended/cases/save.py",
+    "fn": "LoadAlbumProgressFromSRAM",
+    "index": 2
+  }
+}

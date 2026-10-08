@@ -1,0 +1,33 @@
+{
+  "fn": "AddBoosterEnergyToDrawnEnergies",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddBoosterEnergyToDrawnEnergies\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49170\": \"00\", \"50198\": \"00\", \"54871\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddBoosterEnergyToDrawnEnergies\", \"mismatches\": {\"bus\": {\"address\": 50198, \"reference\": \"000000\", \"native\": \"000101\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49170, 1], [50198, 1], [54871, 1]]}}}\n",
+  "restored": "{\"fn\": \"AddBoosterEnergyToDrawnEnergies\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49170\": \"00\", \"50198\": \"00\", \"54871\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AddBoosterEnergyToDrawnEnergies",
+    "before": "card_id_write(&current, a);",
+    "after": "card_id_write(&current, (CardId)(a + 1u));",
+    "case_ids": [
+      "AddBoosterEnergyToDrawnEnergies-0",
+      "AddBoosterEnergyToDrawnEnergies-1",
+      "AddBoosterEnergyToDrawnEnergies-2",
+      "AddBoosterEnergyToDrawnEnergies-3"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "17bb2bfad7f723a7642a8e152bb5bf66a8adfe556207d80703c65f7851d27a26",
+    "mutation_sha256": "1119fcbfdd99e735ee5f180aad1b283e8c8e3e8d123bd996a3320366fd9a5d51",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "AddBoosterEnergyToDrawnEnergies",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "AddBoosterEnergyToDrawnEnergies",
+    "index": 0
+  }
+}

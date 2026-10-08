@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"LookForCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 70, \"d\": 0, \"e\": 97, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 315, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"60\", \"50432\": \"00ff\", \"51899\": \"80\", \"52512\": \"00\", \"65344\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardsInDeck\", \"mismatches\": {\"bus\": {\"address\": 52512, \"reference\": \"6000ff800080c2\", \"native\": \"6000ff80ff80c2\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[50176, 1], [50432, 2], [51899, 1], [52512, 1], [65344, 1], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"LookForCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 70, \"d\": 0, \"e\": 97, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 315, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"60\", \"50432\": \"00ff\", \"51899\": \"80\", \"52512\": \"00\", \"65344\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"LookForCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 70, \"d\": 0, \"e\": 97, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 315, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50176\": \"60\", \"50432\": \"00ff\", \"51899\": \"80\", \"52512\": \"00\", \"65344\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LookForCardsInDeck",
+    "before": "\tif (wDuelTempList != 0xffu && LookForCardsInDeck_Found(d, e)) {",
+    "after": "\tif (wDuelTempList != 0xffu || LookForCardsInDeck_Found(d, e)) {",
+    "case_ids": [
+      "LookForCardsInDeck-4",
+      "LookForCardsInDeck-5"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "317ae6abdef4276cc84339a4cea131b2840cb75b3b0fbb84a1bb5527791ec1f1",
+    "mutation_sha256": "bd6f6305e44be1617e035da5e37ed3affec7df73ee332a0beee419d37377bed0",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "LookForCardsInDeck",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "LookForCardsInDeck",
+    "index": 4
+  }
 }

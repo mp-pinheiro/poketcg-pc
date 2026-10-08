@@ -1,0 +1,30 @@
+{
+  "fn": "_PauseMenu_Status",
+  "case": "tests/profiles/extended/cases/status.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_PauseMenu_Status\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53505\": \"00\", \"53886\": \"5a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_PauseMenu_Status\", \"mismatches\": {\"bus\": {\"address\": 53886, \"reference\": \"80005a\", \"native\": \"800000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51899, 1], [53505, 1], [53886, 1]]}}}\n",
+  "restored": "{\"fn\": \"_PauseMenu_Status\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"53505\": \"00\", \"53886\": \"5a\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "_PauseMenu_Status",
+    "before": "void _PauseMenu_Status(void)\n{\n\tuint8_t saved_d291 = wd291;",
+    "after": "void _PauseMenu_Status(void)\n{\n\tuint8_t saved_d291 = 0u;",
+    "case_ids": [
+      "_PauseMenu_Status-0",
+      "_PauseMenu_Status-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "f59c3688979c6a12074846a920c70e76ea2e05eb61427cc802926e27c4340873",
+    "case_sha256": "93d406e5051d7eb0b110f4236627999db3690c97a5e7f899594a1fc784f6042e",
+    "schema_sha256": "4ac5a5bd21a6ae00ed3fc69de7a865b0ec7138711ee4e1a7a9b4356ab2d409b5",
+    "mutation_sha256": "de4f8b80e5e417fd48271e517d0e7fc1147e1ba27c0bfe0b2b24114f7a33aea6",
+    "source": "src/profiles/extended/home/status.c",
+    "source_symbol": "_PauseMenu_Status",
+    "case": "tests/profiles/extended/cases/status.py",
+    "fn": "_PauseMenu_Status",
+    "index": 0
+  }
+}

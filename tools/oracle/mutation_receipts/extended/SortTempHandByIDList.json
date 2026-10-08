@@ -1,0 +1,30 @@
+{
+  "fn": "SortTempHandByIDList",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SortTempHandByIDList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52532\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SortTempHandByIDList\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"SortTempHandByIDList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52532\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SortTempHandByIDList",
+    "before": "\t\treturn (SortTempHandResult){0u, 0x80u, b, c, d, e, hl};",
+    "after": "\t\treturn (SortTempHandResult){(uint8_t)((0u) ^ 1u), 0x80u, b, c, d, e, hl};",
+    "case_ids": [
+      "SortTempHandByIDList-0"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "91965a9abe5364f8cc74201fef586a772020052ffc348d9432c7117c0dbd1da9",
+    "mutation_sha256": "3aa5fe649272ba6cf2afd716bfbe7c4446e5b3d82e66dd5b6d74a1e8b568925f",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "SortTempHandByIDList",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "SortTempHandByIDList",
+    "index": 0
+  }
+}

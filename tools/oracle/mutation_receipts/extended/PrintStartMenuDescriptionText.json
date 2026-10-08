@@ -1,0 +1,30 @@
+{
+  "fn": "PrintStartMenuDescriptionText",
+  "case": "tests/profiles/extended/cases/start.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintStartMenuDescriptionText\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52414\": \"02\", \"54801\": \"01\", \"54803\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintStartMenuDescriptionText\", \"mismatches\": {\"f\": [192, 128]}}\n",
+  "restored": "{\"fn\": \"PrintStartMenuDescriptionText\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52414\": \"02\", \"54801\": \"01\", \"54803\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PrintStartMenuDescriptionText",
+    "before": "\n\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0xC0u : f;",
+    "after": "\n\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0x80u : f;",
+    "case_ids": [
+      "PrintStartMenuDescriptionText-0",
+      "PrintStartMenuDescriptionText-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c75b9af0da9c150b45667cc51f17c8008a657903c126b73bda5a78873a89ca42",
+    "case_sha256": "8aefaed433b8b5063fc4aa53566c2e640512e0e9b5ac136d30b2399270381c57",
+    "schema_sha256": "def558e018898efe730fcc6dd875611506b37424450eeba492dda735bc3317dd",
+    "mutation_sha256": "b271a1f4ee5ad86cb7f55949c92231bb286a9bf08abc4a637e51e7bcd12125b2",
+    "source": "src/profiles/extended/home/start.c",
+    "source_symbol": "PrintStartMenuDescriptionText",
+    "case": "tests/profiles/extended/cases/start.py",
+    "fn": "PrintStartMenuDescriptionText",
+    "index": 0
+  }
+}

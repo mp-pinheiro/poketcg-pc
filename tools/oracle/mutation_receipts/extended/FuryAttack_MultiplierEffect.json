@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"FuryAttack_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"14\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"FuryAttack_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"14\", \"native\": \"1e\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52324, 1]]}}}\n",
-  "restored": "{\"fn\": \"FuryAttack_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"14\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"FuryAttack_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"14\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FuryAttack_MultiplierEffect",
+    "before": "void FuryAttack_MultiplierEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoinATimesResult result = TossCoinATimes(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);",
+    "after": "void FuryAttack_MultiplierEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoinATimesResult result = TossCoinATimes(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);",
+    "case_ids": [
+      "FuryAttack_MultiplierEffect-0",
+      "FuryAttack_MultiplierEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "27fae0edfd4677ea07942da14b1f7d980015c4addd4de48d50da4cfc950d77bf",
+    "mutation_sha256": "c0072f22c1ce280249f6a3cce2bf872d8ef91ac5da05b2b1d55a4911271edfd8",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "FuryAttack_MultiplierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "FuryAttack_MultiplierEffect",
+    "index": 0
+  }
 }

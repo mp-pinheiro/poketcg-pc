@@ -1,0 +1,31 @@
+{
+  "fn": "DrawDuelHorizontalSeparator",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawDuelHorizontalSeparator\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39040\": \"3737373737373737373132000000000000000000000000000000000000000000000000000000000000333400000000000000000000000000000000000000000000000000000000000033340000000000000000000000000000000000000000000000000000000000003536373737373737373737000000000000000000000000\"}, \"1\": {\"39040\": \"0101010101010101010101000000000000000000000000000000000000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000001010000000000000000000000000000000000000000000000000000000000000101010101010101010101000000000000000000000000\"}}, \"wram\": {\"51892\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawDuelHorizontalSeparator\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawDuelHorizontalSeparator\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39040\": \"3737373737373737373132000000000000000000000000000000000000000000000000000000000000333400000000000000000000000000000000000000000000000000000000000033340000000000000000000000000000000000000000000000000000000000003536373737373737373737000000000000000000000000\"}, \"1\": {\"39040\": \"0101010101010101010101000000000000000000000000000000000000000000000000000000000000010100000000000000000000000000000000000000000000000000000000000001010000000000000000000000000000000000000000000000000000000000000101010101010101010101000000000000000000000000\"}}, \"wram\": {\"51892\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DrawDuelHorizontalSeparator",
+    "before": "data = DUEL_HORIZONTAL_SEPARATOR_CGB_PAL_DATA;",
+    "after": "data = DUEL_HORIZONTAL_SEPARATOR_TILE_DATA;",
+    "case_ids": [
+      "DrawDuelHorizontalSeparator-0",
+      "DrawDuelHorizontalSeparator-1",
+      "DrawDuelHorizontalSeparator-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "d7f41e104f680d74cdc62a6d50e6a6b0ad6122cff26b3f9d2cb91022b8274e30",
+    "mutation_sha256": "96568a7d0b5a082e0feae42706962612c20c87c0a137abcc79268110601608d4",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "DrawDuelHorizontalSeparator",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "DrawDuelHorizontalSeparator",
+    "index": 0
+  }
+}

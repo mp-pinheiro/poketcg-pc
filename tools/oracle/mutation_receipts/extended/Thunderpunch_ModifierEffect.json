@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Thunderpunch_ModifierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"0a00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Thunderpunch_ModifierEffect\", \"mismatches\": {\"bus\": {\"address\": 52324, \"reference\": \"000001000a00010100\", \"native\": \"000001000b00010100\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 2], [52514, 4], [52756, 2], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"Thunderpunch_ModifierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"0a00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Thunderpunch_ModifierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52324\": \"0a00\", \"52514\": \"01010002\", \"52756\": \"0000\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Thunderpunch_ModifierEffect",
+    "before": "void Thunderpunch_ModifierEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(IfHeadPlus10IfTails10ToYourselfText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(10u);",
+    "after": "void Thunderpunch_ModifierEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(IfHeadPlus10IfTails10ToYourselfText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(11u);",
+    "case_ids": [
+      "Thunderpunch_ModifierEffect-0",
+      "Thunderpunch_ModifierEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "7e4ea0e533935b13ecb7c86e5e78c614264698cb75d3ca37c3a3c3072329e087",
+    "mutation_sha256": "d752ab85543d9b82a3e98795531af45cf0c896a2e2b0ba4ffc782335cf291243",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Thunderpunch_ModifierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Thunderpunch_ModifierEffect",
+    "index": 0
+  }
 }

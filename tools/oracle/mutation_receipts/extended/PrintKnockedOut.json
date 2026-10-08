@@ -1,0 +1,30 @@
+{
+  "fn": "PrintKnockedOut",
+  "case": "tests/profiles/extended/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintKnockedOut\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39296\": \"18\"}}, \"wram\": {\"51923\": \"2203\", \"52337\": \"08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintKnockedOut\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintKnockedOut\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"39296\": \"18\"}}, \"wram\": {\"51923\": \"2203\", \"52337\": \"08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PrintKnockedOut",
+    "before": "\tDrawWideTextBox_PrintText(WAS_KNOCKED_OUT_TEXT);",
+    "after": "\t;",
+    "case_ids": [
+      "PrintKnockedOut-0"
+    ],
+    "source": "src/profiles/extended/home/duel.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "017a59766e777dba79a4ada59f2b33bd8687731c3e9475210823dfd1479fe138",
+    "case_sha256": "810ced77d34f62b1baac648a124167a4d5b2866c204cbe1662d501836c7bbed5",
+    "schema_sha256": "0afd8033ca77dcf80d272b6bdc15d8377647d372d7250060017a6cb303b57122",
+    "mutation_sha256": "3861c9b7909e0e081380d10ff705512d9d04296ba1813d4d7826369109b248c8",
+    "source": "src/profiles/extended/home/duel.c",
+    "source_symbol": "PrintKnockedOut",
+    "case": "tests/profiles/extended/cases/duel.py",
+    "fn": "PrintKnockedOut",
+    "index": 0
+  }
+}

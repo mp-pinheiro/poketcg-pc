@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Paralysis50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52347\": \"03c2f003\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Paralysis50PercentEffect\", \"mismatches\": {\"f\": [16, 0]}}\n",
-  "restored": "{\"fn\": \"Paralysis50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52347\": \"03c2f003\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Paralysis50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52347\": \"03c2f003\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Paralysis50PercentEffect",
+    "before": "uint8_t Paralysis50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(ParalysisCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn ParalysisEffect().f;",
+    "after": "uint8_t Paralysis50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(ParalysisCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn (uint8_t)(ParalysisEffect().f ^ 0x10u);",
+    "case_ids": [
+      "Paralysis50PercentEffect-0",
+      "Paralysis50PercentEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "9e16dfc4a3329bd5eca8e5c7dbea9fec371aea1724e40b4ec2fcf671448d2cf3",
+    "mutation_sha256": "abb48a67418237250d355a0d1f2dca2ed8065843ec0b2cdfd28241c3f5e8828e",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Paralysis50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Paralysis50PercentEffect",
+    "index": 0
+  }
 }

@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"KrabbyCallForFamily_PlayerSelectEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"51899\": \"80\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"KrabbyCallForFamily_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"3c80c2ff\", \"native\": \"3c80c200\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49850, 1], [51899, 1], [65431, 1], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"KrabbyCallForFamily_PlayerSelectEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"51899\": \"80\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"KrabbyCallForFamily_PlayerSelectEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"51899\": \"80\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "KrabbyCallForFamily_PlayerSelectEffect",
+    "before": "KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;",
+    "after": "KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;",
+    "case_ids": [
+      "KrabbyCallForFamily_PlayerSelectEffect-0",
+      "KrabbyCallForFamily_PlayerSelectEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "17197dfd8f312523187ddc7010e154e4a544ad2fab1acdbd09813723c4c2acf3",
+    "mutation_sha256": "0bd3c41653a6e6ec57a98070a46755ea58b72c0acb3b29e95ce633c1490516dd",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "KrabbyCallForFamily_PlayerSelectEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "KrabbyCallForFamily_PlayerSelectEffect",
+    "index": 0
+  }
 }

@@ -1,0 +1,32 @@
+{
+  "fn": "IsCardInAnyDeck",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"IsCardInAnyDeck\", \"registers\": {\"a\": 1, \"b\": 59, \"c\": 7, \"d\": 0, \"e\": 66, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41752\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"41844\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"41936\": \"000042000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"42028\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"IsCardInAnyDeck\", \"mismatches\": {\"b\": [59, 60], \"c\": [7, 8]}}\n",
+  "restored": "{\"fn\": \"IsCardInAnyDeck\", \"registers\": {\"a\": 1, \"b\": 59, \"c\": 7, \"d\": 0, \"e\": 66, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41752\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"41844\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"41936\": \"000042000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"42028\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "IsCardInAnyDeck",
+    "before": "if (card == id)",
+    "after": "if (card != id)",
+    "case_ids": [
+      "IsCardInAnyDeck-0",
+      "IsCardInAnyDeck-1",
+      "IsCardInAnyDeck-2"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "55f490a1700356ef9016d010d23f06fd42ca8efe6f3a5f3f7fb82f809896e075",
+    "mutation_sha256": "baabbc92f9148930496fedb5a43da336477fecbd325c1709121df1b47301ff51",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "IsCardInAnyDeck",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "IsCardInAnyDeck",
+    "index": 0
+  }
+}

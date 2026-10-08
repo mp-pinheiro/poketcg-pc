@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DarkMind_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DarkMind_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"01c2ff\", \"native\": \"01c2fe\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50159, 1], [65431, 1], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"DarkMind_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DarkMind_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50159\": \"01\", \"65431\": \"c2\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DarkMind_PlayerSelectEffect",
+    "before": "hTemp_ffa0 = 0xffu;",
+    "after": "hTemp_ffa0 = 0xfeu;",
+    "case_ids": [
+      "DarkMind_PlayerSelectEffect-0",
+      "DarkMind_PlayerSelectEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "68a498e90b06650f49d170cce7c63c071f73a10834174cabace28132e99c4907",
+    "mutation_sha256": "4ffb8e1f0c004b877873a525fafc2197b9a4ccd336222d897d12ff44a4a041bc",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "DarkMind_PlayerSelectEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "DarkMind_PlayerSelectEffect",
+    "index": 0
+  }
 }

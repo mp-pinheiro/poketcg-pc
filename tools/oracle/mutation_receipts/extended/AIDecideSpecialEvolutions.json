@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52152\": \"0f\", \"52247\": \"3101\", \"52548\": \"20\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AIDecideSpecialEvolutions\", \"mismatches\": {\"bus\": {\"address\": 52548, \"reference\": \"0f310120\", \"native\": \"0f310116\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52152, 1], [52247, 2], [52548, 1]]}}}\n",
-  "restored": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52152\": \"0f\", \"52247\": \"3101\", \"52548\": \"20\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52152\": \"0f\", \"52247\": \"3101\", \"52548\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AIDecideSpecialEvolutions",
+    "before": "\t\tCardId card = card_id_read_at(wLoadedCard2ID_ADDR);",
+    "after": "\t\tCardId card = gb_read8(wLoadedCard2ID_ADDR);",
+    "case_ids": [
+      "AIDecideSpecialEvolutions-6"
+    ],
+    "source": "src/profiles/extended/home/hand_pokemon.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "f2882e2fad2a3a91c4f36f07893d32d2cd4da8a0acb9707ad534f9cd65decb5a",
+    "case_sha256": "a6ce1ff11796a045d4339147adf1604a9e53208cd32c1c06d3716b5f734a4fc2",
+    "schema_sha256": "c189c8365922b1bf09d1d523deae2a8b69748835cfab346e1dcf75ba61daa32a",
+    "mutation_sha256": "db2c4920d9eed7b9b0e51c00ac57b58a4b36ced9584f3cc70e0ac9da434e9b6f",
+    "source": "src/profiles/extended/home/hand_pokemon.c",
+    "source_symbol": "AIDecideSpecialEvolutions",
+    "case": "tests/profiles/extended/cases/hand_pokemon.py",
+    "fn": "AIDecideSpecialEvolutions",
+    "index": 6
+  }
 }

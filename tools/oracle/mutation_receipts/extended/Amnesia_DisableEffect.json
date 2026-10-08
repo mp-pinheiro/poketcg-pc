@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Amnesia_DisableEffect\", \"registers\": {\"a\": 1, \"b\": 2, \"c\": 3, \"d\": 4, \"e\": 5, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50152\": \"04\", \"50162\": \"02\", \"50166\": \"04\", \"50168\": \"02\", \"52341\": \"00\", \"65431\": \"c2\", \"65440\": \"02\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Amnesia_DisableEffect\", \"mismatches\": {\"bus\": {\"address\": 50152, \"reference\": \"0402040200\", \"native\": \"0000000000\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[50152, 1], [50162, 1], [50166, 1], [50168, 1], [52341, 1], [65431, 1], [65440, 1]]}}}\n",
-  "restored": "{\"fn\": \"Amnesia_DisableEffect\", \"registers\": {\"a\": 1, \"b\": 2, \"c\": 3, \"d\": 4, \"e\": 5, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50152\": \"04\", \"50162\": \"02\", \"50166\": \"04\", \"50168\": \"02\", \"52341\": \"00\", \"65431\": \"c2\", \"65440\": \"02\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Amnesia_DisableEffect\", \"registers\": {\"a\": 1, \"b\": 2, \"c\": 3, \"d\": 4, \"e\": 5, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50152\": \"04\", \"50162\": \"02\", \"50166\": \"04\", \"50168\": \"02\", \"52341\": \"00\", \"65431\": \"c2\", \"65440\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Amnesia_DisableEffect",
+    "before": "ApplyAmnesiaToAttack(a, f, b, c, d, e, hl);",
+    "after": "(void)hl;",
+    "case_ids": [
+      "Amnesia_DisableEffect-0",
+      "Amnesia_DisableEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "b5512a59cf304d4de7da4a25424b1d518de775bb63b012f6329243c18e4b3998",
+    "mutation_sha256": "92bc6b3cb3040fededd8d9fc66b5e7b857f2bf492d1138737cc4135c96d5658c",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Amnesia_DisableEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Amnesia_DisableEffect",
+    "index": 0
+  }
 }

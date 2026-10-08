@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"MainMenu_NewGame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"53416\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"MainMenu_NewGame\", \"mismatches\": {\"bus\": {\"address\": 53416, \"reference\": \"00\", \"native\": \"ff\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[53416, 1]]}}}\n",
-  "restored": "{\"fn\": \"MainMenu_NewGame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"53416\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"MainMenu_NewGame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"53416\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "MainMenu_NewGame",
+    "before": "\tFunc_c1b1();\n\tif (!frame_boundary_is_installed()) {",
+    "after": "\t(void)0;\n\tif (!frame_boundary_is_installed()) {",
+    "case_ids": [
+      "MainMenu_NewGame-0",
+      "MainMenu_NewGame-1"
+    ],
+    "source": "src/profiles/extended/home/main_menu.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "38ac78c42f6ccb7bf007b63a8cd3cad66f053fe5cd2cdfb024874fdd43df85c8",
+    "case_sha256": "bddaa8679234223484c54585c319db6c8b2691dd0c5da01152eab6eb0c96981a",
+    "schema_sha256": "d1a562c823268732d95f2f40eb4f86b1935e49d70c60b8bb7d6ac728e602e1a9",
+    "mutation_sha256": "9e91944831dfb6ecdc8048da1ec654ce40bdb550bd80e6a9dba2196eb86f2839",
+    "source": "src/profiles/extended/home/main_menu.c",
+    "source_symbol": "MainMenu_NewGame",
+    "case": "tests/profiles/extended/cases/main_menu.py",
+    "fn": "MainMenu_NewGame",
+    "index": 0
+  }
 }

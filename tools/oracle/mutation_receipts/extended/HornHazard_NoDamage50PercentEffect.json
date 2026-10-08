@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"HornHazard_NoDamage50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"011000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"HornHazard_NoDamage50PercentEffect\", \"mismatches\": {\"bus\": {\"address\": 52323, \"reference\": \"000001000110000001\", \"native\": \"000001000010000001\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52323, 3], [52379, 1], [52514, 4], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"HornHazard_NoDamage50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"011000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"HornHazard_NoDamage50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52323\": \"011000\", \"52379\": \"00\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HornHazard_NoDamage50PercentEffect",
+    "before": "uint8_t HornHazard_NoDamage50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(DamageCheckIfTailsNoDamageText, 0u);\n\tif ((toss.f & 0x10u) != 0u) {\n\t\twLoadedAttackAnimation = ATK_ANIM_HIT;",
+    "after": "uint8_t HornHazard_NoDamage50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(DamageCheckIfTailsNoDamageText, 0u);\n\tif ((toss.f & 0x10u) != 0u) {\n\t\twLoadedAttackAnimation = 0x00u;",
+    "case_ids": [
+      "HornHazard_NoDamage50PercentEffect-0"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "3dd9c6eaf3a5911cd5c064fae22446d500a0701b3b3c2e4136e89dbf2da373f0",
+    "mutation_sha256": "ff44b80c4b0242850884289b1edb7bd7353b6dde9060c3b749dcd375164b975f",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "HornHazard_NoDamage50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "HornHazard_NoDamage50PercentEffect",
+    "index": 0
+  }
 }

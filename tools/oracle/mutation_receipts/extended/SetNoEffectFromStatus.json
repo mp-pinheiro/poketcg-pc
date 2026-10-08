@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"SetNoEffectFromStatus\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52379\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"SetNoEffectFromStatus\", \"mismatches\": {\"bus\": {\"address\": 52379, \"reference\": \"01\", \"native\": \"02\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52379, 1]]}}}\n",
-  "restored": "{\"fn\": \"SetNoEffectFromStatus\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52379\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"SetNoEffectFromStatus\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52379\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SetNoEffectFromStatus",
+    "before": "wEffectFailed = EFFECT_FAILED_NO_EFFECT;",
+    "after": "wEffectFailed = EFFECT_FAILED_UNSUCCESSFUL;",
+    "case_ids": [
+      "SetNoEffectFromStatus-0",
+      "SetNoEffectFromStatus-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "593aa173641d7f761beaea08e30858ef5796c2aa6d1ea8d78e440d8e59a8341c",
+    "mutation_sha256": "d0c0cbd38dbb34dd3c9cf31ccb69e219f0a3a849d56af69f452e071821e191b5",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "SetNoEffectFromStatus",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "SetNoEffectFromStatus",
+    "index": 0
+  }
 }

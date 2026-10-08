@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"StepIn_BenchCheck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 174, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"49859\": \"20\", \"50108\": \"ff\", \"65431\": \"c2\", \"65437\": \"01\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"StepIn_BenchCheck\", \"mismatches\": {\"f\": [16, 128], \"hl\": [174, 184]}}\n",
-  "restored": "{\"fn\": \"StepIn_BenchCheck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 174, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"49859\": \"20\", \"50108\": \"ff\", \"65431\": \"c2\", \"65437\": \"01\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"StepIn_BenchCheck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 174, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"49859\": \"20\", \"50108\": \"ff\", \"65431\": \"c2\", \"65437\": \"01\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "StepIn_BenchCheck",
+    "before": "\tif ((flags & (1u << USED_PKMN_POWER_THIS_TURN_F)) != 0u)",
+    "after": "\tif ((flags & (1u << USED_PKMN_POWER_THIS_TURN_F)) == 0u)",
+    "case_ids": [
+      "StepIn_BenchCheck-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "c740ce0d078d597f8d7b52c5dfb2c0d7d454cb6a05b898de08d2d7aabf1e172a",
+    "mutation_sha256": "dc7a19338e4b6a9c5d4bb7ae5f4679b45308d699c71efe23c84f651c9e6b3cca",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "StepIn_BenchCheck",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "StepIn_BenchCheck",
+    "index": 2
+  }
 }

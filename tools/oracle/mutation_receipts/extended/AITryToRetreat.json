@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"AITryToRetreat\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"09\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AITryToRetreat\", \"mismatches\": {\"a\": [9, 0]}}\n",
-  "restored": "{\"fn\": \"AITryToRetreat\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"09\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AITryToRetreat\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49896\": \"09\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AITryToRetreat",
+    "before": "\tif (unable.f & FLAG_C)\n\t\treturn (AITryToRetreatResult){SUBSTATUS2_ACID, unable.f};",
+    "after": "\tif (unable.f & FLAG_C)\n\t\treturn (AITryToRetreatResult){0u, unable.f};",
+    "case_ids": [
+      "AITryToRetreat-2"
+    ],
+    "source": "src/profiles/extended/home/retreat.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "4caf86ea75c7906092069f5fcb92aa51abdbc94dcea2620dec813231ec19ba26",
+    "case_sha256": "8a327a4545afcc44a0c812193950702f7c3e25ad6de36ecc46c3f6a91d07f00c",
+    "schema_sha256": "09e5e35b9389a821202fa581498630ff90a3141df74ff03f9ea98d31b1a55759",
+    "mutation_sha256": "93ff90202a381f64deb501ed416eac83f2aa7f033641ca96ae4bdcc7af6ba64a",
+    "source": "src/profiles/extended/home/retreat.c",
+    "source_symbol": "AITryToRetreat",
+    "case": "tests/profiles/extended/cases/retreat.py",
+    "fn": "AITryToRetreat",
+    "index": 2
+  }
 }

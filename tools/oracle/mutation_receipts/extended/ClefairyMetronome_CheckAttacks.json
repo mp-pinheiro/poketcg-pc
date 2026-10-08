@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ClefairyMetronome_CheckAttacks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ClefairyMetronome_CheckAttacks\", \"mismatches\": {\"hl\": [169, 0]}}\n",
-  "restored": "{\"fn\": \"ClefairyMetronome_CheckAttacks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ClefairyMetronome_CheckAttacks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ClefairyMetronome_CheckAttacks",
+    "before": "\treturn (ClefairyMetronomeCheckAttacksResult){r.f, NoAttackMayBeChosenText};",
+    "after": "\treturn (ClefairyMetronomeCheckAttacksResult){r.f, 0};",
+    "case_ids": [
+      "ClefairyMetronome_CheckAttacks-0",
+      "ClefairyMetronome_CheckAttacks-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "a60e41b10e84f4c7d5690c42d43424d8cae650dd1f00989fceea74a1ab8f6ca3",
+    "mutation_sha256": "c76f78708eca13a034f1f6fdf3f36d4e01b4fbdf6faeb1c2eb04ce8939d54965",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "ClefairyMetronome_CheckAttacks",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "ClefairyMetronome_CheckAttacks",
+    "index": 0
+  }
 }

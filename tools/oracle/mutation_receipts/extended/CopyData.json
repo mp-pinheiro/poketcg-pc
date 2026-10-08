@@ -1,0 +1,30 @@
+{
+  "fn": "CopyData",
+  "case": "tests/profiles/extended/cases/music.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyData\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 194, \"e\": 1, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"a5\", \"49664\": \"a5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyData\", \"mismatches\": {\"bus\": {\"address\": 49664, \"reference\": \"a5a5\", \"native\": \"a5a6\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49408, 1], [49664, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyData\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 194, \"e\": 1, \"f\": 240, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 66, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"a5\", \"49664\": \"a5\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CopyData",
+    "before": "\t\tgb_write8(*de, gb_read8(*hl));",
+    "after": "\t\tgb_write8(*de, (uint8_t)(gb_read8(*hl) + 1u));",
+    "case_ids": [
+      "CopyData-1"
+    ],
+    "source": "src/profiles/extended/home/music.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "4a9d9d8083d06202c3451e0f08509423a80c0b8d27677abef6589e63e3904c26",
+    "case_sha256": "534cd65f6b236e7be6ea2cad8e77a03ec3b714375d3624ab861e261f45719e34",
+    "schema_sha256": "707c27e4efa2ed0690e98f3614fdff89f0b6a0bbba848495a6acaf5328567217",
+    "mutation_sha256": "6365f6d277af0a1ca3aa30a2db58e5246dd2336e125a61fca5da32e5954470c9",
+    "source": "src/profiles/extended/home/music.c",
+    "source_symbol": "CopyData",
+    "case": "tests/profiles/extended/cases/music.py",
+    "fn": "CopyData",
+    "index": 1
+  }
+}

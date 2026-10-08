@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"FocusEnergyEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49895\": \"00\", \"52335\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"FocusEnergyEffect\", \"mismatches\": {\"bus\": {\"address\": 49895, \"reference\": \"0000c2\", \"native\": \"1900c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49895, 1], [52335, 1], [65431, 1]]}}}\n",
-  "restored": "{\"fn\": \"FocusEnergyEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49895\": \"00\", \"52335\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"FocusEnergyEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49895\": \"00\", \"52335\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "FocusEnergyEffect",
+    "before": "if (card_id != VAPOREON_LV29)",
+    "after": "if (card_id == VAPOREON_LV29)",
+    "case_ids": [
+      "FocusEnergyEffect-0",
+      "FocusEnergyEffect-1",
+      "FocusEnergyEffect-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "3d0ddac778dc8d078147f4eee0dd457abc64e6481789c7a42bc8d861dd0a59bd",
+    "mutation_sha256": "6fac6ae4deacc79a2862f5bd0fdf0863853e444d732ff76c8fed7f33ba93cde7",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "FocusEnergyEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "FocusEnergyEffect",
+    "index": 0
+  }
 }

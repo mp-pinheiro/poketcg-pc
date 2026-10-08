@@ -5,5 +5,28 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Preload_NikkiInGrassClub\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54220\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Preload_NikkiInGrassClub\", \"mismatches\": {\"f\": [0, 128]}}\n",
-  "restored": "{\"fn\": \"Preload_NikkiInGrassClub\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54220\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Preload_NikkiInGrassClub\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"54220\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Preload_NikkiInGrassClub",
+    "before": "if (a == NIKKI_IN_GRASS_CLUB)",
+    "after": "if (a != NIKKI_IN_GRASS_CLUB)",
+    "case_ids": [
+      "Preload_NikkiInGrassClub-0",
+      "Preload_NikkiInGrassClub-1",
+      "Preload_NikkiInGrassClub-2"
+    ],
+    "source": "src/profiles/extended/home/grass_club.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "a86f8a87962fe9f8b4cb1ba5bd97c64fd147809848292de61958b04e8796ac4e",
+    "case_sha256": "c031d86f0555a466ddd2f5e11a05a04397d79cc9c840f956f42e7e3c7569882d",
+    "schema_sha256": "7b5907e6e1af88c5571e8b2e6eead523a803bbb4ec2da50b7b5d43cbcea3fa84",
+    "mutation_sha256": "20f24f2e305d7a763416443c5af33fb046e1497a2d6f1129705c4f55ecc61357",
+    "source": "src/profiles/extended/home/grass_club.c",
+    "source_symbol": "Preload_NikkiInGrassClub",
+    "case": "tests/profiles/extended/cases/grass_club.py",
+    "fn": "Preload_NikkiInGrassClub",
+    "index": 0
+  }
 }

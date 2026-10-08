@@ -1,0 +1,30 @@
+{
+  "fn": "OpenCardPageFromCardList",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenCardPageFromCardList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52812\": \"00\", \"52814\": \"01\", \"52819\": \"02\", \"52869\": \"01\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenCardPageFromCardList\", \"mismatches\": {\"bus\": {\"address\": 52869, \"reference\": \"800001020180\", \"native\": \"800001020080\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[51899, 1], [52812, 1], [52814, 1], [52819, 1], [52869, 1], [65344, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenCardPageFromCardList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52812\": \"00\", \"52814\": \"01\", \"52819\": \"02\", \"52869\": \"01\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "OpenCardPageFromCardList",
+    "before": "\twTempCardListCursorPos = cursor;",
+    "after": "\twTempCardListCursorPos = 0u;",
+    "case_ids": [
+      "OpenCardPageFromCardList-0",
+      "OpenCardPageFromCardList-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "1e0cfe79551c2215306859f4a88f105afa5a7b6d2f8a525a8cca12de6b6f730f",
+    "mutation_sha256": "7e26791fcf10d984abffdcb1c9cc7426c18560313bb1a456a4c08fc3f9524083",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "OpenCardPageFromCardList",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "OpenCardPageFromCardList",
+    "index": 0
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "fn": "GenerateLightningEnergy",
+  "case": "tests/profiles/extended/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateLightningEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 4, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateLightningEnergy\", \"mismatches\": {\"bus\": {\"address\": 50198, \"reference\": \"0004\", \"native\": \"0006\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49152, 1], [50198, 1]]}}}\n",
+  "restored": "{\"fn\": \"GenerateLightningEnergy\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 4, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"50198\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GenerateLightningEnergy",
+    "before": "\treturn AddBoosterEnergyToDrawnEnergies(LIGHTNING_ENERGY);",
+    "after": "\treturn AddBoosterEnergyToDrawnEnergies(PSYCHIC_ENERGY);",
+    "case_ids": [
+      "GenerateLightningEnergy-0",
+      "GenerateLightningEnergy-1"
+    ],
+    "source": "src/profiles/extended/home/booster_packs.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "dc954982545da6a42dd2bdf61c7ff241e5df3b03ef0dc3c3b7252310f6b02438",
+    "case_sha256": "846892adec938d1c8887c437dddb16e07dfc754040773ad8f38146aa6004a7ab",
+    "schema_sha256": "b865ce5269be8942504a49d83245d3531fb7692f424c394774bf91177c305d60",
+    "mutation_sha256": "57b852b01ac521bf04b9eb614a9f1bd8dfb4ef62628ada2a00f2e696d0ec4d74",
+    "source": "src/profiles/extended/home/booster_packs.c",
+    "source_symbol": "GenerateLightningEnergy",
+    "case": "tests/profiles/extended/cases/booster_packs.py",
+    "fn": "GenerateLightningEnergy",
+    "index": 0
+  }
+}

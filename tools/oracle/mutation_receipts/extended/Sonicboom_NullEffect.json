@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Sonicboom_NullEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"00\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Sonicboom_NullEffect\", \"mismatches\": {\"bus\": {\"address\": 49408, \"reference\": \"00\", \"native\": \"ff\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[49408, 1]]}}}\n",
-  "restored": "{\"fn\": \"Sonicboom_NullEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Sonicboom_NullEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Sonicboom_NullEffect",
+    "before": "void Sonicboom_NullEffect(void)\n{\n\treturn;",
+    "after": "void Sonicboom_NullEffect(void)\n{\n\tgb_write8(0xC100u, 0xFFu);",
+    "case_ids": [
+      "Sonicboom_NullEffect-0",
+      "Sonicboom_NullEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "6466c47b5884fc27aef68802ba1f132afe0c8b9703778a80c194b1b3a19de0c0",
+    "mutation_sha256": "76ba971775b4c326590ec2ff0dc629020fff6d95a596d1b40839a970ac51e3cd",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Sonicboom_NullEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Sonicboom_NullEffect",
+    "index": 0
+  }
 }

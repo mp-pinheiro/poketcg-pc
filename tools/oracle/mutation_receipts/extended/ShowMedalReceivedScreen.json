@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"ShowMedalReceivedScreen\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51899\": \"80\", \"52741\": \"ee02\", \"53505\": \"fa00e0\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"ShowMedalReceivedScreen\", \"mismatches\": {\"bus\": {\"address\": 53505, \"reference\": \"0080ee02fa00e0\", \"native\": \"0080ee02fb00e0\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51892, 1], [51899, 1], [52741, 2], [53505, 3]]}}}\n",
-  "restored": "{\"fn\": \"ShowMedalReceivedScreen\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51899\": \"80\", \"52741\": \"ee02\", \"53505\": \"fa00e0\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"ShowMedalReceivedScreen\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51899\": \"80\", \"52741\": \"ee02\", \"53505\": \"fa00e0\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "ShowMedalReceivedScreen",
+    "before": "\twMedalScreenYOffset = (uint8_t)-6;",
+    "after": "\twMedalScreenYOffset = (uint8_t)-5;",
+    "case_ids": [
+      "ShowMedalReceivedScreen-0",
+      "ShowMedalReceivedScreen-1",
+      "ShowMedalReceivedScreen-2"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "af7361d44f0cb93ed0d5f4e9bb21fb4a4397c34891ebe47fffbd9c223ab5895f",
+    "case_sha256": "669d11f56fea7596d2d1bff941633bd65d6fa6cb62bfdfd8ab729941daf30431",
+    "schema_sha256": "5ef36f08e736d6b8f4899d3c0dc7dbf9938a20722b3e140a553bc0f5564d32c0",
+    "mutation_sha256": "7d765a3f06ab0a65dde1af00998facc196749100c78d976a6219060ea10e75b0",
+    "source": "src/profiles/extended/home/medal.c",
+    "source_symbol": "ShowMedalReceivedScreen",
+    "case": "tests/profiles/extended/cases/medal.py",
+    "fn": "ShowMedalReceivedScreen",
+    "index": 0
+  }
 }

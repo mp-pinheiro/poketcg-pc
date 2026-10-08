@@ -5,5 +5,27 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Sleep50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52347\": \"03c2f002\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Sleep50PercentEffect\", \"mismatches\": {\"f\": [16, 0]}}\n",
-  "restored": "{\"fn\": \"Sleep50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52347\": \"03c2f002\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Sleep50PercentEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000001\", \"52147\": \"00\", \"52347\": \"03c2f002\", \"52514\": \"01010002\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Sleep50PercentEffect",
+    "before": "uint8_t Sleep50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(SleepCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn SleepEffect().f;",
+    "after": "uint8_t Sleep50PercentEffect(void)\n{\n\tTossCoinRoutineResult toss = TossCoin(SleepCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn (uint8_t)(SleepEffect().f ^ 0x10u);",
+    "case_ids": [
+      "Sleep50PercentEffect-0",
+      "Sleep50PercentEffect-1"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "13410b4d451d572147ab8054329d6c35532d8d0da995bced1756d8b76128c10c",
+    "mutation_sha256": "16227f500f74c7618809b02b5887c4383a9fdb8834db455fd0ad6ff1bbf35a93",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "Sleep50PercentEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "Sleep50PercentEffect",
+    "index": 0
+  }
 }

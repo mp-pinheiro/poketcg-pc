@@ -1,9 +1,30 @@
 {
   "fn": "PokemonDomeLoadMap",
   "case": "tests/profiles/extended/cases/pokemon_dome.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"PokemonDomeLoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53427\": \"0000\", \"53515\": \"8d0000000000000000000000000000\", \"54208\": \"08\", \"54232\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"PokemonDomeLoadMap\", \"mismatches\": {\"bus\": {\"address\": 54208, \"reference\": \"000000000800\", \"native\": \"000000000000\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[53427, 2], [53515, 15], [54208, 1], [54232, 1]]}}}\n",
-  "restored": "{\"fn\": \"PokemonDomeLoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53427\": \"0000\", \"53515\": \"8d0000000000000000000000000000\", \"54208\": \"08\", \"54232\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"PokemonDomeLoadMap\", \"registers\": {\"a\": 119, \"b\": 152, \"c\": 0, \"d\": 211, \"e\": 4, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 30470, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53427\": \"7476\", \"53515\": \"8d0000000000000000000000000000\", \"54208\": \"08\", \"54232\": \"08\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PokemonDomeLoadMap\", \"mismatches\": {\"bus\": {\"address\": 53427, \"reference\": \"74768d0000\", \"native\": \"00008d0000\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[53427, 2], [53515, 15], [54208, 1], [54232, 1]]}}}\n",
+  "restored": "{\"fn\": \"PokemonDomeLoadMap\", \"registers\": {\"a\": 119, \"b\": 152, \"c\": 0, \"d\": 211, \"e\": 4, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 30470, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53427\": \"7476\", \"53515\": \"8d0000000000000000000000000000\", \"54208\": \"08\", \"54232\": \"08\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PokemonDomeLoadMap",
+    "before": "\tif (GetEventValue(EVENT_POKEMON_DOME_IN_MENU) == 0u)\n\t\treturn;",
+    "after": "\tif ((uint8_t)((gb_read8(0xD3E9u) & 0x08u) >> 3) == 0u)\n\t\treturn;",
+    "case_ids": [
+      "PokemonDomeLoadMap-2"
+    ],
+    "source": "src/profiles/extended/home/pokemon_dome.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "264a6097ebff51cf10b2d91bf6f6d91d594755b8264e02b37b2ef5f32165839d",
+    "case_sha256": "aced037ba2d5ddf4d4bb1b8b6c722272b54ff6cf58ac919a3dc33b2c114ae531",
+    "schema_sha256": "110d10f2c39e2cf12400753e0c3699a898a0ac9671b7beb6fd080996bc91c552",
+    "mutation_sha256": "5bae171510361b99e9d1a5a7a8b587dec91d50ab86da06339f4489f330f4996d",
+    "source": "src/profiles/extended/home/pokemon_dome.c",
+    "source_symbol": "PokemonDomeLoadMap",
+    "case": "tests/profiles/extended/cases/pokemon_dome.py",
+    "fn": "PokemonDomeLoadMap",
+    "index": 2
+  }
 }

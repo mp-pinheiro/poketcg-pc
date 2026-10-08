@@ -5,5 +5,25 @@
   "status": "RED",
   "baseline": "{\"fn\": \"PrintAlbumProgress_SkipGetProgress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 5, \"e\": 10, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38912\": \"2c2920\", \"38916\": \"000020\"}}, \"wram\": {\"54433\": \"000020\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"PrintAlbumProgress_SkipGetProgress\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
-  "restored": "{\"fn\": \"PrintAlbumProgress_SkipGetProgress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 5, \"e\": 10, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38912\": \"2c2920\", \"38916\": \"000020\"}}, \"wram\": {\"54433\": \"000020\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"PrintAlbumProgress_SkipGetProgress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 5, \"e\": 10, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {\"0\": {\"38912\": \"2c2920\", \"38916\": \"000020\"}}, \"wram\": {\"54433\": \"000020\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "PrintAlbumProgress_SkipGetProgress",
+    "before": "uint8_t b2 = (uint8_t)(b + 4u);",
+    "after": "uint8_t b2 = (uint8_t)(b + 5u);",
+    "case_ids": [
+      "PrintAlbumProgress_SkipGetProgress-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "a4cf51673e4e35b690d9a02dd41c4461720c8aed4de8fa38c502e5cfabd9b600",
+    "case_sha256": "697ffc9920c76695a09dcc1f64f02323d605c8d2064e0f2aeb240ddd8bd486e3",
+    "schema_sha256": "681f6ac9b0ba35ab6d4e44d2b06552cd6c3bb8d20efc2dc778636d33bbc51e7e",
+    "mutation_sha256": "69fa3514197e1bdf46ec33d23e036a640d68273a3a03d573363958f024d98ad0",
+    "source": "src/profiles/extended/home/print_stats.c",
+    "source_symbol": "PrintAlbumProgress_SkipGetProgress",
+    "case": "tests/profiles/extended/cases/print_stats.py",
+    "fn": "PrintAlbumProgress_SkipGetProgress",
+    "index": 0
+  }
 }

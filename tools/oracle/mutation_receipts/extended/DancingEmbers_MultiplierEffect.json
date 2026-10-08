@@ -5,5 +5,26 @@
   "status": "RED",
   "baseline": "{\"fn\": \"DancingEmbers_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"086407\", \"52147\": \"00\", \"52324\": \"46004646\", \"52514\": \"08070008\", \"52745\": \"0a00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"DancingEmbers_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52745, \"reference\": \"080700080a000000\", \"native\": \"080700080b000000\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52147, 1], [52324, 4], [52514, 4], [52745, 2], [52756, 2]]}}}\n",
-  "restored": "{\"fn\": \"DancingEmbers_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"086407\", \"52147\": \"00\", \"52324\": \"46004646\", \"52514\": \"08070008\", \"52745\": \"0a00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"DancingEmbers_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"086407\", \"52147\": \"00\", \"52324\": \"46004646\", \"52514\": \"08070008\", \"52745\": \"0a00\", \"52756\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "DancingEmbers_MultiplierEffect",
+    "before": "void DancingEmbers_MultiplierEffect(void)\n{\n\tLoadTxRam3(10u);",
+    "after": "void DancingEmbers_MultiplierEffect(void)\n{\n\tLoadTxRam3(11u);",
+    "case_ids": [
+      "DancingEmbers_MultiplierEffect-0",
+      "DancingEmbers_MultiplierEffect-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "10f67f04171561a318ffdf50ac4a69f47689597d412fe793f8d1a2f4ec298088",
+    "mutation_sha256": "b1a2b75299201562316d8edfcfea1eda78131756b6fad9675f5a2ec125c398f1",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "DancingEmbers_MultiplierEffect",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "DancingEmbers_MultiplierEffect",
+    "index": 0
+  }
 }

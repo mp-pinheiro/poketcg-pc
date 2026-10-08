@@ -1,0 +1,30 @@
+{
+  "fn": "LookForCardIDInHand",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LookForCardIDInHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49730\": \"000101\", \"49902\": \"02\", \"50176\": \"cb01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardIDInHand\", \"mismatches\": {\"f\": [144, 128]}}\n",
+  "restored": "{\"fn\": \"LookForCardIDInHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49730\": \"000101\", \"49902\": \"02\", \"50176\": \"cb01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "LookForCardIDInHand",
+    "before": "if (card_id == de)",
+    "after": "if (card_id != de)",
+    "case_ids": [
+      "LookForCardIDInHand-0"
+    ],
+    "source": "src/profiles/extended/home/core.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "dc56418c5326d0e721336c015c4225892d9c8295bfbfcdc11343d8215bbabe4b",
+    "mutation_sha256": "327de8a4c1b4ce6bb2f45795cd3ef2c1f84661b2db5d13a61199c5e41af57140",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "LookForCardIDInHand",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "LookForCardIDInHand",
+    "index": 0
+  }
+}

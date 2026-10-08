@@ -5,5 +5,29 @@
   "status": "RED",
   "baseline": "{\"fn\": \"Script_Specs2\", \"registers\": {\"a\": 232, \"b\": 0, \"c\": 2, \"d\": 10, \"e\": 232, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52742, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"038002\", \"52741\": \"e80aff\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Script_Specs2\", \"mismatches\": {\"a\": [232, 77], \"d\": [10, 8], \"e\": [232, 77], \"bus\": {\"address\": 52741, \"reference\": \"038002e80aff\", \"native\": \"0380024d08ff\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[51914, 3], [52741, 3]]}}}\n",
-  "restored": "{\"fn\": \"Script_Specs2\", \"registers\": {\"a\": 232, \"b\": 0, \"c\": 2, \"d\": 10, \"e\": 232, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52742, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"038002\", \"52741\": \"e80aff\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Script_Specs2\", \"registers\": {\"a\": 232, \"b\": 0, \"c\": 2, \"d\": 10, \"e\": 232, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52742, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51914\": \"038002\", \"52741\": \"e80aff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Script_Specs2",
+    "before": "\tuint16_t hl = (uint16_t)(DATA_EBE7 + c);",
+    "after": "\tuint16_t hl = (uint16_t)(DATA_EBE7 + c + 2u);",
+    "case_ids": [
+      "Script_Specs2-0",
+      "Script_Specs2-2",
+      "Script_Specs2-3",
+      "Script_Specs2-4"
+    ],
+    "source": "src/profiles/extended/home/science_club_lobby.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "18937e278d4a0a205428531af5c9aee29c749a1f0d3958cfa30c770077cf6a5a",
+    "case_sha256": "201d7ceb0a0c958dbf13472ade982a25dd30d5d2bb66d3902c4d19cb76f24a02",
+    "schema_sha256": "c7cbe4c117120f5a8dc5c150c7bbe634670a9b1d0b26bcd666eaaf91999af6e4",
+    "mutation_sha256": "86633b22ab512f32015351da466bffbd48eb23dd0c54839d783273b3e3381aff",
+    "source": "src/profiles/extended/home/science_club_lobby.c",
+    "source_symbol": "Script_Specs2",
+    "case": "tests/profiles/extended/cases/science_club_lobby.py",
+    "fn": "Script_Specs2",
+    "index": 0
+  }
 }

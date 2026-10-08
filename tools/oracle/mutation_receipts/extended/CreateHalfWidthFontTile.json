@@ -1,0 +1,30 @@
+{
+  "fn": "CreateHalfWidthFontTile",
+  "case": "tests/profiles/extended/cases/process_text.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateHalfWidthFontTile\", \"registers\": {\"a\": 28, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 162, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52402, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateHalfWidthFontTile\", \"mismatches\": {\"e\": [162, 163]}}\n",
+  "restored": "{\"fn\": \"CreateHalfWidthFontTile\", \"registers\": {\"a\": 28, \"b\": 0, \"c\": 0, \"d\": 204, \"e\": 162, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 52402, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "CreateHalfWidthFontTile",
+    "before": "\treturn (FontTileResult){(uint8_t)(HalfWidthFont_BANK - 1u), 0u, 0u, wTextTileBuffer_ADDR,",
+    "after": "\treturn (FontTileResult){(uint8_t)(HalfWidthFont_BANK - 1u), 0u, 0u, (uint16_t)(wTextTileBuffer_ADDR + 1u),",
+    "case_ids": [
+      "CreateHalfWidthFontTile-0"
+    ],
+    "source": "src/profiles/extended/home/process_text.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "3fd461efbd36224af44731a36b7d2c2371bbdaea427ba3e66372220b94bd66d8",
+    "case_sha256": "704bb6b5f592ed6181309e32fed28cc4bfbb03607f75e012eac5d1e66e581888",
+    "schema_sha256": "2f9fb96430b7c83e810a0a957c69ec6329cb3ce849ee260a781b2f2f6dc3971c",
+    "mutation_sha256": "5793c73d7e7a99fdc49e7f2ef973e40244854a043e88249b2c31509330bbd940",
+    "source": "src/profiles/extended/home/process_text.c",
+    "source_symbol": "CreateHalfWidthFontTile",
+    "case": "tests/profiles/extended/cases/process_text.py",
+    "fn": "CreateHalfWidthFontTile",
+    "index": 0
+  }
+}

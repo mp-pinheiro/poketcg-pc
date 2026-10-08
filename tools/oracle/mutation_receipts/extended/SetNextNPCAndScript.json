@@ -1,0 +1,32 @@
+{
+  "fn": "SetNextNPCAndScript",
+  "case": "tests/profiles/extended/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetNextNPCAndScript\", \"registers\": {\"a\": 3, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 17767, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53420\": \"03\", \"53422\": \"02\", \"53427\": \"3412\", \"54049\": \"01\", \"54071\": \"00000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"54169\": \"00\", \"54179\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetNextNPCAndScript\", \"mismatches\": {\"bus\": {\"address\": 54179, \"reference\": \"0000000000\", \"native\": \"0000000001\", \"reference_size\": 104, \"native_size\": 104, \"spans\": [[53420, 1], [53422, 1], [53427, 2], [54049, 1], [54071, 97], [54169, 1], [54179, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetNextNPCAndScript\", \"registers\": {\"a\": 3, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 17767, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53420\": \"03\", \"53422\": \"02\", \"53427\": \"3412\", \"54049\": \"01\", \"54071\": \"00000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"54169\": \"00\", \"54179\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SetNextNPCAndScript",
+    "before": "wScriptNPC = wLoadedNPCTempIndex;",
+    "after": "wScriptNPC = (uint8_t)(wLoadedNPCTempIndex + 1u);",
+    "case_ids": [
+      "SetNextNPCAndScript-0",
+      "SetNextNPCAndScript-1",
+      "SetNextNPCAndScript-2"
+    ],
+    "source": "src/profiles/extended/home/scripting.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2fe5f3b106755f4e9c0c0e331734c3f51984b423c1c15396d8476b2608db2b36",
+    "case_sha256": "aeeb2292b0114fbc4163986972f4fe014e59824aae1c24e9dfa2de6738a94e2f",
+    "schema_sha256": "062976a5215d94a167b950439ee7bfd5e279a1e72ad6e31373eb91fcf2b53eac",
+    "mutation_sha256": "6f4bc6fac1b93640897d627b487378c70376a18363a0421483fc32c8b2c0bfa3",
+    "source": "src/profiles/extended/home/scripting.c",
+    "source_symbol": "SetNextNPCAndScript",
+    "case": "tests/profiles/extended/cases/scripting.py",
+    "fn": "SetNextNPCAndScript",
+    "index": 0
+  }
+}

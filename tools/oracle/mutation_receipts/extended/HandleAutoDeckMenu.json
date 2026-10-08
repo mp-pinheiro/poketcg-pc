@@ -1,0 +1,30 @@
+{
+  "fn": "HandleAutoDeckMenu",
+  "case": "tests/profiles/extended/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleAutoDeckMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51894\": \"00\", \"51920\": \"c9\", \"52414\": \"00\", \"52812\": \"00\", \"52819\": \"05\", \"52863\": \"226d\", \"53363\": \"0000\", \"53391\": \"45020005\", \"53393\": \"00\", \"53398\": \"00\", \"65409\": \"00\", \"65457\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAutoDeckMenu\", \"mismatches\": {\"bus\": {\"address\": 52863, \"reference\": \"c9000005226d000045\", \"native\": \"c9000005236d000045\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[51892, 1], [51894, 1], [51920, 1], [52414, 1], [52812, 1], [52819, 1], [52863, 2], [53363, 2], [53391, 4], [53398, 1], [65409, 1], [65457, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleAutoDeckMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51894\": \"00\", \"51920\": \"c9\", \"52414\": \"00\", \"52812\": \"00\", \"52819\": \"05\", \"52863\": \"226d\", \"53363\": \"0000\", \"53391\": \"45020005\", \"53393\": \"00\", \"53398\": \"00\", \"65409\": \"00\", \"65457\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleAutoDeckMenu",
+    "before": "\tgb_write8(wCardListUpdateFunction_ADDR, (uint8_t)UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR);",
+    "after": "\tgb_write8(wCardListUpdateFunction_ADDR, (uint8_t)(UPDATE_DECK_MACHINE_SCROLL_ARROWS_ADDR + 1u));",
+    "case_ids": [
+      "HandleAutoDeckMenu-0",
+      "HandleAutoDeckMenu-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "2b37b66976ac6d28a2eecf10fef74a52fb30302660c6e5e02a8c8d15a150de01",
+    "case_sha256": "7c75bc1440b4b0b30278f49c753bf254357f2f1513ca1c523d756a5e3fe70735",
+    "schema_sha256": "485ee5467d0f15759f885a9a37cc52447d963a4ec97f4e6bb50942d70732df26",
+    "mutation_sha256": "aeb96d5a9e9e6b80cd96b893382f47d563ce6158a69e427f05f7dc3ac8d33096",
+    "source": "src/profiles/extended/home/deck_machine.c",
+    "source_symbol": "HandleAutoDeckMenu",
+    "case": "tests/profiles/extended/cases/deck_machine.py",
+    "fn": "HandleAutoDeckMenu",
+    "index": 0
+  }
+}

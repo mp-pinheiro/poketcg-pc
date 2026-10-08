@@ -1,0 +1,29 @@
+{
+  "fn": "Func_6fa5",
+  "case": "tests/profiles/extended/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_6fa5\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ffffffffffff\", \"49864\": \"000000000000\", \"52342\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_6fa5\", \"mismatches\": {\"f\": [128, 16]}}\n",
+  "restored": "{\"fn\": \"Func_6fa5\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"ffffffffffff\", \"49864\": \"000000000000\", \"52342\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "Func_6fa5",
+    "before": "\t\treturn (Func6fa5Result){knocked.f};",
+    "after": "\t\treturn (Func6fa5Result){0x10u};",
+    "case_ids": [
+      "Func_6fa5-0"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "967a838b6a946e49d9b9419f7c914bad22c60dca64dab81a6cf88f055cb68f1b",
+    "case_sha256": "9b54f47042be203b6bc4b3ac4934f19859d2516d2ec83955fbf5b399835128fb",
+    "schema_sha256": "f88f02e45d7573700f2d8a28433668fd9997cd979f09f7bb8bd78f3619b72c91",
+    "mutation_sha256": "6c61ea0b234a0d7423b56bd5f51a9c8500bc1fd518c7dc67c37d268df7417113",
+    "source": "src/profiles/extended/home/core.c",
+    "source_symbol": "Func_6fa5",
+    "case": "tests/profiles/extended/cases/core.py",
+    "fn": "Func_6fa5",
+    "index": 0
+  }
+}

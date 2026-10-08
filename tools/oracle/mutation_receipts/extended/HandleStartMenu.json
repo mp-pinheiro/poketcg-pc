@@ -1,0 +1,30 @@
+{
+  "fn": "HandleStartMenu",
+  "case": "tests/profiles/extended/cases/start.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleStartMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff\", \"51899\": \"80\", \"52406\": \"00\", \"54801\": \"0000000001\", \"54804\": \"00\", \"54819\": \"00000e0402021e03ff010202010f000000\", \"65431\": \"c2\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleStartMenu\", \"mismatches\": {\"bus\": {\"address\": 54804, \"reference\": \"00000000000100000e\", \"native\": \"00000000010100000e\", \"reference_size\": 27, \"native_size\": 27, \"spans\": [[50432, 1], [51899, 1], [52406, 1], [54801, 5], [54819, 17], [65431, 1], [65457, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleStartMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50432\": \"ff\", \"51899\": \"80\", \"52406\": \"00\", \"54801\": \"0000000001\", \"54804\": \"00\", \"54819\": \"00000e0402021e03ff010202010f000000\", \"65431\": \"c2\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "HandleStartMenu",
+    "before": "\t\twLastSelectedStartMenuItem = hCurMenuItem;",
+    "after": "\t\twLastSelectedStartMenuItem = (uint8_t)(hCurMenuItem ^ 1u);",
+    "case_ids": [
+      "HandleStartMenu-0",
+      "HandleStartMenu-1"
+    ]
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "c75b9af0da9c150b45667cc51f17c8008a657903c126b73bda5a78873a89ca42",
+    "case_sha256": "8aefaed433b8b5063fc4aa53566c2e640512e0e9b5ac136d30b2399270381c57",
+    "schema_sha256": "f30f02ceb766a5d159414524e1bd76e9bf37b48a893fcc883624b703c83b867a",
+    "mutation_sha256": "6c41668aee4e4ae7bab93b6f0b4b658e1ce48a56675ae7fb568c5ba34565c9cb",
+    "source": "src/profiles/extended/home/start.c",
+    "source_symbol": "HandleStartMenu",
+    "case": "tests/profiles/extended/cases/start.py",
+    "fn": "HandleStartMenu",
+    "index": 0
+  }
+}

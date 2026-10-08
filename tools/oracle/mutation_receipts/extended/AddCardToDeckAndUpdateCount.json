@@ -1,0 +1,31 @@
+{
+  "fn": "AddCardToDeckAndUpdateCount",
+  "case": "tests/profiles/extended/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddCardToDeckAndUpdateCount\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52861\": \"00\", \"53203\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddCardToDeckAndUpdateCount\", \"mismatches\": {\"e\": [1, 2]}}\n",
+  "restored": "{\"fn\": \"AddCardToDeckAndUpdateCount\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52861\": \"00\", \"53203\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "AddCardToDeckAndUpdateCount",
+    "before": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, (uint8_t)id};",
+    "after": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, (uint8_t)(id + 1u)};",
+    "case_ids": [
+      "AddCardToDeckAndUpdateCount-0",
+      "AddCardToDeckAndUpdateCount-1"
+    ],
+    "source": "src/profiles/extended/home/deck_configuration.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "ef06f6892b5a5ae227f239a01694c3f75ad02706a9f540fdc213336654dcb0bd",
+    "case_sha256": "cb46f67629f2892e629dca0a94c19a3949e55e54d1a0122af84008429f7f8afa",
+    "schema_sha256": "aa390e668ad6722d5d0bc6f0a5616b9816e6db3857191e7c5d4b0546da79cf47",
+    "mutation_sha256": "c1abe97259a8e2c239fe77e9318a4d1da84a0f40c7b3cdfaead0d90d70ca38a2",
+    "source": "src/profiles/extended/home/deck_configuration.c",
+    "source_symbol": "AddCardToDeckAndUpdateCount",
+    "case": "tests/profiles/extended/cases/deck_configuration.py",
+    "fn": "AddCardToDeckAndUpdateCount",
+    "index": 0
+  }
+}

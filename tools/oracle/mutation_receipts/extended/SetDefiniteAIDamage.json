@@ -1,9 +1,32 @@
 {
   "fn": "SetDefiniteAIDamage",
   "case": "tests/profiles/extended/cases/effect_functions.py",
-  "index": 0,
+  "index": 1,
   "status": "RED",
-  "baseline": "{\"fn\": \"SetDefiniteAIDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"00\", \"52326\": \"0000\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"SetDefiniteAIDamage\", \"mismatches\": {\"bus\": {\"address\": 52326, \"reference\": \"000000\", \"native\": \"000100\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52324, 1], [52326, 2]]}}}\n",
-  "restored": "{\"fn\": \"SetDefiniteAIDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"00\", \"52326\": \"0000\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"SetDefiniteAIDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"42\", \"52326\": \"4242\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetDefiniteAIDamage\", \"mismatches\": {\"bus\": {\"address\": 52326, \"reference\": \"424242\", \"native\": \"424342\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52324, 1], [52326, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetDefiniteAIDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52324\": \"42\", \"52326\": \"4242\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "SetDefiniteAIDamage",
+    "before": "wAIMinDamage = wDamage;",
+    "after": "wAIMinDamage = (uint8_t)(wDamage + 1u);",
+    "case_ids": [
+      "SetDefiniteAIDamage-1",
+      "SetDefiniteAIDamage-0",
+      "SetDefiniteAIDamage-2"
+    ],
+    "source": "src/profiles/extended/home/effect_functions.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "27e6b503f710a529b80da52e460c5359f9c0c3f767b40006ccbab30384bd81e3",
+    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "schema_sha256": "b5632faa74a91f8e29cbe72d5141a8d6d636671e930b944fc443171d95e44bd1",
+    "mutation_sha256": "38dfb8ac8d667c0b23fda8b840c54c8c6dfd5ebff5b9ee24a611646ed626b8c8",
+    "source": "src/profiles/extended/home/effect_functions.c",
+    "source_symbol": "SetDefiniteAIDamage",
+    "case": "tests/profiles/extended/cases/effect_functions.py",
+    "fn": "SetDefiniteAIDamage",
+    "index": 1
+  }
 }
