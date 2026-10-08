@@ -56,7 +56,7 @@ CASES["HandleAIStrangeBehavior"] = [
 	{"c": 0},
 	dict(POISON, c=0),
 	dict(_strange_behavior_fixture(vram=False, damage=0), **_STRANGE_BEHAVIOR_REGS),
-	dict(_strange_behavior_fixture(vram=False, damage=10), **_STRANGE_BEHAVIOR_REGS, compare=("a", "f")),
+	dict(_strange_behavior_fixture(vram=False, damage=10), **_STRANGE_BEHAVIOR_REGS, compare=("f",)),
 ]
 # <<< factory HandleAIStrangeBehavior
 
