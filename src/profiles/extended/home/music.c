@@ -12,7 +12,7 @@
 /* <<< part includes */
 
 /* >>> part MUSIC_BANK */
-#define MUSIC_BANK 0x42u
+#define MUSIC_BANK ChannelLoopStacks_BANK
 /* <<< part MUSIC_BANK */
 /* >>> part ADR_CHANNEL_LOOP_STACKS */
 #define ADR_CHANNEL_LOOP_STACKS ChannelLoopStacks_ADDR

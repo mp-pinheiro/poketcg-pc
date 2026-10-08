@@ -1,6 +1,3 @@
-/* >>> part BANK_SOUND_TIMER_HANDLER */
-#define BANK_SOUND_TIMER_HANDLER 0x42u
-/* <<< part BANK_SOUND_TIMER_HANDLER */
 /* >>> factory TimerHandler */
 void TimerHandler(void)
 {

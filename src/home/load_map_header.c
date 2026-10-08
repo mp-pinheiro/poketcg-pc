@@ -8,7 +8,7 @@
 /* <<< part includes */
 
 /* >>> part MAP_HEADERS_BANK */
-#define MAP_HEADERS_BANK 7u
+#define MAP_HEADERS_BANK MapHeaders_BANK
 /* <<< part MAP_HEADERS_BANK */
 /* >>> part MAP_HEADERS */
 #define MAP_HEADERS MapHeaders_ADDR

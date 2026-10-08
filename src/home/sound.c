@@ -4,13 +4,14 @@
 
 #include "home/music1.h"
 #include "generated/constants.h"
+#include "generated/rom.h"
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
 /* <<< part includes */
 
 /* >>> part BANK_CARD_GRAPHICS */
-#define BANK_CARD_GRAPHICS 0x31u
+#define BANK_CARD_GRAPHICS CardGraphics_BANK
 /* <<< part BANK_CARD_GRAPHICS */
 
 /* >>> factory Func_37c5 */
@@ -105,7 +106,7 @@ TileConvertWrapResult Func_37a5(uint16_t hl, uint16_t de)
  * and does not cover them. Without the restore the driver's internal switch
  * leaks: the overworld script interpreter then fetched its next opcode out of
  * bank $3D and ran a different command. */
-#define BANK_AUDIO_1 0x3Du
+#define BANK_AUDIO_1 SoundTimerHandler_BANK
 /* <<< part BANK_AUDIO_1 */
 
 /* >>> part enter_audio_bank */

@@ -34,7 +34,7 @@
 #define UPDATE_ADDR UpdateQueuedAnimations_ADDR
 /* <<< part UPDATE_ADDR */
 /* >>> part ANIMATIONS_BANK */
-#define ANIMATIONS_BANK 7u
+#define ANIMATIONS_BANK Animations_BANK
 /* <<< part ANIMATIONS_BANK */
 /* >>> part ANIMATIONS_ADDR */
 #define ANIMATIONS_ADDR Animations_ADDR

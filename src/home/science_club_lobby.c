@@ -11,7 +11,7 @@
 #define DATA_EBE7 Data_ebe7_ADDR
 /* <<< part DATA_EBE7 */
 /* >>> part DATA_EBE7_BANK */
-#define DATA_EBE7_BANK 3u
+#define DATA_EBE7_BANK Data_ebe7_BANK
 /* <<< part DATA_EBE7_BANK */
 /* >>> part includes_ScienceClubLobbyAfterDuelTable */
 #include "home/science_club_lobby.h"

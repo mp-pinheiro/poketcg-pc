@@ -2,6 +2,7 @@
 #include "home/time.h"
 
 #include "generated/constants.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
@@ -15,7 +16,7 @@
 #include "serial_track.h"
 /* <<< part includes_2 */
 /* >>> part BANK_SOUND_TIMER_HANDLER */
-#define BANK_SOUND_TIMER_HANDLER 0x3Du
+#define BANK_SOUND_TIMER_HANDLER SoundTimerHandler_BANK
 /* <<< part BANK_SOUND_TIMER_HANDLER */
 
 

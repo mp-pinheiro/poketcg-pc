@@ -13,7 +13,7 @@
 #include "home/duel.h"
 /* <<< part includes_2 */
 /* >>> part BANK__DrawPlayersPrizeAndBenchCards */
-#define BANK__DrawPlayersPrizeAndBenchCards 0x02u
+#define BANK__DrawPlayersPrizeAndBenchCards _DrawPlayersPrizeAndBenchCards_BANK
 /* <<< part BANK__DrawPlayersPrizeAndBenchCards */
 
 /* >>> part includes_DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK */
@@ -22,7 +22,7 @@
 #include "home/duel.h"
 /* <<< part includes_DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK */
 /* >>> part DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK */
-#define DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK 0x02u
+#define DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK _DrawPlayAreaToPlacePrizeCards_BANK
 /* <<< part DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK */
 
 /* >>> part includes_BANK__DrawYourOrOppPlayAreaScreen */
@@ -33,7 +33,7 @@
 #include "generated/wram.h"
 /* <<< part includes_BANK__DrawYourOrOppPlayAreaScreen */
 /* >>> part BANK__DrawYourOrOppPlayAreaScreen */
-#define BANK__DrawYourOrOppPlayAreaScreen 0x02u
+#define BANK__DrawYourOrOppPlayAreaScreen _DrawYourOrOppPlayAreaScreen_BANK
 /* <<< part BANK__DrawYourOrOppPlayAreaScreen */
 
 /* >>> part includes_BANK__DrawAIPeekScreen */
@@ -43,7 +43,7 @@
 #include "generated/wram.h"
 /* <<< part includes_BANK__DrawAIPeekScreen */
 /* >>> part BANK__DrawAIPeekScreen */
-#define BANK__DrawAIPeekScreen 0x02u
+#define BANK__DrawAIPeekScreen _DrawAIPeekScreen_BANK
 /* <<< part BANK__DrawAIPeekScreen */
 
 /* >>> part includes_BANK__SelectPrizeCards */
@@ -53,7 +53,7 @@
 #include "generated/wram.h"
 /* <<< part includes_BANK__SelectPrizeCards */
 /* >>> part BANK__SelectPrizeCards */
-#define BANK__SelectPrizeCards 0x02u
+#define BANK__SelectPrizeCards _SelectPrizeCards_BANK
 /* <<< part BANK__SelectPrizeCards */
 
 /* >>> part includes_BANK__HandlePeekSelection */
@@ -63,7 +63,7 @@
 #include "home/switch_rom.h"
 /* <<< part includes_BANK__HandlePeekSelection */
 /* >>> part BANK__HandlePeekSelection */
-#define BANK__HandlePeekSelection 0x02u
+#define BANK__HandlePeekSelection _HandlePeekSelection_BANK
 /* <<< part BANK__HandlePeekSelection */
 
 /* >>> part includes_tail */

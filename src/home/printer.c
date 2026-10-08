@@ -185,7 +185,7 @@
  * parameter bytes (x 3, y 3, y spacing 0, x spacing 4, 2 entries,
  * SYM_CURSOR_R $0F, SYM_SPACE $00, NULL handler) this menu hands
  * InitCardSelectionParams, which reads them through the $4000-$7FFF window. */
-#define PRINTER_CARD_LIST_SELECTION_PARAMS_BANK 2u
+#define PRINTER_CARD_LIST_SELECTION_PARAMS_BANK Data_ad05_BANK
 /* <<< part PRINTER_CARD_LIST_SELECTION_PARAMS_BANK */
 /* >>> part PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR */
 #define PRINTER_CARD_LIST_SELECTION_PARAMS_ADDR (Data_ad05_ADDR)

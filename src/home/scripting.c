@@ -13,7 +13,7 @@
 #include "home/map_events.h"
 /* <<< part includes */
 /* >>> part EVENT_VAR_MASKS_BANK */
-#define EVENT_VAR_MASKS_BANK 3u
+#define EVENT_VAR_MASKS_BANK EventVarMasks_BANK
 /* <<< part EVENT_VAR_MASKS_BANK */
 /* >>> part EVENT_VAR_MASKS */
 #define EVENT_VAR_MASKS EventVarMasks_ADDR
@@ -140,7 +140,7 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define CHALLENGE_HALL_NPC_COUNT 25u
 /* <<< part CHALLENGE_HALL_NPC_COUNT */
 /* >>> part CHALLENGE_HALL_NPCS_BANK */
-#define CHALLENGE_HALL_NPCS_BANK 3u
+#define CHALLENGE_HALL_NPCS_BANK ChallengeHallNPCs_BANK
 /* <<< part CHALLENGE_HALL_NPCS_BANK */
 /* >>> part CHALLENGE_HALL_NPCS_ADDR */
 #define CHALLENGE_HALL_NPCS_ADDR ChallengeHallNPCs_ADDR
@@ -302,7 +302,7 @@ static const uint8_t sAaronDeckIDs[] = {
 #include "generated/wram.h"
 /* <<< part includes_SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK */
 /* >>> part SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK */
-#define SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK 0x03u
+#define SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK ScriptCommand_ChooseStarterDeckMultichoice__multichoice_menu_args_BANK
 /* <<< part SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK */
 /* >>> part MULTICHOICE_MENU_ARGS */
 #define MULTICHOICE_MENU_ARGS (ScriptCommand_ChooseStarterDeckMultichoice__multichoice_menu_args_ADDR)
@@ -366,7 +366,7 @@ static const uint8_t sAaronDeckIDs[] = {
 #define MAN1_REQUESTED_CARDS_COUNT 5u
 /* <<< part MAN1_REQUESTED_CARDS_COUNT */
 /* >>> part CHALLENGE_CUP_PRIZE_CARDS_BANK */
-#define CHALLENGE_CUP_PRIZE_CARDS_BANK 3u
+#define CHALLENGE_CUP_PRIZE_CARDS_BANK ChallengeCupPrizeCards_BANK
 /* <<< part CHALLENGE_CUP_PRIZE_CARDS_BANK */
 /* >>> part CHALLENGE_CUP_PRIZE_CARDS_ADDR */
 #define CHALLENGE_CUP_PRIZE_CARDS_ADDR ChallengeCupPrizeCards_ADDR
@@ -375,13 +375,13 @@ static const uint8_t sAaronDeckIDs[] = {
 #define CHALLENGE_CUP_PRIZE_CARD_COUNT 15u
 /* <<< part CHALLENGE_CUP_PRIZE_CARD_COUNT */
 /* >>> part LEGENDARY_CARDS_BANK */
-#define LEGENDARY_CARDS_BANK 3u
+#define LEGENDARY_CARDS_BANK LegendaryCards_BANK
 /* <<< part LEGENDARY_CARDS_BANK */
 /* >>> part LEGENDARY_CARDS_ADDR */
 #define LEGENDARY_CARDS_ADDR LegendaryCards_ADDR
 /* <<< part LEGENDARY_CARDS_ADDR */
 /* >>> part LEGENDARY_CARD_EVENTS_BANK */
-#define LEGENDARY_CARD_EVENTS_BANK 3u
+#define LEGENDARY_CARD_EVENTS_BANK LegendaryCardEvents_BANK
 /* <<< part LEGENDARY_CARD_EVENTS_BANK */
 /* >>> part LEGENDARY_CARD_EVENTS_ADDR */
 #define LEGENDARY_CARD_EVENTS_ADDR LegendaryCardEvents_ADDR

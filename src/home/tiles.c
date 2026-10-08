@@ -72,7 +72,7 @@ void Copy1bppTiles(uint16_t *hl, uint16_t *de)
 /* <<< factory Copy1bppTiles */
 
 /* >>> part BANK_FONTS */
-#define BANK_FONTS 0x1du
+#define BANK_FONTS Fonts_BANK
 /* <<< part BANK_FONTS */
 /* >>> part TILE_SIZE */
 #define TILE_SIZE 16u

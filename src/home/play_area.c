@@ -72,7 +72,7 @@
 /* <<< part includes_BANK_OPEN_IN_PLAY_AREA_SCREEN */
 
 /* >>> part BANK_OPEN_IN_PLAY_AREA_SCREEN */
-#define BANK_OPEN_IN_PLAY_AREA_SCREEN 0x06u
+#define BANK_OPEN_IN_PLAY_AREA_SCREEN OpenInPlayAreaScreen_BANK
 /* <<< part BANK_OPEN_IN_PLAY_AREA_SCREEN */
 /* >>> part OPEN_IN_PLAY_AREA_TEXT_TABLE */
 #define OPEN_IN_PLAY_AREA_TEXT_TABLE OpenInPlayAreaScreen_TextTable_ADDR

@@ -2,6 +2,7 @@
 #include "home/play_animation.h"
 
 #include "generated/constants.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes */
@@ -12,14 +13,14 @@
 /* <<< part includes_2 */
 
 /* >>> part BANK_LOAD_DUEL_ANIM_BUFFER */
-#define BANK_LOAD_DUEL_ANIM_BUFFER 7u
+#define BANK_LOAD_DUEL_ANIM_BUFFER LoadDuelAnimationToBuffer_BANK
 /* <<< part BANK_LOAD_DUEL_ANIM_BUFFER */
 
 /* >>> part includes_BANK_UPDATE_QUEUED_ANIMATIONS */
 #include "home/load_animation.h"
 /* <<< part includes_BANK_UPDATE_QUEUED_ANIMATIONS */
 /* >>> part BANK_UPDATE_QUEUED_ANIMATIONS */
-#define BANK_UPDATE_QUEUED_ANIMATIONS 7u
+#define BANK_UPDATE_QUEUED_ANIMATIONS _UpdateQueuedAnimations_BANK
 /* <<< part BANK_UPDATE_QUEUED_ANIMATIONS */
 
 /* >>> part includes_tail */

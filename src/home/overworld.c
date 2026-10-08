@@ -172,18 +172,9 @@
 /* >>> part PC_MENU_PARAMS */
 #define PC_MENU_PARAMS PCMenuParams_ADDR
 /* <<< part PC_MENU_PARAMS */
-/* >>> part MENUS_BANK */
-/* Bank $04 holds the menu implementations and their data: the params tables
- * PauseMenuParams ($04:4D98) and PCMenuParams ($04:4DA9), InitAndPrintMenu
- * ($04:51E9), and every _PauseMenu_* body ($04:4059-$04:4548) with its labels
- * (StatusScreenLabels $04:4095). The asm reaches all of them by `farcall`,
- * which selects the callee's bank and restores the caller's on return
- * (overworld.asm:1151-1155, 1165-1199). */
-#define MENUS_BANK 0x04u
-/* <<< part MENUS_BANK */
 
 /* >>> part PAUSE_MENU_TEXT_LIST_BANK */
-#define PAUSE_MENU_TEXT_LIST_BANK 0x03u
+#define PAUSE_MENU_TEXT_LIST_BANK PauseMenuTextList_BANK
 /* <<< part PAUSE_MENU_TEXT_LIST_BANK */
 /* >>> part PAUSE_MENU_TEXT_LIST_ADDR */
 #define PAUSE_MENU_TEXT_LIST_ADDR PauseMenuTextList_ADDR
@@ -687,7 +678,7 @@ FuncC1A0Result Func_c1a0(uint16_t hl)
 void PauseMenu_Exit(void)
 {
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(MENUS_BANK);
+	BankswitchROM(_PauseMenu_Exit_BANK);
 	_PauseMenu_Exit();
 	BankswitchROM(saved_bank);
 }
@@ -996,7 +987,7 @@ void DisplayPauseMenu(void)
 {
 	uint8_t selected = wSelectedPauseMenuItem;
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(MENUS_BANK);
+	BankswitchROM(InitAndPrintMenu_BANK);
 	InitAndPrintMenu(PAUSE_MENU_PARAMS, selected);
 	BankswitchROM(saved_bank);
 }
@@ -1024,7 +1015,7 @@ FuncC8edResult Func_c8ed(uint16_t hl)
 void PauseMenu_Diary(void)
 {
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(MENUS_BANK);
+	BankswitchROM(_PauseMenu_Diary_BANK);
 	_PauseMenu_Diary();
 	BankswitchROM(saved_bank);
 }
@@ -1035,7 +1026,7 @@ void DisplayPCMenu(void)
 {
 	uint8_t selected = wSelectedPCMenuItem;
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(MENUS_BANK);
+	BankswitchROM(InitAndPrintMenu_BANK);
 	InitAndPrintMenu(PC_MENU_PARAMS, selected);
 	BankswitchROM(saved_bank);
 }
@@ -1060,7 +1051,7 @@ void Func_c268(void)
 void PauseMenu_Status(void)
 {
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(MENUS_BANK);
+	BankswitchROM(_PauseMenu_Status_BANK);
 	_PauseMenu_Status();
 	BankswitchROM(saved_bank);
 }
@@ -1365,7 +1356,7 @@ void PCMenu_CardAlbum(void)
 void PauseMenu_Config(void)
 {
 	uint8_t saved_bank = hBankROM;
-	BankswitchROM(MENUS_BANK);
+	BankswitchROM(_PauseMenu_Config_BANK);
 	_PauseMenu_Config();
 	BankswitchROM(saved_bank);
 }

@@ -383,7 +383,7 @@ FindBasicEnergyCardsInLocationResult FindBasicEnergyCardsInLocation(uint8_t a)
 		if (location.a != wTempAI)
 			continue;
 
-		uint8_t card_id = GetCardIDFromDeckIndex(e);
+		CardId card_id = GetCardIDFromDeckIndex(e);
 		if (card_id >= DOUBLE_COLORLESS_ENERGY)
 			continue;
 
@@ -658,13 +658,13 @@ FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
 		uint8_t outer_idx = gb_read8((uint16_t)(list + outer));
 		if (outer_idx == 0xFFu)
 			break;
-		uint8_t outer_id = GetCardIDFromDeckIndex(outer_idx);
+		CardId outer_id = GetCardIDFromDeckIndex(outer_idx);
 		uint8_t inner = (uint8_t)(outer + 1u);
 		for (;;) {
 			uint8_t inner_idx = gb_read8((uint16_t)(list + inner));
 			if (inner_idx == 0xFFu)
 				break;
-			uint8_t inner_id = GetCardIDFromDeckIndex(inner_idx);
+			CardId inner_id = GetCardIDFromDeckIndex(inner_idx);
 			if (inner_id == outer_id) {
 				uint8_t type = GetCardType(inner_id);
 				if (type < TYPE_ENERGY)

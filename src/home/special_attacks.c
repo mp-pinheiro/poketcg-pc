@@ -127,7 +127,7 @@ HandleSpecialAIAttacksResult HandleSpecialAIAttacks(void)
 {
 	uint8_t location = hTempPlayAreaLocation_ff9d;
 	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
-	uint8_t card = GetCardIDFromDeckIndex(arena.a);
+	CardId card = GetCardIDFromDeckIndex(arena.a);
 
 	switch (card) {
 	case NIDORANF:

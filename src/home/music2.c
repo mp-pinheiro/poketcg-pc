@@ -13,7 +13,7 @@
 /* <<< part includes_2 */
 
 /* >>> part MUSIC2_BANK */
-#define MUSIC2_BANK 0x3Eu
+#define MUSIC2_BANK Music2_Update_BANK
 /* <<< part MUSIC2_BANK */
 
 /* >>> part ADR_NumberOfSongs2 */

@@ -192,7 +192,7 @@ void GetAIScoreOfAttack(uint8_t a)
 		}
 	high_recoil_generic_checks:
 		{
-			uint8_t id = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+			CardId id = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 			uint8_t bench_damage = 20u;
 			if (id == CHANSEY)
 				bench_damage = 0u;
@@ -262,7 +262,7 @@ check_defending_can_ko:
 	{
 		uint8_t defender = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 		SwapTurn();
-		uint8_t defender_id = GetCardIDFromDeckIndex(defender);
+		CardId defender_id = GetCardIDFromDeckIndex(defender);
 		SwapTurn();
 		if (defender_id == SNORLAX)
 			goto handle_special_atks;

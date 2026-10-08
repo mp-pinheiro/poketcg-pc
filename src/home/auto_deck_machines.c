@@ -16,7 +16,7 @@
 #include "mem.h"
 /* <<< part includes_2 */
 /* >>> part AUTO_DECK_MACHINES_BANK */
-#define AUTO_DECK_MACHINES_BANK 0x06u
+#define AUTO_DECK_MACHINES_BANK AutoDeckMachineEntries_BANK
 /* <<< part AUTO_DECK_MACHINES_BANK */
 /* >>> part AUTO_DECK_MACHINE_ENTRIES */
 #define AUTO_DECK_MACHINE_ENTRIES AutoDeckMachineEntries_ADDR

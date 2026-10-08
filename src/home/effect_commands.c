@@ -2,6 +2,7 @@
 #include "home/effect_commands.h"
 
 #include "generated/hram.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
@@ -17,7 +18,7 @@
 /* <<< part includes_2 */
 
 /* >>> part BANK_EFFECT_COMMANDS */
-#define BANK_EFFECT_COMMANDS 0x06u
+#define BANK_EFFECT_COMMANDS EffectCommands_BANK
 /* <<< part BANK_EFFECT_COMMANDS */
 /* >>> part BANK_EFFECT_FUNCTIONS */
 #define BANK_EFFECT_FUNCTIONS 0x0Bu

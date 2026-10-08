@@ -80,7 +80,7 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "mem.h"
 /* <<< part includes_OVERWORLD_MAP_BANK */
 /* >>> part OVERWORLD_MAP_BANK */
-#define OVERWORLD_MAP_BANK 0x04u
+#define OVERWORLD_MAP_BANK OverworldMap_PlayerMovementPaths_BANK
 /* <<< part OVERWORLD_MAP_BANK */
 /* >>> part OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS */
 #define OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS OverworldMap_PlayerMovementPaths_ADDR

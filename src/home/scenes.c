@@ -137,7 +137,7 @@ static void write_mint_attributes(uint8_t b, uint8_t c)
 #include "mem.h"
 /* <<< part includes_SCENE_POINTERS_BANK */
 /* >>> part SCENE_POINTERS_BANK */
-#define SCENE_POINTERS_BANK 0x04u
+#define SCENE_POINTERS_BANK ScenePointers_BANK
 /* <<< part SCENE_POINTERS_BANK */
 /* >>> part SCENE_POINTERS_ADDR */
 #define SCENE_POINTERS_ADDR ScenePointers_ADDR

@@ -12,7 +12,7 @@
 #include "mem.h"
 /* <<< part includes */
 /* >>> part CHALLENGE_HALL_BANK */
-#define CHALLENGE_HALL_BANK 3u
+#define CHALLENGE_HALL_BANK ChallengeHallAfterDuelTable_BANK
 /* <<< part CHALLENGE_HALL_BANK */
 /* >>> part CHALLENGE_HALL_NPC_COUNT */
 #define CHALLENGE_HALL_NPC_COUNT 25u

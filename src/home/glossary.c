@@ -43,7 +43,7 @@
 #define GLOSSARY_TRANSITION_TABLE OpenGlossaryScreen_TransitionTable_ADDR /* bank 2: OpenGlossaryScreen_TransitionTable */
 #define GLOSSARY_DATA1 GlossaryData1_ADDR            /* bank 6: GlossaryData1 */
 #define GLOSSARY_DATA2 GlossaryData2_ADDR            /* bank 6: GlossaryData2 */
-#define GLOSSARY_BANK 6u
+#define GLOSSARY_BANK GlossaryData1_BANK
 
 /* glossary.asm:83-122 `.print_menu` */
 static void glossary_print_menu(void)

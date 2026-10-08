@@ -1,10 +1,21 @@
+/* >>> part includes */
+#include "home/sound.h"
+#include "home/frames.h"
+
+#include "home/music1.h"
+#include "generated/constants.h"
+#include "generated/hram.h"
+#include "generated/rom.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+/* <<< part includes */
 /* --- factory Func_37c5 */
 /* --- factory Func_37a5 */
 /* --- part BANK_AUDIO_1 */
 /* --- part enter_audio_bank */
 /* === part BANK_CARD_GRAPHICS */
 /* >>> part MUSIC_BANK */
-#define MUSIC_BANK 0x42u
+#define MUSIC_BANK ChannelLoopStacks_BANK
 /* <<< part MUSIC_BANK */
 /* >>> part enter_music_bank */
 static uint8_t enter_music_bank(void)

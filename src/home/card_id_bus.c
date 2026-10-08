@@ -30,7 +30,7 @@ CardId card_id_read_at(uint16_t address)
 /* >>> part card_id_write */
 void card_id_write(uint16_t *address, CardId id)
 {
-	gb_write8(*address, (uint8_t)id);
+	gb_write8(*address, (uint8_t)(id & 0xFFu));
 	*address = (uint16_t)(*address + 1u);
 #if PROFILE_FEATURE_NINE_BIT_CARD_IDS
 	gb_write8(*address, (uint8_t)(id >> 8));
@@ -118,3 +118,16 @@ void script_pointer_write(uint16_t address, uint8_t bank)
 #endif
 }
 /* <<< part script_pointer_write */
+
+/* >>> part card_id_compare_a */
+uint8_t card_id_compare_a(CardId id, CardId constant)
+{
+#if PROFILE_FEATURE_NINE_BIT_CARD_IDS
+	if ((id >> 8) != (constant >> 8))
+		return (uint8_t)(id >> 8);
+#else
+	(void)constant;
+#endif
+	return (uint8_t)(id & 0xFFu);
+}
+/* <<< part card_id_compare_a */

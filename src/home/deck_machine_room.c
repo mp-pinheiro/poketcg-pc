@@ -36,7 +36,7 @@
 #define CLUB_MAP_NAMES ClubMapNames_ADDR
 /* <<< part CLUB_MAP_NAMES */
 /* >>> part CLUB_MAP_NAMES_BANK */
-#define CLUB_MAP_NAMES_BANK 3u
+#define CLUB_MAP_NAMES_BANK ClubMapNames_BANK
 /* <<< part CLUB_MAP_NAMES_BANK */
 /* >>> part EVENT_AARON_BOOSTER_REWARD_OFFSET */
 #define EVENT_AARON_BOOSTER_REWARD_OFFSET 0x1Au

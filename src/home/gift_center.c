@@ -19,7 +19,7 @@
 /* GiftCenterMenu assembles at 04:4dba (poketcg.sym), so both of its local
  * tables resolve through ROM bank $04: .GiftCenterTextPointers at $4e0f and
  * .GiftCenterMenuParams at $4e17. */
-#define GIFT_CENTER_BANK 0x04u
+#define GIFT_CENTER_BANK GiftCenterMenu_BANK
 /* <<< part GIFT_CENTER_BANK */
 /* >>> part GIFT_CENTER_TEXT_POINTERS */
 #define GIFT_CENTER_TEXT_POINTERS (GiftCenterMenu__GiftCenterTextPointers_ADDR)

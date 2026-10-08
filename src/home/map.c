@@ -17,7 +17,7 @@
 #include "home/warp.h"
 /* <<< part includes_2 */
 /* >>> part BANK_HANDLE_MAP_WARP */
-#define BANK_HANDLE_MAP_WARP 7u
+#define BANK_HANDLE_MAP_WARP _HandleMapWarp_BANK
 /* <<< part BANK_HANDLE_MAP_WARP */
 
 /* >>> part includes_tail */
@@ -76,7 +76,7 @@
 /* <<< part includes_tail */
 
 /* >>> part BANK_EXECUTE_NPC_MOVEMENT */
-#define BANK_EXECUTE_NPC_MOVEMENT 0x03u
+#define BANK_EXECUTE_NPC_MOVEMENT ExecuteNPCMovement_BANK
 /* <<< part BANK_EXECUTE_NPC_MOVEMENT */
 
 /* >>> part permission_address */

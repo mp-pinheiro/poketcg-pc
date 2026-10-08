@@ -167,7 +167,7 @@ DuelCoreStateWideResult CountKnockedOutPokemon(void)
 	do {
 		uint8_t index = gb_read8(cards);
 		if (index != 0xff && gb_read8(hp) == 0) {
-			uint8_t id = GetCardIDFromDeckIndex(index);
+			CardId id = GetCardIDFromDeckIndex(index);
 			if (GetCardType(id) != TYPE_TRAINER)
 				b++;
 		}

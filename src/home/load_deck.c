@@ -11,7 +11,7 @@
 /* <<< part includes */
 
 /* >>> part BANK_DECK_DATA */
-#define BANK_DECK_DATA 0x0cu
+#define BANK_DECK_DATA DeckPointers_BANK
 /* <<< part BANK_DECK_DATA */
 /* >>> part DECK_POINTERS */
 #define DECK_POINTERS  DeckPointers_ADDR

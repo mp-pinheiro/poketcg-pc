@@ -293,8 +293,7 @@ HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c, uint8_t d, uint
 	for (d = 60u; d != 0u; d--)
 		DoFrame();
 	AIMakeDecisionResult result = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE, 0u, 0u, 0u, 0u);
-	return (HandleAIStrangeBehaviorResult){OPPACTION_DUEL_MAIN_SCENE, result.f,
-		result.c, result.d, result.e, hl};
+	return (HandleAIStrangeBehaviorResult){result.a, result.f, result.c, result.d, result.e, hl};
 }
 /* <<< factory HandleAIStrangeBehavior */
 
@@ -370,7 +369,7 @@ static HandleAIDamageSwapResult HandleAIDamageSwap_CheckForTargetInBench(void)
 	uint8_t without_energy = 0xffu;
 	for (uint8_t location = PLAY_AREA_BENCH_1; location != count; location++) {
 		uint8_t index = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD)).a;
-		uint8_t id = GetCardIDFromDeckIndex(index);
+		CardId id = GetCardIDFromDeckIndex(index);
 		if (id != CHANSEY && id != KANGASKHAN && id != SNORLAX && id != MR_MIME)
 			continue;
 		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location)).a < 20u)
@@ -404,7 +403,7 @@ HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f)
 	if (muk.f & 0x10u)
 		return (HandleAIDamageSwapResult){muk.a, muk.f};
 	uint8_t arena_index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
-	uint8_t arena_id = GetCardIDFromDeckIndex(arena_index);
+	CardId arena_id = GetCardIDFromDeckIndex(arena_index);
 	if (arena_id != ALAKAZAM && arena_id != KADABRA && arena_id != ABRA && arena_id != MR_MIME) {
 		uint8_t half_borrow = (uint8_t)((arena_id & 0x0fu) < (MR_MIME & 0x0fu));
 		uint8_t borrow = (uint8_t)(arena_id < MR_MIME);
@@ -507,8 +506,8 @@ HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
 	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
 	uint8_t c = PLAY_AREA_ARENA;
 	if (status & CNF_SLP_PRZ)
-		c++;
-	while (c != count) {
+		goto next_pokemon;
+	do {
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + c)).a;
 		gb_write8(WCE08_ADDR, deck_index);
 		hTempPlayAreaLocation_ff9d = c;
@@ -517,7 +516,7 @@ HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
 		if (wLoadedAttackCategory == POKEMON_POWER) {
 			TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2, 0u, 0u, 0u);
 			if (!(effect.f & 0x10u)) {
-				uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
+				CardId card_id = GetCardIDFromDeckIndex(deck_index);
 				if (card_id == VILEPLUME)
 					(void)HandleAIHeal(c);
 				else if (card_id == VENOMOTH)
@@ -533,8 +532,9 @@ HandleAIPkmnPowersResult HandleAIPkmnPowers(void)
 				}
 			}
 		}
+next_pokemon:
 		c++;
-	}
+	} while (c != count);
 	return (HandleAIPkmnPowersResult){c, 0xC0u};
 }
 /* <<< factory HandleAIPkmnPowers */
@@ -588,7 +588,7 @@ HandleAICowardiceResult HandleAICowardice(void)
 			return (HandleAICowardiceResult){c, 0xC0u};
 		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + c)).a;
 		wce08 = deck_index;
-		uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
+		CardId card_id = GetCardIDFromDeckIndex(deck_index);
 		/* `cp TENTACOOL` then `jr nc, .next`: a card whose id is below
 		 * Tentacool's leaves carry set and takes the "used Cowardice" path
 		 * without using anything (the ROM's own bug, kept). */

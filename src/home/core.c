@@ -26,6 +26,7 @@
 /* <<< part SYM_HP_NOK */
 /* >>> part includes_DUEL_ENTRY_SP */
 #include "home/duel.h"
+#include "home/card_id_bus.h"
 /* <<< part includes_DUEL_ENTRY_SP */
 
 /* >>> part DUEL_ENTRY_SP */
@@ -210,7 +211,7 @@ static uint32_t duel_save_total_size(void)
 /* <<< part includes_ANIM_DATA_BANK */
 
 /* >>> part ANIM_DATA_BANK */
-#define ANIM_DATA_BANK 7u
+#define ANIM_DATA_BANK AnimationCoordinatesIndex_BANK
 /* <<< part ANIM_DATA_BANK */
 /* >>> part ANIM_COORDS_INDEX_ADDR */
 #define ANIM_COORDS_INDEX_ADDR AnimationCoordinatesIndex_ADDR
@@ -1361,7 +1362,7 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 /* 01:52c5 PracticeDuelTextPointerTable (poketcg/poketcg.sym). `ld hl,
  * PracticeDuelTextPointerTable` resolves in the routine's own bank, which is
  * bank $01 for every callsite, so the pointer pair is read from there. */
-#define PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK 0x01u
+#define PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK PracticeDuelTextPointerTable_BANK
 /* <<< part PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK */
 /* >>> part PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR */
 #define PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR PracticeDuelTextPointerTable_ADDR
@@ -2517,7 +2518,7 @@ EnergyFlagsResult CheckEnergyFlagsNeededInList(uint8_t a)
 		if (deck_index == 0xffu)
 			return (EnergyFlagsResult){0xffu, 0u};
 
-		uint8_t energy = GetCardIDFromDeckIndex(deck_index);
+		CardId energy = GetCardIDFromDeckIndex(deck_index);
 		uint8_t flags;
 
 		if (energy == FIRE_ENERGY)
@@ -2958,7 +2959,7 @@ CoreCardListResult CreateEnergyCardListFromHand(uint8_t a)
 	(void)a;
 	while (remaining != 0u) {
 		uint8_t deck_index = gb_read8(hand++);
-		uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
+		CardId card_id = GetCardIDFromDeckIndex(deck_index);
 		if ((GetCardType(card_id) & TYPE_ENERGY) != 0u)
 			gb_write8(dst++, deck_index);
 		remaining--;
@@ -2975,7 +2976,7 @@ CoreCardListResult LookForCardIDInHand(uint8_t a)
 {
 	uint8_t count = GetTurnDuelistVariable(0xeeu).a;
 	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | 0x42u);
-	uint8_t last_id = 0u;
+	CardId last_id = 0u;
 	for (uint8_t i = 0; i < count; i++) {
 		uint8_t deck_index = gb_read8((uint16_t)(hand + i));
 		last_id = GetCardIDFromDeckIndex(deck_index);
@@ -3605,7 +3606,7 @@ void LoadDefendingPokemonColorWRAndPrizeCards(void)
 /* >>> factory CheckIfEnergyIsUseful */
 CheckIfEnergyIsUsefulResult CheckIfEnergyIsUseful(uint8_t a)
 {
-	uint8_t energy = GetCardIDFromDeckIndex(a);
+	CardId energy = GetCardIDFromDeckIndex(a);
 	if (energy == DOUBLE_COLORLESS_ENERGY || wTempCardType == TYPE_ENERGY_DOUBLE_COLORLESS)
 		return (CheckIfEnergyIsUsefulResult){0x90u};
 	uint8_t required = 0u;
@@ -5081,7 +5082,7 @@ loop_bench:
 			hl++;
 			if (deck_index == 0xFFu)
 				break;
-			uint8_t card_id = GetCardIDFromDeckIndex(deck_index);
+			CardId card_id = GetCardIDFromDeckIndex(deck_index);
 			if (card_id != wSamePokemonCardID)
 				continue;
 			uint8_t dam = GetCardDamageAndMaxHP(e).a;
@@ -8490,10 +8491,10 @@ CheckDamageToMrMimeResult CheckDamageToMrMime(uint8_t a, uint8_t f, uint8_t b, u
 	uint8_t original_a = a;
 	DuelistVarResult arena = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	SwapTurn();
-	uint8_t card_id = GetCardIDFromDeckIndex(arena.a);
+	CardId card_id = GetCardIDFromDeckIndex(arena.a);
 	SwapTurn();
 	if (card_id != MR_MIME)
-		return (CheckDamageToMrMimeResult){card_id, 0x10u};
+		return (CheckDamageToMrMimeResult){card_id_compare_a(card_id, MR_MIME), 0x10u};
 	CheckIfCanDamageDefendingPokemonResult check =
 		CheckIfCanDamageDefendingPokemon(original_a, 0xC0u, original_a, f, d, e, arena.hl);
 	if ((check.f & 0x10u) != 0u)
@@ -8929,12 +8930,12 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
 {
 	uint8_t selected_attack = wSelectedAttack;
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	uint8_t card_id = GetCardIDFromDeckIndex(arena.a);
+	CardId card_id = GetCardIDFromDeckIndex(arena.a);
 	uint8_t flags = 0x00u;
 	/* ai/core.asm:2049 `.no_carry: or a / ret`: the flags come from whatever
 	 * `a` held on the way there -- the card id, wSelectedAttack, or a
 	 * callee's exit -- never from wSelectedAttack alone. */
-	uint8_t last_a = card_id;
+	uint8_t last_a = card_id_compare_a(card_id, ELECTRODE_LV35);
 
 	if (card_id == MEW_LV23) {
 		last_a = selected_attack;

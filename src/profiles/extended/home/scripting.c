@@ -327,27 +327,14 @@ LoadOverworldResult LoadOverworld(uint8_t b, uint8_t c)
 }
 /* <<< factory LoadOverworld */
 /* >>> factory CallMapScriptPointerIfExists */
-/* scripting.asm:98-101 -- five bytes:
- *   call GetMapScriptPointer / ret nc / jp hl
- * Two exits, and they need DIFFERENT completion modes, which is why the cases
- * mix them:
- *   no script for this map slot (carry clear) -> `ret nc`, an ordinary return
- *   script found (carry set)                  -> `jp hl` transfers to the map
- *      script's own entry, so the case declares pre-ret at that address
- *
- * Neither `ret nc` nor `jp hl` touches a register, so both exits observe exactly
- * what GetMapScriptPointer produced -- and because `hl` IS the jump target,
- * comparing hl is what verifies the transfer. The target is ordinary script code,
- * not a `rst $20`, so no bytecode interpreter is involved on this boundary. */
-/* scripting.asm:98-101: `ret nc` when the map has no script in slot l,
- * otherwise `jp hl` into the entry, whose exit flags become the caller's. */
 CallMapScriptResult CallMapScriptPointerIfExists(uint8_t l)
 {
 	MapScriptResult r = GetMapScriptPointer(l);
 	if ((r.f & 0x10u) == 0u)
 		return (CallMapScriptResult){r.a, r.f, r.hl};
+	uint8_t saved_bank = hBankROM;
 	ScriptEntryRegs entered = ScriptEntryEnterWithBank(r.hl, r.a, r.f, r.a, 0u, 0u, 0u);
-	return (CallMapScriptResult){entered.a, entered.f, entered.hl};
+	return (CallMapScriptResult){saved_bank, r.f, entered.hl};
 }
 /* <<< factory CallMapScriptPointerIfExists */
 /* >>> factory Func_c9c7 */

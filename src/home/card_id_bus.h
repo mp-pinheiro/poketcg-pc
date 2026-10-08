@@ -38,4 +38,7 @@ uint16_t script_pointer_read(uint8_t *bank);
 /* >>> part script_pointer_write */
 void script_pointer_write(uint16_t address, uint8_t bank);
 /* <<< part script_pointer_write */
+/* >>> part card_id_compare_a */
+uint8_t card_id_compare_a(CardId id, CardId constant);
+/* <<< part card_id_compare_a */
 #endif

@@ -89,7 +89,7 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "mem.h"
 /* <<< part includes_BOOSTER_PACKS_BANK */
 /* >>> part BOOSTER_PACKS_BANK */
-#define BOOSTER_PACKS_BANK 0x07u
+#define BOOSTER_PACKS_BANK BoosterPack_ColosseumNeutral_BANK
 /* <<< part BOOSTER_PACKS_BANK */
 
 /* >>> factory GetCurrentRarityAmount */

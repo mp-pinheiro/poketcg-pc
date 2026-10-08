@@ -17,7 +17,7 @@
 #define TRUE 1u
 /* <<< part TRUE */
 /* >>> part BANK_ANIMATION_CORE */
-#define BANK_ANIMATION_CORE 0x07u
+#define BANK_ANIMATION_CORE _ResetAnimationQueue_BANK
 /* <<< part BANK_ANIMATION_CORE */
 
 /* >>> part includes_BANK_GAME_LOOP */
@@ -30,7 +30,7 @@
 #include "home/main_menu.h"
 /* <<< part includes_BANK_GAME_LOOP */
 /* >>> part BANK_GAME_LOOP */
-#define BANK_GAME_LOOP 0x04u
+#define BANK_GAME_LOOP _GameLoop_BANK
 /* <<< part BANK_GAME_LOOP */
 
 /* >>> part includes_MAP_SCRIPTS_BANK */

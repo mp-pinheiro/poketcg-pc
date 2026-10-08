@@ -147,7 +147,7 @@ uint8_t GetArenaCardColor(void)
 /* >>> factory HandleEnergyBurn */
 void HandleEnergyBurn(void)
 {
-	uint8_t card_id = deck_card_id(turn_duel_var(DUELVARS_ARENA_CARD));
+	CardId card_id = deck_card_id(turn_duel_var(DUELVARS_ARENA_CARD));
 	if (card_id != CHARIZARD)
 		return;
 	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(0);

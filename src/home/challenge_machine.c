@@ -119,7 +119,7 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "mem.h"
 /* <<< part includes_CHALLENGE_MACHINE_DATA_BANK_500 */
 /* >>> part CHALLENGE_MACHINE_DATA_BANK_500 */
-#define CHALLENGE_MACHINE_DATA_BANK_500 0x04u
+#define CHALLENGE_MACHINE_DATA_BANK_500 ChallengeMachine_OpponentDeckIDs_BANK
 /* <<< part CHALLENGE_MACHINE_DATA_BANK_500 */
 /* >>> part CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 */
 #define CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 ChallengeMachine_OpponentDeckIDs_ADDR

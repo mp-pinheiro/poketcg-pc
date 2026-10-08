@@ -572,7 +572,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 /* <<< part includes_BANK_DUEL_CORE */
 /* >>> part BANK_DUEL_CORE */
-#define BANK_DUEL_CORE 0x01u
+#define BANK_DUEL_CORE DisplayEnergyDiscardScreen_BANK
 /* <<< part BANK_DUEL_CORE */
 /* >>> part KADABRA_TYPE_ENERGY_PSYCHIC */
 #define KADABRA_TYPE_ENERGY_PSYCHIC 0x0du
@@ -588,7 +588,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA 0x00u
 /* <<< part Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA */
 /* >>> part Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE */
-#define Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE 0x01u
+#define Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE DisplayEnergyDiscardScreen_BANK
 /* <<< part Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE */
 /* >>> part Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC */
 #define Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC 0x0du
@@ -609,7 +609,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define SR_PLAY_AREA_ARENA 0x00u
 /* <<< part SR_PLAY_AREA_ARENA */
 /* >>> part SR_BANK_DUEL_CORE */
-#define SR_BANK_DUEL_CORE 0x01u
+#define SR_BANK_DUEL_CORE DisplayEnergyDiscardScreen_BANK
 /* <<< part SR_BANK_DUEL_CORE */
 /* >>> part SR_TYPE_ENERGY_WATER */
 #define SR_TYPE_ENERGY_WATER 0x0Bu
@@ -670,7 +670,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 /* <<< part includes_SAH_BANK_DUEL_CORE */
 /* >>> part SAH_BANK_DUEL_CORE */
-#define SAH_BANK_DUEL_CORE 0x01u
+#define SAH_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part SAH_BANK_DUEL_CORE */
 
 /* >>> part includes_RAH_BANK_DUEL_CORE */
@@ -681,7 +681,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 /* <<< part includes_RAH_BANK_DUEL_CORE */
 /* >>> part RAH_BANK_DUEL_CORE */
-#define RAH_BANK_DUEL_CORE 0x01u
+#define RAH_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part RAH_BANK_DUEL_CORE */
 
 /* >>> part includes_Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE */
@@ -700,7 +700,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 /* <<< part includes_Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE */
-#define Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
@@ -714,7 +714,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 /* <<< part includes_NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
-#define NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
@@ -728,7 +728,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 /* <<< part includes_MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
-#define MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
@@ -742,7 +742,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 /* <<< part includes_KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
-#define KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
@@ -762,7 +762,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "mem.h"
 /* <<< part includes_RV_BANK_DUEL_CORE */
 /* >>> part RV_BANK_DUEL_CORE */
-#define RV_BANK_DUEL_CORE 0x01u
+#define RV_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part RV_BANK_DUEL_CORE */
 /* >>> part RV_DUELVARS_ARENA_CARD_HP */
 #define RV_DUELVARS_ARENA_CARD_HP 0xC8u
@@ -777,7 +777,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "mem.h"
 /* <<< part includes_IF_BANK_DUEL_CORE */
 /* >>> part IF_BANK_DUEL_CORE */
-#define IF_BANK_DUEL_CORE 0x01u
+#define IF_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part IF_BANK_DUEL_CORE */
 
 /* >>> part includes_BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
@@ -788,7 +788,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 /* <<< part includes_BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
-#define BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 #define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
@@ -1106,7 +1106,7 @@ static void chain_lightning_damage_same_color_bench(void)
  * those tables read out of bank 0b. DECK_SIZE, DUELVARS_DECK_CARDS and
  * DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK are already defined earlier in this
  * statics block and are deliberately not repeated. */
-#define Pokedex_PlayerSelection_BANK_DUEL_CORE 0x01u
+#define Pokedex_PlayerSelection_BANK_DUEL_CORE InitAndDrawCardListScreenLayout_BANK
 /* <<< part Pokedex_PlayerSelection_BANK_DUEL_CORE */
 
 /* >>> part includes_HandleProphecyScreen_BANK_DUEL_CORE */
@@ -1146,7 +1146,7 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "mem.h"
 /* <<< part includes_HandleProphecyScreen_BANK_DUEL_CORE */
 /* >>> part HandleProphecyScreen_BANK_DUEL_CORE */
-#define HandleProphecyScreen_BANK_DUEL_CORE 0x01u
+#define HandleProphecyScreen_BANK_DUEL_CORE InitAndDrawCardListScreenLayout_BANK
 /* <<< part HandleProphecyScreen_BANK_DUEL_CORE */
 /* >>> part BankswitchROM_decl */
 void BankswitchROM(uint8_t bank);
@@ -2173,7 +2173,7 @@ CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_
 	for (uint8_t index = 0; index < DECK_SIZE; index++) {
 		if (gb_read8((uint16_t)(locations + index)) != 0x10u)
 			continue;
-		uint8_t card_id = GetCardIDFromDeckIndex(index);
+		CardId card_id = GetCardIDFromDeckIndex(index);
 		if (GetCardType(card_id) != a)
 			continue;
 		gb_write8(dst++, index);
@@ -2893,8 +2893,8 @@ void NidoranFCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 		hTemp_ffa0 = card;
 		if (card == 0xffu)
 			return;
-		uint8_t card_id = GetCardIDFromDeckIndex(card);
-		if ((uint8_t)card_id == NIDORANF || (uint8_t)card_id == NIDORANM)
+		CardId card_id = GetCardIDFromDeckIndex(card);
+		if (card_id == NIDORANF || card_id == NIDORANM)
 			return;
 	}
 }
@@ -3068,7 +3068,7 @@ CheckIfCardHasGrassEnergyAttachedResult CheckIfCardHasGrassEnergyAttached(uint8_
 	for (uint8_t index = 0; index < DECK_SIZE; index++) {
 		if (gb_read8((uint16_t)(locations.hl + index)) != e)
 			continue;
-		uint8_t card_id = GetCardIDFromDeckIndex(index);
+		CardId card_id = GetCardIDFromDeckIndex(index);
 		if (GetCardType(card_id) != TYPE_ENERGY_GRASS)
 			continue;
 		return (CheckIfCardHasGrassEnergyAttachedResult){
@@ -3443,7 +3443,7 @@ EnergyBurnCheckResult EnergyBurnCheck_Unreferenced(void)
     if (incapable.f & 0x10u)
         return (EnergyBurnCheckResult){0x00u, incapable.f};
     DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-    uint8_t card_id = GetCardIDFromDeckIndex(arena.a);
+    CardId card_id = GetCardIDFromDeckIndex(arena.a);
     if (card_id == 0x32u)
         return (EnergyBurnCheckResult){card_id, 0x00u};
     return (EnergyBurnCheckResult){card_id, 0x10u};
@@ -6754,7 +6754,7 @@ static uint8_t LookForCardsInDeck_Found(uint8_t d, uint8_t e)
 				return 1u;
 			break;
 		case SEARCHEFFECT_NIDORAN: {
-			uint8_t id = GetCardIDFromDeckIndex(index);
+			CardId id = GetCardIDFromDeckIndex(index);
 			if (id == NIDORANF || id == NIDORANM)
 				return 1u;
 			break;

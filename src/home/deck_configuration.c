@@ -299,7 +299,7 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #define F9CED_TRUE 0x01u
 /* <<< part F9CED_TRUE */
 /* >>> part F9CED_BANK_DUEL_CORE */
-#define F9CED_BANK_DUEL_CORE 0x01u
+#define F9CED_BANK_DUEL_CORE OpenCardPage_FromHand_BANK
 /* <<< part F9CED_BANK_DUEL_CORE */
 
 /* >>> part includes_PAD_SELECT */

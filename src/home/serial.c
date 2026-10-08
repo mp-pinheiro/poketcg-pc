@@ -4,6 +4,7 @@
 
 #include "generated/text_ids.h"
 #include "generated/constants.h"
+#include "generated/rom.h"
 #include "generated/wram.h"
 #include "home/printer.h"
 #include "mem.h"
@@ -27,7 +28,7 @@
 #define DUELVARS_DUELIST_TYPE  0xf1u
 /* <<< part DUELVARS_DUELIST_TYPE */
 /* >>> part BANK_LINK_OPP_TURN */
-#define BANK_LINK_OPP_TURN     0x01u
+#define BANK_LINK_OPP_TURN DoLinkOpponentTurn_BANK
 /* <<< part BANK_LINK_OPP_TURN */
 /* >>> part F_Z */
 #define F_Z                    0x80u

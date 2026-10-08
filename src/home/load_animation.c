@@ -14,7 +14,7 @@
 #include "home/sprite_animations.h"
 /* <<< part includes_2 */
 /* >>> part BANK_SPRITE_ANIMATIONS */
-#define BANK_SPRITE_ANIMATIONS 0x04u
+#define BANK_SPRITE_ANIMATIONS SpriteAnimations_BANK
 /* <<< part BANK_SPRITE_ANIMATIONS */
 
 /* >>> part includes_BANK_DRAW_PORTRAIT */
@@ -50,7 +50,7 @@
 #include "home/switch_rom.h"
 /* <<< part includes_BANK_LOAD_SCENE */
 /* >>> part BANK_LOAD_SCENE */
-#define BANK_LOAD_SCENE 0x04u
+#define BANK_LOAD_SCENE _LoadScene_BANK
 /* <<< part BANK_LOAD_SCENE */
 
 
@@ -74,7 +74,7 @@
 #define SPRITE_NULL_ANIMATION_POINTER_ADDR SpriteNullAnimationPointer_ADDR
 /* <<< part SPRITE_NULL_ANIMATION_POINTER_ADDR */
 /* >>> part SPRITE_NULL_ANIMATION_POINTER_BANK */
-#define SPRITE_NULL_ANIMATION_POINTER_BANK 0x20u
+#define SPRITE_NULL_ANIMATION_POINTER_BANK SpriteNullAnimationPointer_BANK
 /* <<< part SPRITE_NULL_ANIMATION_POINTER_BANK */
 
 /* >>> part gb_add */

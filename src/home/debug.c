@@ -19,10 +19,10 @@
 /* <<< part includes_2 */
 
 /* >>> part FUNC_80C64_BANK */
-#define FUNC_80C64_BANK 0x20u
+#define FUNC_80C64_BANK Func_80c64__menu_parameters_BANK
 /* <<< part FUNC_80C64_BANK */
 /* >>> part FUNC_80C64_MENU_PARAMS_ADDR */
-#define FUNC_80C64_MENU_PARAMS_ADDR CopyPalsToSRAMBuffer_ADDR
+#define FUNC_80C64_MENU_PARAMS_ADDR Func_80c64__menu_parameters_ADDR
 /* <<< part FUNC_80C64_MENU_PARAMS_ADDR */
 /* >>> part FUNC_80C64_WIN_LOSE_PRIZES_TEXT */
 #define FUNC_80C64_WIN_LOSE_PRIZES_TEXT 0x0385u
@@ -45,7 +45,7 @@
 /* <<< part includes_DEBUG_CREATE_BOOSTER_BANK */
 
 /* >>> part DEBUG_CREATE_BOOSTER_BANK */
-#define DEBUG_CREATE_BOOSTER_BANK 0x04u
+#define DEBUG_CREATE_BOOSTER_BANK Unknown_12919_BANK
 /* <<< part DEBUG_CREATE_BOOSTER_BANK */
 /* >>> part DEBUG_CREATE_BOOSTER_MENU_PARAMS */
 #define DEBUG_CREATE_BOOSTER_MENU_PARAMS Unknown_12919_ADDR

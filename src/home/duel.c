@@ -65,7 +65,7 @@ DeckCardResult _GetCardIDFromDeckIndex(uint8_t a)
 {
 	uint16_t deck = hWhoseTurn == PLAYER_TURN ? wPlayerDeck_ADDR : wOpponentDeck_ADDR;
 	CardId id = card_id_read_at(card_id_index_address(deck, a));
-	return (DeckCardResult){(uint8_t)id, (uint16_t)(deck + a)};
+	return (DeckCardResult){(uint8_t)(id & 0xFFu), (uint16_t)(deck + a)};
 }
 /* <<< factory _GetCardIDFromDeckIndex */
 
@@ -117,7 +117,7 @@ static uint8_t load_card_data_from_deck_index(uint8_t a, uint16_t buffer, void (
 	CardId id = GetCardIDFromDeckIndex(a);
 	load(id);
 	(void)ConvertSpecialTrainerCardToPokemon(a, buffer, id);
-	return (uint8_t)id;
+	return (uint8_t)(id & 0xFFu);
 }
 /* <<< part load_card_data_from_deck_index */
 
@@ -2646,11 +2646,11 @@ void SaveDuelStateToSRAM(void)
 	BankswitchSRAM(sDuelBuffer0_BANK);
 
 	DuelistVarResult r1 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	uint8_t turnCardId = GetCardIDFromDeckIndex(r1.a);
+	CardId turnCardId = GetCardIDFromDeckIndex(r1.a);
 	wTempTurnDuelistCardID = turnCardId;
 	SwapTurn();
 	DuelistVarResult r2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	uint8_t nonTurnCardId = GetCardIDFromDeckIndex(r2.a);
+	CardId nonTurnCardId = GetCardIDFromDeckIndex(r2.a);
 	wTempNonTurnDuelistCardID = nonTurnCardId;
 	SwapTurn();
 

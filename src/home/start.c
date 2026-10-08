@@ -109,7 +109,7 @@
 #include "runtime.h"
 /* <<< part includes_BANK_GAME_LOOP */
 /* >>> part BANK_GAME_LOOP */
-#define BANK_GAME_LOOP 0x01u
+#define BANK_GAME_LOOP GameLoop_BANK
 /* <<< part BANK_GAME_LOOP */
 /* >>> part rIF */
 #define rIF 0xFF0Fu

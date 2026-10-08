@@ -75,33 +75,6 @@ CheckIfHasCardIDInHandResult CheckIfHasCardIDInHand(CardId de)
 	}
 }
 /* <<< factory CheckIfHasCardIDInHand */
-/* >>> factory FindBasicEnergyCardsInLocation */
-FindBasicEnergyCardsInLocationResult FindBasicEnergyCardsInLocation(uint8_t a)
-{
-	wTempAI = a;
-	uint8_t count = 0u;
-	uint8_t e = 0u;
-	uint16_t hl = wDuelTempList_ADDR;
-	for (; e < DECK_SIZE; e++) {
-		DuelistVarResult location = GetTurnDuelistVariable(
-			(uint8_t)(DUELVARS_CARD_LOCATIONS + e));
-		if (location.a != wTempAI)
-			continue;
-
-		CardId card_id = GetCardIDFromDeckIndex(e);
-		if (card_id >= DOUBLE_COLORLESS_ENERGY)
-			continue;
-
-		gb_write8(hl++, e);
-		count++;
-	}
-	if (count == 0u)
-		return (FindBasicEnergyCardsInLocationResult){0u, 0x90u, 0u, e, hl};
-
-	gb_write8(hl, 0xffu);
-	return (FindBasicEnergyCardsInLocationResult){count, 0x00u, count, e, hl};
-}
-/* <<< factory FindBasicEnergyCardsInLocation */
 /* >>> factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */
 /* common.asm:4-45 */
 CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result CheckIfPlayerHasPokemonOtherThanMewtwoLv53(uint8_t b, uint8_t c, uint8_t d, uint16_t hl)
@@ -262,43 +235,6 @@ LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_Given
 	return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){wTempAIPokemonCard, f, r3.d};
 }
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
-/* >>> factory FindDuplicatePokemonCards */
-FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
-{
-	wTempAI = 0xFFu;
-	(void)CreateHandCardList(0u);
-
-	uint16_t list = wDuelTempList_ADDR;
-	uint8_t outer = 0u;
-	for (;;) {
-		uint8_t outer_idx = gb_read8((uint16_t)(list + outer));
-		if (outer_idx == 0xFFu)
-			break;
-		CardId outer_id = GetCardIDFromDeckIndex(outer_idx);
-		uint8_t inner = (uint8_t)(outer + 1u);
-		for (;;) {
-			uint8_t inner_idx = gb_read8((uint16_t)(list + inner));
-			if (inner_idx == 0xFFu)
-				break;
-			CardId inner_id = GetCardIDFromDeckIndex(inner_idx);
-			if (inner_id == outer_id) {
-				uint8_t type = GetCardType(inner_id);
-				if (type < TYPE_ENERGY)
-					wTempAI = inner_idx;
-				break;
-			}
-			inner = (uint8_t)(inner + 1u);
-		}
-		outer = (uint8_t)(outer + 1u);
-	}
-
-	uint8_t final_val = wTempAI;
-	uint8_t d = gb_read8(wDuelTempList_ADDR) != 0xFFu ? 0u : 0xC5u;
-	if (final_val == 0xFFu)
-		return (FindDuplicatePokemonCardsResult){final_val, 0x00u, d};
-	return (FindDuplicatePokemonCardsResult){final_val, 0x10u, d};
-}
-/* <<< factory FindDuplicatePokemonCards */
 /* --- factory PreparePrinterConnection */
 /* --- factory PrintDeckConfiguration */
 /* >>> factory ShowPromotionalCardScreen */
@@ -323,3 +259,5 @@ void ShowPromotionalCardScreen(CardId de)
 /* === factory AIPickEnergyCardToDiscard */
 /* === factory PickAttachedEnergyCardToRemove */
 /* === factory PickTwoAttachedEnergyCards */
+/* === factory FindBasicEnergyCardsInLocation */
+/* === factory FindDuplicatePokemonCards */

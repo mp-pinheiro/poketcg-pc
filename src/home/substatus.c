@@ -804,7 +804,7 @@ HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de)
 {
 	uint8_t e = (uint8_t)de;
 	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e));
-	uint8_t card = GetCardIDFromDeckIndex(arena.a);
+	CardId card = GetCardIDFromDeckIndex(arena.a);
 	if (card == MEW_LV8) {
 		DuelistVarResult stage = GetNonTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + e));
 		if (stage.a != 0u) {

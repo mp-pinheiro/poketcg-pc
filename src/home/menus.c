@@ -101,7 +101,7 @@
 #include "home/core.h"
 /* <<< part includes_CONTINUE_DUEL_BANK */
 /* >>> part CONTINUE_DUEL_BANK */
-#define CONTINUE_DUEL_BANK 0x01u
+#define CONTINUE_DUEL_BANK _ContinueDuel_BANK
 /* <<< part CONTINUE_DUEL_BANK */
 
 /* >>> part SYM_0 */

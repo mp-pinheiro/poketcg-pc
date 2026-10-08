@@ -11,7 +11,7 @@
 #include "mem.h"
 /* <<< part includes_2 */
 /* >>> part NPC_HEADER_POINTERS_BANK */
-#define NPC_HEADER_POINTERS_BANK 0x04u
+#define NPC_HEADER_POINTERS_BANK NPCHeaderPointers_BANK
 /* <<< part NPC_HEADER_POINTERS_BANK */
 /* >>> part NPC_HEADER_POINTERS_ADDR */
 #define NPC_HEADER_POINTERS_ADDR NPCHeaderPointers_ADDR
@@ -27,7 +27,7 @@
 #include "mem.h"
 /* <<< part includes_NPC_DATA_BANK */
 /* >>> part NPC_DATA_BANK */
-#define NPC_DATA_BANK 0x04u
+#define NPC_DATA_BANK NPCHeaderPointers_BANK
 /* <<< part NPC_DATA_BANK */
 
 /* >>> part includes_NPC_DUEL_CONFIGURATIONS_BANK */
@@ -35,7 +35,7 @@
 #include "mem.h"
 /* <<< part includes_NPC_DUEL_CONFIGURATIONS_BANK */
 /* >>> part NPC_DUEL_CONFIGURATIONS_BANK */
-#define NPC_DUEL_CONFIGURATIONS_BANK 0x04u
+#define NPC_DUEL_CONFIGURATIONS_BANK DeckIDDuelConfigurations_BANK
 /* <<< part NPC_DUEL_CONFIGURATIONS_BANK */
 /* >>> part NPC_DUEL_CONFIGURATIONS_ADDR */
 #define NPC_DUEL_CONFIGURATIONS_ADDR DeckIDDuelConfigurations_ADDR

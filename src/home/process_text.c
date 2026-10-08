@@ -12,7 +12,7 @@
 #include "home/write_number.h"
 /* <<< part includes */
 /* >>> part BANK_FONTS */
-#define BANK_FONTS 0x1Du
+#define BANK_FONTS Fonts_BANK
 /* <<< part BANK_FONTS */
 /* >>> part includes_SYM_SPACE */
 #include "home/text_box.h"

@@ -14,7 +14,7 @@
 #define ENERGY_CARD_LIST EnergyCardList_ADDR
 /* <<< part ENERGY_CARD_LIST */
 /* >>> part ENERGY_CARD_LIST_BANK */
-#define ENERGY_CARD_LIST_BANK 3u
+#define ENERGY_CARD_LIST_BANK EnergyCardList_BANK
 /* <<< part ENERGY_CARD_LIST_BANK */
 /* >>> part ENERGY_CARD_LIST_LEN */
 #define ENERGY_CARD_LIST_LEN 6u

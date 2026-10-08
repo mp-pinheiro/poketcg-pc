@@ -117,7 +117,7 @@ AITryToRetreatResult AITryToRetreat(uint8_t entry_a, uint8_t entry_f)
 	}
 
 	/* .check_id */
-	uint8_t arena_id = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+	CardId arena_id = GetCardIDFromDeckIndex(GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
 	if (arena_id == MYSTERIOUS_FOSSIL || arena_id == CLEFAIRY_DOLL) {
 		if (GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a < 2u) {
 			/* No bench: `pop af` then `scf` hands the caller's own a back
@@ -167,7 +167,7 @@ AITryToRetreatResult AITryToRetreat(uint8_t entry_a, uint8_t entry_f)
 			/* .choose_energy_discard */
 			uint16_t hl = wDuelTempList_ADDR;
 			uint8_t deck_index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
-			uint8_t id = GetCardIDFromDeckIndex(deck_index);
+			CardId id = GetCardIDFromDeckIndex(deck_index);
 			uint8_t c;
 			wTempCardID = id;
 			LoadCardDataToBuffer1_FromCardID(id);
@@ -537,7 +537,7 @@ active_cant_ko_1:
 		AIEncourageResult r = AIEncourage(2u);
 		a = r.a; f = r.f;
 		DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-		uint8_t arena_id = GetCardIDFromDeckIndex(arena.a);
+		CardId arena_id = GetCardIDFromDeckIndex(arena.a);
 		if (arena_id != PORYGON)
 			goto check_weakness_3;
 		CheckIfCanDamageDefendingPokemonResult damage = CheckIfCanDamageDefendingPokemon(e, f, b, c, d, e, hl);
@@ -627,7 +627,7 @@ bench_ko_success:
 check_defending_id:
 	v = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	SwapTurn();
-	uint8_t defending_id = GetCardIDFromDeckIndex(v.a);
+	CardId defending_id = GetCardIDFromDeckIndex(v.a);
 	SwapTurn();
 	if (defending_id == MR_MIME || defending_id == HITMONLEE) {
 		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
@@ -689,7 +689,7 @@ check_defending_id:
 
 check_active_id:
 	v = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	uint8_t active_id = GetCardIDFromDeckIndex(v.a);
+	CardId active_id = GetCardIDFromDeckIndex(v.a);
 	d = 0u;
 	if (active_id == MYSTERIOUS_FOSSIL || active_id == CLEFAIRY_DOLL) {
 		e = 0u;

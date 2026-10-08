@@ -17,13 +17,13 @@
 /* <<< part includes_2 */
 
 /* >>> part MUSIC1_BANK */
-#define MUSIC1_BANK 0x3Du
+#define MUSIC1_BANK Music1_Update_BANK
 /* <<< part MUSIC1_BANK */
 /* >>> part MUSIC2_BANK */
 /* poketcg.sym: Music1_Update is 3d:40e9 and Music2_Update is 3e:40e9 -- the
  * two drivers are parallel ROM copies at identical bank offsets, so the audio
  * tick's dispatch target depends on which of the two wCurSongBank maps in. */
-#define MUSIC2_BANK 0x3Eu
+#define MUSIC2_BANK Music2_Update_BANK
 /* <<< part MUSIC2_BANK */
 
 /* >>> part ADR_NumberOfSongs1 */

@@ -31,7 +31,7 @@
 /* <<< part includes_2 */
 
 /* >>> part BANK_DECK_AI_POINTER_TABLE */
-#define BANK_DECK_AI_POINTER_TABLE 5u
+#define BANK_DECK_AI_POINTER_TABLE DeckAIPointerTable_BANK
 /* <<< part BANK_DECK_AI_POINTER_TABLE */
 /* >>> part DECK_AI_POINTER_TABLE_ADDR */
 #define DECK_AI_POINTER_TABLE_ADDR DeckAIPointerTable_ADDR

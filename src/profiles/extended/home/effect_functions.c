@@ -667,26 +667,6 @@ void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 	}
 }
 /* <<< factory KrabbyCallForFamily_AISelectEffect */
-/* >>> factory CreateListOfEnergyAttachedToArena */
-CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_t a)
-{
-	uint8_t count = 0;
-	uint16_t locations = GetTurnDuelistVariable(0x00u).hl;
-	uint16_t dst = wDuelTempList_ADDR;
-	for (uint8_t index = 0; index < DECK_SIZE; index++) {
-		if (gb_read8((uint16_t)(locations + index)) != 0x10u)
-			continue;
-		CardId card_id = GetCardIDFromDeckIndex(index);
-		if (GetCardType(card_id) != a)
-			continue;
-		gb_write8(dst++, index);
-		count++;
-	}
-	gb_write8(dst, 0xFFu);
-	return (CreateListOfEnergyAttachedToArenaResult){
-		count, count, (uint16_t)(locations + DECK_SIZE), 0xC0u};
-}
-/* <<< factory CreateListOfEnergyAttachedToArena */
 /* --- factory ArcanineFlamethrower_CheckEnergy */
 /* --- factory ArcanineFlamethrower_DiscardEffect */
 /* >>> factory SolarPower_CheckUse */
@@ -751,42 +731,7 @@ uint16_t SwordsDanceEffect(void)
 /* --- factory NidorinaDoubleKick_AIEffect */
 /* --- factory NidorinoDoubleKick_AIEffect */
 /* --- factory NidoranFFurySwipes_AIEffect */
-/* >>> factory NidoranFCallForFamily_AISelectEffect */
-void NidoranFCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
-{
-	(void)CreateDeckCardList(c, de);
-	uint16_t hl = wDuelTempList_ADDR;
-	for (;;) {
-		uint8_t card = gb_read8(hl++);
-		hTemp_ffa0 = card;
-		if (card == 0xffu)
-			return;
-		CardId card_id = GetCardIDFromDeckIndex(card);
-		if (card_id == NIDORANF || card_id == NIDORANM)
-			return;
-	}
-}
-/* <<< factory NidoranFCallForFamily_AISelectEffect */
 /* --- factory PrimeapeFurySwipes_AIEffect */
-/* >>> factory CheckIfCardHasGrassEnergyAttached */
-/* effect_functions.asm:2303-2340 */
-CheckIfCardHasGrassEnergyAttachedResult CheckIfCardHasGrassEnergyAttached(uint8_t a)
-{
-	uint8_t e = (uint8_t)(a | CARD_LOCATION_PLAY_AREA);
-	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
-	for (uint8_t index = 0; index < DECK_SIZE; index++) {
-		if (gb_read8((uint16_t)(locations.hl + index)) != e)
-			continue;
-		CardId card_id = GetCardIDFromDeckIndex(index);
-		if (GetCardType(card_id) != TYPE_ENERGY_GRASS)
-			continue;
-		return (CheckIfCardHasGrassEnergyAttachedResult){
-			index, index == 0u ? 0x80u : 0x00u, e, (uint16_t)(locations.hl + index)};
-	}
-	return (CheckIfCardHasGrassEnergyAttachedResult){DECK_SIZE, 0x90u, e,
-		(uint16_t)(locations.hl + DECK_SIZE)};
-}
-/* <<< factory CheckIfCardHasGrassEnergyAttached */
 /* --- factory GrimerMinimizeEffect */
 /* >>> factory FocusEnergyEffect */
 /* effect_functions.asm:3509-3520 */
@@ -3297,3 +3242,4 @@ uint16_t HyperBeam_DiscardEffect(uint16_t hl)
 /* === factory Sprout_AISelectEffect */
 /* === factory NidoranFCallForFamily_PlayerSelectEffect */
 /* === factory Sprout_PlayerSelectEffect */
+/* === factory NidoranFCallForFamily_AISelectEffect */

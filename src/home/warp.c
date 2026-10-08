@@ -5,7 +5,7 @@
 #include "mem.h"
 /* <<< part includes */
 /* >>> part WARP_DATA_BANK */
-#define WARP_DATA_BANK 0x07u
+#define WARP_DATA_BANK WarpDataPointers_BANK
 /* <<< part WARP_DATA_BANK */
 /* >>> part WARP_DATA_POINTERS */
 #define WARP_DATA_POINTERS WarpDataPointers_ADDR

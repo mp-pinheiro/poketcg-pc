@@ -1,9 +1,6 @@
 /* >>> part BUFFER_ADDR */
 #define BUFFER_ADDR wDuelAnimBuffer_ADDR
 /* <<< part BUFFER_ADDR */
-/* >>> part ANIMATIONS_BANK */
-#define ANIMATIONS_BANK Animations_BANK
-/* <<< part ANIMATIONS_BANK */
 /* >>> part ANIM_ENTRY_SIZE */
 #define ANIM_ENTRY_SIZE 5u
 /* <<< part ANIM_ENTRY_SIZE */
