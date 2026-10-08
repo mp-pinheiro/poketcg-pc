@@ -992,6 +992,21 @@ HandleAutoDeckMenuResult HandleAutoDeckMenu(void)
 /* --- factory GiftCenter_SendCard */
 /* --- factory GiftCenter_SendDeck */
 /* --- factory HandleGiftCenter */
-/* === factory CheckIfSelectedDeckMachineEntryIsEmpty */
 /* === factory HandleDeckMachineSelection */
 /* === factory SafelySwitchToTempSRAMBank */
+/* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
+uint8_t CheckIfSelectedDeckMachineEntryIsEmpty(void)
+{
+	uint16_t entry = (uint16_t)(wMachineDeckPtrs_ADDR
+		+ (uint16_t)wSelectedDeckMachineEntry * 2u);
+	uint16_t deck = (uint16_t)(gb_read8(entry)
+		| (uint16_t)(gb_read8((uint16_t)(entry + 1u)) << 8));
+	uint16_t cards = (uint16_t)(deck + DECK_NAME_SIZE);
+
+	EnableSRAM();
+	uint8_t value = (uint8_t)(gb_read8(cards) | gb_read8((uint16_t)(cards + 1u)));
+	DisableSRAM();
+
+	return value ? 0u : 0x90u;
+}
+/* <<< factory CheckIfSelectedDeckMachineEntryIsEmpty */

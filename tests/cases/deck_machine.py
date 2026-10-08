@@ -1,5 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/deck_machine.asm."""
-from tests.cases._symbols import STACK_TOP, sym
+from tests.cases._symbols import STACK_TOP, const, sym, sym_pointer
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -15,8 +15,9 @@ CASES = {}
 # >>> factory CheckIfSelectedDeckMachineEntryIsEmpty
 CONTRACT["CheckIfSelectedDeckMachineEntryIsEmpty"] = {"compare": ("d", "e", "f"), "preserve": ("d", "e")}
 CASES["CheckIfSelectedDeckMachineEntryIsEmpty"] = [
-    {"wram": {sym("wSelectedDeckMachineEntry"): b"\x00", sym("wMachineDeckPtrs"): b"\x50\xa3"}, "sram": {0: {sym("sSavedDeck1") + 0x17: b"\x7f\x00"}}, "ramg": False},
-    dict(POISON, wram={sym("wSelectedDeckMachineEntry"): b"\x01", sym("wMachineDeckPtrs"): b"\x00\x00\x80\xa3"}, sram={0: {sym("sSavedDeck1Cards") + 0x2F: b"\x00\x7f"}}, ramg=False),
+    {"wram": {sym("wSelectedDeckMachineEntry"): b"\x00", sym("wMachineDeckPtrs"): sym_pointer("sSavedDeck1")}, "sram": {0: {sym("sSavedDeck1") + const("DECK_NAME_SIZE") - 1: b"\x7f\x00"}}, "ramg": False},
+    dict(POISON, wram={sym("wSelectedDeckMachineEntry"): b"\x01", sym("wMachineDeckPtrs"): b"\x00\x00" + sym_pointer("sSavedDeck2")}, sram={0: {sym("sSavedDeck2") + const("DECK_NAME_SIZE") - 1: b"\x00\x7f"}}, ramg=False),
+    {"wram": {sym("wSelectedDeckMachineEntry"): b"\x00", sym("wMachineDeckPtrs"): sym_pointer("sSavedDeck1")}, "sram": {0: {sym("sSavedDeck1") + const("DECK_NAME_SIZE"): b"\x00\x7f"}}, "ramg": False},
 ]
 # <<< factory CheckIfSelectedDeckMachineEntryIsEmpty
 

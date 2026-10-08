@@ -2446,11 +2446,10 @@ CASES.update({
     ],
 })
 MUTATIONS.update({
-    'CheckIfSelectedDeckMachineEntryIsEmpty': {   'source_symbol': 'CheckIfSelectedDeckMachineEntryIsEmpty',
-        'before': 'uint16_t name = (uint16_t)(deck + DECK_NAME_SIZE);',
-        'after': 'uint16_t name = (uint16_t)(deck + DECK_NAME_SIZE - 1u);',
-        'case_ids': [   'CheckIfSelectedDeckMachineEntryIsEmpty-0',
-                        'CheckIfSelectedDeckMachineEntryIsEmpty-1'],
+    'CheckIfSelectedDeckMachineEntryIsEmpty': {'source_symbol': 'CheckIfSelectedDeckMachineEntryIsEmpty',
+        'before': '\tuint8_t value = (uint8_t)(gb_read8(cards) | gb_read8((uint16_t)(cards + 1u)));',
+        'after': '\tuint8_t value = gb_read8(cards);',
+        'case_ids': ['CheckIfSelectedDeckMachineEntryIsEmpty-2'],
         'source': 'src/profiles/extended/home/deck_machine.c'},
     'CheckIfHasEnoughCardsToBuildDeck': {'source_symbol': 'CheckIfHasEnoughCardsToBuildDeck', 'before': 'if (owned == 0u || owned == CARD_NOT_OWNED)', 'after': 'if (owned == 0u && owned == CARD_NOT_OWNED)', 'case_ids': ['CheckIfHasEnoughCardsToBuildDeck-0', 'CheckIfHasEnoughCardsToBuildDeck-2', 'CheckIfHasEnoughCardsToBuildDeck-3'], 'source': 'src/profiles/extended/home/deck_machine.c'},
     'GetSavedDeckCount': {'source_symbol': 'GetSavedDeckCount', 'before': '\twNumSavedDecks = count;', 'after': '\twNumSavedDecks = (uint8_t)((count) ^ 1u);', 'case_ids': ['GetSavedDeckCount-0'], 'source': 'src/profiles/extended/home/deck_machine.c'},
