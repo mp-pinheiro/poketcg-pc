@@ -36,8 +36,8 @@ bootstrap:
     make -C poketcg DEBUG=1
     python3 tools/verify_oracle_artifacts.py
 
-bootstrap-extended:
-    python3 tools/bootstrap_extended.py
+bootstrap-profile PROFILE:
+    python3 tools/bootstrap_profile.py --profile {{PROFILE}}
 
 
 # Per-clone VCS setup: jj --repo config lives outside the repo, so a fresh
@@ -142,11 +142,33 @@ build:
 build-extended: extended-configure
     ninja {{ninja_jobs}} -C {{build_dir}} poketcg-extended poketcg_extended_probe
 
+
+build-profile PROFILE:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    profile={{PROFILE}}
+    export POKETCG_PROFILE="$profile"
+    binary_path="$(python3 tools/profile_path.py --profile "$profile" binary)"
+    probe_path="$(python3 tools/profile_path.py --profile "$profile" probe)"
+    build_dir="${POKETCG_BUILD:-$(dirname "$binary_path")}"
+    export POKETCG_BUILD="$build_dir"
+    upper="$(printf '%s' "$profile" | tr '[:lower:]' '[:upper:]')"
+    pack_path="$(python3 tools/profile_path.py --profile "$profile" pack)"
+    default_profile="$(python3 tools/profile_path.py default)"
+    args=(-G Ninja -B "$build_dir" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPORT_FILES="")
+    args+=("-DPOKETCG_PROFILE_${upper}_DATA_PACK=${pack_path}")
+    if [[ "$profile" != "$default_profile" ]]; then
+        args+=("-DPOKETCG_ENABLE_${upper}=ON")
+    fi
+    just progress-inventory
+    python3 tools/gen_data.py --sparse-pack --verify
+    cmake "${args[@]}"
+    ninja {{ninja_jobs}} -C "$build_dir" "$(basename "$binary_path")" "$(basename "$probe_path")"
 # Regenerate the Extended inventory and sparse pack, then configure the Extended targets.
 extended-configure:
     POKETCG_PROFILE=extended just progress-inventory
     POKETCG_PROFILE=extended python3 tools/gen_data.py --sparse-pack --verify --pack {{build_dir}}/completion/data-pack-extended.bin --pack-manifest {{build_dir}}/completion/data-pack-extended.json
-    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_ENABLE_EXTENDED=ON -DPOKETCG_DATA_PACK_EXTENDED="{{build_dir}}/completion/data-pack-extended.bin" -DPORT_FILES=""
+    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_ENABLE_EXTENDED=ON -DPOKETCG_PROFILE_EXTENDED_DATA_PACK="{{build_dir}}/completion/data-pack-extended.bin" -DPORT_FILES=""
 
 # Configure a private Extended build directory without touching the shared inventory or pack
 # (the probe does not load the pack; port lanes use this before `just extended-check`).
@@ -185,7 +207,7 @@ build-profiles:
     POKETCG_PROFILE=extended just progress-inventory
     POKETCG_PROFILE=vanilla python3 tools/gen_data.py --sparse-pack --verify --pack {{build_dir}}/completion/data-pack.bin --pack-manifest {{build_dir}}/completion/data-pack.json
     POKETCG_PROFILE=extended python3 tools/gen_data.py --sparse-pack --verify --pack {{build_dir}}/completion/data-pack-extended.bin --pack-manifest {{build_dir}}/completion/data-pack-extended.json
-    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_ENABLE_EXTENDED=ON -DPOKETCG_ENABLE_LAUNCHER=ON -DPOKETCG_DATA_PACK="{{build_dir}}/completion/data-pack.bin" -DPOKETCG_DATA_PACK_EXTENDED="{{build_dir}}/completion/data-pack-extended.bin" -DPORT_FILES=""
+    cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_ENABLE_EXTENDED=ON -DPOKETCG_ENABLE_LAUNCHER=ON -DPOKETCG_DATA_PACK="{{build_dir}}/completion/data-pack.bin" -DPOKETCG_PROFILE_EXTENDED_DATA_PACK="{{build_dir}}/completion/data-pack-extended.bin" -DPORT_FILES=""
     ninja -C {{build_dir}} poketcg poketcg_probe poketcg-extended poketcg_extended_probe poketcg-launcher
 
 debug-build:
@@ -260,7 +282,7 @@ oracle-diff-group GROUP: build
 oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
     python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath {{profile_rom}})" --symbols "$(realpath {{profile_sym}})" --probe "$(realpath {{profile_probe}})" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 
-oracle-fn-all: oracle-build-gbref build-barrier lint-adapters lint-blocks lint-placement
+oracle-fn-all: oracle-build-gbref build-barrier lint-adapters lint-blocks lint-placement lint-card-ids
     python3 tools/oracle/fn_all.py --rom "$(realpath {{profile_rom}})" --symbols "$(realpath {{profile_sym}})" --probe "$(realpath {{profile_probe}})" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 
 oracle-fn-gate: oracle-health-gbref oracle-fn-all
@@ -339,6 +361,9 @@ lint-blocks:
 lint-placement:
     python3 tools/lint_placement.py
 
+
+lint-card-ids:
+    python3 tools/lint_card_ids.py
 # Reject hand-typed constants, text ids and data addresses that disagree with the disassembly.
 lint-constants:
     python3 tools/lint_constants.py
@@ -443,7 +468,7 @@ extended-animation-gate:
     python3 tools/extended_animation.py
 
 extended-fixes-gate:
-    python3 tools/extended_fixes.py
+    python3 tools/profile_fixes.py --profile extended
 
 extended-reference-gate:
     python3 tools/extended_reference.py

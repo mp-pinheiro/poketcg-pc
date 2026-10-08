@@ -233,10 +233,12 @@ def mutation_source(profile: Profile, basename: str, symbol: str, before: str, r
     patch = parse(fragment.read_text(), fragment)
     if any(patch.block(name) is not None for name in (symbol, symbol.replace(".", "_"))):
         return fragment
+    base = parse(shared.read_text(), shared)
+    removed = {directive.name for directive in patch.directives if directive.op == "---"}
+    if any(base.block(name) is not None and name not in removed for name in (symbol, symbol.replace(".", "_"))):
+        return shared
     if any(before in "\n".join(block.body) for block in patch.blocks):
         return fragment
-    removed = {directive.name for directive in patch.directives if directive.op == "---"}
-    base = parse(shared.read_text(), shared)
     if any(block.name in removed and before in "\n".join(block.body) for block in base.blocks):
         return fragment
     return shared

@@ -110,7 +110,8 @@
         "case_namespace": "tests/profiles/extended/cases",
         "receipt_namespace": "tools/oracle/mutation_receipts/extended",
         "hatch_registry": "tests/profiles/extended/hatches.py",
-        "hatch_ratchet": "tools/oracle/hatch_ratchet_extended.json"
+        "hatch_ratchet": "tools/oracle/hatch_ratchet_extended.json",
+        "fix_receipt_namespace": "tools/oracle/fix_receipts"
       },
       "save": {
         "tag": "EXTD",

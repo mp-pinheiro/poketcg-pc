@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from tools.extended_fixes import SCOREBOARD, case_routines, scoreboard_status
+from tools.profile_fixes import case_routines, scoreboard_path, scoreboard_status
 from tools.profiles import get_profile
 
 CONTRACT = ROOT / "profiles" / "extended" / "presentation.toml"
@@ -28,9 +28,10 @@ CONTRACT = ROOT / "profiles" / "extended" / "presentation.toml"
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--contract", type=Path, default=CONTRACT)
-    parser.add_argument("--scoreboard", type=Path, default=SCOREBOARD)
+    parser.add_argument("--scoreboard", type=Path)
     args = parser.parse_args()
     profile = get_profile("extended", ROOT)
+    args.scoreboard = args.scoreboard or scoreboard_path(profile)
     contract = tomllib.loads(args.contract.read_text())
     surfaces = contract.get("surfaces")
     if not isinstance(surfaces, list) or not surfaces:

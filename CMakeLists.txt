@@ -10,25 +10,50 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "" FORCE)
 endif()
 
-set(POKETCG_DISASM "${CMAKE_SOURCE_DIR}/poketcg" CACHE PATH "pret/poketcg checkout")
-set(POKETCG_EXTENDED_DISASM "${CMAKE_SOURCE_DIR}/poketcg-extended" CACHE PATH "Extended source checkout")
-set(POKETCG_DATA_PACK "" CACHE FILEPATH "vanilla sparse production data pack")
-set(POKETCG_DATA_PACK_EXTENDED "" CACHE FILEPATH "Extended sparse production data pack")
-set(POKETCG_EXTENDED_INVENTORY "${CMAKE_SOURCE_DIR}/site/data/extended/inventory.json" CACHE FILEPATH "Extended routine inventory")
+set(POKETCG_DISASM "${CMAKE_SOURCE_DIR}/poketcg" CACHE PATH "default profile source checkout")
+set(POKETCG_DATA_PACK "" CACHE FILEPATH "default profile sparse production data pack")
 set(PORT_FILES "" CACHE STRING "semicolon-separated pret basenames to build; empty = all")
-option(POKETCG_ENABLE_EXTENDED "build the Extended profile targets" OFF)
 option(POKETCG_ENABLE_LAUNCHER "build the profile chooser" OFF)
 option(POKETCG_DEBUG_MENU "enable the host playtest debug menu" OFF)
 option(POKETCG_TRACE "record function entries in the ported routines" OFF)
 
+
 find_package(Threads REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
+execute_process(
+  COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/profile_path.py" default
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  OUTPUT_VARIABLE POKETCG_DEFAULT_PROFILE
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND_ERROR_IS_FATAL ANY)
+execute_process(
+  COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/profile_path.py" profiles
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  OUTPUT_VARIABLE POKETCG_PROFILE_NAMES
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND_ERROR_IS_FATAL ANY)
+foreach(profile IN LISTS POKETCG_PROFILE_NAMES)
+  if(NOT profile STREQUAL POKETCG_DEFAULT_PROFILE)
+    string(TOUPPER "${profile}" profile_upper)
+    set(enable_var "POKETCG_ENABLE_${profile_upper}")
+    option(${enable_var} "build the ${profile} profile targets" OFF)
+  endif()
+endforeach()
+execute_process(
+  COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/profile_path.py" sym --profile "${POKETCG_DEFAULT_PROFILE}"
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  OUTPUT_VARIABLE POKETCG_CATALOG_DEFAULT_SYM
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND_ERROR_IS_FATAL ANY)
+get_filename_component(POKETCG_DEFAULT_SYM_NAME "${POKETCG_CATALOG_DEFAULT_SYM}" NAME)
+set(POKETCG_DEFAULT_SYM "${POKETCG_DISASM}/${POKETCG_DEFAULT_SYM_NAME}")
 
 file(GLOB SHARED_HOME_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/home/*.c")
 file(GLOB SHARED_PROBE_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/probe/*.c")
 file(GLOB SHARED_HOME_HEADERS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/home/*.h")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-  "${CMAKE_SOURCE_DIR}/profiles/profiles.json" "${CMAKE_SOURCE_DIR}/tools/compose_profile.py")
+  "${CMAKE_SOURCE_DIR}/profiles/profiles.json" "${CMAKE_SOURCE_DIR}/tools/profile_path.py"
+  "${CMAKE_SOURCE_DIR}/tools/compose_profile.py")
 
 function(profile_sources profile out_dir home_out probe_out headers_out profile_root_out compose_out)
   execute_process(
@@ -87,6 +112,16 @@ function(profile_sources profile out_dir home_out probe_out headers_out profile_
   set(${headers_out} ${headers} PARENT_SCOPE)
   set(${profile_root_out} "${profile_root}" PARENT_SCOPE)
   set(${compose_out} ${composed} PARENT_SCOPE)
+endfunction()
+
+function(profile_catalog_path profile kind output)
+  execute_process(
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/profile_path.py" "${kind}" --profile "${profile}"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    OUTPUT_VARIABLE value
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    COMMAND_ERROR_IS_FATAL ANY)
+  set(${output} "${value}" PARENT_SCOPE)
 endfunction()
 
 function(add_poketcg_profile profile)
@@ -150,12 +185,12 @@ function(add_poketcg_profile profile)
     VERBATIM)
   set(layout_target "gen_layout_${profile}")
   add_custom_target(${layout_target} DEPENDS ${generated_headers} ${constant_headers} "${profile_header}")
-  if(profile STREQUAL "vanilla")
+  if(profile STREQUAL POKETCG_DEFAULT_PROFILE)
     add_custom_target(gen_layout DEPENDS ${layout_target})
   endif()
 
   set(save_import_sources "")
-  if(profile STREQUAL "extended")
+  if(PROFILE_ROOT AND EXISTS "${PROFILE_ROOT}/host/save_import.c")
     set(save_import_header "${profile_generated}/save_import_layout.h")
     file(GLOB save_import_inputs CONFIGURE_DEPENDS
       "${POKETCG_DISASM}/src/constants/*.asm" "${POKETCG_DISASM}/src/text/*.asm"
@@ -163,11 +198,11 @@ function(add_poketcg_profile profile)
     add_custom_command(
       OUTPUT "${save_import_header}"
       COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_save_import.py"
-              --vanilla-sym "${POKETCG_DISASM}/poketcg.sym" --extended-sym "${PROFILE_SYM}"
+              --vanilla-sym "${POKETCG_DEFAULT_SYM}" --extended-sym "${PROFILE_SYM}"
               --vanilla-disasm "${POKETCG_DISASM}" --extended-disasm "${PROFILE_DISASM}"
               --out "${save_import_header}"
       DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_save_import.py" "${CMAKE_SOURCE_DIR}/tools/gen_constants.py"
-              "${POKETCG_DISASM}/poketcg.sym" "${PROFILE_SYM}" ${save_import_inputs}
+              "${POKETCG_DEFAULT_SYM}" "${PROFILE_SYM}" ${save_import_inputs}
       COMMENT "gen_save_import: ${profile}"
       VERBATIM)
     set(save_import_sources "${PROFILE_ROOT}/host/save_import.c" "${save_import_header}")
@@ -268,31 +303,32 @@ function(add_poketcg_profile profile)
     set(PROBE_SOURCES ${filtered_probe})
   endif()
 
-  set(gbmem_target "gbmem")
-  set(probe_target "poketcg_probe")
-  set(shell_target "poketcg")
-  if(profile STREQUAL "extended")
-    set(gbmem_target "gbmem_extended")
-    set(probe_target "poketcg_extended_probe")
-    set(shell_target "poketcg-extended")
+  if(profile STREQUAL POKETCG_DEFAULT_PROFILE)
+    set(gbmem_target "gbmem")
+  else()
+    set(gbmem_target "gbmem_${profile}")
   endif()
+  set(probe_target "${PROFILE_PROBE}")
+  set(shell_target "${PROFILE_BINARY}")
 
   set(gbmem_sources src/mem.c src/ppu.c src/apu.c src/printer_sink.c src/runtime_events.c src/trace.c
                     src/bank_guard.c src/link.c src/isr.c src/serial_track.c src/widescreen.c ${HOME_SOURCES})
-  if(profile STREQUAL "extended")
-    list(REMOVE_ITEM gbmem_sources src/link.c src/serial_track.c)
-    list(APPEND gbmem_sources "${PROFILE_ROOT}/host/link.c" "${PROFILE_ROOT}/host/serial_track.c")
-  endif()
+  foreach(host_source IN ITEMS link serial_track)
+    if(PROFILE_ROOT AND EXISTS "${PROFILE_ROOT}/host/${host_source}.c")
+      list(REMOVE_ITEM gbmem_sources "src/${host_source}.c")
+      list(APPEND gbmem_sources "${PROFILE_ROOT}/host/${host_source}.c")
+    endif()
+  endforeach()
   if(POKETCG_DEBUG_MENU)
     list(APPEND gbmem_sources src/debug_cheats.c)
   endif()
   if(NOT PORT_FILES)
     list(APPEND gbmem_sources "${bank_guard_source}")
   endif()
-  if(profile STREQUAL "extended")
-    add_library(${gbmem_target} STATIC EXCLUDE_FROM_ALL ${gbmem_sources})
-  else()
+  if(profile STREQUAL POKETCG_DEFAULT_PROFILE)
     add_library(${gbmem_target} STATIC ${gbmem_sources})
+  else()
+    add_library(${gbmem_target} STATIC EXCLUDE_FROM_ALL ${gbmem_sources})
   endif()
   add_dependencies(${gbmem_target} ${layout_target} ${compose_target})
   target_include_directories(${gbmem_target} PUBLIC
@@ -317,10 +353,10 @@ function(add_poketcg_profile profile)
   endforeach()
   set(probe_root "${profile_build_root}/probe")
   file(GENERATE OUTPUT "${probe_root}/probe_groups.h" CONTENT "${probe_groups}")
-  if(profile STREQUAL "extended")
-    add_executable(${probe_target} EXCLUDE_FROM_ALL src/probe.c src/probe_table.c ${PROBE_SOURCES})
-  else()
+  if(profile STREQUAL POKETCG_DEFAULT_PROFILE)
     add_executable(${probe_target} src/probe.c src/probe_table.c ${PROBE_SOURCES})
+  else()
+    add_executable(${probe_target} EXCLUDE_FROM_ALL src/probe.c src/probe_table.c ${PROBE_SOURCES})
   endif()
   target_include_directories(${probe_target} PRIVATE "${probe_root}" "${profile_build_root}" "${CMAKE_SOURCE_DIR}/src")
   add_dependencies(${probe_target} ${compose_target})
@@ -329,10 +365,10 @@ function(add_poketcg_profile profile)
   set_target_properties(${probe_target} PROPERTIES ENABLE_EXPORTS ON)
 
   set(shell_sources src/main.c src/checkpoint.c src/digest.c src/persistence.c src/profile.c src/pc_options.c src/presentation.c src/runtime.c src/shell.c src/state_dump.c ${save_import_sources})
-  if(profile STREQUAL "extended")
-    add_executable(${shell_target} EXCLUDE_FROM_ALL ${shell_sources})
-  else()
+  if(profile STREQUAL POKETCG_DEFAULT_PROFILE)
     add_executable(${shell_target} ${shell_sources})
+  else()
+    add_executable(${shell_target} EXCLUDE_FROM_ALL ${shell_sources})
   endif()
   if(PROFILE_ROOT AND EXISTS "${PROFILE_ROOT}/host/save_import.c")
     target_compile_definitions(${shell_target} PRIVATE POKETCG_SAVE_IMPORT=1)
@@ -406,27 +442,58 @@ if(POKETCG_PULSE_INCLUDE_DIR AND POKETCG_PULSE_SIMPLE_LIBRARY AND POKETCG_PULSE_
   set(POKETCG_PULSE_USABLE ON)
 endif()
 
-add_poketcg_profile(vanilla
-  DISASM "${POKETCG_DISASM}"
-  ROM "${POKETCG_DISASM}/poketcg.gbc"
-  MAP "${POKETCG_DISASM}/poketcg.map"
-  SYM "${POKETCG_DISASM}/poketcg.sym"
-  BINARY poketcg
-  PROBE poketcg_probe
-  DATA_PACK "${POKETCG_DATA_PACK}"
-  INVENTORY "${CMAKE_SOURCE_DIR}/site/data/inventory.json")
-
-if(POKETCG_ENABLE_EXTENDED)
-  add_poketcg_profile(extended
-    DISASM "${POKETCG_EXTENDED_DISASM}"
-    ROM "${POKETCG_EXTENDED_DISASM}/poketcg_ext.gbc"
-    MAP "${POKETCG_EXTENDED_DISASM}/poketcg_ext.map"
-    SYM "${POKETCG_EXTENDED_DISASM}/poketcg_ext.sym"
-    BINARY poketcg-extended
-    PROBE poketcg_extended_probe
-    DATA_PACK "${POKETCG_DATA_PACK_EXTENDED}"
-    INVENTORY "${POKETCG_EXTENDED_INVENTORY}")
-endif()
+foreach(profile IN LISTS POKETCG_PROFILE_NAMES)
+  string(TOUPPER "${profile}" profile_upper)
+  if(NOT profile STREQUAL POKETCG_DEFAULT_PROFILE)
+    set(enable_var "POKETCG_ENABLE_${profile_upper}")
+    if(NOT ${enable_var})
+      continue()
+    endif()
+  endif()
+  profile_catalog_path("${profile}" source profile_source)
+  profile_catalog_path("${profile}" rom profile_rom_catalog)
+  profile_catalog_path("${profile}" map profile_map_catalog)
+  profile_catalog_path("${profile}" sym profile_sym_catalog)
+  profile_catalog_path("${profile}" binary profile_binary_catalog)
+  profile_catalog_path("${profile}" probe profile_probe_catalog)
+  profile_catalog_path("${profile}" pack profile_pack_catalog)
+  profile_catalog_path("${profile}" inventory profile_inventory_catalog)
+  if(profile STREQUAL POKETCG_DEFAULT_PROFILE)
+    set(profile_disasm_default "${POKETCG_DISASM}")
+  else()
+    set(profile_disasm_default "${profile_source}")
+  endif()
+  set(disasm_var "POKETCG_PROFILE_${profile_upper}_DISASM")
+  set(${disasm_var} "${profile_disasm_default}" CACHE PATH "source checkout for ${profile}")
+  set(profile_disasm "${${disasm_var}}")
+  get_filename_component(profile_rom_name "${profile_rom_catalog}" NAME)
+  get_filename_component(profile_map_name "${profile_map_catalog}" NAME)
+  get_filename_component(profile_sym_name "${profile_sym_catalog}" NAME)
+  set(profile_rom "${profile_disasm}/${profile_rom_name}")
+  set(profile_map "${profile_disasm}/${profile_map_name}")
+  set(profile_sym "${profile_disasm}/${profile_sym_name}")
+  get_filename_component(profile_binary "${profile_binary_catalog}" NAME)
+  get_filename_component(profile_probe "${profile_probe_catalog}" NAME)
+  set(profile_pack_default "")
+  if(profile STREQUAL POKETCG_DEFAULT_PROFILE AND POKETCG_DATA_PACK)
+    set(profile_pack_default "${POKETCG_DATA_PACK}")
+  elseif(EXISTS "${profile_pack_catalog}")
+    set(profile_pack_default "${profile_pack_catalog}")
+  endif()
+  set(pack_var "POKETCG_PROFILE_${profile_upper}_DATA_PACK")
+  set(${pack_var} "${profile_pack_default}" CACHE FILEPATH "data pack for ${profile}")
+  set(inventory_var "POKETCG_PROFILE_${profile_upper}_INVENTORY")
+  set(${inventory_var} "${profile_inventory_catalog}" CACHE FILEPATH "inventory for ${profile}")
+  add_poketcg_profile("${profile}"
+    DISASM "${profile_disasm}"
+    ROM "${profile_rom}"
+    MAP "${profile_map}"
+    SYM "${profile_sym}"
+    BINARY "${profile_binary}"
+    PROBE "${profile_probe}"
+    DATA_PACK "${${pack_var}}"
+    INVENTORY "${${inventory_var}}")
+endforeach()
 
 if(POKETCG_ENABLE_LAUNCHER)
   if(NOT POKETCG_SDL_USABLE)

@@ -93,8 +93,8 @@ def build_fixture(root: Path, workdir: Path) -> tuple[Path, Path]:
 def build_native(root: Path, workdir: Path, source: Path, inventory: Path) -> Path:
     native = workdir / "native"
     run(["cmake", "-G", "Ninja", "-B", str(native), "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-         "-DPOKETCG_ENABLE_EXTENDED=ON", f"-DPOKETCG_EXTENDED_DISASM={source}",
-         f"-DPOKETCG_EXTENDED_INVENTORY={inventory}", "-DPORT_FILES="])
+         "-DPOKETCG_ENABLE_EXTENDED=ON", f"-DPOKETCG_PROFILE_EXTENDED_DISASM={source}",
+         f"-DPOKETCG_PROFILE_EXTENDED_INVENTORY={inventory}", "-DPORT_FILES="])
     jobs = os.environ.get("POKETCG_NINJA_JOBS", "-j2")
     run(["ninja", jobs, "-C", str(native), "poketcg_extended_probe", "poketcg-extended"])
     profile = get_profile("extended", root)

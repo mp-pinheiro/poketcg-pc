@@ -1958,7 +1958,7 @@ def deck_cards(deck_id: int) -> list[int]:
         raise SessionError(f"deck id {deck_id} expands to {len(cards)} cards")
     return cards
 WRAM = {name: symbol_address(PROFILE, name, ROOT)[1] - 0xC000 for name in ("wDuelTurns", "wDuelFinished")}
-DECK_ENTRY_BYTES = 2 if PROFILE.name == "extended" else 1
+DECK_ENTRY_BYTES = 2 if PROFILE.features.get("nine_bit_card_ids") else 1
 AI_DUEL_MAX_ORDINALS = 80_000
 
 

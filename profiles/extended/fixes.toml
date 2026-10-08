@@ -261,6 +261,7 @@ index = 17
 heading = "Phantom Venusaur will never be obtained through Card Pop!"
 kind = "removed"
 routines = []
+basenames = ["card_pop"]
 
 [[fixes]]
 heading = "Water Club master room uses the wrong void color"

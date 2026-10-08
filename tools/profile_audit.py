@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from collections import Counter, defaultdict
@@ -11,7 +12,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
-from profiles import Profile, ProfileError, get_profile, symbol_table
+from profiles import Profile, ProfileError, get_profile, load_catalog, symbol_table
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -47,50 +48,6 @@ def masked_source(text: str) -> str:
         return "".join("\n" if ch == "\n" else " " for ch in match.group(0))
 
     return STRING_RE.sub(blank, COMMENT_RE.sub(blank, text))
-
-
-def asm_lines(path: Path) -> list[str]:
-    lines = []
-    for raw in path.read_text(errors="replace").splitlines():
-        line = raw.split(";", 1)[0]
-        line = re.sub(r"\s+", " ", line.strip()).upper()
-        if line:
-            lines.append(line)
-    return lines
-
-
-def asm_body(path: Path) -> str:
-    return "\n".join(asm_lines(path))
-
-
-def asm_routines(path: Path) -> dict[str, str]:
-    routines: dict[str, list[str]] = {}
-    current = "(header)"
-    for raw in path.read_text(errors="replace").splitlines():
-        code = raw.split(";", 1)[0]
-        match = LABEL_RE.match(code)
-        if match:
-            current = match.group(1)
-            routines.setdefault(current, [])
-            continue
-        line = re.sub(r"\s+", " ", code.strip()).upper()
-        if line:
-            routines.setdefault(current, []).append(line)
-    return {name: "\n".join(body) for name, body in routines.items()}
-
-
-def asm_by_basename(root: Path) -> dict[str, list[tuple[str, str]]]:
-    result: dict[str, list[tuple[str, str]]] = defaultdict(list)
-    for path in sorted(root.rglob("*.asm")):
-        result[path.stem].append((path.relative_to(root).as_posix(), asm_body(path)))
-    return result
-
-
-def routines_by_basename(root: Path) -> dict[str, dict[str, str]]:
-    result: dict[str, dict[str, str]] = defaultdict(dict)
-    for path in sorted(root.rglob("*.asm")):
-        result[path.stem].update(asm_routines(path))
-    return result
 
 
 @dataclass(frozen=True)
@@ -471,34 +428,42 @@ def rom_literal_failures(vanilla: Profile, profile: Profile, vanilla_checkout: P
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Diff the profile's asm against vanilla routine by routine after normalization.")
-    parser.add_argument("--profile", default="extended")
-    parser.add_argument("--vanilla", type=Path, help="vanilla checkout overriding the catalog's")
-    parser.add_argument("--extended", type=Path, help="profile checkout overriding the catalog's")
+    parser = argparse.ArgumentParser(description="Diff each ported profile's asm against the catalog's default profile routine by routine after normalization.")
+    parser.add_argument("--profile", help="profile to audit (POKETCG_PROFILE, else every profile but the catalog default)")
+    parser.add_argument("--base-checkout", type=Path, help="default profile checkout overriding the catalog's")
+    parser.add_argument("--checkout", type=Path, help="audited profile checkout overriding the catalog's")
     parser.add_argument("--routines", nargs="*", metavar="BASENAME",
                         help="list per-routine classes (all basenames when none given) instead of auditing")
     parser.add_argument("--all", action="store_true", help="with --routines, also list identical routines")
     args = parser.parse_args()
     try:
-        vanilla = get_profile("vanilla", ROOT)
-        profile = get_profile(args.profile, ROOT)
+        default, catalog = load_catalog()
+        base = get_profile(default, ROOT)
+        requested = args.profile or os.environ.get("POKETCG_PROFILE")
+        names = [requested] if requested and requested != default else [name for name in catalog if name != default]
+        profiles = [get_profile(name, ROOT) for name in names]
     except ProfileError as error:
         raise SystemExit(str(error)) from error
-    vanilla_checkout = (args.vanilla or vanilla.source_path(ROOT)).resolve()
-    profile_checkout = (args.extended or profile.source_path(ROOT)).resolve()
-    differences = compare(vanilla, profile, vanilla_checkout, profile_checkout)
-    if args.routines is not None:
-        return routine_report(differences, args.routines, args.all)
-    failures = audit(profile, differences) + rom_literal_failures(vanilla, profile, vanilla_checkout, profile_checkout)
-    totals = Counter(difference.status for difference in differences)
-    summary = " ".join(f"{key}={totals[key]}" for key in (*NORMALIZED, "semantic", "new", "removed"))
-    if failures:
-        print(f"profile-audit: FAIL profile={args.profile} {summary}")
-        for failure in failures:
-            print(failure)
-        return 1
-    print(f"profile-audit: PASS profile={args.profile} {summary}")
-    return 0
+    if len(profiles) != 1 and (args.routines is not None or args.checkout):
+        raise SystemExit("--routines and --checkout need one profile: pass --profile or set POKETCG_PROFILE")
+    base_checkout = (args.base_checkout or base.source_path(ROOT)).resolve()
+    status = 0
+    for profile in profiles:
+        profile_checkout = (args.checkout or profile.source_path(ROOT)).resolve()
+        differences = compare(base, profile, base_checkout, profile_checkout)
+        if args.routines is not None:
+            return routine_report(differences, args.routines, args.all)
+        failures = audit(profile, differences) + rom_literal_failures(base, profile, base_checkout, profile_checkout)
+        totals = Counter(difference.status for difference in differences)
+        summary = " ".join(f"{key}={totals[key]}" for key in (*NORMALIZED, "semantic", "new", "removed"))
+        if failures:
+            print(f"profile-audit: FAIL profile={profile.name} {summary}")
+            for failure in failures:
+                print(failure)
+            status = 1
+            continue
+        print(f"profile-audit: PASS profile={profile.name} {summary}")
+    return status
 
 
 if __name__ == "__main__":

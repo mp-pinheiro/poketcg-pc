@@ -3,20 +3,28 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 
-from profiles import get_profile
+from profiles import load_catalog
 
 ROOT = Path(__file__).resolve().parent.parent
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("kind", choices=("source", "rom", "map", "sym", "binary", "probe", "pack",
+    parser.add_argument("kind", choices=("profiles", "default", "source", "rom", "map", "sym", "binary", "probe", "pack",
                                          "inventory", "removed-basenames", "overlay-root"))
     parser.add_argument("--profile")
     args = parser.parse_args()
-    profile = get_profile(args.profile, root=ROOT)
+    default, profiles = load_catalog(ROOT / "profiles" / "profiles.json")
+    if args.kind == "profiles":
+        print(";".join(profiles))
+        return 0
+    if args.kind == "default":
+        print(default)
+        return 0
+    profile = profiles[args.profile or os.environ.get("POKETCG_PROFILE") or default]
     if args.kind == "removed-basenames":
         print(";".join(sorted(profile.removed_basenames)))
         return 0

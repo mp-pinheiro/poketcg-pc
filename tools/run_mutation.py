@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -133,7 +134,8 @@ def main() -> int:
                               capture_output=True, check=False)
 
     def rebuild() -> None:
-        built = subprocess.run(["ninja", "-C", str(build_dir), str(PROFILE.probe)], cwd=ROOT,
+        jobs = os.environ.get("POKETCG_NINJA_JOBS") or "-j1"
+        built = subprocess.run(["ninja", jobs, "-C", str(build_dir), str(PROFILE.probe)], cwd=ROOT,
                                text=True, capture_output=True, check=False)
         if built.returncode != 0:
             raise SystemExit(f"MUTATION_BUILD_FAILED: {built.stdout}{built.stderr}")
