@@ -1,7 +1,3 @@
-/* >>> part includes */
-#include <stdint.h>
-#include "home/card_id.h"
-/* <<< part includes */
 /* >>> part PkmnPowerCountResult */
 /* Pkmn-power counters (substatus.asm:495-590). Count cards of the given id in
  * the play areas, skipping status-incapable arena cards. Exit a = the count;

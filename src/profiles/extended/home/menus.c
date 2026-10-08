@@ -1,19 +1,3 @@
-/* >>> part includes */
-#include "home/menus.h"
-
-#include "generated/constants.h"
-#include "generated/rom.h"
-#include "generated/hram.h"
-#include "generated/text_ids.h"
-#include "generated/wram.h"
-#include "home/bg_map.h"
-#include "home/frames.h"
-#include "home/lcd.h"
-#include "home/process_text.h"
-#include "home/random.h"
-#include "home/text_box.h"
-#include "mem.h"
-/* <<< part includes */
 /* --- part includes_CONTINUE_DUEL_BANK */
 /* --- part CONTINUE_DUEL_BANK */
 /* === part SYM_SLASH */
@@ -28,9 +12,6 @@
 /* >>> part CARD_SYMBOL_TABLE */
 #define CARD_SYMBOL_TABLE 0x20C5u
 /* <<< part CARD_SYMBOL_TABLE */
-/* >>> part YES_OR_NO_TEXT_ID */
-#define YES_OR_NO_TEXT_ID YesOrNoText
-/* <<< part YES_OR_NO_TEXT_ID */
 /* --- factory OneByteNumberToTxSymbol_PadSpace */
 /* --- factory OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign */
 /* === factory OneByteNumberToTxSymbol */

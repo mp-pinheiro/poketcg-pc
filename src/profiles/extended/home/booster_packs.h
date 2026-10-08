@@ -1,7 +1,3 @@
-/* >>> part includes */
-#include <stdint.h>
-#include "home/card_id.h"
-/* <<< part includes */
 /* >>> factory AddBoosterCardToTempCardCollection */
 typedef struct { uint8_t a; uint8_t f; } AddBoosterCardToTempCardCollectionResult;
 AddBoosterCardToTempCardCollectionResult AddBoosterCardToTempCardCollection(void);

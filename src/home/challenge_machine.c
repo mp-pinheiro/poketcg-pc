@@ -188,7 +188,7 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "mem.h"
 /* <<< part includes_CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
 /* >>> part CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
-#define CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT 0x07F3u
+#define CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT ChallengeMachineNotDuelledIconText
 /* <<< part CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
 /* >>> part CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT */
 #define CHALLENGE_MACHINE_DUEL_WON_ICON_TEXT ChallengeMachineDuelWonIconText

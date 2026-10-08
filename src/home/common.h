@@ -3,6 +3,7 @@
 
 /* >>> part includes */
 #include <stdint.h>
+#include "home/card_id.h"
 /* <<< part includes */
 
 /* >>> factory CountOppEnergyCardsInHand */

@@ -11,6 +11,7 @@
 /* <<< part includes */
 /* >>> part includes_2 */
 #include "home/duel.h"
+#include "home/card_id_bus.h"
 #include "home/effect_functions.h"
 /* <<< part includes_2 */
 
@@ -44,10 +45,10 @@
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
 /* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK */
 /* >>> part TX_ThereAreNoTrainerCardsInDiscardPileText */
-#define TX_ThereAreNoTrainerCardsInDiscardPileText 0x00C4u
+#define TX_ThereAreNoTrainerCardsInDiscardPileText ThereAreNoTrainerCardsInDiscardPileText
 /* <<< part TX_ThereAreNoTrainerCardsInDiscardPileText */
 /* >>> part TX_NoCardsLeftInTheDeckText */
-#define TX_NoCardsLeftInTheDeckText 0x00B1u
+#define TX_NoCardsLeftInTheDeckText NoCardsLeftInTheDeckText
 /* <<< part TX_NoCardsLeftInTheDeckText */
 
 
@@ -71,22 +72,22 @@
 
 
 /* >>> part COLOR_TEXT_FIRE */
-#define COLOR_TEXT_FIRE      0x48u
+#define COLOR_TEXT_FIRE      FireSymbolText
 /* <<< part COLOR_TEXT_FIRE */
 /* >>> part COLOR_TEXT_GRASS */
-#define COLOR_TEXT_GRASS     0x47u
+#define COLOR_TEXT_GRASS     GrassSymbolText
 /* <<< part COLOR_TEXT_GRASS */
 /* >>> part COLOR_TEXT_LIGHTNING */
-#define COLOR_TEXT_LIGHTNING 0x4au
+#define COLOR_TEXT_LIGHTNING LightningSymbolText
 /* <<< part COLOR_TEXT_LIGHTNING */
 /* >>> part COLOR_TEXT_WATER */
-#define COLOR_TEXT_WATER     0x49u
+#define COLOR_TEXT_WATER     WaterSymbolText
 /* <<< part COLOR_TEXT_WATER */
 /* >>> part COLOR_TEXT_FIGHTING */
-#define COLOR_TEXT_FIGHTING  0x4bu
+#define COLOR_TEXT_FIGHTING  FightingSymbolText
 /* <<< part COLOR_TEXT_FIGHTING */
 /* >>> part COLOR_TEXT_PSYCHIC */
-#define COLOR_TEXT_PSYCHIC   0x4cu
+#define COLOR_TEXT_PSYCHIC   PsychicSymbolText
 /* <<< part COLOR_TEXT_PSYCHIC */
 
 /* >>> part color_to_text */
@@ -703,7 +704,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part Sprout_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 /* <<< part Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
 /* >>> part includes_NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
@@ -717,7 +718,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part NidoranFCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 /* <<< part NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
 /* >>> part includes_MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
@@ -731,7 +732,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 /* <<< part MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
 /* >>> part includes_KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
@@ -745,7 +746,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 /* <<< part KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
 /* >>> part includes_RV_BANK_DUEL_CORE */
@@ -791,7 +792,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE DisplayCardDetailScreen_BANK
 /* <<< part BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE */
 /* >>> part BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+#define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
 /* <<< part BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 
 /* >>> part includes_SYM_GRASS */

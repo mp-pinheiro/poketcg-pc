@@ -1,14 +1,3 @@
-/* >>> part includes */
-#include <stdint.h>
-#include "home/card_id.h"
-
-/* Callee result types used by this file's declarations live in core.h
- * (AIMakeDecisionResult and friends). Packets tell a generator to "include
- * their header", but `statics` lands in the .c only, so a header fragment
- * naming a core.h type could not compile and cost four AIPlay_* attempts one
- * generation each on 2026-08-28. */
-#include "home/core.h"
-/* <<< part includes */
 /* --- factory AIDecide_Defender_Phase14 */
 /* --- factory PickPokedexCards_Unreferenced */
 /* --- factory AIDecide_PlusPower_Phase14 */

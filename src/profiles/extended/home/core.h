@@ -1,7 +1,3 @@
-/* >>> part includes */
-#include <stdint.h>
-#include "home/card_id.h"
-/* <<< part includes */
 /* --- factory ValidateSavedDuelDataFromHL */
 /* --- factory CopyCGBCardPalette */
 /* --- factory CreateCardAttrBlkPacket_DataSet */

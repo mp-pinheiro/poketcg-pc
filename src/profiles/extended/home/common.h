@@ -1,7 +1,3 @@
-/* >>> part includes */
-#include <stdint.h>
-#include "home/card_id.h"
-/* <<< part includes */
 /* >>> factory LookForCardIDInPlayArea_Bank8 */
 typedef struct { uint8_t a; uint8_t b; uint8_t f; } LookForCardIDInPlayAreaResult;
 LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(CardId de, uint8_t b);

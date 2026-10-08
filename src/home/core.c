@@ -26,6 +26,7 @@
 /* <<< part SYM_HP_NOK */
 /* >>> part includes_DUEL_ENTRY_SP */
 #include "home/duel.h"
+#include "home/load_deck.h"
 #include "home/card_id_bus.h"
 /* <<< part includes_DUEL_ENTRY_SP */
 
@@ -66,25 +67,25 @@
 #define FLAG_Z 0x80u
 /* <<< part FLAG_Z */
 /* >>> part TX_COIN_TOSS */
-#define TX_COIN_TOSS 0x0075u
+#define TX_COIN_TOSS CoinTossToDecideWhoPlaysFirstText
 /* <<< part TX_COIN_TOSS */
 /* >>> part TX_IF_HEADS */
-#define TX_IF_HEADS 0x0074u
+#define TX_IF_HEADS IfHeadsDuelistPlaysFirstText
 /* <<< part TX_IF_HEADS */
 /* >>> part TX_NEITHER_BASIC */
-#define TX_NEITHER_BASIC 0x006Bu
+#define TX_NEITHER_BASIC NeitherPlayerHasBasicPkmnText
 /* <<< part TX_NEITHER_BASIC */
 /* >>> part TX_PLACING_PRIZES */
-#define TX_PLACING_PRIZES 0x0072u
+#define TX_PLACING_PRIZES PlacingThePrizesText
 /* <<< part TX_PLACING_PRIZES */
 /* >>> part TX_PLACE_PRIZES */
-#define TX_PLACE_PRIZES 0x0073u
+#define TX_PLACE_PRIZES PleasePlacePrizesText
 /* <<< part TX_PLACE_PRIZES */
 /* >>> part TX_YOU_PLAY_FIRST */
-#define TX_YOU_PLAY_FIRST 0x0053u
+#define TX_YOU_PLAY_FIRST YouPlayFirstText
 /* <<< part TX_YOU_PLAY_FIRST */
 /* >>> part TX_YOU_PLAY_SECOND */
-#define TX_YOU_PLAY_SECOND 0x0054u
+#define TX_YOU_PLAY_SECOND YouPlaySecondText
 /* <<< part TX_YOU_PLAY_SECOND */
 /* >>> part FLAG_C */
 #define FLAG_C 0x10u
@@ -940,10 +941,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK_490 0xBAu
 /* <<< part DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK_490 */
 /* >>> part DUEL_ANIM_OPP_SHUFFLE_490 */
-#define DUEL_ANIM_OPP_SHUFFLE_490 0x52u
+#define DUEL_ANIM_OPP_SHUFFLE_490 DUEL_ANIM_OPP_SHUFFLE
 /* <<< part DUEL_ANIM_OPP_SHUFFLE_490 */
 /* >>> part DUEL_ANIM_PLAYER_SHUFFLE_490 */
-#define DUEL_ANIM_PLAYER_SHUFFLE_490 0x51u
+#define DUEL_ANIM_PLAYER_SHUFFLE_490 DUEL_ANIM_PLAYER_SHUFFLE
 /* <<< part DUEL_ANIM_PLAYER_SHUFFLE_490 */
 /* >>> part PLAYER_TURN_490 */
 #define PLAYER_TURN_490 0xC2u
@@ -1407,25 +1408,25 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define DUELVARS_DUELIST_TYPE_7847 0xF1u
 /* <<< part DUELVARS_DUELIST_TYPE_7847 */
 /* >>> part DUEL_ANIM_COIN_SPIN_7847 */
-#define DUEL_ANIM_COIN_SPIN_7847 0x58u
+#define DUEL_ANIM_COIN_SPIN_7847 DUEL_ANIM_COIN_SPIN
 /* <<< part DUEL_ANIM_COIN_SPIN_7847 */
 /* >>> part DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847 */
-#define DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847 0x59u
+#define DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847 DUEL_ANIM_COIN_TOSS_GOING_HEADS
 /* <<< part DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847 */
 /* >>> part DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847 */
-#define DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847 0x5Au
+#define DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847 DUEL_ANIM_COIN_TOSS_GOING_TAILS
 /* <<< part DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847 */
 /* >>> part DUEL_ANIM_COIN_TAILS_7847 */
-#define DUEL_ANIM_COIN_TAILS_7847 0x5Bu
+#define DUEL_ANIM_COIN_TAILS_7847 DUEL_ANIM_COIN_TAILS
 /* <<< part DUEL_ANIM_COIN_TAILS_7847 */
 /* >>> part DUEL_ANIM_COIN_HEADS_7847 */
-#define DUEL_ANIM_COIN_HEADS_7847 0x5Cu
+#define DUEL_ANIM_COIN_HEADS_7847 DUEL_ANIM_COIN_HEADS
 /* <<< part DUEL_ANIM_COIN_HEADS_7847 */
 /* >>> part SFX_COIN_TOSS_HEADS_7847 */
-#define SFX_COIN_TOSS_HEADS_7847 0x54u
+#define SFX_COIN_TOSS_HEADS_7847 SFX_COIN_TOSS_HEADS
 /* <<< part SFX_COIN_TOSS_HEADS_7847 */
 /* >>> part SFX_COIN_TOSS_TAILS_7847 */
-#define SFX_COIN_TOSS_TAILS_7847 0x55u
+#define SFX_COIN_TOSS_TAILS_7847 SFX_COIN_TOSS_TAILS
 /* <<< part SFX_COIN_TOSS_TAILS_7847 */
 /* >>> part HEADS_7847 */
 #define HEADS_7847 0x01u
@@ -1916,16 +1917,16 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define PLAY_POKEMON_CARD_ARENA 0x00u
 /* <<< part PLAY_POKEMON_CARD_ARENA */
 /* >>> part PLAY_POKEMON_CARD_CANT_EVOLVE_TEXT */
-#define PLAY_POKEMON_CARD_CANT_EVOLVE_TEXT 0x00B4u
+#define PLAY_POKEMON_CARD_CANT_EVOLVE_TEXT CantEvolvePokemonInSameTurnItsPlacedText
 /* <<< part PLAY_POKEMON_CARD_CANT_EVOLVE_TEXT */
 /* >>> part PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT */
-#define PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT 0x00B3u
+#define PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT NoPokemonCapableOfEvolvingText
 /* <<< part PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT */
 /* >>> part PLAY_POKEMON_CARD_NO_SPACE_TEXT */
-#define PLAY_POKEMON_CARD_NO_SPACE_TEXT 0x00B2u
+#define PLAY_POKEMON_CARD_NO_SPACE_TEXT NoSpaceOnTheBenchText
 /* <<< part PLAY_POKEMON_CARD_NO_SPACE_TEXT */
 /* >>> part PLAY_POKEMON_CARD_PLACED_TEXT */
-#define PLAY_POKEMON_CARD_PLACED_TEXT 0x0061u
+#define PLAY_POKEMON_CARD_PLACED_TEXT PlacedOnTheBenchText
 /* <<< part PLAY_POKEMON_CARD_PLACED_TEXT */
 
 /* >>> factory DrawHPBar */
@@ -10884,7 +10885,7 @@ void OppAction_PlayAttackAnimationDealAttackDamage(void)
 #define OPPONENT_TURN_MAIN 0xC3u
 /* <<< part OPPONENT_TURN_MAIN */
 /* >>> part DUEL_ANIM_DUEL_WIN_MAIN */
-#define DUEL_ANIM_DUEL_WIN_MAIN 0x5Du
+#define DUEL_ANIM_DUEL_WIN_MAIN DUEL_ANIM_DUEL_WIN
 /* <<< part DUEL_ANIM_DUEL_WIN_MAIN */
 /* >>> part DUEL_ANIM_DUEL_LOSS_MAIN */
 #define DUEL_ANIM_DUEL_LOSS_MAIN DUEL_ANIM_DUEL_LOSS

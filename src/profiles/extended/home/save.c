@@ -73,9 +73,6 @@ void LoadBackupSaveData(void)
 }
 /* <<< factory LoadBackupSaveData */
 /* --- factory _AddCardToCollectionAndUpdateAlbumProgress */
-/* >>> part EV_ISHIHARA_MENT */
-#define EV_ISHIHARA_MENT EVENT_ISHIHARAS_HOUSE_MENTIONED
-/* <<< part EV_ISHIHARA_MENT */
 /* --- factory AddCardToCollectionAndUpdateAlbumProgress */
 /* --- factory SaveGame */
 /* === factory LoadBackupCardAndDeckSaveData */

@@ -43,6 +43,8 @@
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
+#include "home/card_id_bus.h"
+#include "home/load_deck.h"
 #include "home/deck_configuration.h"
 #include "home/switch_sram.h"
 

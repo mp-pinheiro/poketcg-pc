@@ -3,6 +3,7 @@
 
 /* >>> part includes */
 #include <stdint.h>
+#include "home/card_id.h"
 
 /* Callee result types used by this file's declarations live in core.h
  * (AIMakeDecisionResult and friends). Packets tell a generator to "include

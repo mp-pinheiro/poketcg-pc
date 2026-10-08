@@ -1,15 +1,3 @@
-/* >>> part includes */
-#include "home/medal.h"
-#include "home/frames.h"
-#include "home/play_song.h"
-
-#include "generated/text_ids.h"
-#include "generated/constants.h"
-#include "generated/rom.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-/* <<< part includes */
 /* >>> part includes_2 */
 #include "generated/wram.h"
 #include "home/init_menu.h"

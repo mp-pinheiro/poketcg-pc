@@ -444,7 +444,7 @@ void _AddCardToCollectionAndUpdateAlbumProgress(uint8_t a)
 #define MEDAL_EVENTS    MedalEvents_ADDR
 /* <<< part MEDAL_EVENTS */
 /* >>> part EV_ISHIHARA_MENT */
-#define EV_ISHIHARA_MENT 0x1eu
+#define EV_ISHIHARA_MENT EVENT_ISHIHARAS_HOUSE_MENTIONED
 /* <<< part EV_ISHIHARA_MENT */
 /* >>> part EV_LEGENDARY */
 #define EV_LEGENDARY     EVENT_RECEIVED_LEGENDARY_CARDS

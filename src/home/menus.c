@@ -4,6 +4,7 @@
 #include "generated/constants.h"
 #include "generated/rom.h"
 #include "generated/hram.h"
+#include "generated/text_ids.h"
 #include "generated/wram.h"
 #include "home/bg_map.h"
 #include "home/frames.h"
@@ -114,7 +115,7 @@
 #define CARD_SYMBOL_TABLE CardSymbolTable_ADDR
 /* <<< part CARD_SYMBOL_TABLE */
 /* >>> part YES_OR_NO_TEXT_ID */
-#define YES_OR_NO_TEXT_ID 0x2f
+#define YES_OR_NO_TEXT_ID YesOrNoText
 /* <<< part YES_OR_NO_TEXT_ID */
 
 /* >>> factory InitializeCardListParameters */

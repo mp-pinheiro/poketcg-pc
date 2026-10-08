@@ -1,7 +1,3 @@
-/* >>> part includes */
-#include <stdint.h>
-#include "home/card_id.h"
-/* <<< part includes */
 /* === factory CalculateOnesAndTensDigits */
 /* >>> factory CalculateOnesAndTensDigits_Long */
 void CalculateOnesAndTensDigits_Long(uint16_t hl);

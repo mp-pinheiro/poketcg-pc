@@ -143,7 +143,7 @@ MUTATIONS.update({
                         'HandleCardAlbumCardPage-1',
                         'HandleCardAlbumCardPage-2'],
         'source': 'src/home/card_album.c'},
-    'CardAlbum': {'source_symbol': 'CardAlbum', 'before': '{\n\twTileMapFill = 0u;', 'after': '{\n\twTileMapFill = (uint8_t)((0u) ^ 1u);', 'case_ids': ['CardAlbum-0'], 'source': 'src/profiles/extended/home/card_album.c'},
+    'CardAlbum': {'source_symbol': 'CardAlbum', 'before': '{\n\twTileMapFill = 0u;', 'after': '{\n\twTileMapFill = (uint8_t)((0u) ^ 1u);', 'case_ids': ['CardAlbum-0'], 'source': 'src/home/card_album.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

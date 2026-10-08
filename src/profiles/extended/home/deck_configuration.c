@@ -25,45 +25,6 @@
 /* >>> part HFFB3 */
 #define HFFB3 0xffb3u
 /* <<< part HFFB3 */
-/* >>> part includes_SYM_SPACE */
-#include "home/deck_configuration.h"
-
-#include "home/deck_selection.h"
-#include "home/switch_sram.h"
-
-
-#include "home/tiles.h"
-
-#include "generated/wram.h"
-#include "home/switch_sram.h"
-
-#include "generated/hram.h"
-#include "generated/sram.h"
-#include "generated/wram.h"
-#include "home/card_id_bus.h"
-#include "home/load_deck.h"
-#include "home/deck_configuration.h"
-#include "home/switch_sram.h"
-
-
-#include "generated/wram.h"
-
-#include "home/switch_sram.h"
-#include "mem.h"
-
-#include "home/empty_screen.h"
-#include "home/deck_configuration.h"
-#include "generated/hram.h"
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "generated/wram.h"
-#include "mem.h"
-
-#include "generated/wram.h"
-#include "home/deck_configuration.h"
-#include "home/process_text.h"
-/* <<< part includes_SYM_SPACE */
 /* >>> part CARD_LIST_MISSING_CARDS_ADDR */
 #define CARD_LIST_MISSING_CARDS_ADDR (HandleDeckMissingCardsList__DeckConfirmationCardSelectionParams_ADDR)
 /* <<< part CARD_LIST_MISSING_CARDS_ADDR */

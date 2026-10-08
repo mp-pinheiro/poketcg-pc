@@ -1,6 +1,3 @@
-/* >>> part CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
-#define CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT ChallengeMachineNotDuelledIconText
-/* <<< part CHALLENGE_MACHINE_NOT_DUELLED_ICON_TEXT */
 /* >>> factory ChallengeMachine_Start */
 void ChallengeMachine_Start(void)
 {

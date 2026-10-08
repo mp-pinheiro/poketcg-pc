@@ -9,35 +9,6 @@
 #include "mem.h"
 #include "home/bg_map.h"
 /* <<< part includes */
-/* >>> part includes_2 */
-#include "home/duel.h"
-#include "home/card_id_bus.h"
-#include "home/effect_functions.h"
-/* <<< part includes_2 */
-/* >>> part TX_ThereAreNoTrainerCardsInDiscardPileText */
-#define TX_ThereAreNoTrainerCardsInDiscardPileText ThereAreNoTrainerCardsInDiscardPileText
-/* <<< part TX_ThereAreNoTrainerCardsInDiscardPileText */
-/* >>> part TX_NoCardsLeftInTheDeckText */
-#define TX_NoCardsLeftInTheDeckText NoCardsLeftInTheDeckText
-/* <<< part TX_NoCardsLeftInTheDeckText */
-/* >>> part COLOR_TEXT_FIRE */
-#define COLOR_TEXT_FIRE      FireSymbolText
-/* <<< part COLOR_TEXT_FIRE */
-/* >>> part COLOR_TEXT_GRASS */
-#define COLOR_TEXT_GRASS     GrassSymbolText
-/* <<< part COLOR_TEXT_GRASS */
-/* >>> part COLOR_TEXT_LIGHTNING */
-#define COLOR_TEXT_LIGHTNING LightningSymbolText
-/* <<< part COLOR_TEXT_LIGHTNING */
-/* >>> part COLOR_TEXT_WATER */
-#define COLOR_TEXT_WATER     WaterSymbolText
-/* <<< part COLOR_TEXT_WATER */
-/* >>> part COLOR_TEXT_FIGHTING */
-#define COLOR_TEXT_FIGHTING  FightingSymbolText
-/* <<< part COLOR_TEXT_FIGHTING */
-/* >>> part COLOR_TEXT_PSYCHIC */
-#define COLOR_TEXT_PSYCHIC   PsychicSymbolText
-/* <<< part COLOR_TEXT_PSYCHIC */
 /* === part DUELVARS_ARENA_CARD_LAST_TURN_EFFECT */
 /* >>> part includes_hTemp_ffa0_ADDR */
 #include "home/random.h"
@@ -206,21 +177,6 @@
 #include "home/effect_functions.h"
 #include "home/duel.h"
 /* <<< part includes_DUELVARS_ARENA_CARD_CHANGED_RESISTANCE */
-/* >>> part Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
-/* <<< part Sprout_PutInPlayAreaEffect_PlacedOnTheBenchText */
-/* >>> part NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
-/* <<< part NidoranFCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-/* >>> part MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
-/* <<< part MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-/* >>> part KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
-/* <<< part KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-/* >>> part BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
-#define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText PlacedOnTheBenchText
-/* <<< part BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText */
 /* >>> part includes_OPPONENT_TURN */
 #include "home/effect_functions.h"
 #include "generated/wram.h"

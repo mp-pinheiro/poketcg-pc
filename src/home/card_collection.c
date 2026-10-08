@@ -1,10 +1,12 @@
 /* >>> part includes */
 #include "home/card_collection.h"
 
+#include "generated/constants.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/copy.h"
 #include "home/card_id_bus.h"
+#include "home/load_deck.h"
 #include "home/switch_sram.h"
 #include "mem.h"
 /* <<< part includes */

@@ -1,10 +1,3 @@
-/* >>> part includes_DUELVARS_ARENA_CARD */
-#include "home/card_data.h"
-#include "home/card_id_bus.h"
-#include "home/core.h"
-#include "home/duel.h"
-#include "mem.h"
-/* <<< part includes_DUELVARS_ARENA_CARD */
 /* --- part includes_AI_MEWTWO_MILL */
 /* --- part AI_MEWTWO_MILL */
 /* >>> part includes_tail */

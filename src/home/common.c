@@ -24,6 +24,7 @@
 
 /* >>> part includes_DUELVARS_ARENA_CARD */
 #include "home/card_data.h"
+#include "home/card_id_bus.h"
 #include "home/core.h"
 #include "home/duel.h"
 #include "mem.h"

@@ -16,32 +16,6 @@
 #include "debug_cheats.h"
 #endif
 /* <<< part includes */
-/* >>> part includes_DUEL_ENTRY_SP */
-#include "home/duel.h"
-#include "home/load_deck.h"
-#include "home/card_id_bus.h"
-/* <<< part includes_DUEL_ENTRY_SP */
-/* >>> part TX_COIN_TOSS */
-#define TX_COIN_TOSS CoinTossToDecideWhoPlaysFirstText
-/* <<< part TX_COIN_TOSS */
-/* >>> part TX_IF_HEADS */
-#define TX_IF_HEADS IfHeadsDuelistPlaysFirstText
-/* <<< part TX_IF_HEADS */
-/* >>> part TX_NEITHER_BASIC */
-#define TX_NEITHER_BASIC NeitherPlayerHasBasicPkmnText
-/* <<< part TX_NEITHER_BASIC */
-/* >>> part TX_PLACING_PRIZES */
-#define TX_PLACING_PRIZES PlacingThePrizesText
-/* <<< part TX_PLACING_PRIZES */
-/* >>> part TX_PLACE_PRIZES */
-#define TX_PLACE_PRIZES PleasePlacePrizesText
-/* <<< part TX_PLACE_PRIZES */
-/* >>> part TX_YOU_PLAY_FIRST */
-#define TX_YOU_PLAY_FIRST YouPlayFirstText
-/* <<< part TX_YOU_PLAY_FIRST */
-/* >>> part TX_YOU_PLAY_SECOND */
-#define TX_YOU_PLAY_SECOND YouPlaySecondText
-/* <<< part TX_YOU_PLAY_SECOND */
 /* >>> part kDuelDataToSave */
 static const DuelSaveEntry kDuelDataToSave[] = {
 	{ wPlayerDuelVariables_ADDR, (uint16_t)(wOpponentDuelVariables_ADDR - wPlayerDuelVariables_ADDR) },
@@ -219,12 +193,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 	0xdcu, 0x02u, /* stage 2 special */
 };
 /* <<< part kFaceDownCardTileNumbers */
-/* >>> part DUEL_ANIM_OPP_SHUFFLE_490 */
-#define DUEL_ANIM_OPP_SHUFFLE_490 DUEL_ANIM_OPP_SHUFFLE
-/* <<< part DUEL_ANIM_OPP_SHUFFLE_490 */
-/* >>> part DUEL_ANIM_PLAYER_SHUFFLE_490 */
-#define DUEL_ANIM_PLAYER_SHUFFLE_490 DUEL_ANIM_PLAYER_SHUFFLE
-/* <<< part DUEL_ANIM_PLAYER_SHUFFLE_490 */
 /* === part SYM_HP */
 /* >>> part includes_hTempPlayAreaLocation_ff9d_ADDR */
 #include "home/duel.h"
@@ -363,27 +331,6 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 /* <<< part includes_COIN_TOSS_7847 */
 /* --- part DUELTYPE_LINK_7847 */
-/* >>> part DUEL_ANIM_COIN_SPIN_7847 */
-#define DUEL_ANIM_COIN_SPIN_7847 DUEL_ANIM_COIN_SPIN
-/* <<< part DUEL_ANIM_COIN_SPIN_7847 */
-/* >>> part DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847 */
-#define DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847 DUEL_ANIM_COIN_TOSS_GOING_HEADS
-/* <<< part DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847 */
-/* >>> part DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847 */
-#define DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847 DUEL_ANIM_COIN_TOSS_GOING_TAILS
-/* <<< part DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847 */
-/* >>> part DUEL_ANIM_COIN_TAILS_7847 */
-#define DUEL_ANIM_COIN_TAILS_7847 DUEL_ANIM_COIN_TAILS
-/* <<< part DUEL_ANIM_COIN_TAILS_7847 */
-/* >>> part DUEL_ANIM_COIN_HEADS_7847 */
-#define DUEL_ANIM_COIN_HEADS_7847 DUEL_ANIM_COIN_HEADS
-/* <<< part DUEL_ANIM_COIN_HEADS_7847 */
-/* >>> part SFX_COIN_TOSS_HEADS_7847 */
-#define SFX_COIN_TOSS_HEADS_7847 SFX_COIN_TOSS_HEADS
-/* <<< part SFX_COIN_TOSS_HEADS_7847 */
-/* >>> part SFX_COIN_TOSS_TAILS_7847 */
-#define SFX_COIN_TOSS_TAILS_7847 SFX_COIN_TOSS_TAILS
-/* <<< part SFX_COIN_TOSS_TAILS_7847 */
 /* --- part TossCoin_CheckTransmissionError */
 /* --- part TossCoin_WaitSerialByteRecv */
 /* --- part TossCoin_SendSerialByte */
@@ -640,18 +587,6 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 /* >>> part PLAY_POKEMON_CARD_OPP_BASIC */
 #define PLAY_POKEMON_CARD_OPP_BASIC 0x00u
 /* <<< part PLAY_POKEMON_CARD_OPP_BASIC */
-/* >>> part PLAY_POKEMON_CARD_CANT_EVOLVE_TEXT */
-#define PLAY_POKEMON_CARD_CANT_EVOLVE_TEXT CantEvolvePokemonInSameTurnItsPlacedText
-/* <<< part PLAY_POKEMON_CARD_CANT_EVOLVE_TEXT */
-/* >>> part PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT */
-#define PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT NoPokemonCapableOfEvolvingText
-/* <<< part PLAY_POKEMON_CARD_NO_EVOLUTION_TEXT */
-/* >>> part PLAY_POKEMON_CARD_NO_SPACE_TEXT */
-#define PLAY_POKEMON_CARD_NO_SPACE_TEXT NoSpaceOnTheBenchText
-/* <<< part PLAY_POKEMON_CARD_NO_SPACE_TEXT */
-/* >>> part PLAY_POKEMON_CARD_PLACED_TEXT */
-#define PLAY_POKEMON_CARD_PLACED_TEXT PlacedOnTheBenchText
-/* <<< part PLAY_POKEMON_CARD_PLACED_TEXT */
 /* --- factory ValidateSavedDuelDataFromHL */
 /* --- factory CopyCGBCardPalette */
 /* --- factory CreateCardAttrBlkPacket_DataSet */
@@ -4087,9 +4022,6 @@ void HandleBetweenTurnsEvents(void)
 	(void)HandleBetweenTurnKnockOuts();
 }
 /* <<< factory HandleBetweenTurnsEvents */
-/* >>> part DUEL_ANIM_DUEL_WIN_MAIN */
-#define DUEL_ANIM_DUEL_WIN_MAIN DUEL_ANIM_DUEL_WIN
-/* <<< part DUEL_ANIM_DUEL_WIN_MAIN */
 /* >>> factory MainDuelLoop */
 /* core.asm:73-217. One turn per iteration: start-of-turn substatus, the turn
  * screen, the turn itself, then the between-turns work. wDuelFinished is
