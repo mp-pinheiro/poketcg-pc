@@ -88,7 +88,8 @@ static void adapt_PlayNextNote_pop(ProbeState *s) { PlayNextNote_pop(s->stack[0]
 /* >>> part Music_note */
 static void adapt_Music_note(ProbeState *s)
 {
-	Music_note(&s->hl, s->a, s->b, s->c);
+	uint16_t stream = s->stack[0];
+	Music_note(&stream, s->a, s->b, s->c);
 }
 /* <<< part Music_note */
 
