@@ -1546,7 +1546,7 @@ CASES["DrawInPlayArea_Icons"] = [
 # >>> factory DisplayUsePokemonPowerScreen_WaitForInput
 CONTRACT["DisplayUsePokemonPowerScreen_WaitForInput"] = {"compare": ("f",), "preserve": ()}
 CASES["DisplayUsePokemonPowerScreen_WaitForInput"] = [
-    {"hl": 0x0000, "keys": 0x01, "instruction_budget": 5000000, "cycle_budget": 20000000,
+    {"hl": 0x0000, "keys": 0x01, "hbank_rom": 0x01, "instruction_budget": 5000000, "cycle_budget": 20000000,
      "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
      "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00",
               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
@@ -1556,7 +1556,7 @@ CASES["DisplayUsePokemonPowerScreen_WaitForInput"] = [
               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
-    dict(POISON, hl=0x0000, keys=0x01, instruction_budget=5000000, cycle_budget=20000000,
+    dict(POISON, hl=0x0000, keys=0x01, hbank_rom=0x01, instruction_budget=5000000, cycle_budget=20000000,
          hram={hTempPlayAreaLocation_ff9d: b"\x00"},
          wram={hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00",
                wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
