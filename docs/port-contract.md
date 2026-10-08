@@ -193,6 +193,8 @@ is to the routine. Two corollaries that have each cost a session:
   claim, a case expectation or a mutation anchored below it is unverifiable by
   construction.
 
+An `entry` completion keeps the callee's current ROM bank in both lanes. The native probe discards abandoned bank-guard frames without restoring their saved banks before the snapshot. Ordinary returns and frame-budget exits still restore their saved banks.
+
 ### Case-key reference
 
 Every address in these keys (dict keys of `wram`, `read`, `sram`, `sread`, `expect`; pointer registers; `stack` words; `entry_sp`; schema-2 `completion` pcs) is spelled through `tests/cases/_symbols.py`, which resolves names against the active profile's `.sym` at import and raises on an unknown name: `sym("wFoo") + n` for a game variable or ROM label (`sym_bank("Label")` for its bank), `data(0x...)` for a value inside a RAM range that is not an address, `CALL_FRAME`, `STACK_WINDOW`, `STACK_TOP` (`entry_sp` is usually `STACK_TOP - 2`) and `STACK_CANARY` for the harness frame, and `WRAM_START`, `WRAMX_START`, `SRAM_START`, `HRAM_START` for whole-region or bank images. A `mem:` event predicate is an f-string over `sym(...)`. Fixture cases pass patches as `fixture.case({sym("wFoo"): b"..."}, vram=False)`. `just lint-case-literals` rejects raw RAM literals.

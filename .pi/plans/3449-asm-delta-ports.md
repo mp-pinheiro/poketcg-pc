@@ -28,12 +28,23 @@ Issue body: `fj issue view 3449`. Measurements behind this plan: `/tmp/i3449/` (
 4. Shared code: placement-constant lint and fixes (action 6), card-id width lint and fixes (action 3); delete override blocks that become identical; vanilla mutations re-anchored with receipts.
 5. Cases: symbol helper, codemod of vanilla case modules with record identity, raw-literal lint, per-routine case composition, Extended case modules reduced to overridden routines, `transpose_cases.py` and `relocate_case_pointers.py` deleted.
 6. Harness: decision 8, DevolutionSpray cases 1 and 2 back on `[0,1,0,2,0,1,0,2]` as primary evidence.
-7. Docs and generality: `docs/porting-a-profile.md`, `extended_fixes.py` generalized, bootstrap and CMake generic.
+7. Docs and generality: `docs/porting-a-profile.md`, `profile_fixes.py` generalised from Extended, profile-driven bootstrap and CMake.
 8. Verification: every acceptance item of the issue, vanilla release gate, every Extended gate and session.
 
 ## Rules for every lane
 
 - jj only, integrator commits; lanes never run jj or git, `just build`, `oracle-fn-gate`, the release gate or `test_leaves --all`.
-- Private build dirs, `POKETCG_NINJA_JOBS=-j1`; memory is about 5 GB free.
+- Private build dirs and `POKETCG_NINJA_JOBS=-j1`. Check `omp.slice` cgroup headroom before spawning workers, language servers or runtime jobs; host `free -m` does not measure this cap.
 - No authored comments in C or Python; no profile `#ifdef` in shared code.
 - Vanilla pack sha256 `b3c1036a2ac2b410f47a4ed47fd28264ae7087a84c29fc6bbc14864155a92d27`, size 945154.
+
+## Recovery checkpoint
+
+- Live `omp.slice` limits were increased to 12 GiB memory and 12 GiB swap. Builds use `--parallel 1`; emulator, oracle and mutation runs stay serial. No memory-check loop is needed.
+- `src/profiles/extended/home/scripting.c` now reproduces `FarCallHL` restoring caller AF. CMake uses `POKETCG_DISASM` for save-import inputs, and `tools/profile_path.py` honors `POKETCG_PROFILE`. The entry-stop path in `src/probe.c` truncates bank guards without unwinding the callee bank before snapshot.
+- Verified current targeted paths: 26 movement/map cases in each profile; 22 Extended practice-scene cases with full returns (card page, attack, knockout, prize selection); six Extended Heal cases; five Sand Attack cases in each profile; four Slowbro cases in each profile; ten Extended deck-header, machine-entry and Nidoran cases. The earlier 7,920-case pass is not final acceptance.
+- Shared Slowbro case 2 retains its original undamaged-arena guard; case 3 exercises a live counter transfer. The C API returns semantic AF rather than incidental clobbered register residue, and the final `a` comes from `AIMakeDecision`. Native practice captures reproduce the original Goldeen-versus-Machop board, HP 40/50 and play-area counts 2/1. Their completed-poll recordings replay to byte-identical entry snapshots.
+- Native fixture aliases now cover movement, map scripts, text/menu callbacks, recoil, Heal, Slowbro, Sand Attack, AI evolution/damage/energy removal, the deck header and the visible save-machine entries. The remaining shared diagnostic was DisplayFirstOrNextCardPage case 0; the actual native Full Heal trainer page was reached and its capture is running as bg_55.
+- CardId lint now rejects narrowed call results, variables and parameters, including multiline assignments and casts before comparisons. The reproduced regression tests pass; the current tree passes all three issue lints, and actual CLI negative examples reject a narrowed CardId, raw RAM literal, literal bank select and ROM-label offset. Shared Nidoran comparison now keeps the full CardId; its identical Extended block was removed and machine ownership declared.
+- Composition and normalized assembly audit pass. Static Extended mutation audit found a stale inherited Slowbro anchor after the API cleanup; that declaration now mutates the HP guard using the new active case 3. Nineteen additional override ownership/mutation gaps were repaired by MutationFreshProof. No new mutation witnesses have been executed yet. `/tmp/i3449/prove_overrides.py` requires current source/case/schema/mutation hashes and PASS/PORT/PASS with transactional restoration; all existing receipts without those hashes are stale.
+- Remaining acceptance: final shared-case sweep, full Extended gates and every Extended session, fresh RED witness for every actual override, Vanilla regression/release gate and fixed pack hash/size, original DevolutionSpray timeline in GBREF and PyBoy, and final deterministic review. Build `build-cmake-generic2` contains both profile probes and the Extended runtime. Issue #3449 remains open; no commit or push was made.
