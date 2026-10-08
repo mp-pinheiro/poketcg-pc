@@ -868,7 +868,7 @@ SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)
 	uint16_t dst = wOpponentDeck_ADDR;
 	uint16_t list = wDuelTempList_ADDR;
 	uint8_t index = 0u;
-	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
+	for (;;) {
 		CardId card = card_id_read(&src);
 		card_id_write(&dst, card);
 		if (card == 0u) {
@@ -892,7 +892,6 @@ SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)
 		CardId id = card_id_read_at(card);
 		card_id_write(&out, id);
 	}
-	gb_write8(out++, 0u);
 	gb_write8(out, 0u);
 	return (SortCurDeckCardsByIDResult){(uint8_t)(order - 1u)};
 }

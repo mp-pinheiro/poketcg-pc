@@ -1,5 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/deck_configuration.asm."""
-from tests.cases._symbols import sym, sym_bank, sym_pointer
+from tests.cases._symbols import card_id_size, deck_entries, sym, sym_bank, sym_pointer
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -859,6 +859,11 @@ CASES["SortCurDeckCardsByID"] = [
      "read": {hWhoseTurn: 1, wCurDeckCards: 1, wOpponentDeck: 2, wDuelTempList: 1, hTempListPtr_ff99: 2}},
     dict(POISON, wram={hWhoseTurn: b"\xC3", wCurDeckCards: b"\x02\x03\x01\x00", wOpponentDeck: b"\xA0\xA1\xA2\x00", wDuelTempList: b"\xFF"},
          read={hWhoseTurn: 1, wCurDeckCards: 4, wOpponentDeck: 4, wDuelTempList: 4, hTempListPtr_ff99: 2}),
+    {"wram": {hWhoseTurn: b"\xC2", **deck_entries([0x3C - i for i in range(0x3C)] + [0, 0x77], base=wCurDeckCards),
+              wOpponentDeck: b"\x99" * (0x3E * card_id_size()), wDuelTempList: b"\xFF"},
+     "read": {hWhoseTurn: 1, wCurDeckCards: 0x3E * card_id_size(), wOpponentDeck: 0x3E * card_id_size(), wDuelTempList: 0x3E,
+              hTempListPtr_ff99: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory SortCurDeckCardsByID
 
