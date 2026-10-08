@@ -11,11 +11,20 @@
   "ai-duel-water-carriers": {
     "confirmed_ordinal": 35326
   },
+  "ai-heal-carrier": {
+    "confirmed_ordinal": 42490
+  },
+  "ai-slowbro-carrier": {
+    "confirmed_ordinal": 38602
+  },
   "boot-menu": {
     "confirmed_ordinal": 1000
   },
   "credits-extended": {
     "confirmed_ordinal": 58522
+  },
+  "deck-confirmation": {
+    "confirmed_ordinal": 42551
   },
   "deck-reload-base": {
     "confirmed_ordinal": 1000
@@ -25,6 +34,9 @@
   },
   "deck-save-reload": {
     "confirmed_ordinal": 2391
+  },
+  "deck-ui": {
+    "confirmed_ordinal": 42399
   },
   "extended-animations": {
     "confirmed_ordinal": 9812
@@ -71,6 +83,9 @@
   "practice-begin": {
     "confirmed_ordinal": 8600
   },
+  "practice-horn-attack": {
+    "confirmed_ordinal": 20528
+  },
   "practice-menu": {
     "confirmed_ordinal": 11859
   },
@@ -83,8 +98,14 @@
   "starter-deck": {
     "confirmed_ordinal": 36458
   },
+  "status-screen": {
+    "confirmed_ordinal": 36710
+  },
   "three-palette-screens": {
     "confirmed_ordinal": 25250
+  },
+  "trainer-card-page": {
+    "confirmed_ordinal": 43253
   },
   "vanilla-save-import": {
     "confirmed_ordinal": 2013

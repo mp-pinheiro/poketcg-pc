@@ -17,8 +17,8 @@
   },
   "proof": {
     "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "2b37b66976ac6d28a2eecf10fef74a52fb30302660c6e5e02a8c8d15a150de01",
-    "case_sha256": "7c75bc1440b4b0b30278f49c753bf254357f2f1513ca1c523d756a5e3fe70735",
+    "baseline_source_sha256": "18ceef8d80e2007783e498c01b2602e759db7aa1e43726e2d6f5ed262c2cd02b",
+    "case_sha256": "b663e21d22792c915f5513db2e2b0d5e7ec2ca07492accec1fa53fcdb8141450",
     "schema_sha256": "83550b400f05c27dfc36e43f246861e2aafb68f65cc2a1bfd7783ff7dd61044c",
     "mutation_sha256": "ed62f5e7b73abce764fb85811e4a4b8ab1261c14b677547765debe4f81133a7d",
     "source": "src/profiles/extended/home/deck_machine.c",
