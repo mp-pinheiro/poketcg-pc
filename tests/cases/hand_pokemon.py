@@ -1,4 +1,4 @@
-from tests.cases._symbols import sym
+from tests.cases._symbols import card_id_size, sym
 from tests.cases._fixtures import ai_play_pokemon_fixture as _ai_play_pokemon_fixture, AI_PLAY_POKEMON_REGS as _AI_PLAY_POKEMON_REGS, ai_evolution_fixture as _ai_evolution_fixture, AI_EVOLUTION_REGS as _AI_EVOLUTION_REGS
 """Oracle-diff cases for poketcg/src/engine/duel/ai/hand_pokemon.asm."""
 
@@ -61,7 +61,8 @@ CONTRACT["AIDecidePlayPokemonCard"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIDecidePlayPokemonCard"] = [
     {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"}, "read": {sym("wDuelTempList"): 1, sym("wFilteredCardList"): 1}, "expect": {sym("wDuelTempList"): b"\xFF", sym("wFilteredCardList"): b"\xFF"}},
     dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"}, read={sym("wDuelTempList"): 1, sym("wFilteredCardList"): 1}, expect={sym("wDuelTempList"): b"\xFF", sym("wFilteredCardList"): b"\xFF"}),
-    dict(_ai_play_pokemon_fixture(bank=5), **_AI_PLAY_POKEMON_REGS),
+    dict(_ai_play_pokemon_fixture(vram=card_id_size() == 1,
+                                  bank=5 if card_id_size() == 1 else None), **_AI_PLAY_POKEMON_REGS),
 ]
 # <<< factory AIDecidePlayPokemonCard
 

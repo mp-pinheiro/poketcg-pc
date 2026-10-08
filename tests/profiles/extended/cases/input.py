@@ -1,15 +1,18 @@
-"""Extended oracle-diff cases for input, seeded from tests/cases/input.py."""
-
-CONTRACT = {
+"""Extended oracle-diff cases for input: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import sym, sym_bank
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('input')
+OWN = (
+    'ReadJoypad',
+    'Reset',
+)
+CONTRACT.update({
     'ReadJoypad': {'compare': ('d', 'e'), 'preserve': ('d', 'e')},
-    'SaveButtonsHeld': {'compare': ('b', 'c', 'd', 'e', 'f', 'hl'), 'preserve': ('b', 'd', 'e', 'f', 'hl')},
-    'ClearJoypad': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'Reset': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('f', 'b', 'c', 'd', 'e', 'hl')},
-}
-
-CASES = {
+})
+CASES.update({
     'ReadJoypad': [
-        {'wram': {0xFF8D: b'\x00\x00\x00\x00\x00'}, 'read': {0xFF8D: 0x05}},
+        {'wram': {sym("hDPadRepeat"): b'\x00\x00\x00\x00\x00'}, 'read': {sym("hDPadRepeat"): 0x05}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -17,14 +20,14 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xFF8D: b'\x124Vx\x9a'},
-            'read': {0xFF8D: 0x05}},
-        {'keys': 0x01, 'wram': {0xFF8D: b'\x00\x00\x00\x00\x00'}, 'read': {0xFF8D: 0x05}},
+            'wram': {sym("hDPadRepeat"): b'\x124Vx\x9a'},
+            'read': {sym("hDPadRepeat"): 0x05}},
+        {'keys': 0x01, 'wram': {sym("hDPadRepeat"): b'\x00\x00\x00\x00\x00'}, 'read': {sym("hDPadRepeat"): 0x05}},
         {'oracle': False,
          'why': 'The seeded A+B+Start+Select held-button state takes ReadJoypad into the non-returning Reset jump.',
-         'wram': {0xFF8D: b'\x00\x00\x00\x0f\x00'},
-         'read': {0xFF8D: 0x05},
-         'expect': {0xFF8D: b'\x00\x0f\x00\x0f\x00'}},
+         'wram': {sym("hDPadRepeat"): b'\x00\x00\x00\x0f\x00'},
+         'read': {sym("hDPadRepeat"): 0x05},
+         'expect': {sym("hDPadRepeat"): b'\x00\x0f\x00\x0f\x00'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -34,37 +37,14 @@ CASES = {
             'hl': 0x1234,
             'oracle': False,
             'why': 'The poisoned held-button state takes ReadJoypad into the non-returning Reset jump.',
-            'wram': {0xFF8D: b'\x00\x00\x00\x0f\x00'},
-            'read': {0xFF8D: 0x05},
-            'expect': {0xFF8D: b'\x00\x0f\x00\x0f\x00'}},
-    ],
-    'SaveButtonsHeld': [
-        {'c': 0x00, 'read': {0xFF90: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xA5,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'read': {0xFF90: 0x01}},
-    ],
-    'ClearJoypad': [
-        {'wram': {0xFF8D: b'\x01\x02\x03\x04\x05'}, 'read': {0xFF8D: 0x05}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF8D: b'\x01\x02\x03\x04\x05'},
-            'read': {0xFF8D: 0x05}},
+            'wram': {sym("hDPadRepeat"): b'\x00\x00\x00\x0f\x00'},
+            'read': {sym("hDPadRepeat"): 0x05},
+            'expect': {sym("hDPadRepeat"): b'\x00\x0f\x00\x0f\x00'}},
     ],
     'Reset': [
-        {'completion': {'mode': 'entry', 'pc': 0x0150, 'bank': 0x00, 'routine': 'Start'},
-         'wram': {0xCAB3: b'7'},
-         'read': {0xCAB3: 0x01}},
+        {'completion': {'mode': 'entry', 'pc': sym("Start"), 'bank': sym_bank("Start"), 'routine': 'Start'},
+         'wram': {sym("wInitialA"): b'7'},
+         'read': {sym("wInitialA"): 0x01}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -72,38 +52,26 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'completion': {'mode': 'entry', 'pc': 0x0150, 'bank': 0x00, 'routine': 'Start'},
-            'wram': {0xCAB3: b'\xc3'},
-            'read': {0xCAB3: 0x01}},
+            'completion': {'mode': 'entry', 'pc': sym("Start"), 'bank': sym_bank("Start"), 'routine': 'Start'},
+            'wram': {sym("wInitialA"): b'\xc3'},
+            'read': {sym("wInitialA"): 0x01}},
     ],
-}
-
-MUTATIONS = {
+})
+MUTATIONS.update({
     'ReadJoypad': {   'source_symbol': 'ReadJoypad',
         'before': '\t\t(void)Reset();\n\t\treturn;',
         'after': '\t\t(void)Reset();\n\t\tSaveButtonsHeld(c);\n\t\treturn;',
         'case_ids': ['ReadJoypad-3', 'ReadJoypad-4'],
         'source': 'src/profiles/extended/home/input.c'},
-    'SaveButtonsHeld': {   'source_symbol': 'SaveButtonsHeld',
-        'before': 'gb_write8(JOYP, JOYP_GET_NONE);',
-        'after': 'gb_write8(hKeysHeld_ADDR, (uint8_t)(c + 1u));',
-        'case_ids': ['SaveButtonsHeld-0', 'SaveButtonsHeld-1'],
-        'source': 'src/home/input.c'},
-    'ClearJoypad': {   'source_symbol': 'ClearJoypad',
-        'before': '\tgb_write8(address, 0);',
-        'after': '\t;',
-        'case_ids': ['ClearJoypad-0'],
-        'source': 'src/home/input.c'},
     'Reset': {   'source_symbol': 'Reset',
         'before': '\twInitialA = initial_a;',
         'after': '\twInitialA = 0u;',
         'case_ids': ['Reset-0'],
         'source': 'src/profiles/extended/home/input.c'},
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-for _name, _entries in CASES.items():
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
+for _name, _entries in ((_fn, CASES[_fn]) for _fn in OWN):
     for _index, _entry in enumerate(_entries):
         if "completion" in _entry:
             SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]

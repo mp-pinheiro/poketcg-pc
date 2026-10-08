@@ -1,101 +1,14 @@
-"""Extended oracle-diff cases for time, seeded from tests/cases/time.py."""
-
-CONTRACT = {
-    'IncrementPlayTimeCounter': {'compare': ('b', 'c', 'd', 'e'), 'preserve': ('b', 'c', 'd', 'e')},
-    'CheckForCGB': {'compare': ('f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
-    'SetupTimer': {'compare': ('c', 'd', 'e', 'hl'), 'preserve': ('c', 'd', 'e', 'hl')},
-    'TimerHandler': {'compare': (), 'preserve': (), 'wram_out': True},
-}
-
-CASES = {
-    'IncrementPlayTimeCounter': [
-        {'wram': {0xCAC4: b'\x00;\x00\x00\x00\x00'}},
-        {'wram': {0xCAC4: b'\x01\x00\x00\x00\x00\x00'}},
-        {'wram': {0xCAC4: b'\x01;\x00\x00\x00\x00'}},
-        {'wram': {0xCAC4: b'\x01;;;\x00\x00'}},
-        {'wram': {0xCAC4: b'\x01;;;\xff\x05'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCAC4: b'\x01\x05\t!\x80\x07'}},
-    ],
-    'CheckForCGB': [
-        {'wram': {0xCAB4: b'\x02'}},
-        {'wram': {0xCAB4: b'\x00'}},
-        {'wram': {0xCAB4: b'\x01'}},
-        {'wram': {0xCAB4: b'\x03'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCAB4: b'\x02'}},
-    ],
-    'SetupTimer': [
-        {'wram': {0xCAB4: b'\x00'}, 'read': {0xFF06: 0x01, 0xFF07: 0x01}},
-        {'wram': {0xCAB4: b'\x02'}, 'read': {0xFF06: 0x01, 0xFF07: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCAB4: b'\x02'},
-            'read': {0xFF06: 0x01, 0xFF07: 0x01}},
-    ],
-    'TimerHandler': [
-        {   'wram': {0xFF80: b'\x01', 0xCABA: b'\x00', 0xCAC3: b'\x00'},
-            'instruction_budget': 0x30D40,
-            'cycle_budget': 0xF4240,
-            'read': {0xFF80: 0x01, 0xCABA: 0x01, 0xCAC3: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF80: b'\x01', 0xCABA: b'\x00', 0xCAC3: b'\x03'},
-            'instruction_budget': 0x30D40,
-            'cycle_budget': 0xF4240,
-            'read': {0xFF80: 0x01, 0xCABA: 0x01, 0xCAC3: 0x01}},
-    ],
-}
-
-MUTATIONS = {
-    'IncrementPlayTimeCounter': {   'source_symbol': 'IncrementPlayTimeCounter',
-        'before': 'if (b0 < 60u)',
-        'after': 'if (b0 <= 60u)',
-        'case_ids': [   'IncrementPlayTimeCounter-2',
-                        'IncrementPlayTimeCounter-0',
-                        'IncrementPlayTimeCounter-1',
-                        'IncrementPlayTimeCounter-3',
-                        'IncrementPlayTimeCounter-4',
-                        'IncrementPlayTimeCounter-5'],
-        'source': 'src/home/time.c'},
-    'CheckForCGB': {   'source_symbol': 'CheckForCGB',
-        'before': '\tif (a == CONSOLE_CGB)',
-        'after': '\tif (a != CONSOLE_CGB)',
-        'case_ids': ['CheckForCGB-0'],
-        'source': 'src/home/time.c'},
-    'SetupTimer': {   'source_symbol': 'SetupTimer',
-        'before': '\t\tif ((gb_read8(rSPD) & (uint8_t)(1u << B_SPD_DOUBLE)) != 0u)',
-        'after': '\t\tif ((gb_read8(rSPD) & (uint8_t)(1u << B_SPD_DOUBLE)) == 0u)',
-        'case_ids': ['SetupTimer-1'],
-        'source': 'src/home/time.c'},
-    'TimerHandler': {   'source_symbol': 'TimerHandler',
-        'before': '\twTimerCounter = (uint8_t)(counter + 1u);',
-        'after': '\twTimerCounter = counter;',
-        'case_ids': ['TimerHandler-0', 'TimerHandler-1'],
-        'source': 'src/profiles/extended/home/time.c'},
-}
-
+"""Extended oracle-diff cases for time: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('time')
+OWN = (
+)
+CONTRACT.update({
+})
+CASES.update({
+})
+MUTATIONS.update({
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

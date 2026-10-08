@@ -1,4 +1,4 @@
-from tests.cases._symbols import sym, sym_bank
+from tests.cases._symbols import map_script_offset, sym, sym_bank
 from tests.cases._fixtures import (
     after_duel_fixture,
     AFTER_DUEL_REGS,
@@ -3015,10 +3015,6 @@ CASES["Func_c9c7"] = [
 # <<< factory Func_c9c7
 
 # >>> factory Func_c9b8
-# `ld l, MAP_SCRIPT_LOAD_MAP`: the overworld's LoadOverworld runs (fixture);
-# map 2 has no LOAD_MAP entry. LoadOverworld's port is void, so the flags past
-# the jump are not modeled and the contract compares the state block only. Index 0 reds the mutation: the overworld's
-# AFTER_DUEL slot is empty.
 CONTRACT["Func_c9b8"] = {"compare": (), "preserve": ()}
 CASES["Func_c9b8"] = [
     {**load_map_fixture(vram=False), **LOAD_MAP_REGS, "read": _CMSP_READ},
@@ -3105,15 +3101,12 @@ CASES["ScriptCommand_PrintText"] = [
 # <<< factory ScriptCommand_PrintText
 
 # >>> factory Func_c9c0
-# `ld l, MAP_SCRIPT_MOVED_PLAYER`: neither the lab (fixture) nor map 0 has an
-# entry, so both return nc; the Water Club's WaterClubMovePlayer runs from the
-# after-duel state with wCurMap retargeted.
 CONTRACT["Func_c9c0"] = {"compare": ("f",), "preserve": ()}
 CASES["Func_c9c0"] = [
-    {**after_duel_fixture(changes={sym("wCurMap"): b"\x0c"}), **AFTER_DUEL_REGS, "read": _CMSP_READ},
-    {"wram": {sym("wCurMap"): b"\x00"}, "read": {sym("wCurMap"): 1}},
+    {**after_duel_fixture({sym("wCurMap"): b"\x0c"}), **AFTER_DUEL_REGS, "read": _CMSP_READ},
+    {"wram": {_CMSP_CURMAP: b"\x00"}, "read": {_CMSP_CURMAP: 1}},
     {**after_duel_fixture(), **AFTER_DUEL_REGS, "read": _CMSP_READ},
-    {**after_duel_fixture(changes={sym("wCurMap"): b"\x0c"}), **POISON, "read": _CMSP_READ},
+    {**after_duel_fixture({sym("wCurMap"): b"\x0c"}), **POISON, "read": _CMSP_READ},
 ]
 # <<< factory Func_c9c0
 
@@ -4619,7 +4612,7 @@ from tests.cases._schema_migration import legacy_to_schema
 # read by no caller, so the contract compares the flags and the state block.
 CONTRACT["CallMapScriptPointerIfExists"] = {"compare": ("f",), "preserve": ()}
 CASES["CallMapScriptPointerIfExists"] = [
-    {**after_duel_fixture(), **AFTER_DUEL_REGS, "hl": 0x000A, "read": _CMSP_READ},
+    {**after_duel_fixture(), **AFTER_DUEL_REGS, "hl": map_script_offset(5), "read": _CMSP_READ},
     {
         "a": 0,
         "f": 0,
@@ -4631,15 +4624,12 @@ CASES["CallMapScriptPointerIfExists"] = [
         "wram": {_CMSP_CURMAP: b"\x00"},
         "read": {_CMSP_CURMAP: 1},
     },
-    {**after_duel_fixture(), **POISON, "hl": 0x000A, "read": _CMSP_READ},
+    {**after_duel_fixture(), **POISON, "hl": map_script_offset(5), "read": _CMSP_READ},
 ]
 # <<< factory CallMapScriptPointerIfExists
 
 
 # >>> factory Func_c9bc
-# `ld l, MAP_SCRIPT_AFTER_DUEL` into CallMapScriptPointerIfExists: the lab's
-# after-duel entry runs (fixture), map 0 has none. Index 0 reds the mutation:
-# the lab's MOVED_PLAYER slot is empty.
 CONTRACT["Func_c9bc"] = {"compare": ("f",), "preserve": ()}
 CASES["Func_c9bc"] = [
     {**after_duel_fixture(), **AFTER_DUEL_REGS, "read": _CMSP_READ},

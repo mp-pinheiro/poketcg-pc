@@ -1,4 +1,4 @@
-from tests.cases._symbols import HRAM_START, STACK_CANARY, sym, sym_bank
+from tests.cases._symbols import HRAM_START, STACK_CANARY, sym, sym_bank, sym_pointer
 from tests.cases._fixtures import play_area_b_fixture as _play_area_b_fixture, PLAY_AREA_B_REGS as _PLAY_AREA_B_REGS
 from tests.cases._fixtures import CARD_LIST_INPUT_REGS as _CARD_LIST_INPUT_REGS, card_list_input_fixture as _card_list_input_fixture
 from tests.cases._fixtures import BUTTON_AB_REGS as _BUTTON_AB_REGS, button_ab_fixture as _button_ab_fixture
@@ -428,8 +428,8 @@ CASES["HandleMenuInput"] = [
     # which advances the counter. A port that runs CardListMenuFunction for
     # every update function, or that refreshes the cursor before the update
     # function decides, differs on the counter or the flags.
-    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x08", sym("wMenuUpdateFunc"): b"\xCE\x60", sym("wCurMenuItem"): b"\x02", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x02", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x99", sym("wCursorBlinkCounter"): b"\x05", sym("hBankROM"): b"\x01"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1, sym("wCursorBlinkCounter"): 1}},
-    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00", sym("wMenuUpdateFunc"): b"\xCE\x60", sym("wCurMenuItem"): b"\x02", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x02", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x00", sym("wCursorBlinkCounter"): b"\x05", sym("hBankROM"): b"\x01"}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1, sym("wCursorBlinkCounter"): 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x08", sym("wMenuUpdateFunc"): sym_pointer("PlayAreaScreenMenuFunction"), sym("wCurMenuItem"): b"\x02", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x02", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x99", sym("wCursorBlinkCounter"): b"\x05", sym("hBankROM"): bytes([sym_bank("PlayAreaScreenMenuFunction")])}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1, sym("wCursorBlinkCounter"): 1}},
+    {"wram": {sym("hDPadHeld"): b"\x00", sym("hKeysPressed"): b"\x00", sym("wMenuUpdateFunc"): sym_pointer("PlayAreaScreenMenuFunction"), sym("wCurMenuItem"): b"\x02", sym("wNumMenuItems"): b"\x04", sym("hCurMenuItem"): b"\x02", sym("wMenuVisibleCursorTile"): b"\x00", sym("wRefreshMenuCursorSFX"): b"\x00", sym("wCursorBlinkCounter"): b"\x05", sym("hBankROM"): bytes([sym_bank("PlayAreaScreenMenuFunction")])}, "read": {sym("hCurMenuItem"): 1, sym("wCurMenuItem"): 1, sym("wRefreshMenuCursorSFX"): 1, sym("wCursorBlinkCounter"): 1}},
     dict(_PLAY_AREA_B, **_PLAY_AREA_B_REGS),
 ]
 # <<< factory HandleMenuInput

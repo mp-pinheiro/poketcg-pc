@@ -1,87 +1,17 @@
-"""Extended oracle-diff cases for script, seeded from tests/cases/script.py."""
-
-CONTRACT = {
-    'GetMapScriptPointer': {'compare': ('a', 'b', 'c', 'd', 'e', 'f', 'hl'), 'preserve': ('b', 'c', 'd', 'e')},
-    'ResetAnimationQueue': {'compare': (), 'preserve': ()},
-    'FinishQueuedAnimations': {'compare': (), 'preserve': ()},
-    'HandleMoveModeAPress': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('e',)},
+"""Extended oracle-diff cases for script: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('script', remove=(
+    'Func_3b11',
+    'GetNPCDuelConfigurations',
+))
+OWN = (
+    'RunOverworldScript',
+)
+CONTRACT.update({
     'RunOverworldScript': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
-}
-
-CASES = {
-    'GetMapScriptPointer': [
-        {'hl': 0x04, 'wram': {0xD31C: b'\x00'}},
-        {'hl': 0x06, 'wram': {0xD31C: b'\x00'}},
-        {'hl': 0x04, 'wram': {0xD31C: b'\x01'}},
-        {'hl': 0x06, 'wram': {0xD31C: b'\x02'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x04,
-            'wram': {0xD31C: b'\x03'}},
-    ],
-    'ResetAnimationQueue': [
-        {'wram': {0xFF80: b'\x04', 0xCAD3: b'\x00\x00'}, 'read': {0xFF80: 0x01, 0xCAD3: 0x02}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF80: b'\x07', 0xCAD3: b'\xff\xff'},
-            'read': {0xFF80: 0x01, 0xCAD3: 0x02}},
-    ],
-    'FinishQueuedAnimations': [
-        {   'wram': {0xFF80: b'\x04', 0xCAD3: b'\x11"'},
-            'read': {0xFF80: 0x01, 0xCAD3: 0x02, 0xCAC0: 0x01}},
-        {   'wram': {   0xFF80: b'\x04',
-                        0xCAD3: b'\xc92',
-                        0xD410: b'\xff\xff\xff\xff\xff\xff\xff',
-                        0xD499: b'\x00\x00',
-                        0xD4A6: b'\xa5K'},
-            'read': {0xFF80: 0x01, 0xCAD3: 0x02, 0xCAC0: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF80: b'\x07', 0xCAD3: b'3D'},
-            'read': {0xFF80: 0x01, 0xCAD3: 0x02, 0xCAC0: 0x01}},
-    ],
-    'HandleMoveModeAPress': [
-        {   'a': 0x11,
-            'f': 0x00,
-            'b': 0x22,
-            'c': 0x33,
-            'd': 0x44,
-            'e': 0x55,
-            'hl': 0x4567,
-            'wram': {   0xD31C: b'\x01',
-                        0xD31D: b'\x12',
-                        0xD31E: b'\x04',
-                        0xD321: b'\x00',
-                        0xFF80: b'\x01'},
-            'read': {0xD0B3: 0x02, 0xD0B8: 0x02, 0xD0B6: 0x02}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xD31C: b'\x01',
-                        0xD31D: b'\x12',
-                        0xD31E: b'\x04',
-                        0xD321: b'\x00',
-                        0xFF80: b'\x01'},
-            'read': {0xD0B3: 0x02, 0xD0B8: 0x02, 0xD0B6: 0x02}},
-    ],
+})
+CASES.update({
     'RunOverworldScript': [
         {   'a': 0x00,
             'f': 0x00,
@@ -92,8 +22,8 @@ CASES = {
             'hl': 0x4567,
             'rom_bank': 0x03,
             'hbank_rom': 0x03,
-            'wram': {0xFF80: b'\x03', 0xD402: b'\x00\xc5', 0xC4F0: b'\x004\x12', 0xD401: b'\x00'},
-            'read': {0xFF80: 0x01, 0xD402: 0x02, 0xD401: 0x01}},
+            'wram': {sym("hBankROM"): b'\x03', sym("wScriptPointer"): b'\x00\xc5', sym("wNameBuffer"): b'\x004\x12', sym("wBreakScriptLoop"): b'\x00'},
+            'read': {sym("hBankROM"): 0x01, sym("wScriptPointer"): 0x02, sym("wBreakScriptLoop"): 0x01}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -103,8 +33,8 @@ CASES = {
             'hl': 0x1234,
             'rom_bank': 0x03,
             'hbank_rom': 0x03,
-            'wram': {0xFF80: b'\x03', 0xD402: b'\x00\xc5', 0xC4F0: b'\x004\x12', 0xD401: b'\xff'},
-            'read': {0xFF80: 0x01, 0xD402: 0x02, 0xD401: 0x01}},
+            'wram': {sym("hBankROM"): b'\x03', sym("wScriptPointer"): b'\x00\xc5', sym("wNameBuffer"): b'\x004\x12', sym("wBreakScriptLoop"): b'\xff'},
+            'read': {sym("hBankROM"): 0x01, sym("wScriptPointer"): 0x02, sym("wBreakScriptLoop"): 0x01}},
         {   'a': 0x00,
             'f': 0x00,
             'b': 0x00,
@@ -114,12 +44,11 @@ CASES = {
             'hl': 0x4567,
             'rom_bank': 0x03,
             'hbank_rom': 0x03,
-            'wram': {0xFF80: b'\x03', 0xD402: b'\x00\xc5', 0xC4F0: b'\x014\x12', 0xD401: b'\x00'},
-            'read': {0xFF80: 0x01, 0xD402: 0x02, 0xD401: 0x01}},
+            'wram': {sym("hBankROM"): b'\x03', sym("wScriptPointer"): b'\x00\xc5', sym("wNameBuffer"): b'\x014\x12', sym("wBreakScriptLoop"): b'\x00'},
+            'read': {sym("hBankROM"): 0x01, sym("wScriptPointer"): 0x02, sym("wBreakScriptLoop"): 0x01}},
     ],
-}
-
-MUTATIONS = {
+})
+MUTATIONS.update({
     'GetMapScriptPointer': {   'source_symbol': 'GetMapScriptPointer',
         'before': 'uint8_t f = found == 0u ? 0x80u : 0x10u;',
         'after': 'uint8_t f = found == 0u ? 0x10u : 0x80u;',
@@ -129,39 +58,11 @@ MUTATIONS = {
                         'GetMapScriptPointer-3',
                         'GetMapScriptPointer-4'],
         'source': 'src/profiles/extended/home/script.c'},
-    'ResetAnimationQueue': {   'source_symbol': 'ResetAnimationQueue',
-        'before': 'void ResetAnimationQueue(void)\n'
-                  '{\n'
-                  '\tuint8_t bank = gb_read8(hBankROM_ADDR);\n'
-                  '\tBankswitchROM(BANK_ANIMATION_CORE);\n'
-                  '\t_ResetAnimationQueue();\n'
-                  '\tBankswitchROM(bank);\n'
-                  '}',
-        'after': 'void ResetAnimationQueue(void)\n'
-                 '{\n'
-                 '\tuint8_t bank = gb_read8(hBankROM_ADDR);\n'
-                 '\tBankswitchROM(BANK_ANIMATION_CORE);\n'
-                 '\t_ResetAnimationQueue();\n'
-                 '\tBankswitchROM((uint8_t)(bank + 1u));\n'
-                 '}',
-        'case_ids': ['ResetAnimationQueue-0', 'ResetAnimationQueue-1'],
-        'source': 'src/home/script.c'},
-    'FinishQueuedAnimations': {   'source_symbol': 'FinishQueuedAnimations',
-        'before': 'if (!(r.f & 0x10u)) {',
-        'after': 'if ((r.f & 0x10u)) {',
-        'case_ids': ['FinishQueuedAnimations-0', 'FinishQueuedAnimations-1'],
-        'source': 'src/home/script.c'},
-    'HandleMoveModeAPress': {   'source_symbol': 'HandleMoveModeAPress',
-        'before': '\tuint8_t object_direction = wPlayerDirection;',
-        'after': '\tuint8_t object_direction = 0xffu;',
-        'case_ids': ['HandleMoveModeAPress-0', 'HandleMoveModeAPress-1'],
-        'source': 'src/profiles/extended/home/script.c'},
     'RunOverworldScript': {   'source_symbol': 'RunOverworldScript',
         'before': 'ScriptDispatchFn dispatch = ScriptDispatchLookupOpcode(opcode);',
         'after': 'ScriptDispatchFn dispatch = ScriptDispatchLookupOpcode((uint8_t)(opcode + 1u));',
         'case_ids': ['RunOverworldScript-0', 'RunOverworldScript-1'],
         'source': 'src/profiles/extended/home/script.c'},
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

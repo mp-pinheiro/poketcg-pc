@@ -1,70 +1,30 @@
-"""Extended oracle-diff cases for sound, seeded from tests/cases/sound.py."""
-
-CONTRACT = {
-    'SetupSound': {'compare': (), 'preserve': ()},
-    'PlaySong': {'compare': ('hl',), 'preserve': ('hl',)},
-    'AssertSongFinished': {'compare': ('a',), 'preserve': ()},
-    'AssertSFXFinished': {'compare': ('a',), 'preserve': ()},
+"""Extended oracle-diff cases for sound: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('sound', remove=(
+    'Func_37a5',
+    'Func_37c5',
+    'PlaySFX',
+    'PlaySFX_InvalidChoice',
+    'StopMusic',
+))
+OWN = (
+    'PauseSong',
+    'PlaySFX',
+    'PlaySFX_InvalidChoice',
+)
+CONTRACT.update({
     'PlaySFX_InvalidChoice': {'compare': ('b', 'c', 'hl'), 'preserve': ('b', 'c', 'hl')},
     'PlaySFX': {'compare': ('b', 'c', 'hl'), 'preserve': ('b', 'c', 'hl')},
     'PauseSong': {'compare': (), 'preserve': ()},
-    'ResumeSong': {'compare': (), 'preserve': ()},
-}
-
-CASES = {
-    'SetupSound': [
-        {'read': {0xD7A4: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'read': {0xD7A4: 0x01}},
-    ],
-    'PlaySong': [
-        {'a': 0x00, 'read': {0xD7A4: 0x01}},
-        {'a': 0x1E, 'read': {0xD7A4: 0x01}},
-        {   'a': 0x0F,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'read': {0xD7A4: 0x01}},
-    ],
-    'AssertSongFinished': [
-        {'wram': {0xD7A4: b'\x80'}},
-        {'wram': {0xD7A4: b'\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xD7A4: b'\x80'}},
-    ],
-    'AssertSFXFinished': [
-        {'wram': {0xD7A6: b'\x80'}},
-        {'wram': {0xD7A6: b'\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xD7A6: b'\x80'}},
-    ],
+})
+CASES.update({
     'PlaySFX_InvalidChoice': [
-        {'read': {0xD7A6: 0x01, 0xD7A7: 0x01}},
+        {'read': {sym("wCurSfxID"): 0x01, sym("wMusicStereoPanning"): 0x01}},
     ],
     'PlaySFX': [
-        {'a': 0x00, 'read': {0xD7A6: 0x01, 0xD7A7: 0x01}},
-        {'a': 0x01, 'read': {0xD7A6: 0x01, 0xD7A7: 0x01}},
+        {'a': 0x00, 'read': {sym("wCurSfxID"): 0x01, sym("wMusicStereoPanning"): 0x01}},
+        {'a': 0x01, 'read': {sym("wCurSfxID"): 0x01, sym("wMusicStereoPanning"): 0x01}},
         {   'a': 0x05,
             'f': 0xF0,
             'b': 0xBB,
@@ -72,17 +32,13 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'read': {0xD7A6: 0x01, 0xD7A7: 0x01}},
+            'read': {sym("wCurSfxID"): 0x01, sym("wMusicStereoPanning"): 0x01}},
     ],
     'PauseSong': [
-        {'wram': {0xD7A4: b'\x01'}, 'read': {0xD7A4: 0x01}},
+        {'wram': {sym("wCurSongID"): b'\x01'}, 'read': {sym("wCurSongID"): 0x01}},
     ],
-    'ResumeSong': [
-        {'wram': {0xD7A4: b'\x01'}, 'read': {0xD7A4: 0x01}},
-    ],
-}
-
-MUTATIONS = {
+})
+MUTATIONS.update({
     'SetupSound': {
         'source_symbol': 'SetupSound',
         'before': '\t_SetupSound();',
@@ -139,7 +95,6 @@ MUTATIONS = {
         'case_ids': ['ResumeSong-0'],
         'source': 'src/profiles/extended/home/sound.c',
     },
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

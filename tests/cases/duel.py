@@ -1,4 +1,4 @@
-from tests.cases._symbols import SRAM_START, sym, sym_bank
+from tests.cases._symbols import SRAM_START, deck_entry, sym, sym_bank, sym_pointer
 from tests.cases._fixtures import full_heal_trainer_fixture as _full_heal_trainer_fixture, FULL_HEAL_TRAINER_REGS as _FULL_HEAL_TRAINER_REGS
 from tests.cases._fixtures import init_duelvar_fixture as _init_duelvar_fixture, INIT_DUELVAR_REGS as _INIT_DUELVAR_REGS
 from tests.cases._fixtures import swap_duelvar_fixture as _swap_duelvar_fixture, SWAP_DUELVAR_REGS as _SWAP_DUELVAR_REGS
@@ -151,19 +151,19 @@ CASES = {
     ],
     # Deck index -> id from the turn holder's deck; hl = deck base + index.
     "_GetCardIDFromDeckIndex": [
-        {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x10"}},
-        {"a": 5, "wram": {hWhoseTurn: b"\xC3", wOpponentDeck + 5: b"\x22"}},
-        dict(POISON, a=3, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 3: b"\x33"}),
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", **deck_entry(0, 0x10, base=wPlayerDeck)}},
+        {"a": 5, "wram": {hWhoseTurn: b"\xC3", **deck_entry(5, 0x22, base=wOpponentDeck)}},
+        dict(POISON, a=3, wram={hWhoseTurn: b"\xC2", **deck_entry(3, 0x33, base=wPlayerDeck)}),
     ],
     # id in de, af and hl preserved.
     "GetCardIDFromDeckIndex": [
-        {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x10"}},
-        dict(POISON, a=5, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 5: b"\x22"}),
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", **deck_entry(0, 0x10, base=wPlayerDeck)}},
+        dict(POISON, a=5, wram={hWhoseTurn: b"\xC2", **deck_entry(5, 0x22, base=wPlayerDeck)}),
     ],
     # id in a and c, b = 0, hl preserved.
     "GetCardIDFromDeckIndex_bc": [
-        {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x10"}},
-        dict(POISON, a=5, wram={hWhoseTurn: b"\xC3", wOpponentDeck + 5: b"\x22"}),
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", **deck_entry(0, 0x10, base=wPlayerDeck)}},
+        dict(POISON, a=5, wram={hWhoseTurn: b"\xC3", **deck_entry(5, 0x22, base=wOpponentDeck)}),
     ],
     # Temp-list entry shadowed in hTempCardIndex_ff98, hl preserved.
     "GetCardInDuelTempList_OnlyDeckIndex": [
@@ -173,22 +173,22 @@ CASES = {
     # Entry in a (reloaded), id in de, hl preserved.
     "GetCardInDuelTempList": [
         {"a": 0, "wram": {hWhoseTurn: b"\xC2", wDuelTempList: b"\x01",
-                          wPlayerDeck + 1: b"\x44"}, "read": {sym("hTempCardIndex_ff98"): 1}},
+                          **deck_entry(1, 0x44, base=wPlayerDeck)}, "read": {sym("hTempCardIndex_ff98"): 1}},
         dict(POISON, a=1, wram={hWhoseTurn: b"\xC3", wDuelTempList + 1: b"\x02",
-                                wOpponentDeck + 2: b"\x55"}, read={sym("hTempCardIndex_ff98"): 1}),
+                                **deck_entry(2, 0x55, base=wOpponentDeck)}, read={sym("hTempCardIndex_ff98"): 1}),
     ],
     # Deck card loaded into wLoadedCard1: the type byte lands in the buffer and
     # exit a is the card id's low byte. wLoadedCard1 = $CC24.
     "LoadCardDataToBuffer1_FromDeckIndex": [
-        {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x10"},
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", **deck_entry(0, 0x10, base=wPlayerDeck)},
          "read": {sym("wLoadedCard1"): 64}},
-        dict(POISON, a=3, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 3: b"\x20"},
+        dict(POISON, a=3, wram={hWhoseTurn: b"\xC2", **deck_entry(3, 0x20, base=wPlayerDeck)},
              read={sym("wLoadedCard1"): 64}),
     ],
     "LoadCardDataToBuffer2_FromDeckIndex": [
-        {"a": 1, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck + 1: b"\x15"},
+        {"a": 1, "wram": {hWhoseTurn: b"\xC2", **deck_entry(1, 0x15, base=wPlayerDeck)},
          "read": {sym("wLoadedCard2"): 64}},
-        dict(POISON, a=4, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 4: b"\x25"},
+        dict(POISON, a=4, wram={hWhoseTurn: b"\xC2", **deck_entry(4, 0x25, base=wPlayerDeck)},
              read={sym("wLoadedCard2"): 64}),
     ],
     # HP minus damage, clamped at zero; carry set iff HP remains.
@@ -485,10 +485,10 @@ CASES = {
         dict(POISON, a=5, wram={hWhoseTurn: b"\xC2", sym("wPlayerPrizes"): b"\x00"}),
     ],
     "SortCardsInListByID_CheckForListTerminator": [
-        {"wram": {hWhoseTurn: b"\xC2", sym("hTempListPtr_ff99"): b"\x10\xC5",
-                  sym("wDuelTempList"): b"\x02\x01\x00\xff", wPlayerDeck: b"\x03\x02\x01"},
+        {"wram": {hWhoseTurn: b"\xC2", sym("hTempListPtr_ff99"): sym_pointer("wDuelTempList"),
+                  sym("wDuelTempList"): b"\x02\x01\x00\xff", **deck_entry(0, 3, wPlayerDeck), **deck_entry(1, 2, wPlayerDeck), **deck_entry(2, 1, wPlayerDeck)},
          "read": {sym("wDuelTempList"): 4, sym("hTempListPtr_ff99"): 2}},
-        {"wram": {hWhoseTurn: b"\xC2", sym("hTempListPtr_ff99"): b"\x00\xC5",
+        {"wram": {hWhoseTurn: b"\xC2", sym("hTempListPtr_ff99"): sym_pointer("wNameBuffer"),
                   sym("wNameBuffer"): b"\xff"}, "read": {sym("hTempListPtr_ff99"): 2}},
         # Poisoned b/c must survive an immediate (empty-list) terminator hit
         # unchanged -- this is the only branch where they're real pass-through
@@ -497,7 +497,7 @@ CASES = {
         # touches carry, but the shared C hardcodes f=$20 (C=0) on this
         # branch, so poisoning entry carry would fail through code this
         # routine doesn't own.
-        dict(POISON, f=0x00, wram={hWhoseTurn: b"\xC3", sym("hTempListPtr_ff99"): b"\x00\xC5",
+        dict(POISON, f=0x00, wram={hWhoseTurn: b"\xC3", sym("hTempListPtr_ff99"): sym_pointer("wNameBuffer"),
                            sym("wNameBuffer"): b"\xff"}, read={sym("hTempListPtr_ff99"): 2}),
     ],
     "CheckIfCanEvolveInto": [
@@ -847,13 +847,13 @@ CASES.update({
         dict(POISON, a=2, wram={hWhoseTurn: b"\xC2", sym("wPlayerBench2CardHP"): b"\x32"}),
         {"a": 0, "wram": {hWhoseTurn: b"\xC2", HP_ADDR: b"\x00",
                           sym("wPlayerArenaCard"): b"\x00", wPlayerDeck + 0: b"\x08",
-                          sym("wTempNonTurnDuelistCardID"): b"\x08", sym("wDoFrameFunction"): b"\x48\x03"},
+                          sym("wTempNonTurnDuelistCardID"): b"\x08", sym("wDoFrameFunction"): sym_pointer("NoOp")},
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          "instruction_budget": 1000000, "cycle_budget": 4000000,
          "vread": {0: {0x9980: 1}}},
     ],
     "PrintKnockedOut": [
-        {"wram": {hWhoseTurn: b"\xC2", sym("wTempNonTurnDuelistCardID"): b"\x08", sym("wDoFrameFunction"): b"\x48\x03"},
+        {"wram": {hWhoseTurn: b"\xC2", sym("wTempNonTurnDuelistCardID"): b"\x08", sym("wDoFrameFunction"): sym_pointer("NoOp")},
          "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
          "instruction_budget": 1000000, "cycle_budget": 4000000,
          "vread": {0: {0x9980: 1}}},
@@ -1398,7 +1398,7 @@ CONTRACT["DrawYourOrOppPlayArea_RefreshArrows"] = {"compare": ("a", "f"), "prese
 CASES["DrawYourOrOppPlayArea_RefreshArrows"] = [
     {"a": 0x00, "wram": {wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00", wYourOrOppPlayAreaLastCursorPosition: b"\x00"}, "read": {wYourOrOppPlayAreaLastCursorPosition: 1}},
     {"a": 0x12, "wram": {wCheckMenuCursorXPosition: b"\x01", wCheckMenuCursorYPosition: b"\x02", wYourOrOppPlayAreaLastCursorPosition: b"\x00"}, "read": {wYourOrOppPlayAreaLastCursorPosition: 1}},
-    dict(POISON, a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00", wYourOrOppPlayAreaLastCursorPosition: b"\x00"}, read={wYourOrOppPlayAreaLastCursorPosition: 1}),
+    dict(POISON, a=0x01, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00", wYourOrOppPlayAreaLastCursorPosition: b"\x00"}, read={wYourOrOppPlayAreaLastCursorPosition: 1}),
 ]
 # <<< factory DrawYourOrOppPlayArea_RefreshArrows
 
@@ -2738,8 +2738,8 @@ MUTATIONS["TranslateColorToWR"] = {
 }
 MUTATIONS["_GetCardIDFromDeckIndex"] = {
     "source_symbol": "_GetCardIDFromDeckIndex",
-    "before": "\treturn (DeckCardResult){(uint8_t)id, (uint16_t)(deck + a)};",
-    "after": "\treturn (DeckCardResult){(uint8_t)id, (uint16_t)(deck + (uint8_t)(a + 1u))};",
+    "before": "\treturn (DeckCardResult){(uint8_t)(id & 0xFFu), (uint16_t)(deck + a)};",
+    "after": "\treturn (DeckCardResult){(uint8_t)(id & 0xFFu), (uint16_t)(deck + (uint8_t)(a + 1u))};",
     "case_ids": ["_GetCardIDFromDeckIndex-1"],
 }
 MUTATIONS["SortCardsInListByID_CheckForListTerminator"] = {

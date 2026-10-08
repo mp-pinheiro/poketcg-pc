@@ -1,3 +1,4 @@
+from tests.cases._symbols import data, sym
 POISON = {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC,
           'd': 0xDD, 'e': 0xEE, 'hl': 0x1234}
 
@@ -38,15 +39,15 @@ CONTRACT['CopyData'] = {'compare': ('hl', 'd', 'e'), 'preserve': ()}
 CASES = {}
 for name in ROUTINES:
     CASES[name] = [
-        {'a': 0x00, 'c': 0x00, 'hl': 0xC100,
-         'wram': {0xC100: b'\x00\x00\x00'},
-         'read': {0xD7A4: 1, 0xD7A6: 1, 0xD7B0: 4}},
-        dict(POISON, a=0x01, c=0x01, hl=0xC101,
-             wram={0xC101: b'\xD0\x01\x02'},
-             read={0xD7A4: 1, 0xD7A6: 1, 0xD7B0: 4}),
-        dict(POISON, a=0xFF, c=0x03, hl=0xC1FF,
-             wram={0xC1FF: b'\xFE', 0xC200: b'\xFD\xFC'},
-             read={0xD7A4: 1, 0xD7A6: 1, 0xD7B0: 4}),
+        {'a': 0x00, 'c': 0x00, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11,
+         'wram': {sym("wDecompressionSecondaryBufferStart") + 0x11: b'\x00\x00\x00'},
+         'read': {sym("wCurSongID"): 1, sym("wCurSfxID"): 1, sym("wMusicIsPlaying"): 4}},
+        dict(POISON, a=0x01, c=0x01, hl=sym("wDecompressionSecondaryBufferStart") + 0x12,
+             wram={sym("wDecompressionSecondaryBufferStart") + 0x12: b'\xD0\x01\x02'},
+             read={sym("wCurSongID"): 1, sym("wCurSfxID"): 1, sym("wMusicIsPlaying"): 4}),
+        dict(POISON, a=0xFF, c=0x03, hl=sym("wDecompressionSecondaryBufferStart") + 0x110,
+             wram={sym("wDecompressionSecondaryBufferStart") + 0x110: b'\xFE', sym("wPlayerCardLocations"): b'\xFD\xFC'},
+             read={sym("wCurSongID"): 1, sym("wCurSfxID"): 1, sym("wMusicIsPlaying"): 4}),
     ]
 STACK_SENSITIVE_MUSIC_COMMANDS = (
     'Music_note', 'PlayNextNote_pop', 'Music_speed', 'Music_octave',
@@ -58,27 +59,27 @@ STACK_SENSITIVE_MUSIC_COMMANDS = (
     'Music_vibrato_delay', 'Music_pitch_offset',
     'Music_adjust_pitch_offset', 'Music_end')
 _COMMAND_WRAM = {
-    0xC100: b'\xFF\xFF\xFF',
-    0xC101: b'\xFF\xFF\xFF',
-    0xD7E2: b'\x08\x08\x08\x08',
-    0xD7F2: b'\x01\x01\x01\x01',
-    0xD7C0: b'\x00\xC1\x00\x00\x00\x00\x00\x00',
-    0xD816: b'\x00\xC2\x00\x00\x00\x00\x00\x00',
-    0xD90A: b'\x5A\x00',
+    sym("wDecompressionSecondaryBufferStart") + 0x11: b'\xFF\xFF\xFF',
+    sym("wDecompressionSecondaryBufferStart") + 0x12: b'\xFF\xFF\xFF',
+    sym("wMusicCutoff"): b'\x08\x08\x08\x08',
+    sym("wMusicSpeed"): b'\x01\x01\x01\x01',
+    sym("wMusicMainLoopStart"): b'\x00\xC1\x00\x00\x00\x00\x00\x00',
+    sym("wMusicChannelStackPointers"): b'\x00\xC2\x00\x00\x00\x00\x00\x00',
+    sym("wAudioArg"): b'\x5A\x00',
 }
 for name in STACK_SENSITIVE_MUSIC_COMMANDS:
-    command_case = {'c': 0x00, 'stack': [0xC100], 'wram': dict(_COMMAND_WRAM)}
-    poison_case = dict(POISON, b=0x00, c=0x00, stack=[0xC100],
+    command_case = {'c': 0x00, 'stack': [sym("wDecompressionSecondaryBufferStart") + 0x11], 'wram': dict(_COMMAND_WRAM)}
+    poison_case = dict(POISON, b=0x00, c=0x00, stack=[sym("wDecompressionSecondaryBufferStart") + 0x11],
                        wram=dict(_COMMAND_WRAM))
     if name == 'Music_note':
-        command_case['stack'] = [0xC100, 0x0000]
-        poison_case['stack'] = [0xC100, 0xF0AA]
+        command_case['stack'] = [sym("wDecompressionSecondaryBufferStart") + 0x11, 0x0000]
+        poison_case['stack'] = [sym("wDecompressionSecondaryBufferStart") + 0x11, 0xF0AA]
     elif name == 'Music_EndLoop':
-        command_case['wram'].update({0xC1FF: b'\x01'})
-        poison_case['wram'].update({0xC1FF: b'\x01'})
+        command_case['wram'].update({sym("wDecompressionSecondaryBufferStart") + 0x110: b'\x01'})
+        poison_case['wram'].update({sym("wDecompressionSecondaryBufferStart") + 0x110: b'\x01'})
     elif name == 'Music_ret':
-        command_case['wram'].update({0xC1FE: b'\xFE\xC0'})
-        poison_case['wram'].update({0xC1FE: b'\xFE\xC0'})
+        command_case['wram'].update({sym("wDecompressionSecondaryBufferStart") + 0x10F: b'\xFE\xC0'})
+        poison_case['wram'].update({sym("wDecompressionSecondaryBufferStart") + 0x10F: b'\xFE\xC0'})
     CASES[name] = [command_case, poison_case]
 CASES['Music_f4967'] = [
     {'b': 0x00, 'c': 0x00, 'd': 0x12, 'e': 0x34},
@@ -87,31 +88,31 @@ CASES['Music_f4967'] = [
 ]
 
 CASES['CopyData'] = [
-    {'a': 0x00, 'hl': 0xC100, 'd': 0xC2, 'e': 0x00,
-     'wram': {0xC100: b'\x00' * 256}, 'read': {0xC200: 256}},
-    dict(POISON, a=0x01, hl=0xC100, d=0xC2, e=0x00,
-         wram={0xC100: b'\xA5'}, read={0xC200: 1}),
-    dict(POISON, a=0xFF, hl=0xC100, d=0xC2, e=0x00,
-         wram={0xC100: b'\x5A' * 255}, read={0xC200: 255}),
+    {'a': 0x00, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11, 'd': 0xC2, 'e': 0x00,
+     'wram': {sym("wDecompressionSecondaryBufferStart") + 0x11: b'\x00' * 256}, 'read': {sym("wPlayerCardLocations"): 256}},
+    dict(POISON, a=0x01, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, d=0xC2, e=0x00,
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b'\xA5'}, read={sym("wPlayerCardLocations"): 1}),
+    dict(POISON, a=0xFF, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, d=0xC2, e=0x00,
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b'\x5A' * 255}, read={sym("wPlayerCardLocations"): 255}),
 ]
 CASES['GetMusicCommandAndArgs'] = [
-    {'a': 0x42, 'hl': 0xC100, 'wram': {0xC100: b'\x00\x00\x00'},
-     'read': {0xD909: 1, 0xD90A: 2}},
-    dict(POISON, a=0x42, hl=0xC100,
-         wram={0xC100: b'\xD0\x01\x02'}, read={0xD909: 1, 0xD90A: 2}),
-    dict(POISON, a=0x42, hl=0xC1FF,
-         wram={0xC1FF: b'\xFE', 0xC200: b'\xFD\xFC'},
-         read={0xD909: 1, 0xD90A: 2}),
+    {'a': 0x42, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11, 'wram': {sym("wDecompressionSecondaryBufferStart") + 0x11: b'\x00\x00\x00'},
+     'read': {sym("wAudioCmd"): 1, sym("wAudioArg"): 2}},
+    dict(POISON, a=0x42, hl=sym("wDecompressionSecondaryBufferStart") + 0x11,
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b'\xD0\x01\x02'}, read={sym("wAudioCmd"): 1, sym("wAudioArg"): 2}),
+    dict(POISON, a=0x42, hl=sym("wDecompressionSecondaryBufferStart") + 0x110,
+         wram={sym("wDecompressionSecondaryBufferStart") + 0x110: b'\xFE', sym("wPlayerCardLocations"): b'\xFD\xFC'},
+         read={sym("wAudioCmd"): 1, sym("wAudioArg"): 2}),
 ]
 CASES['GetChannelStackPointer'] = [
-    {'c': 0x00, 'wram': {0xD816: b'\x00\xC1'}, 'read': {0xD816: 2}},
-    dict(POISON, b=0x00, c=0x01, wram={0xD818: b'\x00\xC2'}, read={0xD816: 8}),
-    dict(POISON, b=0x00, c=0x03, wram={0xD81C: b'\x00\xC4'}, read={0xD816: 8}),
+    {'c': 0x00, 'wram': {sym("wMusicChannelStackPointers"): b'\x00\xC1'}, 'read': {sym("wMusicChannelStackPointers"): 2}},
+    dict(POISON, b=0x00, c=0x01, wram={sym("wMusicChannelStackPointers") + 2: b'\x00\xC2'}, read={sym("wMusicChannelStackPointers"): 8}),
+    dict(POISON, b=0x00, c=0x03, wram={sym("wMusicChannelStackPointers") + 6: b'\x00\xC4'}, read={sym("wMusicChannelStackPointers"): 8}),
 ]
 CASES['SetChannelStackPointer'] = [
-    {'c': 0x00, 'hl': 0xC100, 'read': {0xD816: 2}},
-    dict(POISON, b=0x00, c=0x01, hl=0xC200, read={0xD816: 8}),
-    dict(POISON, b=0x00, c=0x03, hl=0xC3FF, read={0xD816: 8}),
+    {'c': 0x00, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11, 'read': {sym("wMusicChannelStackPointers"): 2}},
+    dict(POISON, b=0x00, c=0x01, hl=sym("wPlayerCardLocations"), read={sym("wMusicChannelStackPointers"): 8}),
+    dict(POISON, b=0x00, c=0x03, hl=data(0xC3FF), read={sym("wMusicChannelStackPointers"): 8}),
 ]
 
 ANCHORS = {
@@ -123,7 +124,7 @@ ANCHORS = {
     '_AssertSFXFinished': ('\treturn Music_AssertSFXFinished();', '\treturn Music_AssertSongFinished();'),
     '_PauseSong': ('\tMusic_PauseSong();', '\tMusic_ResumeSong();'),
     '_ResumeSong': ('\tMusic_ResumeSong();', '\tMusic_PauseSong();'),
-    'SetCurSong': ('\tif (a < gb_read8(ADR_NUMBER_OF_SONGS))', '\tif (a <= gb_read8(ADR_NUMBER_OF_SONGS))'),
+    'SetCurSong': ('\tif (a >= gb_read8(ADR_NUMBER_OF_SONGS))', '\tif (a <= gb_read8(ADR_NUMBER_OF_SONGS))'),
     'SetCurSFX': ('\twCurSfxID = a;', '\twCurSfxID = 0u;'),
     'Music_AssertSongFinished': ('\treturn wCurSongID == 0x80u ? 0u : 1u;', '\treturn wCurSongID == 0x81u ? 0u : 1u;'),
     'Music_AssertSFXFinished': ('\treturn wCurSfxID == 0x80u ? 0u : 1u;', '\treturn wCurSfxID == 0x81u ? 0u : 1u;'),

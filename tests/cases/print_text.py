@@ -289,7 +289,7 @@ CASES.update({
                   sym("wCursorBlinkCounter"): b"\x05", sym("wCurMenuItem"): b"\x04", sym("wMenuInvisibleCursorTile"): b"\x22"},
          "read": {sym("wIsTextBoxLabeled"): 1, sym("wTextBoxLabel"): 2, sym("wCursorBlinkCounter"): 1, sym("wCurMenuItem"): 1, sym("wMenuInvisibleCursorTile"): 1},
          "vread": {0: {0x9980: 1}}},
-        dict(scroll_label_fixture(vram=False, changes={sym("wDoFrameFunction"): b"\x00\x00"}), **SCROLL_LABEL_REGS, keys=[0x00, 0x01]),
+        dict(scroll_label_fixture(vram=False, **{"CAD3": b"\x00\x00"}), **SCROLL_LABEL_REGS, keys=[0x00, 0x01]),
     ],
 })
 # GenerateTextTile's product is the tile itself, copied into VRAM. Without a vread

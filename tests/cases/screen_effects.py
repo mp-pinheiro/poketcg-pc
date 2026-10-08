@@ -1,5 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/duel/animations/screen_effects.asm."""
-from tests.cases._symbols import sym
+from tests.cases._symbols import const, sym, sym_pointer
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -76,8 +76,8 @@ CASES["DefaultScreenAnimationUpdate"] = [
 # >>> factory DoScreenAnimationUpdate
 CONTRACT["DoScreenAnimationUpdate"] = {"compare": (), "preserve": ()}
 CASES["DoScreenAnimationUpdate"] = [
-    {"wram": {wScreenAnimUpdatePtr: b"\xBC\x4C", wScreenAnimDuration: b"\x00"}, "read": {wScreenAnimDuration: 1, wScreenAnimUpdatePtr: 2}},
-    dict(POISON, wram={wScreenAnimUpdatePtr: b"\xBC\x4C", wScreenAnimDuration: b"\xFF"}, read={wScreenAnimDuration: 1, wScreenAnimUpdatePtr: 2}),
+    {"wram": {wScreenAnimUpdatePtr: sym_pointer("DefaultScreenAnimationUpdate"), wScreenAnimDuration: b"\x00"}, "read": {wScreenAnimDuration: 1, wScreenAnimUpdatePtr: 2}},
+    dict(POISON, wram={wScreenAnimUpdatePtr: sym_pointer("DefaultScreenAnimationUpdate"), wScreenAnimDuration: b"\xFF"}, read={wScreenAnimDuration: 1, wScreenAnimUpdatePtr: 2}),
 ]
 # <<< factory DoScreenAnimationUpdate
 
@@ -108,7 +108,7 @@ CASES["Func_1ce03"] = [
     {"a": 0x98, "wram": {WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06", sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wBoosterCardsDrawn"): b"\x08", sym("wPlayerCardLocations"): b"\x10", sym("wLCDC"): b"\x00", sym("wPlayerArenaCardHP"): b"\x28"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {WD4C0: 1}, "vread": {0: {0x9800: 0x400}},
      "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, a=0x97, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06", sym("wLoadedAttackAnimation"): b"\x00", sym("wTempNonTurnDuelistCardID"): b"\x08", sym("wDamageAnimAmount"): b"\x14\x00", sym("wDoFrameFunction"): b"\x48\x03", sym("wTxRam2"): b"\xAA\x55"},
+    dict(POISON, a=0x97, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06", sym("wLoadedAttackAnimation"): b"\x00", sym("wTempNonTurnDuelistCardID"): b"\x08", sym("wDamageAnimAmount"): b"\x14\x00", sym("wDoFrameFunction"): sym_pointer("NoOp"), sym("wTxRam2"): b"\xAA\x55"},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={WD4C0: 1, sym("wTxRam2"): 2}, vread={0: {0x9800: 0x400}},
          instruction_budget=4000000, cycle_budget=16000000),
     dict(POISON, a=0x9B, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x06"}, read={WD4C0: 1}),
@@ -181,28 +181,28 @@ CASES["ShakeScreenY_Small"] = [
 # >>> factory InitScreenAnimation
 CONTRACT["InitScreenAnimation"] = {"compare": (), "preserve": ()}
 CASES["InitScreenAnimation"] = [
-    dict(POISON, wram={wAnimationsDisabled: b"\x00", wTempAnimation: b"\x61"},
+    dict(POISON, wram={wAnimationsDisabled: b"\x00", wTempAnimation: const("DUEL_ANIM_SMALL_SHAKE_X").to_bytes(1, "little")},
          read={wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
                wScreenShakeOffsetsPtr: 2}),
-    {"wram": {wAnimationsDisabled: b"\x01", wTempAnimation: b"\x61",
+    {"wram": {wAnimationsDisabled: b"\x01", wTempAnimation: const("DUEL_ANIM_SMALL_SHAKE_X").to_bytes(1, "little"),
                      wActiveScreenAnim: b"\x55", wScreenAnimUpdatePtr: b"\x34\x12",
                      wScreenAnimDuration: b"\x77", wScreenShakeOffsetsPtr: b"\x88\x99"},
      "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
                wScreenShakeOffsetsPtr: 2}},
-    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x62"},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: const("DUEL_ANIM_BIG_SHAKE_X").to_bytes(1, "little")},
      "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
                wScreenShakeOffsetsPtr: 2}},
-    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x63"},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: const("DUEL_ANIM_SMALL_SHAKE_Y").to_bytes(1, "little")},
      "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
                wScreenShakeOffsetsPtr: 2}},
-    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x64"},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: const("DUEL_ANIM_BIG_SHAKE_Y").to_bytes(1, "little")},
      "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
                wScreenShakeOffsetsPtr: 2}},
-    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x65", wBGP: b"\x11"},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: const("DUEL_ANIM_FLASH").to_bytes(1, "little"), wBGP: b"\x11"},
      "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
                wTempWhiteFlashBGP: 1, wBackgroundPalettesCGB: 8,
                wTempBackgroundPalettesCGB: 8, wBGP: 1}},
-    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: b"\x66"},
+    {"wram": {wAnimationsDisabled: b"\x00", wTempAnimation: const("DUEL_ANIM_DISTORT").to_bytes(1, "little")},
      "read": {wActiveScreenAnim: 1, wScreenAnimUpdatePtr: 2, wScreenAnimDuration: 1,
                wBGScrollMod: 1, wApplyBGScroll: 1, wLCDCFunctionTrampoline: 2}},
 ]

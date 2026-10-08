@@ -1,6 +1,11 @@
-from tests.cases._symbols import sym
-from tests.cases._fixtures import attack_fixture as _attack_fixture, ATTACK_REGS as _ATTACK_REGS
+from tests.cases._symbols import card_id_size, sym
+from tests.cases._fixtures import attack_fixture as _attack_fixture, profile_fixture as _profile_fixture
 """Oracle-diff cases for poketcg/src/home/ai.asm."""
+
+_AIDO_TURN = _profile_fixture({
+    "vanilla": "practice-win-attack-entry",
+    "extended": "ai-duel-fire-charge-aidoaction-turn-entry",
+})
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
@@ -149,13 +154,9 @@ CASES["AIDoAction_TakePrize"] = [
 
 # >>> factory AIDoAction_Turn
 CONTRACT["AIDoAction_Turn"] = {"compare": ("a",), "preserve": ()}
-# Sam's side of the practice-duel state (tests/cases/_fixtures.py) with the
-# turn handed to him: turn 1 is scripted (AIPerformScriptedTurn attaches an
-# energy and attacks). With his deck id pointed at the general AI instead, the
-# same state runs AIMainTurnLogic.
 CASES["AIDoAction_Turn"] = [
-    dict(_attack_fixture(changes={sym("hWhoseTurn"): b"\xc3"}), **_ATTACK_REGS),
-    dict(_attack_fixture(changes={sym("hWhoseTurn"): b"\xc3", sym("wOpponentDeckID"): b"\x01"}), **POISON),
+    dict(_AIDO_TURN.case(changes={sym("hWhoseTurn"): b"\xc3"}, vram=card_id_size() == 1), **_AIDO_TURN.regs),
+    dict(_AIDO_TURN.case(changes={sym("hWhoseTurn"): b"\xc3", sym("wOpponentDeckID"): b"\x01"}, vram=card_id_size() == 1), **POISON),
 ]
 # <<< factory AIDoAction_Turn
 

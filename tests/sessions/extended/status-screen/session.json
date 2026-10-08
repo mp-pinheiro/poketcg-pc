@@ -1,0 +1,10 @@
+{
+  "derived_from": "starter-deck",
+  "goal": "Starter deck aftermath, START > STATUS: player portrait, medals and play time, then exit with B; live OverworldDoFrameFunction key wait",
+  "input_sha256": "0f446594fe0cd159f92d031e09383005bf8185ac74638a4719967dfdc4500bf2",
+  "name": "status-screen",
+  "ordinals": 36710,
+  "recorded": "2026-10-08T03:07:52+00:00",
+  "schema": 1,
+  "script": "/tmp/i3449/status-screen-input.txt"
+}

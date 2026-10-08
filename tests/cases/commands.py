@@ -1,5 +1,5 @@
 """Oracle-diff cases for duel animation command routines."""
-from tests.cases._symbols import sym
+from tests.cases._symbols import sym, sym_pointer
 
 wDuelAnimLocationParam = sym("wDuelAnimLocationParam")
 wDuelAnimationScreen = sym("wDuelAnimationScreen")
@@ -145,8 +145,8 @@ CASES["DuelAnim157"] = [{}, dict(POISON), {"wram": {sym("wDecompressionSecondary
 # >>> factory PrintDamageText
 CONTRACT["PrintDamageText"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["PrintDamageText"] = [
-    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", sym("wDoFrameFunction"): b"\x48\x03", wTxRam2: b"\xAA\x55"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wTxRam2: 2}, "instruction_budget": 1000000, "cycle_budget": 4000000},
-    dict(POISON, wram={wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", sym("wDoFrameFunction"): b"\x48\x03", wTxRam2: b"\x12\x34"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wTxRam2: 2}, instruction_budget=1000000, cycle_budget=4000000),
+    {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", sym("wDoFrameFunction"): sym_pointer("NoOp"), wTxRam2: b"\xAA\x55"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wTxRam2: 2}, "instruction_budget": 1000000, "cycle_budget": 4000000},
+    dict(POISON, wram={wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", sym("wDoFrameFunction"): sym_pointer("NoOp"), wTxRam2: b"\x12\x34"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wTxRam2: 2}, instruction_budget=1000000, cycle_budget=4000000),
     {"b": 1, "c": 2, "d": 3, "e": 4, "hl": sym("wDecompressionSecondaryBufferStart") + 0x12, "wram": {wLoadedAttackAnimation: b"\x79", wTxRam2: b"\xAA\x55"}, "read": {wTxRam2: 2}},
     dict(POISON, wram={wLoadedAttackAnimation: b"\x86", wTxRam2: b"\x12\x34"}, read={wTxRam2: 2}),
 ]

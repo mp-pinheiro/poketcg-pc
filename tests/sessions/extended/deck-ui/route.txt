@@ -1,0 +1,69 @@
+peek
+hold DOWN 4
+idle
+hold RIGHT 220
+idle
+peek
+press LEFT
+idle
+press LEFT
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press DOWN
+idle
+press LEFT
+idle
+press LEFT
+idle
+press UP
+idle
+peek
+press A
+idle
+shot extended-deck-machine
+yes
+idle
+press A
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+press B
+idle
+dismiss
+press START
+idle
+press A
+idle
+press B
+idle
+press DOWN
+idle
+press DOWN
+idle
+press A
+idle
+press A
+idle
+press A
+idle
+shot extended-deck-builder
+press B
+idle
+press B
+idle
+press A
+idle
+shot extended-deck-confirmation

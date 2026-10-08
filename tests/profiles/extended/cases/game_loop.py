@@ -1,97 +1,19 @@
-"""Extended oracle-diff cases for game_loop, seeded from tests/cases/game_loop.py."""
-
-CONTRACT = {
-    'SetupResetBackUpRamScreen': {'compare': (), 'preserve': ()},
-    'InitSaveDataAndSetUppercase': {'compare': (), 'preserve': ()},
+"""Extended oracle-diff cases for game_loop: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import sym, sym_bank
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('game_loop')
+OWN = (
+    'GameLoop',
+)
+CONTRACT.update({
     'GameLoop': {'compare': (), 'preserve': ()},
-}
-
-CASES = {
-    'SetupResetBackUpRamScreen': [
-        {   'wram': {   0xCAB4: b'\x00',
-                        0xCAB6: b'\x00',
-                        0xCABB: b'\x00',
-                        0xCABC: b'\x00',
-                        0xCABD: b'\x00',
-                        0xCABE: b'\x00',
-                        0xCABF: b'\x00',
-                        0xFF47: b'\xfc',
-                        0xFF48: b'\xff',
-                        0xFF49: b'\xff'},
-            'read': {   0xCAB6: 0x01,
-                        0xCABB: 0x01,
-                        0xCABC: 0x01,
-                        0xCAB7: 0x01,
-                        0xFFFF: 0x01,
-                        0xCABD: 0x01,
-                        0xCABE: 0x01,
-                        0xCABF: 0x01,
-                        0xCCB2: 0x01,
-                        0xFF40: 0x01,
-                        0xFF47: 0x01,
-                        0xFF48: 0x01,
-                        0xFF49: 0x01,
-                        0xFFA8: 0x01,
-                        0xFFA9: 0x01,
-                        0xFFB0: 0x01,
-                        0xC600: 0x0100},
-            'vread': {0x00: {0x9000: 0x0380}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCAB4: b'\x00',
-                        0xCAB6: b'\xa5',
-                        0xCABB: b'\x80',
-                        0xCABC: b'\x11',
-                        0xCABD: b'"',
-                        0xCABE: b'3',
-                        0xCABF: b'D',
-                        0xFF47: b'\xfc',
-                        0xFF48: b'\xff',
-                        0xFF49: b'\xff'},
-            'read': {   0xCAB6: 0x01,
-                        0xCABB: 0x01,
-                        0xCABC: 0x01,
-                        0xCAB7: 0x01,
-                        0xFFFF: 0x01,
-                        0xCABD: 0x01,
-                        0xCABE: 0x01,
-                        0xCABF: 0x01,
-                        0xCCB2: 0x01,
-                        0xFF40: 0x01,
-                        0xFF47: 0x01,
-                        0xFF48: 0x01,
-                        0xFF49: 0x01,
-                        0xFFA8: 0x01,
-                        0xFFA9: 0x01,
-                        0xFFB0: 0x01,
-                        0xC600: 0x0100},
-            'vread': {0x00: {0x9000: 0x0380}}},
-    ],
-    'InitSaveDataAndSetUppercase': [
-        {   'wram': {0xFF97: b'\xff', 0xCCBB: b'\x00'},
-            'read': {0xCCBB: 0x01},
-            'sread': {0x00: {0xA100: 0x20}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xff', 0xCCBB: b'\x00'},
-            'read': {0xCCBB: 0x01},
-            'sread': {0x00: {0xA100: 0x20}}},
-    ],
+})
+CASES.update({
     'GameLoop': [
-        {   'completion': {'mode': 'entry', 'pc': 0x666C, 'bank': 0x04, 'routine': '_GameLoop'},
-            'wram': {0xCAB4: b'\x02', 0xFF90: b'\x00', 0xCE0D: b'\xff', 0xCCA0: b'\xff', 0xCCBB: b'\xff'},
-            'sram': {0x00: {0xA006: b'\x02', 0xA009: b'\x01'}},
-            'read': {0xCE0D: 0x01, 0xCCA0: 0x01, 0xCCBB: 0x01},
+        {   'completion': {'mode': 'entry', 'pc': sym("_GameLoop"), 'bank': sym_bank("_GameLoop"), 'routine': '_GameLoop'},
+            'wram': {sym("wConsole"): b'\x02', sym("hKeysHeld"): b'\x00', sym("wTextSpeed"): b'\xff', sym("wSkipDelayAllowed"): b'\xff', sym("wUppercaseHalfWidthLetters"): b'\xff'},
+            'sram': {0x00: {sym("sTextSpeed"): b'\x02', sym("sSkipDelayAllowed"): b'\x01'}},
+            'read': {sym("wTextSpeed"): 0x01, sym("wSkipDelayAllowed"): 0x01, sym("wUppercaseHalfWidthLetters"): 0x01},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
         {   'a': 0xAA,
@@ -101,36 +23,24 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'completion': {'mode': 'entry', 'pc': 0x666C, 'bank': 0x04, 'routine': '_GameLoop'},
-            'wram': {0xCAB4: b'\x02', 0xFF90: b'\x00', 0xCE0D: b'\xff', 0xCCA0: b'\xff', 0xCCBB: b'\xff'},
-            'sram': {0x00: {0xA006: b'\x06', 0xA009: b'\x00'}},
-            'read': {0xCE0D: 0x01, 0xCCA0: 0x01, 0xCCBB: 0x01},
+            'completion': {'mode': 'entry', 'pc': sym("_GameLoop"), 'bank': sym_bank("_GameLoop"), 'routine': '_GameLoop'},
+            'wram': {sym("wConsole"): b'\x02', sym("hKeysHeld"): b'\x00', sym("wTextSpeed"): b'\xff', sym("wSkipDelayAllowed"): b'\xff', sym("wUppercaseHalfWidthLetters"): b'\xff'},
+            'sram': {0x00: {sym("sTextSpeed"): b'\x06', sym("sSkipDelayAllowed"): b'\x00'}},
+            'read': {sym("wTextSpeed"): 0x01, sym("wSkipDelayAllowed"): 0x01, sym("wUppercaseHalfWidthLetters"): 0x01},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
     ],
-}
-
-MUTATIONS = {
-    'SetupResetBackUpRamScreen': {   'source_symbol': 'SetupResetBackUpRamScreen',
-        'before': 'wTileMapFill = 0;',
-        'after': 'wTileMapFill = 0xFF;',
-        'case_ids': ['SetupResetBackUpRamScreen-0', 'SetupResetBackUpRamScreen-1'],
-        'source': 'src/home/game_loop.c'},
-    'InitSaveDataAndSetUppercase': {   'source_symbol': 'InitSaveDataAndSetUppercase',
-        'before': '\twUppercaseHalfWidthLetters = 1u;',
-        'after': '\twUppercaseHalfWidthLetters = 0u;',
-        'case_ids': ['InitSaveDataAndSetUppercase-0', 'InitSaveDataAndSetUppercase-1'],
-        'source': 'src/profiles/extended/home/game_loop.c'},
+})
+MUTATIONS.update({
     'GameLoop': {   'source_symbol': 'GameLoop',
         'before': '\twUppercaseHalfWidthLetters = 1u;',
         'after': '\twUppercaseHalfWidthLetters = 0u;',
         'case_ids': ['GameLoop-0', 'GameLoop-1'],
         'source': 'src/profiles/extended/home/game_loop.c'},
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-for _name, _entries in CASES.items():
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
+for _name, _entries in ((_fn, CASES[_fn]) for _fn in OWN):
     for _index, _entry in enumerate(_entries):
         if "completion" in _entry:
             SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]

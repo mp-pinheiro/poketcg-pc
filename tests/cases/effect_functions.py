@@ -5,13 +5,67 @@ from tests.cases._fixtures import color_name_fixture as _color_name_fixture, COL
 from tests.cases._fixtures import discard_basic_list_fixture as _discard_basic_list_fixture, DISCARD_BASIC_LIST_REGS as _DISCARD_BASIC_LIST_REGS
 from tests.cases._fixtures import ai_gust_of_wind_fixture as _ai_gust_of_wind_fixture, AI_GUST_OF_WIND_REGS as _AI_GUST_OF_WIND_REGS
 from tests.cases._fixtures import peal_of_thunder_fixture as _peal_of_thunder_fixture, PEAL_OF_THUNDER_REGS as _PEAL_OF_THUNDER_REGS
-from tests.cases._fixtures import selfdestruct_fixture as _selfdestruct_fixture, SELFDESTRUCT_REGS as _SELFDESTRUCT_REGS
 from tests.cases._fixtures import ZAPDOS_RECOIL_REGS, zapdos_recoil_fixture
 from tests.cases._fixtures import foul_gas_fixture as _foul_gas_fixture, FOUL_GAS_REGS as _FOUL_GAS_REGS
+from tests.cases._fixtures import profile_fixture
 """Oracle-diff cases for poketcg/src/engine/duel/effect_functions.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+
+_RECOIL_FIXTURE = profile_fixture({
+    "vanilla": "lightning-2-selfdestruct-entry",
+    "extended": "extended-fixes-selfdestruct-entry",
+})
+_RECOIL_REGS = _RECOIL_FIXTURE.regs
+
+
+def _recoil_animation_cases(*, temp_list=False, energy_conversion=False, ram=False):
+    changes = {}
+    if temp_list:
+        changes[sym("hTempList")] = b"\x01" if ram else b"\xff"
+    if ram:
+        changes.update({
+            sym("wPlayerBench"): b"\x38",
+            sym("wPlayerBench1CardHP"): b"\x32",
+            sym("wPlayerCardLocations") + 0x38: b"\x11",
+            sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02",
+        })
+    read = {
+        sym("wDoFrameFunction"): 2,
+        sym("wLoadedCard1"): 8,
+        sym("wLoadedAttackAnimation"): 3,
+        sym("wTempTurnDuelistCardID"): 2,
+        sym("wIsDamageToSelf"): 1,
+        sym("wOpponentArenaCardHP"): 1,
+        sym("wOpponentBench1CardHP"): 5,
+        sym("wPlayerArenaCardHP"): 1,
+        sym("wPlayerBench1CardHP"): 5,
+        sym("wPlayerNumberOfPokemonInPlayArea"): 1,
+        sym("wOpponentNumberOfPokemonInPlayArea"): 1,
+        sym("wAttackAnimationIsPlaying"): 1,
+    }
+    if ram:
+        read[sym("hTempList")] = 1
+    if energy_conversion:
+        read[sym("wDuelTempList") + 0x10] = 1
+    poison = dict(POISON)
+    register_sets = (
+        _RECOIL_REGS,
+        dict(_RECOIL_REGS, **poison),
+    )
+    return [
+        {
+            **case_registers,
+            **_RECOIL_FIXTURE.case(changes=changes, vram=False, bank=0x0B),
+            "read": dict(read),
+            "instruction_budget": 0x1312D00,
+            "cycle_budget": 0x4C4B400,
+        }
+        for case_registers in register_sets
+    ]
+
 
 CONTRACT = {}
 CASES = {}
@@ -3517,7 +3571,8 @@ CASES["Heal_OncePerTurnCheck"] = [
     {"wram": {sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCardFlags"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
               sym("wPlayerArenaCard"): b"\x00", sym("wBoosterCardsDrawn"): b"\x08", sym("wPlayerArenaCardHP"): b"\x28"}, "read": {sym("hTempList"): 1}},
     {"wram": {sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCardFlags"): b"\x00",
-              sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF"}, "read": {sym("hTempList"): 1}},
+              sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF"}, "read": {sym("hTempList"): 1},
+     "instruction_budget": 0x1E8480, "cycle_budget": 0x7A1200},
 ]
 # <<< factory Heal_OncePerTurnCheck
 
@@ -3732,9 +3787,9 @@ CASES["GolduckHyperBeam_DiscardEffect"] = [
 # >>> factory StrangeBehavior_CheckDamage
 CONTRACT["StrangeBehavior_CheckDamage"] = {"compare": ("f", "hl"), "preserve": ()}
 CASES["StrangeBehavior_CheckDamage"] = [
-    {"wram": {hWhoseTurn: b"\xC2", sym("wDeckToBuild"): b"\x00" * 0xF00, hTempPlayAreaLocation_ff9d: b"\x00"}},
-    {"wram": {hWhoseTurn: b"\xC2", sym("wDeckToBuild"): b"\x00" * 0xF00, hTempPlayAreaLocation_ff9d: b"\x01"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", sym("wDeckToBuild"): b"\x00" * 0xF00, hTempPlayAreaLocation_ff9d: b"\x00"}),
+    {"wram": {hWhoseTurn: b"\xC2", sym("wDeckToBuild"): b"\x00" * 0xF00, hTempPlayAreaLocation_ff9d: b"\x00"}, "instruction_budget": 1000000, "cycle_budget": 4000000},
+    {"wram": {hWhoseTurn: b"\xC2", sym("wDeckToBuild"): b"\x00" * 0xF00, hTempPlayAreaLocation_ff9d: b"\x01"}, "instruction_budget": 1000000, "cycle_budget": 4000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", sym("wDeckToBuild"): b"\x00" * 0xF00, hTempPlayAreaLocation_ff9d: b"\x00"}, instruction_budget=1000000, cycle_budget=4000000),
 ]
 # <<< factory StrangeBehavior_CheckDamage
 
@@ -7495,22 +7550,12 @@ CASES["ComputerSearch_PlayerDeckSelection"] = [
 
 # >>> factory TakeDownEffect
 CONTRACT["TakeDownEffect"] = {"compare": ("a", "f"), "preserve": ()}
-CASES["TakeDownEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["TakeDownEffect"] = _recoil_animation_cases()
 # <<< factory TakeDownEffect
 
 # >>> factory JigglypuffDoubleEdgeEffect
 CONTRACT["JigglypuffDoubleEdgeEffect"] = {"compare": ("a", "f"), "preserve": ()}
-CASES["JigglypuffDoubleEdgeEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["JigglypuffDoubleEdgeEffect"] = _recoil_animation_cases()
 # <<< factory JigglypuffDoubleEdgeEffect
 
 # >>> factory Recycle_PlayerSelection
@@ -7523,22 +7568,12 @@ CASES["Recycle_PlayerSelection"] = [
 
 # >>> factory GolemSelfdestructEffect
 CONTRACT["GolemSelfdestructEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
-CASES["GolemSelfdestructEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["GolemSelfdestructEffect"] = _recoil_animation_cases()
 # <<< factory GolemSelfdestructEffect
 
 # >>> factory ChanseyDoubleEdgeEffect
 CONTRACT["ChanseyDoubleEdgeEffect"] = {"compare": ("a", "f"), "preserve": ()}
-CASES["ChanseyDoubleEdgeEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["ChanseyDoubleEdgeEffect"] = _recoil_animation_cases()
 # <<< factory ChanseyDoubleEdgeEffect
 
 # >>> factory FriendshipSong_AddToBench50PercentEffect
@@ -7566,52 +7601,27 @@ CASES["FriendshipSong_AddToBench50PercentEffect"] = [
 
 # >>> factory SubmissionEffect
 CONTRACT["SubmissionEffect"]={"compare":("a","f"),"preserve":()}
-CASES["SubmissionEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["SubmissionEffect"] = _recoil_animation_cases()
 # <<< factory SubmissionEffect
 
 # >>> factory MagnemiteSelfdestructEffect
 CONTRACT["MagnemiteSelfdestructEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
-CASES["MagnemiteSelfdestructEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["MagnemiteSelfdestructEffect"] = _recoil_animation_cases()
 # <<< factory MagnemiteSelfdestructEffect
 
 # >>> factory Ram_RecoilSwitchEffect
 CONTRACT["Ram_RecoilSwitchEffect"] = {"compare": ("a", "f"), "preserve": ()}
-CASES["Ram_RecoilSwitchEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B, changes={sym("hTempList"): b"\x01", sym("wPlayerBench"): b"\x38", sym("wPlayerBench1CardHP"): b"\x32", sym("wPlayerCardLocations") + 0x38: b"\x11", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02"}), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B, changes={sym("hTempList"): b"\x01", sym("wPlayerBench"): b"\x38", sym("wPlayerBench1CardHP"): b"\x32", sym("wPlayerCardLocations") + 0x38: b"\x11", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02"}), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["Ram_RecoilSwitchEffect"] = _recoil_animation_cases(temp_list=True, ram=True)
 # <<< factory Ram_RecoilSwitchEffect
 
 # >>> factory MagnetonLv35SelfdestructEffect
 CONTRACT["MagnetonLv35SelfdestructEffect"]={"compare":("a","f","b","c","d","e","hl"),"preserve":()}
-CASES["MagnetonLv35SelfdestructEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["MagnetonLv35SelfdestructEffect"] = _recoil_animation_cases()
 # <<< factory MagnetonLv35SelfdestructEffect
 
 # >>> factory MagnetonLv28SelfdestructEffect
 CONTRACT["MagnetonLv28SelfdestructEffect"]={"compare":("a","f","b","c","d","e","hl"),"preserve":()}
-CASES["MagnetonLv28SelfdestructEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["MagnetonLv28SelfdestructEffect"] = _recoil_animation_cases()
 # <<< factory MagnetonLv28SelfdestructEffect
 
 # >>> factory Scavenge_PlayerSelectTrainerEffect
@@ -7621,12 +7631,7 @@ CASES["Scavenge_PlayerSelectTrainerEffect"]=[{"keys":[0,1],"wram":{sym("hWhoseTu
 
 # >>> factory WeezingSelfdestructEffect
 CONTRACT["WeezingSelfdestructEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
-CASES["WeezingSelfdestructEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["WeezingSelfdestructEffect"] = _recoil_animation_cases()
 # <<< factory WeezingSelfdestructEffect
 
 # >>> factory PayDayEffect
@@ -7653,12 +7658,7 @@ CASES["StoneBarrage_MultiplierEffect"] = [
 
 # >>> factory EnergyConversion_AddToHandEffect
 CONTRACT["EnergyConversion_AddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
-CASES["EnergyConversion_AddToHandEffect"] = [
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B, changes={sym("hTempList"): b"\xff"}), **_SELFDESTRUCT_REGS, read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-    dict(_selfdestruct_fixture(vram=False, bank=0x0B, changes={sym("hTempList"): b"\xff"}), **dict(_SELFDESTRUCT_REGS, **POISON), read={sym("wDoFrameFunction"): 2, sym("wLoadedCard1"): 8, sym("wLoadedAttackAnimation"): 3, sym("wTempTurnDuelistCardID"): 2, sym("wIsDamageToSelf"): 1, sym("wOpponentArenaCardHP"): 1, sym("wOpponentBench1CardHP"): 5, sym("wPlayerArenaCardHP"): 1, sym("wPlayerBench1CardHP"): 5, sym("wPlayerNumberOfPokemonInPlayArea"): 1, sym("wOpponentNumberOfPokemonInPlayArea"): 1, sym("wAttackAnimationIsPlaying"): 1},
-         instruction_budget=20000000, cycle_budget=80000000),
-]
+CASES["EnergyConversion_AddToHandEffect"] = _recoil_animation_cases(temp_list=True, energy_conversion=True)
 # <<< factory EnergyConversion_AddToHandEffect
 
 # >>> factory SolarPower_RemoveStatusEffect
@@ -8785,7 +8785,7 @@ MUTATIONS["WeezingSmog_AIEffect"] = {
 MUTATIONS["NidoranFFurySwipes_AIEffect"] = {"source_symbol": "NidoranFFurySwipes_AIEffect", "before": "SetExpectedAIDamage(30u / 2u, 0u, 30u);", "after": "SetExpectedAIDamage(16u, 0u, 30u);", "case_ids": ["NidoranFFurySwipes_AIEffect-0", "NidoranFFurySwipes_AIEffect-1"]}
 # <<< factory-mutation NidoranFFurySwipes_AIEffect
 # >>> factory-mutation NidoranFCallForFamily_AISelectEffect
-MUTATIONS["NidoranFCallForFamily_AISelectEffect"] = {"source_symbol": "NidoranFCallForFamily_AISelectEffect", "before": "if ((uint8_t)card_id == NIDORANF || (uint8_t)card_id == NIDORANM)", "after": "if ((uint8_t)card_id != NIDORANF || (uint8_t)card_id == NIDORANM)", "case_ids": ["NidoranFCallForFamily_AISelectEffect-0", "NidoranFCallForFamily_AISelectEffect-1"]}
+MUTATIONS["NidoranFCallForFamily_AISelectEffect"] = {"source_symbol": "NidoranFCallForFamily_AISelectEffect", "before": "if (card_id == NIDORANF || card_id == NIDORANM)", "after": "if (card_id != NIDORANF || card_id == NIDORANM)", "case_ids": ["NidoranFCallForFamily_AISelectEffect-0", "NidoranFCallForFamily_AISelectEffect-1"]}
 # <<< factory-mutation NidoranFCallForFamily_AISelectEffect
 # >>> factory-mutation ToxicGasEffect
 MUTATIONS["ToxicGasEffect"] = {

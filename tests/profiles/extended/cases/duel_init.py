@@ -1,97 +1,19 @@
-"""Extended oracle-diff cases for duel_init, seeded from tests/cases/duel_init.py."""
-
-CONTRACT = {
-    'Duel_Init': {'compare': (), 'preserve': ()},
-}
-
-CASES = {
-    'Duel_Init': [
-        {   'f': 0x00,
-            'keys': [0x00, 0x01],
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'wram': {   0xCABB: b'\x00',
-                        0xFF40: b'\x80',
-                        0xD27E: b'A',
-                        0xCBC4: b'\x00',
-                        0xCBC1: b'v\x00',
-                        0xCBC0: b'\x01',
-                        0xD100: b'\xff',
-                        0xD7A4: b'\x80',
-                        0xCE05: b'\x00\x00',
-                        0xCE07: b'\x00\x00'},
-            'read': {0xCCA1: 0x01, 0xCE05: 0x02, 0xCE07: 0x02, 0xD27E: 0x01},
-            'instruction_budget': 0x3938700,
-            'cycle_budget': 0xE4E1C00},
-        {   'f': 0x00,
-            'keys': [0x00, 0x01],
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'wram': {   0xCABB: b'\x00',
-                        0xFF40: b'\x80',
-                        0xD27E: b'A',
-                        0xCBC4: b'\x01',
-                        0xCBC1: b'v\x00',
-                        0xCBC0: b'\x01',
-                        0xD100: b'\xff',
-                        0xD7A4: b'\x80',
-                        0xCE05: b'\x00\x00',
-                        0xCE07: b'\x00\x00'},
-            'read': {0xCCA1: 0x01, 0xCE05: 0x02, 0xCE07: 0x02, 0xD27E: 0x01},
-            'instruction_budget': 0x3938700,
-            'cycle_budget': 0xE4E1C00},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'keys': [0x00, 0x01],
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'wram': {   0xCABB: b'\x00',
-                        0xFF40: b'\x80',
-                        0xD27E: b'A',
-                        0xCBC4: b'\x00',
-                        0xCBC1: b'v\x00',
-                        0xCBC0: b'\x01',
-                        0xD100: b'\xff',
-                        0xD7A4: b'\x80',
-                        0xCE05: b'\x00\x00',
-                        0xCE07: b'\x00\x00'},
-            'read': {0xCCA1: 0x01, 0xCE05: 0x02, 0xCE07: 0x02, 0xD27E: 0x01},
-            'instruction_budget': 0x3938700,
-            'cycle_budget': 0xE4E1C00},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'keys': [0x00, 0x01],
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'wram': {   0xCABB: b'\x00',
-                        0xFF40: b'\x80',
-                        0xD27E: b'A',
-                        0xCBC4: b'\x01',
-                        0xCBC1: b'v\x00',
-                        0xCBC0: b'\x01',
-                        0xD100: b'\xff',
-                        0xD7A4: b'\x80',
-                        0xCE05: b'\x00\x00',
-                        0xCE07: b'\x00\x00'},
-            'read': {0xCCA1: 0x01, 0xCE05: 0x02, 0xCE07: 0x02, 0xD27E: 0x01},
-            'instruction_budget': 0x3938700,
-            'cycle_budget': 0xE4E1C00},
-    ],
-}
-
-MUTATIONS = {
+"""Extended oracle-diff cases for duel_init: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('duel_init')
+OWN = (
+)
+CONTRACT.update({
+})
+CASES.update({
+})
+MUTATIONS.update({
     'Duel_Init': {   'source_symbol': 'Duel_Init',
-        'before': '\twTextBoxFrameType = 4u;',
-        'after': '\twTextBoxFrameType = 5u;',
+        'before': '\twTextBoxFrameType = 1u;',
+        'after': '\twTextBoxFrameType = 0u;',
         'case_ids': ['Duel_Init-0', 'Duel_Init-1', 'Duel_Init-2', 'Duel_Init-3'],
         'source': 'src/profiles/extended/home/duel_init.c'},
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

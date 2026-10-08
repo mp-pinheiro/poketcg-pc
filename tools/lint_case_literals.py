@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reject raw WRAM, SRAM and HRAM address literals in tests/cases modules; spell them with tests/cases/_symbols.py."""
+"""Reject raw WRAM, SRAM and HRAM address literals in every profile's case modules; spell them with tests/cases/_symbols.py."""
 
 from __future__ import annotations
 
@@ -9,7 +9,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CASES = ROOT / "tests" / "cases"
+sys.path.insert(0, str(ROOT))
+
+from tools.profiles import load_catalog  # noqa: E402
+
 EXEMPT = {"_symbols.py", "_schema_migration.py"}
 RANGES = ((0xC000, 0xE000), (0xA000, 0xC000), (0xFF80, 0xFFFF))
 
@@ -35,11 +38,16 @@ def violations(path: Path) -> list[tuple[int, int]]:
     return sorted(found)
 
 
+def namespaces() -> list[Path]:
+    _, profiles = load_catalog()
+    return sorted({ROOT / profile.case_namespace for profile in profiles.values()})
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("paths", nargs="*", type=Path, help="modules to check (default: tests/cases/*.py)")
+    parser.add_argument("paths", nargs="*", type=Path, help="modules to check (default: every profile's case namespace)")
     args = parser.parse_args()
-    paths = args.paths or sorted(p for p in CASES.glob("*.py") if p.name not in EXEMPT)
+    paths = args.paths or [p for d in namespaces() for p in sorted(d.glob("*.py")) if p.name not in EXEMPT]
     total = 0
     for path in paths:
         for line, value in violations(path):

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rewrite address literals in tests/cases modules as `_symbols` references: python3 tools/case_symbols.py [--check] [MODULE ...]"""
+"""Rewrite address literals in a profile's case modules as `_symbols` references: python3 tools/case_symbols.py [--profile NAME] [--check] [MODULE ...]"""
 
 from __future__ import annotations
 
@@ -18,8 +18,7 @@ sys.path.insert(0, str(ROOT))
 
 from tools.profiles import load_catalog  # noqa: E402
 
-CASES = ROOT / "tests" / "cases"
-SKIP = {"_symbols.py", "_schema_migration.py"}
+SKIP = {"_symbols.py", "_schema_migration.py", "_inherit.py"}
 SYMBOLS_MODULE = "tests.cases._symbols"
 
 WRAM = (0xC000, 0xE000)
@@ -71,12 +70,12 @@ class Tables:
     named: dict[str, tuple[int, int]]
 
     @classmethod
-    def load(cls) -> "Tables":
+    def load(cls, profile: str = "vanilla") -> "Tables":
         _, profiles = load_catalog(ROOT / "profiles" / "profiles.json")
-        rows = read_sym(profiles["vanilla"].sym_path(ROOT))
+        rows = read_sym(profiles[profile].sym_path(ROOT))
         others = [
-            {name for _, _, name in read_sym(profile.sym_path(ROOT))}
-            for key, profile in profiles.items() if key != "vanilla"
+            {name for _, _, name in read_sym(other.sym_path(ROOT))}
+            for key, other in profiles.items() if key != profile
         ]
         shared = {name for _, _, name in rows if all(name in names for names in others)}
         order = {name: index for index, (_, _, name) in enumerate(rows)}
@@ -649,10 +648,11 @@ def shadowed(text: str, names: set[str]) -> list[str]:
     return sorted(found)
 
 
-def modules(paths: list[str]) -> list[Path]:
+def modules(paths: list[str], profile: str) -> list[Path]:
     if paths:
         return [Path(p).resolve() for p in paths]
-    return sorted(p for p in CASES.glob("*.py") if p.name not in SKIP)
+    _, profiles = load_catalog(ROOT / "profiles" / "profiles.json")
+    return sorted(p for p in profiles[profile].case_path(ROOT).glob("*.py") if p.name not in SKIP)
 
 
 def main() -> int:
@@ -661,11 +661,12 @@ def main() -> int:
     parser.add_argument("--check", action="store_true", help="report pending rewrites without writing")
     parser.add_argument("--report", type=Path, help="write the per-site notes as JSON")
     parser.add_argument("--out", type=Path, help="write rewritten modules into this directory")
+    parser.add_argument("--profile", default="vanilla", help="resolve symbols from this profile's sym file (default: vanilla)")
     args = parser.parse_args()
-    tables = Tables.load()
+    tables = Tables.load(args.profile)
     notes: list[dict] = []
     pending = 0
-    for path in modules(args.modules):
+    for path in modules(args.modules, args.profile):
         rewriter = Rewriter(tables, path)
         result = rewriter.run()
         notes.extend(result.notes)

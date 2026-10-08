@@ -1,27 +1,18 @@
-"""Extended oracle-diff cases for duel_animation_core, seeded from tests/cases/duel_animation_core.py."""
-
-CONTRACT = {
-    '_ResetAnimationQueue': {'compare': ('b', 'c', 'hl'), 'preserve': ('b', 'c', 'hl')},
+"""Extended oracle-diff cases for duel_animation_core: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import STACK_TOP, WRAMX_START, sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('duel_animation_core')
+OWN = (
+    'PlayLoadedDuelAnimation',
+    '_UpdateQueuedAnimations',
+)
+CONTRACT.update({
     'PlayLoadedDuelAnimation': {'compare': (), 'preserve': ()},
-    'LoadDuelAnimationToBuffer': {'compare': ('a', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     '_UpdateQueuedAnimations': {'compare': ('a', 'b', 'c', 'hl'), 'preserve': ()},
-    'ClearAndDisableQueuedAnimations': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
-}
-
-CASES = {
-    '_ResetAnimationQueue': [
-        {'wram': {0xD410: b'\x00\x00\x00\x00\x00\x00\x00', 0xD499: b'\x7f\x7f\x7f'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xD410: b'\x01\x01\x01\x01\x01\x01\x01', 0xD499: b'\xaa\xbb\xcc'}},
-    ],
+})
+CASES.update({
     'PlayLoadedDuelAnimation': [
-        {'wram': {0xCAD3: b'\xc9\x32', 0xD40F: b'\x00', 0xD40E: b'\x00'}},
+        {'wram': {sym("wDoFrameFunction"): b'\xc9\x32', sym("wTempAnimation"): b'\x00', sym("wAnimationsDisabled"): b'\x00'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -29,69 +20,39 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCAD3: b'\xc9\x32', 0xD40F: b'\x01', 0xD40E: b'\x00', 0xD5C4: b'\x00',
-                     0xD605: b'\x01', 0xD5C5: b'\x01\x4f\x00\x10', 0xCAC0: b'\x00',
-                     0xD410: b'\xff\xff\xff\xff\xff\xff\xff'},
-            'read': {0xD4AC: 0x01, 0xD605: 0x01, 0xD5C5: 0x04, 0xCAC0: 0x01, 0xD410: 0x01, 0xD418: 0x01},
+            'wram': {sym("wDoFrameFunction"): b'\xc9\x32', sym("wTempAnimation"): b'\x01', sym("wAnimationsDisabled"): b'\x00', sym("wAllSpriteAnimationsDisabled"): b'\x00',
+                     sym("wSpriteVRAMBufferSize"): b'\x01', sym("wSpriteVRAM1Valid"): b'\x01\x4f\x00\x10', sym("wVBlankOAMCopyToggle"): b'\x00',
+                     sym("wAnimationQueue"): b'\xff\xff\xff\xff\xff\xff\xff'},
+            'read': {sym("wd4bf"): 0x01, sym("wSpriteVRAMBufferSize"): 0x01, sym("wSpriteVRAM1Valid"): 0x04, sym("wVBlankOAMCopyToggle"): 0x01, sym("wAnimationQueue"): 0x01, sym("wAnimFlags"): 0x01},
             'instruction_budget': 0x2DC6C0,
             'cycle_budget': 0x989680},
-        {   'wram': {0xCAD3: b'\xc9\x32', 0xD40F: b'\x02', 0xD40E: b'\x01', 0xD5C4: b'\x00',
-                     0xD605: b'\x00', 0xCAC0: b'\x00'},
-            'read': {0xD4AC: 0x01, 0xD605: 0x01, 0xCAC0: 0x01},
+        {   'wram': {sym("wDoFrameFunction"): b'\xc9\x32', sym("wTempAnimation"): b'\x02', sym("wAnimationsDisabled"): b'\x01', sym("wAllSpriteAnimationsDisabled"): b'\x00',
+                     sym("wSpriteVRAMBufferSize"): b'\x00', sym("wVBlankOAMCopyToggle"): b'\x00'},
+            'read': {sym("wd4bf"): 0x01, sym("wSpriteVRAMBufferSize"): 0x01, sym("wVBlankOAMCopyToggle"): 0x01},
             'instruction_budget': 0x2DC6C0,
             'cycle_budget': 0x989680},
-        {   'wram': {0xCAD3: b'\xa2\x00', 0xD40F: b'\x01', 0xD40E: b'\x00'},
-            'expect': {0xD4AC: b'\x00'},
-            'read': {0xD4AC: 0x01}},
-        {   'wram': {   0xCAD3: b'\xc9\x32',
-                        0xD40F: b'a',
-                        0xD40E: b'\x00',
-                        0xD417: b'\xff',
-                        0xD4A6: b'\x00\x00\x00\x00\x00'},
-            'read': {0xD417: 0x01, 0xD4A6: 0x05}},
-    ],
-    'LoadDuelAnimationToBuffer': [
-        {   'wram': {   0xD499: b'\x00',
-                        0xD49A: b'\x00',
-                        0xD40F: b'\x01',
-                        0xD49B: b'\x02',
-                        0xD49C: b'\x01',
-                        0xD49D: b'\x05',
-                        0xD49E: b'4\x12',
-                        0xD4A0: b'\x03',
-                        0xD4AB: b'\x07'},
-            'read': {0xD419: 0x08}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xD499: b'\x08',
-                        0xD49A: b'x',
-                        0xD40F: b'\x02',
-                        0xD49B: b'\x00',
-                        0xD49C: b'\x00',
-                        0xD49D: b'\x00',
-                        0xD49E: b'\x01\x00',
-                        0xD4A0: b'\x00',
-                        0xD4AB: b'\x00'},
-            'read': {0xD491: 0x08}},
-        {'wram': {0xD499: b'\x00', 0xD49A: b'\x08'}, 'read': {0xD419: 0x08}},
+        {   'wram': {sym("wDoFrameFunction"): b'\xa2\x00', sym("wTempAnimation"): b'\x01', sym("wAnimationsDisabled"): b'\x00'},
+            'expect': {sym("wd4bf"): b'\x00'},
+            'read': {sym("wd4bf"): 0x01}},
+        {   'wram': {   sym("wDoFrameFunction"): b'\xc9\x32',
+                        sym("wTempAnimation"): b'a',
+                        sym("wAnimationsDisabled"): b'\x00',
+                        sym("wActiveScreenAnim"): b'\xff',
+                        sym("wScreenAnimUpdatePtr"): b'\x00\x00\x00\x00\x00'},
+            'read': {sym("wActiveScreenAnim"): 0x01, sym("wScreenAnimUpdatePtr"): 0x05}},
     ],
     '_UpdateQueuedAnimations': [
-        {   'wram': {0xD417: b'\xff', 0xD4AD: b'\xff', 0xD410: b'\x00\x01\x02\x03\x04\x05\x06'},
-            'expect': {0xD410: b'\xff\x01\x02\x03\x04\x05\x06'},
+        {   'wram': {sym("wActiveScreenAnim"): b'\xff', sym("wd4c0"): b'\xff', sym("wAnimationQueue"): b'\x00\x01\x02\x03\x04\x05\x06'},
+            'expect': {sym("wAnimationQueue"): b'\xff\x01\x02\x03\x04\x05\x06'},
             'expect_regs': {'a': 0x00}},
-        {   'wram': {   0xD417: b'\xff',
-                        0xD4AD: b'\x01',
-                        0xD4BC: b'\x00',
-                        0xD4BD: b'\x01',
-                        0xD4CB: b'\xff',
-                        0xD5C4: b'\x00',
-                        0xD410: b'\x00\x00\x00\x00\x00\x00\x00'},
-            'read': {0xD4BD: 0x01, 0xD410: 0x07},
+        {   'wram': {   sym("wActiveScreenAnim"): b'\xff',
+                        sym("wd4c0"): b'\x01',
+                        sym("wWhichSprite"): b'\x00',
+                        sym("wSprite1Enabled"): b'\x01',
+                        sym("wSprite1Counter"): b'\xff',
+                        sym("wAllSpriteAnimationsDisabled"): b'\x00',
+                        sym("wAnimationQueue"): b'\x00\x00\x00\x00\x00\x00\x00'},
+            'read': {sym("wSprite1Enabled"): 0x01, sym("wAnimationQueue"): 0x07},
             'expect_regs': {'a': 0x00}},
         {   'a': 0xAA,
             'f': 0xF0,
@@ -100,24 +61,24 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xD417: b'\xff', 0xD4AD: b'\x80', 0xD410: b'\x01\xff\x02\xff\x03\xff\x04'},
-            'expect': {0xD4AD: b'\xff', 0xD410: b'\x01\xff\x02\xff\x03\xff\x04'},
+            'wram': {sym("wActiveScreenAnim"): b'\xff', sym("wd4c0"): b'\x80', sym("wAnimationQueue"): b'\x01\xff\x02\xff\x03\xff\x04'},
+            'expect': {sym("wd4c0"): b'\xff', sym("wAnimationQueue"): b'\x01\xff\x02\xff\x03\xff\x04'},
             'expect_regs': {'a': 0xFF}},
         {   'oracle': False,
             'why': 'The seeded animation callback target does not return in the live oracle.',
             'expect': {},
-            'wram': {   0xD417: b'a',
-                        0xD4AD: b'\xff',
-                        0xD4A6: b'\xffL\x01UM',
-                        0xFF80: b'\x06',
-                        0xFF92: b'\x00',
-                        0xD499: b'\x00\x00',
-                        0xD410: b'\xff\xff\xff\xff\xff\xff\xff'},
-            'read': {0xD417: 0x01, 0xD4A6: 0x05, 0xFF92: 0x01}},
+            'wram': {   sym("wActiveScreenAnim"): b'a',
+                        sym("wd4c0"): b'\xff',
+                        sym("wScreenAnimUpdatePtr"): b'\xffL\x01UM',
+                        sym("hBankROM"): b'\x06',
+                        sym("hSCX"): b'\x00',
+                        sym("wDuelAnimBufferCurPos"): b'\x00\x00',
+                        sym("wAnimationQueue"): b'\xff\xff\xff\xff\xff\xff\xff'},
+            'read': {sym("wActiveScreenAnim"): 0x01, sym("wScreenAnimUpdatePtr"): 0x05, sym("hSCX"): 0x01}},
         {   'oracle': False,
             'why': 'The poisoned animation frame points into the synthesized call-frame range.',
             'expect': {},
-            'wram': {   0xC000: b'\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0'
+            'wram': {   sym("wDeckToBuild"): b'\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0'
                                 b'\xc1\xc2\xc3\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -270,11 +231,11 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x030\x030\x030\x030\x030\x030\x00\x00\x00\x00\x00\x00\x00\x11'
                                 b'\x02\x00\x00',
-                        0xCAB8: b'',
-                        0xCAB9: b'\x00\x00\xc3\xe4\xe6\xe4',
-                        0xCAC0: b'',
-                        0xCAC1: b'\x1d\t\xa8\x01\r\n\x06\x00\x00\xbd\xe8\x82\xc3\x00\x00\xc3"\x03\xc92\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x98c\x8c2\x84!\x80\x00\x9cc\x1c2\x9c \x00 \x10R\x9cc\x8cQ\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe8\xdf\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x98\x00\x00\x00\x00\x18\xff\xff\xff\x00\x00\x07\x03\xb1\x03\x02\x18\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf2\x01\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\xa0\xa0\xa0\xa0\xa0\xa0\xc0\xc0\xa0\xa0\xac\xac\xac\xacOO\x88\x80\x00\x02\x01\x00\x00\x01\x00',
-                        0xCCBE: b'\x00\x12\x11\x00\x01/\x1d\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                        sym("wVBlankCounter"): b'',
+                        sym("wVBlankCounter") + 1: b'\x00\x00\xc3\xe4\xe6\xe4',
+                        sym("wVBlankOAMCopyToggle"): b'',
+                        sym("wTempByte"): b'\x1d\t\xa8\x01\r\n\x06\x00\x00\xbd\xe8\x82\xc3\x00\x00\xc3"\x03\xc92\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x98c\x8c2\x84!\x80\x00\x9cc\x1c2\x9c \x00 \x10R\x9cc\x8cQ\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe8\xdf\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x98\x00\x00\x00\x00\x18\xff\xff\xff\x00\x00\x07\x03\xb1\x03\x02\x18\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf2\x01\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\xa0\xa0\xa0\xa0\xa0\xa0\xc0\xc0\xa0\xa0\xac\xac\xac\xacOO\x88\x80\x00\x02\x01\x00\x00\x01\x00',
+                        sym("wCurMenuItem"): b'\x00\x12\x11\x00\x01/\x1d\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -299,7 +260,7 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE4E: b'\x05\x00\x00\x00\x00\x06\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                        sym("wCardListCursorPos"): b'\x05\x00\x00\x00\x00\x06\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -320,7 +281,7 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x030\x030\x030\x030\x03',
-                        0xD001: b'\x00\xc5^g\x0c\t\x06\x0c\x01\x02\x00\x00\x00\x00\x00\x00'
+                        sym("wNamingScreenDestPointer"): b'\x00\xc5^g\x0c\t\x06\x0c\x01\x02\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -512,7 +473,7 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xDCEE: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                        STACK_TOP + 0x2E: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -520,18 +481,18 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xFF80: b'\x07\x00\x00>\xca\xe0F>(= \xfd\xc9',
-                        0xFF8E: b'',
-                        0xFF8F: b'',
-                        0xFF90: b'',
-                        0xFF91: b'',
-                        0xFF92: b'\x00\x00\x00\x00\x00\xc2\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                        sym("hBankROM"): b'\x07\x00\x00>\xca\xe0F>(= \xfd\xc9',
+                        sym("hKeysReleased"): b'',
+                        sym("hDPadHeld"): b'',
+                        sym("hKeysHeld"): b'',
+                        sym("hKeysPressed"): b'',
+                        sym("hSCX"): b'\x00\x00\x00\x00\x00\xc2\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x9fO\x0f\x9a\x0e\x01\x13\x0f\x00\x00'
                                 b'\x00\x00\x00\x00\x1f\x03',
                         0xFF40: b'\xc3'},
-            'entry_sp': 0xDFD0,
+            'entry_sp': WRAMX_START + 0xFD0,
             'rom_bank': 0x07,
-            'read': {0xC200: 0x0200, 0xCBAA: 0x0100},
+            'read': {sym("wPlayerCardLocations"): 0x0200, sym("wPracticeDuelTurn"): 0x0100},
             'keys': [0x00, 0x01],
             'instruction_budget': 0x2625A00,
             'cycle_budget': 0x9896800,
@@ -543,50 +504,13 @@ CASES = {
             'f': 0x00,
             'hl': 0x3BA2},
     ],
-    'ClearAndDisableQueuedAnimations': [
-        {   'wram': {   0xCAD3: b'\xc9\x32',
-                        0xD417: b'\xff',
-                        0xD410: b'\x00\x00\x00\x00\x00\x00\x00',
-                        0xD499: b'\x01\x02'},
-            'expect': {0xD410: b'\xff\xff\xff\xff\xff\xff\xff', 0xD499: b'\x00\x00'},
-            'read': {0xD4AD: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCAD3: b'\xc9\x32',
-                        0xD417: b'\xff',
-                        0xD410: b'\x01\xff\x02\xff\x03\xff\x04',
-                        0xD499: b'\xaa\xbb'},
-            'expect': {0xD410: b'\xff\xff\xff\xff\xff\xff\xff', 0xD499: b'\x00\x00'}},
-        {   'wram': {   0xCAD3: b'\x01\x00',
-                        0xD417: b'\xff',
-                        0xD410: b'\x01\x01\x01\x01\x01\x01\x01',
-                        0xD499: b'\x01\x02'}},
-    ],
-}
-
-MUTATIONS = {
-    '_ResetAnimationQueue': {   'source_symbol': '_ResetAnimationQueue',
-        'before': 'for (uint8_t i = 0; i < QUEUE_LENGTH; i++)\n'
-                  '        write((uint16_t)(QUEUE_ADDR + i), 0xff);',
-        'after': 'for (uint8_t i = 0; i < QUEUE_LENGTH; i++)\n'
-                 '        write((uint16_t)(QUEUE_ADDR + i), 0xfe);',
-        'case_ids': ['_ResetAnimationQueue-0', '_ResetAnimationQueue-1'],
-        'source': 'src/home/duel_animation_core.c'},
+})
+MUTATIONS.update({
     'PlayLoadedDuelAnimation': {   'source_symbol': 'PlayLoadedDuelAnimation',
         'before': '    ClearSpriteVRAMBuffer();\n    ZeroObjectPositions();\n    write(wVBlankOAMCopyToggle_ADDR, 1u);',
         'after': '    ZeroObjectPositions();\n    write(wVBlankOAMCopyToggle_ADDR, 1u);',
         'case_ids': ['PlayLoadedDuelAnimation-1'],
         'source': 'src/profiles/extended/home/duel_animation_core.c'},
-    'LoadDuelAnimationToBuffer': {   'source_symbol': 'LoadDuelAnimationToBuffer',
-        'before': 'if (next != cur) {',
-        'after': 'if (next == cur) {',
-        'case_ids': ['LoadDuelAnimationToBuffer-0', 'LoadDuelAnimationToBuffer-zero'],
-        'source': 'src/home/duel_animation_core.c'},
     '_UpdateQueuedAnimations': {   'source_symbol': '_UpdateQueuedAnimations',
         'before': '        uint16_t hl = CallScreenAnimationUpdate();\n'
                   '        active = read(wActiveScreenAnim_ADDR);',
@@ -594,12 +518,6 @@ MUTATIONS = {
                  '        active = read(wActiveScreenAnim_ADDR);',
         'case_ids': ['_UpdateQueuedAnimations-3'],
         'source': 'src/home/duel_animation_core.c'},
-    'ClearAndDisableQueuedAnimations': {   'source_symbol': 'ClearAndDisableQueuedAnimations',
-        'before': '    write(wd4c0_ADDR, 0xff);\n    if (read(wActiveScreenAnim_ADDR) != 0xff)',
-        'after': '    write(wd4c0_ADDR, 0x00);\n    if (read(wActiveScreenAnim_ADDR) != 0xff)',
-        'case_ids': ['ClearAndDisableQueuedAnimations-0', 'ClearAndDisableQueuedAnimations-zero'],
-        'source': 'src/home/duel_animation_core.c'},
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

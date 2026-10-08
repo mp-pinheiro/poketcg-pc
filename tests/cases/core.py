@@ -1,4 +1,4 @@
-from tests.cases._symbols import HRAM_START, SRAM_START, data, sym, sym_bank
+from tests.cases._symbols import HRAM_START, SRAM_START, const, data, deck_bytes, sym, sym_bank, sym_pointer, text_id
 from tests.cases._fixtures import Fixture
 DRAGONITE_PLAY_ATTACK = Fixture("effect-dragonite-lv41-2-ai-s3-playattackanimation-entry")
 DRAGONITE_PLAY_BUFFERED = Fixture("effect-dragonite-lv41-2-ai-s3-playbufferedduelanimations-entry")
@@ -11,6 +11,9 @@ from tests.cases._fixtures import (
 from tests.cases._fixtures import (
     card_page_attack2_fixture as _card_page_attack2_fixture,
     CARD_PAGE_ATTACK2_REGS as _CARD_PAGE_ATTACK2_REGS,
+)
+from tests.cases._fixtures import (
+    open_card_page_check_play_area_fixture as _open_card_page_check_play_area_fixture,
 )
 from tests.cases._fixtures import (
     ai_power_effect_fixture as _ai_power_effect_fixture,
@@ -357,7 +360,7 @@ wOpponentTurnEnded_ = sym("wOpponentTurnEnded")
 wDuelFinished_ = sym("wDuelFinished")
 CASES["AIMakeDecision"] = [
     {
-        "a": 0x08,
+        "a": const("OPPACTION_BEGIN_ATTACK"),
         "wram": {
             hOppActionTableIndex_: b"\x00",
             wSkipDuelistIsThinkingDelay_: b"\x01",
@@ -368,7 +371,7 @@ CASES["AIMakeDecision"] = [
     },
     dict(
         POISON,
-        a=0x08,
+        a=const("OPPACTION_BEGIN_ATTACK"),
         wram={
             hOppActionTableIndex_: b"\x00",
             wSkipDuelistIsThinkingDelay_: b"\x01",
@@ -378,7 +381,7 @@ CASES["AIMakeDecision"] = [
         },
     ),
     {
-        "a": 0x08,
+        "a": const("OPPACTION_BEGIN_ATTACK"),
         "wram": {
             hOppActionTableIndex_: b"\x00",
             wSkipDuelistIsThinkingDelay_: b"\x01",
@@ -390,7 +393,7 @@ CASES["AIMakeDecision"] = [
     # $0F -> OppAction_NoAction; post-dispatch wSkip==0 exits through the
     # DuelistIsThinking textbox (core.asm:6255-6259).
     {
-        "a": 0x0F,
+        "a": const("OPPACTION_NO_ACTION_0F"),
         "keys": [0x00, 0x01],
         "wram": {
             hOppActionTableIndex_: b"\x00",
@@ -408,7 +411,7 @@ CASES["AIMakeDecision"] = [
     },
     # wDuelFinished forces the .turn_ended carry exit (core.asm:6248-6251).
     {
-        "a": 0x0F,
+        "a": const("OPPACTION_NO_ACTION_0F"),
         "wram": {
             hOppActionTableIndex_: b"\x00",
             wSkipDuelistIsThinkingDelay_: b"\x01",
@@ -420,7 +423,7 @@ CASES["AIMakeDecision"] = [
     # wSkip==0 at entry runs the real DoFrame delay loop from 59 to 60
     # (core.asm:6236-6240); wDuelFinished then takes the carry exit.
     {
-        "a": 0x0F,
+        "a": const("OPPACTION_NO_ACTION_0F"),
         "keys": [0x00, 0x01],
         "wram": {
             hOppActionTableIndex_: b"\x00",
@@ -2259,7 +2262,7 @@ CONTRACT["PrintCardNameFromCardIDInTextBox"] = {"compare": (), "preserve": ()}
 CASES["PrintCardNameFromCardIDInTextBox"] = [
     {
         "hl": 0x0081,
-        "wram": {wTempNonTurnDuelistCardID: b"\x08", sym("wDoFrameFunction"): b"\x48\x03"},
+        "wram": {wTempNonTurnDuelistCardID: b"\x08", sym("wDoFrameFunction"): sym_pointer("NoOp")},
         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
         "instruction_budget": 1000000,
         "cycle_budget": 4000000,
@@ -2269,7 +2272,7 @@ CASES["PrintCardNameFromCardIDInTextBox"] = [
     dict(
         POISON,
         hl=0x0081,
-        wram={wTempNonTurnDuelistCardID: b"\x08", sym("wDoFrameFunction"): b"\x48\x03"},
+        wram={wTempNonTurnDuelistCardID: b"\x08", sym("wDoFrameFunction"): sym_pointer("NoOp")},
         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
         instruction_budget=1000000,
         cycle_budget=4000000,
@@ -3348,16 +3351,11 @@ PSDCA_wSkipDelayAllowed = sym("wSkipDelayAllowed")
 PSDCA_wLCDC = sym("wLCDC")
 PSDCA_wTextSpeed = sym("wTextSpeed")
 PSDCA_hWhoseTurn = sym("hWhoseTurn")
-# Same animation-idle image tests/cases/core.py already uses for
-# PlayTurnDuelistDrawAnimation: queue/screen-anim slots idle ($ff), the duel
-# animation ring empty, and wDoFrameFunction ($CAD3) pointing at
-# UpdateQueuedAnimations ($3BA2) - the value ResetAnimationQueue writes on both
-# sides, so every seeded byte here is one the two runs agree on at return.
 PSDCA_ANIM_SAFE = {
     sym("wActiveScreenAnim"): b"\xff",
     sym("wd4c0"): b"\xff",
     sym("wAnimationQueue"): b"\xff" * 7,
-    sym("wDoFrameFunction"): bytes([0xA2, 0x3B]),
+    sym("wDoFrameFunction"): sym_pointer("UpdateQueuedAnimations"),
     sym("wDuelAnimBufferCurPos"): b"\x00",
     sym("wDuelAnimBufferSize"): b"\x08",
 }
@@ -4503,7 +4501,7 @@ CASES["PrintPracticeDuelNumberedInstruction"] = [
         "d": 0x20,
         "e": 0x40,
         "hl": sym("wNameBuffer"),
-        "wram": {sym("wNameBuffer") + 2: b"\xa9\x01", sym("wNameBuffer") + 4: b"\x00\x00"},
+        "wram": {sym("wNameBuffer") + 2: text_id("Turn1Instr1PracticeDuelText").to_bytes(2, "little"), sym("wNameBuffer") + 4: b"\x00\x00"},
         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
         "read": {
             sym("wc600") + 0x20: 4,
@@ -4523,7 +4521,7 @@ CASES["PrintPracticeDuelNumberedInstruction"] = [
         "d": 0x01,
         "e": 0x08,
         "hl": sym("wNameBuffer"),
-        "wram": {sym("wNameBuffer") + 2: b"\xaa\x01", sym("wNameBuffer") + 4: b"\xff\xff"},
+        "wram": {sym("wNameBuffer") + 2: text_id("Turn1Instr2PracticeDuelText").to_bytes(2, "little"), sym("wNameBuffer") + 4: b"\xff\xff"},
         "setup": [{"fn": "SetupText", "d": 0x01, "e": 0x08}],
         "read": {
             sym("wc600") + 0x20: 4,
@@ -4542,7 +4540,7 @@ CASES["PrintPracticeDuelNumberedInstruction"] = [
     dict(
         POISON,
         hl=sym("wNameBuffer"),
-        wram={sym("wNameBuffer") + 2: b"\xaa\x01", sym("wNameBuffer") + 4: b"\x00\x00"},
+        wram={sym("wNameBuffer") + 2: text_id("Turn1Instr2PracticeDuelText").to_bytes(2, "little"), sym("wNameBuffer") + 4: b"\x00\x00"},
         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
         read={
             sym("wc600") + 0x20: 4,
@@ -4771,7 +4769,7 @@ _ANIM_SAFE = {
     sym("wActiveScreenAnim"): b"\xff",
     sym("wd4c0"): b"\xff",
     sym("wAnimationQueue"): b"\xff" * 7,
-    sym("wDoFrameFunction"): bytes([0xA2, 0x3B]),
+    sym("wDoFrameFunction"): sym_pointer("UpdateQueuedAnimations"),
     sym("wDuelAnimBufferCurPos"): b"\x00",
     sym("wDuelAnimBufferSize"): b"\x08",
 }
@@ -7908,25 +7906,31 @@ CASES["OpenCardPage_FromHand"] = [
 # >>> factory OpenCardPage_FromCheckPlayArea
 CONTRACT["OpenCardPage_FromCheckPlayArea"] = {"compare": (), "preserve": ()}
 CASES["OpenCardPage_FromCheckPlayArea"] = [
-    {
-        "a": 0x00,
-        "f": 0x00,
-        "b": 0x00,
-        "c": 0x00,
-        "d": 0x00,
-        "e": 0x00,
-        "hl": 0x0000,
-        "keys": [0x00, 0x01],
-        "wram": {wCardPageExitKeys: b"\x01", sym("wLCDC"): b"\x00"},
-        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-        "read": {wCardPageExitKeys: 1, wCardPageType: 1},
-        "instruction_budget": 4000000,
-        "cycle_budget": 16000000,
-    },
     dict(
-        POISON,
+        _open_card_page_check_play_area_fixture(
+            vram=False,
+            changes={wCardPageExitKeys: b"\x01", sym("wLCDC"): b"\x00"},
+        ),
+        a=0x00,
+        f=0x00,
+        b=0x00,
+        c=0x00,
+        d=0x00,
+        e=0x00,
+        hl=0x0000,
         keys=[0x00, 0x01],
-        wram={wCardPageExitKeys: b"\x01", sym("wLCDC"): b"\x00"},
+        setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={wCardPageExitKeys: 1, wCardPageType: 1},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
+    dict(
+        _open_card_page_check_play_area_fixture(
+            vram=False,
+            changes={wCardPageExitKeys: b"\x01", sym("wLCDC"): b"\x00"},
+        ),
+        **POISON,
+        keys=[0x00, 0x01],
         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
         read={wCardPageExitKeys: 1, wCardPageType: 1},
         instruction_budget=4000000,
@@ -11956,7 +11960,7 @@ CASES["DuelMenu_Attack"] = [
             sym("wPlayerArenaCardStatus"): b"\x00",
             sym("wPlayerArenaCardHP"): b"\x28",
             sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
-            sym("wBoosterCardsDrawn"): b"\x08\x01\x01\x01\x01",
+            sym("wBoosterCardsDrawn"): deck_bytes((0x08, 0x01, 0x01, 0x01, 0x01)),
             sym("wPlayerCardLocations"): b"\x10\x10\x10\x10\x10",
             sym("wLCDC"): b"\x00",
             sym("wSelectedDuelSubMenuItem"): b"\x55",
@@ -12316,18 +12320,18 @@ CASES["_ContinueDuel"] = [
 CONTRACT["DoLinkOpponentTurn"] = {"compare": (), "preserve": ()}
 CASES["DoLinkOpponentTurn"] = [
     {
-        "wram": {sym("wOpponentTurnEnded"): b"\x01", sym("wSkipDuelistIsThinkingDelay"): b"\x01", sym("wDoFrameFunction"): b"\x48\x03"},
+        "wram": {sym("wOpponentTurnEnded"): b"\x01", sym("wSkipDuelistIsThinkingDelay"): b"\x01", sym("wDoFrameFunction"): sym_pointer("NoOp")},
         "read": {sym("wOpponentTurnEnded"): 1, sym("wSkipDuelistIsThinkingDelay"): 1, sym("wDoFrameFunction"): 2},
-        "expect": {sym("wOpponentTurnEnded"): b"\x00", sym("wSkipDuelistIsThinkingDelay"): b"\x00", sym("wDoFrameFunction"): b"\x1d\x0f"},
+        "expect": {sym("wOpponentTurnEnded"): b"\x00", sym("wSkipDuelistIsThinkingDelay"): b"\x00", sym("wDoFrameFunction"): sym_pointer("LinkOpponentTurnFrameFunction")},
         "setup": [{"fn": "CopyDMAFunction"}],
         "instruction_budget": 2000000,
         "cycle_budget": 8000000,
     },
     dict(
         POISON,
-        wram={sym("wOpponentTurnEnded"): b"\x01", sym("wSkipDuelistIsThinkingDelay"): b"\x01", sym("wDoFrameFunction"): b"\x48\x03"},
+        wram={sym("wOpponentTurnEnded"): b"\x01", sym("wSkipDuelistIsThinkingDelay"): b"\x01", sym("wDoFrameFunction"): sym_pointer("NoOp")},
         read={sym("wOpponentTurnEnded"): 1, sym("wSkipDuelistIsThinkingDelay"): 1, sym("wDoFrameFunction"): 2},
-        expect={sym("wOpponentTurnEnded"): b"\x00", sym("wSkipDuelistIsThinkingDelay"): b"\x00", sym("wDoFrameFunction"): b"\x1d\x0f"},
+        expect={sym("wOpponentTurnEnded"): b"\x00", sym("wSkipDuelistIsThinkingDelay"): b"\x00", sym("wDoFrameFunction"): sym_pointer("LinkOpponentTurnFrameFunction")},
         setup=[{"fn": "CopyDMAFunction"}],
         instruction_budget=2000000,
         cycle_budget=8000000,
@@ -15223,8 +15227,8 @@ MUTATIONS["PrintDeckAndHandIconsAndNumberOfCards"] = {
 # >>> factory-mutation CheckDamageToMrMime
 MUTATIONS["CheckDamageToMrMime"] = {
     "source_symbol": "CheckDamageToMrMime",
-    "before": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x10u};",
-    "after": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x00u};",
+    "before": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id_compare_a(card_id, MR_MIME), 0x10u};",
+    "after": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id_compare_a(card_id, MR_MIME), 0x00u};",
     "case_ids": ["CheckDamageToMrMime-0", "CheckDamageToMrMime-1"],
 }
 # <<< factory-mutation CheckDamageToMrMime

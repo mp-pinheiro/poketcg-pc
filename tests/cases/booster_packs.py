@@ -176,7 +176,7 @@ CASES["GenerateRandomEnergy"] = [
 # <<< factory GenerateRandomEnergy
 
 # >>> factory GenerateEnergyBoosterGrassPsychic
-CONTRACT["GenerateEnergyBoosterGrassPsychic"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e"), "wram_out": True}
+CONTRACT["GenerateEnergyBoosterGrassPsychic"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
 CASES["GenerateEnergyBoosterGrassPsychic"] = [
     {},
     dict(POISON),
@@ -184,7 +184,7 @@ CASES["GenerateEnergyBoosterGrassPsychic"] = [
 # <<< factory GenerateEnergyBoosterGrassPsychic
 
 # >>> factory GenerateEnergyBoosterLightningFire
-CONTRACT["GenerateEnergyBoosterLightningFire"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e"), "wram_out": True};
+CONTRACT["GenerateEnergyBoosterLightningFire"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
 CASES["GenerateEnergyBoosterLightningFire"] = [
     {},
     dict(POISON),
@@ -192,7 +192,7 @@ CASES["GenerateEnergyBoosterLightningFire"] = [
 # <<< factory GenerateEnergyBoosterLightningFire
 
 # >>> factory GenerateEnergyBoosterWaterFighting
-CONTRACT["GenerateEnergyBoosterWaterFighting"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e"), "wram_out": True}
+CONTRACT["GenerateEnergyBoosterWaterFighting"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
 CASES["GenerateEnergyBoosterWaterFighting"] = [
     {},
     dict(POISON),

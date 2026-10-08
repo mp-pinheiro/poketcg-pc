@@ -1,0 +1,5 @@
+hold DOWN 400
+idle
+press A
+idle
+shot extended-trainer-card-page

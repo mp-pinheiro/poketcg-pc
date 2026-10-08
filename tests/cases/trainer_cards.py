@@ -1,4 +1,4 @@
-from tests.cases._symbols import sym
+from tests.cases._symbols import sym, sym_bank
 from tests.cases._fixtures import ai_energy_retrieval_fixture as _ai_energy_retrieval_fixture, AI_ENERGY_RETRIEVAL_REGS as _AI_ENERGY_RETRIEVAL_REGS
 from tests.cases._fixtures import energy_removal_fixture as _energy_removal_fixture, ENERGY_REMOVAL_REGS as _ENERGY_REMOVAL_REGS
 from tests.cases._fixtures import energy_retrieval_fixture as _energy_retrieval_fixture, ENERGY_RETRIEVAL_REGS as _ENERGY_RETRIEVAL_REGS
@@ -1022,7 +1022,7 @@ CONTRACT["AIDecide_EnergyRemoval"] = {"compare": ("a", "f", "d"), "preserve": ()
 CASES["AIDecide_EnergyRemoval"] = [
     {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wPlayerArenaCard"): b"\xFF" * 60, sym("wOpponentArenaCard"): b"\xFF" * 60}, "read": {sym("wce0f"): 1, sym("wce1a"): 1, sym("wTotalAttachedEnergies"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wPlayerArenaCard"): b"\xFF" * 60, sym("wOpponentArenaCard"): b"\xFF" * 60}, read={sym("wce0f"): 1, sym("wce1a"): 1, sym("wTotalAttachedEnergies"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}, instruction_budget=20000000, cycle_budget=80000000),
-    dict(_energy_removal_fixture(vram=False, bank=8), **_ENERGY_REMOVAL_REGS, read={sym("wAIDefendingPokemonWeakness"): 1, sym("wAISetupEnergyCount"): 1, sym("wce0f"): 1, sym("wce1a"): 1, sym("wTotalAttachedEnergies"): 1, sym("hWhoseTurn"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}),
+    dict(_energy_removal_fixture(vram=False, bank=sym_bank("AIDecide_EnergyRemoval")), **_ENERGY_REMOVAL_REGS, read={sym("wAIDefendingPokemonWeakness"): 1, sym("wAISetupEnergyCount"): 1, sym("wce0f"): 1, sym("wce1a"): 1, sym("wTotalAttachedEnergies"): 1, sym("hWhoseTurn"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}),
 ]
 # <<< factory AIDecide_EnergyRemoval
 

@@ -1,25 +1,27 @@
-"""Extended oracle-diff cases for load_map_header, seeded from tests/cases/load_map_header.py."""
-
-CONTRACT = {
+"""Extended oracle-diff cases for load_map_header: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('load_map_header', remove=('LoadMapHeader',))
+OWN = ('LoadMapHeader',)
+CONTRACT.update({
     'LoadMapHeader': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
-}
-
-CASES = {
+})
+CASES.update({
     'LoadMapHeader': [
-        {   'wram': {   0xCAB4: b'\x02',
-                        0xD31C: b'\x00',
-                        0xD11E: b'\xaa',
-                        0xD11F: b'\xaa',
-                        0xD27C: b'\xaa',
-                        0xD27D: b'\xaa',
-                        0xD0FE: b'\xaa'}},
-        {   'wram': {   0xCAB4: b'\x00',
-                        0xD31C: b'\x00',
-                        0xD11E: b'\x00',
-                        0xD11F: b'\x00',
-                        0xD27C: b'\x00',
-                        0xD27D: b'\x00',
-                        0xD0FE: b'\x00'}},
+        {   'wram': {   sym("wConsole"): b'\x02',
+                        sym("wCurMap"): b'\x00',
+                        sym("wCurTilemap"): b'\xaa',
+                        sym("wCurTilemap") + 1: b'\xaa',
+                        sym("wCurMapInitialPalette"): b'\xaa',
+                        sym("wCurMapPalette"): b'\xaa',
+                        sym("wDefaultSong"): b'\xaa'}},
+        {   'wram': {   sym("wConsole"): b'\x00',
+                        sym("wCurMap"): b'\x00',
+                        sym("wCurTilemap"): b'\x00',
+                        sym("wCurTilemap") + 1: b'\x00',
+                        sym("wCurMapInitialPalette"): b'\x00',
+                        sym("wCurMapPalette"): b'\x00',
+                        sym("wDefaultSong"): b'\x00'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -27,13 +29,13 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {   0xCAB4: b'\x00',
-                        0xD31C: b'\x01',
-                        0xD11E: b'\xaa',
-                        0xD11F: b'\xaa',
-                        0xD27C: b'\xaa',
-                        0xD27D: b'\xaa',
-                        0xD0FE: b'\xaa'}},
+            'wram': {   sym("wConsole"): b'\x00',
+                        sym("wCurMap"): b'\x01',
+                        sym("wCurTilemap"): b'\xaa',
+                        sym("wCurTilemap") + 1: b'\xaa',
+                        sym("wCurMapInitialPalette"): b'\xaa',
+                        sym("wCurMapPalette"): b'\xaa',
+                        sym("wDefaultSong"): b'\xaa'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -41,23 +43,21 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {   0xCAB4: b'\x02',
-                        0xD31C: b'#',
-                        0xD11E: b'\xaa',
-                        0xD11F: b'\xaa',
-                        0xD27C: b'\xaa',
-                        0xD27D: b'\xaa',
-                        0xD0FE: b'\xaa'}},
+            'wram': {   sym("wConsole"): b'\x02',
+                        sym("wCurMap"): b'#',
+                        sym("wCurTilemap"): b'\xaa',
+                        sym("wCurTilemap") + 1: b'\xaa',
+                        sym("wCurMapInitialPalette"): b'\xaa',
+                        sym("wCurMapPalette"): b'\xaa',
+                        sym("wDefaultSong"): b'\xaa'}},
     ],
-}
-
-MUTATIONS = {
+})
+MUTATIONS.update({
     'LoadMapHeader': {   'source_symbol': 'LoadMapHeader',
-        'before': 'cgb_tilemap != 0',
-        'after': 'cgb_tilemap == 0',
+        'before': '\tgb_write8(wCurTilemap_ADDR, header[0]);',
+        'after': '\tgb_write8(wCurTilemap_ADDR, header[1]);',
         'case_ids': ['LoadMapHeader-0', 'LoadMapHeader-1', 'LoadMapHeader-2', 'LoadMapHeader-3'],
         'source': 'src/profiles/extended/home/load_map_header.c'},
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

@@ -1,511 +1,63 @@
-"""Extended oracle-diff cases for deck_configuration, seeded from tests/cases/deck_configuration.py."""
-
-CONTRACT = {
-    'DecrementDeckCardsInCollection': {'compare': ('hl',), 'preserve': ()},
-    'AddDeckToCollection': {'compare': ('hl',), 'preserve': ()},
-    'CopyListFromHLToDE': {'compare': ('hl', 'd', 'e'), 'preserve': ()},
-    'CalculateOnesAndTensDigits': {   'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'),
-    'preserve': ('a', 'f', 'b', 'c', 'd', 'e', 'hl')},
-    'InitCardSelectionParams': {'compare': ('a', 'c', 'hl'), 'preserve': ('c',)},
-    'ClearMemory_Bank2': {   'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'),
-    'preserve': ('a', 'f', 'b', 'c', 'd', 'e', 'hl')},
-    'CheckIfHasOtherValidDecks': {'compare': ('f',), 'preserve': ()},
-    'FillDEWithA': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('a', 'c', 'd', 'e', 'hl')},
-    'DrawHandCardsTileAtDE': {'compare': ('d', 'e'), 'preserve': ('d', 'e')},
-    'CountNumberOfCardsOfType': {'compare': ('a', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('d', 'e', 'hl')},
-    'CopyNBytesFromHLToDE': {'compare': ('d', 'e', 'hl'), 'preserve': ()},
-    'IncrementDeckCardsInTempCollection': {'compare': (), 'preserve': ()},
-    'CreateCardCollectionListWithDeckCards': {'compare': (), 'preserve': ()},
-    'GetSelectedVisibleCardID': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c')},
-    'CheckIfDeckHasCards': {'compare': ('f',), 'preserve': ()},
-    'FillBGMapLineWithA': {'compare': (), 'preserve': ()},
+"""Extended oracle-diff cases for deck_configuration: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import STACK_WINDOW, WRAMX_START, sym, sym_bank
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('deck_configuration', remove=(
+    'AddGiftCenterDeckCardsToCollection',
+    'Func_9ced',
+    'HandleSendDeckConfigurationMenu',
+    'PrepareToBuildDeckConfigurationToSend',
+))
+OWN = (
+    'AppendOwnedCardCountAndStorageCountNumbers',
+    'AppendOwnedCardCountNumber',
+    'CalculateOnesAndTensDigits_Long',
+    'CopyNBytesFromHLToDE_Long',
+    'GetCardTypeIconPalette',
+    'GetOwnedCardCount',
+    'HandleDeckCardSelectionList',
+    'OpenDeckConfigurationMenu',
+    'PrintCardSelectionList',
+    'PrintConfirmationCardList',
+    'PrintDeckBuildingCardList',
+    'PrintFilteredCardList',
+    'TryAddCardToDeck',
+)
+CONTRACT.update({
     'OpenDeckConfigurationMenu': {'compare': (), 'preserve': ()},
-    'PrintTotalNumberOfCardsInCollection': {'compare': (), 'preserve': ()},
-    'DrawHorizontalListCursor': {'compare': ('b', 'c'), 'preserve': ()},
-    'GetCountOfCardInCurDeck': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'e', 'hl')},
-    'DrawListCursor': {'compare': ('b', 'c'), 'preserve': ()},
-    'DrawHorizontalListCursor_Invisible': {'compare': ('b', 'c'), 'preserve': ()},
-    'DrawHorizontalListCursor_Visible': {'compare': ('b', 'c'), 'preserve': ()},
     'IsCardInAnyDeck': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('a', 'd', 'e', 'hl')},
-    'DrawListCursor_Invisible': {'compare': ('b', 'c'), 'preserve': ()},
-    'DrawListCursor_Visible': {'compare': ('b', 'c'), 'preserve': ()},
-    'CountNumberOfCardsForEachCardType': {'compare': (), 'preserve': (), 'wram_out': True},
-    'CopyDeckName': {'compare': ('hl', 'd', 'e'), 'preserve': (), 'wram_out': True},
     'GetOwnedCardCount': {'compare': ('a', 'd', 'e', 'hl'), 'preserve': ('e', 'hl')},
-    'TallyCardsInCardFilterLists': {'compare': ('hl',), 'preserve': ()},
-    'RemoveCardFromDeck': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
-    'CheckIfCurrentDeckWasChanged': {'compare': ('a', 'f'), 'preserve': ()},
-    'CreateFilteredCardList': {   'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'),
-    'preserve': ('a', 'f', 'b', 'c', 'd', 'e', 'hl')},
-    'ConfirmSelectionAndReturnCarry': {'compare': ('a', 'e'), 'preserve': ()},
-    'AddCardIDToVisibleList': {   'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'),
-    'preserve': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'),
-    'wram_out': True},
-    'HandleCardSelectionCursorBlink': {'compare': ('b', 'c'), 'preserve': ()},
-    'DrawHandCardsTileOnCurDeck': {'compare': (), 'preserve': ()},
-    'HandleCardSelectionInput': {'compare': (), 'preserve': (), 'wram_out': True},
-    'HandleLeftRightInCardList': {'compare': ('f',), 'preserve': ()},
-    'PrintPlayersCardsText': {'compare': (), 'preserve': (), 'wram_out': True},
-    'ConvertToNumericalDigits': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('f', 'c', 'd', 'e')},
-    'CopyListFromHLToDEInSRAM': {'compare': ('f', 'd', 'e', 'hl'), 'preserve': ()},
-    'PrintDeckName': {'compare': (), 'preserve': ()},
     'AppendOwnedCardCountNumber': {'compare': (), 'preserve': (), 'wram_out': True},
-    'PrintNumberValueInCursorYPos': {'compare': (), 'preserve': (), 'wram_out': True},
     'AppendOwnedCardCountAndStorageCountNumbers': {'compare': (), 'preserve': (), 'wram_out': True},
-    'PrintCardTypeCounts': {'compare': (), 'preserve': (), 'wram_out': True},
-    'AppendDeckName': {'compare': ('f',), 'preserve': ()},
-    'DrawDecksScreen': {'compare': (), 'preserve': (), 'wram_out': True},
-    'PrintTotalCardCount': {'compare': ('d', 'e'), 'preserve': ('d', 'e'), 'wram_out': True},
-    'RemoveCardFromDeckAndUpdateCount': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
     'PrintCardSelectionList': {'compare': (), 'preserve': (), 'wram_out': True},
-    'PrintFilteredCardSelectionList': {'compare': ('a', 'f'), 'preserve': ('a', 'f')},
     'PrintDeckBuildingCardList': {'compare': (), 'preserve': (), 'wram_out': True},
     'PrintFilteredCardList': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('a', 'f')},
-    'OpenCardPageFromCardList': {'compare': (), 'preserve': ()},
-    'CheckIfThereAreAnyBasicCardsInDeck': {'compare': ('a', 'f', 'e', 'hl'), 'preserve': ()},
-    'SortCurDeckCardsByID': {'compare': ('e',), 'preserve': ()},
     'GetCardTypeIconPalette': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'hl')},
-    'DrawCardTypeIcons': {'compare': (), 'preserve': ()},
-    'PrintPlayersCardsHeaderInfo': {'compare': (), 'preserve': ()},
     'PrintConfirmationCardList': {'compare': (), 'preserve': ()},
-    'CreateCurDeckUniqueCardList': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
     'TryAddCardToDeck': {'compare': ('a', 'f'), 'preserve': ()},
-    'AddCardToDeckAndUpdateCount': {'compare': ('a', 'f', 'e'), 'preserve': ('e',)},
     'HandleDeckCardSelectionList': {'compare': (), 'preserve': ()},
-    'PrintCurDeckNumberAndName': {'compare': (), 'preserve': (), 'wram_out': True},
-    'UpdateConfirmationCardScreen': {'compare': (), 'preserve': ()},
-    'PrintSlashSixty': {'compare': (), 'preserve': ()},
-    'ShowDeckInfoHeader': {'compare': (), 'preserve': ()},
-    'DrawCardTypeIconsAndPrintCardCounts': {'compare': (), 'preserve': ()},
-    'ShowConfirmationCardScreen': {'compare': (), 'preserve': ()},
-    'ShowDeckInfoHeaderAndWaitForBButton': {'compare': (), 'preserve': ()},
-    'HandleDeckConfirmationMenu': {'compare': (), 'preserve': ()},
-    'ConfirmDeckConfiguration': {'compare': (), 'preserve': ()},
-    'SaveDeckConfiguration': {'compare': ('a', 'f'), 'preserve': ()},
-    'DismantleDeck': {'compare': ('a',), 'preserve': ()},
-    'CancelDeckModifications': {'compare': ('a', 'f'), 'preserve': ()},
-    'HandleSelectUpAndDownInList': {'compare': ('f',), 'preserve': ()},
-    'HandleDeckBuildScreen': {'compare': (), 'preserve': ()},
-    'HandlePlayersCardsScreen': {'compare': (), 'preserve': ()},
-    'ChangeDeckName': {'compare': (), 'preserve': ()},
-    'HandleDeckConfigurationMenu': {'compare': (), 'preserve': ()},
-    'ModifyDeckConfiguration': {'compare': (), 'preserve': ()},
     'CopyNBytesFromHLToDE_Long': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
     'CalculateOnesAndTensDigits_Long': {'compare': (), 'preserve': ()},
-}
-
-CASES = {
-    'DecrementDeckCardsInCollection': [
-        {'hl': 0xC100, 'wram': {0xC100: b'\x00'}, 'sram': {0x00: {0xA100: b'\x00\x00\x00\x00'}}},
-        {'hl': 0xC100, 'wram': {0xC100: b'\x01\x02\x00'}, 'sram': {0x00: {0xA100: b'\x05\x05\x05'}}},
-        {   'hl': 0xC100,
-            'wram': {   0xC100: b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'},
-            'sram': {0x00: {0xA101: b'c'}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0xC100,
-            'wram': {0xC100: b'\x00'},
-            'sram': {0x00: {0xA100: b'\x00\x00\x00\x00'}}},
-    ],
-    'AddDeckToCollection': [
-        {'hl': 0xC100, 'wram': {0xC100: b'\x00'}, 'sram': {0x00: {0xA100: b'\x00\x00\x00\x00'}}},
-        {'hl': 0xC100, 'wram': {0xC100: b'\x01\x02\x00'}, 'sram': {0x00: {0xA100: b'\x05\x05\x05'}}},
-        {   'hl': 0xC100,
-            'wram': {   0xC100: b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
-                                b'\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'},
-            'sram': {0x00: {0xA101: b'b'}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0xC100,
-            'wram': {0xC100: b'\x00'},
-            'sram': {0x00: {0xA100: b'\x00\x00\x00\x00'}}},
-    ],
-    'CopyListFromHLToDE': [
-        {'hl': 0xC100, 'd': 0xC2, 'e': 0x00, 'wram': {0xC100: b'\x00'}, 'read': {0xC200: 0x01}},
-        {'hl': 0xC100, 'd': 0xC2, 'e': 0x00, 'wram': {0xC100: b'\x01\x02\x00'}, 'read': {0xC200: 0x03}},
-        {   'hl': 0xC100,
-            'd': 0xC2,
-            'e': 0x00,
-            'wram': {0xC100: b'\xff\xff\xff\xff\xff\x00'},
-            'read': {0xC200: 0x06}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'hl': 0xC100,
-            'd': 0xC2,
-            'e': 0x00,
-            'wram': {0xC100: b'\x00'},
-            'read': {0xC200: 0x01}},
-    ],
-    'CalculateOnesAndTensDigits': [
-        {'a': 0x00, 'wram': {0xCE60: b'\xff\xff'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE60: b'\xff\xff'}},
-        {'a': 0x01, 'wram': {0xCE60: b'\xff\xff'}},
-        {'a': 0x09, 'wram': {0xCE60: b'\xff\xff'}},
-        {'a': 0x0A, 'wram': {0xCE60: b'\xff\xff'}},
-        {'a': 0x13, 'wram': {0xCE60: b'\xff\xff'}},
-        {'a': 0x63, 'wram': {0xCE60: b'\xff\xff'}},
-        {'a': 0xFF, 'wram': {0xCE60: b'\xff\xff'}},
-    ],
-    'InitCardSelectionParams': [
-        {   'a': 0x00,
-            'hl': 0xC100,
-            'wram': {0xC100: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'read': {0xCE4D: 0x0C, 0xFFB3: 0x01}},
-        {   'a': 0x5A,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0xC100,
-            'wram': {0xC100: b'\x01\x02\x03\x04\x05\x06\x07\x08\t'},
-            'read': {0xCE4D: 0x0C, 0xFFB3: 0x01}},
-        {   'a': 0xFF,
-            'hl': 0xC1F8,
-            'wram': {0xC1F8: b'\x11"3DUfw\x88\x99'},
-            'read': {0xCE4D: 0x0C, 0xFFB3: 0x01}},
-    ],
-    'ClearMemory_Bank2': [
-        {   'hl': 0xC100,
-            'wram': {   0xC100: b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'}},
-        {   'a': 0x01,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0xC200,
-            'wram': {0xC200: b'\xaa'}},
-        {'a': 0x01, 'hl': 0xC300, 'wram': {0xC300: b'\xaa'}},
-        {   'a': 0xFF,
-            'hl': 0xC400,
-            'wram': {   0xC400: b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa'}},
-    ],
-    'CheckIfHasOtherValidDecks': [
-        {'wram': {0xCE5C: b'\x00\x00\x00\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE5C: b'\x01\x01\x00\x00'}},
-        {'wram': {0xCE5C: b'\x01\x00\x00\x00'}},
-        {'wram': {0xCE5C: b'\x00\x01\x00\x00'}},
-        {'wram': {0xCE5C: b'\x01\x00\x01\x00'}},
-        {'wram': {0xCE5C: b'\x00\x00\x01\x01'}},
-    ],
-    'FillDEWithA': [
-        {   'a': 0x00,
-            'b': 0x01,
-            'd': 0xC1,
-            'e': 0x00,
-            'hl': 0xC200,
-            'wram': {0xC100: b'\xff'},
-            'read': {0xC100: 0x01}},
-        {   'a': 0x7E,
-            'b': 0x00,
-            'd': 0xC2,
-            'e': 0x00,
-            'hl': 0xC300,
-            'wram': {   0xC200: b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'},
-            'read': {0xC200: 0x0100}},
-        {   'a': 0xA5,
-            'b': 0x05,
-            'd': 0xC3,
-            'e': 0x00,
-            'hl': 0xC400,
-            'wram': {0xC300: b'\x00\x00\x00\x00\x00'},
-            'read': {0xC300: 0x05}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xD811: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'read': {0xD811: 0xBB}},
-    ],
-    'DrawHandCardsTileAtDE': [
-        {'d': 0x00, 'e': 0x00, 'vread': {0x00: {0x9800: 0x40}}},
-        {'d': 0x01, 'e': 0x02, 'vread': {0x00: {0x9841: 0x02, 0x9861: 0x02}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0x02,
-            'e': 0x03,
-            'hl': 0x1234,
-            'vread': {0x00: {0x9862: 0x02, 0x9882: 0x02}}},
-    ],
-    'CountNumberOfCardsOfType': [
-        {},
-        {'a': 0x08},
-        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234},
-    ],
-    'CopyNBytesFromHLToDE': [
-        {'b': 0x01, 'hl': 0xC100, 'd': 0xC4, 'e': 0xF0, 'wram': {0xC100: b'B'}, 'read': {0xC4F0: 0x01}},
-        {   'b': 0x03,
-            'hl': 0xC100,
-            'd': 0xC4,
-            'e': 0xF0,
-            'wram': {0xC100: b'\x01\x02\x03'},
-            'read': {0xC4F0: 0x03}},
-        {   'b': 0x00,
-            'hl': 0xC100,
-            'd': 0xC4,
-            'e': 0xF0,
-            'wram': {   0xC100: b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f'
-                                b'\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#'
-                                b"$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefg"
-                                b'hijklmnopqrstuvwxyz{|}~\x7f\x80\x81\x82\x83\x84\x85\x86\x87'
-                                b'\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97'
-                                b'\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7'
-                                b'\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7'
-                                b'\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7'
-                                b'\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7'
-                                b'\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7'
-                                b'\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7'
-                                b'\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff'},
-            'read': {0xC4F0: 0x0100}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0xC100,
-            'wram': {   0xC100: b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f'
-                                b'\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#'
-                                b"$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefg"
-                                b'hijklmnopqrstuvwxyz{|}~\x7f\x80\x81\x82\x83\x84\x85\x86\x87'
-                                b'\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97'
-                                b'\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7'
-                                b'\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7'
-                                b'\xb8\xb9\xba'},
-            'read': {0xD811: 0xBB}},
-    ],
-    'IncrementDeckCardsInTempCollection': [
-        {   'd': 0xC2,
-            'e': 0x00,
-            'wram': {0xC200: b'\x01\x02\x01\x00'},
-            'read': {0xC001: 0x02, 0xC002: 0x01}},
-        {'d': 0xC2, 'e': 0x10, 'wram': {0xC210: b'\x00'}, 'read': {}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xD811: b'\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb'
-                                b'\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb'
-                                b'\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb'
-                                b'\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb\xbb'},
-            'read': {0xC0BB: 0x3C}},
-    ],
-    'CreateCardCollectionListWithDeckCards': [
-        {   'a': 0x00,
-            'sram': {   0x00: {   0xA100: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00'}},
-            'read': {0xC000: 0xFF}},
-        {   'a': 0x05,
-            'sram': {0x00: {0xA101: b'\x05\x06', 0xA318: b'\x01\x02\x00', 0xA3D0: b'\x02\x01\x00'}},
-            'read': {0xC001: 0x06, 0xC002: 0x08}},
-        {'a': 0x0A, 'sram': {0x00: {0xA374: b'\x01\x00', 0xA42C: b'\x01\x00'}}, 'read': {0xC001: 0x02}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'sram': {0x00: {0xA374: b'\x01\x00', 0xA42C: b'\x01\x00'}},
-            'read': {0xC001: 0x02}},
-    ],
-    'GetSelectedVisibleCardID': [
-        {   'wram': {0xCE4E: b'\x00', 0xCE6E: b'*'},
-            'expect_regs': {   'a': 0x00,
-                               'f': 0x00,
-                               'b': 0x00,
-                               'c': 0x00,
-                               'd': 0x00,
-                               'e': 0x2A,
-                               'hl': 0xCEC4}},
-        {   'wram': {0xCE4E: b'\x01', 0xCE6E: b'\x00\x7f'},
-            'expect_regs': {   'a': 0x01,
-                               'f': 0x00,
-                               'b': 0x00,
-                               'c': 0x00,
-                               'd': 0x00,
-                               'e': 0x7F,
-                               'hl': 0xCEC5}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE4E: b'\x02', 0xCE6E: b'\x00\x00\xee'},
-            'expect_regs': {   'a': 0x02,
-                               'f': 0x80,
-                               'b': 0xBB,
-                               'c': 0xCC,
-                               'd': 0x00,
-                               'e': 0xEE,
-                               'hl': 0xCEC6}},
-    ],
-    'CheckIfDeckHasCards': [
-        {'hl': 0xA300, 'ramg': False, 'sram': {0x00: {0xA318: b'\x00'}}},
-        {'hl': 0xA300, 'ramg': False, 'sram': {0x00: {0xA318: b'\x01'}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0xA300,
-            'ramg': False,
-            'sram': {0x00: {0xA318: b'\x00'}}},
-        {'hl': 0xA300, 'sram': {0x00: {0xA318: b'\xff'}}},
-    ],
-    'FillBGMapLineWithA': [
-        {'a': 0x11, 'b': 0x00, 'c': 0x00, 'wram': {0xCAB4: b'\x00'}, 'vread': {0x00: {0x9800: 0x14}}},
-        {   'a': 0x22,
-            'b': 0x01,
-            'c': 0x02,
-            'wram': {0xCAB4: b'\x02'},
-            'vread': {0x00: {0x9841: 0x14}, 0x01: {0x9841: 0x14}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0x03,
-            'c': 0x04,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCAB4: b'\x02'},
-            'vread': {0x00: {0x9883: 0x14}, 0x01: {0x9883: 0x14}}},
-    ],
+})
+CASES.update({
     'OpenDeckConfigurationMenu': [
         {   'oracle': False,
             'evidence': 'primary',
             'why': 'The relocated handler pointer enters the frame-driven deck configuration menu loop, which does not return from an isolated oracle call.',
             'expect': {},
-            'wram': {0xCE18: b'\xff', 0xCE4D: b'\xff', 0xCABB: b'\x00', 0xCFD6: b'\x07S'},
+            'wram': {sym("wInPlayAreaCurPosition"): b'\xff', sym("wCheckMenuCursorBlinkCounter"): b'\xff', sym("wLCDC"): b'\x00', sym("wDeckConfigurationMenuHandlerFunction"): b'\x07S'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'keys': [0x00, 0x01],
-            'read': {0xCE18: 0x01, 0xCE19: 0x02, 0xCE1B: 0x01, 0xCE4D: 0x01},
+            'read': {sym("wInPlayAreaCurPosition"): 0x01, sym("wMenuInputTablePointer"): 0x02, sym("wDuelInitialPrizesUpperBitsSet"): 0x01, sym("wCheckMenuCursorBlinkCounter"): 0x01},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
         {   'oracle': False,
             'evidence': 'primary',
             'why': 'The relocated handler pointer enters the frame-driven deck configuration menu loop, which does not return from an isolated oracle call.',
             'expect': {},
-            'wram': {0xCE18: b'\x01', 0xCE4D: b'\x7f', 0xCABB: b'\x00', 0xCFD6: b'\x07S'},
+            'wram': {sym("wInPlayAreaCurPosition"): b'\x01', sym("wCheckMenuCursorBlinkCounter"): b'\x7f', sym("wLCDC"): b'\x00', sym("wDeckConfigurationMenuHandlerFunction"): b'\x07S'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'keys': [0x00, 0x01],
-            'read': {0xCE18: 0x01, 0xCE19: 0x02, 0xCE1B: 0x01, 0xCE4D: 0x01},
+            'read': {sym("wInPlayAreaCurPosition"): 0x01, sym("wMenuInputTablePointer"): 0x02, sym("wDuelInitialPrizesUpperBitsSet"): 0x01, sym("wCheckMenuCursorBlinkCounter"): 0x01},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
         {   'oracle': False,
@@ -518,362 +70,15 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCE18: b'\xa5', 0xCE4D: b'\x12', 0xCABB: b'\x00', 0xCFD6: b'\x07S'},
+            'wram': {sym("wInPlayAreaCurPosition"): b'\xa5', sym("wCheckMenuCursorBlinkCounter"): b'\x12', sym("wLCDC"): b'\x00', sym("wDeckConfigurationMenuHandlerFunction"): b'\x07S'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
             'keys': [0x00, 0x01],
-            'read': {0xCE18: 0x01, 0xCE19: 0x02, 0xCE1B: 0x01, 0xCE4D: 0x01},
+            'read': {sym("wInPlayAreaCurPosition"): 0x01, sym("wMenuInputTablePointer"): 0x02, sym("wDuelInitialPrizesUpperBitsSet"): 0x01, sym("wCheckMenuCursorBlinkCounter"): 0x01},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
-    ],
-    'PrintTotalNumberOfCardsInCollection': [
-        {   'sram': {   0x00: {   0xA100: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00'}},
-            'read': {0xC000: 0x0C, 0xCE60: 0x05},
-            'vread': {0x00: {0x980D: 0x0C}}},
-        {   'sram': {   0x00: {   0xA100: b'\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00'}},
-            'read': {0xC000: 0x0C, 0xCE60: 0x05},
-            'vread': {0x00: {0x980D: 0x0C}}},
-        {   'sram': {   0x00: {   0xA100: b'\x00\xff\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00'}},
-            'read': {0xC000: 0x0C, 0xCE60: 0x05},
-            'vread': {0x00: {0x980D: 0x0C}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'sram': {   0x00: {   0xA100: b'\x00\x7f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00'}},
-            'read': {0xC000: 0x0C, 0xCE60: 0x05},
-            'vread': {0x00: {0x980D: 0x0C}}},
-    ],
-    'DrawHorizontalListCursor': [
-        {   'a': 0x66,
-            'wram': {0xCE4E: b'\x03', 0xCE4F: b'\x04', 0xCE50: b'\x05', 0xCE52: b'\x02'},
-            'vread': {0x00: {0x98AA: 0x01}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE4E: b'\x04', 0xCE4F: b'\x06', 0xCE50: b'\x07', 0xCE52: b'\x03'},
-            'vread': {0x00: {0x98FA: 0x01}}},
-    ],
-    'GetCountOfCardInCurDeck': [
-        {},
-        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234},
-    ],
-    'DrawListCursor': [
-        {   'a': 0x66,
-            'wram': {   0xCE4E: b'\x03',
-                        0xCE4F: b'\x04',
-                        0xCE50: b'\x05',
-                        0xCE52: b'\x02',
-                        0xCE51: b'\x00'},
-            'vread': {0x00: {0x98AA: 0x01}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCE4E: b'\x04',
-                        0xCE4F: b'\x06',
-                        0xCE50: b'\x07',
-                        0xCE52: b'\x03',
-                        0xCE51: b'\x00'},
-            'vread': {0x00: {0x98F2: 0x01}}},
-    ],
-    'DrawHorizontalListCursor_Invisible': [
-        {   'wram': {0xCE55: b'f', 0xCE4E: b'\x03', 0xCE4F: b'\x04', 0xCE50: b'\x05', 0xCE52: b'\x02'},
-            'vread': {0x00: {0x98AA: 0x01}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE55: b'w', 0xCE4E: b'\x04', 0xCE4F: b'\x06', 0xCE50: b'\x07', 0xCE52: b'\x03'},
-            'vread': {0x00: {0x98FA: 0x01}}},
-    ],
-    'DrawHorizontalListCursor_Visible': [
-        {   'wram': {0xCE54: b'f', 0xCE4E: b'\x03', 0xCE4F: b'\x04', 0xCE50: b'\x05', 0xCE52: b'\x02'},
-            'vread': {0x00: {0x98AA: 0x01}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE54: b'w', 0xCE4E: b'\x04', 0xCE4F: b'\x06', 0xCE50: b'\x07', 0xCE52: b'\x03'},
-            'vread': {0x00: {0x98FA: 0x01}}},
-    ],
-    'IsCardInAnyDeck': [
-        {   'a': 0x01,
-            'f': 0x00,
-            'e': 0x42,
-            'ramg': False,
-            'sram': {   0x00: {   0xA318: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA374: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA3D0: b'\x00\x00B\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA42C: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'}},
-            'expect_regs': {   'a': 0x01,
-                               'f': 0x00,
-                               'b': 0x3A,
-                               'c': 0x00,
-                               'd': 0x00,
-                               'e': 0x42,
-                               'hl': 0x00}},
-        {   'a': 0x00,
-            'f': 0x00,
-            'e': 0x7F,
-            'ramg': False,
-            'sram': {   0x00: {   0xA318: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA374: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA3D0: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA42C: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x7f'}},
-            'expect_regs': {   'a': 0x00,
-                               'f': 0x80,
-                               'b': 0x01,
-                               'c': 0x00,
-                               'd': 0x00,
-                               'e': 0x7F,
-                               'hl': 0x00}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'ramg': False,
-            'sram': {   0x00: {   0xA318: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA374: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA3D0: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA42C: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'}},
-            'expect_regs': {   'a': 0xAA,
-                               'f': 0xD0,
-                               'b': 0x00,
-                               'c': 0xCC,
-                               'd': 0xDD,
-                               'e': 0xEE,
-                               'hl': 0x1234}},
-    ],
-    'DrawListCursor_Invisible': [
-        {   'wram': {   0xCE55: b'f',
-                        0xCE4E: b'\x03',
-                        0xCE4F: b'\x04',
-                        0xCE50: b'\x05',
-                        0xCE51: b'\x00',
-                        0xCE52: b'\x02'},
-            'vread': {0x00: {0x98AA: 0x01}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCE55: b'w',
-                        0xCE4E: b'\x04',
-                        0xCE4F: b'\x06',
-                        0xCE50: b'\x07',
-                        0xCE51: b'\x00',
-                        0xCE52: b'\x03'},
-            'vread': {0x00: {0x98F2: 0x01}}},
-    ],
-    'DrawListCursor_Visible': [
-        {   'wram': {   0xCE54: b'f',
-                        0xCE4E: b'\x03',
-                        0xCE4F: b'\x04',
-                        0xCE50: b'\x05',
-                        0xCE51: b'\x00',
-                        0xCE52: b'\x02'},
-            'vread': {0x00: {0x98AA: 0x01}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCE54: b'w',
-                        0xCE4E: b'\x04',
-                        0xCE4F: b'\x06',
-                        0xCE50: b'\x07',
-                        0xCE51: b'\x00',
-                        0xCE52: b'\x03'},
-            'vread': {0x00: {0x98F2: 0x01}}},
-    ],
-    'CountNumberOfCardsForEachCardType': [
-        {'read': {0xCE65: 0x09}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'read': {0xCE65: 0x09}},
-    ],
-    'CopyDeckName': [
-        {   'hl': 0xA300,
-            'rom_bank': 0x02,
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'sram': {0x00: {0xA300: b'ABC\x00'}},
-            'wram': {0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'read': {0xC580: 0x0C}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0xA300,
-            'rom_bank': 0x02,
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'sram': {0x00: {0xA300: b'AB\x00'}},
-            'wram': {0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'read': {0xC580: 0x0C}},
     ],
     'GetOwnedCardCount': [
-        {'e': 0x63, 'wram': {0xCE8B: b'\x00'}},
+        {'e': 0x63, 'wram': {sym("wHandTempList"): b'\x00'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -881,415 +86,51 @@ CASES = {
             'd': 0xDD,
             'e': 0x63,
             'hl': 0x1234,
-            'wram': {0xCE8B: b'\x01\x02\x03\x00'}},
+            'wram': {sym("wHandTempList"): b'\x01\x02\x03\x00'}},
         {   'e': 0x02,
             'oracle': False,
             'why': "wOwnedCardsCountList (0xCF68) falls inside $CF00-$CFFF, the oracle's own reserved "
                    "call frame, so the match branch's real count byte can never be seeded or read "
                    'live; only the loop index (d) that locates card id 0x02 at position 1 is asserted.',
-            'wram': {0xCE8B: b'\x01\x02\x03\x00'},
+            'wram': {sym("wHandTempList"): b'\x01\x02\x03\x00'},
             'expect_regs': {'d': 0x01}},
     ],
-    'TallyCardsInCardFilterLists': [
-        {   'wram': {0xCE65: b'\x01\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE65: b'\x01\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
-        {   'wram': {0xCE65: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
-    ],
-    'RemoveCardFromDeck': [
-        {'b': 0x11, 'c': 0x22, 'd': 0x33, 'e': 0x01, 'hl': 0x4455},
-        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0x02, 'hl': 0x1234},
-    ],
-    'CheckIfCurrentDeckWasChanged': [
-        {'wram': {0xCE7D: b'\x01'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE7D: b'\x01'}},
-    ],
-    'CreateFilteredCardList': [
-        {   'a': 0x08,
-            'f': 0x00,
-            'b': 0x11,
-            'c': 0x22,
-            'd': 0x33,
-            'e': 0x44,
-            'hl': 0x5566,
-            'wram': {   0xC000: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'instruction_budget': 0x7A1200,
-            'cycle_budget': 0x1E84800,
-            'read': {0xCE58: 0x01}},
-        {   'a': 0x08,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xC000: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'instruction_budget': 0x7A1200,
-            'cycle_budget': 0x1E84800,
-            'read': {0xCE58: 0x01}},
-    ],
-    'ConfirmSelectionAndReturnCarry': [
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE4E: b'\x05'},
-            'hram': {0xFFB3: b'\x07'},
-            'expect_regs': {'a': 0x07, 'e': 0x05}},
-    ],
-    'AddCardIDToVisibleList': [
-        {   'b': 0x02,
-            'e': 0x2A,
-            'wram': {0xCE6E: b'\x00\x00\x00\x00\x00\x00\x00', 0xCE7C: b'\x05'},
-            'read': {0xCE6E: 0x07}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0x02,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0x2A,
-            'hl': 0x1234,
-            'wram': {0xCE6E: b'\x00\x00\x00\x00\x00\x00\x00', 0xCE7C: b'\x05'},
-            'read': {0xCE6E: 0x07}},
-    ],
-    'HandleCardSelectionCursorBlink': [
-        {'wram': {0xCE4D: b'\x01'}, 'read': {0xCE4D: 0x01}},
-        {   'wram': {   0xCE4D: b'\xf0',
-                        0xCE54: b'w',
-                        0xCE55: b'f',
-                        0xCE4E: b'\x03',
-                        0xCE4F: b'\x04',
-                        0xCE50: b'\x05',
-                        0xCE52: b'\x02'},
-            'read': {0xCE4D: 0x01},
-            'vread': {0x00: {0x98AA: 0x01}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCE4D: b'\x00',
-                        0xCE54: b'w',
-                        0xCE55: b'f',
-                        0xCE4E: b'\x03',
-                        0xCE4F: b'\x04',
-                        0xCE50: b'\x05',
-                        0xCE52: b'\x02'},
-            'read': {0xCE4D: 0x01},
-            'vread': {0x00: {0x98AA: 0x01}}},
-    ],
-    'DrawHandCardsTileOnCurDeck': [
-        {'sram': {0x00: {0xB668: b'\x00'}}, 'vread': {0x00: {0x9800: 0x40}}},
-        {'sram': {0x00: {0xB668: b'\x02'}}, 'vread': {0x00: {0x9800: 0x0100}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'sram': {0x00: {0xB668: b'\x00'}},
-            'vread': {0x00: {0x9800: 0x40}}},
-    ],
-    'HandleCardSelectionInput': [
-        {   'wram': {   0xFF8F: b'\x00',
-                        0xFF91: b'\x00',
-                        0xCE4E: b'\x02',
-                        0xCE53: b'\x04',
-                        0xCE4D: b'\x01'},
-            'read': {0xFFB3: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF8F: b'\x00', 0xFF91: b'\x00', 0xCE4E: b'\x03', 0xCE53: b'\x04', 0xCE4D: b'\t'},
-            'read': {0xFFB3: 0x01}},
-    ],
-    'HandleLeftRightInCardList': [
-        {'wram': {0xFF8F: b'\x00', 0xCE53: b'\x02', 0xCE4C: b'\x03'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF8F: b'@', 0xCE53: b'\x02', 0xCE4C: b'\x03'}},
-    ],
-    'PrintPlayersCardsText': [
-        {   'wram': {0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'sram': {   0x00: {   0xA010: b'\x81\x82\x83\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00'}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {   0xC620: 0x04,
-                        0xC720: 0x04,
-                        0xC820: 0x04,
-                        0xC920: 0x04,
-                        0xCCB3: 0x02,
-                        0xCCB8: 0x01,
-                        0xC580: 0x10},
-            'vread': {0x00: {0x8000: 0x1000, 0x9000: 0x0800, 0x9800: 0x0400}, 0x01: {0x9800: 0x0400}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xC580: b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'},
-            'sram': {   0x00: {   0xA010: b'\x84\x85\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00'}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {   0xC620: 0x04,
-                        0xC720: 0x04,
-                        0xC820: 0x04,
-                        0xC920: 0x04,
-                        0xCCB3: 0x02,
-                        0xCCB8: 0x01,
-                        0xC580: 0x10},
-            'vread': {0x00: {0x8000: 0x1000, 0x9000: 0x0800, 0x9800: 0x0400}, 0x01: {0x9800: 0x0400}}},
-    ],
-    'ConvertToNumericalDigits': [
-        {   'a': 0x2A,
-            'hl': 0xC4F0,
-            'wram': {0xC4F0: b'\x00\x00\x00\x00'},
-            'expect': {0xC4F0: b'\x05$\x05"'}},
-        {   'a': 0x11,
-            'hl': 0xC4F0,
-            'wram': {0xC4F0: b'\x00\x00\x00\x00'},
-            'expect': {0xC4F0: b"\x05!\x05'"}},
-        {'a': 0x11, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE, 'hl': 0x1234},
-    ],
-    'CopyListFromHLToDEInSRAM': [
-        {   'hl': 0xC4F0,
-            'd': 0xC6,
-            'e': 0x00,
-            'wram': {0xC4F0: b'AB\x00', 0xC600: b'\x00\x00\x00'},
-            'expect': {0xC600: b'AB\x00'},
-            'expect_regs': {'hl': 0xC503, 'd': 0xC6, 'e': 0x02}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xC6,
-            'e': 0x00,
-            'hl': 0xC4F0,
-            'wram': {0xC4F0: b'AB\x00', 0xC600: b'\x00\x00\x00'}},
-    ],
-    'PrintDeckName': [
-        {   'hl': 0xA300,
-            'd': 0x01,
-            'e': 0x08,
-            'sram': {0x00: {0xA318: b'\x00'}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
-        {   'hl': 0xA300,
-            'd': 0x01,
-            'e': 0x08,
-            'sram': {0x00: {0xA300: b'AB\x00', 0xA318: b'\x01'}},
-            'wram': {0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'rom_bank': 0x02,
-            'read': {0xC580: 0x08}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0xA300,
-            'sram': {0x00: {0xA318: b'\x00'}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
-    ],
     'AppendOwnedCardCountNumber': [
-        {   'hl': 0xC4F0,
+        {   'hl': sym("wNameBuffer"),
             'e': 0x63,
-            'wram': {0xC4F0: b'AB\x00\x00\x00\x00\x00', 0xCE8B: b'\x01\x02\x03\x00'},
-            'read': {0xC4F0: 0x07}},
+            'wram': {sym("wNameBuffer"): b'AB\x00\x00\x00\x00\x00', sym("wHandTempList"): b'\x01\x02\x03\x00'},
+            'read': {sym("wNameBuffer"): 0x07}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
             'c': 0xCC,
             'd': 0xDD,
             'e': 0x63,
-            'hl': 0xC4F0,
-            'wram': {0xC4F0: b'AB\x00\x00\x00\x00\x00', 0xCE8B: b'\x01\x02\x03\x00'},
-            'read': {0xC4F0: 0x07}},
-    ],
-    'PrintNumberValueInCursorYPos': [
-        {   'a': 0x05,
-            'wram': {0xCE51: b'\x01', 0xCE4E: b'\x02', 0xCE50: b'\x08'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x05},
-            'vread': {0x00: {0x994E: 0x05}}},
-        {   'a': 0x05,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE51: b'\x01', 0xCE4E: b'\x02', 0xCE50: b'\x08'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x05},
-            'vread': {0x00: {0x994E: 0x05}}},
+            'hl': sym("wNameBuffer"),
+            'wram': {sym("wNameBuffer"): b'AB\x00\x00\x00\x00\x00', sym("wHandTempList"): b'\x01\x02\x03\x00'},
+            'read': {sym("wNameBuffer"): 0x07}},
     ],
     'AppendOwnedCardCountAndStorageCountNumbers': [
-        {   'hl': 0xC4F0,
+        {   'hl': sym("wNameBuffer"),
             'e': 0x63,
-            'wram': {0xC4F0: b'AB\x00\x00\x00\x00\x00\x00\x00\x00\x00', 0xCE8B: b'\x01\x02\x03\x00'},
-            'read': {0xC4F0: 0x0C}},
+            'wram': {sym("wNameBuffer"): b'AB\x00\x00\x00\x00\x00\x00\x00\x00\x00', sym("wHandTempList"): b'\x01\x02\x03\x00'},
+            'read': {sym("wNameBuffer"): 0x0C}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
             'c': 0xCC,
             'd': 0xDD,
             'e': 0x63,
-            'hl': 0xC4F0,
-            'wram': {0xC4F0: b'AB\x00\x00\x00\x00\x00\x00\x00\x00\x00', 0xCE8B: b'\x01\x02\x03\x00'},
-            'read': {0xC4F0: 0x0C}},
-    ],
-    'PrintCardTypeCounts': [
-        {   'wram': {0xCE65: b'\x01\x02\x03\x04\x05\x06\x07\x08\t'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x25}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE65: b'\x01\x02\x03\x04\x05\x06\x07\x08\t'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x25}},
-    ],
-    'AppendDeckName': [
-        {   'hl': 0xA300,
-            'ramg': False,
-            'sram': {0x00: {0xA318: b'\x00'}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0xA300,
-            'ramg': False,
-            'sram': {0x00: {0xA318: b'\x00'}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
-    ],
-    'DrawDecksScreen': [
-        {   'a': 0x00,
-            'sram': {   0x00: {   0xA318: b'\x00',
-                                  0xA374: b'\x00',
-                                  0xA3D0: b'\x00',
-                                  0xA42C: b'\x00',
-                                  0xB668: b'\x00'}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'rom_bank': 0x02,
-            'instruction_budget': 0x1E8480,
-            'cycle_budget': 0x7A1200,
-            'read': {0xCE5C: 0x04}},
-        {   'a': 0x00,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'sram': {   0x00: {   0xA318: b'\x00',
-                                  0xA374: b'\x00',
-                                  0xA3D0: b'\x00',
-                                  0xA42C: b'\x00',
-                                  0xB668: b'\x00'}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'rom_bank': 0x02,
-            'instruction_budget': 0x1E8480,
-            'cycle_budget': 0x7A1200,
-            'read': {0xCE5C: 0x04}},
-    ],
-    'PrintTotalCardCount': [
-        {   'd': 0x20,
-            'e': 0x40,
-            'wram': {   0xCE65: b'\x01\x02\x00\x00\x00\x00\x00\x00\x00',
-                        0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE7D: 0x01, 0xC580: 0x05}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0x20,
-            'e': 0x40,
-            'hl': 0x1234,
-            'wram': {   0xCE65: b'\t\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE7D: 0x01, 0xC580: 0x05}},
-    ],
-    'RemoveCardFromDeckAndUpdateCount': [
-        {'e': 0x01},
-        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0x02, 'hl': 0x1234},
+            'hl': sym("wNameBuffer"),
+            'wram': {sym("wNameBuffer"): b'AB\x00\x00\x00\x00\x00\x00\x00\x00\x00', sym("wHandTempList"): b'\x01\x02\x03\x00'},
+            'read': {sym("wNameBuffer"): 0x0C}},
     ],
     'PrintCardSelectionList': [
-        {   'wram': {0xCE81: b'\x03\x04', 0xCE4C: b'\x00', 0xCE7C: b'\x00', 0xCE8B: b'\x00'},
-            'read': {0xCE7E: 0x01},
+        {   'wram': {sym("wCardListCoords"): b'\x03\x04', sym("wCardListVisibleOffset"): b'\x00', sym("wNumVisibleCardListEntries"): b'\x00', sym("wHandTempList"): b'\x00'},
+            'read': {sym("wUnableToScrollDown"): 0x01},
             'vread': {0x00: {0x9833: 0x01, 0x9873: 0x01, 0x9864: 0x0A, 0x98A4: 0x0A}}},
-        {   'wram': {0xCE81: b'\x03\x04', 0xCE4C: b'\x01', 0xCE7C: b'\x00', 0xCE8B: b'\x00\x01'},
-            'read': {0xCE7E: 0x01},
+        {   'wram': {sym("wCardListCoords"): b'\x03\x04', sym("wCardListVisibleOffset"): b'\x01', sym("wNumVisibleCardListEntries"): b'\x00', sym("wHandTempList"): b'\x00\x01'},
+            'read': {sym("wUnableToScrollDown"): 0x01},
             'vread': {0x00: {0x9833: 0x01, 0x9873: 0x01, 0x9864: 0x0A, 0x98A4: 0x0A}}},
         {   'a': 0xAA,
             'f': 0xF0,
@@ -1298,118 +139,22 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCE81: b'\x03\x04', 0xCE4C: b'\x01', 0xCE7C: b'\x00', 0xCE8B: b'\x00\x01'},
-            'read': {0xCE7E: 0x01},
+            'wram': {sym("wCardListCoords"): b'\x03\x04', sym("wCardListVisibleOffset"): b'\x01', sym("wNumVisibleCardListEntries"): b'\x00', sym("wHandTempList"): b'\x00\x01'},
+            'read': {sym("wUnableToScrollDown"): 0x01},
             'vread': {0x00: {0x9833: 0x01, 0x9873: 0x01, 0x9864: 0x0A, 0x98A4: 0x0A}}},
-        {   'wram': {0xCE81: b'\x03\x04', 0xCE4C: b'\x00', 0xCE7C: b'\x02', 0xCE8B: b'\x01\x02\x00'},
+        {   'wram': {sym("wCardListCoords"): b'\x03\x04', sym("wCardListVisibleOffset"): b'\x00', sym("wNumVisibleCardListEntries"): b'\x02', sym("wHandTempList"): b'\x01\x02\x00'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE7E: 0x01},
-            'vread': {0x00: {0x9864: 0x0C, 0x98A4: 0x0C}},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'PrintFilteredCardSelectionList': [
-        {   'a': 0x00,
-            'f': 0x00,
-            'wram': {   0xC000: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7C: b'\x00'},
-            'read': {0xCE7C: 0x01},
-            'instruction_budget': 0x7A1200,
-            'cycle_budget': 0x1E84800},
-        {   'a': 0x00,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xC000: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7C: b'\x00'},
-            'read': {0xCE7C: 0x01},
-            'instruction_budget': 0x7A1200,
-            'cycle_budget': 0x1E84800},
-        {   'a': 0x08,
-            'f': 0x80,
-            'wram': {   0xC000: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7C: b'\x00'},
-            'read': {0xCE7C: 0x01},
-            'instruction_budget': 0x7A1200,
-            'cycle_budget': 0x1E84800},
-        {   'a': 0x00,
-            'f': 0x00,
-            'wram': {   0xC000: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7C: b'\x02',
-                        0xCE81: b'\x03\x04',
-                        0xCE4C: b'\x00',
-                        0xCE8B: b'\x01\x02\x00'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE7C: 0x01, 0xCE7E: 0x01},
+            'read': {sym("wUnableToScrollDown"): 0x01},
             'vread': {0x00: {0x9864: 0x0C, 0x98A4: 0x0C}},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
     ],
     'PrintDeckBuildingCardList': [
-        {   'wram': {0xCE81: b'\x03\x04', 0xCE4C: b'\x00', 0xCE7C: b'\x00', 0xCE8B: b'\x00'},
-            'read': {0xCE7E: 0x01},
+        {   'wram': {sym("wCardListCoords"): b'\x03\x04', sym("wCardListVisibleOffset"): b'\x00', sym("wNumVisibleCardListEntries"): b'\x00', sym("wHandTempList"): b'\x00'},
+            'read': {sym("wUnableToScrollDown"): 0x01},
             'vread': {0x00: {0x9853: 0x00, 0x9833: 0x00}}},
-        {   'wram': {0xCE81: b'\x03\x04', 0xCE4C: b'\x01', 0xCE7C: b'\x00', 0xCE8B: b'\x00'},
-            'read': {0xCE7E: 0x01},
+        {   'wram': {sym("wCardListCoords"): b'\x03\x04', sym("wCardListVisibleOffset"): b'\x01', sym("wNumVisibleCardListEntries"): b'\x00', sym("wHandTempList"): b'\x00'},
+            'read': {sym("wUnableToScrollDown"): 0x01},
             'vread': {0x00: {0x9853: 0x0C, 0x9833: 0x00}}},
         {   'a': 0xAA,
             'f': 0xF0,
@@ -1418,20 +163,20 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCE81: b'\x03\x04', 0xCE4C: b'\x01', 0xCE7C: b'\x00', 0xCE8B: b'\x00'},
-            'read': {0xCE7E: 0x01},
+            'wram': {sym("wCardListCoords"): b'\x03\x04', sym("wCardListVisibleOffset"): b'\x01', sym("wNumVisibleCardListEntries"): b'\x00', sym("wHandTempList"): b'\x00'},
+            'read': {sym("wUnableToScrollDown"): 0x01},
             'vread': {0x00: {0x9853: 0x0C, 0x9833: 0x00}}},
-        {   'wram': {0xCE81: b'\x03\x04', 0xCE4C: b'\x00', 0xCE7C: b'\x02', 0xCE8B: b'\x01\x02\x00'},
+        {   'wram': {sym("wCardListCoords"): b'\x03\x04', sym("wCardListVisibleOffset"): b'\x00', sym("wNumVisibleCardListEntries"): b'\x02', sym("wHandTempList"): b'\x01\x02\x00'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE7E: 0x01},
+            'read': {sym("wUnableToScrollDown"): 0x01},
             'vread': {0x00: {0x9864: 0x0C, 0x98A4: 0x0C}},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
     ],
     'PrintFilteredCardList': [
         {   'a': 0x00,
-            'wram': {0xC000: b'\x00', 0xCE7C: b'\x00', 0xCE81: b'\x00\x00'},
-            'read': {0xCE7C: 0x01},
+            'wram': {sym("wDeckToBuild"): b'\x00', sym("wNumVisibleCardListEntries"): b'\x00', sym("wCardListCoords"): b'\x00\x00'},
+            'read': {sym("wNumVisibleCardListEntries"): 0x01},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
         {   'a': 0x00,
@@ -1441,8 +186,8 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xC000: b'\x00', 0xCE7C: b'\x00', 0xCE81: b'\x00\x00'},
-            'read': {0xCE7C: 0x01},
+            'wram': {sym("wDeckToBuild"): b'\x00', sym("wNumVisibleCardListEntries"): b'\x00', sym("wCardListCoords"): b'\x00\x00'},
+            'read': {sym("wNumVisibleCardListEntries"): 0x01},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
         {   'a': 0x00,
@@ -1450,89 +195,11 @@ CASES = {
             'b': 0x3C,
             'c': 0x09,
             'd': 0x11,
-            'hl': 0xC587,
-            'wram': {0xC000: b'\x00', 0xCE7C: b'\x00', 0xCE81: b'\x00\x00'},
-            'read': {0xCE7C: 0x01},
+            'hl': sym("wCurDeckCardChanges") + 7,
+            'wram': {sym("wDeckToBuild"): b'\x00', sym("wNumVisibleCardListEntries"): b'\x00', sym("wCardListCoords"): b'\x00\x00'},
+            'read': {sym("wNumVisibleCardListEntries"): 0x01},
             'instruction_budget': 0x1E8480,
             'cycle_budget': 0x7A1200},
-    ],
-    'OpenCardPageFromCardList': [
-        {   'wram': {   0xCE4E: b'\x01',
-                        0xCE4C: b'\x00',
-                        0xCE53: b'\x02',
-                        0xCABB: b'\x80',
-                        0xFF40: b'\x84'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100,
-            'read': {0xCE85: 0x01},
-            'expect': {0xCE85: b'\x01'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCE4E: b'\x01',
-                        0xCE4C: b'\x00',
-                        0xCE53: b'\x02',
-                        0xCABB: b'\x80',
-                        0xFF40: b'\x84'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100,
-            'read': {0xCE85: 0x01},
-            'expect': {0xCE85: b'\x01'}},
-    ],
-    'CheckIfThereAreAnyBasicCardsInDeck': [
-        {   'wram': {0xCEC8: b'\x00'},
-            'read': {0xCEC8: 0x01},
-            'expect_regs': {'a': 0x00, 'f': 0x80, 'e': 0x00, 'hl': 0xCF18}},
-        {   'wram': {0xCEC8: b'\x08\x00'},
-            'read': {0xCEC8: 0x02},
-            'expect_regs': {'a': 0x00, 'f': 0x90, 'e': 0x08, 'hl': 0xCF18}},
-        {   'wram': {0xCEC8: b'\x01\x00'},
-            'read': {0xCEC8: 0x02},
-            'expect_regs': {'a': 0x00, 'f': 0x80, 'e': 0x00, 'hl': 0xCF19}},
-        {   'wram': {0xCEC8: b'\t\x00'},
-            'read': {0xCEC8: 0x02},
-            'expect_regs': {'a': 0x00, 'f': 0x80, 'e': 0x00, 'hl': 0xCF19}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCEC8: b'\x08\x00'},
-            'read': {0xCEC8: 0x02},
-            'expect_regs': {'a': 0x00, 'f': 0x90, 'e': 0x08, 'hl': 0xCF18}},
-    ],
-    'SortCurDeckCardsByID': [
-        {   'wram': {   0xFF97: b'\xc2',
-                        0xCEC8: b'\x03\x01\x02\x00',
-                        0xC478: b'\x99\x98\x97\x00',
-                        0xC500: b'\xff'},
-            'read': {0xFF97: 0x01, 0xCEC8: 0x04, 0xC478: 0x04, 0xC500: 0x04, 0xFF99: 0x02}},
-        {   'wram': {0xFF97: b'\xc3', 0xCEC8: b'\x04\x00', 0xC478: b'\xa0\x00', 0xC500: b'\xff'},
-            'read': {0xFF97: 0x01, 0xCEC8: 0x02, 0xC478: 0x02, 0xC500: 0x02, 0xFF99: 0x02}},
-        {   'wram': {0xFF97: b'\xc2', 0xCEC8: b'\x00', 0xC478: b'U\x00', 0xC500: b'\xff'},
-            'read': {0xFF97: 0x01, 0xCEC8: 0x01, 0xC478: 0x02, 0xC500: 0x01, 0xFF99: 0x02}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xFF97: b'\xc3',
-                        0xCEC8: b'\x02\x03\x01\x00',
-                        0xC478: b'\xa0\xa1\xa2\x00',
-                        0xC500: b'\xff'},
-            'read': {0xFF97: 0x01, 0xCEC8: 0x04, 0xC478: 0x04, 0xC500: 0x04, 0xFF99: 0x02}},
     ],
     'GetCardTypeIconPalette': [
         {   'a': 0xE0,
@@ -1541,36 +208,36 @@ CASES = {
             'c': 0x34,
             'd': 0x56,
             'e': 0x78,
-            'hl': 0xC100,
+            'hl': sym("wDecompressionSecondaryBufferStart") + 0x11,
             'expect_regs': {   'a': 0x02, 'f': 0xC0, 'b': 0x12, 'c': 0x34,
-                               'd': 0x56, 'e': 0x78, 'hl': 0xC100}},
+                               'd': 0x56, 'e': 0x78, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11}},
         {   'a': 0xF8,
             'f': 0xF0,
             'b': 0xAC,
             'c': 0x8B,
             'd': 0xCC,
             'e': 0x8B,
-            'hl': 0xC200,
+            'hl': sym("wPlayerCardLocations"),
             'expect_regs': {   'a': 0x00, 'f': 0xC0, 'b': 0xAA, 'c': 0xBB,
-                               'd': 0xCC, 'e': 0xDD, 'hl': 0xC200}},
+                               'd': 0xCC, 'e': 0xDD, 'hl': sym("wPlayerCardLocations")}},
         {   'a': 0x01,
             'f': 0x10,
             'b': 0x22,
             'c': 0x33,
             'd': 0x44,
             'e': 0x55,
-            'hl': 0xC300,
+            'hl': sym("wOpponentCardLocations"),
             'expect_regs': {   'a': 0xFF, 'f': 0x80, 'b': 0x22, 'c': 0x33,
-                               'd': 0x44, 'e': 0x55, 'hl': 0xC300}},
+                               'd': 0x44, 'e': 0x55, 'hl': sym("wOpponentCardLocations")}},
         {   'a': 0x00,
             'f': 0xFF,
             'b': 0x01,
             'c': 0x02,
             'd': 0x03,
             'e': 0x04,
-            'hl': 0xC400,
+            'hl': sym("wBoosterCardsDrawn"),
             'expect_regs': {   'a': 0xFF, 'f': 0x80, 'b': 0x01, 'c': 0x02,
-                               'd': 0x03, 'e': 0x04, 'hl': 0xC400}},
+                               'd': 0x03, 'e': 0x04, 'hl': sym("wBoosterCardsDrawn")}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -1581,70 +248,14 @@ CASES = {
             'expect_regs': {   'a': 0xFF, 'f': 0x80, 'b': 0xBB, 'c': 0xCC,
                                'd': 0xDD, 'e': 0xEE, 'hl': 0x1234}},
     ],
-    'DrawCardTypeIcons': [
-        {   'wram': {0xCAB4: b'\x00'},
-            'vram': {   0x00: {   0x9841: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00',
-                                  0x9861: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00'}},
-            'expect_vram': {   0x00: {   0x9841: b'\xe4\xe5\xe0\xe1\xec\xed\xe8\xe9\xf0\xf1\xf4\xf5'
-                                                 b'\xf8\xf9\xdc\xdd\xfc\xfd',
-                                         0x9861: b'\xe6\xe7\xe2\xe3\xee\xef\xea\xeb\xf2\xf3\xf6\xf7'
-                                                 b'\xfa\xfb\xde\xdf\xfe\xff'}},
-            'instruction_budget': 0x186A0,
-            'cycle_budget': 0x61A80},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCAB4: b'\x02'},
-            'vram': {   0x00: {   0x9841: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00',
-                                  0x9861: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00'},
-                        0x01: {   0x9841: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00',
-                                  0x9861: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00'}},
-            'expect_vram': {   0x00: {   0x9841: b'\xe4\xe5\xe0\xe1\xec\xed\xe8\xe9\xf0\xf1\xf4\xf5'
-                                                 b'\xf8\xf9\xdc\xdd\xfc\xfd',
-                                         0x9861: b'\xe6\xe7\xe2\xe3\xee\xef\xea\xeb\xf2\xf3\xf6\xf7'
-                                                 b'\xfa\xfb\xde\xdf\xfe\xff'},
-                               0x01: {   0x9841: b'\x03\x03\x02\x02\x03\x03\x02\x02\x04\x04\x04\x04'
-                                                 b'\x00\x00\x03\x03\x03\x03',
-                                         0x9861: b'\x03\x03\x02\x02\x03\x03\x02\x02\x04\x04\x04\x04'
-                                                 b'\x00\x00\x03\x03\x03\x03'}},
-            'instruction_budget': 0x186A0,
-            'cycle_budget': 0x61A80},
-    ],
-    'PrintPlayersCardsHeaderInfo': [
-        {   'wram': {0xCAB4: b'\x00', 0xCAB6: b'\xff', 0xCAC0: b'\x00', 0xCABB: b'\x00'},
-            'sram': {0x00: {0xA100: b'\x00' * 0x510, 0xA010: b'\x81\x82'}},
-            'read': {0xCAB6: 0x01, 0xCAC0: 0x01, 0xCABB: 0x01},
-            'vread': {0x00: {0x9880: 0x14}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCAB4: b'\x00', 0xCAB6: b'\xff', 0xCAC0: b'\x00', 0xCABB: b'\x00'},
-            'sram': {0x00: {0xA100: b'\x00\x01', 0xA010: b'\x84\x85'}},
-            'read': {0xCAB6: 0x01, 0xCAC0: 0x01, 0xCABB: 0x01},
-            'vread': {0x00: {0x9880: 0x14}}},
-    ],
     'PrintConfirmationCardList': [
         {   'a': 0x00,
             'd': 0x00,
             'e': 0x00,
-            'hl': 0xC100,
-            'wram': {0xCE7C: b'\x00', 0xCE81: b'\x05\x02'},
-            'read': {0xCE7E: 0x01},
-            'expect': {0xCE7E: b'\x01'}},
+            'hl': sym("wDecompressionSecondaryBufferStart") + 0x11,
+            'wram': {sym("wNumVisibleCardListEntries"): b'\x00', sym("wCardListCoords"): b'\x05\x02'},
+            'read': {sym("wUnableToScrollDown"): 0x01},
+            'expect': {sym("wUnableToScrollDown"): b'\x01'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -1652,20 +263,20 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCE7C: b'\x00', 0xCE81: b'\x05\x02'},
-            'read': {0xCE7E: 0x01},
-            'expect': {0xCE7E: b'\x01'}},
+            'wram': {sym("wNumVisibleCardListEntries"): b'\x00', sym("wCardListCoords"): b'\x05\x02'},
+            'read': {sym("wUnableToScrollDown"): 0x01},
+            'expect': {sym("wUnableToScrollDown"): b'\x01'}},
         {   'a': 0x00,
             'd': 0x00,
             'e': 0x00,
-            'hl': 0xC100,
-            'wram': {0xCE7C: b'\x02', 0xCE81: b'\x05\x02', 0xCE4C: b'\x00', 0xD72C: b'\x01\x02\x00'},
+            'hl': sym("wDecompressionSecondaryBufferStart") + 0x11,
+            'wram': {sym("wNumVisibleCardListEntries"): b'\x02', sym("wCardListCoords"): b'\x05\x02', sym("wCardListVisibleOffset"): b'\x00', sym("wUniqueDeckCardList"): b'\x01\x02\x00'},
             'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE7E: 0x01},
+            'read': {sym("wUnableToScrollDown"): 0x01},
             'vread': {0x00: {0x98A2: 0x0E, 0x98E2: 0x0E}},
             'instruction_budget': 0x1312D00,
             'cycle_budget': 0x4C4B400},
-        {   'wram': {   0xC000: b'\x80\x04\n\x04\x08\x06\x03\x80\x01\x01\x80\x80\x02\x01\x80\x80'
+        {   'wram': {   sym("wDeckToBuild"): b'\x80\x04\n\x04\x08\x06\x03\x80\x01\x01\x80\x80\x02\x01\x80\x80'
                                 b'\x80\x80\x80\x80\x02\x80\x80\x01\x80\x80\x80\x80\x80\x80\x80\x80'
                                 b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x01'
                                 b'\x02\x01\x01\x80\x80\x80\x02\x80\x01\x02\x80\x01\x80\x80\x80\x80'
@@ -1814,11 +425,11 @@ CASES = {
                                 b'\x00\x002\x00\x00\x003\x00\x00\x00\x19\x00\x00\x00"\x00\x00\x00#\x00'
                                 b'\x00\x00\x00" \x00\x030\x030\x030\x00\x00\x00\x00\x00\x00\x00\x11'
                                 b'\x02\x00\x00',
-                        0xCAB8: b'',
-                        0xCAB9: b'\x00\x00\xc3\xe4\xe4\xe4',
-                        0xCAC0: b'',
-                        0xCAC1: b'\x00\x00\xf8\x01!\x02\x1c\x00\x00\xdc\x93\x85\xc3\x00\x00\xc3"\x03\x17.\x00Ca\x02\x00\x00\xf6\x00\xc0\xa2\xa3\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xffWH\x03\x04\x02\x80\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x9cc\xb5BJ!\x00\x00\xffWH\x03\x04\x02\x80\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x04\x02\x03\x01\x00\x00\x00\x01\x01\x00\x00\x00\x01\x00\x00\x08\xc2\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x01\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x01\x07\x00\x0e;S\x00\x00\xc2\x0e\x01\x02\x80\x00\x00\x00\x00\x00\xff\x01\x0fV\x01\x07\x03\xb1\x03\x02\x00\x02\x00\x00\x00\x00\x03\x00\x00\x00\x03\x01a\x08\\\x08\x00\x00\x17(\x00\x00\x00\x01\x00\x00\x00]\x08^\x08\x00\x00\x1e\x00\xd4G\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x04\x00O\x08 \x00\x14\x01\x04\x96\x00_\x08\x13\x0c\x84\x01\x04\x08\x00P\x05mN\x05\x08\x00\x00\r\xe5\x01\x06\x08\x00P\x06lN\x07\x08\x00\x00\x0eF\x02\x08\x08\x01P\x07kN\t\x08\x00\x00\x10\xe5Ih\x0b\x01\x00\xc3\xa4Ni\x0b\x00\x00\x10FJj\x0b\x020\xc4\xd5\x00\x01\x00 \x88\t"\x08\x00\x00\x14\x00"I\x04\x00\x00\x00}\x14\x00\x00\x00\x00\x00\x14\x00\x00VV}\x00\x01\x00\x00\x00\x00\x00\x00\x03\xc3\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\xe1\x01\x00\x01\x00\x04\x00\x00\x00\x00\x04\x00\x00\xa0\xa0\xa0\xa0\xa0\xa0\xc0\xc0\xa0\xa0\xa0\xa0\xa0\xa0I \x88\x80\x00\x00\x00\x00\n\x01\x00',
-                        0xCCBE: b'\x00\x01\x02\x03\x04\x0f\x00\x00\x00\x00\x04\x04\x0e\x19W\x00'
+                        sym("wVBlankCounter"): b'',
+                        sym("wVBlankCounter") + 1: b'\x00\x00\xc3\xe4\xe4\xe4',
+                        sym("wVBlankOAMCopyToggle"): b'',
+                        sym("wTempByte"): b'\x00\x00\xf8\x01!\x02\x1c\x00\x00\xdc\x93\x85\xc3\x00\x00\xc3"\x03\x17.\x00Ca\x02\x00\x00\xf6\x00\xc0\xa2\xa3\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xffWH\x03\x04\x02\x80\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x9cc\xb5BJ!\x00\x00\xffWH\x03\x04\x02\x80\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x04\x02\x03\x01\x00\x00\x00\x01\x01\x00\x00\x00\x01\x00\x00\x08\xc2\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x01\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x01\x07\x00\x0e;S\x00\x00\xc2\x0e\x01\x02\x80\x00\x00\x00\x00\x00\xff\x01\x0fV\x01\x07\x03\xb1\x03\x02\x00\x02\x00\x00\x00\x00\x03\x00\x00\x00\x03\x01a\x08\\\x08\x00\x00\x17(\x00\x00\x00\x01\x00\x00\x00]\x08^\x08\x00\x00\x1e\x00\xd4G\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x04\x00O\x08 \x00\x14\x01\x04\x96\x00_\x08\x13\x0c\x84\x01\x04\x08\x00P\x05mN\x05\x08\x00\x00\r\xe5\x01\x06\x08\x00P\x06lN\x07\x08\x00\x00\x0eF\x02\x08\x08\x01P\x07kN\t\x08\x00\x00\x10\xe5Ih\x0b\x01\x00\xc3\xa4Ni\x0b\x00\x00\x10FJj\x0b\x020\xc4\xd5\x00\x01\x00 \x88\t"\x08\x00\x00\x14\x00"I\x04\x00\x00\x00}\x14\x00\x00\x00\x00\x00\x14\x00\x00VV}\x00\x01\x00\x00\x00\x00\x00\x00\x03\xc3\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\xe1\x01\x00\x01\x00\x04\x00\x00\x00\x00\x04\x00\x00\xa0\xa0\xa0\xa0\xa0\xa0\xc0\xc0\xa0\xa0\xa0\xa0\xa0\xa0I \x88\x80\x00\x00\x00\x00\n\x01\x00',
+                        sym("wCurMenuItem"): b'\x00\x01\x02\x03\x04\x0f\x00\x00\x00\x00\x04\x04\x0e\x19W\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -1843,7 +454,7 @@ CASES = {
                                 b"\x00\x00\x00\x00\x00\x00\x00\x00'\x00\x01\x14\x00\x00\x80\xc2"
                                 b'}\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE4E: b'\x00\x00\x05\x02\x00\x07\x0f\x00\x00\x00\x07\x00\x00\x00\x01\x00'
+                        sym("wCardListCursorPos"): b'\x00\x00\x05\x02\x00\x07\x0f\x00\x00\x00\x07\x00\x00\x00\x01\x00'
                                 b'\x00\x00 &\x00\x00\x00\x00\n\x00\x07\x05\x00\x04\n\x18\x08\t\x0c\r'
                                 b'\x14\x17\x0f\x07<\x00\xb0Y\x05\x03\x01\x00\x03\x00\x00\x00'
                                 b'\x00\x1d\x08\t\x0c\r\x14\x17/\x00\x00\x00\x00\x00\x00\x00'
@@ -1861,7 +472,7 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x06Charmander & Friends\x00\x00\x00P\x04\x01'
                                 b'\x80TyV\xda\xce\x00\x00\x00\x00\x00\x06\x01\x07\x00\x00'
                                 b'\x00\x00\x1d\x030\x030\x030\x030\x03',
-                        0xD000: b'\x00\xc5^g\x0c\t\x06\x0c\x01\x02\x00\x00\x00P\xa3\xa4\xa3\xf8\xa3L'
+                        sym("wNamingScreenBufferLength"): b'\x00\xc5^g\x0c\t\x06\x0c\x01\x02\x00\x00\x00P\xa3\xa4\xa3\xf8\xa3L'
                                 b'\xa4\xa0\xa4\xf4\xa4H\xa5\x9c\xa5\xf0\xa5D\xa6\x98\xa6\xec'
                                 b'\xa6@\xa7\x94\xa7\xe8\xa7<\xa8\x90\xa8\xe4\xa88\xa9\x8c\xa9\xe0\xa94'
                                 b'\xaa\x88\xaa\xdc\xaa0\xab\x84\xab\xd8\xab,\xac\x80\xac\xd4\xac(\xad|'
@@ -2050,7 +661,7 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xDD00: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                        STACK_WINDOW.stop: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -2058,12 +669,12 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xFF80: b'\x02\x00\x00>\xca\xe0F>(= \xfd\xc9',
-                        0xFF8E: b'',
-                        0xFF8F: b'',
-                        0xFF90: b'',
-                        0xFF91: b'',
-                        0xFF92: b'\x00\x00\x00\x00\x00\xc2\x0fL\xc5\xdf\x00\x00\n\x0f\x00\x08'
+                        sym("hBankROM"): b'\x02\x00\x00>\xca\xe0F>(= \xfd\xc9',
+                        sym("hKeysReleased"): b'',
+                        sym("hDPadHeld"): b'',
+                        sym("hKeysHeld"): b'',
+                        sym("hKeysPressed"): b'',
+                        sym("hSCX"): b'\x00\x00\x00\x00\x00\xc2\x0fL\xc5\xdf\x00\x00\n\x0f\x00\x08'
                                 b'\xff\xff\x00\x00\x00\x00\xbfI3\x98\x03\x10\x00\x0f\x00\x00'
                                 b'\x00\x00\x00\xff\x1f\x03',
                         0x8000: b'\xe0\xc0\x98\xb0\x84\x8c\x83\x82\x86\x8f\x9d\xbe\xf4\xf8P`?2?8\x7fO{N'
@@ -2529,14 +1140,14 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00',
                         0xFF40: b'\xc3'},
-            'entry_sp': 0xDFCA,
+            'entry_sp': WRAMX_START + 0xFCA,
             'rom_bank': 0x02,
-            'read': {0xCE7E: 0x01, 0xC580: 0x20, 0xCE6E: 0x10, 0xFFAA: 0x04, 0xFFAD: 0x01},
+            'read': {sym("wUnableToScrollDown"): 0x01, sym("wCurDeckCardChanges"): 0x20, sym("wUnavailableAlbumCardSets"): 0x10, sym("hTextBGMap0Address"): 0x04, sym("hTextHorizontalAlign"): 0x01},
             'keys': [0x00, 0x01],
             'instruction_budget': 0x2625A00,
             'cycle_budget': 0x9896800,
             'vread': {0x00: {0x9800: 0x0400, 0x8800: 0x0800}},
-            'sram': {   0x00: {   0xA000: b'\x04!\x05\x02\x00\x00\x02\x00\x08\x00\x00\x00'
+            'sram': {   0x00: {   sym("s0a000"): b'\x04!\x05\x02\x00\x00\x02\x00\x08\x00\x00\x00'
                                           b'\x00\x00\x00\x00\x030\x030\x030\x030\x030\x030\x00\x00\xf5@'
                                           b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                           b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -3193,7 +1804,7 @@ CASES = {
                                           b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                           b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                           b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-                        0x01: {   0xA000: b'\x82\x8b\xec\xef\xee\xed\xec\xef\xee\xed\xec\xef'
+                        0x01: {   sym("sGfxBuffer0"): b'\x82\x8b\xec\xef\xee\xed\xec\xef\xee\xed\xec\xef'
                                           b'\xee\xed\xec\xef\xee\xed\xec\xef\xee\xed\x91\x84'
                                           b'\x00\x00\x00\x00\x00\x00\x00\x00\x8a\x88\xd4\xd5'
                                           b'\xd6\xd7\xd4\xd5\xd6\xd7\xd4\xd5\xd6\xd7\xd4\xd5'
@@ -3880,25 +2491,11 @@ CASES = {
             'd': 0x03,
             'e': 0x05,
             'f': 0x00,
-            'hl': 0xCE82},
-    ],
-    'CreateCurDeckUniqueCardList': [
-        {'wram': {0xCEC8: b'\x01\x00'}, 'read': {0xCEC8: 0x02, 0xD72C: 0x02, 0xCE8A: 0x01}},
-        {'wram': {0xCEC8: b'\x01\x01\x02\x02\x00'}, 'read': {0xCEC8: 0x05, 0xD72C: 0x03, 0xCE8A: 0x01}},
-        {'wram': {0xCEC8: b'\xe4\xe4\x03\x00'}, 'read': {0xCEC8: 0x04, 0xD72C: 0x03, 0xCE8A: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCEC8: b'\x05\x05\x07\x05\x00'},
-            'read': {0xCEC8: 0x05, 0xD72C: 0x04, 0xCE8A: 0x01}},
+            'hl': sym("wCardListCoords") + 1},
     ],
     'TryAddCardToDeck': [
-        {'wram': {0xCE7D: b'\x00'}, 'expect_regs': {'a': 0x00, 'f': 0x90}},
-        {'e': 0x01, 'wram': {0xCE7D: b'\x00'}, 'expect_regs': {'a': 0x00, 'f': 0x90}},
+        {'wram': {sym("wTotalCardCount"): b'\x00'}, 'expect_regs': {'a': 0x00, 'f': 0x90}},
+        {'e': 0x01, 'wram': {sym("wTotalCardCount"): b'\x00'}, 'expect_regs': {'a': 0x00, 'f': 0x90}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -3906,41 +2503,30 @@ CASES = {
             'd': 0xD8,
             'e': 0x07,
             'hl': 0x1234,
-            'wram': {0xCE7D: b'\x00'},
+            'wram': {sym("wTotalCardCount"): b'\x00'},
             'expect_regs': {'a': 0x00, 'f': 0x90}},
     ],
-    'AddCardToDeckAndUpdateCount': [
-        {'e': 0x01, 'wram': {0xCE7D: b'\x00', 0xCFD3: b'\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0x01,
-            'hl': 0x1234,
-            'wram': {0xCE7D: b'\x00', 0xCFD3: b'\x00'}},
-    ],
     'HandleDeckCardSelectionList': [
-        {   'wram': {   0xFF8F: b'\x00',
-                        0xFF91: b'\x00',
-                        0xCE4E: b'\x02',
-                        0xCE56: b'\x00',
-                        0xCE4D: b'\x01'},
-            'read': {0xFFB3: 0x01}},
-        {   'wram': {   0xFF8F: b'@',
-                        0xFF91: b'\x00',
-                        0xCE4E: b'\x02',
-                        0xCE53: b'\x04',
-                        0xCE4C: b'\x01',
-                        0xCE56: b'\x00',
-                        0xCE4D: b'\x01'},
-            'read': {0xFFB3: 0x01}},
-        {   'wram': {   0xFF8F: b'\x00',
-                        0xFF91: b'\x01',
-                        0xCE4E: b'\x03',
-                        0xCE56: b'\x00',
-                        0xCE4D: b'\x01'},
-            'read': {0xFFB3: 0x01}},
+        {   'wram': {   sym("hDPadHeld"): b'\x00',
+                        sym("hKeysPressed"): b'\x00',
+                        sym("wCardListCursorPos"): b'\x02',
+                        sym("wCardListHandlerFunction"): b'\x00',
+                        sym("wCheckMenuCursorBlinkCounter"): b'\x01'},
+            'read': {sym("hffb3"): 0x01}},
+        {   'wram': {   sym("hDPadHeld"): b'@',
+                        sym("hKeysPressed"): b'\x00',
+                        sym("wCardListCursorPos"): b'\x02',
+                        sym("wCardListNumCursorPositions"): b'\x04',
+                        sym("wCardListVisibleOffset"): b'\x01',
+                        sym("wCardListHandlerFunction"): b'\x00',
+                        sym("wCheckMenuCursorBlinkCounter"): b'\x01'},
+            'read': {sym("hffb3"): 0x01}},
+        {   'wram': {   sym("hDPadHeld"): b'\x00',
+                        sym("hKeysPressed"): b'\x01',
+                        sym("wCardListCursorPos"): b'\x03',
+                        sym("wCardListHandlerFunction"): b'\x00',
+                        sym("wCheckMenuCursorBlinkCounter"): b'\x01'},
+            'read': {sym("hffb3"): 0x01}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -3948,9 +2534,9 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xFF8F: b'\x00', 0xFF91: b'\x00', 0xCE4E: b'\x03', 0xCE56: b'\x00', 0xCE4D: b'\t'},
-            'read': {0xFFB3: 0x01}},
-        {   'wram': {   0xC000: b'\x80\x04\x00\x04\x00\x00\x03\x80\x01\x01\x80\x80\x02\x01\x80\x80'
+            'wram': {sym("hDPadHeld"): b'\x00', sym("hKeysPressed"): b'\x00', sym("wCardListCursorPos"): b'\x03', sym("wCardListHandlerFunction"): b'\x00', sym("wCheckMenuCursorBlinkCounter"): b'\t'},
+            'read': {sym("hffb3"): 0x01}},
+        {   'wram': {   sym("wDeckToBuild"): b'\x80\x04\x00\x04\x00\x00\x03\x80\x01\x01\x80\x80\x02\x01\x80\x80'
                                 b'\x80\x80\x80\x80\x02\x80\x80\x01\x80\x80\x80\x80\x80\x80\x80\x80'
                                 b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x01'
                                 b'\x00\x00\x00\x80\x80\x80\x00\x80\x00\x00\x80\x00\x80\x80\x80\x80'
@@ -4096,11 +2682,11 @@ CASES = {
                                 b'\x00\x00) \x00\x00 \x00\x00\x00!\x00\x00\x001\x00\x00\x002\x00'
                                 b'\x00\x003\x00\x00\x00\x19\x00\x00\x00"\x00\x00\x00#\x00\x030\x030'
                                 b'\x030\x030\x030\x030\x00\x00\x00\x00\x00\x00\x00\x11\x02\x00\x00',
-                        0xCAB8: b'',
-                        0xCAB9: b'\x00\x00\xc3\xe4\xe4\xe4',
-                        0xCAC0: b'',
-                        0xCAC1: b'/\x00}\x01+ \x19\x00\x00"[\x90\xc3\x00\x00\xc3"\x03\x17.\x00\xb4^\x05\x00\x00\xf9\x00\xc0\xd7\x7f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x9cc\xb5BJ!\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\t\x02\x03\x01\x00\x00\x00\x01\x01\x00\x00\x00\x01\x00\x00\x08\x02\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x01\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x01\x07\x00\x0e;S\x00\x00\xc2\x0e\x01\x02\x80\x00\x00\x00\x00\x00\xff\x01\x0fV\x01\x07\x03\xb1\x03\x02\x00\x02\x00\x00\x00\x00\x03\x00\x00\x00\x03\x01N\x052\x08\x00\x10\x0f(\x00\x00\x00\x01\x00\x00\x003\x084\x08\x00\x00\n\x00\x03H\x01\x00\x00\x000\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x80\x005\x08\r\x00\x0c\x01\x00F\x006\x08\x13\x0c\x84\x01\x04\x08\x00P\x05mN\x05\x08\x00\x00\r\xe5\x01\x06\x08\x00P\x06lN\x07\x08\x00\x00\x0eF\x02\x08\x08\x01P\x07kN\t\x08\x00\x00\x10\xe5Ih\x0b\x01\x00\xc3\xa4Ni\x0b\x00\x00\x10FJj\x0b\x020\xc4\xd5\x00\x01\x00 \x88\t"\x08\x00\x00\x14\x00"I\x04\x00\x00\x00}\x14\x00\x00\x00\x00\x00\x14\x00\x00VV}\x00\x01\x00\x00\x00\x00\x00\x00\x03\xc3\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\xe1\x01\x00\x01\x00\x04\x00\x00\x00\x00\x04\x00\x00\xe4\xe4,,$$\xe4\xe4\x84\x84\x84\x84\xee\xeeZN\x88\x80\x00\x00\x00\x00\n\x01\x00',
-                        0xCCBE: b'\x01\x03\x03\x02\x05\x0f\x00\x00\x00\x00\x04\x04\x0e\x19W\x00'
+                        sym("wVBlankCounter"): b'',
+                        sym("wVBlankCounter") + 1: b'\x00\x00\xc3\xe4\xe4\xe4',
+                        sym("wVBlankOAMCopyToggle"): b'',
+                        sym("wTempByte"): b'/\x00}\x01+ \x19\x00\x00"[\x90\xc3\x00\x00\xc3"\x03\x17.\x00\xb4^\x05\x00\x00\xf9\x00\xc0\xd7\x7f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x9cc\xb5BJ!\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\t\x02\x03\x01\x00\x00\x00\x01\x01\x00\x00\x00\x01\x00\x00\x08\x02\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x01\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x01\x07\x00\x0e;S\x00\x00\xc2\x0e\x01\x02\x80\x00\x00\x00\x00\x00\xff\x01\x0fV\x01\x07\x03\xb1\x03\x02\x00\x02\x00\x00\x00\x00\x03\x00\x00\x00\x03\x01N\x052\x08\x00\x10\x0f(\x00\x00\x00\x01\x00\x00\x003\x084\x08\x00\x00\n\x00\x03H\x01\x00\x00\x000\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x80\x005\x08\r\x00\x0c\x01\x00F\x006\x08\x13\x0c\x84\x01\x04\x08\x00P\x05mN\x05\x08\x00\x00\r\xe5\x01\x06\x08\x00P\x06lN\x07\x08\x00\x00\x0eF\x02\x08\x08\x01P\x07kN\t\x08\x00\x00\x10\xe5Ih\x0b\x01\x00\xc3\xa4Ni\x0b\x00\x00\x10FJj\x0b\x020\xc4\xd5\x00\x01\x00 \x88\t"\x08\x00\x00\x14\x00"I\x04\x00\x00\x00}\x14\x00\x00\x00\x00\x00\x14\x00\x00VV}\x00\x01\x00\x00\x00\x00\x00\x00\x03\xc3\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\xe1\x01\x00\x01\x00\x04\x00\x00\x00\x00\x04\x00\x00\xe4\xe4,,$$\xe4\xe4\x84\x84\x84\x84\xee\xeeZN\x88\x80\x00\x00\x00\x00\n\x01\x00',
+                        sym("wCurMenuItem"): b'\x01\x03\x03\x02\x05\x0f\x00\x00\x00\x00\x04\x04\x0e\x19W\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -4125,7 +2711,7 @@ CASES = {
                                 b"\x00\x00\x00\x00\x00\x00\x00\x00'\x00\x01\x14\x00\x00\x80\xc2"
                                 b'}\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE4E: b'\x00\x01\x04\x02\x00\x07\x0f\x00\x00\x00"\x00\x00\x00\x00\x00'
+                        sym("wCardListCursorPos"): b'\x00\x01\x04\x02\x00\x07\x0f\x00\x00\x00"\x00\x00\x00\x00\x00'
                                 b"\x00\x00'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
                                 b'\x08\t\x0b\x0c\r\x0e\x0f\x07\x00\x00\xfaf\x04\x02\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x08\t\x0b\x0c\r\x0e\x0f\x10\x11\x19#$%2:>AB'
@@ -4145,7 +2731,7 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x07\x00\x00'
                                 b'\x00\x00"\x030\x030\x030\x030\x03',
-                        0xD000: b'\x00\xc5^g\x0c\t\x06\x0c\x01\x02\x00\x00\x00\x00\x00\x00'
+                        sym("wNamingScreenBufferLength"): b'\x00\xc5^g\x0c\t\x06\x0c\x01\x02\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -4336,7 +2922,7 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00',
-                        0xDD00: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                        STACK_WINDOW.stop: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -4344,12 +2930,12 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xFF80: b'\x02\x00\x00>\xca\xe0F>(= \xfd\xc9',
-                        0xFF8E: b'',
-                        0xFF8F: b'',
-                        0xFF90: b'',
-                        0xFF91: b'',
-                        0xFF92: b'\x00\x00\x00\x00\x00\xc2\x0f\x00\x00\x00\x00\x00\n\x0f\x00\x08'
+                        sym("hBankROM"): b'\x02\x00\x00>\xca\xe0F>(= \xfd\xc9',
+                        sym("hKeysReleased"): b'',
+                        sym("hDPadHeld"): b'',
+                        sym("hKeysHeld"): b'',
+                        sym("hKeysPressed"): b'',
+                        sym("hSCX"): b'\x00\x00\x00\x00\x00\xc2\x0f\x00\x00\x00\x00\x00\n\x0f\x00\x08'
                                 b'\xff\xff\x00\x00\x00\x00\xffN\x13\x9a\r\x02\x00\x0f\x00\x01'
                                 b'\x00\x00\x00\x00\x1f\x03',
                         0x8000: b'\xe0\xc0\x98\xb0\x84\x8c\x83\x82\x86\x8f\x9d\xbe\xf4\xf8P`?2?8\x7fO{N'
@@ -4816,9 +3402,9 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
                         0xFF40: b'\xc3'},
-            'entry_sp': 0xDFDE,
+            'entry_sp': WRAMX_START + 0xFDE,
             'rom_bank': 0x02,
-            'read': {0xCE4D: 0x01, 0xFFB3: 0x01},
+            'read': {sym("wCheckMenuCursorBlinkCounter"): 0x01, sym("hffb3"): 0x01},
             'keys': [0x00, 0x01],
             'instruction_budget': 0x2625A00,
             'cycle_budget': 0x9896800,
@@ -4829,2965 +3415,42 @@ CASES = {
             'd': 0x66,
             'e': 0xAE,
             'f': 0x80,
-            'hl': 0xCE80},
-        {   'wram': {   0xFF8F: b'@',
-                        0xFF91: b'\x00',
-                        0xCE4E: b'\x00',
-                        0xCE53: b'\x04',
-                        0xCE4C: b'\x00',
-                        0xCE56: b'\x00',
-                        0xCE4D: b'\x05'},
-            'read': {0xFFB3: 0x01, 0xCE4E: 0x01, 0xCFE5: 0x01, 0xCE4D: 0x01}},
-        {   'wram': {   0xFF8F: b'\x10',
-                        0xFF91: b'\x00',
-                        0xCE4E: b'\x02',
-                        0xCE53: b'\x04',
-                        0xCE4C: b'\x00',
-                        0xCE56: b'\x00',
-                        0xCE4D: b'\x05',
-                        0xCE83: b'\x00'},
-            'read': {0xFFB3: 0x01, 0xCE4E: 0x01, 0xCFE5: 0x01, 0xCE4D: 0x01}},
-    ],
-    'PrintCurDeckNumberAndName': [
-        {   'rom_bank': 0x02,
-            'wram': {   0xCE5B: b'\xff',
-                        0xCFBB: b'\x00',
-                        0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x01}},
-        {   'rom_bank': 0x02,
-            'wram': {   0xCE5B: b'\x00',
-                        0xCFBB: b'AB\x00',
-                        0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x08}},
-        {   'rom_bank': 0x02,
-            'wram': {   0xCE5B: b'\x80',
-                        0xCFBB: b'CDE\x00',
-                        0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x09}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'rom_bank': 0x02,
-            'wram': {   0xCE5B: b'\x01',
-                        0xCFBB: b'XY\x00',
-                        0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x08}},
-    ],
-    'UpdateConfirmationCardScreen': [
-        {   'rom_bank': 0x02,
-            'wram': {   0xCE5B: b'\xff',
-                        0xCFBB: b'\x00',
-                        0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7C: b'\x00',
-                        0xCE81: b'\x05\x02'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x01, 0xCE7E: 0x01, 0xFFB0: 0x01}},
-        {   'rom_bank': 0x02,
-            'wram': {   0xCE5B: b'\x00',
-                        0xCFBB: b'AB\x00',
-                        0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7C: b'\x00',
-                        0xCE81: b'\x05\x02'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x08, 0xCE7E: 0x01, 0xFFB0: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'rom_bank': 0x02,
-            'wram': {   0xCE5B: b'\xff',
-                        0xCFBB: b'\x00',
-                        0xC580: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7C: b'\x00',
-                        0xCE81: b'\x05\x02'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xC580: 0x01, 0xCE7E: 0x01, 0xFFB0: 0x01}},
-    ],
-    'PrintSlashSixty': [
-        {   'd': 0x11,
-            'e': 0x00,
-            'read': {0xC580: 0x07},
-            'vread': {0x00: {0x9811: 0x03}},
-            'setup': [{'fn': 'SetupText', 'd': 0x30, 'e': 0x7F}]},
-        {   'd': 0x10,
-            'e': 0x01,
-            'read': {0xC580: 0x07},
-            'vread': {0x00: {0x9830: 0x03}},
-            'setup': [{'fn': 'SetupText', 'd': 0x30, 'e': 0x7F}]},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0x11,
-            'e': 0x00,
-            'hl': 0x1234,
-            'read': {0xC580: 0x07},
-            'vread': {0x00: {0x9811: 0x03}},
-            'setup': [{'fn': 'SetupText', 'd': 0x30, 'e': 0x7F}]},
-    ],
-    'ShowDeckInfoHeader': [
-        {   'wram': {0xCFBB: b'\x00', 0xCABB: b'\x00'},
-            'sram': {0x00: {}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'vread': {0x00: {0x9821: 0x04}},
-            'instruction_budget': 0x1E8480,
-            'cycle_budget': 0x7A1200},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCFBB: b'\x01\x00', 0xCE5B: b'\x00', 0xCABB: b'\x00'},
-            'sram': {0x00: {0xB668: b'\x00'}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'vread': {0x00: {0x9821: 0x04}},
-            'instruction_budget': 0x1E8480,
-            'cycle_budget': 0x7A1200},
-        {   'wram': {   0xC000: b'\x80\x04\n\x04\x08\x06\x03\x80\x01\x01\x80\x80\x02\x01\x80\x80'
-                                b'\x80\x80\x80\x80\x02\x80\x80\x01\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x01'
-                                b'\x02\x01\x01\x80\x80\x80\x02\x80\x01\x02\x80\x01\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x02\x01\x80\x80\x80'
-                                b'\x80\x80\x80\x02\x01\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x02\x80\x80\x80\x80\x80\x80\x01\x80\x02\x80\x01\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x01\x80\x80\x80\x02\x01\x80\x80\x01\x01\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x02\x01'
-                                b'\x80\x80\x80\x80\x01\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x02\x01\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x01\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x01\x80\x02\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x01\x80\x80\x80\x01\x80\x01\x80\x80\x80\x80\x02\x80\x02'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x01\x10\x02\x02\x10\x01\x02\x11\x01\x02\x10\x10\x11\x02\x01\x10'
-                                b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x07\x08\x00\x00'
-                                b'\x00\x00\x00\x05\x0e\x10\x08\x0c\x06\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x03'
-                                b'\x06\t\r\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11'
-                                b'\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()'
-                                b'*+,-./0123456789:;\x11\x0f\x0c\xff\xff\xff\xff\xff\x80\x80'
-                                b'\x80\x00\x00\x00(2\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x05\x02\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x02\x10\x02'
-                                b'\x02\x10\x01\x08\x02\x01\x10\x01\x02\x02\x02\x01\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x07\x08\x00\x00\x00\x00\x06\t'
-                                b'\x0b\x0f\x0f\r\n\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x04\x01\x08\x0c\r'
-                                b'\x0e\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15'
-                                b'\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./0123456789'
-                                b':;\x10\x05\xff\xff\xff\xff\xff\xff\x80\x80\x00\x00\x00\x00'
-                                b'\n\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x01\x07\x04\x01\x03\x80\x00\x14\x00\x03\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x02\x02\x02\x02\x02\x02'
-                                b'\x02\x02\x04\x04\x04\x04\x04\x04\x04\x04\x05\x05\x05\x05\x05\x050012'
-                                b'66899;``giikuyyz}~\xa7\xa7\xa8\xb1\xc3\xc5\xc5\xd2\xd6\xd8'
-                                b'\xdd\xdd\xdf\xdf\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x02\x02\x02\x02\x02\x02'
-                                b'\x02\x02\x04\x04\x04\x04\x04\x04\x04\x04\x05\x05\x05\x05\x05\x050012'
-                                b'66899;``giikuyyz}~\xa7\xa7\xa8\xb1\xc3\xc5\xc5\xd2\xd6\xd8'
-                                b'\xdd\xdd\xdf\xdf\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x030\x030\x030\x030\x030\x030'
-                                b'\x00\x00\x00\x00\t\x00\x01\x02\x03\x04\x05\x06\x07\x08\x11\n'
-                                b'\x0b\x0c\r\x0e\x0f\x10\x17\x12\x13\x14\x15\x16\x19\x18\x1a\x1b'
-                                b'\x1d\x1c\x1e \x1f!#"$&%\'(*)+,-/.0124356798;:\xff\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x06Nidoran$ Lv20             \x05\x00\x05 \x05.\x05\x00\x05!\x00  '
-                                b'                         \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00UBSU'
-                                b' V3 VS0AEPEL1 EAO 1IOA%$2 OFR OIYAAEMNL CL\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00SAUD'
-                                b"AYDCMTPDBLAARL1 IY2CTRI V3MTPD2NDRNNV0CNIMMDFNSVSATENEEAOUIGYO' ETR."
-                                b'(N TEECSOTAKT P) EDNKMIOAAYEAEUGYB NHRCN  TUUA   IE\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x000123456\x878\x8b9\x00<=E?Q>YBD@gFHIWVLaJOPAMSTRU'
-                                b'KXCZ[\\]c^`Nb_defGhi\x85jplnom`\x8er@u\x93vxyz{eO~\x7f\x80\x81\x82'
-                                b'\x83ak\x86]}\x89\x8a:\x8cPs^\x90\x91\x92\x93\x94\x97\x8c\xa2\x96\x99E'
-                                b'\x87\x89\x9d\x9e\x9f\x9b\xa1\x98U\xa6\xa4\xa5\xa7\xa8\xa9\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00<\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00123456789;\x8c<=>B@FRDZE?HhIJOXMSbPQAVTUWLKYC[\\]^`d'
-                                b'aNc_efgGijl\x86nqopmEt\x8f@vx\x00yz{|O\x89\x7f\x80\x81\x82\x83\x84'
-                                b'ak\x878[\x8a\x8b:\x8dPs^\x91\x92\x93w\x95\x8c\x99\x96\xa3\x9a\x8b\xa1'
-                                b'F\x9e\x9f\xa0N\xa2\x98U\xa6\xa7\xa5\xa8\xa9\xaa6\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b' \x10\x00\x00\x00\x00\xa2\x01\x00\x00\xa4\x01\x00\x00\xa6\x01'
-                                b'\x00\x00\xa8\x01\x00\x00\xaa\x01\x00\x00\xac\x01\x00\x00\xae\x01'
-                                b'\x00\x00\xb0\x01\x00\x00\xb2\x01\x00\x00\xb4\x01\x00\x00\xb6\x01'
-                                b'\x00\x00\xb8\x01\x00\x00\xba\x01\x00\x00\xbc\x01\x00\x00\xbe\x01'
-                                b'\x00\x00\xc0\x01\x00\x00\xc2\x01\x00\x00\xc4\x01\x00\x00\xc6\x01'
-                                b'\x00\x00\xc8\x01\x00\x00\xca\x01\x00\x00\xcc\x01\x00\x00\xce\x01'
-                                b'\x00\x004\x00\x00\x005\x00\x00\x006\x00\x00\x007\x00\x00\x00+\x00'
-                                b'\x00\x00-\x00\x00\x00( \x00\x00) \x00\x00 \x00\x00\x00!\x00'
-                                b'\x00\x001\x00\x00\x002\x00\x00\x003\x00\x00\x00\x19\x00\x00\x00"\x00'
-                                b'\x00\x00#\x00\x00\x00\x00" \x00\x030\x030\x030\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x11\x02\x04\x00',
-                        0xCAB8: b'',
-                        0xCAB9: b'\x00\x00\xc3\xe4\xe4\xe4',
-                        0xCAC0: b'',
-                        0xCAC1: b'\x00\x00\xee\x01\x1f\x02\x1c\x00\x00\xdc\x93\x85\xc3\x00\x00\xc3"\x03\x17.\x00Ca\x02\x00\x00\xf6\x00\xc0\xa2\xa3\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xffWH\x03\x04\x02\x80\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x9cc\xb5BJ!\x00\x00\xffWH\x03\x04\x02\x80\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x04\x02\x03\x01\x00\x00\x00\x01\x01\x00\x00\x00\x01\x00\x00\x08\xc2\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x01\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x01\x07\x00\x0e;S\x00\x00\xc2\x0e\x01\x02\x80\x00\x00\x00\x00\x00\xff\x01\x0fV\x01\x07\x03\xb1\x03\x02\x00\x02\x00\x00\x00\x00\x03\x00\x00\x00\x03\x01a\x08\\\x08\x00\x00\x17(\x00\x00\x00\x01\x00\x00\x00]\x08^\x08\x00\x00\x1e\x00\xd4G\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x04\x00O\x08 \x00\x14\x01\x04\x96\x00_\x08\x13\x0c\x84\x01\x04\x08\x00P\x05mN\x05\x08\x00\x00\r\xe5\x01\x06\x08\x00P\x06lN\x07\x08\x00\x00\x0eF\x02\x08\x08\x01P\x07kN\t\x08\x00\x00\x10\xe5Ih\x0b\x01\x00\xc3\xa4Ni\x0b\x00\x00\x10FJj\x0b\x020\xc4\xd5\x00\x01\x00 \x88\t"\x08\x00\x00\x14\x00"I\x04\x00\x00\x00}\x14\x00\x00\x00\x00\x00\x14\x00\x00VV}\x00\x01\x00\x00\x00\x00\x00\x00\x03\xc3\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\xe1\x01\x00\x01\x00\x04\x00\x00\x00\x00\x04\x00\x00\xe8\xe8\x88\x88\x88\x88\xc8\xc8\x88\x88\x88\x88\xee\xeeii\x88\x80\x00\x00\x01\x00\n\x01\x00',
-                        0xCCBE: b'\x00\x01\x02\x03\x04\x0f\x00\x00\x00\x00\x04\x04\x0e\x19W\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x01\x06\x00\x00\r\x01\x01\x00\x01'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x01\x00\x00\x01\xa8\x0e\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00}\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x0b\xffWH\x03\x04\x02\x80\x00\x0f\x01\x0e!z\x0f\x00\x0f\xac'
-                                b'\xca\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xfa\x03\x88\t\x01'
-                                b'\x00\x00\x00\x02\x00\x00\x00\x00\xac\x03\x00\x00\xc2\xc2\x00y'
-                                b'V\xff\x01\x00\x00\x00\xa2\xff\x00\x00\x00\x00\x00\x00\x01\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b"\x00\x00\x00\x00\x00\x00\x00\x00'\x00\x01\x14\x00\x00\x80\xc2"
-                                b'}\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE4E: b'\x00\x00\x05\x02\x00\x07\x0f\x00\x00\x00\x07\x00\x00\x00\x01\x00'
-                                b'\x00\x00!\x00\x00\x00\x00\x00\n\x00\x07\x05\x00\x04\n\x18\x08\t\x0c\r'
-                                b'\x14\x17\x0f\x07<\x00\xb0Y\x07\x01\x01\x00\x03\x00\x00\x00'
-                                b'\x00\x1d\x08\t\x0c\r\x14\x17/\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02'
-                                b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x04\x04\x04\x04\x04\x04\x04'
-                                b'\x04\x05\x05\x05\x05\x05\x05001266899;``giikuyyz}~\xa7\xa7\xa8'
-                                b'\xb1\xc3\xc5\xc5\xd2\xd6\xd8\xdd\xdd\xdf\xdf\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x02\x04\x05012689;`gikuyz}~\xa7\xa8\xb1\xc3\xc5\xd2\xd6\xd8\xdd'
-                                b'\xdf\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x06Charmander & Friends\x00\x00\x00P\x04\x01'
-                                b'\x80TyV\xda\xce\x00\x00\x00\x00\x00\x06\x01\x07\x00\x00'
-                                b'\x00\x00\x1d\x030\x030\x030\x030\x03',
-                        0xD000: b'\x00\xc5^g\x0c\t\x06\x0c\x01\x02\x00\x00\x00P\xa3\xa4\xa3\xf8\xa3L'
-                                b'\xa4\xa0\xa4\xf4\xa4H\xa5\x9c\xa5\xf0\xa5D\xa6\x98\xa6\xec'
-                                b'\xa6@\xa7\x94\xa7\xe8\xa7<\xa8\x90\xa8\xe4\xa88\xa9\x8c\xa9\xe0\xa94'
-                                b'\xaa\x88\xaa\xdc\xaa0\xab\x84\xab\xd8\xab,\xac\x80\xac\xd4\xac(\xad|'
-                                b'\xad\xd0\xad$\xaex\xae\xcc\xae \xaft\xaf\xc8\xaf\x1c\xb0p\xb0\xc4'
-                                b'\xb0\x18\xb1l\xb1\xc0\xb1\x14\xb2h\xb2\xbc\xb2\x10\xb3d'
-                                b'\xb3\xb8\xb3\x0c\xb4`\xb4\xb4\xb4\x08\xb5\\\xb5\xb0\xb5\x04'
-                                b'\xb6X\xb6\xac\xb6\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\\\x02\x00<\x01$\x02\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00`\x02\x02\x00\x02\x02\x0c\x01\x01'
-                                b'\x01\x81\x00\x00\x07\x01\xd0Z\x1a\x04\x1b\x04\xc6-~c\xe6e\x00\x00'
-                                b'\xc6-~c\xbeI\x00\x00\xc6-~c\x1c\x17\x00\x00\xc6-~cd\x0e\x00\x00'
-                                b'\xc6-~c\xbe$\x00\x00\xc6-~c\x0fi\x00\x00\xc6-~c\xff\x7f\x00\x00'
-                                b'\xc6-~c)m\x00\x00\xd3\xe3\x00\x97G\t\t\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00p\x00\x81\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x18\x1e\x07\x02\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x80\x80\x80\x80\x80\x80\x00\x00@\x00'
-                                b'\x00\x00\x80\x80\x80\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x80\x80\x80\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00\x00'
-                                b'\x00P\x10\x10\x10\x00\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00'
-                                b'\x00\x10\x10\x10\x10\x00\x80\x80\x80\x80\x80\x80\x80\x80\x00\x00'
-                                b'\x00\x10\x90\x90\x90\x80\x80\x80\x80\x80\x80\x80\x80\x80\x00\x00'
-                                b'@\x10\x90\x90\x90\x80\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00'
-                                b'\x00\x10\x10\x10\x10\x00\x80\x80\x80\x80\x80\x80\x00\x00@\x00'
-                                b'\x00\x10\x10\x10\x10\x00\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00'
-                                b'\x00\x10\x10\x10\x10\x00\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x00\x0c\x00`\x04'
-                                b'\x0c\x01+a\x01 \x00\x10\x00\x00\x94B\x08!\x00\x00\xf9\x7f\xa9~'
-                                b'\xb8\x01e\x00\x9cs\x99\x02\xc8\x04\x00\x00~?\xb8\x01\x0e\x01\x00\x00'
-                                b'\x9cs\x81\x02\xc8\x04\x00\x00\xf9\x7f\xa9~\xe5|\x00\x14\xf9\x7f\xa9~'
-                                b'\x1f|\x00\x14\xf9\x7f\xa9~\xa4\x06A\x01\x03\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x000\x00\x02\x00\x01\x00'
-                                b'\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                b'\x7f\xff\x7f\x00\nHC\x04\xff\xff\xff\xff\xff\xff\x01\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x02\x02\x14\x10\xa0'
-                                b'\x00\x00\x00\x1e\x00\x01\x01\x028\x0c\x02\xb9d\x00\x00\x00'
-                                b'\xff\x00\x00\x00\x00\x04\r\x01\x06\x08\x02\x00\x0e\x02\x00\x00'
-                                b'\x00\x00e\x02\x06\x16\x03\x00\x0e\x03\x00\x00\x00\x00f\x03'
-                                b'\n\x12\x03\x00\x0e\x03\x00\x00\x00\x00c\x04\x0c\x0c\x03\x00'
-                                b'\x0e\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x03\x00*\x04\x04\x00\xdd\x0e\x00\x18'
-                                b'\x00\x00\xff\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00[\x01\x01\x1b\x00\x00\x01\x00.\xe2\x00\x00\xff\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00p\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\xde'
-                                b'Z\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00]\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\x84\x96\x00\xc3\x00\x14\x00\x01\x06'
-                                b'\x01\x00\xc2\x00\x14\x00\x01\x06\x19\x00\xc3\x00\x14\x00\x01\x06'
-                                b'\x07\x00\xc3\x00\x14\x00\x01\x06a\x00\xc3\x00\x14\x00\x01\x06'
-                                b'\x97\x00\xc3\x00\x14\x00\x01\x06\x8c\x00\xc3\x00\x14\x00\x00\x06'
-                                b'\x02\x00\xc3\x00\x14\x00\x00\x06\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc3\x00\x14\x00\x00'
-                                b'!"\'\x03\x12\xbcL\x00aM\x01]\xff\x00@\x81\x05U"\x10\x14\x00\x00\x00'
-                                b'\x00\x00\x00\x10\x00\x00\x18P\x00\x1e*\x05U\x0cU*0U\r\x00'
-                                b'\x00\x008\xf0\x14\x10*\xc1Q\xd0Q*\x7fQ\t\x00\x00\x008`\x14\x11*\xd8'
-                                b'Q\xdfQ*\x90Q\x0b\x00\x00\x00X@\x14\x11*\xd8Q\xe3Q*\xa1Q\x05\x00'
-                                b'\x00\x00h\x10\x14\x11*\xd8Q\xdfQ*\x90Q\n\x80\x00\x00x\xa0(\x11*\xd8'
-                                b'Q\xdfQ*\x90Q\x05\x00\x00\x00\x18\xa0(\x0f*\xb2Q\xb9Q*;Q\x0f\x00'
-                                b'\x00\x00\xf8\x10(\x10*\xc1Q\xc8Q*]Q\x10\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00h\x10\x14'
-                                b'\x00\x00*\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x08\x10\x01\x003{\x00\x00'
-                                b'\x00\x00\x00\x00\x02\x01\x02\x03\x04\x05\x06\x07\x00\xe1U\x06'
-                                b'\x00m\x00\x00\x0e\x04\x02\x02l\x03\xff\x01\x02\x02\x01\x0f'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xDD00: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xFF80: b'\x02\x00\x00>\xca\xe0F>(= \xfd\xc9',
-                        0xFF8E: b'',
-                        0xFF8F: b'',
-                        0xFF90: b'',
-                        0xFF91: b'',
-                        0xFF92: b'\x00\x00\x00\x00\x00\xc2\x0fL\xc5\xdf\x00\x00\n\x0f\x00\x08'
-                                b'\xff\xff\x00\x00\x00\x00\xbfi\x93\x98\x03\x10\x00\x0f\x00\x00'
-                                b'\x00\x00\x00\xff\x1f\x03',
-                        0x8000: b'\xe0\xc0\x98\xb0\x84\x8c\x83\x82\x86\x8f\x9d\xbe\xf4\xf8P`?2?8\x7fO{N'
-                                b'?>\x17\x1f\x15\x1b\x0e\x0e\x00\x00\x03\x03\x0c\x0f\x14\x1b\x14\x1b;<'
-                                b">?\x7fQ\x00\x00\xc0\xc00\xf0(\xd8(\xd8\xdc<|\xfc\xfe\x8a\x7fB?2?8?'"
-                                b'?&\x19\x1f\x0e\x0e\x00\x00\xfeB\xfeN\xfe\x1a\xfc\xfc\xd8x\xe8\xf8'
-                                b"\xa8\xd8pp\x03\x03\x0c\x0f\x18\x17\x19\x17*7';x_\x7fO?3?8\x7fOx_"
-                                b'<?\x17\x1f\x15\x1b\x0e\x0e\x00\x00\x03\x03\x0c\x0f\x18\x17\x19\x17*7'
-                                b"';x_\x00\x00\xc0\xc00\xf0\x18\xe8\x98\xe8T\xec\xe4\xdc\x1e\xfa"
-                                b'\x7fO\x7fs\x7fX7?\x18\x1f\x17\x1f\x15\x1b\x0e\x0e\xfe\xf2\xfc\xcc'
-                                b'\xfc\x1c\xfe\xf2\x1e\xf2\xec\xfc\xf0\xf0\x00\x00\x07\x07\x08\x0f'
-                                b'\xd0\xdf\xb1\xee\xee\xf1!???\x1f\x19\xc0\xc00\xf0h\x98\x86~'
-                                b'\xfe\xfe\xfa\x8a\xf8(\xf8(\x0f\x08\x07\x06\x07\x07\x07\x04'
-                                b'\x07\x04\x07\x07\x04\x07\x03\x03\xf8\x08\xf0\x10\xe0\xe0\xc0\xc0'
-                                b'\xc0\xc0 \xe0\xa0`\xc0\xc0\x00\x00\x07\x07\x08\x0f\xd0\xdf'
-                                b'\xb1\xee\xee\xf1!???\x00\x00\xc0\xc00\xf0h\x98\x86~\xfe\xfe'
-                                b"\xfa\x8a\xf8(\x1f\x19\x0f\x08\x07\x06\x07\x07\x1f\x19/9'?\x18\x18"
-                                b'\xf8(\xf8\x08\xf0\x10\xe0\xe0\xf8\xf8,\xf4\xc8\xf8pp>>\x1f\x1f????'
-                                b'?1?6\x7fY\x7fI?6?8\x7fO\x7fI?9\x1f\x1c\x13\x1f\x0e\x0e\x00\x00>>'
-                                b'\x1f\x1f?????1?6\x7fY\x00\x00||\xf8\xf8\xfc\xfc\xfc\xfc\xfc\x8c'
-                                b"\xfcl\xfe\x9a\x7fI?6?8?'?%\x1b\x1f\x0e\x0e\x00\x00\xfe\x92\xfen"
-                                b'\xfe\x1a\xfc\xfc\xf8\x98\xe8\xf8\x88\xf8pp>>\x1f\x1f????????'
-                                b'\x7f_\x7fO?3?8\x7fO\x7fP?8\x17\x1f\x11\x1f\x0e\x0e\x00\x00>>'
-                                b'\x1f\x1f????????\x7f_\x00\x00||\xf8\xf8\xfc\xfc\xfc\xfc\xfc\xfc'
-                                b'\xfc\xfc\xfe\xfa\x7fO\x7fs\x7fX?7\x1f\x18\x17\x1f\x13\x1f\x0e\x0e'
-                                b'\xfe\xf2\xfc\xcc\xfc\x1c\xfe\xf2\xfe\x12\xec\xfcpp\x00\x00??\x1f\x1f'
-                                b'??????????\x1f\x19\xe0\xe0\xf0\xf0\xf0\xf0\xf0\xf0\xf0\xf0\xf00'
-                                b'\xf8H\xf8H\x0f\x08\x07\x06\x07\x07\x0f\x0c\x0f\x0c\x0f\x0f'
-                                b'\x04\x07\x03\x03\xf00\xf0\x10\xe0\xe0\xf0\xb0\xf0\x90\xf0\xf0'
-                                b' \xe0\xc0\xc0\x00\x00??\x1f\x1f??????????\x00\x00\xe0\xe0'
-                                b'\xf0\xf0\xf0\xf0\xf0\xf0\xf0\xf0\xf00\xf8H\x1f\x19\x0f\x08'
-                                b"\x07\x06\x07\x07\x1f\x19/9'?\x18\x18\xf8H\xf00\xf0\x10\xe0\xe0"
-                                b'\xf88\xf4\x1c\xe8\xf8pp>>\x1f\x1f?????1?6\x7fY\x7fI?6?8\x7fO\x7fI'
-                                b'?9\x1f\x1c\x13\x1f\x0e\x0e\x00\x00>>\x1f\x1f?????1?6\x7fY\x00\x00||'
-                                b"\xf8\xf8\xfc\xfc\xfc\xfc\xfc\x8c\xfcl\xfe\x9a\x7fI?6?8?'?%\x1b\x1f"
-                                b'\x0e\x0e\x00\x00\xfe\x92\xfen\xfe\x1a\xfc\xfc\xf8\x98\xe8\xf8'
-                                b'\x88\xf8pp>>\x1f\x1f????????\x7f_\x7fO?3?8\x7fO\x7fP?8\x17\x1f'
-                                b'\x11\x1f\x0e\x0e\x00\x00>>\x1f\x1f????????\x7f_\x00\x00||'
-                                b'\xf8\xf8\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfc\xfe\xfa\x7fO\x7fs\x7fX?7'
-                                b'\x1f\x18\x17\x1f\x13\x1f\x0e\x0e\xfe\xf2\xfc\xcc\xfc\x1c\xfe\xf2'
-                                b'\xfe\x12\xec\xfcpp\x00\x00??\x1f\x1f??????????\x1f\x19'
-                                b'\xe0\xe0\xf0\xf0\xf0\xf0\xf0\xf0\xf0\xf0\xf00\xf8H\xf8H'
-                                b'\x0f\x08\x07\x06\x07\x07\x0f\x0c\x0f\x0c\x0f\x0f\x04\x07\x03\x03'
-                                b'\xf00\xf0\x10\xe0\xe0\xf0\xb0\xf0\x90\xf0\xf0 \xe0\xc0\xc0\x00\x00??'
-                                b'\x1f\x1f??????????\x00\x00\xe0\xe0\xf0\xf0\xf0\xf0\xf0\xf0\xf0\xf0'
-                                b"\xf00\xf8H\x1f\x19\x0f\x08\x07\x06\x07\x07\x1f\x19/9'?\x18\x18"
-                                b'\xf8H\xf00\xf0\x10\xe0\xe0\xf88\xf4\x1c\xe8\xf8pp\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00NN'
-                                b'\xa8\xa8\xa8\xa8\xae\xae\xa8\xa8\xa8\xa8HH\x00\x00\xee\xeeDDDDDDDD'
-                                b'DDDD\x00\x00FF\xa8\xa8\xa8\xa8\xe8\xe8\xa8\xa8\xa8\xa8\xa6\xa6'
-                                b'\x00\x00\xa6\xa6\xa8\xa8\xa8\xa8\xce\xce\xa2\xa2\xa2\xa2\xac\xac'
-                                b'\x00\x00\xee\xeeDDDDDDDDDDNN\x00\x00\n\n\n\n\n\n\x0e\x0e\n\n\n\n\n\n'
-                                b'\x00\x00\xee\xee\xa8\xa8\xa8\xa8\xac\xac\xe8\xe8\x88\x88\x8e\x8e'
-                                b'\x00\x00@@          @@\x00\x00\x0e\x0e\x04\x04\x04\x04'
-                                b'\x04\x04\x04\x04\x04\x04\x04\x04\x00\x00\xea\xea\x8a\x8a\x8e\x8e'
-                                b'\xce\xce\x8e\x8e\x8a\x8a\xea\xea\x00\x00\xce\xce\xa4\xa4\xa4\xa4'
-                                b'\xa4\xa4\xa4\xa4\xa4\xa4\xce\xce\x00\x00\xae\xae\xa8\xa8\xe8\xe8'
-                                b'\xea\xea\xea\xea\xaa\xaa\xae\xae\x00\x00\xa6\xa6\xa0\xa0\xae\xae'
-                                b'\xc8\xc8\xae\xae\xa8\xa8\xae\xae\x00\x00\xa4\xa4\xea\xea\xea\xea'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xa4\xa4\x00\x00\xe6\xe6HHHHNNBBBB\xec\xec'
-                                b'\x00\x00JJ\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xae\xaeJJ\x00\x00LL'
-                                b'\xaa\xaa\xaa\xaa\xea\xea\xae\xae\xac\xac\xaa\xaa\x00\x00HH'
-                                b'\xa8\xa8\xa8\xa8\xe8\xe8\xa8\xa8\xa8\xa8\xae\xae\x00\x00\xae\xae'
-                                b'\xa2\xa2\xa2\xa2\xa4\xa4HHHHNN\x00\x00\xec\xec\x8a\x8a\x8a\x8a'
-                                b'\xca\xca\x8a\x8a\x8a\x8a\xec\xec\xc3\x81\xc3\x81\xc3\x81\xc3\x81'
-                                b'\xc3\x81\xc3\x81\xc3\x81\xc3\x81\x01\x01\x01\x01\x01\x01U\x01'
-                                b'\x01\x01U\x01\xab\x01U\x01\x80\x80\x80\x80\x80\x80\xd5\x80'
-                                b'\x80\x80\xd5\x80\xaa\x80\xd5\x80~\x80\xfe\x00\xc0\x00\xc0\x00'
-                                b'\xc7\x07\xcb\x0c\xcf\x08\xcf\x08~\x80\xfe\x00\xc0\x00\xc0\x00'
-                                b'\xf0\xf0\xe8\x18\xf8\x08\xf8\x08\x7f\x83\xfe\x03\xc2\x03\xc3\x02'
-                                b'\xce\x0e\xdf\x16\xfe.\xfa/\xfe\x80\xfe\x80\x80\x80\x80\x80'
-                                b'\xf0\xf0\xd8\xf8\xfc\xdc\xfc\xdc\xff\xff\xff\x00\xff\x00\xff\x7f'
-                                b'\xddI\xddI\xddI\xff\x7f\xbf\xa0\xbf\xaf\xb9\xa9\xbf\xaf'
-                                b'\xbf\xa0\xbf\xaf\xb9\xaf\xbf\xaf\xe7$\xff<\xff\x00\xff\x00'
-                                b'\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00\xff\x00'
-                                b'\xff\x00\xff\x00\xff\x00\xff<\xfd\x05\xfd\xf5\x9d\x95\xfd\xf5'
-                                b'\xfd\x05\xfd\xf5\x9d\xf5\xfd\xf5\xff\xff\xff\xff\xff\xff\xfe\xff'
-                                b'\xfd\xff\xff\xff\xff\xff\xfd\xff\xff\xff\xef\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xef\xff\xff\xff\xdf\xff\xdf\xff\xaf\xff\xef\xff\xff\xff'
-                                b'\xf7\xff\xef\xff\xef\xff\xff\xff\xff\xff\xef\xff\xff\xff\xcf\xff'
-                                b'\xff\xff\xaf\xff\xef\xff\xef\xff\xef\xff\xef\xff\xef\xff\xe5\xff'
-                                b'\xdf\xff\x8f\xff\xbf\xdf\xbf\xdf\xbf\xdf\xda\xff\xbf\xdf\xbe\xdf'
-                                b'\xde\xbf\xfb\xbf\xff\xbf\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xef\xff\xcf\xff'
-                                b'\xdf\xff\xdf\xff\xdf\xff\xd7\xff\xf7\xff\xfa\xfe\xfe\xfe\xbe\xfe'
-                                b'\xb5\xfd\xb1\xfd\xf5\xfd\xb5\xfd\xbd\xfd\xee\xfe\xff\xff\xbe\xff'
-                                b'\xb7\xff\xa2\xff\x7f\xffE\xffo\xbf2\xff&\xffO\xbe\x7f\xbe\x7f\xbe'
-                                b'\xad~\x9d~\xde\xffI\xfe\x91~\xa9~\xdf|o\xfc\x7f\xfc\xff\xff'
-                                b'\xff\xff\xf7\xef\xf7\xef\xd7\xef\xf6\xef\xf8\xee\xf9\xed\xf2\xea'
-                                b'\xe6\xf4\xe4\xf4\xcc\xe8\xc8\xe8\xd9\xd0\xb3\xa0\xa7\xb0VQ]S\xba\xee'
-                                b"\xfe\x84\xfb\x8ai\x99\xf3\x10\xd70`'('\xa8\xa7lc4\xb3\xbf->\xa3"
-                                b'\x92S\x9bQ\xa9i)\xe8\xf4tr\xfa\xf1}\xa6z\xd3\x7f\t\xff\xf3\x7f~\xfb'
-                                b'{\xffu\xfb\xfc\xfb\xbe\xfb\xfa\xff\xff\xff\xff\xff\xfe\xfd'
-                                b'\xfe\xfd\x9e\xbd^]\xec\xaf\xee-\xa6o\xafm\xaam\x96u\xd17\xf25\xf8K'
-                                b'\xb4\xfd\xb4\xb5\xcaF\xf79\x7f\x00_\x00\xab\x00\xc5\x80\xe3@u\xa0'
-                                b'2\xd1(\xf1X\xe0\xb4\xc0z\x80\xfd\x00z\x80}\x80?\xc0\xbf\xc0'
-                                b'\x9f\xe0\xcfpg8\xb9\x9e~g\x1f\x99G\xe6!\xf9h\xf6\x00\xffj\xf5\xa3\xfc'
-                                b'\xea\xf5\xff\xff\xff\xff\xff\xff\xff\xff\xf7\xff\xff\xff\xfb\xff'
-                                b'\xff\xff\xf7\xff\xf7\xff\xe2\xff\xf7\xff\xff\xff\xf7\xff\xe3\xff'
-                                b"\xf3\xff{\xff7\xff\x13\x7f\x87\x9f!g\xb9\x1b\xd5\r\x8b{'\xe7"
-                                b'\xdf\xdf\xe7/g/7\x177\x17\x1a\x0b\x8d\x05\r\x05\xa6\x02\xc3\x01'
-                                b'\xa1\x01\xc5\x01\xeb\x01\xfe\x03z\x87\x04\xff\xcb\xfc\xb4\xf8'
-                                b'c|\x19\x9e\x87\xe7\xe0\xf8\xf0\xff\xff\xff\xff\xff\xbe\xff'
-                                b'\xff\xff\xfd\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff\xff\xff\xdf\xff\xd7\xff\xff\xff\xef\xff'
-                                b'\xff\xff\x7f\xff\xff\xff\xee\xff\xdf\xff\xfd\xff\xff\xff\xeb\xff'
-                                b'\xfe\xef\\\xefn\xff\xfe\xff\xfe\xff\xfa\xffm\xffk\x7f_\x7f\xad\xbe'
-                                b'__/.\x97\x16X\x996\xd6\xd3;*&\xff"E\xff\xfe\xfe\x01\x01\xff\xff'
-                                b'\xff\xff\xff\xff\xff\xff~\xff\xff\xff\xbf\xff\xdf\xff\xd7\xff'
-                                b'\xff\xff\xbe\xff\xbf\xff\xbf\xff\xff\xff\xbe\xff\xbe\xff\x9f\xfe'
-                                b'\x7f\xfe?\xfe\xff\xfe\x7f\xfe~\xffo\xff{\xff{\xffp\xff\xf2\x7f'
-                                b'r\xff\xf2\x7f\xf0\x7fr\xff\xf6\x7f\xeew\xeewo\xf6\xef\xf6\x7f\xe6'
-                                b'\xf7\xeew\xee}\xeem\xfe\x7f|\xbf\xac\xce]N\xdd\x9e\xad\x1fm'
-                                b'\xde\xed\xff\xff\xff\xff\x7f\xff\x7f\xff\xd7\xff\x7f\xff{\xff'
-                                b'\x7f\xff\xff\xff\x7f\xff\xff\xff\xff\xffw\xff\x7f\xff\xeb\xff'
-                                b'\x7f\xffu\xffw\xff{\xff\x7f\xff\xf7\x7f\xf7\x7f#\xff\xb7\x7f\x9d\x7f'
-                                b'u\xff\xab\x7f\xff\x7f\x7f\xff\xfd\x7f\xbb\x7f\xff\x7f\xe1\x7f'
-                                b'\xff\x7fk\xbf\x7f\xff\x7f\xff]\xff\xe9\xff\xfd\xff\xeb\xfd'
-                                b'\xff\xeb\xff\xe7\xf7\xef\xef\xf7\xf7\xff\xef\xf7\xef\xf7\xff\xff'
-                                b'\x00\x00\xff\xff\xff\x80\xff\x81\xfe\x82\xfc\x84\xf9\x88\xf3\x90'
-                                b'\x00\x00\xfe\xfe\xfe\x02\xfe\x02\xfe\x82~B>"\x9e\x12\xe3\xa0\xf3\x90'
-                                b'\xf9\x88\xfc\x84\xfe\x82\xff\x81\xff\x80\xff\xff\x8e\n\x9e\x12>"~B'
-                                b'\xfe\x82\xfe\x02\xfe\x02\xfe\xfe\x00\x00\xff\xff\x80\x80\x81\x81'
-                                b'\x82\x83\x84\x87\x88\x8e\x90\x9e\x00\x00\xfe\xfe\x02\x02\x02\x02'
-                                b'\x82\x82B\xc2"\xe2\x12\xf2\xa0\xbc\xb8\xbe\x88\x8e\x88\x8e'
-                                b'\x88\x8f\x8f\x8f\x80\x80\xff\xff\n\xfa:\xfa"\xe2"\xe2"\xe2\xe2\xe2'
-                                b'\x02\x02\xfe\xfe\x00\x00\xff\xff\x80\x80\x81\x81\x82\x83\x84\x87'
-                                b'\x88\x8e\x90\x9d\x00\x00\xfe\xfe\x02\x02\x02\x02\x82\x82B\xc2'
-                                b'"\xe2\x12r\xa0\xbf\xb8\xbe\x88\x8d\x88\x8c\x88\x8f\x8f\x8f'
-                                b'\x80\x80\xff\xff\nz:\xfa"\xe2"b"\xe2\xe2\xe2\x02\x02\xfe\xfe'
-                                b'\x00\x00\xff\xff\x80\x80\xbf\xbf\xa0\xa0\xa0\xaf\xa0\xaf\xbc\xbd'
-                                b'\x00\x00\xfe\xfe\x02\x02\xfa\xfa\n\n\n\xfa\n\xfaz\xfa\x84\x85\x84\x85'
-                                b'\x84\x85\x84\x85\x84\x85\x87\x87\x80\x80\xff\xffB\xc2B\xc2B\xc2B\xc2'
-                                b'B\xc2\xc2\xc2\x02\x02\xfe\xfe\x00\x00\xff\xff\x80\xff\x83\xff'
-                                b'\x81\xff\x93\xff\xa7\xff\xbf\xff\x00\x00\xfe\xfe\x02\xfe\x82\xfe'
-                                b'\x82\xfe\x82\xfe\x8a\xfe\xf2\xfe\xbf\xff\x9e\xff\xad\xff\xbc\xff'
-                                b'\x9c\xff\x8f\xff\x80\xff\xff\xff\xf2\xfe\xe2\xfe\xca\xfe\xfa\xfe'
-                                b'\xf2\xfe\xc2\xfe\x02\xfe\xfe\xfe\x00\x00\xff\xff\xff\x80\xff\x81'
-                                b'\xff\x87\xff\x88\xff\x9e\xff\xa2\x00\x00\xfe\xfe\xfe\x02\xfe\xc2'
-                                b'\xfeb\xfe"\xfe\xf2\xfe\x8a\xff\xbc\xff\xa2\xff\x98\xff\x8e'
-                                b'\xff\x82\xff\x83\xff\x80\xff\xff\xfez\xfe\x8a\xfe2\xfe\xe2'
-                                b'\xfe\x82\xfe\x82\xfe\x02\xfe\xfe\x00\x00\xff\xff\xff\x80\xff\x80'
-                                b'\xff\x80\xff\x81\xff\x83\xff\x87\x00\x00\xfe\xfe\xfe\x02\xfeB'
-                                b'\xfe\x82\xfe\x82\xfe\x02\xfe\xf2\xff\x8f\xff\x80\xff\x81\xff\x81'
-                                b'\xff\x82\xff\x84\xff\x80\xff\xff\xfe\xe2\xfe\xc2\xfe\x82\xfe\x02'
-                                b'\xfe\x02\xfe\x02\xfe\x02\xfe\xfe\x00\x00\xff\xff\x80\xff\x81\xff'
-                                b'\x87\xff\x8f\xff\x9f\xff\xbf\xff\x00\x00\xfe\xfe\x02\xfe\xf2\xfe'
-                                b'\xe2\xfe\xc2\xfe\xc2\xfe\xe2\xfe\xbf\xff\xbf\xff\xb9\xff\x98\xff'
-                                b'\x9f\xff\x8f\xff\x80\xff\xff\xff\xe2\xfe\xf2\xfe\xf2\xfe\xf2\xfe'
-                                b'\xe2\xfe\xc2\xfe\x02\xfe\xfe\xfe\x00\x00\xff\xff\x80\xff\xb6\xff'
-                                b'\xb6\xff\xb6\xff\xb6\xff\x80\xff\x00\x00\xfe\xfe\x02\xfe\xda\xfe'
-                                b'\xda\xfe\xda\xfe\xda\xfe\x02\xfe\xbe\xff\xbe\xff\xb8\xff\xbb\xff'
-                                b'\x83\xff\x8f\xff\x80\xff\xff\xff\xfa\xfe\xfa\xfe\xfa\xfe\xfa\xfe'
-                                b'\xe2\xfe\xe2\xfe\x02\xfe\xfe\xfe\x00\x00\xff\xff\xff\x80\xff\x80'
-                                b'\xff\x83\xfc\x8c\xf3\x93\xe7\xa7\x00\x00\xfe\xfe\xfe\x02\xfe\x02'
-                                b'\xfe\x82~b\x9e\x92NJ\xc7\xc7\xe7\xa4\xf3\x93\xfc\x8c\xff\x83\xff\x80'
-                                b'\xff\x80\xff\xffFF\xceJ\x9e\x92~b\xfe\x82\xfe\x02\xfe\x02\xfe\xfe'
-                                b'\x00\x00\xff\xff\x81\x80\x80\x81\x81\x81\xb3\x81\x8d\x9b\x87\x8f'
-                                b'\x00\x00\xfe\xfe\x02\x02\x02\x02\x02\x02\x9a\x02b\xb2\xc2\xe2'
-                                b'\x8b\x87\x87\x8f\x8d\x9b\xb3\x81\x81\x81\x80\x81\x81\x80\xff\xff'
-                                b'\xa2\xc2\xc2\xe2b\xb2\x9a\x02\x02\x02\x02\x02\x02\x02\xfe\xfe'
-                                b'\x00\x00\xff\xff\xff\x80\xff\xbf\xe0\xa0\xe0\xaf\xe7\xaf\xe0\xaf'
-                                b'\x00\x00\xfe\xfe\xfe\x02\xfe\xfa\x0e\x1a\x0e\xfa\xfe\xfa\x0e\xfa'
-                                b'\xe0\xa0\xe0\xaf\xe7\xaf\xe0\xaf\xe0\xa0\xff\xbf\xff\x80\xff\xff'
-                                b'\x0e\x1a\x0e\xfa\xfe\xfa\x0e\xfa\x0e\x1a\xfe\xfa\xfe\x02\xfe\xfe'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x10 \x08\x10\xb2\x18\\\xba.|\xbd,j\xc7Z<\x0c\x0c44nn\xee\xee'
-                                b'\xde\xde\\\\0000\x08\x08\x10\x1000~~\xfc\xfc\x18\x18\x10\x10  '
-                                b'\x0f\x0f\x1c<xxx\xf8\xfc\xfe\xfe\xfeL\xce<x(\xaa\xaa\xaa'
-                                b'\xaa\xaa\x00\x00\xf6\xf6\xc6\xc6\xde\xde<<\x00\x00<<ZZ\xb5\xb5'
-                                b'\xa5\xa5ZZ<<\x00\x00\x00\x00\x10\x10\x92\x92||88||\x92\x92\x10\x10'
-                                b'\x00\x0088||\xd6\xd6\x92\x92ll8888\xf0\xf0  @@\xf0\xf0'
-                                b'\x0f\x0f\x02\x02\x04\x04\x0f\x0f\x00\x00<<\xc2B\x9c\x9c'
-                                b'\xa2\xa2\x9a\x9a\xc6D|8\x11\x00*\x11U;;\x7fn\x7fDn\x00D\x00\x00'
-                                b'\x14\x08\x18\x1c.,D.GF\x82G\x83\x83\xfe\xfe\xfe\xfe\x82\xba'
-                                b'\xaa\x92\xc6\x82\xaa\xaa\x82\xaa\x82\xc6\xfe\xfe\x00\x00\x92\x92DD(('
-                                b'\x92\x92((DD\x92\x92\xe0\xc0\x98\xb0\x84\x8c\x83\x82\x86\x8f\x9d\xbe'
-                                b'\xf4\xf8P`\x00\x00\xae\xac\xaa\xaa\xaa\xaa\xee\xec\xa8\xa8'
-                                b'\xa8\xa8\xa8\xa8\x00\x00\x80\x80\xa2\xa2\xb6\xa2\x94\x94\x9c\x94'
-                                b'\x88\x88\xe8\xe8\x00\x00\xfc\xfc\x80\x80\x80\x80\xfc\xfc\x80\x80'
-                                b'\x80\x80\xfc\xfc\x00\x00\x00\x00\x90\x90\xd0\xd0\xf6\xd6\xf9\xb9'
-                                b'\xb9\xb9\x96\x96\x00\x00\x10\x1088LD\xd6\xd6LD\\\\||\x00\x00||'
-                                b'\xce\xce\xd6\xd6\xd6\xd6\xd6\xd6LL88\x00\x0088DD\x82\x82'
-                                b'\x82\x82\x82\x82DD88\x00\x0088,\\\xde\x8e\xae\xde\xfe\xfe||88'
-                                b'\x00\x00\x1f\x1f? p@hGgOdLdL\x00\x00\xf8\xf8\xf4\x0c\n\x06'
-                                b'\x12\xe6\xf2\xe62&2&dLdLgOo@P` ?\x1f\x1f\x00\x002&2&\xf2\xe6\xf2\x06'
-                                b'\x02\x0e\x04\xfc\xf8\xf8\x00\x00\x00\x00\xff\xff\xff\x00\x00\x00'
-                                b'\x00\xff\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\xff\x00'
-                                b'\x00\x00\x00\xff\xff\xff\x00\x00dLdLdLdLdLdLdLdL2&2&2&2&2&2&2&2&'
-                                b'\x00\x00<<BBBBBBBBBB<<\x00\x00\x08\x08\x18\x18((\x08\x08\x08\x08'
-                                b'\x08\x08>>\x00\x00<<BB\x02\x02\x0c\x0c00@@~~\x00\x00<<BB\x02\x02'
-                                b'\x1c\x1c\x02\x02BB<<\x00\x00\x0c\x0c\x14\x14$$DDDD~~\x04\x04'
-                                b'\x00\x00~~@@||\x02\x02\x02\x02BB<<\x00\x00<<@@@@||BBBB<<\x00\x00~~'
-                                b'\x02\x02\x04\x04\x08\x08\x10\x10\x10\x10\x10\x10\x00\x00<<BBBB<<BB'
-                                b'BB<<\x00\x00<<BBBB>>\x02\x02\x02\x02<<\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x000000\x00\x00\x00\x00\x00\x00\x10\x10'
-                                b'\x10\x10||\x10\x10\x10\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00||'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00DD((\x10\x10((DD'
-                                b'\x00\x00\x03\x03\x06\x06\x0c\x0c\x18\x1800``\xc0\xc0\xfe\xfe\x83\x83'
-                                b'\x82GGFD..,\x18\x1c\x14\x08~~B~Zf~BRRBfB~~~\x00\x00\x00\x00'
-                                b'\xff\xff\xfe\x01\xff\x00\xfd\xfe\x03\x02\x03\x02\x00\x00\x00\x00'
-                                b'\x00\x00\x80\x80@\xc0\xc0@\xc0@\xc0@\x03\x02\x03\x02\x03\x02\x03\x02'
-                                b'\x03\x02\x03\x02\x03\x02\x03\x02\xc0@\xc0@\xc0@\xc0@\xc0@\xc0@'
-                                b'\xc0@\xc0@\x03\x02\x03\x02\x03\x02\x02\x03\x01\x01\x00\x00'
-                                b'\x00\x00\x00\x00\xc0@\xc0@\xbf\x7f\xff\x00\x7f\x80\xff\xff'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\xff\x00\xff\x00\xff\xff'
-                                b"\x00\x00\x00\x00\x07\x07\x1c\x1c%$MD\x9d\x84\x9d\x85NF''"
-                                b'\xf0\xf0\x18\x18\xe4$\xdaB\xbd\x81\x1d\x01\t\x01\x82\x02'
-                                b"\x15\x14\x19\x18317'!!0 \x10\x10\x0f\x0f\x84\x84\xe8\xe8"
-                                b'\xf0\xb0\xf0\x10\xf0\x90\xe0 \xe0 \xc0\xc0\x00\x00\xca\xca'
-                                b'\xaa\xaa\xaa\xaa\xca\xca\xaa\xaa\xaa\xaa\xce\xce\x00\x00\x8c\x8c'
-                                b'\x8a\x8a\x8a\x8a\x8c\x8c\x8a\x8a\x8a\x8a\xec\xec\x00\x00FF'
-                                b'\xa8\xa8\xa8\xa8\xee\xee\xa2\xa2\xa2\xa2\xac\xac\x00\x00JJ'
-                                b'\xaa\xaa\xaa\xaa\xea\xea\xaa\xaa\xaa\xaa\xae\xae\x00\x00\xc0\xc0'
-                                b'\xa0\xa0\xa0\xa0\xa0\xa0\xe0\xe0\xc0\xc0\xa0\xa0\x00\x00\x8a\x8a'
-                                b'\x8a\x8a\x8a\x8a\x8a\x8a\x8a\x8a\x8a\x8a\xe4\xe4\x00\x00NN\xc2\xc2BB'
-                                b'NNBBBB\xee\xee\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\xea\xeaJJJJJJJJJJ\xe4\xe4\x00\x00\xa6\xa6'
-                                b'\xa8\xa8\xa8\xa8\xae\xaeBBBBLL\x00\x00\xee\xee****\xea\xea\x8a\x8a'
-                                b'\x8a\x8a\xee\xee\x00\x00dd\x8a\x8a\x8a\x8a\x8e\x8e\x8a\x8a\x8a\x8ajj'
-                                b'\x00\x00\xee\xeeHHHHLLHHHHNN\x00\x00\xce\xce\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xee\xee\xc8\xc8\xa8\xa8\x00\x00\xee\xeeHHHHLLHHHH\xee\xee'
-                                b'\x00\x00\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x0e\x0e'
-                                b'\x00\x00\xa4\xa4\xac\xac\xa4\xa4\xa4\xa4\xa4\xa4\xa4\xa4NN'
-                                b'\x00\x00\xe0\xe0    \xe0\xe0    \xe0\xe0\x00\x00\xae\xae'
-                                b'\xe8\xe8\xe8\xe8\xac\xac\xa8\xa8\xa8\xa8\xae\xae\x00\x00\xe4\xe4JJJJ'
-                                b'NNJJJJJJ\x00\x00\xe4\xe4\xaa\xaa\xaa\xaa\xaa\xaa\xea\xea'
-                                b'\x8a\x8a\x84\x84\x00\x00\xc0\xc0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0'
-                                b'\xa0\xa0\xc0\xc0\x00\x00\xe4\xe4,,$$\xe4\xe4\x84\x84\x84\x84\xee\xee'
-                                b'\x00\x00\xae\xae\xa4\xa4\xe4\xe4\xe4\xe4\xe4\xe4\xa4\xa4\xae\xae'
-                                b'\x00\x00\xc4\xc4\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xc4\xc4'
-                                b'\x00\x00\xc4\xc4\xaa\xaa\xaa\xaa\xae\xae\xea\xea\xca\xca\xaa\xaa'
-                                b'\x00\x00\xae\xae\xaa\xaa\xee\xee\xe4\xe4\xee\xee\xa4\xa4\xa4\xa4'
-                                b'\x00\x00\xa4\xa4\xae\xae\xe4\xe4\xe4\xe4\xee\xee\xaa\xaa\xae\xae'
-                                b'\x00\x00\xae\xae\xa2\xa2\xa2\xa2\xae\xae\xa8\xa8\xa8\xa8NN'
-                                b'\x00\x00\xe0\xe0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xe0\xe0'
-                                b'\x00\x00dd\x8a\x8a\x8a\x8a\x8a\x8a\x8a\x8a\x8a\x8add\x00\x00\xae\xae'
-                                b'\xa8\xa8\xe8\xe8\xee\xee\xe8\xe8\xa8\xa8\xa8\xa8\x00\x00\xec\xecJJJJ'
-                                b'JJNNLL\xea\xea\x00\x00\xa0\xa0\xe0\xe0\xe0\xe0\xa0\xa0\xa0\xa0'
-                                b'\xa0\xa0\xa0\xa0\x00\x00\xa4\xa4\xea\xea\xea\xea\xaa\xaa\xaa\xaa'
-                                b'\xaa\xaa\xa4\xa4\x00\x00\xce\xce\xa4\xa4\xa4\xa4\xa4\xa4\xa4\xa4'
-                                b'\xa4\xa4\xce\xce\x00\x00\xea\xea\x8a\x8a\x8a\x8a\xea\xea\x84\x84'
-                                b'\x84\x84\x84\x84\x00\x00\xa4\xa4\xaa\xaa\xea\xea\xee\xee\xea\xea'
-                                b'\xaa\xaa\xaa\xaa\x00\x00dd\x8a\x8a\x8a\x8a\xee\xee****\xca\xca'
-                                b'\x00\x00\xae\xae\xa8\xa8\xa8\xa8\xac\xac\xa8\xa8\xa8\xa8NN\x00\x00jj'
-                                b'\x8e\x8e\x8e\x8e\xea\xea****\xca\xca\x00\x00JJ\xaa\xaa\xae\xae'
-                                b'\xee\xee\xae\xae\xaa\xaa\xaa\xaa\x00\x00\xe8\xe8HHHHHHHHHHNN'
-                                b'\x00\x00\xe0\xe0\x80\x80\x80\x80\xc0\xc0\x80\x80\x80\x80\xe0\xe0'
-                                b'\x00\x00\xa6\xa6\xa8\xa8\xe8\xe8\xe8\xe8\xe8\xe8\xa8\xa8\xa6\xa6'
-                                b'\x00\x00\xe8\xe8\x88\x88\x88\x88\xc8\xc8\x88\x88\x88\x88\xee\xee'
-                                b'\x00\x00\xee\xee\x84\x84\x84\x84\xc4\xc4\x84\x84\x84\x84\xe4\xe4'
-                                b'\x00\x00NN\xaa\xaa\xaa\xaa\xea\xea\xae\xae\xa8\xa8\xa8\xa8\x00\x00LL'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaaLL\x00\x00\xac\xac'
-                                b'\xaa\xaa\xaa\xaa\xaa\xaa\xae\xae\xac\xac\xea\xea\x00\x00\xea\xeaJJNN'
-                                b'NNNNJJ\xea\xea\x00\x00\xe0\xe0\x80\x80\x80\x80\xa0\xa0\xa0\xa0'
-                                b'\xa0\xa0\xe0\xe0\x00\x00\xa4\xa4\xaa\xaa\xaa\xaa\xaa\xaaJJJJDD'
-                                b'\x00\x00NN\xaa\xaa\xaa\xaa\xaa\xaa\xae\xae\xa8\xa8HH\x00\x00ff(((('
-                                b'NN\x02\x02\x02\x02\x0c\x0c\x00\x00\n\n\n\n\x0e\x0e\x0e\x0e\x0e\x0e'
-                                b'\n\n\n\n\x00\x00\xea\xea\x8a\x8a\x8a\x8a\xc4\xc4\x8a\x8a'
-                                b'\x8a\x8a\xea\xea\x00\x00\xea\xeaJJJJJJJJJJNN\x00\x00\xca\xca'
-                                b'\xaa\xaa\xae\xae\xae\xae\xee\xee\xca\xca\xaa\xaa\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\xc0\xc0\xc0\xc0\x00\x00$$JJJJNNJJ'
-                                b'JJ**\x00\x00\xaa\xaa\xaa\xaa\xea\xea\xea\xea\xe4\xe4\xa4\xa4\xa4\xa4'
-                                b'\x00\x00\x04\x04\n\n\n\n\n\n\n\n\n\n\x04\x04\x00\x00\xea\xeaJJJJNNJJ'
-                                b'JJJJ\x00\x00\xec\xec\x8a\x8a\x8a\x8a\xca\xca\x8e\x8e\x8c\x8c\xea\xea'
-                                b'\x00\x00\xee\xee\x88\x88\x88\x88\xce\xce\x88\x88\x88\x88\xe8\xe8'
-                                b'\x00\x00nn\x84\x84\x84\x84\x84\x84\x84\x84\x84\x84dd\x00\x00``'
-                                b'\x80\x80\x80\x80\xe0\xe0    \xc0\xc0\x18\x1c\x1c\x1c\x1c\x1c\x1c\x1c'
-                                b'\x1c\x1c\x1c\x1c\x1c\x1c\x1c\x1c\x1c\x1c\x1c\x19\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x1e\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1f\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x1e\x00Z[\\]\x00\x00\x00^_`'
-                                b'\x00\x00\x00\x00aN\x00\x1f\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x1e\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x1f\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x1e\x00bc\x00\x00\x00\x00\x00_defg\x00\x00Ghi\x1f'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1a\x1d\x1d\x1d'
-                                b'\x1d\x1d\x1d\x1d\x1d\x1d\x1d\x1d\x1d\x1d\x1d\x1d\x1d\x1d\x1d\x1b'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00<=>?@ABCCCC'
-                                b'CC\x00 .\x00!\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00DE?@AFCCCCCCC\x00 .\x00!\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00GHIJKLMCCCCCC\x00 .\x00"\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00NOPQARCCCCCCC\x00 .\x00!\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00STUVKLMCCCC'
-                                b'CC\x00 .\x00"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00STUWKXYCCCCCC\x00 .\x00!/\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00',
-                        0xFF40: b'\xc3'},
-            'entry_sp': 0xDFCA,
-            'rom_bank': 0x02,
-            'read': {0xC580: 0x20, 0xCD87: 0x40, 0xCE6A: 0x20, 0xFFAA: 0x04},
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x2625A00,
-            'cycle_budget': 0x9896800,
-            'vread': {0x00: {0x9800: 0x0400}},
-            'sram': {   0x00: {   0xA000: b'\x04!\x05\x02\x00\x00\x02\x00\x08\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x030\x030\x030\x030\x030\x030\x00\x00\xf5@'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x80\x04\x00\x04'
-                                          b'\x00\x00\x03\x80\x01\x01\x80\x80\x02\x01\x80\x80'
-                                          b'\x80\x80\x80\x80\x02\x80\x80\x01\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x01\x00\x00\x00\x80'
-                                          b'\x80\x80\x00\x80\x00\x00\x80\x00\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x02'
-                                          b'\x01\x80\x80\x80\x80\x80\x80\x02\x01\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x00\x80\x80\x80'
-                                          b'\x80\x80\x80\x00\x80\x00\x80\x00\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x00\x80\x80\x80\x00\x00\x80'
-                                          b'\x80\x00\x00\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x02\x01\x80\x80\x80\x80'
-                                          b'\x01\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x00\x00\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x00\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x00'
-                                          b'\x80\x00\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x00\x80\x80\x80\x00\x80\x00\x80\x80\x80'
-                                          b'\x80\x00\x80\x00\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x06Charman'
-                                          b'der & Friends\x00\x00\x00\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x04\x04\x04\x04\x04\x04\x04\x04\x05\x05'
-                                          b'\x05\x05\x05\x05001266899;``giikuyyz}~\xa7\xa7'
-                                          b'\xa8\xb1\xc3\xc5\xc5\xd2\xd6\xd8\xdd\xdd\xdf\xdf'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x06Charman'
-                                          b'der & Friends\x00\x00\x00\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x04\x04\x04\x04\x04\x04\x04\x04\x05\x05'
-                                          b'\x05\x05\x05\x05001266899;``giikuyyz}~\xa7\xa7'
-                                          b'\xa8\xb1\xc3\xc5\xc5\xd2\xd6\xd8\xdd\xdd\xdf\xdf\x06Squirtl'
-                                          b'e & Friends\x00\x00\x00\x00\x00\x03\x03\x03\x03'
-                                          b'\x03\x03\x03\x03\x03\x03\x03\x05\x05\x05\x05\x05'
-                                          b'\x05\x06\x06\x06\x06\x06\x06\x06\x06AABCKKLUVST'
-                                          b'Y\x8e\x8e\x8f\x94\x94\x97}~\x80\x80\x88\xa7\xa7\xa8\xb1'
-                                          b'\xc3\xc5\xd2\xd4\xd5\xda\xdd\xdf\x06Bulbasaur & Friends'
-                                          b'\x00\x00\x00\x00\x01\x01\x01\x01\x01\x01\x01\x01'
-                                          b'\x01\x01\x01\x02\x02\x02\x03\x03\x03\x03\x03\x03'
-                                          b'\x03\x03\x03\x08\x08\t\x0b\x0c\x0c\r\x14\x14\x17\x17\x18-'
-                                          b'>KLOOPSST[\xaf\xb1\xbc\xbc\xb9\xc3\xd2\xd4\xd8\xd8'
-                                          b'\xd9\xdf\xdf\xe0\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x01\x00\x00\x01\x01\x01\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00\xb3\x00'
-                                          b'[\x01\x00\x00\x00\x01\x18\t\x19\x00\x00\x01\x01\x0e\x08\x00'
-                                          b'\x00\x00\x07\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x81\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\t\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00p'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00.\xe2\x01\x00\x18P\x00\x1e*\x05'
-                                          b'U\x0cU*0U\r\x00\x01\x008\xf0\x14\x10*\xc1Q\xd0Q*\x7fQ\t\x00'
-                                          b'\x01\x008`\x14\x11*\xd8Q\xdfQ*\x90Q\x0b\x00\x01\x00X@'
-                                          b'\x14\x11*\xd8Q\xe3Q*\xa1Q\x05\x00\x01\x00h\x10\x14\x11*\xd8'
-                                          b'Q\xdfQ*\x90Q\n\x80\x00\x00x\xa0(\x11*\xd8Q\xdfQ*'
-                                          b'\x90Q\x05\x00\x00\x00\x18\xa0(\x0f*\xb2Q\xb9Q*;Q\x0f\x00'
-                                          b'\x00\x00\xf8\x10(\x10*\xc1Q\xc8Q*]Q\x10\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x01\x00\x00\x14\x04\x18\x14\x14'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xe3\x95'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x01\x00\x06Dr. Mason\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x80\x01\x10\x02\x02'
-                                          b'\x10\x01\x02\x11\x08\x02\x10\x10\x11\x02\x01\x10'
-                                          b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x07\x08\x00\x00'
-                                          b'\x00\x00\x00\x05\x0e\x10\x0e\x0c\x06\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x02\x03\x06\t\r\x05\x06\x07\x08\t\n\x0b\x0c\r'
-                                          b'\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19'
-                                          b'\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./0123456789'
-                                          b':;\x11\x0f\x0c\xff\xff\xff\xff\xff\x80\x80\x80\x00\x00\x00'
-                                          b'(2\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x05\x04\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x11\x02\x11\x02\x02\x11\x01\x08'
-                                          b'\x10\x01\x11\x01\x10\x10\x10\x01\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x07\x08\x00\x00\x00\x00\x06\t'
-                                          b'\x0b\x0f\x0f\r\n\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x04'
-                                          b'\x01\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11'
-                                          b'\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !'
-                                          b'"#$%&\'()*+,-./0123456789:;\x10\r\x05\xff\xff\xff'
-                                          b'\xff\xff\x80\x80\x00\x00\x00\x00\n\n\x00\x00'
-                                          b'\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x01\x03\x04\x02'
-                                          b'\x00\x80\x00\x14\x00\x03\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x03\x03\x06TU\xdfS\x03\x03\x03\x03\x03'
-                                          b'\x99\xddTV\x03\xc5\x06\x9cA\x03A\x03\x06B\xc5\x03'
-                                          b'C\x03\x06\x03\x06\xa7\x8e\x06\x9a\x03\x06K\x06\x8f\xdd\x06'
-                                          b'\x99\x06\xa7SKLSUY\x8e\x99\x9a\xa7\xa8\xa8\x90'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x04\x04\x05\x05'
-                                          b'}\xa8\x7f\x05\x05\x7f\xa7\x05\x05}\x05\xa8\x04}\xc5\x05'
-                                          b'yz\x05~\x04\x04\xdbs\x04q\x05\x88\x04\xc3\x05\xbc'
-                                          b'\x05\x07`\x04`\x04\xdd\x04a\x04gh\x04sy}~\x83\x89\x89'
-                                          b'\x8a\xa7\xbc\xbc\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x030\x030'
-                                          b'\x030\x030\x030\x030\x00\x00\x00\x00\xc2\x0e\x00\x02'
-                                          b'\x80\x00\x00\x00\x00\x00\xff\xff\xffV\x01\x07'
-                                          b'\x03\xb1\x03\x02\x00\x02\xc2iCc\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'},
-                        0x01: {   0xA000: b'\x82\x8b\xec\xef\xee\xed\xec\xef\xee\xed\xec\xef'
-                                          b'\xee\xed\xec\xef\xee\xed\xec\xef\xee\xed\x91\x84'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x8a\x88\xd4\xd5'
-                                          b'\xd6\xd7\xd4\xd5\xd6\xd7\xd4\xd5\xd6\xd7\xd4\xd5'
-                                          b'\xd6\xd7\xd4\xd5\xd6\xd7\x8a\x88\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x8a\x88\xdc\xdd\xde\xdf\xd8\xd9'
-                                          b'\xda\xdb\xd8\xd9\xda\xdb\xd8\xd9\xda\xdb\xd8\xd9'
-                                          b'\xda\xdb\x8a\x88\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x8a\x88\xf0\xf1\xf2\xf3\xf0\xf1\xf2\xf3\xf0\xf1'
-                                          b'\xf2\xf3\xf0\xf1\xf2\xf3\xf0\xf1\xf2\xf3\x8a\x88'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x8a\x88\xf4\xf5'
-                                          b'\xf6\xf7\xf4\xf5\xf6\xf7\xf4\xf5\xf6\xf7\xf4\xf5'
-                                          b'\xf6\xf7\xf4\xf5\xf6\xf7\x8a\x88\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x8a\x88\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x8a\x88\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x8a\x88\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x8a\x88'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x8a\x88\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x8a\x88\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x87\x89\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\xd0\xd1\xd2\xd3\xd0\xd1'
-                                          b'\xd2\xd3\x8a\x88\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x96\x95\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\xd4\xd5\xd6\xd7\xd4\xd5\xd6\xd7\x8a\x88'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\xa6\xa5\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\xd8\xd9'
-                                          b'\xda\xdb\xd8\xd9\xda\xdb\x8a\x88\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\xf0\xf1\xf2\xf3\xf0\xf1'
-                                          b'\xf2\xf3\x8a\x88\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\xf4\xf5\xf6\xf7\xf4\xf5\xf6\xf7\x8a\x88'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x8a\x88\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x82\x84\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x8a\x88\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x8a\x88\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x8a\x88'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x8a\x88\xd0\xd1'
-                                          b'\xd2\xd3\x81\x81\x81\x81\x81\x81\x81\x81\xd0\xd1'
-                                          b'\xd2\xd3\xd0\xd1\xd2\xd3\x8a\x88\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x8a\x88\xd4\xd5\xd6\xd7\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\xd4\xd5\xd6\xd7\xd4\xd5'
-                                          b'\xd6\xd7\x8a\x88\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x8a\x88\x03\x04\x05\x06\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\xd8\xd9\xda\xdb\xd8\xd9\xda\xdb\x8a\x88'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x8a\x88\xf8\xf9'
-                                          b'\xfa\xfb\x81\x81\x81\x81\x81\x81\x81\x81\xf0\xf1'
-                                          b'\xf2\xf3\xf0\xf1\xf2\xf3\x8a\x88\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x8a\x88\xf4\xf5\xf6\xf7\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\xf4\xf5\xf6\xf7\xf4\xf5'
-                                          b'\xf6\xf7\x8a\x88\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x8a\x88\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x8a\x88'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x8a\x88\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x8a\x88\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x8a\x88\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x8a\x88\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x8a\x88\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x8a\x88'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x8a\x88\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81\x81'
-                                          b'\x81\x81\x81\x81\x81\x81\x8a\x88\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x87\x90\x83\x83\x83\x83\x83\x83'
-                                          b'\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83\x83'
-                                          b'\x83\x83\x92\x89\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x96\x93\x93\x93\x93\x93\x93\x93\x93\x93\x93\x93'
-                                          b'\x93\x93\x93\x93\x93\x93\x93\x93\x93\x93\x93\x95'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\xa6\xa3\xa3\xa3'
-                                          b'\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa3'
-                                          b'\xa3\xa3\xa3\xa3\xa3\xa3\xa3\xa5\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x06\x06'
-                                          b'\x06\x06\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x02\x02\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x02\x02\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x02\x02\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x02\x02\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x02\x02\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x02\x02\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x02\x02\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x02\x02\x02\x02\x02\x02\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x02\x02'
-                                          b'\x02\x02\x05\x05\x05\x05\x05\x05\x05\x05\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x02\x02\x0c\x0c\x0c\x0c\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x02\x02\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x02\x02\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x02\x02\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x02\x02\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x02\x02\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05'
-                                          b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02\x02'
-                                          b'\x02\x02\x02\x02\x02\x02\x02\x02\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\xe4\xe4\xe4\x9cc\xb5BJ'
-                                          b'!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9c'
-                                          b'c\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff'
-                                          b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                          b'\x7f\xff\x7f\x9cc\x1c2\x9c \x00 \x9cc\xb5BJ!\x00\x00\xff'
-                                          b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                          b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                          b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                          b'\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff'
-                                          b'\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00'}},
-            'a': 0x07,
-            'b': 0x00,
-            'c': 0x00,
-            'd': 0xCE,
-            'e': 0x58,
-            'f': 0x40,
-            'hl': 0x5EB8},
-    ],
-    'DrawCardTypeIconsAndPrintCardCounts': [
-        {   'wram': {0xCAB4: b'\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'vread': {0x00: {0x98A0: 0x14}},
-            'instruction_budget': 0x186A0,
-            'cycle_budget': 0x61A80},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCAB4: b'\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'vread': {0x00: {0x98A0: 0x14}},
-            'instruction_budget': 0x186A0,
-            'cycle_budget': 0x61A80},
-    ],
-    'ShowConfirmationCardScreen': [
-        {   'rom_bank': 0x02,
-            'wram': {0xCFBB: b'\x00', 0xCABB: b'\x00', 0xCE7C: b'\x00', 0xCE81: b'\x00\x00'},
-            'sram': {0x00: {}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE81: 0x02},
-            'expect': {0xCE81: b'\x05\x03'},
-            'instruction_budget': 0x1E8480,
-            'cycle_budget': 0x7A1200},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'rom_bank': 0x02,
-            'wram': {0xCFBB: b'\x00', 0xCABB: b'\x00', 0xCE7C: b'\x00', 0xCE81: b'\x00\x00'},
-            'sram': {0x00: {}},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE81: 0x02},
-            'expect': {0xCE81: b'\x05\x03'},
-            'instruction_budget': 0x1E8480,
-            'cycle_budget': 0x7A1200},
-    ],
-    'ShowDeckInfoHeaderAndWaitForBButton': [
-        {   'wram': {0xCFBB: b'\x00', 0xCABB: b'\x00'},
-            'sram': {0x00: {}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'vread': {0x00: {0x9821: 0x04}},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCFBB: b'\x01\x00', 0xCE5B: b'\x00', 0xCABB: b'\x00'},
-            'sram': {0x00: {0xB668: b'\x00'}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'vread': {0x00: {0x9821: 0x04}},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'HandleDeckConfirmationMenu': [
-        {   'wram': {0xCE7D: b'\x00', 0xCFBB: b'\x00', 0xCABB: b'\x00'},
-            'sram': {0x00: {}},
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'vread': {0x00: {0x9821: 0x04}},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'wram': {   0xCE7D: b'\x01',
-                        0xCFBB: b'\x00',
-                        0xCABB: b'\x00',
-                        0xFF97: b'\xc2',
-                        0xCEC8: b'\x01\x00',
-                        0xC478: b'\x99\x00',
-                        0xC500: b'\xff',
-                        0xCE65: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7F: b'\x00\x00'},
-            'sram': {0x00: {}},
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {   0xCE4C: 0x01,
-                        0xCE4E: 0x01,
-                        0xCE53: 0x01,
-                        0xFF8F: 0x01,
-                        0xFFB3: 0x01,
-                        0xCE7C: 0x01,
-                        0xCE83: 0x01,
-                        0xCE8A: 0x01,
-                        0xCE7F: 0x02,
-                        0xCFE7: 0x01,
-                        0xFF97: 0x01,
-                        0xCEC8: 0x02,
-                        0xD72C: 0x02},
-            'vread': {0x00: {0x9821: 0x04}},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCE7D: b'\x01',
-                        0xCFBB: b'\x00',
-                        0xCABB: b'\x00',
-                        0xFF97: b'\xc2',
-                        0xCEC8: b'\x01\x00',
-                        0xC478: b'\x99\x00',
-                        0xC500: b'\xff',
-                        0xCE65: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7F: b'\x00\x00'},
-            'sram': {0x00: {}},
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {   0xCE4C: 0x01,
-                        0xCE4E: 0x01,
-                        0xCE53: 0x01,
-                        0xFF8F: 0x01,
-                        0xFFB3: 0x01,
-                        0xCE7C: 0x01,
-                        0xCE83: 0x01,
-                        0xCE8A: 0x01,
-                        0xCE7F: 0x02,
-                        0xCFE7: 0x01,
-                        0xFF97: 0x01,
-                        0xCEC8: 0x02,
-                        0xD72C: 0x02},
-            'vread': {0x00: {0x9821: 0x04}},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100},
-        {   'wram': {   0xCE7D: b'\x01',
-                        0xCFBB: b'\x00',
-                        0xCABB: b'\x00',
-                        0xFF97: b'\xc2',
-                        0xCEC8: b'\x08\x01\x02\x03\x04\x05\x06\x07\x00',
-                        0xC478: b'\x99\x00',
-                        0xC500: b'\xff',
-                        0xCE65: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE7F: b'\x00\x00'},
-            'sram': {0x00: {}},
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {   0xCE4C: 0x01,
-                        0xCE4E: 0x01,
-                        0xCE53: 0x01,
-                        0xFF8F: 0x01,
-                        0xFFB3: 0x01,
-                        0xCE7C: 0x01,
-                        0xCE83: 0x01,
-                        0xCE8A: 0x01,
-                        0xCE7F: 0x02,
-                        0xCFE7: 0x01,
-                        0xFF97: 0x01,
-                        0xCEC8: 0x09,
-                        0xD72C: 0x09},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100},
-    ],
-    'ConfirmDeckConfiguration': [
-        {   'a': 0x00,
-            'f': 0x00,
-            'wram': {0xCE7D: b'\x00', 0xCFBB: b'\x00', 0xCABB: b'\x00', 0xCE4C: b'3', 0xCAB4: b'\x00'},
-            'sram': {0x00: {}},
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE4C: 0x01, 0xCE89: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE7D: b'\x00', 0xCFBB: b'\x00', 0xCABB: b'\x00', 0xCE4C: b'3', 0xCAB4: b'\x00'},
-            'sram': {0x00: {}},
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCE4C: 0x01, 0xCE89: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100},
-    ],
-    'SaveDeckConfiguration': [
-        {   'stack': [0x00],
-            'wram': {0xCE7D: b';', 0xCD20: b'\x01', 0xCABB: b'\x80', 0xFF40: b'\x80'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'stack': [0x1234],
-            'wram': {0xCE7D: b';', 0xCD20: b'\x01', 0xCABB: b'\x80', 0xFF40: b'\x80'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'DismantleDeck': [
-        {   'stack': [0x00],
-            'wram': {   0xCD20: b'\x01',
-                        0xCE5B: b'\x00',
-                        0xCE5C: b'\x01\x01\x00\x00',
-                        0xCABB: b'\x80',
-                        0xFF40: b'\x80'},
-            'sram': {   0x00: {   0xA100: b'\x00\x00\x00\x00',
-                                  0xA300: b'AB\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA318: b'\x01\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'stack': [0x1234],
-            'wram': {   0xCD20: b'\x01',
-                        0xCE5B: b'\x00',
-                        0xCE5C: b'\x01\x01\x00\x00',
-                        0xCABB: b'\x80',
-                        0xFF40: b'\x80'},
-            'sram': {   0x00: {   0xA100: b'\x00\x00\x00\x00',
-                                  0xA300: b'AB\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                                  0xA318: b'\x01\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'stack': [0x00],
-            'wram': {   0xCD20: b'\x01',
-                        0xCE5B: b'\x00',
-                        0xCE5C: b'\x01\x01\x00\x00',
-                        0xCABB: b'\x80',
-                        0xFF40: b'\x80'},
-            'sram': {   0x00: {   0xA100: b'\x00\x00\x00\x00',
-                                  0xA300: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00',
-                                  0xA318: b'\x01\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'CancelDeckModifications': [
-        {   'stack': [0x00],
-            'wram': {0xCE7D: b'\x01', 0xCD20: b'\x01', 0xCABB: b'\x80', 0xFF40: b'\x80'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'stack': [0x1234],
-            'wram': {0xCE7D: b'\x01', 0xCD20: b'\x01', 0xCABB: b'\x80', 0xFF40: b'\x80'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'HandleSelectUpAndDownInList': [
-        {'wram': {0xFF8F: b'\x00', 0xCE53: b'\x02', 0xCE4C: b'\x03', 0xCFE7: b'\x08'}},
-        {'wram': {0xFF8F: b'\x04', 0xCE53: b'\x02', 0xCE4C: b'\x03', 0xCFE7: b'\x08'}},
-        {'wram': {0xFF8F: b'\x84', 0xCE53: b'\x02', 0xCE4C: b'\x03', 0xCFE7: b'\x05'}},
-        {   'oracle': False,
-            'why': 'Exercises direct dispatch to the ported card-selection list updater.',
-            'wram': {   0xFF8F: b'\x84',
-                        0xCE53: b'\x02',
-                        0xCE4C: b'\x01',
-                        0xCFE7: b'\x06',
-                        0xCE7F: b'\x1ab',
-                        0xCE7C: b'\x00',
-                        0xCE81: b'\x00\x00',
-                        0xCE7E: b'\x00'},
-            'expect': {0xCE4C: b'\x03', 0xCE7E: b'\x01'},
-            'expect_regs': {'f': 0x10}},
-        {   'oracle': False,
-            'why': 'Exercises direct dispatch to the ported deck-building list updater.',
-            'wram': {   0xFF8F: b'D',
-                        0xCE53: b'\x02',
-                        0xCE4C: b'\x03',
-                        0xCFE7: b'\x08',
-                        0xCE7F: b'jX',
-                        0xCE7C: b'\x00',
-                        0xCE81: b'\x00\x00',
-                        0xCE7E: b'\x00'},
-            'expect': {0xCE4C: b'\x01', 0xCE7E: b'\x01'},
-            'expect_regs': {'f': 0x10}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF8F: b'\x00', 0xCE53: b'\x01', 0xCE4C: b'\x01', 0xCFE7: b'\x08'}},
-    ],
-    'HandleDeckBuildScreen': [
-        {   'wram': {0xCABB: b'\x00', 0xCFD6: b'\x07S'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'read': {0xCE4C: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCABB: b'\x00', 0xCFD6: b'\x07S'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'read': {0xCE4C: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'HandlePlayersCardsScreen': [
-        {   'rom_bank': 0x02,
-            'wram': {   0xCAB4: b'\x00',
-                        0xCABB: b'\x00',
-                        0xCE4C: b'\xff',
-                        0xCE84: b'\xff',
-                        0xFFB3: b'\xff'},
-            'sram': {   0x00: {   0xA100: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00',
-                                  0xA318: b'\x00',
-                                  0xA374: b'\x00',
-                                  0xA3D0: b'\x00',
-                                  0xA42C: b'\x00',
-                                  0xA010: b'\x81\x82\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00'}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'read': {0xCE4C: 0x01, 0xCE84: 0x01, 0xFFB3: 0x01},
-            'expect': {0xCE4C: b'\x00', 0xCE84: b'\x00', 0xFFB3: b'\xff'},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'rom_bank': 0x02,
-            'wram': {   0xCAB4: b'\x00',
-                        0xCABB: b'\x00',
-                        0xCE4C: b'\xff',
-                        0xCE84: b'\xff',
-                        0xFFB3: b'\xff'},
-            'sram': {   0x00: {   0xA100: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00',
-                                  0xA318: b'\x00',
-                                  0xA374: b'\x00',
-                                  0xA3D0: b'\x00',
-                                  0xA42C: b'\x00',
-                                  0xA010: b'\x81\x82\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                          b'\x00\x00\x00\x00'}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'read': {0xCE4C: 0x01, 0xCE84: 0x01, 0xFFB3: 0x01},
-            'expect': {0xCE4C: b'\x00', 0xCE84: b'\x00', 0xFFB3: b'\xff'},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'ChangeDeckName': [
-        {   'wram': {   0xCE5B: b'\x00',
-                        0xCFBB: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00',
-                        0xFF90: b'\x00',
-                        0xCABB: b'\x00'},
-            'sram': {0x00: {0xB669: b'\x01\x00'}},
-            'keys': [0x00, 0x41, 0x00, 0x02],
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCFBB: 0x16},
-            'sread': {0x00: {0xB669: 0x02}},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCE5B: b'\x02',
-                        0xCFBB: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00',
-                        0xFF90: b'\x00',
-                        0xCABB: b'\x00'},
-            'sram': {0x00: {0xB669: b'\xe7\x03'}},
-            'keys': [0x00, 0x41, 0x00, 0x02],
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCFBB: 0x16},
-            'sread': {0x00: {0xB669: 0x02}},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'HandleDeckConfigurationMenu': [
-        {   'wram': {0xCABB: b'\x00', 0xCE85: b'\x12', 0xCE84: b'\x00', 0xCFD4: b'\x07S'},
-            'sram': {0x00: {}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'read': {0xCE4E: 0x01, 0xCE87: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCABB: b'\x00', 0xCE85: b'\x12', 0xCE84: b'\x00', 0xCFD4: b'\x07S'},
-            'sram': {0x00: {}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'read': {0xCE4E: 0x01, 0xCE87: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'ModifyDeckConfiguration': [
-        {   'stack': [0x00],
-            'wram': {0xCABB: b'\x00', 0xCE85: b'\x12', 0xCE84: b'\x00', 0xCFD4: b'\x07S'},
-            'sram': {0x00: {}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'read': {0xCE4E: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'stack': [0x1234],
-            'wram': {0xCABB: b'\x00', 0xCE85: b'\x12', 0xCE84: b'\x00', 0xCFD4: b'\x07S'},
-            'sram': {0x00: {}},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x02],
-            'rom_bank': 0x02,
-            'read': {0xCE4E: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
+            'hl': sym("wCardListUpdateFunction") + 1},
+        {   'wram': {   sym("hDPadHeld"): b'@',
+                        sym("hKeysPressed"): b'\x00',
+                        sym("wCardListCursorPos"): b'\x00',
+                        sym("wCardListNumCursorPositions"): b'\x04',
+                        sym("wCardListVisibleOffset"): b'\x00',
+                        sym("wCardListHandlerFunction"): b'\x00',
+                        sym("wCheckMenuCursorBlinkCounter"): b'\x05'},
+            'read': {sym("hffb3"): 0x01, sym("wCardListCursorPos"): 0x01, sym("wMenuInputSFX"): 0x01, sym("wCheckMenuCursorBlinkCounter"): 0x01}},
+        {   'wram': {   sym("hDPadHeld"): b'\x10',
+                        sym("hKeysPressed"): b'\x00',
+                        sym("wCardListCursorPos"): b'\x02',
+                        sym("wCardListNumCursorPositions"): b'\x04',
+                        sym("wCardListVisibleOffset"): b'\x00',
+                        sym("wCardListHandlerFunction"): b'\x00',
+                        sym("wCheckMenuCursorBlinkCounter"): b'\x05',
+                        sym("wced2"): b'\x00'},
+            'read': {sym("hffb3"): 0x01, sym("wCardListCursorPos"): 0x01, sym("wMenuInputSFX"): 0x01, sym("wCheckMenuCursorBlinkCounter"): 0x01}},
     ],
     'CopyNBytesFromHLToDE_Long': [
-        {'b': 0x00, 'c': 0x01, 'hl': 0xC100, 'd': 0xC2, 'e': 0x00,
-         'wram': {0xC100: b'\x42'}, 'read': {0xC200: 0x01}},
+        {'b': 0x00, 'c': 0x01, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11, 'd': 0xC2, 'e': 0x00,
+         'wram': {sym("wDecompressionSecondaryBufferStart") + 0x11: b'\x42'}, 'read': {sym("wPlayerCardLocations"): 0x01}},
         {'a': 0xAA, 'f': 0xF0, 'b': 0x00, 'c': 0x03, 'd': 0xC2, 'e': 0x00,
-         'hl': 0xC100, 'wram': {0xC100: b'\x01\x02\x03'},
-         'read': {0xC200: 0x03}},
+         'hl': sym("wDecompressionSecondaryBufferStart") + 0x11, 'wram': {sym("wDecompressionSecondaryBufferStart") + 0x11: b'\x01\x02\x03'},
+         'read': {sym("wPlayerCardLocations"): 0x03}},
     ],
     'CalculateOnesAndTensDigits_Long': [
-        {'hl': 0x0000, 'wram': {0xCE60: b'\xff\xff\xff\xff\xff'}},
-        {'hl': 0x0001, 'wram': {0xCE60: b'\xff\xff\xff\xff\xff'}},
+        {'hl': 0x0000, 'wram': {sym("wDecimalDigitsSymbols"): b'\xff\xff\xff\xff\xff'}},
+        {'hl': 0x0001, 'wram': {sym("wDecimalDigitsSymbols"): b'\xff\xff\xff\xff\xff'}},
         {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0xEE,
-         'hl': 0xFFFF, 'wram': {0xCE60: b'\xff\xff\xff\xff\xff'}},
+         'hl': 0xFFFF, 'wram': {sym("wDecimalDigitsSymbols"): b'\xff\xff\xff\xff\xff'}},
     ],
-}
-
-
-MUTATIONS = {
-    'DecrementDeckCardsInCollection': {   'source_symbol': 'DecrementDeckCardsInCollection',
-        'before': 'gb_write8(addr, (uint8_t)(gb_read8(addr) - 1u));',
-        'after': 'gb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));',
-        'case_ids': ['DecrementDeckCardsInCollection-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'AddDeckToCollection': {   'source_symbol': 'AddDeckToCollection',
-        'before': 'gb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));',
-        'after': 'gb_write8(addr, (uint8_t)(gb_read8(addr) - 1u));',
-        'case_ids': ['AddDeckToCollection-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'CopyListFromHLToDE': {   'source_symbol': 'CopyListFromHLToDE',
-        'before': 'if (a == 0)\n\t\t\tbreak;\n\t\td++;',
-        'after': 'if (a == 0)\n\t\t\tbreak;\n\t\td += 2u;',
-        'case_ids': ['CopyListFromHLToDE-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'CalculateOnesAndTensDigits': {   'source_symbol': 'CalculateOnesAndTensDigits',
-        'before': 'if (tens != 0u)',
-        'after': 'if (tens > 1u)',
-        'case_ids': ['CalculateOnesAndTensDigits-4', 'CalculateOnesAndTensDigits-5'],
-        'source': 'src/home/deck_configuration.c'},
-    'InitCardSelectionParams': {   'source_symbol': 'InitCardSelectionParams',
-        'before': 'for (uint8_t i = 0; i < 9u; i++)',
-        'after': 'for (uint8_t i = 0; i < 8u; i++)',
-        'case_ids': ['InitCardSelectionParams-1', 'InitCardSelectionParams-2'],
-        'source': 'src/home/deck_configuration.c'},
-    'ClearMemory_Bank2': {   'source_symbol': 'ClearMemory_Bank2',
-        'before': 'uint32_t n = count ? count : 0x100u;',
-        'after': 'uint32_t n = count ? count : 0xFFu;',
-        'case_ids': ['ClearMemory_Bank2-0', 'ClearMemory_Bank2-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'CheckIfHasOtherValidDecks': {   'source_symbol': 'CheckIfHasOtherValidDecks',
-        'before': 'if (gb_read8(hl) == 0)',
-        'after': 'if (gb_read8(hl) != 0)',
-        'case_ids': [   'CheckIfHasOtherValidDecks-0',
-                        'CheckIfHasOtherValidDecks-1',
-                        'CheckIfHasOtherValidDecks-2',
-                        'CheckIfHasOtherValidDecks-3'],
-        'source': 'src/home/deck_configuration.c'},
-    'FillDEWithA': {   'source_symbol': 'FillDEWithA',
-        'before': 'do {\n\t\tgb_write8(address++, a);\n\t} while (--count);',
-        'after': 'do {\n\t\tgb_write8(address++, a);\n\t} while (--count > 1u);',
-        'case_ids': ['FillDEWithA-1', 'FillDEWithA-3'],
-        'source': 'src/home/deck_configuration.c'},
-    'DrawHandCardsTileAtDE': {   'source_symbol': 'DrawHandCardsTileAtDE',
-        'before': 'FillRectangle(0x38u, 2u, 2u, de, 0x0102u);',
-        'after': 'FillRectangle(0x39u, 2u, 2u, de, 0x0102u);',
-        'case_ids': [   'DrawHandCardsTileAtDE-0',
-                        'DrawHandCardsTileAtDE-1',
-                        'DrawHandCardsTileAtDE-2'],
-        'source': 'src/home/deck_configuration.c'},
-    'CountNumberOfCardsOfType': {   'source_symbol': 'CountNumberOfCardsOfType',
-        'before': 'uint8_t count = 0;',
-        'after': 'uint8_t count = 1;',
-        'case_ids': ['CountNumberOfCardsOfType-2'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'CopyNBytesFromHLToDE': {   'source_symbol': 'CopyNBytesFromHLToDE',
-        'before': '\t\tgb_write8(dst++, gb_read8(src++));',
-        'after': '\t\tgb_write8(dst++, (uint8_t)(gb_read8(src++) + 1u));',
-        'case_ids': [   'CopyNBytesFromHLToDE-0',
-                        'CopyNBytesFromHLToDE-1',
-                        'CopyNBytesFromHLToDE-2',
-                        'CopyNBytesFromHLToDE-3'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'IncrementDeckCardsInTempCollection': {   'source_symbol': 'IncrementDeckCardsInTempCollection',
-        'before': 'uint16_t slot = (uint16_t)(bc + card);',
-        'after': 'uint16_t slot = (uint16_t)(bc + (uint8_t)(card + 1u));',
-        'case_ids': [   'IncrementDeckCardsInTempCollection-0',
-                        'IncrementDeckCardsInTempCollection-1',
-                        'IncrementDeckCardsInTempCollection-2'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'CreateCardCollectionListWithDeckCards': {   'source_symbol': 'CreateCardCollectionListWithDeckCards',
-        'before': 'IncrementDeckCardsInTempCollection(sDeck1Cards_ADDR);',
-        'after': 'IncrementDeckCardsInTempCollection(sDeck2Cards_ADDR);',
-        'case_ids': ['CreateCardCollectionListWithDeckCards-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
+})
+MUTATIONS.update({
+    'CountNumberOfCardsOfType': {'source_symbol': 'CountNumberOfCardsOfType', 'before': 'uint8_t count = 0u;', 'after': 'uint8_t count = 1u;', 'case_ids': ['CountNumberOfCardsOfType-2'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
+    'IncrementDeckCardsInTempCollection': {'source_symbol': 'IncrementDeckCardsInTempCollection', 'before': 'uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + id);', 'after': 'uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + id + 1u);', 'case_ids': ['IncrementDeckCardsInTempCollection-0', 'IncrementDeckCardsInTempCollection-1', 'IncrementDeckCardsInTempCollection-2'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
     'GetSelectedVisibleCardID': {   'source_symbol': 'GetSelectedVisibleCardID',
         'before': '\tuint8_t high = gb_read8((uint16_t)(hl + 1u));',
         'after': '\tuint8_t high = gb_read8((uint16_t)(hl + 2u));',
@@ -7795,19 +3458,8 @@ MUTATIONS = {
                         'GetSelectedVisibleCardID-1',
                         'GetSelectedVisibleCardID-2'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'CheckIfDeckHasCards': {   'source_symbol': 'CheckIfDeckHasCards',
-        'before': 'return value == 0u ? 0x90u : 0x00u;',
-        'after': 'return value != 0u ? 0x90u : 0x00u;',
-        'case_ids': [   'CheckIfDeckHasCards-0',
-                        'CheckIfDeckHasCards-1',
-                        'CheckIfDeckHasCards-2',
-                        'CheckIfDeckHasCards-3'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'FillBGMapLineWithA': {   'source_symbol': 'FillBGMapLineWithA',
-        'before': '\tFillDEWithA(0x04u, 20u, de);',
-        'after': '\tFillDEWithA(0x05u, 20u, de);',
-        'case_ids': ['FillBGMapLineWithA-1', 'FillBGMapLineWithA-2'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
+    'CheckIfDeckHasCards': {'source_symbol': 'CheckIfDeckHasCards', 'before': 'return id == 0u ? 0x90u : 0x00u;', 'after': 'return id != 0u ? 0x90u : 0x00u;', 'case_ids': ['CheckIfDeckHasCards-0', 'CheckIfDeckHasCards-1', 'CheckIfDeckHasCards-2', 'CheckIfDeckHasCards-3'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
+    'FillBGMapLineWithA': {'source_symbol': 'FillBGMapLineWithA', 'before': 'FillDEWithA(a, 20u, de);', 'after': 'FillDEWithA((uint8_t)(a + 1u), 20u, de);', 'case_ids': ['FillBGMapLineWithA-1', 'FillBGMapLineWithA-2'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
     'OpenDeckConfigurationMenu': {   'source_symbol': 'OpenDeckConfigurationMenu',
         'before': '\treturn OpenDeckConfigurationMenu_SkipInit();',
         'after': '\treturn (DeckBuildScreenResult){0u, 0u};',
@@ -7815,182 +3467,16 @@ MUTATIONS = {
                         'OpenDeckConfigurationMenu-1',
                         'OpenDeckConfigurationMenu-2'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'PrintTotalNumberOfCardsInCollection': {   'source_symbol': 'PrintTotalNumberOfCardsInCollection',
-        'before': '\tuint16_t printed = wTempCardCollection_ADDR;',
-        'after': '\tuint16_t printed = (uint16_t)(wTempCardCollection_ADDR + 2u);',
-        'case_ids': [   'PrintTotalNumberOfCardsInCollection-1',
-                        'PrintTotalNumberOfCardsInCollection-3'],
-        'source': 'src/home/deck_configuration.c'},
-    'DrawHorizontalListCursor': {   'source_symbol': 'DrawHorizontalListCursor',
-        'before': 'WriteByteToBGMap0(a, x, y);',
-        'after': 'WriteByteToBGMap0(a, y, x);',
-        'case_ids': ['DrawHorizontalListCursor-0', 'DrawHorizontalListCursor-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'GetCountOfCardInCurDeck': {   'source_symbol': 'GetCountOfCardInCurDeck',
-        'before': '\tuint8_t count = 0u;',
-        'after': '\tuint8_t count = 1u;',
-        'case_ids': ['GetCountOfCardInCurDeck-0', 'GetCountOfCardInCurDeck-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'DrawListCursor': {   'source_symbol': 'DrawListCursor',
-        'before': 'uint8_t x = (uint8_t)((uint8_t)HtimesL(hl) + wCardListCursorXPos);',
-        'after': 'uint8_t x = (uint8_t)((uint8_t)HtimesL(hl) + wCardListCursorXPos + 1u);',
-        'case_ids': ['DrawListCursor-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'DrawHorizontalListCursor_Invisible': {   'source_symbol': 'DrawHorizontalListCursor_Invisible',
-        'before': '\tuint8_t tile = wInvisibleCursorTile;',
-        'after': '\tuint8_t tile = 0u;',
-        'case_ids': [   'DrawHorizontalListCursor_Invisible-0',
-                        'DrawHorizontalListCursor_Invisible-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'DrawHorizontalListCursor_Visible': {   'source_symbol': 'DrawHorizontalListCursor_Visible',
-        'before': '\tuint8_t tile = wVisibleCursorTile;',
-        'after': '\tuint8_t tile = 0u;',
-        'case_ids': ['DrawHorizontalListCursor_Visible-0', 'DrawHorizontalListCursor_Visible-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'IsCardInAnyDeck': {   'source_symbol': 'IsCardInAnyDeck',
-        'before': '\t\t\tif (card == e) {',
-        'after': '\t\t\tif (card != e) {',
-        'case_ids': ['IsCardInAnyDeck-0', 'IsCardInAnyDeck-1', 'IsCardInAnyDeck-2'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'DrawListCursor_Invisible': {   'source_symbol': 'DrawListCursor_Invisible',
-        'before': '\tuint8_t tile = wInvisibleCursorTile;\n\treturn DrawListCursor(tile);',
-        'after': '\tuint8_t tile = 0u;\n\treturn DrawListCursor(tile);',
-        'case_ids': ['DrawListCursor_Invisible-0', 'DrawListCursor_Invisible-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'DrawListCursor_Visible': {   'source_symbol': 'DrawListCursor_Visible',
-        'before': '\tuint8_t tile = wVisibleCursorTile;\n\treturn DrawListCursor(tile);',
-        'after': '\tuint8_t tile = 0u;\n\treturn DrawListCursor(tile);',
-        'case_ids': ['DrawListCursor_Visible-0', 'DrawListCursor_Visible-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'CountNumberOfCardsForEachCardType': {   'source_symbol': 'CountNumberOfCardsForEachCardType',
-        'before': '\t\tgb_write8(hl++, CountNumberOfCardsOfType(type));',
-        'after': '\t\tgb_write8(hl++, (uint8_t)(CountNumberOfCardsOfType(type) + 1u));',
-        'case_ids': ['CountNumberOfCardsForEachCardType-0', 'CountNumberOfCardsForEachCardType-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'CopyDeckName': {   'source_symbol': 'CopyDeckName',
-        'before': '\tuint16_t hl4 = DeckNameSuffix_ADDR;',
-        'after': '\tuint16_t hl4 = (uint16_t)(DeckNameSuffix_ADDR + 1u);',
-        'case_ids': ['CopyDeckName-0', 'CopyDeckName-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'GetOwnedCardCount': {   'source_symbol': 'GetOwnedCardCount',
-        'before': '\t\tif (a == 0u)\n\t\t\treturn (GetOwnedCardCountResult){0u, d};',
-        'after': '\t\tif (a == 1u)\n\t\t\treturn (GetOwnedCardCountResult){0u, d};',
-        'case_ids': ['GetOwnedCardCount-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'TallyCardsInCardFilterLists': {   'source_symbol': 'TallyCardsInCardFilterLists',
-        'before': '\tif (sum != 0u)',
-        'after': '\tif (sum == 0u)',
-        'case_ids': ['TallyCardsInCardFilterLists-0', 'TallyCardsInCardFilterLists-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'RemoveCardFromDeck': {   'source_symbol': 'RemoveCardFromDeck',
-        'before': 'return (RemoveCardFromDeckResult){0u, 0x80u, b, c, d, e, hl};',
-        'after': 'return (RemoveCardFromDeckResult){0u, 0x90u, b, c, d, e, hl};',
-        'case_ids': ['RemoveCardFromDeck-0', 'RemoveCardFromDeck-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'CheckIfCurrentDeckWasChanged': {   'source_symbol': 'CheckIfCurrentDeckWasChanged',
-        'before': 'return (CheckIfCurrentDeckWasChangedResult){total, 0x10u};',
-        'after': 'return (CheckIfCurrentDeckWasChangedResult){total, 0x00u};',
-        'case_ids': ['CheckIfCurrentDeckWasChanged-0', 'CheckIfCurrentDeckWasChanged-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'CreateFilteredCardList': {   'source_symbol': 'CreateFilteredCardList',
-        'before': 'gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)out_index);',
-        'after': 'gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)(out_index + 1u));',
-        'case_ids': ['CreateFilteredCardList-0', 'CreateFilteredCardList-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'ConfirmSelectionAndReturnCarry': {   'source_symbol': 'ConfirmSelectionAndReturnCarry',
-        'before': 'return (ConfirmSelectionAndReturnCarryResult){a, e};',
-        'after': 'return (ConfirmSelectionAndReturnCarryResult){e, a};',
-        'case_ids': ['ConfirmSelectionAndReturnCarry-0'],
-        'source': 'src/home/deck_configuration.c'},
-    'AddCardIDToVisibleList': {   'source_symbol': 'AddCardIDToVisibleList',
-        'before': 'uint8_t offset = (uint8_t)(num_entries - b);',
-        'after': 'uint8_t offset = (uint8_t)(num_entries + b);',
-        'case_ids': ['AddCardIDToVisibleList-0', 'AddCardIDToVisibleList-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'HandleCardSelectionCursorBlink': {   'source_symbol': 'HandleCardSelectionCursorBlink',
-        'before': '\tgb_write8(wCheckMenuCursorBlinkCounter_ADDR, (uint8_t)(counter_old + 1u));',
-        'after': '\tgb_write8(wCheckMenuCursorBlinkCounter_ADDR, counter_old);',
-        'case_ids': ['HandleCardSelectionCursorBlink-0', 'HandleCardSelectionCursorBlink-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'DrawHandCardsTileOnCurDeck': {   'source_symbol': 'DrawHandCardsTileOnCurDeck',
-        'before': '\tuint8_t e = (uint8_t)((uint8_t)product + 1u);',
-        'after': '\tuint8_t e = (uint8_t)product;',
-        'case_ids': ['DrawHandCardsTileOnCurDeck-0', 'DrawHandCardsTileOnCurDeck-1'],
-        'source': 'src/home/deck_configuration.c'},
+    'IsCardInAnyDeck': {'source_symbol': 'IsCardInAnyDeck', 'before': 'if (card == id)', 'after': 'if (card != id)', 'case_ids': ['IsCardInAnyDeck-0', 'IsCardInAnyDeck-1', 'IsCardInAnyDeck-2'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
+    'GetOwnedCardCount': {'source_symbol': 'GetOwnedCardCount', 'before': 'if (card == 0u)', 'after': 'if (card == 1u)', 'case_ids': ['GetOwnedCardCount-1'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
+    'CreateFilteredCardList': {'source_symbol': 'CreateFilteredCardList', 'before': 'gb_write8(wNumEntriesInCurFilter_ADDR, out_index);', 'after': 'gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)(out_index + 1u));', 'case_ids': ['CreateFilteredCardList-0', 'CreateFilteredCardList-1'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
     'HandleCardSelectionInput': {   'source_symbol': 'HandleCardSelectionInput',
         'before': '\tgb_write8(0xFFB3u, gb_read8(wCardListCursorPos_ADDR));',
         'after': '\tgb_write8(0xFFB3u, (uint8_t)(gb_read8(wCardListCursorPos_ADDR) + 1u));',
         'case_ids': ['HandleCardSelectionInput-0', 'HandleCardSelectionInput-1'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'HandleLeftRightInCardList': {   'source_symbol': 'HandleLeftRightInCardList',
-        'before': '\t\tuint8_t f = (dpad == 0u) ? 0x80u : 0x00u;',
-        'after': '\t\tuint8_t f = (dpad == 0u) ? 0x00u : 0x80u;',
-        'case_ids': ['HandleLeftRightInCardList-0', 'HandleLeftRightInCardList-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'PrintPlayersCardsText': {   'source_symbol': 'PrintPlayersCardsText',
-        'before': 'InitTextPrinting(1u, 0u);',
-        'after': 'InitTextPrinting(2u, 0u);',
-        'case_ids': ['PrintPlayersCardsText-0', 'PrintPlayersCardsText-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'ConvertToNumericalDigits': {   'source_symbol': 'ConvertToNumericalDigits',
-        'before': 'gb_write8(hl, tens);',
-        'after': 'gb_write8(hl, ones);',
-        'case_ids': ['ConvertToNumericalDigits-0', 'ConvertToNumericalDigits-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'CopyListFromHLToDEInSRAM': {   'source_symbol': 'CopyListFromHLToDEInSRAM',
-        'before': 'EnableSRAM();\n\tCopyListFromHLToDE(&hl, &de);',
-        'after': 'EnableSRAM();\n\tCopyListFromHLToDE(&de, &hl);',
-        'case_ids': ['CopyListFromHLToDEInSRAM-0'],
-        'source': 'src/home/deck_configuration.c'},
-    'PrintDeckName': {   'source_symbol': 'PrintDeckName',
-        'before': 'uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + len.c);',
-        'after': 'uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + len.c + 1u);',
-        'case_ids': ['PrintDeckName-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'AppendOwnedCardCountNumber': {   'source_symbol': 'AppendOwnedCardCountNumber',
-        'before': '\twhile (gb_read8(walk) != 0u) {',
-        'after': '\twhile (gb_read8(walk) != 1u) {',
-        'case_ids': ['AppendOwnedCardCountNumber-0', 'AppendOwnedCardCountNumber-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'PrintNumberValueInCursorYPos': {   'source_symbol': 'PrintNumberValueInCursorYPos',
-        'before': '\tuint8_t e = (uint8_t)(lo + cursor_y);',
-        'after': '\tuint8_t e = (uint8_t)(lo + cursor_y + 1u);',
-        'case_ids': ['PrintNumberValueInCursorYPos-0', 'PrintNumberValueInCursorYPos-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'AppendOwnedCardCountAndStorageCountNumbers': {   'source_symbol': 'AppendOwnedCardCountAndStorageCountNumbers',
-        'before': 'gb_write8(walk, SYM_SLASH);',
-        'after': 'gb_write8(walk, TX_SYMBOL);',
-        'case_ids': [   'AppendOwnedCardCountAndStorageCountNumbers-0',
-                        'AppendOwnedCardCountAndStorageCountNumbers-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'PrintCardTypeCounts': {   'source_symbol': 'PrintCardTypeCounts',
-        'before': '\t\tuint8_t count = gb_read8((uint16_t)(wCardFilterCounts_ADDR + c));',
-        'after': '\t\tuint8_t count = gb_read8((uint16_t)(wCardFilterCounts_ADDR + c + 1u));',
-        'case_ids': ['PrintCardTypeCounts-0', 'PrintCardTypeCounts-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'AppendDeckName': {   'source_symbol': 'AppendDeckName',
-        'before': '\tif (no_cards & 0x10u) {',
-        'after': '\tif (no_cards & 0x20u) {',
-        'case_ids': ['AppendDeckName-0', 'AppendDeckName-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'DrawDecksScreen': {   'source_symbol': 'DrawDecksScreen',
-        'before': '\tif (!(nc1 & 0x10u)) {\n\t\twDeck1Valid = TRUE;',
-        'after': '\tif ((nc1 & 0x10u)) {\n\t\twDeck1Valid = TRUE;',
-        'case_ids': ['DrawDecksScreen-0', 'DrawDecksScreen-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'PrintTotalCardCount': {   'source_symbol': 'PrintTotalCardCount',
-        'before': 'uint8_t value = gb_read8(hl);\n\t\tsum = (uint8_t)(value + sum);',
-        'after': 'uint8_t value = gb_read8((uint16_t)(hl + 1u));\n'
-                 '\t\tsum = (uint8_t)(value + sum);',
-        'case_ids': ['PrintTotalCardCount-0', 'PrintTotalCardCount-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'RemoveCardFromDeckAndUpdateCount': {   'source_symbol': 'RemoveCardFromDeckAndUpdateCount',
-        'before': '\t\treturn (RemoveCardFromDeckAndUpdateCountResult){r.a, r.f, r.b, r.c, r.d, '
-                  'r.e, r.hl};',
-        'after': '\t\treturn (RemoveCardFromDeckAndUpdateCountResult){r.a, r.f, r.b, r.c, r.c, '
-                 'r.e, r.hl};',
-        'case_ids': ['RemoveCardFromDeckAndUpdateCount-1'],
-        'source': 'src/home/deck_configuration.c'},
+    'AppendOwnedCardCountNumber': {'source_symbol': 'AppendOwnedCardCountNumber', 'before': 'while (gb_read8(walk) != 0u)', 'after': 'while (gb_read8(walk) != 1u)', 'case_ids': ['AppendOwnedCardCountNumber-0', 'AppendOwnedCardCountNumber-1'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
+    'AppendOwnedCardCountAndStorageCountNumbers': {'source_symbol': 'AppendOwnedCardCountAndStorageCountNumbers', 'before': 'gb_write8(walk++, SYM_SLASH);', 'after': 'gb_write8(walk++, TX_SYMBOL);', 'case_ids': ['AppendOwnedCardCountAndStorageCountNumbers-0', 'AppendOwnedCardCountAndStorageCountNumbers-1'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
     'PrintCardSelectionList': {   'source_symbol': 'PrintCardSelectionList',
         'before': '\t\t\tAppendOwnedCardCountNumber(name.hl, card_id);\n'
                   '\t\t\tInitTextPrinting(d, e);',
@@ -7998,12 +3484,6 @@ MUTATIONS = {
                  '\t\t\tInitTextPrinting(d, (uint8_t)(e + 2u));',
         'case_ids': ['PrintCardSelectionList-3'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'PrintFilteredCardSelectionList': {   'source_symbol': 'PrintFilteredCardSelectionList',
-        'before': '\tgb_write8(wNumVisibleCardListEntries_ADDR, '
-                  'NUM_DECK_CONFIRMATION_VISIBLE_CARDS);',
-        'after': '\tgb_write8(wNumVisibleCardListEntries_ADDR, 0x06u);',
-        'case_ids': ['PrintFilteredCardSelectionList-0', 'PrintFilteredCardSelectionList-1'],
-        'source': 'src/home/deck_configuration.c'},
     'PrintDeckBuildingCardList': {   'source_symbol': 'PrintDeckBuildingCardList',
         'before': '\tuint8_t tile = (wCardListVisibleOffset != 0u) ? SYM_CURSOR_U : SYM_SPACE;',
         'after': '\tuint8_t tile = (wCardListVisibleOffset != 0u) ? SYM_CURSOR_D : SYM_SPACE;',
@@ -8014,67 +3494,16 @@ MUTATIONS = {
         'after': '0x00u, 0x01u, 0x02u, 0x03u, 0x04u,',
         'case_ids': ['PrintFilteredCardList-2'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'OpenCardPageFromCardList': {   'source_symbol': 'OpenCardPageFromCardList',
-        'before': '\twTempCardListCursorPos = cursor;',
-        'after': '\twTempCardListCursorPos = 0u;',
-        'case_ids': ['OpenCardPageFromCardList-0', 'OpenCardPageFromCardList-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'CheckIfThereAreAnyBasicCardsInDeck': {   'source_symbol': 'CheckIfThereAreAnyBasicCardsInDeck',
-        'before': 'CheckIfThereAreAnyBasicCardsInDeck(void)\n'
-                  '{\n'
-                  '\tuint16_t hl = wCurDeckCards_ADDR;\n'
-                  '\tfor (;;) {\n'
-                  '\t\tuint8_t card = gb_read8(hl++);\n'
-                  '\t\tif (card == 0u)',
-        'after': 'CheckIfThereAreAnyBasicCardsInDeck(void)\n'
-                 '{\n'
-                 '\tuint16_t hl = wCurDeckCards_ADDR;\n'
-                 '\tfor (;;) {\n'
-                 '\t\tuint8_t card = gb_read8(hl++);\n'
-                 '\t\tif (card == 8u)',
-        'case_ids': [   'CheckIfThereAreAnyBasicCardsInDeck-1',
-                        'CheckIfThereAreAnyBasicCardsInDeck-4'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'SortCurDeckCardsByID': {   'source_symbol': 'SortCurDeckCardsByID',
-        'before': 'SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)\n'
-                  '{\n'
-                  '\tuint16_t src = wCurDeckCards_ADDR;',
-        'after': 'SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)\n'
-                 '{\n'
-                 '\tuint16_t src = wOpponentDeck_ADDR;',
-        'case_ids': [   'SortCurDeckCardsByID-0',
-                        'SortCurDeckCardsByID-1',
-                        'SortCurDeckCardsByID-2',
-                        'SortCurDeckCardsByID-3'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
+    'CheckIfThereAreAnyBasicCardsInDeck': {'source_symbol': 'CheckIfThereAreAnyBasicCardsInDeck', 'before': 'if (card == 0u)', 'after': 'if (card == 8u)', 'case_ids': ['CheckIfThereAreAnyBasicCardsInDeck-1', 'CheckIfThereAreAnyBasicCardsInDeck-4'], 'source': 'src/profiles/extended/home/deck_configuration.c'},
     'GetCardTypeIconPalette': {   'source_symbol': 'GetCardTypeIconPalette',
         'before': '\tuint8_t palette = 0xffu;',
         'after': '\tuint8_t palette = 0x00u;',
         'case_ids': ['GetCardTypeIconPalette-2', 'GetCardTypeIconPalette-4'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'DrawCardTypeIcons': {   'source_symbol': 'DrawCardTypeIcons',
-        'before': '\t\tuint8_t tile = icons[i];',
-        'after': '\t\tuint8_t tile = icons[(uint8_t)(i + 1u)];',
-        'case_ids': ['DrawCardTypeIcons-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'PrintPlayersCardsHeaderInfo': {   'source_symbol': 'PrintPlayersCardsHeaderInfo',
-        'before': '\tFillBGMapLineWithA(0x1Cu, 0u, 4u);',
-        'after': '\tFillBGMapLineWithA(0x1Du, 0u, 4u);',
-        'case_ids': ['PrintPlayersCardsHeaderInfo-0', 'PrintPlayersCardsHeaderInfo-1'],
-        'source': 'src/home/deck_configuration.c'},
     'PrintConfirmationCardList': {   'source_symbol': 'PrintConfirmationCardList',
         'before': '\t\tInitTextPrinting(align, row);',
         'after': '\t\tInitTextPrinting(0u, (uint8_t)(align + 2u));',
         'case_ids': ['PrintConfirmationCardList-2'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'CreateCurDeckUniqueCardList': {   'source_symbol': 'CreateCurDeckUniqueCardList',
-        'before': 'CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n'
-                  '{\n'
-                  '\tuint8_t count = 0u;',
-        'after': 'CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n'
-                 '{\n'
-                 '\tuint8_t count = 1u;',
-        'case_ids': ['CreateCurDeckUniqueCardList-0', 'CreateCurDeckUniqueCardList-1'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
     'TryAddCardToDeck': {   'source_symbol': 'TryAddCardToDeck',
         'before': '\t\treturn (TryAddCardToDeckResult){wTotalCardCount, 0x90u};',
@@ -8091,139 +3520,6 @@ MUTATIONS = {
         'after': '\tif ((counter & CURSOR_BLINK_PERIOD_MASK) == 0u)',
         'case_ids': ['HandleDeckCardSelectionList-4'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'PrintCurDeckNumberAndName': {   'source_symbol': 'PrintCurDeckNumberAndName',
-        'before': '\tTextLength name_length = GetTextLengthInTiles(wDefaultText_ADDR);\n'
-                  '\tuint16_t suffix_base = wDefaultText_ADDR;\n'
-                  '\tuint16_t suffix_destination = (uint16_t)(suffix_base + name_length.c);',
-        'after': '\tTextLength name_length = GetTextLengthInTiles(wDefaultText_ADDR);\n'
-                 '\tuint16_t suffix_base = wDefaultText_ADDR;\n'
-                 '\tuint16_t suffix_destination = (uint16_t)(suffix_base + name_length.c + 1u);',
-        'case_ids': [   'PrintCurDeckNumberAndName-1',
-                        'PrintCurDeckNumberAndName-2',
-                        'PrintCurDeckNumberAndName-3'],
-        'source': 'src/home/deck_configuration.c'},
-    'UpdateConfirmationCardScreen': {   'source_symbol': 'UpdateConfirmationCardScreen',
-        'before': '\tPrintCurDeckNumberAndName();\n\n\thffb0 = 0u;',
-        'after': '\tPrintCurDeckNumberAndName();\n\n\thffb0 = 1u;',
-        'case_ids': [   'UpdateConfirmationCardScreen-0',
-                        'UpdateConfirmationCardScreen-1',
-                        'UpdateConfirmationCardScreen-2'],
-        'source': 'src/home/deck_configuration.c'},
-    'PrintSlashSixty': {   'source_symbol': 'PrintSlashSixty',
-        'before': '\tgb_write8(text++, (uint8_t)(SYM_0 + 6u));',
-        'after': '\tgb_write8(text++, (uint8_t)(SYM_0 + 5u));',
-        'case_ids': ['PrintSlashSixty-0', 'PrintSlashSixty-1', 'PrintSlashSixty-2'],
-        'source': 'src/home/deck_configuration.c'},
-    'ShowDeckInfoHeader': {   'source_symbol': 'ShowDeckInfoHeader',
-        'before': 'ShowDeckInfoHeader(void)\n'
-                  '{\n'
-                  '\tEmptyScreenAndLoadFontDuelAndHandCardsIcons();\n'
-                  '\tuint16_t box = 0u;\n'
-                  '\tDrawRegularTextBox(&box, 0u, 20u, 4u, 0u, 0u);\n'
-                  '\tif (wCurDeckName != 0u) {',
-        'after': 'ShowDeckInfoHeader(void)\n'
-                 '{\n'
-                 '\tEmptyScreenAndLoadFontDuelAndHandCardsIcons();\n'
-                 '\tuint16_t box = 0u;\n'
-                 '\tDrawRegularTextBox(&box, 0u, 20u, 4u, 0u, 0u);\n'
-                 '\tif (wCurDeckName == 0u) {',
-        'case_ids': ['ShowDeckInfoHeader-0', 'ShowDeckInfoHeader-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'DrawCardTypeIconsAndPrintCardCounts': {   'source_symbol': 'DrawCardTypeIconsAndPrintCardCounts',
-        'before': '\tFillBGMapLineWithA(SYM_BOX_TOP, 0u, 5u);',
-        'after': '\tFillBGMapLineWithA(0x1Du, 0u, 5u);',
-        'case_ids': [   'DrawCardTypeIconsAndPrintCardCounts-0',
-                        'DrawCardTypeIconsAndPrintCardCounts-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'ShowConfirmationCardScreen': {   'source_symbol': 'ShowConfirmationCardScreen',
-        'before': 'ShowConfirmationCardScreen(void)\n'
-                  '{\n'
-                  '\tShowDeckInfoHeader();\n'
-                  '\twCardListCoords = 5u;',
-        'after': 'ShowConfirmationCardScreen(void)\n'
-                 '{\n'
-                 '\tShowDeckInfoHeader();\n'
-                 '\twCardListCoords = 4u;',
-        'case_ids': ['ShowConfirmationCardScreen-0', 'ShowConfirmationCardScreen-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'ShowDeckInfoHeaderAndWaitForBButton': {   'source_symbol': 'ShowDeckInfoHeaderAndWaitForBButton',
-        'before': 'void ShowDeckInfoHeaderAndWaitForBButton(void)\n{\n\tShowDeckInfoHeader();',
-        'after': 'void ShowDeckInfoHeaderAndWaitForBButton(void)\n{\n\t(void)0;',
-        'case_ids': [   'ShowDeckInfoHeaderAndWaitForBButton-0',
-                        'ShowDeckInfoHeaderAndWaitForBButton-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'HandleDeckConfirmationMenu': {   'source_symbol': 'HandleDeckConfirmationMenu',
-        'before': '\tgb_write8(wCardListUpdateFunction_ADDR, '
-                  '(uint8_t)UPDATE_CONFIRMATION_CARD_SCREEN_ADDR);',
-        'after': '\tgb_write8(wCardListUpdateFunction_ADDR, '
-                 '(uint8_t)(UPDATE_CONFIRMATION_CARD_SCREEN_ADDR + 1u));',
-        'case_ids': [   'HandleDeckConfirmationMenu-1',
-                        'HandleDeckConfirmationMenu-2',
-                        'HandleDeckConfirmationMenu-3'],
-        'source': 'src/home/deck_configuration.c'},
-    'ConfirmDeckConfiguration': {   'source_symbol': 'ConfirmDeckConfiguration',
-        'before': 'ConfirmDeckConfiguration(void)\n'
-                  '{\n'
-                  '\tuint8_t visible_offset = wCardListVisibleOffset;',
-        'after': 'ConfirmDeckConfiguration(void)\n{\n\tuint8_t visible_offset = 0u;',
-        'case_ids': ['ConfirmDeckConfiguration-0', 'ConfirmDeckConfiguration-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'SaveDeckConfiguration': {   'source_symbol': 'SaveDeckConfiguration',
-        'before': '\t\t\t/* add sp, $2 / or a / ret */\n\t\t\tuint8_t or_a = keep.a;',
-        'after': '\t\t\t/* add sp, $2 / or a / ret */\n'
-                 '\t\t\tuint8_t or_a = (uint8_t)(keep.a + 1u);',
-        'case_ids': ['SaveDeckConfiguration-0', 'SaveDeckConfiguration-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'DismantleDeck': {   'source_symbol': 'DismantleDeck',
-        'before': '\t\tClearMemory_Bank2(NAME_BUFFER_LENGTH, name);',
-        'after': '\t\tClearMemory_Bank2(NAME_BUFFER_LENGTH, (uint16_t)(name + 1u));',
-        'case_ids': ['DismantleDeck-0', 'DismantleDeck-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
-    'CancelDeckModifications': {   'source_symbol': 'CancelDeckModifications',
-        'before': '\t\ta = quit.a;',
-        'after': '\t\t(void)quit.a;',
-        'case_ids': ['CancelDeckModifications-0', 'CancelDeckModifications-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'HandleSelectUpAndDownInList': {   'source_symbol': 'HandleSelectUpAndDownInList',
-        'before': '\twCardListVisibleOffset = next;',
-        'after': '\twCardListVisibleOffset = (uint8_t)(next + 1u);',
-        'case_ids': ['HandleSelectUpAndDownInList-2'],
-        'source': 'src/home/deck_configuration.c'},
-    'HandleDeckBuildScreen': {   'source_symbol': 'HandleDeckBuildScreen',
-        'before': '\twCardListVisibleOffset = 0u;\n\twCurCardTypeFilter = 0u;',
-        'after': '\twCardListVisibleOffset = 1u;\n\twCurCardTypeFilter = 0u;',
-        'case_ids': ['HandleDeckBuildScreen-0'],
-        'source': 'src/home/deck_configuration.c'},
-    'HandlePlayersCardsScreen': {   'source_symbol': 'HandlePlayersCardsScreen',
-        'before': 'HandlePlayersCardsScreen(void)\n'
-                  '{\n'
-                  '\t(void)WriteCardListsTerminatorBytes();\n'
-                  '\t(void)PrintPlayersCardsHeaderInfo();\n'
-                  '\n'
-                  '\twCardListVisibleOffset = 0u;',
-        'after': 'HandlePlayersCardsScreen(void)\n'
-                 '{\n'
-                 '\t(void)WriteCardListsTerminatorBytes();\n'
-                 '\t(void)PrintPlayersCardsHeaderInfo();\n'
-                 '\n'
-                 '\twCardListVisibleOffset = 1u;',
-        'case_ids': ['HandlePlayersCardsScreen-0', 'HandlePlayersCardsScreen-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'ChangeDeckName': {   'source_symbol': 'ChangeDeckName',
-        'before': 'void ChangeDeckName(void)\n{\n\tInputCurDeckName();',
-        'after': 'void ChangeDeckName(void)\n{',
-        'case_ids': ['ChangeDeckName-0'],
-        'source': 'src/home/deck_configuration.c'},
-    'HandleDeckConfigurationMenu': {   'source_symbol': 'HandleDeckConfigurationMenu',
-        'before': '\t\twced6 = selected_item;',
-        'after': '\t\twced6 = (uint8_t)(selected_item + 1u);',
-        'case_ids': ['HandleDeckConfigurationMenu-0', 'HandleDeckConfigurationMenu-1'],
-        'source': 'src/home/deck_configuration.c'},
-    'ModifyDeckConfiguration': {   'source_symbol': 'ModifyDeckConfiguration',
-        'before': '\twCardListCursorPos = wTempCardListCursorPos;',
-        'after': '\twCardListCursorPos = (uint8_t)(wTempCardListCursorPos + 1u);',
-        'case_ids': ['ModifyDeckConfiguration-0', 'ModifyDeckConfiguration-1'],
-        'source': 'src/profiles/extended/home/deck_configuration.c'},
     'CopyNBytesFromHLToDE_Long': {'source_symbol': 'CopyNBytesFromHLToDE_Long',
         'before': '\t\tgb_write8(dst++, gb_read8(src++));',
         'after': '\t\tgb_write8(dst++, (uint8_t)(gb_read8(src++) + 1u));',
@@ -8234,26 +3530,9 @@ MUTATIONS = {
         'after': '\t\twhile (hl > places[i]) {',
         'case_ids': ['CalculateOnesAndTensDigits_Long-0', 'CalculateOnesAndTensDigits_Long-1'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-
-for _record in SCHEMA2_CASES["ModifyDeckConfiguration"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x51E1, "bank": 2,
-                             "routine": "HandleDeckBuildScreen_SkipDraw"}
-
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _record in SCHEMA2_CASES["OpenDeckConfigurationMenu"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x5307, "bank": 2,
+    _record["completion"] = {"mode": "entry", "pc": sym("HandleDeckConfigurationMenu"), "bank": sym_bank("HandleDeckConfigurationMenu"),
                              "routine": "HandleDeckConfigurationMenu"}
-
-for _record in SCHEMA2_CASES["HandleDeckBuildScreen"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x5307, "bank": 2,
-                             "routine": "HandleDeckConfigurationMenu"}
-
-for _record in SCHEMA2_CASES["HandleDeckConfigurationMenu"]:
-    _record["completion"] = {"mode": "entry", "pc": 0x52E8, "bank": 2,
-                             "routine": "OpenDeckConfigurationMenu"}
-
-for _rec in SCHEMA2_CASES["ChangeDeckName"]:
-    _rec["completion"] = {"mode": "pre-ret", "pc": 0x5443, "bank": 2}

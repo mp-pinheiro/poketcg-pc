@@ -1,4 +1,4 @@
-from tests.cases._symbols import sym
+from tests.cases._symbols import const, sym
 from tests.cases._fixtures import SAND_ATTACK_REGS, sand_attack_fixture
 from tests.cases._fixtures import STRIKES_BACK_RESIDUAL_REGS, strikes_back_residual_fixture
 from tests.cases._fixtures import DAMAGE_REDUCTION_REGS, damage_reduction_fixture
@@ -566,7 +566,11 @@ CASES["HandleSandAttackOrSmokescreenSubstatus"] = [
     {"d": 0xAB, "e": 0xCD, "hl": 0x0000, "wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}},
     {"a": 0x01, "f": 0x10, "b": 0x22, "c": 0x33, "d": 0x80, "e": 0x01, "hl": sym("wDeckToBuild"), "wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}},
     dict(POISON, wram={hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}),
-    dict(sand_attack_fixture(vram=False), **SAND_ATTACK_REGS, keys=[0x00, 0x01]),
+    dict(sand_attack_fixture(vram=False, changes={
+        sym("wPlayerArenaCardSubstatus2"): bytes((const("SUBSTATUS2_SAND_ATTACK"),)),
+        sym("wIsPracticeDuel"): b"\x00",
+        sym("wRNG1"): b"\xb7\x43\x79",
+    }), **SAND_ATTACK_REGS, keys=[0x00, 0x01]),
 ]
 # <<< factory HandleSandAttackOrSmokescreenSubstatus
 

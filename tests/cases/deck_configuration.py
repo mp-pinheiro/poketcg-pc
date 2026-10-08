@@ -1,5 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/deck_configuration.asm."""
-from tests.cases._symbols import sym, sym_bank
+from tests.cases._symbols import sym, sym_bank, sym_pointer
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -356,8 +356,8 @@ CASES["FillBGMapLineWithA"] = [
 
 # >>> factory OpenDeckConfigurationMenu
 CONTRACT["OpenDeckConfigurationMenu"] = {"compare": (), "preserve": ()};
-_DECK_CONFIG_HANDLER = {sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"}
-_SEND_DECK_CONFIG_HANDLER = {sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"}
+_DECK_CONFIG_HANDLER = {sym("wDeckConfigurationMenuHandlerFunction"): sym_pointer("HandleDeckConfigurationMenu")}
+_SEND_DECK_CONFIG_HANDLER = {sym("wDeckConfigurationMenuHandlerFunction"): sym_pointer("HandleDeckConfigurationMenu")}
 _MENU_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 CASES["OpenDeckConfigurationMenu"] = [
@@ -1194,8 +1194,8 @@ CASES["HandleSelectUpAndDownInList"] = [
 # >>> factory HandleDeckBuildScreen
 CONTRACT["HandleDeckBuildScreen"] = {"compare": (), "preserve": ()}
 CASES["HandleDeckBuildScreen"] = [
-    {"wram": {sym("wLCDC"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {wCardListVisibleOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={sym("wLCDC"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={wCardListVisibleOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wLCDC"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): sym_pointer("HandleDeckConfigurationMenu")}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {wCardListVisibleOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={sym("wLCDC"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): sym_pointer("HandleDeckConfigurationMenu")}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={wCardListVisibleOffset: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory HandleDeckBuildScreen
 
@@ -1272,11 +1272,11 @@ CASES["ChangeDeckName"] = [
 # >>> factory HandleDeckConfigurationMenu
 CONTRACT["HandleDeckConfigurationMenu"] = {"compare": (), "preserve": ()}
 CASES["HandleDeckConfigurationMenu"] = [
-    {"wram": {sym("wLCDC"): b"\x00", sym("wTempCardListCursorPos"): b"\x12", sym("wCurCardTypeFilter"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"},
+    {"wram": {sym("wLCDC"): b"\x00", sym("wTempCardListCursorPos"): b"\x12", sym("wCurCardTypeFilter"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): sym_pointer("HandleDeckConfigurationMenu")},
      "sram": {0: {}}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "keys": [0x00, 0x02], "rom_bank": 2, "read": {sym("wCardListCursorPos"): 1, sym("wced6"): 1},
      "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, wram={sym("wLCDC"): b"\x00", sym("wTempCardListCursorPos"): b"\x12", sym("wCurCardTypeFilter"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): b"\x80\x54"},
+    dict(POISON, wram={sym("wLCDC"): b"\x00", sym("wTempCardListCursorPos"): b"\x12", sym("wCurCardTypeFilter"): b"\x00", sym("wDeckConfigurationMenuHandlerFunction"): sym_pointer("HandleDeckConfigurationMenu")},
          sram={0: {}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x02], rom_bank=2, read={sym("wCardListCursorPos"): 1, sym("wced6"): 1},
          instruction_budget=20000000, cycle_budget=80000000),

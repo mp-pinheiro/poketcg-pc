@@ -1,6 +1,8 @@
-from tests.cases._symbols import sym
+from tests.cases._symbols import sym, sym_pointer
 wSequenceCmdPtr = sym("wSequenceCmdPtr")
 wSequenceDelay = sym("wSequenceDelay")
+_WAIT_SCRIPT = sym("wDecompressionSecondaryBufferStart") + 0x11
+_WAIT_COMMAND = sym_pointer("CreditsSequenceCmd_Wait")
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -23,10 +25,10 @@ CASES = {
         dict(POISON, wram={wSequenceDelay: b"\xFF"}, read={wSequenceDelay: 1}),
         {"wram": {wSequenceDelay: b"\x01"}, "read": {wSequenceDelay: 1}},
         {"wram": {wSequenceDelay: b"\x02"}, "read": {wSequenceDelay: 1}},
-        {"wram": {wSequenceDelay: b"\x00", wSequenceCmdPtr: b"\xC1\x61"}, "compare": (),
-         "read": {wSequenceDelay: 1, wSequenceCmdPtr: 2}},
-        dict(POISON, wram={wSequenceDelay: b"\x00", wSequenceCmdPtr: b"\x0C\x5B"}, compare=(),
-             read={wSequenceDelay: 1, wSequenceCmdPtr: 2}),
+        {"wram": {wSequenceDelay: b"\x00", wSequenceCmdPtr: _WAIT_SCRIPT.to_bytes(2, "little"), _WAIT_SCRIPT: _WAIT_COMMAND + b"\xff" + _WAIT_COMMAND + b"\xff"}, "compare": (),
+         "read": {wSequenceDelay: 1, wSequenceCmdPtr: 2, _WAIT_SCRIPT: 6}},
+        dict(POISON, wram={wSequenceDelay: b"\x00", wSequenceCmdPtr: _WAIT_SCRIPT.to_bytes(2, "little"), _WAIT_SCRIPT: _WAIT_COMMAND + b"\x3c" + _WAIT_COMMAND + b"\xff"}, compare=(),
+             read={wSequenceDelay: 1, wSequenceCmdPtr: 2, _WAIT_SCRIPT: 6}),
     ],
     "AdvanceCreditsSequenceCmdPtr": [
         {"a": 0, "wram": {wSequenceCmdPtr: b"\x00\x00"},

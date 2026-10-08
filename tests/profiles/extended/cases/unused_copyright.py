@@ -1,13 +1,4 @@
-"""Extended oracle-diff cases for unused_copyright, seeded from tests/cases/unused_copyright.py."""
+"""Extended oracle-diff cases for unused_copyright: the shared cases without the routines Extended does not build."""
+from tests.cases._inherit import inherit
 
-CONTRACT = {
-}
-
-CASES = {
-}
-
-MUTATIONS = {
-}
-
-from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('unused_copyright', remove=('UnusedCopyrightScreen',))

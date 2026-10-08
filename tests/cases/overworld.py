@@ -1,7 +1,6 @@
-from tests.cases._symbols import data, sym, sym_bank
+from tests.cases._symbols import data, sym, sym_bank, sym_pointer
 from tests.cases._fixtures import after_duel_fixture, AFTER_DUEL_REGS, move_step_fixture as _move_step_fixture, MOVE_STEP_REGS as _MOVE_STEP_REGS
-from tests.cases._fixtures import (FIND_NPC_REGS, MAP_SCRIPT_REGS, find_npc_fixture,
-                                   map_script_fixture)
+from tests.cases._fixtures import (FIND_NPC_REGS, MAP_SCRIPT_REGS, find_npc_fixture)
 """Oracle-diff cases for poketcg/src/engine/overworld/overworld.asm."""
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
@@ -812,7 +811,7 @@ CASES["ReturnToOverworld"] = [
     {"wram": {sym("wOverworldNPCFlags"): b"\x80", sym("wReloadOverworldCallbackPtr"): b"\x00\x00", sym("wDefaultSong"): b"\xA5"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wDefaultSong"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, wram={sym("wOverworldNPCFlags"): b"\x55", sym("wReloadOverworldCallbackPtr"): b"\x00\x00", sym("wDefaultSong"): b"\x00"}, read={sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wDefaultSong"): 1}, instruction_budget=20000000, cycle_budget=80000000),
     # wReloadOverworldCallbackPtr set: the pause menu redraw runs through CallHL2.
-    {"setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wOverworldNPCFlags"): b"\x80", sym("wReloadOverworldCallbackPtr"): b"\x97\x47", sym("wDefaultSong"): b"\xA5", sym("wSelectedPauseMenuItem"): b"\x03"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wOverworldNPCFlags"): b"\x80", sym("wReloadOverworldCallbackPtr"): sym_pointer("DisplayPauseMenu"), sym("wDefaultSong"): b"\xA5", sym("wSelectedPauseMenuItem"): b"\x03"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory ReturnToOverworld
 
@@ -829,8 +828,8 @@ CASES["CloseAdvancedDialogueBox"] = [
 CONTRACT["Func_c8ba"] = {"compare": (), "preserve": ()}
 CASES["Func_c8ba"] = [
     {"hl": 0x01DB, "d": 0x00, "e": 0x00, "wram": {wOverworldNPCFlags: b"\x00", wd3b9: b"\x12\x34"}, "setup": SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {wOverworldNPCFlags: 1, wd3b9: 2}},
-    {"hl": 0x01DC, "d": 0x56, "e": 0x78, "wram": {wOverworldNPCFlags: b"\x01", wd3b9: b"\x12\x34"}, "setup": SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {wOverworldNPCFlags: 1, wd3b9: 2}},
-    dict(POISON, hl=0x01DB, d=0x9A, e=0xBC, wram={wOverworldNPCFlags: b"\x01", wd3b9: b"\x12\x34"}, setup=SETUP, keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000, read={wOverworldNPCFlags: 1, wd3b9: 2}),
+    {"hl": 0x01DC, "d": 0x00, "e": 0x03, "wram": {wOverworldNPCFlags: b"\x01", wd3b9: b"\x12\x34"}, "setup": SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {wOverworldNPCFlags: 1, wd3b9: 2}},
+    dict(POISON, hl=0x01DB, d=0x00, e=0x04, wram={wOverworldNPCFlags: b"\x01", wd3b9: b"\x12\x34"}, setup=SETUP, keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000, read={wOverworldNPCFlags: 1, wd3b9: 2}),
 ]
 # <<< factory Func_c8ba
 
@@ -848,9 +847,9 @@ CONTRACT["ReturnToOverworldWithCallback"] = {"compare": ("a", "b", "c", "d", "e"
 CASES["ReturnToOverworldWithCallback"] = [
     # The game passes exactly two callbacks (overworld.asm: PauseMenu and PCMenu),
     # both menu redraws, so a case needs the text setup a menu draw relies on.
-    {"hl": 0x4797, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wOverworldNPCFlags"): b"\xFF", sym("wReloadOverworldCallbackPtr"): b"\x00\x00", sym("wDefaultSong"): b"\x37", sym("wSelectedPauseMenuItem"): b"\x02"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"hl": 0x484E, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wOverworldNPCFlags"): b"\x80", sym("wReloadOverworldCallbackPtr"): b"\x12\x34", sym("wDefaultSong"): b"\xA5", sym("wSelectedPCMenuItem"): b"\x01"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, hl=0x4797, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("wOverworldNPCFlags"): b"\x55", sym("wReloadOverworldCallbackPtr"): b"\xFE\xED", sym("wDefaultSong"): b"\x00", sym("wSelectedPauseMenuItem"): b"\x05"}, read={sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, instruction_budget=20000000, cycle_budget=80000000),
+    {"hl": sym("DisplayPauseMenu"), "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wOverworldNPCFlags"): b"\xFF", sym("wReloadOverworldCallbackPtr"): b"\x00\x00", sym("wDefaultSong"): b"\x37", sym("wSelectedPauseMenuItem"): b"\x02"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"hl": sym("DisplayPCMenu"), "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {sym("wOverworldNPCFlags"): b"\x80", sym("wReloadOverworldCallbackPtr"): b"\x12\x34", sym("wDefaultSong"): b"\xA5", sym("wSelectedPCMenuItem"): b"\x01"}, "read": {sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, hl=sym("DisplayPauseMenu"), setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={sym("wOverworldNPCFlags"): b"\x55", sym("wReloadOverworldCallbackPtr"): b"\xFE\xED", sym("wDefaultSong"): b"\x00", sym("wSelectedPauseMenuItem"): b"\x05"}, read={sym("hWhoseTurn"): 1, sym("wOverworldNPCFlags"): 1, sym("wReloadOverworldCallbackPtr"): 2, sym("wDefaultSong"): 1, sym("wc600"): 0x400}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory ReturnToOverworldWithCallback
 
@@ -899,7 +898,7 @@ CONTRACT["Func_c17a"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["Func_c17a"] = [
     {"hl": 0x0000, "wram": {sym("wOverworldMode"): b"\x03"}, "read": {sym("wOverworldMode"): 1}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("wOverworldMode"): b"\x03"}, "read": {sym("wOverworldMode"): 1}},
-    dict(map_script_fixture(vram=False, bank=3), **MAP_SCRIPT_REGS),
+    {**MAP_SCRIPT_REGS, "hl": sym("wActiveGameEvent"), "wram": {sym("wOverworldMode"): b"\x00", sym("wCurMap"): b"\x03"}, "read": {sym("wOverworldMode"): 1}},
 ]
 # <<< factory Func_c17a
 

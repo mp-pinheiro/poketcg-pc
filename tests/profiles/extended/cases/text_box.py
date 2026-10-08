@@ -1,217 +1,24 @@
-"""Extended oracle-diff cases for text_box, seeded from tests/cases/text_box.py."""
-
-CONTRACT = {
-    'SafeCopyDataDEtoHL': {'compare': ('a', 'b', 'd', 'e', 'hl'), 'preserve': ('b',)},
-    'DECoordToBGMap0Address': {'compare': ('d', 'e', 'hl'), 'preserve': ('d', 'e')},
-    'AdjustCoordinatesForBGScroll': {'compare': ('a', 'f', 'b', 'c', 'd', 'e'), 'preserve': ('a', 'f', 'b', 'c')},
-    'CopyLine': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c')},
-    'DrawRegularTextBox': {'compare': ('b', 'hl'), 'preserve': ('b',)},
+"""Extended oracle-diff cases for text_box: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('text_box', remove=(
+    'ContinueDrawingTextBoxDMGorSGB',
+    'DrawRegularTextBoxDMG',
+))
+OWN = (
+    'ContinueDrawingTextBoxDMG',
+)
+CONTRACT.update({
     'ContinueDrawingTextBoxDMG': {'compare': ('b', 'hl'), 'preserve': ('b',)},
-    'DrawRegularTextBoxCGB': {'compare': ('b', 'hl'), 'preserve': ('b',)},
-    'ContinueDrawingTextBoxCGB': {'compare': ('b', 'hl'), 'preserve': ('b',)},
-    'CopyCurrentLineTilesAndAttrCGB': {'compare': ('b', 'hl'), 'preserve': ('b',)},
-    'CopyCurrentLineAttrCGB': {'compare': ('b', 'hl'), 'preserve': ('b',)},
-    'DrawLabeledTextBox': {'compare': ('b',), 'preserve': ('b',)},
-}
-
-CASES = {
-    'SafeCopyDataDEtoHL': [
-        {'read': {0x9800: 0x01}},
-        {   'c': 0x02,
-            'd': 0xC1,
-            'e': 0x00,
-            'hl': 0x9800,
-            'wram': {0xC100: b'\x03 ', 0xCCE9: b'\x80'},
-            'read': {0x9800: 0x02}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0x01,
-            'd': 0xC1,
-            'e': 0x00,
-            'hl': 0x9800,
-            'wram': {0xC100: b'\x03'},
-            'read': {0x9800: 0x01}},
-        {   'c': 0x00,
-            'd': 0xC1,
-            'e': 0x00,
-            'hl': 0x9800,
-            'wram': {   0xC100: b'\x03 =Zw\x94\xb1\xce\xeb\x08%B_|\x99\xb6\xd3\xf0\r*Gd\x81\x9e'
-                                b'\xbb\xd8\xf5\x12/Li\x86\xa3\xc0\xdd\xfa\x174Qn\x8b\xa8\xc5\xe2'
-                                b'\xff\x1c9Vs\x90\xad\xca\xe7\x04!>[x\x95\xb2\xcf\xec\t&C`}\x9a'
-                                b'\xb7\xd4\xf1\x0e+He\x82\x9f\xbc\xd9\xf6\x130Mj\x87\xa4\xc1\xde'
-                                b'\xfb\x185Ro\x8c\xa9\xc6\xe3\x00\x1d:Wt\x91\xae\xcb\xe8\x05"?\\y\x96'
-                                b"\xb3\xd0\xed\n'Da~\x9b\xb8\xd5\xf2\x0f,If\x83\xa0\xbd\xda\xf7\x141N"
-                                b'k\x88\xa5\xc2\xdf\xfc\x196Sp\x8d\xaa\xc7\xe4\x01\x1e;Xu\x92'
-                                b'\xaf\xcc\xe9\x06#@]z\x97\xb4\xd1\xee\x0b(Eb\x7f\x9c\xb9\xd6\xf3\x10-J'
-                                b'g\x84\xa1\xbe\xdb\xf8\x152Ol\x89\xa6\xc3\xe0\xfd\x1a7Tq\x8e'
-                                b'\xab\xc8\xe5\x02\x1f<Yv\x93\xb0\xcd\xea\x07$A^{\x98\xb5\xd2\xef\x0c)F'
-                                b'c\x80\x9d\xba\xd7\xf4\x11.Kh\x85\xa2\xbf\xdc\xf9\x163Pm\x8a'
-                                b'\xa7\xc4\xe1\xfe\x1b8Ur\x8f\xac\xc9\xe6'},
-            'read': {0x9800: 0x0100}},
-        {   'c': 0x01,
-            'd': 0xC1,
-            'e': 0x00,
-            'hl': 0x9800,
-            'wram': {   0xC100: b'\x03 =Zw\x94\xb1\xce\xeb\x08%B_|\x99\xb6\xd3\xf0\r*Gd\x81\x9e'
-                                b'\xbb\xd8\xf5\x12/Li\x86\xa3\xc0\xdd\xfa\x174Qn\x8b\xa8\xc5\xe2'
-                                b'\xff\x1c9Vs\x90\xad\xca\xe7\x04!>[x\x95\xb2\xcf\xec\t&C`}\x9a'
-                                b'\xb7\xd4\xf1\x0e+He\x82\x9f\xbc\xd9\xf6\x130Mj\x87\xa4\xc1\xde'
-                                b'\xfb\x185Ro\x8c\xa9\xc6\xe3\x00\x1d:Wt\x91\xae\xcb\xe8\x05"?\\y\x96'
-                                b"\xb3\xd0\xed\n'Da~\x9b\xb8\xd5\xf2\x0f,If\x83\xa0\xbd\xda\xf7\x141N"
-                                b'k\x88\xa5\xc2\xdf\xfc\x196Sp\x8d\xaa\xc7\xe4\x01\x1e;Xu\x92'
-                                b'\xaf\xcc\xe9\x06#@]z\x97\xb4\xd1\xee\x0b(Eb\x7f\x9c\xb9\xd6\xf3\x10-J'
-                                b'g\x84\xa1\xbe\xdb\xf8\x152Ol\x89\xa6\xc3\xe0\xfd\x1a7Tq\x8e'
-                                b'\xab\xc8\xe5\x02\x1f<Yv\x93\xb0\xcd\xea\x07$A^{\x98\xb5\xd2\xef\x0c)F'
-                                b'c\x80\x9d\xba\xd7\xf4\x11.Kh\x85\xa2\xbf\xdc\xf9\x163Pm\x8a'
-                                b'\xa7\xc4\xe1\xfe\x1b8Ur\x8f\xac\xc9\xe6\x03'},
-            'read': {0x9800: 0x01}},
-    ],
-    'DECoordToBGMap0Address': [
-        {},
-        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0x07, 'e': 0x04, 'hl': 0x1234},
-        {'d': 0xFF, 'e': 0xFF},
-    ],
-    'AdjustCoordinatesForBGScroll': [
-        {},
-        {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0x07, 'e': 0x09, 'hl': 0x1234},
-        {'d': 0xFF, 'e': 0xFF},
-    ],
-    'CopyLine': [
-        {'hl': 0x9800, 'b': 0x03, 'd': 0x11, 'e': 0x22, 'a': 0x33, 'read': {0x9800: 0x03}},
-        {   'a': 0x33,
-            'f': 0xF0,
-            'b': 0x04,
-            'c': 0xCC,
-            'd': 0x11,
-            'e': 0x22,
-            'hl': 0x9800,
-            'read': {0x9800: 0x04}},
-        {   'hl': 0x9800,
-            'b': 0x00,
-            'd': 0x11,
-            'e': 0x22,
-            'a': 0x33,
-            'oracle': False,
-            'why': 'zero width runs the 8-bit post-test loop and corrupts the call stack',
-            'expect': {   0x9800: b'\x11333333333333333333333333333333333333333333333333333333333333333'
-                                  b'3333333333333333333333333333333333333333333333333333333333333333'
-                                  b'3333333333333333333333333333333333333333333333333333333333333333'
-                                  b'333333333333333333333333333333333333333333333333333333333333333"'}},
-    ],
-    'DrawRegularTextBox': [
-        {   'b': 0x04,
-            'c': 0x03,
-            'd': 0x00,
-            'e': 0x00,
-            'hl': 0x9800,
-            'wram': {0xCAB4: b'\x00'},
-            'read': {0x9800: 0x60},
-            'vread': {0x00: {0x9800: 0x60}, 0x01: {0x9800: 0x60}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0x04,
-            'c': 0x03,
-            'd': 0x00,
-            'e': 0x00,
-            'hl': 0x9800,
-            'wram': {0xCAB4: b'\x02', 0xCCA1: b'\x03'},
-            'read': {0x9800: 0x60},
-            'vread': {0x00: {0x9800: 0x60}, 0x01: {0x9800: 0x60}}},
-    ],
+})
+CASES.update({
     'ContinueDrawingTextBoxDMG': [
         {'b': 0x04, 'c': 0x03, 'hl': 0x9800, 'read': {0x9800: 0x40}},
         {'a': 0xAA, 'f': 0xF0, 'b': 0x04, 'c': 0x04, 'd': 0xDD, 'e': 0xEE,
          'hl': 0x9800, 'read': {0x9800: 0x60}},
     ],
-    'DrawRegularTextBoxCGB': [
-        {   'b': 0x04,
-            'c': 0x03,
-            'd': 0x00,
-            'e': 0x00,
-            'hl': 0x9800,
-            'wram': {0xCCA1: b'\x03'},
-            'read': {0x9800: 0x60}},
-    ],
-    'ContinueDrawingTextBoxCGB': [
-        {   'b': 0x04,
-            'c': 0x03,
-            'hl': 0x9800,
-            'wram': {0xCCA1: b'\x03'},
-            'read': {0x9800: 0x40},
-            'vread': {0x00: {0x9800: 0x40}, 0x01: {0x9800: 0x40}}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0x06,
-            'c': 0x04,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x9800,
-            'wram': {0xCCA1: b'\x05'},
-            'read': {0x9800: 0x60},
-            'vread': {0x00: {0x9800: 0x60}, 0x01: {0x9800: 0x60}}},
-    ],
-    'CopyCurrentLineTilesAndAttrCGB': [
-        {   'b': 0x04,
-            'a': 0x1C,
-            'd': 0x18,
-            'e': 0x19,
-            'hl': 0x9800,
-            'wram': {0xCCA1: b'\x03'},
-            'read': {0x9800: 0x20}},
-    ],
-    'CopyCurrentLineAttrCGB': [
-        {'b': 0x04, 'hl': 0x9800, 'wram': {0xCCA1: b'\x03'}, 'read': {0x9800: 0x20}},
-    ],
-    'DrawLabeledTextBox': [
-        {   'hl': 0x00,
-            'b': 0x14,
-            'c': 0x06,
-            'd': 0x00,
-            'e': 0x00,
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'wram': {0xCAB4: b'\x00', 0xCABB: b'\x00', 0xFF97: b'\x00'},
-            'sram': {0x00: {0xA010: b'AB\x00'}},
-            'read': {0x9800: 0xC0, 0xFFAA: 0x02, 0xFFA9: 0x01, 0xFFB0: 0x01, 0xC000: 0x08}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0x14,
-            'c': 0x06,
-            'd': 0x00,
-            'e': 0x00,
-            'hl': 0x00,
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'wram': {0xCAB4: b'\x02', 0xCCA1: b'\x03', 0xCABB: b'\x00', 0xFF97: b'\x00'},
-            'sram': {0x00: {0xA010: b'AB\x00'}},
-            'read': {0x9800: 0xC0},
-            'vread': {0x00: {0x9800: 0xC0}, 0x01: {0x9800: 0xC0}}},
-    ],
-}
-
-MUTATIONS = {
-    'SafeCopyDataDEtoHL': {   'source_symbol': 'SafeCopyDataDEtoHL',
-        'before': '*de = source;',
-        'after': '*de = (uint16_t)(source + 1u);',
-        'case_ids': [   'SafeCopyDataDEtoHL-0',
-                        'SafeCopyDataDEtoHL-2',
-                        'SafeCopyDataDEtoHL-3',
-                        'SafeCopyDataDEtoHL-4'],
-        'source': 'src/home/text_box.c'},
-    'DECoordToBGMap0Address': {   'source_symbol': 'DECoordToBGMap0Address',
-        'before': '\treturn (uint16_t)(0x9800u + offset);',
-        'after': '\treturn (uint16_t)(0x97FFu + offset);',
-        'case_ids': ['DECoordToBGMap0Address-0'],
-        'source': 'src/home/text_box.c'},
-    'AdjustCoordinatesForBGScroll': {   'source_symbol': 'AdjustCoordinatesForBGScroll',
-        'before': '\tuint8_t x = (uint8_t)((hSCX >> 3) & 0x1f);',
-        'after': '\tuint8_t x = (uint8_t)((hSCX >> 3) | 0x1f);',
-        'case_ids': ['AdjustCoordinatesForBGScroll-0'],
-        'source': 'src/home/text_box.c'},
-    'CopyLine': {   'source_symbol': 'CopyLine',
-        'before': '\tuint8_t middle_raw = (uint8_t)(b - 2);',
-        'after': '\tuint8_t middle_raw = (uint8_t)(b + 2);',
-        'case_ids': ['CopyLine-0'],
-        'source': 'src/home/text_box.c'},
+})
+MUTATIONS.update({
     'DrawRegularTextBox': {   'source_symbol': 'DrawRegularTextBox',
         'before': '\tdraw_line(hl, SYM_BOX_TOP, SYM_BOX_TOP_L, SYM_BOX_TOP_R, b);',
         'after': '\tdraw_line(hl, SYM_BOX_TOP, SYM_BOX_TOP_L, SYM_BOX_TOP_L, b);',
@@ -222,32 +29,6 @@ MUTATIONS = {
         'after': '\tdraw_line(hl, 0x1eu, 0x1au, 0x1bu, b);',
         'case_ids': ['ContinueDrawingTextBoxDMG-0'],
         'source': 'src/profiles/extended/home/text_box.c'},
-    'DrawRegularTextBoxCGB': {   'source_symbol': 'DrawRegularTextBoxCGB',
-        'before': '\tCopyCurrentLineTilesAndAttrCGB(hl, 0x1c, b, 0x18, 0x19);',
-        'after': '\t;',
-        'case_ids': ['DrawRegularTextBoxCGB-0'],
-        'source': 'src/home/text_box.c'},
-    'ContinueDrawingTextBoxCGB': {   'source_symbol': 'ContinueDrawingTextBoxCGB',
-        'before': '\t\tgb_write8(0xff4f, 1);',
-        'after': '\t\t;',
-        'case_ids': ['ContinueDrawingTextBoxCGB-0'],
-        'source': 'src/home/text_box.c'},
-    'CopyCurrentLineTilesAndAttrCGB': {   'source_symbol': 'CopyCurrentLineTilesAndAttrCGB',
-        'before': '\tCopyLine(hl, a, b, d, e);',
-        'after': '\t;',
-        'case_ids': ['CopyCurrentLineTilesAndAttrCGB-0'],
-        'source': 'src/home/text_box.c'},
-    'CopyCurrentLineAttrCGB': {   'source_symbol': 'CopyCurrentLineAttrCGB',
-        'before': '\tCopyLine(hl, wTextBoxFrameType, b, wTextBoxFrameType, wTextBoxFrameType);',
-        'after': '\t;',
-        'case_ids': ['CopyCurrentLineAttrCGB-0'],
-        'source': 'src/home/text_box.c'},
-    'DrawLabeledTextBox': {   'source_symbol': 'DrawLabeledTextBox',
-        'before': '\tif (wConsole == CONSOLE_CGB) {',
-        'after': '\tif (wConsole != CONSOLE_CGB) {',
-        'case_ids': ['DrawLabeledTextBox-1'],
-        'source': 'src/profiles/extended/home/text_box.c'},
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

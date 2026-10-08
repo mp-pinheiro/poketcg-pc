@@ -1,201 +1,136 @@
-"""Extended oracle-diff cases for substatus, seeded from tests/cases/substatus.py."""
-
-CONTRACT = {
-    'CheckSandAttackOrSmokescreenSubstatus': {'compare': ('a', 'b', 'c', 'd', 'e', 'f', 'hl'), 'preserve': ('b', 'c')},
+"""Extended oracle-diff cases for substatus: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import WRAMX_START, sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('substatus')
+OWN = (
+    'ApplyStrikesBack_AgainstResidualAttack',
+    'ClearChangedTypesIfMuk',
+    'CountPokemonWithActivePkmnPowerInBothPlayAreas',
+    'CountTurnDuelistPokemonWithActivePkmnPower',
+    'GetLoadedCard1RetreatCost',
+    'HandleDamageReductionExceptSubstatus2',
+    'HandleDamageReductionOrNoDamageFromPkmnPowerEffects',
+    'HandleNoDamageOrEffectSubstatus',
+    'HandleStrikesBack_AgainstDamagingAttack',
+    'HandleStrikesBack_AgainstResidualAttack',
+    'HandleTransparency',
+)
+CONTRACT.update({
     'CountTurnDuelistPokemonWithActivePkmnPower': {'compare': ('a', 'b', 'c', 'd', 'e', 'f', 'hl'), 'preserve': ()},
     'CountPokemonWithActivePkmnPowerInBothPlayAreas': {'compare': ('a', 'b', 'c', 'd', 'e', 'f', 'hl'), 'preserve': ()},
-    'CheckIsIncapableOfUsingPkmnPower': {'compare': ('a', 'f', 'hl', 'b', 'c', 'd', 'e'), 'preserve': ()},
-    'CheckIsIncapableOfUsingPkmnPower_ArenaCard': {'compare': ('a', 'f', 'hl', 'b', 'c', 'd', 'e'), 'preserve': ()},
-    'HandleDoubleDamageSubstatus': {'compare': ('b', 'c', 'd', 'e'), 'preserve': ('b', 'c')},
     'HandleDamageReductionExceptSubstatus2': {'compare': ('d', 'e'), 'preserve': ()},
-    'HandleDamageReduction': {'compare': ('d', 'e'), 'preserve': ()},
-    'HandleCantAttackSubstatus': {'compare': ('f', 'hl', 'b', 'c', 'd', 'e'), 'preserve': ('b', 'c', 'd', 'e')},
-    'HandleAmnesiaSubstatus': {'compare': ('f', 'hl', 'b', 'c', 'd', 'e'), 'preserve': ('b', 'c', 'd', 'e')},
     'HandleNoDamageOrEffectSubstatus': {'compare': ('f', 'd', 'e', 'hl', 'b', 'c'), 'preserve': ()},
-    'CheckNoDamageOrEffect': {'compare': ('f', 'hl', 'b', 'c'), 'preserve': ('b', 'c')},
-    'IsClairvoyanceActive': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
     'GetLoadedCard1RetreatCost': {'compare': ('a',), 'preserve': ()},
-    'CheckUnableToRetreatDueToEffect': {'compare': ('f', 'hl', 'b', 'c', 'd', 'e'), 'preserve': ('b', 'c', 'd', 'e')},
-    'CheckCantUseTrainerDueToEffect': {'compare': ('f', 'hl', 'b', 'c', 'd', 'e'), 'preserve': ('b', 'c', 'd', 'e')},
-    'IsPrehistoricPowerActive': {'compare': ('a', 'f', 'hl', 'b', 'c', 'd', 'e'), 'preserve': ()},
-    'ClearDamageReductionSubstatus2': {'compare': (), 'preserve': ()},
-    'UpdateSubstatusConditions_StartOfTurn': {'compare': (), 'preserve': ()},
-    'UpdateSubstatusConditions_EndOfTurn': {'compare': (), 'preserve': ()},
-    'IsRainDanceActive': {'compare': ('a', 'f', 'b', 'c', 'd', 'e'), 'preserve': ()},
     'ClearChangedTypesIfMuk': {'compare': (), 'preserve': ()},
-    'CheckRainDanceScenario': {'compare': ('a', 'f'), 'preserve': ()},
     'HandleStrikesBack_AgainstDamagingAttack': {'compare': ('a', 'b', 'c', 'd', 'e', 'f', 'hl'), 'preserve': ()},
     'ApplyStrikesBack_AgainstResidualAttack': {'compare': ('a', 'f'), 'preserve': ()},
     'HandleStrikesBack_AgainstResidualAttack': {'compare': ('a', 'f'), 'preserve': ()},
-    'HandleDestinyBondSubstatus': {'compare': ('a', 'f', 'hl'), 'preserve': ()},
-    'HandleNShieldAndTransparency': {'compare': ('d', 'e', 'f'), 'preserve': ('d', 'e')},
     'HandleTransparency': {'compare': ('a', 'f', 'hl'), 'preserve': ()},
     'HandleDamageReductionOrNoDamageFromPkmnPowerEffects': {'compare': ('f', 'd', 'e', 'hl'), 'preserve': ('d', 'e')},
-    'HandleSandAttackOrSmokescreenSubstatus': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
-}
-
-CASES = {
-    'CheckSandAttackOrSmokescreenSubstatus': [
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x00'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x02', 0xCBB4: b'\x00'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x02', 0xCBB4: b'\x01'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x01', 0xCBB4: b'\x00'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x01', 0xCBB4: b'\x01'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x03'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc3', 0xC3E8: b'\x00'}},
-    ],
+})
+CASES.update({
     'CountTurnDuelistPokemonWithActivePkmnPower': [
-        {'d': 0x00, 'e': 0x01, 'wram': {0xFF97: b'\xc2', 0xC2BB: b'\x00', 0xC400: b'\x01', 0xC2BC: b'\xff'}},
+        {'d': 0x00, 'e': 0x01, 'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerArenaCard"): b'\x00', sym("wBoosterCardsDrawn"): b'\x01', sym("wPlayerBench"): b'\xff'}},
         {   'd': 0x00,
             'e': 0x01,
-            'wram': {0xFF97: b'\xc2', 0xC2BB: b'\x00', 0xC400: b'\x01', 0xC2BC: b'\x00\x00\xff'},
-            'read': {0xCE36: 0x01}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerArenaCard"): b'\x00', sym("wBoosterCardsDrawn"): b'\x01', sym("wPlayerBench"): b'\x00\x00\xff'},
+            'read': {sym("wTempPokemonID_ce7c"): 0x01}},
         {   'd': 0x00,
             'e': 0x01,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BB: b'\x00',
-                        0xC2F0: b'\x01',
-                        0xC400: b'\x01',
-                        0xC2BC: b'\xff'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerArenaCard"): b'\x00',
+                        sym("wPlayerArenaCardStatus"): b'\x01',
+                        sym("wBoosterCardsDrawn"): b'\x01',
+                        sym("wPlayerBench"): b'\xff'}},
         {   'd': 0x00,
             'e': 0x01,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BB: b'\x00',
-                        0xC2F0: b'\x08',
-                        0xC400: b'\x01',
-                        0xC2BC: b'\xff'}},
-        {'d': 0x00, 'e': 0x02, 'wram': {0xFF97: b'\xc2', 0xC2BB: b'\x00', 0xC400: b'\x01', 0xC2BC: b'\xff'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerArenaCard"): b'\x00',
+                        sym("wPlayerArenaCardStatus"): b'\x08',
+                        sym("wBoosterCardsDrawn"): b'\x01',
+                        sym("wPlayerBench"): b'\xff'}},
+        {'d': 0x00, 'e': 0x02, 'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerArenaCard"): b'\x00', sym("wBoosterCardsDrawn"): b'\x01', sym("wPlayerBench"): b'\xff'}},
     ],
     'CountPokemonWithActivePkmnPowerInBothPlayAreas': [
         {   'd': 0x00,
             'e': 0x01,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BB: b'\x00',
-                        0xC3BB: b'\x00',
-                        0xC400: b'\x01',
-                        0xC2BC: b'\xff',
-                        0xC478: b'\x01',
-                        0xC3BC: b'\xff'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerArenaCard"): b'\x00',
+                        sym("wOpponentArenaCard"): b'\x00',
+                        sym("wBoosterCardsDrawn"): b'\x01',
+                        sym("wPlayerBench"): b'\xff',
+                        sym("wOpponentDeck"): b'\x01',
+                        sym("wOpponentBench"): b'\xff'}},
         {   'd': 0x00,
             'e': 0x01,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BB: b'\x00',
-                        0xC3BB: b'\xff',
-                        0xC400: b'\x01',
-                        0xC2BC: b'\xff',
-                        0xC478: b'\x01',
-                        0xC3BC: b'\xff'},
-            'read': {0xCE36: 0x01}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerArenaCard"): b'\x00',
+                        sym("wOpponentArenaCard"): b'\xff',
+                        sym("wBoosterCardsDrawn"): b'\x01',
+                        sym("wPlayerBench"): b'\xff',
+                        sym("wOpponentDeck"): b'\x01',
+                        sym("wOpponentBench"): b'\xff'},
+            'read': {sym("wTempPokemonID_ce7c"): 0x01}},
         {   'd': 0x00,
             'e': 0x02,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BB: b'\xff',
-                        0xC3BB: b'\xff',
-                        0xC400: b'\x01',
-                        0xC2BC: b'\xff',
-                        0xC478: b'\x01',
-                        0xC3BC: b'\xff'},
-            'read': {0xCE36: 0x01}},
-    ],
-    'CheckIsIncapableOfUsingPkmnPower': [
-        {'a': 0x00, 'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2F0: b'\x01'}},
-        {'a': 0x00, 'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2F0: b'\x00'}},
-        {   'a': 0x00,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2BB: b'\x00', 0xC400: b"'"}},
-        {'a': 0x01, 'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2F0: b'\x01'}},
-        {   'a': 0x01,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC3BB: b'\x00', 0xC478: b"'"}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-    ],
-    'CheckIsIncapableOfUsingPkmnPower_ArenaCard': [
-        {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2F0: b'\x08'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-    ],
-    'HandleDoubleDamageSubstatus': [
-        {'d': 0x00, 'e': 0x00, 'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x01'}},
-        {'d': 0x12, 'e': 0x34, 'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x01'}},
-        {'d': 0x12, 'e': 0x34, 'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x00'}},
-        {'d': 0x80, 'e': 0x00, 'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x01'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x01'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerArenaCard"): b'\xff',
+                        sym("wOpponentArenaCard"): b'\xff',
+                        sym("wBoosterCardsDrawn"): b'\x01',
+                        sym("wPlayerBench"): b'\xff',
+                        sym("wOpponentDeck"): b'\x01',
+                        sym("wOpponentBench"): b'\xff'},
+            'read': {sym("wTempPokemonID_ce7c"): 0x01}},
     ],
     'HandleDamageReductionExceptSubstatus2': [
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC75: b'\x01'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wNoDamageOrEffect"): b'\x01'}},
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x0f'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x0f'}},
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x1e'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x1e'}},
         {   'd': 0x00,
             'e': 0x05,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x1e'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x1e'}},
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x13'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x13'}},
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x0e'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x0e'}},
         {   'd': 0x00,
             'e': 0x27,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x0e'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x0e'}},
         {   'd': 0x00,
             'e': 0x28,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x0e'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x0e'}},
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x15'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x15'}},
         {   'd': 0x00,
             'e': 0x02,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x15'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x15'}},
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2F0: b'\x01'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardStatus"): b'\x01'}},
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC5C: b'\x04'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wLoadedAttackCategory"): b'\x04'}},
         {   'd': 0x00,
             'e': 0x0A,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\x9b'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\x9b'}},
         {   'd': 0x00,
             'e': 0x1E,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\x9b'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\x9b'}},
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\x8b'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\x8b'}},
         {   'd': 0x00,
             'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\x01'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\x01'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -203,106 +138,51 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-    ],
-    'HandleDamageReduction': [
-        {   'd': 0x00,
-            'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC3E8: b'\x00'}},
-        {   'd': 0x00,
-            'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC3E8: b'\x03'}},
-        {   'd': 0x00,
-            'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC3E8: b'\x07'}},
-        {   'd': 0x00,
-            'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC3E8: b'\x12'}},
-        {   'd': 0x00,
-            'e': 0x64,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC3E8: b'\x01'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-    ],
-    'HandleCantAttackSubstatus': [
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x00'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x05'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x06'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x0b'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x01'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2'}},
-    ],
-    'HandleAmnesiaSubstatus': [
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x00'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x01'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x04', 0xC2F2: b'\x02', 0xCC74: b'\x02'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x04', 0xC2F2: b'\x02', 0xCC74: b'\x00'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x04', 0xC2F2: b'\x02', 0xCC74: b'\x03'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff'}},
     ],
     'HandleNoDamageOrEffectSubstatus': [
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\xff',
-                        0xC3BC: b'\xff',
-                        0xCC5C: b'\x04',
-                        0xCC75: b'\x03'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerBench"): b'\xff',
+                        sym("wOpponentBench"): b'\xff',
+                        sym("wLoadedAttackCategory"): b'\x04',
+                        sym("wNoDamageOrEffect"): b'\x03'}},
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\r'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\r'}},
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x14'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x14'}},
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2E7: b'\x0c'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardSubstatus1"): b'\x0c'}},
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2F0: b'\x01'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wPlayerArenaCardStatus"): b'\x01'}},
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\x00'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\x00'}},
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\x01'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\x01'}},
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\xff',
-                        0xC3BC: b'\xff',
-                        0xCC71: b'\xa0',
-                        0xCC94: b'\x01'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerBench"): b'\xff',
+                        sym("wOpponentBench"): b'\xff',
+                        sym("wTempNonTurnDuelistCardID"): b'\xa0',
+                        sym("wIsDamageToSelf"): b'\x01'}},
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\xa0', 0xCC6F: b'&'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\xa0', sym("wTempTurnDuelistCardID"): b'&'}},
         {   'e': 0x99,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\xa0', 0xCC6F: b"'"}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\xa0', sym("wTempTurnDuelistCardID"): b"'"}},
         {   'd': 0x5A,
             'e': 0x99,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\xa0', 0xCC6F: b"'"}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\xa0', sym("wTempTurnDuelistCardID"): b"'"}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -310,60 +190,32 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-    ],
-    'CheckNoDamageOrEffect': [
-        {'hl': 0x1234, 'wram': {0xCC75: b'\x00'}},
-        {'hl': 0x1234, 'wram': {0xCC75: b'\x81'}},
-        {'hl': 0x1234, 'wram': {0xCC75: b'\x01'}},
-        {'hl': 0x1234, 'wram': {0xCC75: b'\x05'}},
-        {'hl': 0x1234, 'wram': {0xCC75: b'\x03'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCC75: b'\x02'}},
-    ],
-    'IsClairvoyanceActive': [
-        {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2BB: b'\x00', 0xC400: b'\\'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC3BB: b'\x00', 0xC478: b"'"}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff'}},
     ],
     'GetLoadedCard1RetreatCost': [
-        {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC02: b'\x03'}},
-        {   'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\x00\xff',
-                        0xC3BC: b'\xff',
-                        0xC400: b'\xb6',
-                        0xCC02: b'\x03'}},
-        {   'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\x00\x00\xff',
-                        0xC3BC: b'\xff',
-                        0xC400: b'\xb6',
-                        0xCC02: b'\x03'}},
-        {   'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\x00\x00\xff',
-                        0xC3BC: b'\xff',
-                        0xC400: b'\xb6',
-                        0xCC02: b'\x01'}},
-        {   'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\x00\xff',
-                        0xC3BC: b'\xff',
-                        0xC400: b'\xb6',
-                        0xCC02: b'\x03',
-                        0xC3BB: b'\x00',
-                        0xC478: b"'"}},
+        {'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wLoadedCard1RetreatCost"): b'\x03'}},
+        {   'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerBench"): b'\x00\xff',
+                        sym("wOpponentBench"): b'\xff',
+                        sym("wBoosterCardsDrawn"): b'\xb6',
+                        sym("wLoadedCard1RetreatCost"): b'\x03'}},
+        {   'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerBench"): b'\x00\x00\xff',
+                        sym("wOpponentBench"): b'\xff',
+                        sym("wBoosterCardsDrawn"): b'\xb6',
+                        sym("wLoadedCard1RetreatCost"): b'\x03'}},
+        {   'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerBench"): b'\x00\x00\xff',
+                        sym("wOpponentBench"): b'\xff',
+                        sym("wBoosterCardsDrawn"): b'\xb6',
+                        sym("wLoadedCard1RetreatCost"): b'\x01'}},
+        {   'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerBench"): b'\x00\xff',
+                        sym("wOpponentBench"): b'\xff',
+                        sym("wBoosterCardsDrawn"): b'\xb6',
+                        sym("wLoadedCard1RetreatCost"): b'\x03',
+                        sym("wOpponentArenaCard"): b'\x00',
+                        sym("wOpponentDeck"): b"'"}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -371,133 +223,19 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC02: b'\x05'}},
-    ],
-    'CheckUnableToRetreatDueToEffect': [
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x00'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\t'}},
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x01'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2'}},
-    ],
-    'CheckCantUseTrainerDueToEffect': [
-        {'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x00'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x02'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x01'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2'}},
-    ],
-    'IsPrehistoricPowerActive': [
-        {'hl': 0x1234, 'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-        {   'hl': 0x1234,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\xff',
-                        0xC3BC: b'\xff',
-                        0xC2BB: b'\x00',
-                        0xC400: b'\x8d'}},
-        {   'hl': 0x1234,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\xff',
-                        0xC3BC: b'\xff',
-                        0xC2BB: b'\x00',
-                        0xC400: b'\x8d',
-                        0xC3BB: b'\x00',
-                        0xC478: b"'"}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-    ],
-    'ClearDamageReductionSubstatus2': [
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x03'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x05'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x06'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x07'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x12'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x01'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x05'}},
-    ],
-    'UpdateSubstatusConditions_StartOfTurn': [
-        {'wram': {0xFF97: b'\xc2', 0xC2E7: b'\x19', 0xC2EB: b'\x00'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E7: b'\x0c', 0xC2EB: b'\x00'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E7: b'\x00', 0xC2EB: b'\x02'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2E7: b'\x19', 0xC2EB: b'\x02'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2E7: b'\x19', 0xC2EB: b'\x00'}},
-    ],
-    'UpdateSubstatusConditions_EndOfTurn': [
-        {'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x03', 0xC2E8: b'\x05', 0xC2E7: b'\x00'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x03', 0xC2E8: b'\x05', 0xC2E7: b'\x19'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x00', 0xC2E8: b'\x00', 0xC2E7: b'\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2EB: b'\x03', 0xC2E8: b'\x05', 0xC2E7: b'\x00'}},
-    ],
-    'IsRainDanceActive': [
-        {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
-        {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xC2BB: b'\x00', 0xC400: b'C'}},
-        {   'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\xff',
-                        0xC3BC: b'\xff',
-                        0xC2BB: b'\x00',
-                        0xC400: b'C',
-                        0xC3BB: b'\x00',
-                        0xC478: b"'"}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wLoadedCard1RetreatCost"): b'\x05'}},
     ],
     'ClearChangedTypesIfMuk': [
         {   'a': 0x00,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC400: b"'",
-                        0xC2D4: b'\x01\x02\x03\x04\x05\x06',
-                        0xC3D4: b'\x07\x08\t\n\x0b\x0c'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wBoosterCardsDrawn"): b"'",
+                        sym("wPlayerArenaCardChangedType"): b'\x01\x02\x03\x04\x05\x06',
+                        sym("wOpponentArenaCardChangedType"): b'\x07\x08\t\n\x0b\x0c'}},
         {   'a': 0x00,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC400: b'\x01',
-                        0xC2D4: b'\x01\x02\x03\x04\x05\x06',
-                        0xC3D4: b'\x07\x08\t\n\x0b\x0c'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wBoosterCardsDrawn"): b'\x01',
+                        sym("wPlayerArenaCardChangedType"): b'\x01\x02\x03\x04\x05\x06',
+                        sym("wOpponentArenaCardChangedType"): b'\x07\x08\t\n\x0b\x0c'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -505,66 +243,30 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC400: b"'",
-                        0xC2D4: b'\x01\x02\x03\x04\x05\x06',
-                        0xC3D4: b'\x07\x08\t\n\x0b\x0c'}},
-    ],
-    'CheckRainDanceScenario': [
-        {   'wram': {   0xFF97: b'\xc2',
-                        0xFF98: b'\x00',
-                        0xC400: b'\x08',
-                        0xFF9D: b'\x00',
-                        0xC2BB: b'\x00',
-                        0xC2D4: b'\x00'}},
-        {   'wram': {   0xFF97: b'\xc2',
-                        0xFF98: b'\x00',
-                        0xC400: b'\x03',
-                        0xFF9D: b'\x00',
-                        0xC2BB: b'\x01',
-                        0xC401: b'\x08',
-                        0xC2D4: b'\x00'}},
-        {   'wram': {   0xFF97: b'\xc2',
-                        0xFF98: b'\x00',
-                        0xC400: b'\x03',
-                        0xFF9D: b'\x00',
-                        0xC2BB: b'\x01',
-                        0xC401: b'C',
-                        0xC2D4: b'\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xFF97: b'\xc2',
-                        0xFF98: b'\x00',
-                        0xC400: b'\x03',
-                        0xFF9D: b'\x00',
-                        0xC2BB: b'\x01',
-                        0xC401: b'C',
-                        0xC2D4: b'\x00'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wBoosterCardsDrawn"): b"'",
+                        sym("wPlayerArenaCardChangedType"): b'\x01\x02\x03\x04\x05\x06',
+                        sym("wOpponentArenaCardChangedType"): b'\x07\x08\t\n\x0b\x0c'}},
     ],
     'HandleStrikesBack_AgainstDamagingAttack': [
         {   'd': 0x00,
             'e': 0x00,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\x7f'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\x7f'}},
         {   'd': 0x00,
             'e': 0x0A,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\xff',
-                        0xC3BC: b'\xff',
-                        0xCC71: b'\x7f',
-                        0xCC94: b'\x01'}},
-        {'d': 0x00, 'e': 0x0A, 'wram': {0xFF97: b'\xc2', 0xCC71: b'\x01'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerBench"): b'\xff',
+                        sym("wOpponentBench"): b'\xff',
+                        sym("wTempNonTurnDuelistCardID"): b'\x7f',
+                        sym("wIsDamageToSelf"): b'\x01'}},
+        {'d': 0x00, 'e': 0x0A, 'wram': {sym("hWhoseTurn"): b'\xc2', sym("wTempNonTurnDuelistCardID"): b'\x01'}},
         {   'd': 0x00,
             'e': 0x0A,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BC: b'\xff',
-                        0xC3BC: b'\xff',
-                        0xCC71: b'\x7f',
-                        0xCC5C: b'\x04'}},
+            'wram': {   sym("hWhoseTurn"): b'\xc2',
+                        sym("wPlayerBench"): b'\xff',
+                        sym("wOpponentBench"): b'\xff',
+                        sym("wTempNonTurnDuelistCardID"): b'\x7f',
+                        sym("wLoadedAttackCategory"): b'\x04'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -572,17 +274,17 @@ CASES = {
             'd': 0x00,
             'e': 0x00,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff', 0xCC71: b'\x7f'}},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff', sym("wTempNonTurnDuelistCardID"): b'\x7f'}},
     ],
     'ApplyStrikesBack_AgainstResidualAttack': [
         {   'hl': 0x00,
-            'wram': {0xFF97: b'\xc2', 0xCC6F: b'\x01'},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wTempTurnDuelistCardID"): b'\x01'},
             'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCC13: 0x02}},
+            'read': {sym("wLoadedCard2Name"): 0x02}},
         {   'hl': 0x00,
-            'wram': {0xFF97: b'\xc2', 0xCC6F: b'\xe4'},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wTempTurnDuelistCardID"): b'\xe4'},
             'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCC13: 0x02}},
+            'read': {sym("wLoadedCard2Name"): 0x02}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -590,12 +292,12 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x00,
-            'wram': {0xFF97: b'\xc2', 0xCC6F: b'\x01'},
+            'wram': {sym("hWhoseTurn"): b'\xc2', sym("wTempTurnDuelistCardID"): b'\x01'},
             'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'read': {0xCC13: 0x02}},
+            'read': {sym("wLoadedCard2Name"): 0x02}},
     ],
     'HandleStrikesBack_AgainstResidualAttack': [
-        {   'wram': {   0xC000: b'\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0'
+        {   'wram': {   sym("wDeckToBuild"): b'\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0'
                                 b'\xc1\xc2\xc3\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -740,11 +442,11 @@ CASES = {
                                 b'\x00\x00\x16\x00\x00\x00\x06\x00\x00\x00\x07\x00\x00\x00\x17\x00'
                                 b"\x00\x00'\x00\x00\x00)\x0000010\x00d\x00\x030\x030\x00\x00\x00\x00"
                                 b'\x00\x00\x00\x11\x02\x00\x00',
-                        0xCAB8: b'',
-                        0xCAB9: b'\x00\x00\xc3\xe4\xd2\xe4',
-                        0xCAC0: b'',
-                        0xCAC1: b'\x00\x01&\x01\t\x05;\x03\x00/<\r\xc3\xa55\xc3"\x03\xc92\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xffk\xac~\x08A\x00\x10\xffk\x08\x02\x95@\x00\x10\x00\x00\xff\x7f\xef=\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x11\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x01\x03\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x08\x02\x00\x00o\x00\xa7\x00\x01\x00\x00\x00\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x04\x00\x0e;S\x00\x00\xc3\x00\x00\x06\x9b\x00\x01\x00\x9b\x1b\xff\xff\xff`\x00\x02\x02\xad\x03\x06\x1b\x04\x00\x00\x00\x00\x00\x00\x02\x00\x02\x06aH[\x0b\x01 \xbf(\x00\x00\x00\x00\x00\x00\x10\xad\n\x00\x00\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x04t\t\x93\x00\n\x05\x0bF\x00\\\x0b\x12\x06aH[\x0b\x01 \xbf(\x00\x00\x00\x00\x00\x00\x10\xad\n\x00\x00\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x04t\t\x93\x00\n\x05\x0bF\x00\\\x0b\x12\x00\x00\x00\x10\xad\n\x00\x00\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x01\n\x00\n\n\x00\x00\n\x00\x00\xbf\xbf\xa7\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc3\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf5\x01\x00\x00\x002\x00\x00\x00\x00\x04\x00\x00\xc4\xc4\xa4\xa4\xa4\xa4\xa4\xa4\xa4\xa4\xa0\xa0\xc4\xc4\x9f\x91\x88\x80\x00\x00\x01\x00\n\x01\x00',
-                        0xCCBE: b'\x00\x12\x11\x01\x01/\x1d\x00\x00\x00\x04\x06\x0e\x19W\x00'
+                        sym("wVBlankCounter"): b'',
+                        sym("wVBlankCounter") + 1: b'\x00\x00\xc3\xe4\xd2\xe4',
+                        sym("wVBlankOAMCopyToggle"): b'',
+                        sym("wTempByte"): b'\x00\x01&\x01\t\x05;\x03\x00/<\r\xc3\xa55\xc3"\x03\xc92\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xffk\xac~\x08A\x00\x10\xffk\x08\x02\x95@\x00\x10\x00\x00\xff\x7f\xef=\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x11\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x01\x03\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x08\x02\x00\x00o\x00\xa7\x00\x01\x00\x00\x00\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x04\x00\x0e;S\x00\x00\xc3\x00\x00\x06\x9b\x00\x01\x00\x9b\x1b\xff\xff\xff`\x00\x02\x02\xad\x03\x06\x1b\x04\x00\x00\x00\x00\x00\x00\x02\x00\x02\x06aH[\x0b\x01 \xbf(\x00\x00\x00\x00\x00\x00\x10\xad\n\x00\x00\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x04t\t\x93\x00\n\x05\x0bF\x00\\\x0b\x12\x06aH[\x0b\x01 \xbf(\x00\x00\x00\x00\x00\x00\x10\xad\n\x00\x00\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x04t\t\x93\x00\n\x05\x0bF\x00\\\x0b\x12\x00\x00\x00\x10\xad\n\x00\x00\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x01\n\x00\n\n\x00\x00\n\x00\x00\xbf\xbf\xa7\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc3\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xf5\x01\x00\x00\x002\x00\x00\x00\x00\x04\x00\x00\xc4\xc4\xa4\xa4\xa4\xa4\xa4\xa4\xa4\xa4\xa0\xa0\xc4\xc4\x9f\x91\x88\x80\x00\x00\x01\x00\n\x01\x00',
+                        sym("wCurMenuItem"): b'\x00\x12\x11\x01\x01/\x1d\x00\x00\x00\x04\x06\x0e\x19W\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -769,7 +471,7 @@ CASES = {
                                 b"\x00\x00\x00\x00'\x00\x01\n\x00\x00\x80\xc3\xa7\x00\x00\x00"
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE4E: b'\x05\x00\x00\x00\x00\x06\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                        sym("wCardListCursorPos"): b'\x05\x00\x00\x00\x00\x06\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x17\t\x076\xff\xff\xff0\xff\xff-69\xff'
@@ -789,18 +491,18 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x030\x030\x030\x030\x03',
-                        0xFF80: b'\x00\x00\x00>\xca\xe0F>(= \xfd\xc9',
-                        0xFF8E: b'',
-                        0xFF8F: b'',
-                        0xFF90: b'',
-                        0xFF91: b'',
-                        0xFF92: b"\x00\x00\x00\x00\n\xc3\xff\x18\xc5\xcd\x00\x00\n'\x00\x00"
+                        sym("hBankROM"): b'\x00\x00\x00>\xca\xe0F>(= \xfd\xc9',
+                        sym("hKeysReleased"): b'',
+                        sym("hDPadHeld"): b'',
+                        sym("hKeysHeld"): b'',
+                        sym("hKeysPressed"): b'',
+                        sym("hSCX"): b"\x00\x00\x00\x00\n\xc3\xff\x18\xc5\xcd\x00\x00\n'\x00\x00"
                                 b'\x05\xff\x00\x00\x00\x00\x9f\x91\x14\x98\x06\x0e\x00\x0f\x00\x00'
                                 b'\x01\x00\x00\x00\x1f\x03',
                         0xFF40: b'\xc3'},
-            'entry_sp': 0xDFCE,
+            'entry_sp': WRAMX_START + 0xFCE,
             'rom_bank': 0x00,
-            'read': {0xCC71: 0x01},
+            'read': {sym("wTempNonTurnDuelistCardID"): 0x01},
             'keys': [0x00, 0x01],
             'instruction_budget': 0x2625A00,
             'cycle_budget': 0x9896800,
@@ -811,10 +513,10 @@ CASES = {
             'e': 0x69,
             'f': 0x00,
             'hl': 0x00},
-        {'wram': {0xCC71: b'\x01'}},
-        {'wram': {0xCC71: b'\x7f', 0xCC5C: b'\x80'}},
-        {'wram': {0xCC71: b'\x7f', 0xCC5C: b'\x00', 0xCC6A: b'\x00'}},
-        {'wram': {0xCC71: b'\x01', 0xCC5C: b'\x80', 0xCC6A: b'\x01'}},
+        {'wram': {sym("wTempNonTurnDuelistCardID"): b'\x01'}},
+        {'wram': {sym("wTempNonTurnDuelistCardID"): b'\x7f', sym("wLoadedAttackCategory"): b'\x80'}},
+        {'wram': {sym("wTempNonTurnDuelistCardID"): b'\x7f', sym("wLoadedAttackCategory"): b'\x00', sym("wDealtDamage"): b'\x00'}},
+        {'wram': {sym("wTempNonTurnDuelistCardID"): b'\x01', sym("wLoadedAttackCategory"): b'\x80', sym("wDealtDamage"): b'\x01'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -822,66 +524,23 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCC71: b'\x01'}},
-    ],
-    'HandleDestinyBondSubstatus': [
-        {'wram': {0xFF97: b'\xc2', 0xC3E7: b'\x00', 0xC3C8: b'\x00'}},
-        {'wram': {0xFF97: b'\xc2', 0xC3E7: b'\x16', 0xC3BB: b'\xff'}},
-        {'wram': {0xFF97: b'\xc2', 0xC3E7: b'\x16', 0xC3BB: b'\x00', 0xC3C8: b'\n'}},
-        {'wram': {0xFF97: b'\xc2', 0xC3E7: b'\x16', 0xC3BB: b'\x00', 0xC3C8: b'\x00', 0xC2C8: b'\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc3', 0xC2E7: b' ', 0xC2C8: b'\x00'}},
-    ],
-    'HandleNShieldAndTransparency': [
-        {   'e': 0x00,
-            'd': 0x12,
-            'wram': {0xFF97: b'\xc2', 0xC2BB: b'\x01', 0xC401: b'\x01', 0xCC75: b'\x00'},
-            'read': {0xCC75: 0x01}},
-        {   'e': 0x00,
-            'd': 0x12,
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2BB: b'\x01',
-                        0xC401: b'\xa0',
-                        0xC3CE: b'\x01',
-                        0xCC75: b'\x00',
-                        0xCABB: b'\x00',
-                        0xC500: b'\xff'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400,
-            'read': {0xCC75: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2BB: b'\x01', 0xC401: b'\x01', 0xCC75: b'\x00'},
-            'read': {0xCC75: 0x01}},
+            'wram': {sym("wTempNonTurnDuelistCardID"): b'\x01'}},
     ],
     'HandleTransparency': [
-        {'wram': {0xCC71: b'\x00'}, 'hl': 0x4567},
-        {'wram': {0xCC71: b'\x96', 0xCC5C: b'\x04'}, 'hl': 0xC100},
+        {'wram': {sym("wTempNonTurnDuelistCardID"): b'\x00'}, 'hl': 0x4567},
+        {'wram': {sym("wTempNonTurnDuelistCardID"): b'\x96', sym("wLoadedAttackCategory"): b'\x04'}, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
             'c': 0xCC,
             'd': 0xDD,
             'e': 0xEE,
-            'hl': 0xC200,
-            'wram': {0xCC71: b'\x96', 0xCC5C: b'\x04'}},
+            'hl': sym("wPlayerCardLocations"),
+            'wram': {sym("wTempNonTurnDuelistCardID"): b'\x96', sym("wLoadedAttackCategory"): b'\x04'}},
     ],
     'HandleDamageReductionOrNoDamageFromPkmnPowerEffects': [
-        {'d': 0x12, 'e': 0x34, 'hl': 0x4567, 'wram': {0xCC5C: b'\x04'}},
-        {'d': 0x80, 'e': 0x00, 'hl': 0x00, 'wram': {0xCC5C: b'\x04'}},
+        {'d': 0x12, 'e': 0x34, 'hl': 0x4567, 'wram': {sym("wLoadedAttackCategory"): b'\x04'}},
+        {'d': 0x80, 'e': 0x00, 'hl': 0x00, 'wram': {sym("wLoadedAttackCategory"): b'\x04'}},
         {   'a': 0xAA,
             'f': 0xF0,
             'b': 0xBB,
@@ -889,8 +548,8 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCC5C: b'\x04'}},
-        {   'wram': {0xCC99: b'\x01', 0xC000: b'\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0'
+            'wram': {sym("wLoadedAttackCategory"): b'\x04'}},
+        {   'wram': {sym("wTempPlayAreaLocation_cceb"): b'\x01', sym("wDeckToBuild"): b'\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0'
                                 b'\xc1\xc2\xc3\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -1035,11 +694,11 @@ CASES = {
                                 b"\x00\x00\x06\x00\x00\x00\x07\x00\x00\x00\x17\x00\x00\x00'\x00"
                                 b'\x00\x00)\x00\x00\x00\x00! \x00\x030\x030\x030\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x11\x02\x00\x00',
-                        0xCAB8: b'',
-                        0xCAB9: b'\x00\x00\xc3\xe4\xd2\xe4',
-                        0xCAC0: b'',
-                        0xCAC1: b'\x00\x01\x10\x01\'6\x11\x01\x00\x9d\n\xde\xc3\x00\x00\xc3"\x03\xc92\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xbf\x02\x002\x9a\x00\x00\x00\xffk\xbf\x02\x15\x11\x00\x00\x00\x00\xff\x1f\x1f\x1bk\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x02\x03\x01\x00\x00\x00\x00\x00\x01\x00\x00\x01\x00\x00\x08\x02\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x01\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x07\x00\x0e;S\x00\x00\xc2\t\x00\x04\xa5\x00\x01\x00\x00%\xff\x001\xb1\x00#&\xc0\x03\x04%\x02\x00\x00\x01\x00\x00\x00\x00\x00\x01\x02\xaf%\xc2\t\xffHd(\x00\x00\x00\x00\x10\x00\x00\xc0\t"\x08\x00\x00\n\x00\x88L\x04\x00\x00\x00\x06\x00\x00\x000\xc3\t\xc4\t\x00\x00\x1e\x00\x8cL\x00\x04\x00\x00Q\x01\x00\x08\xb9\t\x19\x00\x0c\x01\x04\x82\x00\xc5\t\x03\x02\xaf%\xc2\t\xffHd(\x00\x00\x00\x00\x10\x00\x00\xc0\t"\x08\x00\x00\n\x00\x88L\x04\x00\x00\x00\x06\x00\x00\x000\xc3\t\xc4\t\x00\x00\x1e\x00\x8cL\x00\x04\x00\x00Q\x01\x00\x08\xb9\t\x19\x00\x0c\x01\x04\x82\x00\xc5\t\x03\x00\x00\x00 \x14\x0b\x15\x0b\x00\x00\x00\x80MN @\x00\x02\x83\x00\x00\n\n\x00\x00\x00\x00\x00\xb1\xb1f\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc2\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x02\x02\x01\x00!\x00\x00\x00\x00\x04\x00\x00\xa4\xa4\xa4\xa4\xa4\xa4\xe4\xe4\xa4\xa4\xa0\xa0\xa4\xa4\x9fd\x88\x80\x00\x00\x01\x00\n\x01\x00',
-                        0xCCBE: b'\x00\x12\x11\x01\x01/\x1d\x00\x00\x01\x04\x07\x0e\x19W\x00'
+                        sym("wVBlankCounter"): b'',
+                        sym("wVBlankCounter") + 1: b'\x00\x00\xc3\xe4\xd2\xe4',
+                        sym("wVBlankOAMCopyToggle"): b'',
+                        sym("wTempByte"): b'\x00\x01\x10\x01\'6\x11\x01\x00\x9d\n\xde\xc3\x00\x00\xc3"\x03\xc92\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xbf\x02\x002\x9a\x00\x00\x00\xffk\xbf\x02\x15\x11\x00\x00\x00\x00\xff\x1f\x1f\x1bk\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x02\x03\x01\x00\x00\x00\x00\x00\x01\x00\x00\x01\x00\x00\x08\x02\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x01\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x07\x00\x0e;S\x00\x00\xc2\t\x00\x04\xa5\x00\x01\x00\x00%\xff\x001\xb1\x00#&\xc0\x03\x04%\x02\x00\x00\x01\x00\x00\x00\x00\x00\x01\x02\xaf%\xc2\t\xffHd(\x00\x00\x00\x00\x10\x00\x00\xc0\t"\x08\x00\x00\n\x00\x88L\x04\x00\x00\x00\x06\x00\x00\x000\xc3\t\xc4\t\x00\x00\x1e\x00\x8cL\x00\x04\x00\x00Q\x01\x00\x08\xb9\t\x19\x00\x0c\x01\x04\x82\x00\xc5\t\x03\x02\xaf%\xc2\t\xffHd(\x00\x00\x00\x00\x10\x00\x00\xc0\t"\x08\x00\x00\n\x00\x88L\x04\x00\x00\x00\x06\x00\x00\x000\xc3\t\xc4\t\x00\x00\x1e\x00\x8cL\x00\x04\x00\x00Q\x01\x00\x08\xb9\t\x19\x00\x0c\x01\x04\x82\x00\xc5\t\x03\x00\x00\x00 \x14\x0b\x15\x0b\x00\x00\x00\x80MN @\x00\x02\x83\x00\x00\n\n\x00\x00\x00\x00\x00\xb1\xb1f\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc2\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x02\x02\x01\x00!\x00\x00\x00\x00\x04\x00\x00\xa4\xa4\xa4\xa4\xa4\xa4\xe4\xe4\xa4\xa4\xa0\xa0\xa4\xa4\x9fd\x88\x80\x00\x00\x01\x00\n\x01\x00',
+                        sym("wCurMenuItem"): b'\x00\x12\x11\x01\x01/\x1d\x00\x00\x01\x04\x07\x0e\x19W\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -1065,7 +724,7 @@ CASES = {
                                 b'\x00\x00\x80\xc2d\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00',
-                        0xCE4E: b'\x05\x00\x00\x00\x00\x06\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                        sym("wCardListCursorPos"): b'\x05\x00\x00\x00\x00\x06\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x10\x04$\xff\xff\xff\xff&\xff\xff+$5\xff'
@@ -1085,18 +744,18 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x030\x030\x030\x030\x03',
-                        0xFF80: b'\x0b\x00\x00>\xca\xe0F>(= \xfd\xc9',
-                        0xFF8E: b'',
-                        0xFF8F: b'',
-                        0xFF90: b'',
-                        0xFF91: b'',
-                        0xFF92: b'\x00\x00\x00\x00\n\xc31\x14\xc5\xc3\x00\x00\n1\x01\x00'
+                        sym("hBankROM"): b'\x0b\x00\x00>\xca\xe0F>(= \xfd\xc9',
+                        sym("hKeysReleased"): b'',
+                        sym("hDPadHeld"): b'',
+                        sym("hKeysHeld"): b'',
+                        sym("hKeysPressed"): b'',
+                        sym("hSCX"): b'\x00\x00\x00\x00\n\xc31\x14\xc5\xc3\x00\x00\n1\x01\x00'
                                 b'\xff\xff\x00\x00\x00\x00\x9fd\x14\x98\n\n\x00\x0f\x00\x00'
                                 b'\x00\x00\x00\x00\x1f\x03',
                         0xFF40: b'\xc3'},
-            'entry_sp': 0xDFD2,
+            'entry_sp': WRAMX_START + 0xFD2,
             'rom_bank': 0x0B,
-            'read': {0xC200: 0x0200, 0xCBAA: 0x0100},
+            'read': {sym("wPlayerCardLocations"): 0x0200, sym("wPracticeDuelTurn"): 0x0100},
             'keys': [0x00, 0x01],
             'instruction_budget': 0x2625A00,
             'cycle_budget': 0x9896800,
@@ -1108,292 +767,47 @@ CASES = {
             'f': 0xA0,
             'hl': 0x00},
     ],
-    'HandleSandAttackOrSmokescreenSubstatus': [
-        {'d': 0x12, 'e': 0x34, 'hl': 0x4567, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x00'}},
-        {'d': 0xAD, 'e': 0xB5, 'hl': 0x00, 'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x00'}},
-        {   'a': 0x01,
-            'f': 0x10,
-            'b': 0x22,
-            'c': 0x33,
-            'd': 0x80,
-            'e': 0x01,
-            'hl': 0xC000,
-            'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xFF97: b'\xc2', 0xC2E8: b'\x00'}},
-        {   'keys': [0x00, 0x01],
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'wram': {0xC000: b'\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0'
-                                b'\xc1\xc2\xc3\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xa0'
-                                b'\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00'
-                                b'\x00\x00\x00\x00\x01\x00\x00\x10\x00\x00\x08\x01\x11\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x08\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x08\x00\x00\x01\x00\x00\x00\x00\x013+\x1a\x00'
-                                b'\x00\x00\r\x1b;6\x14\x146\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\r\x1c)\x1b\x17;63+\x1a'
-                                b'\x14\x075\x05\x194\x08\x0c(\t/-\x02\x12!,&\x04\x06#\x15\x1d:\x00'
-                                b'21\x1e\x03\x10\n9\'\x16\x0e\x18\x11%\x0f$0\x0b\x13\x1f78. "\x01*\x0b)'
-                                b'\x1c\xff\xff\xff\xff\xff\x00\x00\x00\x00\x00\x00\x14<\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00'
-                                b'\x07\x00\x05\x02\x00\x00\x00\n\x00\x00\x02\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x01\x08\x00\x00\x00\x01'
-                                b'\x00\x00\x10\x00\x00\x00\x01\x00\x00\x00\x00\x12\x00\x08\x02\x00'
-                                b'\x02\x00\x00\x08\x00\x10\x00\x00\x00\x00\x01\x13\x11\x00\x00\x00'
-                                b'\x00\x00\x00\x01\x00\x02\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b"\x19\x1f\x07\x00\x00\x00\x06\x12\x0b&/\x04'\x00\x00\x00"
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b"\x00\x00\x1a\x1c13(\x1a!\x19\x1f\x07\x0e\x06\x12\x0b&/\x04';5\x16\x15"
-                                b'\x1b%6.\x18\x012\x02\x1e+\x149\r\x03\x13\x0c#\x00,$)\x100-\t4:\x0f'
-                                b'\n\x11"\x088\x05*7\x1d \x12!(\x17\'\xff\xff\xff\x00\x00'
-                                b'\x00\x00\x00\x00((\x1e(\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x07\x04\x06\x04\x00\x9f\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x02\x02\x02'
-                                b'\x02\x02\x02\x02\x02\x02\x04\x04\x04\x04\x04\x04\x04\x04\x05\x05'
-                                b'\x05\x05\x05\x05001266899;``giikuyyz}~\xa7\xa7\xa8\xb1\xc3\xc5'
-                                b'\xc5\xd2\xd6\xd8\xdd\xdd\xdf\xdf\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x05\x05\x05'
-                                b'\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x05\x03\x03\x03\x03\x03'
-                                b'\x03\x03\x03MMMN\\\\\\]]wwwwxx\x84\x84\x84\x86\x88\x88'
-                                b'\x88\x8b\x8b\x8c\x8d\x8d\xc3\xc3\xc5\xc5\xca\xca\xcc\xcc\xcc\xcc'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x030\x030\x030\x030\x030\x030\x00\x00\x00\x00'
-                                b')\x00)\x01\x1b\r\xff\xff\x11#+$5\xff\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x16\x16\x16\x16'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00v12\x00                            '
-                                b'                     \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x000)NLHPETE.OO E HT2AK'
-                                b'ON6I T1DMP    C OU ITGYRN LIEA 0C GWYTANSSL.OCKGGRKNRVUHATDLZCEY( I!'
-                                b'PTFRL RAHIHDRWWE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00RC LBMME\x03SALC N RETRMDETE1ECCI7DGO NAA8DUTRHYMLH'
-                                b"HRRAEYPTSHK1E.IEGAT ' SNDAOANTPMELF -T GI  AD LKMU GEWUSSFGEDAOL"
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x000123456\x94\x8c\x83\x82S\x7fxAj{p9CDG\x8e\x87\x81}ro`c>Os\x9di'
-                                b'kvH]\\J\x91ZEP;Q\x92\x8aw\x88Ma:\x9aNIlz<\x85\x86\x9cdYq\x008hW\x96'
-                                b'\x80\x84\x8fTg@K~\x9e\x95[t_\x9fBmeR|f\x89F\x93yL\x90\x9b\x8bu\x98?V'
-                                b'\x97^\x99\x8dXb=n\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x008\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x0012345678tCf^l\x9eO\x96}?\x86DE\\\x8dFViY~\x90dhP'
-                                b']_\x89<{s\x97v\x9cq[\x82XW\x99\x84Me\x9dNp\x88\x8b|uS@Tj\x87\x9fLBrKQ'
-                                b'\x83\x94Ub>\x8fkA\x8aJ\x7f=xI;:ymnHc\x8ca\x939\x9bGz\x91Z`\x8e'
-                                b'8\x81w\x98\x95\x9ag\x92oR\x80\x85\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00'
-                                b'\x00\x00\x03\x00\x00\x00\x03 \x00\x00/\x00\x00\x000\x00\x00\x000 '
-                                b'\x00\x00/ \x00\x000`\x00\x00/`\x00\x00-`\x00\x002\x00\x00\x003\x00'
-                                b'\x00\x005\x00\x00\x006\x00\x00\x002\x00\x00\x00\x0b\x00'
-                                b'\x00\x00\x0c\x00\x00\x00\x10 \x00\x00\x11 \x00\x00\x0b\x00'
-                                b'\x00\x00\x0c\x00\x00\x00\x10 \x00\x00\x11 \x00\x00\x0b \x00\x00\x0c '
-                                b'\x00\x00\x10\x00\x00\x00\x11\x00\x00\x00\x0b \x00\x00\x0c '
-                                b'\x00\x00\x10\x00\x00\x00\x11\x00\x00\x00\x0e\x00\x00\x00\x10\x00'
-                                b'\x00\x00\x11\x00\x00\x00\x0b \x00\x00\x0c \x00\x00\x0e\x00'
-                                b'\x00\x00\x10 \x00\x00\x11 \x00\x00\x00# \x00\x030\x030\x030'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x11\x02\x00\x00',
-                        0xCAB8: b'',
-                        0xCAB9: b'\x00\x00\xc3\xe4\xe6\xe4',
-                        0xCAC0: b'',
-                        0xCAC1: b'\x0f\x01\xef\x01/*5\x00\x00\xb7Cy\xc3\x00\x00\xc3"\x03\x00\x00\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xffC\xff\x13\x90\x01\x04\x00\xffC\xbf\x12\x9a\x11\x04\x00\x9cc\xb5BJ!\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x02\x03\x01\x00\x00\x00\x01\x00\x00\x00\x00\x01\x00\x00\x08\x02\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x01\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x01\x07\x00\x0e;S\x00\x00\xc2\x01\x00\x03\x9f\x00\x01\x00\x00\x1f\xff\x00)y\x00\x1c\x1b\xb9\x03\x03\x1f\x02\x00\x00\x00\x00\x01\x00\x00\x00\x01\x04\xaf-\x0f\n\x00\x00y\x1e\x00\x00\x00\x00\x00\x10\x00\x10\n\x00\x00\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00 \x00\x11\n\x00\x00\x00\x00\x1e\x00\x00\x00\x00\x00\x00\x00\x01\x00@ \x12\n2\x00\x08\x00\x08\x14\x00\x13\n\x13\x04\xaf-\x0f\n\x00\x00y\x1e\x00\x00\x00\x00\x00\x10\x00\x10\n\x00\x00\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00 \x00\x11\n\x00\x00\x00\x00\x1e\x00\x00\x00\x00\x00\x00\x00\x01\x00@ \x12\n2\x00\x08\x00\x08\x14\x00\x13\n\x13\x00\x00\x10\x00\x10\n\x00\x00\x00\x00\n\x00\x00\x00\x00\x00\x00\x00\x01\n\x00\n\n\x00\x00\x00\x00\x00yyw\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc3\xf0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xfc\x01\x00\x01\x00\x14\x00\x00\x00\x00\x04\x00\x00NN\xaa\xaa\xaa\xaa\xea\xea\xae\xae\xa8\xa8\xa8\xa8\x9fU\x88\x80\x00\x00\x01\x00\n\x01\x00',
-                        0xCCBE: b'\x00\x01\r\x02\x02\x0f\x00\x00\x00\x00\x04\x06\x0e\x19W\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x01\x06\x00\x00 \x01\x00\x00\x01'
-                                b'\x00\x00\x00\x00\x00\xff\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x02\x04\x02\x01\xa8\x0e\x00\x00\x00\x00R'
-                                b'\x8b\x80\x81\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08'
-                                b'@ \x03\x03\xcc\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x80\x80\x80\x80\x80\x80\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x17\x06\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b"\x00\x00\x00\x00\x00\x00\x0e\x00'\x00\x00\x00\x00\x00\x00\x00"
-                                b'\x00\x00\x00\x00\x00\x00\xff\xd8\x0ex"\x00\x00\x00\x00\x00'
-                                b'\x04\x00\x0b\xffC\xff\x13\x90\x01\x04\x00\x0f\x01\r\xb6j'
-                                b'\x0f\x01\x17\x87f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04'
-                                b'\x08\x0f\n\x01\x00\x00\x00\x02\x00\x02\x00\x00\xb9\x03\x00\x00'
-                                b'\xc3\xc2\x00[K\xcf\x01\x00\x00\x00\xa2\xff\x00\x00\x00\x00'
-                                b'\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'\x00\x01\n"
-                                b'\x00\x00\x80\xc3y\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00',
-                        0xCE4E: b'\x05\x00\x00\x00\x00\x06\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x04/&\x0b\x12\x06\xff\xff\x11#+$5\xff'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x04/&\x0b\x12\x06\xff\xff\x11#+$5\xff\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x030\x030\x030\x030\x03',
-                        0xFF80: b'\x01\x00\x00>\xca\xe0F>(= \xfd\xc9',
-                        0xFF8E: b'',
-                        0xFF8F: b'',
-                        0xFF90: b'',
-                        0xFF91: b'',
-                        0xFF92: b'\x00\x00\x00\x00\n\xc2)\x14\xc5\xc3\x00\x00\x08)\x17\x00'
-                                b'\xff\xff\x00\x00\x00\x00\x9fU\xeb\x99\x04\x07\x00\x0f\x00\x00'
-                                b'\x00\x00\x00\x00\x1f\x03',
-                        0xFF40: b'\xc3'},
-            'entry_sp': 0xDFE2,
-            'rom_bank': 0x01,
-            'read': {0xC200: 0x0200, 0xCBAA: 0x0100},
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x2625A00,
-            'cycle_budget': 0x9896800,
-            'a': 0x17,
-            'b': 0x01,
-            'c': 0x01,
-            'd': 0x00,
-            'e': 0xDE,
-            'f': 0x80,
-            'hl': 0xC2E8},
-    ],
-}
+})
 CASES['HandleDamageReductionExceptSubstatus2'] += [
     {'d': 0x01, 'e': 0x00,
-     'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff',
-              0xC2E7: b'\x15'}},
+     'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff',
+              sym("wPlayerArenaCardSubstatus1"): b'\x15'}},
     {'d': 0x00, 'e': 0x64,
-     'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff',
-              0xCC5C: b'\x00', 0xCC71: b'\x8b\x01'}},
+     'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff',
+              sym("wLoadedAttackCategory"): b'\x00', sym("wTempNonTurnDuelistCardID"): b'\x8b\x01'}},
 ]
 CASES['HandleNoDamageOrEffectSubstatus'] += [
     {'e': 0x99, 'hl': 0x1234,
-     'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff',
-              0xCC71: b'\xa0\x01', 0xCC6F: b'\x01\x00'}},
+     'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff',
+              sym("wTempNonTurnDuelistCardID"): b'\xa0\x01', sym("wTempTurnDuelistCardID"): b'\x01\x00'}},
 ]
 CASES['GetLoadedCard1RetreatCost'] += [
-    {'wram': {0xFF97: b'\xc2', 0xC2BC: b'\x00\xff', 0xC3BC: b'\xff',
-              0xC400: b'\xb6\x01', 0xCC02: b'\x03'}},
+    {'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\x00\xff', sym("wOpponentBench"): b'\xff',
+              sym("wBoosterCardsDrawn"): b'\xb6\x01', sym("wLoadedCard1RetreatCost"): b'\x03'}},
 ]
 CASES['ClearChangedTypesIfMuk'] += [
     {'a': 0x00,
-     'wram': {0xFF97: b'\xc2', 0xC2BB: b'\x00', 0xC400: b'\x27\x01',
-              0xC2D4: b'\x01\x02\x03\x04\x05\x06',
-              0xC3D4: b'\x07\x08\t\n\x0b\x0c'},
-     'read': {0xC2D4: 0x06, 0xC3D4: 0x06}},
+     'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerArenaCard"): b'\x00', sym("wBoosterCardsDrawn"): b'\x27\x01',
+              sym("wPlayerArenaCardChangedType"): b'\x01\x02\x03\x04\x05\x06',
+              sym("wOpponentArenaCardChangedType"): b'\x07\x08\t\n\x0b\x0c'},
+     'read': {sym("wPlayerArenaCardChangedType"): 0x06, sym("wOpponentArenaCardChangedType"): 0x06}},
 ]
 CASES['HandleStrikesBack_AgainstDamagingAttack'] += [
     {'d': 0x00, 'e': 0x0A,
-     'wram': {0xFF97: b'\xc2', 0xC2BC: b'\xff', 0xC3BC: b'\xff',
-              0xCC5C: b'\x04', 0xCC71: b'\x7f\x01'}},
+     'wram': {sym("hWhoseTurn"): b'\xc2', sym("wPlayerBench"): b'\xff', sym("wOpponentBench"): b'\xff',
+              sym("wLoadedAttackCategory"): b'\x04', sym("wTempNonTurnDuelistCardID"): b'\x7f\x01'}},
 ]
 CASES['ApplyStrikesBack_AgainstResidualAttack'] += [
-    {'hl': 0x00, 'wram': {0xFF97: b'\xc2', 0xCC6F: b'\x01\x01'},
+    {'hl': 0x00, 'wram': {sym("hWhoseTurn"): b'\xc2', sym("wTempTurnDuelistCardID"): b'\x01\x01'},
      'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
 ]
 CASES['HandleStrikesBack_AgainstResidualAttack'] += [
-    {'wram': {0xCC71: b'\x7f\x01', 0xCC5C: b'\x80'}},
+    {'wram': {sym("wTempNonTurnDuelistCardID"): b'\x7f\x01', sym("wLoadedAttackCategory"): b'\x80'}},
 ]
 CASES['HandleTransparency'] += [
-    {'wram': {0xCC71: b'\x96\x01', 0xCC5C: b'\x04'}, 'hl': 0xC100},
+    {'wram': {sym("wTempNonTurnDuelistCardID"): b'\x96\x01', sym("wLoadedAttackCategory"): b'\x04'}, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11},
 ]
-
-MUTATIONS = {
-    'CheckSandAttackOrSmokescreenSubstatus': {   'source_symbol': 'CheckSandAttackOrSmokescreenSubstatus',
-        'before': '\tif (status.a == 0)',
-        'after': '\tif (status.a != 0)',
-        'case_ids': ['CheckSandAttackOrSmokescreenSubstatus-0'],
-        'source': 'src/home/substatus.c'},
+MUTATIONS.update({
     'CountTurnDuelistPokemonWithActivePkmnPower': {   'source_symbol': 'CountTurnDuelistPokemonWithActivePkmnPower',
         'before': '\tif (arena != 0xFF) {',
         'after': '\tif (arena == 0xFF) {',
@@ -1404,59 +818,16 @@ MUTATIONS = {
         'after': '	uint8_t count = (uint8_t)(turn.a - other.a);',
         'case_ids': ['CountPokemonWithActivePkmnPowerInBothPlayAreas-0'],
         'source': 'src/profiles/extended/home/substatus.c'},
-    'CheckIsIncapableOfUsingPkmnPower': {   'source_symbol': 'CheckIsIncapableOfUsingPkmnPower',
-        'before': '\tif (a == PLAY_AREA_ARENA) {',
-        'after': '\tif (a != PLAY_AREA_ARENA) {',
-        'case_ids': ['CheckIsIncapableOfUsingPkmnPower-0'],
-        'source': 'src/home/substatus.c'},
-    'CheckIsIncapableOfUsingPkmnPower_ArenaCard': {   'source_symbol': 'CheckIsIncapableOfUsingPkmnPower_ArenaCard',
-        'before': '\treturn CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_ARENA);',
-        'after': '\treturn CheckIsIncapableOfUsingPkmnPower((PLAY_AREA_ARENA + 1u));',
-        'case_ids': ['CheckIsIncapableOfUsingPkmnPower_ArenaCard-0'],
-        'source': 'src/home/substatus.c'},
-    'HandleDoubleDamageSubstatus': {   'source_symbol': 'HandleDoubleDamageSubstatus',
-        'before': 'de = (uint16_t)(de << 1);',
-        'after': 'de = (uint16_t)(de >> 1);',
-        'case_ids': [   'HandleDoubleDamageSubstatus-1',
-                        'HandleDoubleDamageSubstatus-0',
-                        'HandleDoubleDamageSubstatus-2',
-                        'HandleDoubleDamageSubstatus-3',
-                        'HandleDoubleDamageSubstatus-4'],
-        'source': 'src/home/substatus.c'},
-    'HandleDamageReductionExceptSubstatus2': {   'source_symbol': 'HandleDamageReductionExceptSubstatus2_PkmnPower',
-        'before': '\tCardId defender = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);\n'
-                  '\tif (defender == MR_MIME) {',
-        'after': '\tuint8_t defender = gb_read8(wTempNonTurnDuelistCardID_ADDR);\n'
-                 '\tif (defender == MR_MIME) {',
-        'case_ids': ['HandleDamageReductionExceptSubstatus2-18'],
+    'HandleDamageReductionExceptSubstatus2': {   'source_symbol': 'HandleDamageReductionExceptSubstatus2',
+        'before': '\tif (gb_read8(wNoDamageOrEffect_ADDR) != 0)',
+        'after': '\tif (gb_read8(wNoDamageOrEffect_ADDR) == 0)',
+        'case_ids': ['HandleDamageReductionExceptSubstatus2-0'],
         'source': 'src/profiles/extended/home/substatus.c'},
-    'HandleDamageReduction': {   'source_symbol': 'HandleDamageReduction',
-        'before': '\tif (sub2.a == SUBSTATUS2_REDUCE_BY_20)',
-        'after': '\tif (sub2.a != SUBSTATUS2_REDUCE_BY_20)',
-        'case_ids': ['HandleDamageReduction-1'],
-        'source': 'src/home/substatus.c'},
-    'HandleCantAttackSubstatus': {   'source_symbol': 'HandleCantAttackSubstatus',
-        'before': '\tif (sub2.a == SUBSTATUS2_TAIL_WAG)',
-        'after': '\tif (sub2.a != SUBSTATUS2_TAIL_WAG)',
-        'case_ids': ['HandleCantAttackSubstatus-1'],
-        'source': 'src/home/substatus.c'},
-    'HandleAmnesiaSubstatus': {   'source_symbol': 'HandleAmnesiaSubstatus',
-        'before': '\tif (sub2.a != SUBSTATUS2_AMNESIA)',
-        'after': '\tif (sub2.a == SUBSTATUS2_AMNESIA)',
-        'case_ids': ['HandleAmnesiaSubstatus-1'],
-        'source': 'src/home/substatus.c'},
-    'HandleNoDamageOrEffectSubstatus': {   'source_symbol': 'HandleNoDamageOrEffectSubstatus_PkmnPower',
-        'before': '\tCardId defender = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);\n'
-                  '\tuint8_t a = cphl_value(defender, MEW_LV8);',
-        'after': '\tCardId defender = 0u;\n'
-                 '\tuint8_t a = cphl_value(defender, MEW_LV8);',
-        'case_ids': ['HandleNoDamageOrEffectSubstatus-12'],
+    'HandleNoDamageOrEffectSubstatus': {   'source_symbol': 'HandleNoDamageOrEffectSubstatus',
+        'before': '\tif (gb_read8(wLoadedAttackCategory_ADDR) == POKEMON_POWER)',
+        'after': '\tif (gb_read8(wLoadedAttackCategory_ADDR) != POKEMON_POWER)',
+        'case_ids': ['HandleNoDamageOrEffectSubstatus-0'],
         'source': 'src/profiles/extended/home/substatus.c'},
-    'CheckNoDamageOrEffect': {   'source_symbol': 'CheckNoDamageOrEffect',
-        'before': '\tif (val == 0)',
-        'after': '\tif (val != 0)',
-        'case_ids': ['CheckNoDamageOrEffect-0'],
-        'source': 'src/home/substatus.c'},
     'IsClairvoyanceActive': {   'source_symbol': 'IsClairvoyanceActive',
         'before': '\t\treturn (PkmnPowerCountResult){muk.a, 0x00u, muk.de};',
         'after': '\t\treturn (PkmnPowerCountResult){muk.a, 0x01u, muk.de};',
@@ -1467,50 +838,10 @@ MUTATIONS = {
         'after': '\t\tif ((uint8_t)id == DODRIO)',
         'case_ids': ['GetLoadedCard1RetreatCost-6'],
         'source': 'src/profiles/extended/home/substatus.c'},
-    'CheckUnableToRetreatDueToEffect': {   'source_symbol': 'CheckUnableToRetreatDueToEffect',
-        'before': '\tif (sub2.a != SUBSTATUS2_ACID)',
-        'after': '\tif (sub2.a == SUBSTATUS2_ACID)',
-        'case_ids': ['CheckUnableToRetreatDueToEffect-1'],
-        'source': 'src/home/substatus.c'},
-    'CheckCantUseTrainerDueToEffect': {   'source_symbol': 'CheckCantUseTrainerDueToEffect',
-        'before': '\t\treturn (TrainerEffectResult){0xA0u, sub3.hl};',
-        'after': '\t\treturn (TrainerEffectResult){0xA1u, sub3.hl};',
-        'case_ids': ['CheckCantUseTrainerDueToEffect-0'],
-        'source': 'src/home/substatus.c'},
-    'IsPrehistoricPowerActive': {   'source_symbol': 'IsPrehistoricPowerActive',
-        'before': '\tif (!(aero.f & 0x10u))',
-        'after': '\tif (!(aero.f | 0x10u))',
-        'case_ids': ['IsPrehistoricPowerActive-0'],
-        'source': 'src/profiles/extended/home/substatus.c'},
-    'ClearDamageReductionSubstatus2': {   'source_symbol': 'ClearDamageReductionSubstatus2',
-        'before': '\tif (sub2.a == SUBSTATUS2_REDUCE_BY_20 || sub2.a == SUBSTATUS2_POUNCE ||',
-        'after': '\tif (sub2.a != SUBSTATUS2_REDUCE_BY_20 || sub2.a == SUBSTATUS2_POUNCE ||',
-        'case_ids': ['ClearDamageReductionSubstatus2-0'],
-        'source': 'src/home/substatus.c'},
-    'UpdateSubstatusConditions_StartOfTurn': {   'source_symbol': 'UpdateSubstatusConditions_StartOfTurn',
-        'before': '\tif (sub1.a != SUBSTATUS1_NEXT_TURN_DOUBLE_DAMAGE)',
-        'after': '\tif (sub1.a == SUBSTATUS1_NEXT_TURN_DOUBLE_DAMAGE)',
-        'case_ids': ['UpdateSubstatusConditions_StartOfTurn-0'],
-        'source': 'src/home/substatus.c'},
-    'UpdateSubstatusConditions_EndOfTurn': {   'source_symbol': 'UpdateSubstatusConditions_EndOfTurn',
-        'before': '\tif (sub1.a == SUBSTATUS1_NEXT_TURN_DOUBLE_DAMAGE)',
-        'after': '\tif (sub1.a != SUBSTATUS1_NEXT_TURN_DOUBLE_DAMAGE)',
-        'case_ids': ['UpdateSubstatusConditions_EndOfTurn-0'],
-        'source': 'src/home/substatus.c'},
-    'IsRainDanceActive': {   'source_symbol': 'IsRainDanceActive',
-        'before': '\tif (!(blastoise.f & 0x10u))',
-        'after': '\tif (!(blastoise.f | 0x10u))',
-        'case_ids': ['IsRainDanceActive-0'],
-        'source': 'src/profiles/extended/home/substatus.c'},
     'ClearChangedTypesIfMuk': {   'source_symbol': 'ClearChangedTypesIfMuk',
         'before': '\tif (id != MUK)',
         'after': '\tif ((uint8_t)id != MUK)',
         'case_ids': ['ClearChangedTypesIfMuk-3'],
-        'source': 'src/profiles/extended/home/substatus.c'},
-    'CheckRainDanceScenario': {   'source_symbol': 'CheckRainDanceScenario',
-        'before': '\tif (card_type != TYPE_ENERGY_WATER)',
-        'after': '\tif (card_type == TYPE_ENERGY_WATER)',
-        'case_ids': ['CheckRainDanceScenario-1'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'HandleStrikesBack_AgainstDamagingAttack': {   'source_symbol': 'HandleStrikesBack_AgainstDamagingAttack',
         'before': '\tif (defender != MACHAMP)',
@@ -1529,22 +860,6 @@ MUTATIONS = {
         'after': '\tuint8_t card_id = wTempNonTurnDuelistCardID;',
         'case_ids': ['HandleStrikesBack_AgainstResidualAttack-6'],
         'source': 'src/profiles/extended/home/substatus.c'},
-    'HandleDestinyBondSubstatus': {   'source_symbol': 'HandleDestinyBondSubstatus',
-        'before': 'DestinyBondResult HandleDestinyBondSubstatus(void)\n'
-                  '{\n'
-                  '\tDuelistVarResult substatus = '
-                  'GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS1);',
-        'after': 'DestinyBondResult HandleDestinyBondSubstatus(void)\n'
-                 '{\n'
-                 '\tDuelistVarResult substatus = '
-                 'GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);',
-        'case_ids': ['HandleDestinyBondSubstatus-0', 'HandleDestinyBondSubstatus-4'],
-        'source': 'src/home/substatus.c'},
-    'HandleNShieldAndTransparency': {   'source_symbol': 'HandleNShieldAndTransparency',
-        'before': '\t\t\tgb_write8(wNoDamageOrEffect_ADDR, NO_DAMAGE_OR_EFFECT_NSHIELD);',
-        'after': '\t\t\tgb_write8(wNoDamageOrEffect_ADDR, 0x40u);',
-        'case_ids': ['HandleNShieldAndTransparency-1'],
-        'source': 'src/profiles/extended/home/substatus.c'},
     'HandleTransparency': {   'source_symbol': 'HandleTransparency',
         'before': '\tif (category == POKEMON_POWER) {',
         'after': '\tif (category != POKEMON_POWER) {',
@@ -1557,20 +872,11 @@ MUTATIONS = {
                  'HandleNoDamageOrEffectSubstatus((uint8_t)(de >> 8), location, hl);',
         'case_ids': ['HandleDamageReductionOrNoDamageFromPkmnPowerEffects-3'],
         'source': 'src/profiles/extended/home/substatus.c'},
-    'HandleSandAttackOrSmokescreenSubstatus': {   'source_symbol': 'HandleSandAttackOrSmokescreenSubstatus',
-        'before': '\t\t(uint16_t)((uint16_t)wait.d << 8 | wait.e), wait.hl,',
-        'after': '\t\tAttackUnsuccessfulText, wait.hl,',
-        'case_ids': ['HandleSandAttackOrSmokescreenSubstatus-4'],
-        'source': 'src/home/substatus.c'},
-}
-
-for _records in CASES.values():
+})
+for _records in (CASES[_fn] for _fn in OWN):
     for _record in _records:
         _seeds = _record.get("wram", {})
-        if 0xCCBE in _seeds and len(_seeds.get(0xCAC1, b"")) > 0xCCBD - 0xCAC1:
-            _seeds[0xCAC1] = _seeds[0xCAC1][:0xCCBD - 0xCAC1]
-
+        if sym("wCurMenuItem") in _seeds and len(_seeds.get(sym("wTempByte"), b"")) > sym("wCursorBlinkCounter") - sym("wTempByte"):
+            _seeds[sym("wTempByte")] = _seeds[sym("wTempByte")][:sym("wCursorBlinkCounter") - sym("wTempByte")]
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-SCHEMA2_CASES["HandleSandAttackOrSmokescreenSubstatus"][4]["completion"] = {"mode": "return"}
-CASES["HandleSandAttackOrSmokescreenSubstatus"][4]["compare"] = ()
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

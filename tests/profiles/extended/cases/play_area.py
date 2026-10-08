@@ -1,53 +1,12 @@
-"""Extended oracle-diff cases for play_area, seeded from tests/cases/play_area.py."""
-
-CONTRACT = {
-    'ZeroObjectPositionsAndToggleOAMCopy_Bank6': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'd', 'e')},
+"""Extended oracle-diff cases for play_area: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import WRAMX_START, sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('play_area')
+OWN = ('OpenInPlayAreaScreen_HandleInput',)
+CONTRACT.update({
     'OpenInPlayAreaScreen_HandleInput': {'compare': ('a', 'f'), 'preserve': ()},
-    'OpenInPlayAreaScreen_TurnHolderPlayArea': {'compare': (), 'preserve': ()},
-    'OpenInPlayAreaScreen_NonTurnHolderPlayArea': {'compare': (), 'preserve': ()},
-    'OpenInPlayAreaScreen_TurnHolderDiscardPile': {'compare': (), 'preserve': ()},
-    'OpenInPlayAreaScreen_NonTurnHolderDiscardPile': {'compare': (), 'preserve': ()},
-    'OpenInPlayAreaScreen_NonTurnHolderHand': {'compare': (), 'preserve': ()},
-    'OpenInPlayAreaScreen_TurnHolderHand': {'compare': ('a', 'f'), 'preserve': ('f',)},
-    'OpenInPlayAreaScreen': {'compare': ('f',), 'preserve': ()},
-}
-
-CASES = {
-    'ZeroObjectPositionsAndToggleOAMCopy_Bank6': [
-        {   'wram': {   0xCA00: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-                                b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCAC0: b'\x00'},
-            'read': {0xCA00: 0xA0, 0xCAC0: 0x01}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xCA00: b'\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@'
-                                b'\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@'
-                                b'\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@'
-                                b'\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@'
-                                b'\x10 0@\x10 0@\x10 0@\x10 0@',
-                        0xCAC0: b'\xff'},
-            'read': {0xCA00: 0xA0, 0xCAC0: 0x01}},
-        {   'wram': {   0xCA00: b'\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@'
-                                b'\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@'
-                                b'\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@'
-                                b'\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@\x10 0@'
-                                b'\x10 0@\x10 0@\x10 0@\x10 0@',
-                        0xCAC0: b'\x00'},
-            'read': {0xCA00: 0xA0, 0xCAC0: 0x01}},
-    ],
+})
+CASES.update({
     'OpenInPlayAreaScreen_HandleInput': [
         {   'a': 0xAA,
             'f': 0xF0,
@@ -56,10 +15,10 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xCE4D: b'\x01'},
-            'hram': {0xFF8F: b'\x00', 0xFF91: b'\x00'},
+            'wram': {sym("wCheckMenuCursorBlinkCounter"): b'\x01'},
+            'hram': {sym("hDPadHeld"): b'\x00', sym("hKeysPressed"): b'\x00'},
             'expect_regs': {'a': 0x01, 'f': 0x20}},
-        {   'wram': {   0xC000: b'\x05\x18p\x06Dr. Mason\x07p\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05'
+        {   'wram': {   sym("wDeckToBuild"): b'\x05\x18p\x06Dr. Mason\x07p\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05'
                                 b'\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x1c\x05\x19\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -209,11 +168,11 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x030\x039\x039\x039\x0ed\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x11\x02\x04\x00',
-                        0xCAB8: b'',
-                        0xCAB9: b'\x00\x00\xc3\xe4\xe4\xe4',
-                        0xCAC0: b'',
-                        0xCAC1: b'\x04\n\xe2\x01\x02\x13\x0e\x00\x00\x00\x00X\xc3\x00\x00\xc3"\x03\x00\x00\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xffW_\x03\x10\x02\x04\x00\xfakLC\x08"\x80\x00\x9cc\xb5BJ!\x00\x00\xffW_\x03\x10\x02\x04\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x02\x02\x00\x01\x01\x01\x00\x01\x01\x00\x01\x00\x01\x00\x00\x08\x02\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x00\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x06\x00\x00\xd5R\x01\x00\xc2\x00\x00\x02\x80\x00\x01\x00\x00\x00\xff\xff\xff\x00\x01\x07\x03\xb1\x03\x02\x00\x02\x00\x00\x00\x01\x00\x00\x00\x00\x01\x03\x00 \x81\t\x00\x00U(\x00\x00\x00\x00\x01\x00\x00\x82\t\x00\x00\x00\x00\x14\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01 \x00\x83\tx\x00\x0f\x02\x07\xf8\x02\x84\t\x13\x03\x00 \x81\t\x00\x00U(\x00\x00\x00\x00\x01\x00\x00\x82\t\x00\x00\x00\x00\x14\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01 \x00\x83\tx\x00\x0f\x02\x07\xf8\x02\x84\t\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xceN\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00S}\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xdf\x01\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\xe0\xe0\x80\x80\x80\x80\xc0\xc0\x80\x80\x80\x80\xe0\xe0\x94\x94\x88\x80\x00\x00\x01\x00\n\x01\x00',
-                        0xCCBE: b'\x01\x12\x11\x01\x01/\x1d\x00\x00\x00\x04\x05\x0e\x19W\x00'
+                        sym("wVBlankCounter"): b'',
+                        sym("wVBlankCounter") + 1: b'\x00\x00\xc3\xe4\xe4\xe4',
+                        sym("wVBlankOAMCopyToggle"): b'',
+                        sym("wTempByte"): b'\x04\n\xe2\x01\x02\x13\x0e\x00\x00\x00\x00X\xc3\x00\x00\xc3"\x03\x00\x00\x00\x13t\x05\x00\x00\x00\x00\xc0\x00\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9cc\xb5BJ!\x00\x00\x9cc\xbe\x03~\x00\x00\x00\x9cc@\x02lQ\x00\x00\x9cc\x16X\xfb\x0c\x00\x00\x9ccZ\x01\x1c\x00\x00\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xffW_\x03\x10\x02\x04\x00\xfakLC\x08"\x80\x00\x9cc\xb5BJ!\x00\x00\xffW_\x03\x10\x02\x04\x00\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\xff\x7f\x00\x00\x12\xc5\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x02\x02\x00\x01\x01\x01\x00\x01\x01\x00\x01\x00\x01\x00\x00\x08\x02\x00\x00\xaa\x00\xa7\x00\x01\x00\x00\x00\x00\x00\x00\xe8\xdf\x00\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x06\x00\x00\xd5R\x01\x00\xc2\x00\x00\x02\x80\x00\x01\x00\x00\x00\xff\xff\xff\x00\x01\x07\x03\xb1\x03\x02\x00\x02\x00\x00\x00\x01\x00\x00\x00\x00\x01\x03\x00 \x81\t\x00\x00U(\x00\x00\x00\x00\x01\x00\x00\x82\t\x00\x00\x00\x00\x14\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01 \x00\x83\tx\x00\x0f\x02\x07\xf8\x02\x84\t\x13\x03\x00 \x81\t\x00\x00U(\x00\x00\x00\x00\x01\x00\x00\x82\t\x00\x00\x00\x00\x14\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01 \x00\x83\tx\x00\x0f\x02\x07\xf8\x02\x84\t\x13\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xceN\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00S}\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xdf\x01\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\xe0\xe0\x80\x80\x80\x80\xc0\xc0\x80\x80\x80\x80\xe0\xe0\x94\x94\x88\x80\x00\x00\x01\x00\n\x01\x00',
+                        sym("wCurMenuItem"): b'\x01\x12\x11\x01\x01/\x1d\x00\x00\x00\x04\x05\x0e\x19W\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -238,7 +197,7 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\\\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
-                        0xCE4E: b'\x05\x00\x00\x00\x00\x06\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                        sym("wCardListCursorPos"): b'\x05\x00\x00\x00\x00\x06\x0f\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -259,12 +218,12 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x030\x039\x039\x039\x0e',
-                        0xFF80: b'\x06\x00\x00>\xca\xe0F>(= \xfd\xc9',
-                        0xFF8E: b'',
-                        0xFF8F: b'\x02',
-                        0xFF90: b'\x02',
-                        0xFF91: b'\x02',
-                        0xFF92: b'\x00\x00\x00\x00\n\xc2\x00\x16\xc5\xdf\x00\x00\x03\x05\t\x00'
+                        sym("hBankROM"): b'\x06\x00\x00>\xca\xe0F>(= \xfd\xc9',
+                        sym("hKeysReleased"): b'',
+                        sym("hDPadHeld"): b'\x02',
+                        sym("hKeysHeld"): b'\x02',
+                        sym("hKeysPressed"): b'\x02',
+                        sym("hSCX"): b'\x00\x00\x00\x00\n\xc2\x00\x16\xc5\xdf\x00\x00\x03\x05\t\x00'
                                 b'\xff\x00\x00\x00\x00\x00\x9f\x94.\x9a\r\x01\x00\x0f\x00\x01'
                                 b'\x00\x00\x00\x00\x1f\x03',
                         0x8000: b'\xe0\xc0\x98\xb0\x84\x8c\x83\x82\x86\x8f\x9d\xbe\xf4\xf8P`'
@@ -718,9 +677,9 @@ CASES = {
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
                                 b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00',
                         0xFF40: b'\xc3'},
-            'entry_sp': 0xDFDC,
+            'entry_sp': WRAMX_START + 0xFDC,
             'rom_bank': 0x06,
-            'read': {0xC200: 0x0200, 0xCBAA: 0x0100, 0xCE4D: 0x01},
+            'read': {sym("wPlayerCardLocations"): 0x0200, sym("wPracticeDuelTurn"): 0x0100, sym("wCheckMenuCursorBlinkCounter"): 0x01},
             'keys': [0x00, 0x01],
             'instruction_budget': 0x2625A00,
             'cycle_budget': 0x9896800,
@@ -731,234 +690,10 @@ CASES = {
             'd': 0x42,
             'e': 0xDB,
             'f': 0xA0,
-            'hl': 0xCE1E},
+            'hl': sym("wInPlayAreaTemporaryPosition")},
     ],
-    'OpenInPlayAreaScreen_TurnHolderPlayArea': [
-        {   'wram': {0xCE18: b'\x05', 0xCABB: b'\x80', 0xFF40: b'\x84'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100,
-            'read': {0xCB77: 0x01},
-            'expect': {0xCB77: b'\x00'}},
-        {   'wram': {0xCE18: b'\x00', 0xCABB: b'\x80', 0xFF40: b'\x84'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100,
-            'read': {0xCB77: 0x01},
-            'expect': {0xCB77: b'\x01'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE18: b'\x05', 0xCABB: b'\x80', 0xFF40: b'\x84'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100,
-            'read': {0xCB77: 0x01},
-            'expect': {0xCB77: b'\x00'}},
-    ],
-    'OpenInPlayAreaScreen_NonTurnHolderPlayArea': [
-        {   'wram': {0xCE18: b'\x08', 0xCABB: b'\x80', 0xFF40: b'\x84'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100,
-            'read': {0xCB77: 0x01, 0xCB78: 0x01},
-            'expect': {0xCB77: b'\x00', 0xCB78: b'\x00'}},
-        {   'wram': {0xCE18: b'\x0b', 0xCABB: b'\x80', 0xFF40: b'\x84'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100,
-            'read': {0xCB77: 0x01, 0xCB78: 0x01},
-            'expect': {0xCB77: b'\x01', 0xCB78: b'\x00'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {0xCE18: b'\x08', 0xCABB: b'\x80', 0xFF40: b'\x84'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'keys': [0x00, 0x01],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100,
-            'read': {0xCB77: 0x01, 0xCB78: 0x01},
-            'expect': {0xCB77: b'\x00', 0xCB78: b'\x00'}},
-    ],
-    'OpenInPlayAreaScreen_TurnHolderDiscardPile': [
-        {   'c': 0x00,
-            'keys': [0x00, 0x01],
-            'wram': {0xFF97: b'\xc2', 0xC2ED: b'\x00', 0xCABB: b'\x00', 0xC580: b'\x00'},
-            'read': {0xC500: 0x01},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'c': 0x00,
-            'keys': [0x00, 0x02],
-            'wram': {   0xFF97: b'\xc2',
-                        0xC2ED: b'\x02',
-                        0xC27E: b'\x11"',
-                        0xCABB: b'\x00',
-                        0xC580: b'\x00',
-                        0xC500: b'\xff',
-                        0xCB84: b'\x00'},
-            'read': {0xCB84: 0x01, 0xC500: 0x03},
-            'expect': {0xCB84: b'\t'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0x00,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'keys': [0x00, 0x01],
-            'wram': {0xFF97: b'\xc2', 0xC2ED: b'\x00', 0xCABB: b'\x00', 0xC580: b'\x00'},
-            'read': {0xC500: 0x01},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'OpenInPlayAreaScreen_NonTurnHolderDiscardPile': [
-        {   'c': 0x00,
-            'keys': [0x00, 0x01],
-            'wram': {   0xFF97: b'\xc2',
-                        0xC1ED: b'\x00',
-                        0xC2ED: b'\x00',
-                        0xCABB: b'\x00',
-                        0xC580: b'\x00'},
-            'read': {0xFF97: 0x01},
-            'expect': {0xFF97: b'\xc2'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'c': 0x00,
-            'keys': [0x00, 0x02],
-            'wram': {   0xFF97: b'\xc1',
-                        0xC1ED: b'\x00',
-                        0xC2ED: b'\x00',
-                        0xCABB: b'\x00',
-                        0xC580: b'\x00'},
-            'read': {0xFF97: 0x01},
-            'expect': {0xFF97: b'\xc1'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0x00,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'keys': [0x00, 0x01],
-            'wram': {   0xFF97: b'\xc2',
-                        0xC1ED: b'\x00',
-                        0xC2ED: b'\x00',
-                        0xCABB: b'\x00',
-                        0xC580: b'\x00'},
-            'read': {0xFF97: 0x01},
-            'expect': {0xFF97: b'\xc2'},
-            'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'OpenInPlayAreaScreen_NonTurnHolderHand': [
-        {   'keys': [0x00, 0x01],
-            'wram': {0xFF97: b'\xc2', 0xC3EE: b'\x00', 0xCABB: b'\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400,
-            'read': {0xFF97: 0x01},
-            'expect': {0xFF97: b'\xc2'}},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'keys': [0x00, 0x01],
-            'wram': {0xFF97: b'\xc2', 0xC3EE: b'\x00', 0xCABB: b'\x00'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400,
-            'read': {0xFF97: 0x01},
-            'expect': {0xFF97: b'\xc2'}},
-    ],
-    'OpenInPlayAreaScreen_TurnHolderHand': [
-        {   'keys': [0x00, 0x01],
-            'wram': {0xFF97: b'\xc2', 0xC2EE: b'\x00', 0xCABB: b'\x00'},
-            'read': {0xFF97: 0x01},
-            'expect': {0xFF97: b'\xc2'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'keys': [0x00, 0x01],
-            'wram': {0xFF97: b'\xc1', 0xC2EE: b'\x00', 0xCABB: b'\x00'},
-            'read': {0xFF97: 0x01},
-            'expect': {0xFF97: b'\xc1'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'keys': [0x00, 0x01],
-            'wram': {0xFF97: b'\xc2', 0xC2EE: b'\x00', 0xCABB: b'\x00'},
-            'read': {0xFF97: 0x01},
-            'expect': {0xFF97: b'\xc2'},
-            'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x4C4B400},
-    ],
-    'OpenInPlayAreaScreen': [
-        {   'keys': [0x00, 0x02],
-            'hram': {0xFF80: b'\x01'},
-            'wram': {0xCE26: b'\x00', 0xCE18: b'\xaa'},
-            'expect': {0xFF80: b'\x06', 0xCE18: b'\x05'},
-            'read': {0xFF80: 0x01, 0xCE18: 0x01, 0xCAC0: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100},
-        {   'a': 0xAA,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'keys': [0x00, 0x04],
-            'hram': {0xFF80: b'\x01'},
-            'wram': {0xCE26: b'\x01', 0xCE18: b'\xaa'},
-            'expect': {0xFF80: b'\x06', 0xCE18: b'\x05'},
-            'read': {0xFF80: 0x01, 0xCE18: 0x01, 0xCAC0: 0x01},
-            'instruction_budget': 0x1312D00,
-            'cycle_budget': 0x5F5E100},
-    ],
-}
-
-MUTATIONS = {
-    'ZeroObjectPositionsAndToggleOAMCopy_Bank6': {   'source_symbol': 'ZeroObjectPositionsAndToggleOAMCopy_Bank6',
-        'before': 'gb_write8(wVBlankOAMCopyToggle_ADDR, 1);',
-        'after': 'gb_write8(wVBlankOAMCopyToggle_ADDR, 0);',
-        'case_ids': [   'ZeroObjectPositionsAndToggleOAMCopy_Bank6-0',
-                        'ZeroObjectPositionsAndToggleOAMCopy_Bank6-1',
-                        'ZeroObjectPositionsAndToggleOAMCopy_Bank6-2'],
-        'source': 'src/home/play_area.c'},
+})
+MUTATIONS.update({
     'OpenInPlayAreaScreen_HandleInput': {   'source_symbol': 'OpenInPlayAreaScreen_HandleInput',
         'before': 'if (masked != 0u)\n'
                   '\t\treturn (OpenInPlayAreaScreenHandleInputResult){masked, 0x20u};',
@@ -966,79 +701,6 @@ MUTATIONS = {
                  '\t\treturn (OpenInPlayAreaScreenHandleInputResult){0u, 0x20u};',
         'case_ids': ['OpenInPlayAreaScreen_HandleInput-0'],
         'source': 'src/home/play_area.c'},
-    'OpenInPlayAreaScreen_TurnHolderPlayArea': {   'source_symbol': 'OpenInPlayAreaScreen_TurnHolderPlayArea',
-        'before': 'void OpenInPlayAreaScreen_TurnHolderPlayArea(void)\n'
-                  '{\n'
-                  '\tuint8_t slot = (uint8_t)(wInPlayAreaCurPosition + 1u);',
-        'after': 'void OpenInPlayAreaScreen_TurnHolderPlayArea(void)\n'
-                 '{\n'
-                 '\tuint8_t slot = (uint8_t)(wInPlayAreaCurPosition + 2u);',
-        'case_ids': [   'OpenInPlayAreaScreen_TurnHolderPlayArea-0',
-                        'OpenInPlayAreaScreen_TurnHolderPlayArea-1',
-                        'OpenInPlayAreaScreen_TurnHolderPlayArea-2'],
-        'source': 'src/home/play_area.c'},
-    'OpenInPlayAreaScreen_NonTurnHolderPlayArea': {   'source_symbol': 'OpenInPlayAreaScreen_NonTurnHolderPlayArea',
-        'before': 'void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void)\n'
-                  '{\n'
-                  '\tuint8_t slot = (uint8_t)(wInPlayAreaCurPosition - INPLAYAREA_OPP_ACTIVE);',
-        'after': 'void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void)\n'
-                 '{\n'
-                 '\tuint8_t slot = (uint8_t)(wInPlayAreaCurPosition - INPLAYAREA_OPP_ACTIVE - 1u);',
-        'case_ids': [   'OpenInPlayAreaScreen_NonTurnHolderPlayArea-0',
-                        'OpenInPlayAreaScreen_NonTurnHolderPlayArea-1',
-                        'OpenInPlayAreaScreen_NonTurnHolderPlayArea-2'],
-        'source': 'src/home/play_area.c'},
-    'OpenInPlayAreaScreen_TurnHolderDiscardPile': {   'source_symbol': 'OpenInPlayAreaScreen_TurnHolderDiscardPile',
-        'before': 'void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n'
-                  '{\n'
-                  '\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n'
-                  '\t(void)OpenTurnHolderDiscardPileScreen(c);',
-        'after': 'void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n'
-                 '{\n'
-                 '\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n'
-                 '\t(void)0;',
-        'case_ids': [   'OpenInPlayAreaScreen_TurnHolderDiscardPile-0',
-                        'OpenInPlayAreaScreen_TurnHolderDiscardPile-1',
-                        'OpenInPlayAreaScreen_TurnHolderDiscardPile-2'],
-        'source': 'src/home/play_area.c'},
-    'OpenInPlayAreaScreen_NonTurnHolderDiscardPile': {   'source_symbol': 'OpenInPlayAreaScreen_NonTurnHolderDiscardPile',
-        'before': 'void OpenInPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)\n'
-                  '{\n'
-                  '\tuint8_t saved_hWhoseTurn = hWhoseTurn;',
-        'after': 'void OpenInPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)\n'
-                 '{\n'
-                 '\tuint8_t saved_hWhoseTurn = 0u;',
-        'case_ids': [   'OpenInPlayAreaScreen_NonTurnHolderDiscardPile-0',
-                        'OpenInPlayAreaScreen_NonTurnHolderDiscardPile-1',
-                        'OpenInPlayAreaScreen_NonTurnHolderDiscardPile-2'],
-        'source': 'src/home/play_area.c'},
-    'OpenInPlayAreaScreen_NonTurnHolderHand': {   'source_symbol': 'OpenInPlayAreaScreen_NonTurnHolderHand',
-        'before': 'void OpenInPlayAreaScreen_NonTurnHolderHand(void)\n'
-                  '{\n'
-                  '\tuint8_t saved_hWhoseTurn = hWhoseTurn;',
-        'after': 'void OpenInPlayAreaScreen_NonTurnHolderHand(void)\n'
-                 '{\n'
-                 '\tuint8_t saved_hWhoseTurn = 0u;',
-        'case_ids': [   'OpenInPlayAreaScreen_NonTurnHolderHand-0',
-                        'OpenInPlayAreaScreen_NonTurnHolderHand-1'],
-        'source': 'src/home/play_area.c'},
-    'OpenInPlayAreaScreen_TurnHolderHand': {   'source_symbol': 'OpenInPlayAreaScreen_TurnHolderHand',
-        'before': 'uint8_t OpenInPlayAreaScreen_TurnHolderHand(void)\n'
-                  '{\n'
-                  '\tuint8_t saved_hWhoseTurn = hWhoseTurn;',
-        'after': 'uint8_t OpenInPlayAreaScreen_TurnHolderHand(void)\n'
-                 '{\n'
-                 '\tuint8_t saved_hWhoseTurn = 0u;',
-        'case_ids': [   'OpenInPlayAreaScreen_TurnHolderHand-0',
-                        'OpenInPlayAreaScreen_TurnHolderHand-1',
-                        'OpenInPlayAreaScreen_TurnHolderHand-2'],
-        'source': 'src/home/play_area.c'},
-    'OpenInPlayAreaScreen': {   'source_symbol': 'OpenInPlayAreaScreen',
-        'before': '\twInPlayAreaCurPosition = INPLAYAREA_PLAYER_ACTIVE;',
-        'after': '\twInPlayAreaCurPosition = INPLAYAREA_PLAYER_HAND;',
-        'case_ids': ['OpenInPlayAreaScreen-0', 'OpenInPlayAreaScreen-1'],
-        'source': 'src/home/play_area.c'},
-}
-
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

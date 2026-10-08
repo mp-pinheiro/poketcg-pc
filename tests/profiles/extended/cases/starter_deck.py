@@ -1,14 +1,20 @@
-"""Extended oracle-diff cases for starter_deck, seeded from tests/cases/starter_deck.py."""
-
-CONTRACT = {
+"""Extended oracle-diff cases for starter_deck: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
+from tests.cases._symbols import sym
+from tests.cases._inherit import inherit
+CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('starter_deck', remove=(
+    'CopyDeckNameAndCards',
+    'InitSaveData',
+))
+OWN = (
+    'InitSaveData',
+)
+CONTRACT.update({
     'InitSaveData': {'compare': (), 'preserve': ()},
-    '_AddStarterDeck': {'compare': (), 'preserve': ()},
-}
-
-CASES = {
+})
+CASES.update({
     'InitSaveData': [
-        {   'wram': {0xFF97: b'\xff'},
-            'sram': {   0x00: {   0xA100: b'\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
+        {   'wram': {sym("hWhoseTurn"): b'\xff'},
+            'sram': {   0x00: {   sym("sCardAndDeckSaveData"): b'\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
                                           b'\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
                                           b'\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
                                           b'\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
@@ -30,33 +36,33 @@ CASES = {
                                           b'\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
                                           b'\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11\x11'
                                           b'\x11\x11\x11\x11',
-                                  0xBC00: b'\xaa\xbb\xcc',
-                                  0xBB00: b'""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
+                                  sym("sChallengeMachineEnd") + 0x197: b'\xaa\xbb\xcc',
+                                  sym("sChallengeMachineEnd") + 0x97: b'""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
                                           b'""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
                                           b'""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
                                           b'""""""""""""""""""""""""""""""""""""""""""""""""""""""""'
                                           b'""""""""""""""""""""""""""""""""',
-                                  0xA003: b'\xff',
-                                  0xA006: b'\xff',
-                                  0xA007: b'\xff',
-                                  0xA009: b'\xff',
-                                  0xA004: b'\xff',
-                                  0xA005: b'\xff',
-                                  0xA00A: b'\xff'}},
-            'read': {0xFF97: 0x01, 0xCE0D: 0x01},
-            'sread': {   0x00: {   0xA100: 0x0100,
-                                   0xA470: 0x20,
-                                   0xA4CC: 0x20,
-                                   0xA528: 0x20,
-                                   0xBC00: 0x03,
-                                   0xBB00: 0x0100,
-                                   0xA003: 0x01,
-                                   0xA006: 0x01,
-                                   0xA007: 0x01,
-                                   0xA009: 0x01,
-                                   0xA004: 0x01,
-                                   0xA005: 0x01,
-                                   0xA00A: 0x01}},
+                                  sym("s0a000") + 3: b'\xff',
+                                  sym("sTextSpeed"): b'\xff',
+                                  sym("sAnimationsDisabled"): b'\xff',
+                                  sym("sSkipDelayAllowed"): b'\xff',
+                                  sym("s0a004"): b'\xff',
+                                  sym("s0a004") + 1: b'\xff',
+                                  sym("sReceivedLegendaryCards"): b'\xff'}},
+            'read': {sym("hWhoseTurn"): 0x01, sym("wTextSpeed"): 0x01},
+            'sread': {   0x00: {   sym("sCardAndDeckSaveData"): 0x0100,
+                                   sym("sSavedDeck1"): 0x20,
+                                   sym("sSavedDeck2"): 0x20,
+                                   sym("sSavedDeck3"): 0x20,
+                                   sym("sChallengeMachineEnd") + 0x197: 0x03,
+                                   sym("sChallengeMachineEnd") + 0x97: 0x0100,
+                                   sym("s0a000") + 3: 0x01,
+                                   sym("sTextSpeed"): 0x01,
+                                   sym("sAnimationsDisabled"): 0x01,
+                                   sym("sSkipDelayAllowed"): 0x01,
+                                   sym("s0a004"): 0x01,
+                                   sym("s0a004") + 1: 0x01,
+                                   sym("sReceivedLegendaryCards"): 0x01}},
             'vread': {0x00: {0x9380: 0x20}}},
         {   'a': 0xAA,
             'f': 0xF0,
@@ -65,144 +71,42 @@ CASES = {
             'd': 0xDD,
             'e': 0xEE,
             'hl': 0x1234,
-            'wram': {0xFF97: b'\xff'},
-            'sram': {   0x00: {   0xA100: b'33333333333333333333333333333333333333333333333333333333'
+            'wram': {sym("hWhoseTurn"): b'\xff'},
+            'sram': {   0x00: {   sym("sCardAndDeckSaveData"): b'33333333333333333333333333333333333333333333333333333333'
                                           b'33333333333333333333333333333333333333333333333333333333'
                                           b'33333333333333333333333333333333333333333333333333333333'
                                           b'33333333333333333333333333333333333333333333333333333333'
                                           b'33333333333333333333333333333333',
-                                  0xBC00: b'\x11"3',
-                                  0xBB00: b'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
+                                  sym("sChallengeMachineEnd") + 0x197: b'\x11"3',
+                                  sym("sChallengeMachineEnd") + 0x97: b'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
                                           b'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
                                           b'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
                                           b'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'
                                           b'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD'}},
-            'read': {0xFF97: 0x01, 0xCE0D: 0x01},
-            'sread': {   0x00: {   0xA100: 0x0100,
-                                   0xA470: 0x20,
-                                   0xA4CC: 0x20,
-                                   0xA528: 0x20,
-                                   0xBC00: 0x03,
-                                   0xBB00: 0x0100,
-                                   0xA003: 0x01,
-                                   0xA006: 0x01,
-                                   0xA007: 0x01,
-                                   0xA009: 0x01,
-                                   0xA004: 0x01,
-                                   0xA005: 0x01,
-                                   0xA00A: 0x01}},
+            'read': {sym("hWhoseTurn"): 0x01, sym("wTextSpeed"): 0x01},
+            'sread': {   0x00: {   sym("sCardAndDeckSaveData"): 0x0100,
+                                   sym("sSavedDeck1"): 0x20,
+                                   sym("sSavedDeck2"): 0x20,
+                                   sym("sSavedDeck3"): 0x20,
+                                   sym("sChallengeMachineEnd") + 0x197: 0x03,
+                                   sym("sChallengeMachineEnd") + 0x97: 0x0100,
+                                   sym("s0a000") + 3: 0x01,
+                                   sym("sTextSpeed"): 0x01,
+                                   sym("sAnimationsDisabled"): 0x01,
+                                   sym("sSkipDelayAllowed"): 0x01,
+                                   sym("s0a004"): 0x01,
+                                   sym("s0a004") + 1: 0x01,
+                                   sym("sReceivedLegendaryCards"): 0x01}},
             'vread': {0x00: {0x9380: 0x20}}},
     ],
-    '_AddStarterDeck': [
-        {   'a': 0x00,
-            'wram': {   0xFF97: b'\xff',
-                        0xC400: b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f'
-                                b'\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#'
-                                b"$%&'()*+,-./0123456789:;",
-                        0xC478: b'<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'},
-            'sram': {   0x00: {   0xA100: b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80'}},
-            'read': {0xFF97: 0x01},
-            'sread': {0x00: {0xA100: 0x0100, 0xA300: 0x20}}},
-        {   'a': 0x02,
-            'wram': {   0xFF97: b'\xff',
-                        0xC400: b'\x1e\x1f !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY',
-                        0xC478: b'Z[\\]^_`abcdefghijklmnopqrstuvw'},
-            'sram': {   0x00: {   0xA100: b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80'}},
-            'read': {0xFF97: 0x01},
-            'sread': {0x00: {0xA100: 0x0100, 0xA300: 0x20}}},
-        {   'a': 0x00,
-            'f': 0xF0,
-            'b': 0xBB,
-            'c': 0xCC,
-            'd': 0xDD,
-            'e': 0xEE,
-            'hl': 0x1234,
-            'wram': {   0xFF97: b'\xff',
-                        0xC400: b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f'
-                                b'\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#'
-                                b"$%&'()*+,-./0123456789:;",
-                        0xC478: b'<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'},
-            'sram': {   0x00: {   0xA100: b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80'
-                                          b'\x80\x80\x80\x80'}},
-            'read': {0xFF97: 0x01},
-            'sread': {0x00: {0xA100: 0x0100, 0xA300: 0x20}}},
-    ],
-}
-
-MUTATIONS = {
+})
+MUTATIONS.update({
     'InitSaveData': {   'source_symbol': 'InitSaveData',
         'before': '\tgb_write8(sTextSpeed_ADDR, TEXT_SPEED_3);',
         'after': '\tgb_write8(sTextSpeed_ADDR, 3u);',
         'case_ids': ['InitSaveData-0', 'InitSaveData-1'],
         'source': 'src/profiles/extended/home/starter_deck.c'},
-    '_AddStarterDeck': {   'source_symbol': '_AddStarterDeck',
-        'before': '\t\tgb_write8(slot, (uint8_t)(v + 1u));',
-        'after': '\t\tgb_write8(slot, v);',
-        'case_ids': ['_AddStarterDeck-0', '_AddStarterDeck-1'],
-        'source': 'src/profiles/extended/home/starter_deck.c'},
-}
-
+    '_AddStarterDeck': {'source_symbol': '_AddStarterDeck', 'before': 'gb_write8(slot, (uint8_t)(value + 1u));', 'after': 'gb_write8(slot, value);', 'case_ids': ['_AddStarterDeck-0', '_AddStarterDeck-1'], 'source': 'src/profiles/extended/home/starter_deck.c'},
+})
 from tests.cases._schema_migration import legacy_to_schema
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

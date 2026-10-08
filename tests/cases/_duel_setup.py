@@ -10,7 +10,7 @@ core.asm:1920-1931 into its serial-exchange error.
 Shared by tests/cases/core.py and tests/cases/map.py: any routine reaching
 StartDuel needs this exact seed to reach a `ret` on either lane.
 """
-from tests.cases._symbols import STACK_TOP, sym
+from tests.cases._symbols import STACK_TOP, card_id_bytes, sym, sym_pointer
 
 DUEL_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
@@ -18,13 +18,14 @@ DUEL_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x4
 # animation does not read unseeded card data.
 DUEL_ANIM_SAFE = {
     sym("wActiveScreenAnim"): b"\xff", sym("wd4c0"): b"\xff", sym("wAnimationQueue"): b"\xff" * 7,
-    sym("wDoFrameFunction"): bytes([0xA2, 0x3B]), sym("wDuelAnimBufferCurPos"): b"\x00", sym("wDuelAnimBufferSize"): b"\x08",
+    sym("wDoFrameFunction"): sym_pointer("UpdateQueuedAnimations"), sym("wDuelAnimBufferCurPos"): b"\x00", sym("wDuelAnimBufferSize"): b"\x08",
 }
 
 DUEL_WRAM = {
     sym("wNPCDuelPrizes"): b"\x06", sym("wDuelTheme"): b"\x01",
     sym("hWhoseTurn"): b"\xC2", sym("wPlayerDuelistType"): b"\x80", sym("wOpponentDuelistType"): b"\x80",
-    sym("wDuelType"): b"\x80", sym("wBoosterCardsDrawn"): b"\x08" * 0x3C, sym("wOpponentDeck"): b"\x08" * 0x3C,
+    sym("wDuelType"): b"\x80", sym("wBoosterCardsDrawn"): card_id_bytes(0x08) * 0x3C,
+    sym("wOpponentDeck"): card_id_bytes(0x08) * 0x3C,
     sym("wLCDC"): b"\x00", sym("wSkipDelayAllowed"): b"\x01",
     **DUEL_ANIM_SAFE,
 }

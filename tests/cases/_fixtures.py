@@ -12,9 +12,10 @@ the entry of PlayAttackAnimation_DealAttackDamage: Goldeen's Horn Attack on
 Sam's Machop in turn 1 of the practice duel.
 """
 import json
+import os
 from pathlib import Path
 
-from tests.cases._symbols import CALL_FRAME, HRAM_START, SRAM_START, STACK_WINDOW, WRAM_START, WRAMX_START, sym
+from tests.cases._symbols import CALL_FRAME, HRAM_START, SRAM_START, STACK_WINDOW, WRAM_START, WRAMX_START, card_id_size, card_max_hp, frame_callback_pointer, profile_symbols, sym
 
 # Bytes the two reference lanes cannot agree on with the native lane, left
 # unseeded and uncompared. wIE ($CAB7) mirrors rIE, which each lane arms for
@@ -28,6 +29,22 @@ from tests.cases._symbols import CALL_FRAME, HRAM_START, SRAM_START, STACK_WINDO
 _HOLES = tuple(sym(name) for name in (
     "wIE", "wVBlankCounter", "wFlushPaletteFlags", "wVBlankOAMCopyToggle",
     "wCursorBlinkCounter", "wCheckMenuCursorBlinkCounter"))
+
+_ROOT = Path(__file__).resolve().parents[2]
+_PROFILE_CATALOG = json.loads((_ROOT / "profiles" / "profiles.json").read_text())
+_DEFAULT_PROFILE = _PROFILE_CATALOG["default"]
+
+
+def _source_profile(directory: Path | None) -> str:
+    if directory is None:
+        return _DEFAULT_PROFILE
+    try:
+        parts = directory.resolve().relative_to(_ROOT).parts
+    except ValueError:
+        return _DEFAULT_PROFILE
+    if len(parts) >= 4 and parts[:2] == ("tests", "profiles") and parts[3] == "fixtures":
+        return parts[2]
+    return _DEFAULT_PROFILE
 
 
 def _cut(start: int, end: int, holes: tuple[int, ...]) -> list[tuple[int, int]]:
@@ -61,7 +78,10 @@ class Fixture:
     def __init__(self, name: str, directory: Path | None = None, holes: tuple[int, ...] = _HOLES,
                  lcdc: int | None = None):
         folder = directory if directory is not None else Path(__file__).resolve().parent.parent / "fixtures"
-        data = json.load(open(folder / f"{name}.json"))
+        self.source_profile = _source_profile(directory)
+        self.source_variant = None
+        with (folder / f"{name}.json").open() as stream:
+            data = json.load(stream)
         self._load(name, data)
         self.holes = holes
         self.lcdc = sym("wLCDC") if lcdc is None else lcdc
@@ -71,6 +91,8 @@ class Fixture:
         """A capture that never touched disk: the sweep's in-memory entries."""
         fixture = cls.__new__(cls)
         fixture._load(data.get("entry", "?"), data)
+        fixture.source_profile = os.environ.get("POKETCG_PROFILE") or _DEFAULT_PROFILE
+        fixture.source_variant = os.environ.get("POKETCG_PROFILE_VARIANT")
         fixture.holes = _HOLES
         fixture.lcdc = sym("wLCDC")
         return fixture
@@ -101,7 +123,20 @@ class Fixture:
         wram = bytearray(self.wram)
         hram = bytearray(self.hram)
         patches = dict(changes or {})
-        patches.update((int(addr, 16), data) for addr, data in named.items())
+        patches.update((int(address, 16), data) for address, data in named.items())
+        source_callback = profile_symbols(self.source_profile).get("wDoFrameFunction")
+        target_callback = sym("wDoFrameFunction")
+        if source_callback is not None and target_callback not in patches:
+            source_address = source_callback[1]
+            if source_address != target_callback:
+                raise ValueError(f"{self.name} moves wDoFrameFunction from {source_address:04X} to {target_callback:04X}")
+            offset = source_address - WRAM_START
+            value = self.wram[offset:offset + 2]
+            if len(value) == 2:
+                pointer = frame_callback_pointer(int.from_bytes(value, "little"), self.source_profile,
+                                                 self.rom_bank, self.source_variant)
+                if pointer != value:
+                    patches[target_callback] = pointer
         for address, data in patches.items():
             if address >= HRAM_START:
                 hram[address - HRAM_START:address - HRAM_START + len(data)] = data
@@ -149,16 +184,50 @@ class Fixture:
             case["sram"] = {bank: {SRAM_START: self.sram[bank * 0x2000:(bank + 1) * 0x2000]} for bank in range(2)}
         return case
 
+def profile_fixture(names: dict[str, str], *, holes: tuple[int, ...] = _HOLES,
+                    lcdc: int | None = None) -> Fixture:
+    profile = os.environ.get("POKETCG_PROFILE") or _DEFAULT_PROFILE
+    name = names.get(profile, names[_DEFAULT_PROFILE])
+    case_namespace = _PROFILE_CATALOG["profiles"][profile]["evidence"]["case_namespace"]
+    profile_directory = _ROOT / Path(case_namespace).parent / "fixtures"
+    directory = (
+        profile_directory
+        if (profile_directory / f"{name}.json").is_file()
+        else _ROOT / "tests" / "fixtures"
+    )
+    return Fixture(name, directory=directory, holes=holes, lcdc=lcdc)
 
-ATTACK = Fixture("practice-win-attack-entry")
+
+ATTACK = profile_fixture({
+    "vanilla": "practice-win-attack-entry",
+    "extended": "practice-horn-attack-entry",
+})
 ATTACK_REGS = ATTACK.regs
+OPEN_CARD_PAGE_CHECK_PLAY_AREA = profile_fixture({
+    "vanilla": "practice-win-attack-entry",
+    "extended": "practice-horn-attack-open-card-page-check-play-area-entry",
+})
+
+
+def open_card_page_check_play_area_fixture(changes: dict[int, bytes] | None = None,
+                                          vram: bool = True, bank: int | None = None,
+                                          **named: bytes) -> dict:
+    return OPEN_CARD_PAGE_CHECK_PLAY_AREA.case(changes, vram=vram, bank=bank, **named)
+
+
 # Func_c141's entry after the practice duel: wActiveGameEvent = GAME_EVENT_DUEL,
 # Dr. Mason's lab loaded, Sam's after-duel script about to be dispatched.
-AFTER_DUEL = Fixture("practice-win-after-duel-entry")
+AFTER_DUEL = profile_fixture({
+    "vanilla": "practice-win-after-duel-entry",
+    "extended": "starter-deck-after-duel-entry",
+})
 AFTER_DUEL_REGS = AFTER_DUEL.regs
 # Func_c9b8's entry at the game's start: wCurMap = OVERWORLD_MAP, so the
 # LOAD_MAP slot is LoadOverworld (Func_d4fb, then Script_BeginGame).
-LOAD_MAP = Fixture("practice-win-load-map-entry")
+LOAD_MAP = profile_fixture({
+    "vanilla": "practice-win-load-map-entry",
+    "extended": "starter-deck-load-map-entry",
+})
 LOAD_MAP_REGS = LOAD_MAP.regs
 # AIProcessEnergyCards' entry in the AI-versus-AI session ai-duel-02 at DoFrame
 # 24437: the second duelist's turn, an energy card in hand, the reference
@@ -180,7 +249,10 @@ AI_EVOLUTION_ENERGY = Fixture("ai-duel-02-evolution-energy-entry")
 AI_EVOLUTION_ENERGY_REGS = AI_EVOLUTION_ENERGY.regs
 # The same AI turn after the energy attach, DoFrame 24548: AIDecidePlayPokemonCard's
 # second call and AIProcessAndTryToUseAttack's entry (AIProcessAttacks shares it).
-AI_PLAY_POKEMON = Fixture("ai-duel-02-play-pokemon-entry")
+AI_PLAY_POKEMON = profile_fixture({
+    "vanilla": "ai-duel-02-play-pokemon-entry",
+    "extended": "ai-duel-fire-charge-aidecideplaypokemoncard-entry",
+})
 AI_PLAY_POKEMON_REGS = AI_PLAY_POKEMON.regs
 AI_EVOLUTION = Fixture("ai-duel-02-evolution-entry")
 AI_EVOLUTION_REGS = AI_EVOLUTION.regs
@@ -191,7 +263,10 @@ AI_ATTACK_SCORE = Fixture("ai-duel-02-attack-score-entry")
 AI_ATTACK_SCORE_REGS = AI_ATTACK_SCORE.regs
 # EstimateDamage_VersusDefendingCard's entry from AIProcessAttacks.execute in
 # that same turn: the chosen attack's damage against the player's arena card.
-AI_ESTIMATE = Fixture("ai-duel-02-estimate-entry")
+AI_ESTIMATE = profile_fixture({
+    "vanilla": "ai-duel-02-estimate-entry",
+    "extended": "ai-duel-fire-charge-ai-estimate-entry",
+})
 AI_ESTIMATE_REGS = AI_ESTIMATE.regs
 # AIDecide_Bill's entry at DoFrame 25589, phase 4 of the trainer-card pass with
 # eleven cards left in the deck: the parameter byte is the count the cp leaves.
@@ -211,7 +286,10 @@ AI_TRY_RETREAT = Fixture("ai-duel-02-try-retreat-entry")
 AI_TRY_RETREAT_REGS = AI_TRY_RETREAT.regs
 # Back in the lab after the AI duel, DoFrame 37028: the after-duel script's
 # MOVE_ACTIVE_NPC, from the script command through the first movement step.
-NPC_EXECUTE = Fixture("ai-duel-02-npc-execute-entry")
+NPC_EXECUTE = profile_fixture({
+    "vanilla": "ai-duel-02-npc-execute-entry",
+    "extended": "starter-deck-npc-execute-entry",
+})
 NPC_EXECUTE_REGS = NPC_EXECUTE.regs
 NPC_START = Fixture("ai-duel-02-npc-start-entry")
 NPC_START_REGS = NPC_START.regs
@@ -227,7 +305,10 @@ IN_PLAY_AREA_B_EXIT = Fixture("tas-5530s-in-play-area-b-exit-entry")
 IN_PLAY_AREA_B_EXIT_REGS = IN_PLAY_AREA_B_EXIT.regs
 # The fighting-club route's first walk (DoFrame 99702): DOWN held, one pixel of
 # the step left, so the step and its arrival (Func_c6dc) both run this frame.
-MOVE_STEP = Fixture("fighting-club-move-step-entry")
+MOVE_STEP = profile_fixture({
+    "vanilla": "fighting-club-move-step-entry",
+    "extended": "multi-bank-scripts-move-step-entry",
+})
 MOVE_STEP_REGS = MOVE_STEP.regs
 # The rock-club route's B press on the Potion target screen (DoFrame 118590):
 # HandleMenuInput under PlayAreaScreenMenuFunction must report the cancel.
@@ -257,7 +338,10 @@ AI_TRAINER_PHASE5_REGS = AI_TRAINER_PHASE5.regs
 # gene-duel at DoFrame 224056: the Energy Removal decision with the player's
 # arena Machop energised but short of an attack; the ROM's .default fallback
 # inspects the terminal (empty) slot and declines.
-ENERGY_REMOVAL = Fixture("gene-duel-energy-removal-entry")
+ENERGY_REMOVAL = profile_fixture({
+    "vanilla": "gene-duel-energy-removal-entry",
+    "extended": "ai-duel-fighting-carriers-energy-removal-entry",
+})
 ENERGY_REMOVAL_REGS = ENERGY_REMOVAL.regs
 # gene-duel at DoFrame 224056: Gene's arena card above half HP with an
 # evolution flagged, so the evolution search runs on the arena deck index.
@@ -266,7 +350,10 @@ FULLY_POWERED_REGS = FULLY_POWERED.regs
 # jennifer-duel at DoFrame 259030: Jennifer's bench of three Pikachu, the
 # first at full HP with its Raichu in hand, so the set-up count must search
 # evolutions by the bench deck index rather than the HP just read.
-BENCH_COUNT = Fixture("jennifer-duel-bench-count-entry")
+BENCH_COUNT = profile_fixture({
+    "vanilla": "jennifer-duel-bench-count-entry",
+    "extended": "ai-duel-fire-charge-bench-count-entry",
+})
 BENCH_COUNT_REGS = BENCH_COUNT.regs
 # lightning-2 at DoFrame 310249: Koffing's Foul Gas against the player; the
 # ROM's coin lands tails here, so the confusion branch runs.
@@ -321,7 +408,10 @@ FILTERED_LIST = Fixture("boot-deck-machine-filtered-list-entry")
 FILTERED_LIST_REGS = FILTERED_LIST.regs
 # boot-deck-machine at DoFrame 100325: the deck confirmation screen's header,
 # with the starter deck loaded and its 60 cards counted (SRAM seeded).
-DECK_INFO_HEADER = Fixture("boot-deck-machine-deck-info-header-entry")
+DECK_INFO_HEADER = profile_fixture({
+    "vanilla": "boot-deck-machine-deck-info-header-entry",
+    "extended": "deck-confirmation-showdeckinfoheader-entry",
+})
 DECK_INFO_HEADER_REGS = DECK_INFO_HEADER.regs
 # boot-deck-machine at DoFrame 100325: the confirmation list prints the deck's
 # 29 unique cards from row 5 at align 3, scroll cursor on the last row.
@@ -347,29 +437,50 @@ NAME_INPUT_REGS = NAME_INPUT.regs
 # out of wNamingScreenBuffer into the caller's destination buffer.
 NAME_FINAL = Fixture("lightning-3-name-final-entry")
 NAME_FINAL_REGS = NAME_FINAL.regs
-SCROLL_TEXT = Fixture("lightning-3-scroll-text-entry")
+SCROLL_TEXT = profile_fixture({
+    "vanilla": "lightning-3-scroll-text-entry",
+    "extended": "practice-menu-scroll-text-entry",
+})
 SCROLL_TEXT_REGS = SCROLL_TEXT.regs
 TITLE_ORB = Fixture("lightning-3-title-orb-entry")
 TITLE_ORB_REGS = TITLE_ORB.regs
-ADVANCE_TEXT = Fixture("boot-deck-machine-advance-text-entry")
+ADVANCE_TEXT = profile_fixture({
+    "vanilla": "boot-deck-machine-advance-text-entry",
+    "extended": "practice-menu-advance-text-entry",
+})
 ADVANCE_TEXT_REGS = ADVANCE_TEXT.regs
-BUTTON_AB = Fixture("boot-deck-machine-button-ab-entry")
+BUTTON_AB = profile_fixture({
+    "vanilla": "boot-deck-machine-button-ab-entry",
+    "extended": "practice-menu-button-ab-entry",
+})
 BUTTON_AB_REGS = BUTTON_AB.regs
-YES_NO = Fixture("boot-deck-machine-yes-no-entry")
+YES_NO = profile_fixture({
+    "vanilla": "boot-deck-machine-yes-no-entry",
+    "extended": "practice-menu-yes-no-entry",
+})
 YES_NO_REGS = YES_NO.regs
 CARD_LIST_INPUT = Fixture("isaac-duel-card-list-input-entry")
 CARD_LIST_INPUT_REGS = CARD_LIST_INPUT.regs
 CHECK_CURSOR = Fixture("boot-deck-machine-check-cursor-entry")
 CHECK_CURSOR_REGS = CHECK_CURSOR.regs
-DM_ENTRIES = Fixture("boot-deck-machine-visible-entries-entry")
+DM_ENTRIES = profile_fixture({
+    "vanilla": "boot-deck-machine-visible-entries-entry",
+    "extended": "deck-ui-visible-deck-machine-entries-entry",
+})
 DM_ENTRIES_REGS = DM_ENTRIES.regs
 HIGH_RECOIL = Fixture("lightning-3-high-recoil-entry")
 HIGH_RECOIL_REGS = HIGH_RECOIL.regs
-SAND_ATTACK = Fixture("lightning-3-sand-attack-entry")
+SAND_ATTACK = profile_fixture({
+    "vanilla": "lightning-3-sand-attack-entry",
+    "extended": "practice-horn-attack-entry",
+})
 SAND_ATTACK_REGS = SAND_ATTACK.regs
 DAMAGE_REDUCTION = Fixture("lightning-3-damage-reduction-entry")
 DAMAGE_REDUCTION_REGS = DAMAGE_REDUCTION.regs
-AI_PKMN_POWERS = Fixture("lightning-3-ai-pkmn-powers-entry")
+AI_PKMN_POWERS = profile_fixture({
+    "vanilla": "lightning-3-ai-pkmn-powers-entry",
+    "extended": "ai-heal-carrier-pkmn-powers-handler-entry",
+})
 AI_PKMN_POWERS_REGS = AI_PKMN_POWERS.regs
 ZAPDOS_RECOIL = Fixture("lightning-3-zapdos-recoil-entry")
 ZAPDOS_RECOIL_REGS = ZAPDOS_RECOIL.regs
@@ -377,11 +488,20 @@ MAP_SCRIPT = Fixture("lightning-3-map-script-entry")
 MAP_SCRIPT_REGS = MAP_SCRIPT.regs
 SPECIAL_ATTACK = Fixture("water-master-special-attack-entry")
 SPECIAL_ATTACK_REGS = SPECIAL_ATTACK.regs
-SCROLL_LABEL = Fixture("lightning-3-scroll-label-entry")
+SCROLL_LABEL = profile_fixture({
+    "vanilla": "lightning-3-scroll-label-entry",
+    "extended": "practice-menu-scroll-label-entry",
+})
 SCROLL_LABEL_REGS = SCROLL_LABEL.regs
-WAIT_KEYS = Fixture("boot-deck-machine-wait-keys-entry")
+WAIT_KEYS = profile_fixture({
+    "vanilla": "boot-deck-machine-wait-keys-entry",
+    "extended": "status-screen-wait-keys-entry",
+})
 WAIT_KEYS_REGS = WAIT_KEYS.regs
-FIND_NPC = Fixture("water-club-findnpc-entry")
+FIND_NPC = profile_fixture({
+    "vanilla": "water-club-findnpc-entry",
+    "extended": "multi-bank-scripts-find-npc-entry",
+})
 FIND_NPC_REGS = FIND_NPC.regs
 TEXT_TILE = Fixture("water-master-placenexttexttile-entry")
 TEXT_TILE_REGS = TEXT_TILE.regs
@@ -888,7 +1008,10 @@ def color_name_fixture(changes: dict[int, bytes] | None = None, vram: bool = Tru
     return COLOR_NAME.case(changes, vram=vram, bank=bank, **named)
 
 
-AI_HEAL = Fixture("effect-vileplume-1-aiheal-entry")
+AI_HEAL = profile_fixture({
+    "vanilla": "effect-vileplume-1-aiheal-entry",
+    "extended": "ai-heal-carrier-aiheal-entry",
+})
 AI_HEAL_REGS = AI_HEAL.regs
 
 
@@ -1032,7 +1155,10 @@ def special_attack_params_fixture(changes: dict[int, bytes] | None = None, vram:
     return SPECIAL_ATTACK_PARAMS.case(changes, vram=vram, bank=bank, **named)
 
 
-AI_PKMN_POWERS_MASTER = Fixture("water-master-ai-pkmn-powers-entry")
+AI_PKMN_POWERS_MASTER = profile_fixture({
+    "vanilla": "water-master-ai-pkmn-powers-entry",
+    "extended": "ai-heal-carrier-pkmn-powers-loop-entry",
+})
 AI_PKMN_POWERS_MASTER_REGS = AI_PKMN_POWERS_MASTER.regs
 
 
@@ -1041,7 +1167,10 @@ def ai_pkmn_powers_master_fixture(changes: dict[int, bytes] | None = None, vram:
     return AI_PKMN_POWERS_MASTER.case(changes, vram=vram, bank=bank, **named)
 
 
-EVOLUTION_IN_LIST = Fixture("dome-5-evolution-in-list-entry")
+EVOLUTION_IN_LIST = profile_fixture({
+    "vanilla": "dome-5-evolution-in-list-entry",
+    "extended": "ai-duel-fire-charge-evolution-in-list-entry",
+})
 EVOLUTION_IN_LIST_REGS = EVOLUTION_IN_LIST.regs
 
 
@@ -1172,7 +1301,10 @@ def animation_next_command_fixture(changes: dict[int, bytes] | None = None, vram
     return ANIMATION_NEXT_COMMAND.case(changes, vram=vram, bank=bank, **named)
 
 
-FIRST_OR_NEXT_PAGE = Fixture("water-club-first-or-next-page-entry")
+FIRST_OR_NEXT_PAGE = profile_fixture({
+    "vanilla": "water-club-first-or-next-page-entry",
+    "extended": "trainer-card-page-displayfirstornextcardpage-entry",
+})
 FIRST_OR_NEXT_PAGE_REGS = FIRST_OR_NEXT_PAGE.regs
 
 
@@ -1199,13 +1331,25 @@ def energy_search_flower_fixture(changes: dict[int, bytes] | None = None, vram: 
     return ENERGY_SEARCH_FLOWER.case(changes, vram=vram, bank=bank, **named)
 
 
-STRANGE_BEHAVIOR = Fixture("ai-ghost-strange-behavior-entry")
+STRANGE_BEHAVIOR = profile_fixture({
+    "vanilla": "ai-ghost-strange-behavior-entry",
+    "extended": "ai-slowbro-carrier-strange-behavior-entry",
+})
 STRANGE_BEHAVIOR_REGS = STRANGE_BEHAVIOR.regs
 
 
 def strange_behavior_fixture(changes: dict[int, bytes] | None = None, vram: bool = True, bank: int | None = None,
-                             **named: bytes) -> dict:
-    return STRANGE_BEHAVIOR.case(changes, vram=vram, bank=bank, **named)
+                             damage: int | None = None, **named: bytes) -> dict:
+    patches = dict(changes or {})
+    if damage is not None:
+        turn = STRANGE_BEHAVIOR.hram[sym("hWhoseTurn") - HRAM_START]
+        side = "Player" if turn == 0xC2 else "Opponent"
+        index = STRANGE_BEHAVIOR.wram[sym(f"w{side}ArenaCard") - WRAM_START]
+        width = card_id_size()
+        offset = sym(f"w{side}Deck") - WRAM_START + index * width
+        card_id = int.from_bytes(STRANGE_BEHAVIOR.wram[offset:offset + width], "little")
+        patches[sym(f"w{side}ArenaCardHP")] = bytes((card_max_hp(card_id) - damage,))
+    return STRANGE_BEHAVIOR.case(patches, vram=vram, bank=bank, **named)
 
 
 COUNT_CARD_ID = Fixture("ai-ghost-count-card-id-entry")

@@ -1,0 +1,3 @@
+press START
+idle
+shot extended-real-deck-confirmation

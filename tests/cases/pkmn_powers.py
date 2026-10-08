@@ -1,4 +1,4 @@
-from tests.cases._symbols import sym
+from tests.cases._symbols import card_id_size, const, deck_bytes, rom_byte, sym, sym_bank
 from tests.cases._fixtures import ai_heal_fixture as _ai_heal_fixture, AI_HEAL_REGS as _AI_HEAL_REGS
 from tests.cases._fixtures import strange_behavior_fixture as _strange_behavior_fixture, STRANGE_BEHAVIOR_REGS as _STRANGE_BEHAVIOR_REGS
 from tests.cases._fixtures import energy_trans_fixture as _energy_trans_fixture, ENERGY_TRANS_REGS as _ENERGY_TRANS_REGS
@@ -51,11 +51,12 @@ CASES["HandleAIPeek"] = [
 # <<< factory HandleAIPeek
 
 # >>> factory HandleAIStrangeBehavior
-CONTRACT["HandleAIStrangeBehavior"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b",)}
+CONTRACT["HandleAIStrangeBehavior"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["HandleAIStrangeBehavior"] = [
 	{"c": 0},
 	dict(POISON, c=0),
-	dict(_strange_behavior_fixture(vram=False), **_STRANGE_BEHAVIOR_REGS),
+	dict(_strange_behavior_fixture(vram=False, damage=0), **_STRANGE_BEHAVIOR_REGS),
+	dict(_strange_behavior_fixture(vram=False, damage=10), **_STRANGE_BEHAVIOR_REGS, compare=("a", "f")),
 ]
 # <<< factory HandleAIStrangeBehavior
 
@@ -73,14 +74,14 @@ CASES["HandleAICurse"] = [
     # (pkmn_powers.asm:887 wants two); hTempRetreatCostCards keeps the retreat's card index.
     {
         "c": 0x00,
-        "wram": {sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02", sym("wPlayerArenaCard"): b"\x00\x01\xFF", sym("wPlayerArenaCardHP"): b"\x1E\x28", sym("wBoosterCardsDrawn"): b"\x08\x08", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wOpponentArenaCard"): b"\x00\xFF", sym("wOpponentDeck"): b"\x08"},
+        "wram": {sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02", sym("wPlayerArenaCard"): b"\x00\x01\xFF", sym("wPlayerArenaCardHP"): b"\x1E\x28", sym("wBoosterCardsDrawn"): deck_bytes((8, 8)), sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wOpponentArenaCard"): b"\x00\xFF", sym("wOpponentDeck"): deck_bytes((8,))},
         "hram": {sym("hWhoseTurn"): b"\xC3", sym("hAIEnergyTransEnergyCard"): b"\x09"},
         "read": {sym("hTempList"): 3},
     },
     # Two damaged player cards: the lowest-HP one is stored before the second scan.
     {
         "c": 0x00,
-        "wram": {sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02", sym("wPlayerArenaCard"): b"\x00\x01\xFF", sym("wPlayerArenaCardHP"): b"\x1E\x14", sym("wBoosterCardsDrawn"): b"\x08\x08", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wOpponentArenaCard"): b"\x00\xFF", sym("wOpponentDeck"): b"\x08", sym("wOpponentArenaCardHP"): b"\x28"},
+        "wram": {sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02", sym("wPlayerArenaCard"): b"\x00\x01\xFF", sym("wPlayerArenaCardHP"): b"\x1E\x14", sym("wBoosterCardsDrawn"): deck_bytes((8, 8)), sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wOpponentArenaCard"): b"\x00\xFF", sym("wOpponentDeck"): deck_bytes((8,)), sym("wOpponentArenaCardHP"): b"\x28"},
         "hram": {sym("hWhoseTurn"): b"\xC3", sym("hAIEnergyTransEnergyCard"): b"\x09"},
         "read": {sym("hTempList"): 3},
     },
@@ -123,12 +124,13 @@ CASES["HandleAIDamageSwap"] = [
 
 # >>> factory HandleAIHeal
 CONTRACT["HandleAIHeal"] = {"compare": ("a", "f"), "preserve": ()}
+_NULL_CARD_HP = bytes((rom_byte(0, const("CARD_DATA_HP")),))
 CASES["HandleAIHeal"] = [
-    {"c": 0, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): b"\xC9", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, "read": {sym("hTempList"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"c": 1, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): b"\xC9", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, "read": {sym("hTempList"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"c": 0xE4, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): b"\xC9", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, "read": {sym("hTempList"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, c=0xCC, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): b"\xC9", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, read={sym("hTempList"): 1}, instruction_budget=20000000, cycle_budget=80000000),
-    {"c": 1, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): b"\xC9", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, "read": {sym("hTempList"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): _NULL_CARD_HP, sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, "read": {sym("hTempList"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 1, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): _NULL_CARD_HP, sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, "read": {sym("hTempList"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0xE4, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): _NULL_CARD_HP, sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, "read": {sym("hTempList"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0xCC, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): _NULL_CARD_HP, sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, read={sym("hTempList"): 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"c": 1, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerCardLocations"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): _NULL_CARD_HP, sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, "read": {sym("hTempList"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(_ai_heal_fixture(vram=False, bank=8), **_AI_HEAL_REGS, instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory HandleAIHeal
@@ -137,10 +139,10 @@ CASES["HandleAIHeal"] = [
 CONTRACT["HandleAIPkmnPowers"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["HandleAIPkmnPowers"] = [
     # water-master 419138: Amy's turn, the live entry the sweep flagged (a, f).
-    dict(ai_pkmn_powers_master_fixture(vram=False, bank=8), **AI_PKMN_POWERS_MASTER_REGS, read={sym("wAISetupEnergyCount"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}),
-    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wPlayerBench"): b"\x00\xC5", sym("wOpponentBench"): b"\x01\xC5", sym("wBoosterCardsDrawn"): b"\x27", sym("wOpponentDeck"): b"\x27", sym("wNameBuffer"): b"\xFF", sym("wNameBuffer") + 1: b"\xFF"}, "read": {sym("wTempPokemonID_ce7c"): 1}},
-    {"a": 0x11, "f": 0xE0, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x6789, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wPlayerBench"): b"\x00\xC5", sym("wOpponentBench"): b"\x01\xC5", sym("wBoosterCardsDrawn"): b"\x27", sym("wOpponentDeck"): b"\x27", sym("wNameBuffer"): b"\xFF", sym("wNameBuffer") + 1: b"\xFF"}, "read": {sym("wTempPokemonID_ce7c"): 1}},
-    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wPlayerBench"): b"\x00\xC5", sym("wOpponentBench"): b"\x01\xC5", sym("wBoosterCardsDrawn"): b"\x27", sym("wOpponentDeck"): b"\x27", sym("wNameBuffer"): b"\xFF", sym("wNameBuffer") + 1: b"\xFF"}, read={sym("wTempPokemonID_ce7c"): 1}),
+    dict(ai_pkmn_powers_master_fixture(vram=False, bank=sym_bank("HandleAIPkmnPowers")), **AI_PKMN_POWERS_MASTER_REGS, read={sym("wAISetupEnergyCount"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}),
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wPlayerBench"): b"\x00\xC5", sym("wOpponentBench"): b"\x01\xC5", sym("wBoosterCardsDrawn"): deck_bytes((const("MUK"),)), sym("wOpponentDeck"): deck_bytes((const("MUK"),)), sym("wNameBuffer"): b"\xFF", sym("wNameBuffer") + 1: b"\xFF"}, "read": {sym("wTempPokemonID_ce7c"): card_id_size()}},
+    {"a": 0x11, "f": 0xE0, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x6789, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wPlayerBench"): b"\x00\xC5", sym("wOpponentBench"): b"\x01\xC5", sym("wBoosterCardsDrawn"): deck_bytes((const("MUK"),)), sym("wOpponentDeck"): deck_bytes((const("MUK"),)), sym("wNameBuffer"): b"\xFF", sym("wNameBuffer") + 1: b"\xFF"}, "read": {sym("wTempPokemonID_ce7c"): card_id_size()}},
+    dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wPlayerBench"): b"\x00\xC5", sym("wOpponentBench"): b"\x01\xC5", sym("wBoosterCardsDrawn"): deck_bytes((const("MUK"),)), sym("wOpponentDeck"): deck_bytes((const("MUK"),)), sym("wNameBuffer"): b"\xFF", sym("wNameBuffer") + 1: b"\xFF"}, read={sym("wTempPokemonID_ce7c"): card_id_size()}),
     dict(ai_pkmn_powers_fixture(vram=False), **AI_PKMN_POWERS_REGS),
 ]
 # <<< factory HandleAIPkmnPowers

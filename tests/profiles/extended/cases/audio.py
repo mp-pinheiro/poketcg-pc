@@ -1,3 +1,4 @@
+from tests.cases._symbols import sym
 CONTRACT = {
     'GetAudioCmdAndArgs': {'compare': ('a', 'b', 'c', 'hl'), 'preserve': ('b', 'c', 'hl')},
 }
@@ -7,14 +8,14 @@ POISON = {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC,
 
 CASES = {
     'GetAudioCmdAndArgs': [
-        {'a': 0x00, 'hl': 0xC100, 'wram': {0xC100: b'\x00\x00\x00'},
-         'read': {0xD909: 1, 0xD90A: 2}},
-        dict(POISON, a=0x42, hl=0xC100,
-             wram={0xC100: b'\xD0\x12\x34'},
-             read={0xD909: 1, 0xD90A: 2}),
-        {'a': 0x01, 'b': 0x01, 'c': 0x02, 'hl': 0xC1FF,
-         'wram': {0xC1FF: b'\xFE', 0xC200: b'\xED\xDC'},
-         'read': {0xD909: 1, 0xD90A: 2}},
+        {'a': 0x00, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x11, 'wram': {sym("wDecompressionSecondaryBufferStart") + 0x11: b'\x00\x00\x00'},
+         'read': {sym("wAudioCmd"): 1, sym("wAudioArg"): 2}},
+        dict(POISON, a=0x42, hl=sym("wDecompressionSecondaryBufferStart") + 0x11,
+             wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b'\xD0\x12\x34'},
+             read={sym("wAudioCmd"): 1, sym("wAudioArg"): 2}),
+        {'a': 0x01, 'b': 0x01, 'c': 0x02, 'hl': sym("wDecompressionSecondaryBufferStart") + 0x110,
+         'wram': {sym("wDecompressionSecondaryBufferStart") + 0x110: b'\xFE', sym("wPlayerCardLocations"): b'\xED\xDC'},
+         'read': {sym("wAudioCmd"): 1, sym("wAudioArg"): 2}},
     ],
 }
 
