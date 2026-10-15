@@ -44,7 +44,7 @@ void InitAITurnVars(void)
 		SwapTurn();
 		uint16_t id = GetCardIDFromDeckIndex(wPlayerAttackingCardIndex);
 		SwapTurn();
-		if ((uint8_t)id == MEWTWO_LV53) {
+		if (id == MEWTWO_LV53) {
 			if (wAIBarrierFlagCounter & AI_MEWTWO_MILL) {
 				barrier_flag_set = 1u;
 			} else {
@@ -55,7 +55,7 @@ void InitAITurnVars(void)
 					SwapTurn();
 					uint16_t id2 = GetCardIDFromDeckIndex(arena.a);
 					SwapTurn();
-					if ((uint8_t)id2 == MEWTWO_LV53) {
+					if (id2 == MEWTWO_LV53) {
 						CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result r =
 							CheckIfPlayerHasPokemonOtherThanMewtwoLv53(0u, 0u, 0u, 0u);
 						if (!(r.f & 0x10u))

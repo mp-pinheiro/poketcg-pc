@@ -5,6 +5,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/duel.h"
+#include "home/card_id_bus.h"
 #include "mem.h"
 /* <<< part includes */
 /* >>> part includes_2 */
@@ -49,7 +50,14 @@ SamsPracticeResult SetSamsStartingPlayArea(uint8_t a, uint8_t f, uint8_t b,
 		hTempCardIndex_ff98 = a;
 		if (a == 0xffu)
 			return (SamsPracticeResult){a, 0xe0u, b, c, d, e, scan};
-		if (LoadCardDataToBuffer1_FromDeckIndex(a) == 0x7du) {
+		uint8_t loaded = LoadCardDataToBuffer1_FromDeckIndex(a);
+		CardId card_id = PROFILE_FEATURE_NINE_BIT_CARD_IDS
+			? card_id_read_at(wLoadedCard1ID_ADDR) : loaded;
+		if (PROFILE_FEATURE_NINE_BIT_CARD_IDS) {
+			d = (uint8_t)(card_id >> 8);
+			e = (uint8_t)(card_id & 0xFFu);
+		}
+		if (card_id == MACHOP) {
 			f = 0xc0u;
 			break;
 		}

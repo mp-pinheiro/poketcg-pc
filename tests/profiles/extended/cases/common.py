@@ -1,5 +1,5 @@
 """Extended oracle-diff cases for common: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import sym, sym_bank
+from tests.cases._symbols import card_id_bytes, const, deck_bytes, sym, sym_bank
 from tests.cases._inherit import inherit
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('common', remove=(
     'DoCardPop',
@@ -25,6 +25,9 @@ OWN = (
     'LookForCardIDInPlayArea_Bank8',
     'LookForCardIDToTradeWithDifferentHandCard',
     'ShowPromotionalCardScreen',
+    'AIPickEnergyCardToDiscard',
+    'PickAttachedEnergyCardToRemove',
+    'PickTwoAttachedEnergyCards',
 )
 CONTRACT.update({
     'LookForCardIDInPlayArea_Bank8': {'compare': ('a', 'f', 'b', 'd', 'e'), 'preserve': ('d', 'e')},
@@ -519,6 +522,55 @@ MUTATIONS["LookForCardIDInPlayArea_Bank8"] = {
     "case_ids": [f"LookForCardIDInPlayArea_Bank8-{len(CASES['LookForCardIDInPlayArea_Bank8']) - 1}"],
     "source": "src/profiles/extended/home/common.c",
 }
+CASES['FindDuplicatePokemonCards'] = [
+    *CASES['FindDuplicatePokemonCards'],
+    {'wram': {sym("hWhoseTurn"): b'\xC2', sym("wPlayerNumberOfCardsInHand"): b'\x01',
+              sym("wPlayerHand"): b'\x00', sym("wPlayerCardLocations"): b'\x01' + bytes(59),
+              sym("wPlayerDeck"): card_id_bytes(0x0108)}},
+]
+CASES['AIPickEnergyCardToDiscard'] = [
+    *CASES['AIPickEnergyCardToDiscard'],
+    {'a': 0, 'wram': {
+        sym("hWhoseTurn"): b'\xC2', sym("wPlayerArenaCard"): b'\x00',
+        sym("wPlayerCardLocations"): b'\x10' * 3 + bytes(57),
+        sym("wPlayerDeck"): deck_bytes([const("PSYDUCK"), const("PSYCHIC_ENERGY"), const("FIRE_ENERGY")]),
+        sym("wTempCardID"): b'\x00\x01'},
+     'read': {sym("wTempCardID"): 2}, 'instruction_budget': 2000000, 'cycle_budget': 8000000},
+    {'a': 0, 'wram': {
+        sym("hWhoseTurn"): b'\xC2', sym("wPlayerArenaCard"): b'\x00',
+        sym("wPlayerCardLocations"): b'\x10\x10' + bytes(58),
+        sym("wPlayerDeck"): deck_bytes([0x0108, const("GRASS_ENERGY")]),
+        sym("wLoadedCard1Type"): b'\x00', sym("wLoadedCard2Type"): b'\x00'},
+     'instruction_budget': 2000000, 'cycle_budget': 8000000},
+]
+for _routine in ('PickAttachedEnergyCardToRemove', 'PickTwoAttachedEnergyCards'):
+    CASES[_routine] = [
+        *CASES[_routine],
+        {'a': 0, 'wram': {
+            sym("hWhoseTurn"): b'\xC2', sym("wPlayerArenaCard"): b'\x00',
+            sym("wPlayerCardLocations"): b'\x10' * 3 + bytes(57),
+            sym("wPlayerDeck"): deck_bytes([const("EXEGGCUTE"), const("FIRE_ENERGY"), const("PSYCHIC_ENERGY")]),
+            sym("wTempCardID"): b'\x00\xFF'},
+         'read': {sym("wTempCardID"): 2, sym("wTempAI"): 1, sym("wCurCardCanAttack"): 1},
+         'instruction_budget': 2000000, 'cycle_budget': 8000000},
+    ]
+MUTATIONS['FindDuplicatePokemonCards'] = {
+    'source': 'src/home/common.c', 'source_symbol': 'FindDuplicatePokemonCards',
+    'before': 'd = (uint8_t)(outer_id >> 8);', 'after': 'd = 0u;',
+    'case_ids': ['FindDuplicatePokemonCards-2'],
+}
+for _routine, _index in (
+    ('AIPickEnergyCardToDiscard', 3),
+    ('PickAttachedEnergyCardToRemove', 4),
+    ('PickTwoAttachedEnergyCards', 5),
+):
+    MUTATIONS[_routine] = {
+        'source': 'src/home/common.c', 'source_symbol': _routine,
+        'before': 'card_id_write(&temp_card_id, id);',
+        'after': 'gb_write8(temp_card_id, (uint8_t)(id & 0xFFu));',
+        'case_ids': [f'{_routine}-{_index}'],
+    }
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _record in SCHEMA2_CASES["ShowPromotionalCardScreen"]:

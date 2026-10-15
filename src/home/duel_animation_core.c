@@ -149,7 +149,8 @@ static uint8_t play_buffered_duel_animations(void)
         write(wDuelAnimReturnBank_ADDR, read((uint16_t)(src + 7u)));
         write(wDuelAnimBufferCurPos_ADDR, (uint8_t)((cur + STRUCT_SIZE) & BUFFER_MASK));
         PlayLoadedDuelAnimation();
-        if (CheckAnyAnimationPlaying().f & 0x10u) break;
+        AnimationStatusResult status = CheckAnyAnimationPlaying();
+        if (status.f & 0x10u) return status.a;
     }
     return read(wDuelAnimBufferCurPos_ADDR);
 }

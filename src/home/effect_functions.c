@@ -1,3 +1,7 @@
+/* >>> part NIDORAN_F_CANCEL_CHECK_M */
+#define NIDORAN_F_CANCEL_CHECK_M 0
+/* <<< part NIDORAN_F_CANCEL_CHECK_M */
+
 /* >>> part includes */
 #include "home/effect_functions.h"
 
@@ -2157,8 +2161,8 @@ void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 		hTemp_ffa0 = card;
 		if (card == 0xffu)
 			return;
-		uint16_t card_id = GetCardIDFromDeckIndex(card);
-		if ((uint8_t)card_id == KRABBY)
+		CardId card_id = GetCardIDFromDeckIndex(card);
+		if (card_id == KRABBY)
 			return;
 	}
 }
@@ -3274,8 +3278,8 @@ void BoyfriendsEffect(void)
 	uint16_t hl = arena.hl;
 	uint8_t c = PLAY_AREA_ARENA;
 	while (gb_read8(hl) != 0xffu) {
-		uint16_t id = GetCardIDFromDeckIndex(gb_read8(hl));
-		if ((uint8_t)id == NIDOKING && (uint8_t)(id >> 8) == 0u)
+		CardId id = GetCardIDFromDeckIndex(gb_read8(hl));
+		if (id == NIDOKING)
 			c++;
 		hl++;
 	}
@@ -5998,7 +6002,7 @@ void MorphEffect(void)
 	uint8_t old_arena_index = arena.a;
 	hTempCardIndex_ff98 = old_arena_index;
 	DeckCardResult old_slot = _GetCardIDFromDeckIndex(old_arena_index);
-	gb_write8(old_slot.hl, (uint8_t)chosen_card_id);
+	gb_write8(old_slot.hl, (uint8_t)(chosen_card_id & 0xFFu));
 
 	CardDamageResult dmg = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
 	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
@@ -9459,7 +9463,7 @@ BellsproutCallForFamily_PlayerSelectEffectResult BellsproutCallForFamily_PlayerS
 		if ((display.f & 0x10u) == 0u) {
 			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
 			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-				(uint8_t)card_id, 0u, BELLSPROUT);
+				(uint8_t)(card_id & 0xFFu), 0u, BELLSPROUT);
 			if ((compare & 0x80u) != 0u) {
 				uint8_t selected = hTempCardIndex_ff98;
 				hTemp_ffa0 = selected;
@@ -9477,7 +9481,7 @@ BellsproutCallForFamily_PlayerSelectEffectResult BellsproutCallForFamily_PlayerS
 				uint8_t index = (uint8_t)hl;
 				uint16_t card_id = GetCardIDFromDeckIndex(index);
 				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-					(uint8_t)card_id, 0u, BELLSPROUT);
+					(uint8_t)(card_id & 0xFFu), 0u, BELLSPROUT);
 				if ((compare & 0x80u) != 0u) {
 					PlaySFX_InvalidChoice();
 					break;
@@ -9562,7 +9566,7 @@ KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEff
 					uint8_t index = (uint8_t)hl;
 					uint16_t card_id = GetCardIDFromDeckIndex(index);
 					uint8_t compare = CompareDEtoBC(
-						(uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, KRABBY);
+						(uint8_t)(card_id >> 8), (uint8_t)(card_id & 0xFFu), 0u, KRABBY);
 					if ((compare & 0x80u) != 0u)
 						break;
 				}
@@ -9577,7 +9581,7 @@ KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEff
 		}
 		uint16_t card_id = GetCardIDFromDeckIndex(display.a);
 		uint8_t compare = CompareDEtoBC(
-			(uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, KRABBY);
+			(uint8_t)(card_id >> 8), (uint8_t)(card_id & 0xFFu), 0u, KRABBY);
 		if ((compare & 0x80u) == 0u) {
 			PlaySFX_InvalidChoice();
 			continue;
@@ -9606,10 +9610,10 @@ NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelec
 	for (;;) {
 		DisplayCardListResult display = DisplayCardList();
 		if ((display.f & 0x10u) == 0u) {
-			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
-			uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
+			CardId card_id = GetCardIDFromDeckIndex(display.a);
+			uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)(card_id & 0xFFu),
 				(uint8_t)(NIDORANF >> 8), (uint8_t)NIDORANF);
-			uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
+			uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)(card_id & 0xFFu),
 				(uint8_t)(NIDORANM >> 8), (uint8_t)NIDORANM);
 			if ((is_f & 0x80u) != 0u || (is_m & 0x80u) != 0u) {
 				uint8_t selected = hTempCardIndex_ff98;
@@ -9622,10 +9626,12 @@ NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelec
 		uint16_t hl = locations.hl;
 		for (;;) {
 			if (gb_read8(hl) == CARD_LOCATION_DECK) {
-				uint16_t card_id = GetCardIDFromDeckIndex((uint8_t)hl);
-				uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id,
-					(uint8_t)(NIDORANF >> 8), (uint8_t)NIDORANF);
-				if ((is_f & 0x80u) != 0u) { PlaySFX_InvalidChoice(); break; }
+				CardId card_id = GetCardIDFromDeckIndex((uint8_t)hl);
+				uint8_t target_available = (uint8_t)(card_id == NIDORANF);
+#if NIDORAN_F_CANCEL_CHECK_M
+				target_available |= (uint8_t)(card_id == NIDORANM);
+#endif
+				if (target_available != 0u) { PlaySFX_InvalidChoice(); break; }
 			}
 			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
 			if ((uint8_t)hl >= DECK_SIZE) { hTemp_ffa0 = 0xffu; return (NidoranFCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u}; }
@@ -10584,7 +10590,7 @@ Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
 		if ((display.f & 0x10u) == 0u) {
 			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
 			uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-				(uint8_t)card_id, (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
+				(uint8_t)(card_id & 0xFFu), (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
 			if ((compare & 0x80u) != 0u) {
 				uint8_t selected = hTempCardIndex_ff98;
 				hTemp_ffa0 = selected;
@@ -10602,7 +10608,7 @@ Sprout_PlayerSelectEffectResult Sprout_PlayerSelectEffect(void)
 				uint8_t index = (uint8_t)hl;
 				uint16_t card_id = GetCardIDFromDeckIndex(index);
 				uint8_t compare = CompareDEtoBC((uint8_t)(card_id >> 8),
-					(uint8_t)card_id, (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
+					(uint8_t)(card_id & 0xFFu), (uint8_t)(ODDISH >> 8), (uint8_t)ODDISH);
 				if ((compare & 0x80u) != 0u) {
 					PlaySFX_InvalidChoice();
 					break;
@@ -10970,7 +10976,7 @@ void LassEffect(void)
 	PutCardInDiscardPile(discarded);
 	(void)DrawWideTextBox_WaitForInput(PleaseCheckTheOpponentsHandText);
 
-	if (wDuelType != 0u) {
+	if (PROFILE_FEATURE_LINK_DUEL && wDuelType != 0u) {
 		uint8_t saved_turn = hWhoseTurn;
 		hWhoseTurn = OPPONENT_TURN;
 		HandListResult hand = CreateHandCardList(0u);
@@ -10997,24 +11003,29 @@ void LassEffect(void)
 		SwapTurn();
 	}
 
-	(void)CreateHandCardList(0u);
-	(void)SortCardsInDuelTempListByID(0u, 0u, wDuelTempList_ADDR);
-	hCurSelectionItem = 0u;
-	uint16_t list = wDuelTempList_ADDR;
-	for (;;) {
-		uint8_t index = gb_read8(list++);
-		if (index == 0xffu)
-			break;
-		hTempCardIndex_ff98 = index;
-		uint16_t card_id = GetCardIDFromDeckIndex(index);
-		if (GetCardType(card_id) != TYPE_TRAINER)
-			continue;
-		RemoveCardFromHand(index);
-		ReturnCardToDeck(index);
-		hCurSelectionItem++;
+	SwapTurn();
+	for (uint8_t hand = 0u; hand < 2u; hand++) {
+		(void)CreateHandCardList(0u);
+		(void)SortCardsInDuelTempListByID(0u, 0u, wDuelTempList_ADDR);
+		hCurSelectionItem = 0u;
+		uint16_t list = wDuelTempList_ADDR;
+		for (;;) {
+			uint8_t index = gb_read8(list++);
+			if (index == 0xffu)
+				break;
+			hTempCardIndex_ff98 = index;
+			CardId card_id = GetCardIDFromDeckIndex(index);
+			if (GetCardType(card_id) != TYPE_TRAINER)
+				continue;
+			RemoveCardFromHand(index);
+			ReturnCardToDeck(index);
+			hCurSelectionItem++;
+		}
+		if (hCurSelectionItem != 0u)
+			(void)ShuffleCardsInDeck(hCurSelectionItem, 0u, 0u, wDuelTempList_ADDR);
+		if (hand == 0u)
+			SwapTurn();
 	}
-	if (hCurSelectionItem != 0u)
-		(void)ShuffleCardsInDeck(hCurSelectionItem, 0u, 0u, wDuelTempList_ADDR);
 }
 /* <<< factory LassEffect */
 

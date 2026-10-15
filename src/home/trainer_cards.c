@@ -71,9 +71,6 @@
 /* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
 /* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
-/* >>> part GO_GO_RAIN_DANCE_DECK_ID */
-#define GO_GO_RAIN_DANCE_DECK_ID 0x12u
-/* <<< part GO_GO_RAIN_DANCE_DECK_ID */
 
 /* >>> part includes_DUELVARS_ARENA_CARD_HP */
 #include "home/duel.h"
@@ -94,21 +91,6 @@
 
 
 
-/* >>> part ANGER_DECK_ID */
-#define ANGER_DECK_ID 0x31u
-/* <<< part ANGER_DECK_ID */
-/* >>> part FIRE_CHARGE_DECK_ID */
-#define FIRE_CHARGE_DECK_ID 0x17u
-/* <<< part FIRE_CHARGE_DECK_ID */
-/* >>> part ROCK_CRUSHER_DECK_ID */
-#define ROCK_CRUSHER_DECK_ID 0x11u
-/* <<< part ROCK_CRUSHER_DECK_ID */
-/* >>> part WONDERS_OF_SCIENCE_DECK_ID */
-#define WONDERS_OF_SCIENCE_DECK_ID 0x16u
-/* <<< part WONDERS_OF_SCIENCE_DECK_ID */
-/* >>> part EXCAVATION_DECK_ID */
-#define EXCAVATION_DECK_ID 0x1Fu
-/* <<< part EXCAVATION_DECK_ID */
 /* >>> part TRUE */
 #define TRUE 0x01u
 /* <<< part TRUE */
@@ -119,18 +101,6 @@
 
 
 
-/* >>> part ETCETERA_DECK_ID */
-#define ETCETERA_DECK_ID 0x28u
-/* <<< part ETCETERA_DECK_ID */
-/* >>> part HARD_POKEMON_DECK_ID */
-#define HARD_POKEMON_DECK_ID 0x21u
-/* <<< part HARD_POKEMON_DECK_ID */
-/* >>> part LOVELY_NIDORAN_DECK_ID */
-#define LOVELY_NIDORAN_DECK_ID 0x2fu
-/* <<< part LOVELY_NIDORAN_DECK_ID */
-/* >>> part PIKACHU_DECK_ID */
-#define PIKACHU_DECK_ID 0x25u
-/* <<< part PIKACHU_DECK_ID */
 
 /* >>> part includes_LEGENDARY_MOLTRES_DECK_ID */
 #include "home/trainer_cards.h"
@@ -163,36 +133,6 @@
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes_LEGENDARY_MOLTRES_DECK_ID */
-/* >>> part LEGENDARY_MOLTRES_DECK_ID */
-#define LEGENDARY_MOLTRES_DECK_ID 0x0Cu
-/* <<< part LEGENDARY_MOLTRES_DECK_ID */
-/* >>> part LEGENDARY_ARTICUNO_DECK_ID */
-#define LEGENDARY_ARTICUNO_DECK_ID 0x0Eu
-/* <<< part LEGENDARY_ARTICUNO_DECK_ID */
-/* >>> part LEGENDARY_DRAGONITE_DECK_ID */
-#define LEGENDARY_DRAGONITE_DECK_ID 0x0Fu
-/* <<< part LEGENDARY_DRAGONITE_DECK_ID */
-/* >>> part LEGENDARY_RONALD_DECK_ID */
-#define LEGENDARY_RONALD_DECK_ID 0x1Bu
-/* <<< part LEGENDARY_RONALD_DECK_ID */
-/* >>> part BLISTERING_POKEMON_DECK_ID */
-#define BLISTERING_POKEMON_DECK_ID 0x20u
-/* <<< part BLISTERING_POKEMON_DECK_ID */
-/* >>> part SOUND_OF_THE_WAVES_DECK_ID */
-#define SOUND_OF_THE_WAVES_DECK_ID 0x24u
-/* <<< part SOUND_OF_THE_WAVES_DECK_ID */
-/* >>> part POWER_GENERATOR_DECK_ID */
-#define POWER_GENERATOR_DECK_ID 0x27u
-/* <<< part POWER_GENERATOR_DECK_ID */
-/* >>> part FLOWER_GARDEN_DECK_ID */
-#define FLOWER_GARDEN_DECK_ID 0x29u
-/* <<< part FLOWER_GARDEN_DECK_ID */
-/* >>> part STRANGE_POWER_DECK_ID */
-#define STRANGE_POWER_DECK_ID 0x2Du
-/* <<< part STRANGE_POWER_DECK_ID */
-/* >>> part FLAMETHROWER_DECK_ID */
-#define FLAMETHROWER_DECK_ID 0x32u
-/* <<< part FLAMETHROWER_DECK_ID */
 
 /* >>> part includes_HEATED_BATTLE_DECK_ID */
 #include "home/core.h"
@@ -203,9 +143,6 @@
 #include "generated/hram.h"
 #include "mem.h"
 /* <<< part includes_HEATED_BATTLE_DECK_ID */
-/* >>> part HEATED_BATTLE_DECK_ID */
-#define HEATED_BATTLE_DECK_ID 0x1Du
-/* <<< part HEATED_BATTLE_DECK_ID */
 
 /* >>> part includes_IMAKUNI_DECK_ID */
 #include "home/core.h"
@@ -301,18 +238,12 @@
 #include "generated/hram.h"
 #include "mem.h"
 /* <<< part includes_IMAKUNI_DECK_ID */
-/* >>> part IMAKUNI_DECK_ID */
-#define IMAKUNI_DECK_ID 0x34u
-/* <<< part IMAKUNI_DECK_ID */
 /* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xC2u
 /* <<< part PLAYER_TURN */
 /* >>> part DUELVARS_BENCH */
 #define DUELVARS_BENCH 0xBCu
 /* <<< part DUELVARS_BENCH */
-/* >>> part GHOST_DECK_ID */
-#define GHOST_DECK_ID 0x2Bu
-/* <<< part GHOST_DECK_ID */
 
 /* >>> part includes_tail */
 #include "generated/hram.h"
@@ -483,9 +414,6 @@ PickPokedexResult PickPokedexCards(void)
 /* >>> factory AIDecide_Recycle */
 AIDecideParameterResult AIDecide_Recycle(uint8_t d)
 {
-	(void)d;
-	/* trainer_cards.asm AIDecide_Recycle: the five priority slots live in
-	 * wce08..wce0c and the first one filled is the card to recycle. */
 	CardListResult discard = CreateDiscardPileCardList(0);
 	if (discard.f & 0x10u)
 		return (AIDecideParameterResult){discard.a, or_a_flags(discard.a), 0xC5u};
@@ -497,7 +425,13 @@ AIDecideParameterResult AIDecide_Recycle(uint8_t d)
 		uint8_t deck_index = gb_read8(list++);
 		if (deck_index == 0xFFu)
 			break;
-		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		uint8_t loaded = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		CardId card_id = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? card_id_read_at(wLoadedCard1ID_ADDR) : loaded;
+#if PROFILE_FEATURE_NINE_BIT_CARD_IDS
+		d = (uint8_t)(card_id >> 8);
+#else
+		d = 0xC5u;
+#endif
 		if (!ghost) {
 			if (card_id == DOUBLE_COLORLESS_ENERGY) gb_write8(wce08_ADDR, deck_index);
 			else if (card_id == CHANSEY) gb_write8(wce08_ADDR + 1u, deck_index);
@@ -514,9 +448,9 @@ AIDecideParameterResult AIDecide_Recycle(uint8_t d)
 	for (uint8_t i = 0; i < 5u; i++) {
 		uint8_t chosen = gb_read8((uint16_t)(wce08_ADDR + i));
 		if (chosen != 0xFFu)
-			return (AIDecideParameterResult){chosen, 0x10u, 0xC5u};
+			return (AIDecideParameterResult){chosen, 0x10u, d};
 	}
-	return (AIDecideParameterResult){0xFFu, 0x00u, 0xC5u};
+	return (AIDecideParameterResult){0xFFu, 0x00u, d};
 }
 /* <<< factory AIDecide_Recycle */
 
@@ -1086,8 +1020,12 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 	 * wDuelTempList's page when the hand is empty, and the score loops start
 	 * from `ld d, $00`. */
 	PrehistoricPowerResult power = IsPrehistoricPowerActive(hl_in);
-	if (power.f & 0x10u)
-		return (AIDecidePokemonBreederResult){power.a, power.f, d};
+	if (power.f & 0x10u) {
+#if PROFILE_FEATURE_NINE_BIT_CARD_IDS
+		d = (uint8_t)(power.de >> 8);
+#endif
+		return (AIDecidePokemonBreederResult){power.a, or_a_flags(power.a), d};
+	}
 
 	ClearMemory_Bank8(7u, wce08_ADDR);
 	wce06 = 0u;
@@ -1101,14 +1039,22 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 			break;
 		d = deck_index;
 
-		uint8_t card_type = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
-		if (card_type == VENUSAUR_LV64 || card_type == VENUSAUR_LV67 ||
-		    card_type == BLASTOISE || card_type == VILEPLUME ||
-		    card_type == ALAKAZAM || card_type == GENGAR) {
+		uint8_t loaded = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		CardId card_id = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? card_id_read_at(wLoadedCard1ID_ADDR) : loaded;
+#if PROFILE_FEATURE_NINE_BIT_CARD_IDS
+		d = (uint8_t)(card_id >> 8);
+#endif
+		if (card_id == VENUSAUR_LV64 || card_id == VENUSAUR_LV67 ||
+		    card_id == BLASTOISE || card_id == VILEPLUME ||
+		    card_id == ALAKAZAM || card_id == GENGAR) {
 			uint8_t c = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 			uint8_t e = PLAY_AREA_ARENA;
 			for (; c != 0u; c--, e++) {
-				EvolveResult evolve = CheckIfCanEvolveInto_BasicToStage2(deck_index, e);
+				uint8_t evolution_index = deck_index;
+#if PROFILE_FEATURE_NINE_BIT_CARD_IDS
+				evolution_index = d;
+#endif
+				EvolveResult evolve = CheckIfCanEvolveInto_BasicToStage2(evolution_index, e);
 				if (evolve.f & 0x10u)
 					continue;
 
@@ -1119,7 +1065,7 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 				uint8_t energies = wTotalAttachedEnergies;
 				uint8_t lo = (energies >= 16u) ? 15u : energies;
 				gb_write8((uint16_t)(wce08_ADDR + e), (uint8_t)(hi | lo));
-				gb_write8((uint16_t)(wce0f_ADDR + e), deck_index);
+				gb_write8((uint16_t)(wce0f_ADDR + e), evolution_index);
 				wce06++;
 			}
 		}
@@ -1129,7 +1075,7 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 		wce06 = 0u;
 		uint8_t c = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 		uint8_t e = PLAY_AREA_ARENA;
-		uint8_t best_loc = 0u;
+		uint8_t best_loc = wce07;
 		for (; c != 0u; c--, e++) {
 			uint8_t score = gb_read8((uint16_t)(wce08_ADDR + e));
 			if (wce06 < score) {
@@ -1139,7 +1085,7 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 		}
 		wce07 = best_loc;
 		wce1a = gb_read8((uint16_t)(wce0f_ADDR + best_loc));
-		return (AIDecidePokemonBreederResult){best_loc, 0x10u, 0u};
+		return (AIDecidePokemonBreederResult){best_loc, 0x90u, 0u};
 	}
 
 	ClearMemory_Bank8(7u, wce08_ADDR);
@@ -1153,11 +1099,11 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 		if (deck_index == 0xFFu)
 			break;
 		d = deck_index;
-
 		uint8_t c = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 		uint8_t e = PLAY_AREA_ARENA;
 		for (; c != 0u; c--, e++) {
-			EvolveResult evolve = CheckIfCanEvolveInto_BasicToStage2(deck_index, e);
+			uint8_t evolution_index = deck_index;
+			EvolveResult evolve = CheckIfCanEvolveInto_BasicToStage2(evolution_index, e);
 			if (evolve.f & 0x10u)
 				continue;
 
@@ -1194,7 +1140,7 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 			uint8_t energies = wTotalAttachedEnergies;
 			uint8_t lo = (energies >= 16u) ? 15u : energies;
 			gb_write8((uint16_t)(wce08_ADDR + e), (uint8_t)(hi | lo));
-			gb_write8((uint16_t)(wce0f_ADDR + e), deck_index);
+			gb_write8((uint16_t)(wce0f_ADDR + e), evolution_index);
 			wce06++;
 		}
 	}
@@ -1507,24 +1453,24 @@ AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(ui
 		wce1a = 0xFFu;
 		wce1b = 0xFFu;
 		(void)CreateHandCardList(c);
-		d = 0xC5u;
+		d = (uint8_t)(wce1a_ADDR >> 8);
 		uint16_t scan = wDuelTempList_ADDR;
 		uint16_t store = wce1a_ADDR;
-		d = 0xCEu;
 		uint8_t trainer_to_play = wAITrainerCardToPlay;
 		for (;;) {
 			uint8_t idx = gb_read8(scan);
 			scan = (uint16_t)(scan + 1u);
 			if (idx == 0xFFu)
 				break;
-			uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(idx);
+			uint8_t loaded = LoadCardDataToBuffer1_FromDeckIndex(idx);
+			CardId card_id = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? card_id_read_at(wLoadedCard1ID_ADDR) : loaded;
 			if (card_id == PROFESSOR_OAK || card_id == FIGHTING_ENERGY ||
 			    card_id == DOUBLE_COLORLESS_ENERGY || card_id == DIGLETT ||
 			    card_id == GEODUDE || card_id == ONIX || card_id == RHYHORN) {
-				final_a = card_id;
+				final_a = (uint8_t)(card_id & 0xFFu);
 				goto no_carry;
 			}
-			if (card_id == trainer_to_play)
+			if (idx == trainer_to_play)
 				continue;
 			gb_write8(store, idx);
 			store = (uint16_t)(store + 1u);
@@ -1561,7 +1507,7 @@ AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(ui
 		d = 0u;
 		if (loc.f & 0x10u) {
 			wce06 = loc.a;
-			LookForCardIDInPlayAreaResult grav_pa = LookForCardIDInPlayArea_Bank8(GRAVELER, b);
+			LookForCardIDInPlayAreaResult grav_pa = LookForCardIDInPlayArea_Bank8(GRAVELER, 0u);
 			if (grav_pa.f & 0x10u) {
 				LookForCardIDInHandListResult golem_hand = LookForCardIDInHandList_Bank8(GOLEM);
 				d = 0xC5u;
@@ -1582,7 +1528,7 @@ AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(ui
 			goto no_carry;
 		}
 		wce06 = loc.a;
-		LookForCardIDInPlayAreaResult dig_pa = LookForCardIDInPlayArea_Bank8(DIGLETT, b);
+		LookForCardIDInPlayAreaResult dig_pa = LookForCardIDInPlayArea_Bank8(DIGLETT, 0u);
 		if (!(dig_pa.f & 0x10u)) {
 			final_a = dig_pa.a;
 			goto no_carry;
@@ -1623,7 +1569,7 @@ find_discard_cards_2:
 			}
 			d = (uint8_t)(d + 1u);
 			if (d == 3u) {
-				final_a = r.a;
+				final_a = 3u;
 				goto no_carry;
 			}
 		}
@@ -1809,23 +1755,23 @@ choose_hand: ;
 	wce1a = target_a;
 	{
 		CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(SEEL);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(KRABBY);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(HORSEA);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(SHELLDER);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(TENTACOOL);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f, d};
 		target_a = h.a;
@@ -1926,27 +1872,27 @@ choose_hand: ;
 	wce1a = final_a;
 	{
 		CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DRAGONAIR);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(CHARMELEON);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(GYARADOS);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(MAGIKARP);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(CHARMANDER);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		h = CheckIfHasCardIDInHand(DRATINI);
-		d = 0xC5u;
+		d = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;
 		if (h.f & 0x10u)
 			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f, d};
 		final_a = h.a;
@@ -2221,13 +2167,13 @@ AIDecide_PokemonTrader_FlamethrowerResult AIDecide_PokemonTrader_Flamethrower(ui
 	d = r1.d;
 	a = r1.a;
 	if (!(r1.f & 0x10u)) {
-		LookForCardIDInDeck_GivenCardIDInHandResult r2 =
-			LookForCardIDInDeck_GivenCardIDInHand(CHARMANDER, CHARMELEON);
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r2 =
+			LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARIZARD, CHARMELEON);
 		d = r2.d;
 		a = r2.a;
 		if (!(r2.f & 0x10u)) {
-			LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r3 =
-				LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARIZARD, CHARMELEON);
+			LookForCardIDInDeck_GivenCardIDInHandResult r3 =
+				LookForCardIDInDeck_GivenCardIDInHand(CHARMANDER, CHARMELEON);
 			d = r3.d;
 			a = r3.a;
 			if (!(r3.f & 0x10u)) {
@@ -3331,8 +3277,13 @@ static uint8_t ser_has_basic_energy(uint8_t location)
 		uint8_t card = gb_read8(list++);
 		if (card == 0xFFu)
 			return 0u;
-		if (LoadCardDataToBuffer1_FromDeckIndex(card) < DOUBLE_COLORLESS_ENERGY)
+		uint8_t loaded = LoadCardDataToBuffer1_FromDeckIndex(card);
+		CardId card_id = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? card_id_read_at(wLoadedCard1ID_ADDR) : loaded;
+		if (card_id < DOUBLE_COLORLESS_ENERGY)
 			return 1u;
+#if PROFILE_FEATURE_NINE_BIT_CARD_IDS
+		list = wLoadedCard1ID_ADDR;
+#endif
 	}
 }
 

@@ -35,10 +35,12 @@ Use the existing vanilla CMake target and `tools/gen_data.py` sparse-pack pipeli
 - Do not add profile-specific `#ifdef` branches inside shared game routines or bundle ROM/disassembly artifacts.
 
 ## Acceptance
-- [ ] Catalog and selected-path parsing work :: python3 tools/profiles.py --profile vanilla
-- [ ] Vanilla build remains green :: POKETCG_BUILD=build just build
-- [ ] Extended source/bootstrap and profile build work :: just build-extended
-- [ ] Extended routine gate is clean :: POKETCG_PROFILE=extended POKETCG_BUILD=build-extended just oracle-fn-gate
-- [ ] Distribution block is enforced :: ! just appimage-profiles
-- [ ] Save and selector smoke paths work :: just build-profiles
-- [ ] Repository green-check passes :: just build
+Current results belong in source-bound release and profile evidence. The acceptance commands are:
+
+- Catalog and selected-path parsing work :: python3 tools/profiles.py --profile vanilla
+- Vanilla build remains green :: POKETCG_BUILD=build just build
+- Extended source/bootstrap and profile build work :: just build-extended
+- Extended routine gate is clean :: POKETCG_PROFILE=extended POKETCG_BUILD=build-extended just oracle-fn-gate
+- Distribution block is enforced :: ! just appimage-profiles
+- Save and selector smoke paths work :: just build-profiles
+- Repository green-check passes :: just build

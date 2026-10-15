@@ -53,9 +53,9 @@ AIDoTurn_LegendaryDragoniteResult AIDoTurn_LegendaryDragonite(uint8_t a, uint8_t
 		f = trainer.f;
 		if (wAlreadyPlayedEnergy == 0u) {
 			DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-			uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
+			CardId card_id = GetCardIDFromDeckIndex(arena.a);
 			uint8_t skip_energy = 0u;
-			if ((uint8_t)card_id == KANGASKHAN) {
+			if (card_id == KANGASKHAN) {
 				CoreCardListResult energy_list = CreateEnergyCardListFromHand(arena.a);
 				if ((energy_list.f & 0x10u) != 0u) {
 					skip_energy = 1u;

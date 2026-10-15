@@ -702,8 +702,11 @@ uint8_t CheckIfHasOtherValidDecks(void)
 	hl = GetPointerToDeckCards();
 	EnableSRAM();
 	uint8_t a = gb_read8(hl);
+#if PROFILE_FEATURE_NINE_BIT_CARD_IDS
+	a |= gb_read8((uint16_t)(hl + 1u));
+#endif
 	DisableSRAM();
-	return a != 0 ? 0x10u : 0x80u;
+	return a != 0u ? 0x10u : 0x80u;
 }
 /* <<< factory CheckIfHasOtherValidDecks */
 
@@ -2081,13 +2084,15 @@ void DrawCardTypeIcons(void)
 		uint16_t de = (uint16_t)(((uint16_t)x << 8) | 2u);
 		FillRectangle(tile, 2u, 2u, de, 0x0102u);
 		GetCardTypeIconPaletteResult palette = GetCardTypeIconPalette(tile, 0u, 0u, 0u, 0u, 0u, 0u);
-		if (wConsole == 0x02u) {
-			hBankVRAM = 1u;
-			gb_write8(0xFF4Fu, 1u);
-			FillRectangle(palette.a, 2u, 2u, de, 0x0000u);
-			hBankVRAM = 0u;
-			gb_write8(0xFF4Fu, 0u);
-		}
+#if !PROFILE_FEATURE_CGB_ONLY
+		if (wConsole != 0x02u)
+			continue;
+#endif
+		hBankVRAM = 1u;
+		gb_write8(0xFF4Fu, 1u);
+		FillRectangle(palette.a, 2u, 2u, de, 0x0000u);
+		hBankVRAM = 0u;
+		gb_write8(0xFF4Fu, 0u);
 	}
 }
 /* <<< factory DrawCardTypeIcons */

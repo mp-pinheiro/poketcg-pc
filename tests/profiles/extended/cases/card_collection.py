@@ -6,7 +6,7 @@ OWN = (
     'CreateTempCardCollection',
 )
 CONTRACT.update({
-    'CreateTempCardCollection': {'compare': (), 'preserve': ()},
+    'CreateTempCardCollection': {'compare': (), 'preserve': (), 'wram_out': True},
     'GetCardAlbumProgress': {'compare': ('b', 'c', 'd', 'e', 'hl'), 'preserve': ('hl',)},
 })
 CASES.update({
@@ -259,12 +259,23 @@ CASES.update({
         {'ramg': False, 'read': {sym("wDeckToBuild"): 0x0100}},
     ],
 })
+CASES['CreateTempCardCollection'] = [
+    *CASES['CreateTempCardCollection'],
+    {'wram': {sym("wTempCardCollection"): bytes(0x200)},
+     'sram': {0: {
+         sym("sCardCollection"): bytes(0x200),
+         sym("sDeck1Name"): b'\x00\x41',
+         sym("sDeck2Name"): bytes(2), sym("sDeck3Name"): bytes(2), sym("sDeck4Name"): bytes(2),
+         sym("sDeck1Cards"): (b'\x00' + b'\x01' * 8) * 7 + b'\x00' + b'\x01' * 4,
+     }},
+     'read': {sym("wTempCardCollection") + 1: 1}},
+]
 MUTATIONS.update({
-    'CreateTempCardCollection': {   'source_symbol': 'CreateTempCardCollection',
-        'before': '\tCopyDataHLtoDE(&hl, &de, card_id_collection_bytes());',
-        'after': '\tCopyDataHLtoDE(&hl, &de, 0x0100u);',
-        'case_ids': ['CreateTempCardCollection-0'],
-        'source': 'src/home/card_collection.c'},
+    'CreateTempCardCollection': {'source_symbol': 'CreateTempCardCollection',
+        'before': 'if (gb_read8(de) == 0u)',
+        'after': 'if ((uint8_t)(gb_read8(de) | gb_read8((uint16_t)(de + 1u))) == 0u)',
+        'case_ids': ['CreateTempCardCollection-8'],
+        'source': 'src/profiles/extended/home/card_collection.c'},
     'GetCardAlbumProgress': {   'source_symbol': 'GetCardAlbumProgress',
         'before': '\tif ((gb_read8((uint16_t)(sCardCollection_ADDR + VENUSAUR_LV64)) & 0x80u) != 0u)',
         'after': '\tif ((gb_read8((uint16_t)(sCardCollection_ADDR + VENUSAUR_LV64)) & 0x81u) != 0u)',

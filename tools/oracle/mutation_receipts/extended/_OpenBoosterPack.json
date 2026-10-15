@@ -1,0 +1,9 @@
+{
+  "fn": "_OpenBoosterPack",
+  "case": "/home/matheus/git/poketcg/tests/profiles/extended/cases/booster_pack.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_OpenBoosterPack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"50176\": \"080009000000\", \"50432\": \"0001ff\", \"51899\": \"80\", \"52100\": \"09\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_OpenBoosterPack\", \"mismatches\": {\"bus\": {\"address\": 50434, \"reference\": \"00000001ff8009\", \"native\": \"00000001028009\", \"reference_size\": 71, \"native_size\": 71, \"spans\": [[49664, 60], [50176, 6], [50432, 3], [51899, 1], [52100, 1]]}}}\n",
+  "restored": "{\"fn\": \"_OpenBoosterPack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"50176\": \"080009000000\", \"50432\": \"0001ff\", \"51899\": \"80\", \"52100\": \"09\"}}, \"status\": \"PASS\"}\n"
+}

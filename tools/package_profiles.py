@@ -6,16 +6,21 @@ import argparse
 import os
 import shutil
 import subprocess
+import sys
 import zipfile
 from pathlib import Path
 
+
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+from tools.completion.package_smoke import FORBIDDEN_SUFFIXES  # noqa: E402
+from tools.profiles import get_profile  # noqa: E402
 LINUXDEPLOY_URL = "https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20251107-1/linuxdeploy-x86_64.AppImage"
 LINUXDEPLOY_SHA256 = "c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d"
 
 
 def build_root() -> Path:
-    return ROOT / os.environ.get("POKETCG_BUILD", "build-profiles")
+    return get_profile(root=ROOT).build_path(ROOT)
 
 
 def copy_product(stage: Path) -> None:
@@ -25,7 +30,7 @@ def copy_product(stage: Path) -> None:
         "poketcg-extended": binary_root / "poketcg-extended",
         "poketcg-launcher": binary_root / "poketcg-launcher",
         "data-pack.bin": binary_root / "completion" / "data-pack.bin",
-        "data-pack-extended.bin": ROOT / "build-extended" / "completion" / "data-pack.bin",
+        "data-pack-extended.bin": binary_root / "completion" / "data-pack-extended.bin",
     }
     stage.mkdir(parents=True, exist_ok=True)
     for name, source in files.items():
@@ -41,7 +46,7 @@ def copy_product(stage: Path) -> None:
 
 def verify_stage(stage: Path) -> None:
     for path in stage.rglob("*"):
-        if path.is_file() and path.suffix.lower() in FORBIDDEN:
+        if path.is_file() and path.suffix.lower() in FORBIDDEN_SUFFIXES:
             raise SystemExit(f"profile package contains forbidden file: {path}")
 
 

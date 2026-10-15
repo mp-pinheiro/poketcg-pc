@@ -1,3 +1,7 @@
+/* >>> part BUFFERED_ANIM_RESET_OBJ_SIZE */
+#define BUFFERED_ANIM_RESET_OBJ_SIZE 1
+/* <<< part BUFFERED_ANIM_RESET_OBJ_SIZE */
+
 /* >>> part includes */
 #include "home/core.h"
 #include <stdio.h>

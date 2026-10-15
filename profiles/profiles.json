@@ -45,6 +45,7 @@
         "schema": 0
       },
       "features": {
+        "cgb_only": false,
         "link_duel": true,
         "card_pop": true,
         "gift_center": true,
@@ -98,8 +99,8 @@
       },
       "artifacts": {
         "inventory": "site/data/extended/inventory.json",
-        "data_pack": "build-extended/completion/data-pack.bin",
-        "pack_manifest": "build-extended/completion/data-pack.json",
+        "data_pack": "build-extended/completion/data-pack-extended.bin",
+        "pack_manifest": "build-extended/completion/data-pack-extended.json",
         "rom_sha256": "61ddf86befabf0e7827d97d39b1779a9cc98956faececfe6cd0d24432de3d10b",
         "pack_sha256": null,
         "pack_size": null
@@ -119,6 +120,7 @@
         "schema": 1
       },
       "features": {
+        "cgb_only": true,
         "link_duel": false,
         "card_pop": false,
         "gift_center": false,

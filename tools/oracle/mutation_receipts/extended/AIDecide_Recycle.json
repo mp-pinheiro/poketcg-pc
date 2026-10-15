@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_Recycle",
+  "case": "/home/matheus/git/poketcg/tests/profiles/extended/cases/trainer_cards.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_Recycle\", \"registers\": {\"a\": 7, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49671\": \"02\", \"49790\": \"07\", \"49901\": \"01\", \"50190\": \"b800\", \"52152\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_Recycle\", \"mismatches\": {\"d\": [0, 197]}}\n",
+  "restored": "{\"fn\": \"AIDecide_Recycle\", \"registers\": {\"a\": 7, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49671\": \"02\", \"49790\": \"07\", \"49901\": \"01\", \"50190\": \"b800\", \"52152\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

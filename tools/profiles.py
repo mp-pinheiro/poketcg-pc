@@ -120,7 +120,7 @@ class Profile:
         return self.build_path(root) / self.probe
 
     def data_pack_path(self, root: Path = ROOT) -> Path:
-        return self.build_path(root) / "completion" / "data-pack.bin"
+        return self.artifact_path("data_pack", root)
 
     def session_path(self, root: Path = ROOT) -> Path:
         return root / self.session_namespace
@@ -144,6 +144,8 @@ class Profile:
         value = self.artifacts.get(name)
         if not isinstance(value, str) or not value:
             raise ProfileError(f"profile {self.name} has no path for artifact {name}")
+        if name in {"data_pack", "pack_manifest"}:
+            return self.build_path(root) / "completion" / Path(value).name
         return root / value
 
     @property

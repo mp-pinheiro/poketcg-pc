@@ -1,5 +1,5 @@
 """Extended oracle-diff cases for pkmn_powers: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import WRAMX_START, sym, sym_bank
+from tests.cases._symbols import WRAMX_START, card_id_bytes, card_max_hp, const, deck_offset, sym, sym_bank
 from pathlib import Path
 from tests.cases._fixtures import Fixture
 from tests.cases._inherit import inherit
@@ -15,6 +15,8 @@ OWN = (
     'HandleAIDamageSwap',
     'HandleAIEnergyTrans',
     'HandleAIShift',
+    'AIEnergyTransTransferEnergyToBench',
+    'HandleAIGoGoRainDanceEnergy',
 )
 CONTRACT.update({
     'HandleAIShift': {'compare': ('a', 'f'), 'preserve': ()},
@@ -1084,5 +1086,66 @@ MUTATIONS.update({
         'case_ids': ['HandleAIEnergyTrans-3', 'HandleAIEnergyTrans-2'],
         'source': 'src/home/pkmn_powers.c'},
 })
+_TRANSFER_BENCH_CASE = dict(
+    _ENERGY_TRANS_FIXTURE.case(vram=False, changes={
+        sym("wPlayerArenaCardHP"): b'\x01',
+        sym("wPlayerArenaCardStatus"): bytes([const("PARALYZED")]),
+        sym("wPlayerDeck") + deck_offset(56): card_id_bytes(const("VENUSAUR_LV67")),
+        sym("wPlayerDeck") + deck_offset(57): card_id_bytes(const("NIDORANF")),
+        sym("wPlayerArenaCardHP") + 1: bytes([card_max_hp(const("VENUSAUR_LV67"))]),
+        sym("wPlayerArenaCardHP") + 2: bytes([card_max_hp(const("NIDORANF"))]),
+        sym("wOpponentDeck") + deck_offset(37): card_id_bytes(const("TAUROS")),
+        sym("wOpponentArenaCardHP"): bytes([card_max_hp(const("TAUROS"))]),
+        sym("wOpponentCardLocations") + 6: b'\x10',
+        sym("wOpponentCardLocations") + 23: b'\x10',
+        sym("wOpponentHand"): bytes([30, 20, 47]),
+        sym("wOpponentNumberOfCardsInHand"): b'\x03',
+    }), **_ENERGY_TRANS_FIXTURE.regs)
+_TRANSFER_BENCH_CASE['instruction_budget'] = 40000000
+_TRANSFER_BENCH_CASE['cycle_budget'] = 160000000
+_TRANSFER_BENCH_CASE['read'] = {
+    sym("wPlayerCardLocations") + 26: 1,
+    sym("wAIVenusaurLv67PlayAreaLocation"): 1,
+    sym("hAIEnergyTransPlayAreaLocation"): 1,
+    sym("wAIEnergyAttachLogicFlags"): 1,
+}
+CASES['AIEnergyTransTransferEnergyToBench'] = [
+    *CASES['AIEnergyTransTransferEnergyToBench'], _TRANSFER_BENCH_CASE,
+]
+MUTATIONS['AIEnergyTransTransferEnergyToBench'] = {
+    'source_symbol': 'GRASS_ENERGY_COUNT_ADDR',
+    'before': '#define GRASS_ENERGY_COUNT_ADDR (wAttachedEnergies_ADDR + GRASS)',
+    'after': '#define GRASS_ENERGY_COUNT_ADDR 0xCC1Cu',
+    'case_ids': ['AIEnergyTransTransferEnergyToBench-2'],
+    'source': 'src/home/pkmn_powers.c',
+}
+_RAIN_DANCE_CASE = dict(
+    _ENERGY_TRANS_FIXTURE.case(vram=False, changes={
+        sym("wOpponentDeckID"): bytes([const("GO_GO_RAIN_DANCE_DECK_ID")]),
+        sym("wPlayerDeck") + deck_offset(59): card_id_bytes(const("BLASTOISE")),
+        sym("wPlayerArenaCardHP"): bytes([card_max_hp(const("BLASTOISE"))]),
+        sym("wPlayerArenaCardStatus"): b'\x00',
+        sym("wPlayerDeck") + deck_offset(3): card_id_bytes(const("WATER_ENERGY")),
+        sym("wPlayerDeck") + deck_offset(24): card_id_bytes(const("WATER_ENERGY")),
+        sym("wAlreadyPlayedEnergy"): b'\x00',
+    }), **_ENERGY_TRANS_FIXTURE.regs)
+_RAIN_DANCE_CASE["instruction_budget"] = 60000000
+_RAIN_DANCE_CASE["cycle_budget"] = 240000000
+_RAIN_DANCE_CASE["read"] = {
+    sym("wPlayerCardLocations") + 3: 1,
+    sym("wPlayerCardLocations") + 24: 1,
+    sym("wPlayerNumberOfCardsInHand"): 1,
+    sym("wAlreadyPlayedEnergy"): 1,
+}
+CASES['HandleAIGoGoRainDanceEnergy'] = [
+    *CASES['HandleAIGoGoRainDanceEnergy'], _RAIN_DANCE_CASE,
+]
+MUTATIONS['HandleAIGoGoRainDanceEnergy'] = {
+    'source_symbol': 'HandleAIGoGoRainDanceEnergy',
+    'before': '\tfor (;;) {\n\t\tAIEnergyResult energy = AIProcessAndTryToPlayEnergy();\n\t\tif ((energy.f & 0x10u) == 0u)\n\t\t\treturn (HandleAIGoGoRainDanceEnergyResult){energy.a, energy.f};\n\t}',
+    'after': '\tAIEnergyResult energy = AIProcessAndTryToPlayEnergy();\n\treturn (HandleAIGoGoRainDanceEnergyResult){energy.a, energy.f};',
+    'case_ids': ['HandleAIGoGoRainDanceEnergy-5'],
+    'source': 'src/home/pkmn_powers.c',
+}
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

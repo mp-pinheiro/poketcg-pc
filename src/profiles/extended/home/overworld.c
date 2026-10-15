@@ -182,11 +182,13 @@ SetScriptDataResult SetScriptData(uint16_t hl)
 	wNextScript = npc.c;
 	wNextScript_PTR[1] = npc.b;
 	wOverworldMode = OWMODE_SCRIPT;
+	uint16_t target = (uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8));
+	uint8_t entry_bank = hBankROM;
+	if (target == 0u)
+		return (SetScriptDataResult){entry_bank, npc.f, npc.b, npc.c, target};
 	ScriptEntryRegs entered = ScriptEntryEnterWithBank(
-		(uint16_t)(wNextScript | ((uint16_t)wNextScript_PTR[1] << 8)),
-		npc.a, npc.f, npc.b, npc.c, 0u, 0u);
-	entered.a = npc.a;
-	return (SetScriptDataResult){entered.a, entered.f, entered.b, entered.c, entered.hl};
+		target, npc.a, npc.f, npc.b, npc.c, 0u, 0u);
+	return (SetScriptDataResult){entry_bank, npc.f, entered.b, entered.c, entered.hl};
 }
 /* <<< factory SetScriptData */
 /* >>> factory HandleOverworldMode */
@@ -204,10 +206,11 @@ void HandleOverworldMode(uint16_t hl)
 		(void)SetScriptData(hl);
 		break;
 	case 3u: {
-		(void)ScriptEntryEnterWithBank(
-			(uint16_t)(wNextScript |
-				((uint16_t)gb_read8((uint16_t)(wNextScript_ADDR + 1u)) << 8)),
-			wNextScriptBank, 0u, 0u, 0u, 0u, 0u);
+		uint16_t target = (uint16_t)(wNextScript |
+			((uint16_t)gb_read8((uint16_t)(wNextScript_ADDR + 1u)) << 8));
+		if (target != 0u)
+			(void)ScriptEntryEnterWithBank(
+				target, wNextScriptBank, 0u, 0u, 0u, 0u, 0u);
 		break;
 	}
 	default:

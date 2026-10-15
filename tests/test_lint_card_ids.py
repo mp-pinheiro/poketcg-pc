@@ -33,6 +33,45 @@ class CardIdNarrowingTests(unittest.TestCase):
             with self.subTest(body=body):
                 self.assertTrue(failures(body))
 
+    def test_wide_integer_aliases_keep_card_id_provenance(self) -> None:
+        bodies = (
+            "uint16_t id16 = GetCard(index);\nuint8_t card = (uint8_t)id16;",
+            "uint32_t first = GetCard(index);\nuint16_t second = first;\nuint8_t card = second;",
+            "uint16_t id16;\nid16 = GetCard(index);\nuint8_t card = id16;",
+            "CardId original;\nuint16_t alias = original;\nuint8_t card;\ncard = alias;",
+            "uint8_t Function(void) {\nuint16_t id16 = GetCard(0);\nreturn id16;\n}",
+            "uint16_t id16 = GetCard(index);\nif ((uint8_t)id16 == 7u) return;",
+        )
+        for body in bodies:
+            with self.subTest(body=body):
+                self.assertTrue(failures(body))
+
+    def test_for_initializer_shadowing_does_not_erase_outer_card_id(self) -> None:
+        statements = (
+            "for (uint16_t card = 0; card < 1; ++card) {}",
+            "for (uint16_t card = 0; card < 1; ++card) consume(card);",
+            "for (uint16_t card = 0; card < 1; ++card) if (flag) consume(card); else consume(card);",
+            "for (uint16_t card = 0; card < 1; ++card) for (uint32_t card = 0; card < 1; ++card) {}",
+        )
+        for statement in statements:
+            with self.subTest(statement=statement):
+                self.assertTrue(failures(f"uint8_t Function(CardId card) {{ {statement} return (uint8_t)card; }}"))
+
+    def test_for_initializer_shadowing_keeps_ordinary_loop_values_local(self) -> None:
+        body = "uint8_t Function(CardId card) { for (uint16_t card = 0; card < 1; ++card) { uint8_t byte = (uint8_t)card; } return (uint8_t)(card & 0xFFu); }"
+        self.assertEqual(failures(body), [])
+
+    def test_integer_alias_extraction_and_shadowing_remain_allowed(self) -> None:
+        bodies = (
+            "uint16_t id16 = GetCard(index);\nuint8_t low = id16 & 0xFFu;",
+            "uint16_t id16 = GetCard(index);\nuint8_t high = id16 >> 8;",
+            "uint16_t ordinary = 512u;\nuint8_t byte = (uint8_t)ordinary;",
+            "uint16_t id16 = GetCard(index);\n{ uint16_t id16 = 4u;\nuint8_t byte = id16;\n}",
+        )
+        for body in bodies:
+            with self.subTest(body=body):
+                self.assertEqual(failures(body), [])
+
     def test_byte_extraction_and_comparisons_are_not_semantic_ids(self) -> None:
         bodies = (
             ("CardId card;\nuint8_t low = (uint8_t)(card & 0xffu);\nuint8_t high = (uint8_t)(card >> 8);\n"

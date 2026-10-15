@@ -1,5 +1,5 @@
 """Extended oracle-diff cases for deck_configuration: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import STACK_WINDOW, WRAMX_START, sym, sym_bank
+from tests.cases._symbols import STACK_WINDOW, VRAM_START, WRAMX_START, sym, sym_bank
 from tests.cases._inherit import inherit
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('deck_configuration', remove=(
     'AddGiftCenterDeckCardsToCollection',
@@ -21,6 +21,8 @@ OWN = (
     'PrintDeckBuildingCardList',
     'PrintFilteredCardList',
     'TryAddCardToDeck',
+    'CheckIfHasOtherValidDecks',
+    'DrawCardTypeIcons',
 )
 CONTRACT.update({
     'OpenDeckConfigurationMenu': {'compare': (), 'preserve': ()},
@@ -3515,6 +3517,34 @@ MUTATIONS.update({
         'case_ids': ['CalculateOnesAndTensDigits_Long-0', 'CalculateOnesAndTensDigits_Long-1'],
         'source': 'src/profiles/extended/home/deck_configuration.c'},
 })
+CASES['CheckIfHasOtherValidDecks'] = [
+    *CASES['CheckIfHasOtherValidDecks'],
+    {'wram': {sym("wDeck1Valid"): b'\x01\x00\x00\x00', sym("wCurDeck"): b'\x00'},
+     'sram': {0: {sym("sDeck1Cards"): b'\x00\x08'}}},
+]
+CASES['DrawCardTypeIcons'] = [
+    *CASES['DrawCardTypeIcons'],
+    {'wram': {sym("wConsole"): b'\x00', sym("wLCDC"): b'\x00'},
+     'vram': {1: {VRAM_START + 0x1841: b'\xFF' * 18, VRAM_START + 0x1861: b'\xFF' * 18}},
+     'vread': {1: {VRAM_START + 0x1841: 18, VRAM_START + 0x1861: 18}},
+     'read': {sym("hBankVRAM"): 1},
+     'instruction_budget': 100000, 'cycle_budget': 400000},
+]
+MUTATIONS['CheckIfHasOtherValidDecks'] = {
+    'source': 'src/home/deck_configuration.c',
+    'source_symbol': 'CheckIfHasOtherValidDecks',
+    'before': 'a |= gb_read8((uint16_t)(hl + 1u));',
+    'after': 'a |= 0u;',
+    'case_ids': ['CheckIfHasOtherValidDecks-6'],
+}
+MUTATIONS['DrawCardTypeIcons'] = {
+    'source': 'src/home/deck_configuration.c',
+    'source_symbol': 'DrawCardTypeIcons',
+    'before': '#if !PROFILE_FEATURE_CGB_ONLY',
+    'after': '#if 1',
+    'case_ids': ['DrawCardTypeIcons-2'],
+}
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _record in SCHEMA2_CASES["OpenDeckConfigurationMenu"]:

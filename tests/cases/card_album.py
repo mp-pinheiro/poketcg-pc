@@ -1,5 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/card_album.asm."""
-from tests.cases._symbols import sym
+from tests.cases._symbols import card_id_size, sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -98,6 +98,8 @@ CONTRACT["CreateCardSetListAndInitListCoords"] = {"compare": ("a", "f"), "preser
 CASES["CreateCardSetListAndInitListCoords"] = [
     {"a": 0x04, "sram": {0: {sym("sCardAndDeckSaveData"): bytes(0xFF)}}, "read": {sym("wDeckToBuild"): 0xFF, sym("wNumVisibleCardListEntries"): 1, sym("wCardListCoords"): 2, sym("wCurDeckName"): 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
     dict(POISON, a=0x03, sram={0: {sym("sCardAndDeckSaveData"): bytes(0xFF)}}, read={sym("wDeckToBuild"): 0xFF, sym("wNumVisibleCardListEntries"): 1, sym("wCardListCoords"): 2, sym("wCurDeckName"): 2}, instruction_budget=2000000, cycle_budget=8000000),
+    {"a": 0, "sram": {0: {sym("sCardCollection"): bytes(0x100 * card_id_size())}},
+     "read": {sym("sCardCollection"): 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
 ]
 # <<< factory CreateCardSetListAndInitListCoords
 

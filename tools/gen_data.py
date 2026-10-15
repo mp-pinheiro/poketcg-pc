@@ -632,9 +632,9 @@ def main() -> int:
     if args.out is None:
         args.out = root / "include" / "generated" / "data.h"
     if args.pack is None:
-        args.pack = root / ("build" if profile.name == "vanilla" else "build-extended") / "completion" / "data-pack.bin"
+        args.pack = profile.data_pack_path(root)
     if args.pack_manifest is None:
-        args.pack_manifest = root / ("build" if profile.name == "vanilla" else "build-extended") / "completion" / "data-pack.json"
+        args.pack_manifest = profile.artifact_path("pack_manifest", root)
     for path in (args.rom, args.map, args.sym, args.inventory):
         if not path.exists():
             raise SystemExit(f"input not found: {path} (run the selected profile bootstrap)")

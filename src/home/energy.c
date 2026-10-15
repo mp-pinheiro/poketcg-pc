@@ -28,15 +28,6 @@
 /* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xbbu
 /* <<< part DUELVARS_ARENA_CARD */
-/* >>> part LEGENDARY_DRAGONITE_DECK_ID */
-#define LEGENDARY_DRAGONITE_DECK_ID 0x0fu
-/* <<< part LEGENDARY_DRAGONITE_DECK_ID */
-/* >>> part FIRE_CHARGE_DECK_ID */
-#define FIRE_CHARGE_DECK_ID 0x17u
-/* <<< part FIRE_CHARGE_DECK_ID */
-/* >>> part LEGENDARY_RONALD_DECK_ID */
-#define LEGENDARY_RONALD_DECK_ID 0x1bu
-/* <<< part LEGENDARY_RONALD_DECK_ID */
 
 /* >>> part includes_FALSE */
 #include "home/energy.h"
@@ -194,7 +185,7 @@ static uint8_t CheckSpecificDecksToAttachDoubleColorless_GetID(void)
 	uint8_t loc = hTempPlayAreaLocation_ff9d;
 	DuelistVarResult v = GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD));
 	uint16_t id16 = GetCardIDFromDeckIndex(v.a);
-	return (uint8_t)id16;
+	return (uint8_t)(id16 & 0xFFu);
 }
 
 CheckSpecificDecksToAttachDoubleColorlessResult CheckSpecificDecksToAttachDoubleColorless(
@@ -447,7 +438,7 @@ check_deck:
 					goto look_for_any_energy;
 				gb_write8(hTemp_ffa0_ADDR, v);
 				uint16_t id16 = GetCardIDFromDeckIndex(v);
-				uint8_t id_e = (uint8_t)id16;
+				uint8_t id_e = (uint8_t)(id16 & 0xFFu);
 				if (id_e == DOUBLE_COLORLESS_ENERGY_600)
 					goto play_energy_card;
 			}
@@ -468,7 +459,7 @@ check_deck:
 					load = v;
 				} else {
 					uint16_t id16b = GetCardIDFromDeckIndex(v);
-					uint8_t id_e2 = (uint8_t)id16b;
+					uint8_t id_e2 = (uint8_t)(id16b & 0xFFu);
 					if (id_e2 == DOUBLE_COLORLESS_ENERGY_600)
 						continue;
 					load = boss.a;
@@ -725,16 +716,17 @@ AIEnergyResult AIProcessEnergyCards(void)
 /* <<< factory AIProcessEnergyCards */
 
 /* >>> factory AIProcessAndTryToPlayEnergy */
-void AIProcessAndTryToPlayEnergy(void)
+AIEnergyResult AIProcessAndTryToPlayEnergy(void)
 {
 	wAIEnergyAttachLogicFlags = 0u;
 	CoreCardListResult list = CreateEnergyCardListFromHand(0u);
-	if ((list.f & 0x10u) == 0u) {
-		AIProcessEnergyCards();
-		return;
-	}
-	if (wAIEnergyAttachLogicFlags != 0u)
+	if ((list.f & 0x10u) == 0u)
+		return AIProcessEnergyCards();
+	if (wAIEnergyAttachLogicFlags != 0u) {
 		(void)RetrievePlayAreaAIScoreFromBackup1();
+		return (AIEnergyResult){wAIEnergyAttachLogicFlags, 0u};
+	}
+	return (AIEnergyResult){0u, 0x80u};
 }
 /* <<< factory AIProcessAndTryToPlayEnergy */
 

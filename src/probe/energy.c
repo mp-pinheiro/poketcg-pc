@@ -92,8 +92,9 @@ static void adapt_AIProcessEnergyCards(ProbeState *s)
 /* >>> factory AIProcessAndTryToPlayEnergy */
 static void adapt_AIProcessAndTryToPlayEnergy(ProbeState *s)
 {
-	(void)s;
-	AIProcessAndTryToPlayEnergy();
+	AIEnergyResult result = AIProcessAndTryToPlayEnergy();
+	s->a = result.a;
+	s->f = result.f;
 }
 /* <<< factory AIProcessAndTryToPlayEnergy */
 

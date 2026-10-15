@@ -154,6 +154,13 @@ CASES["HandleAIGoGoRainDanceEnergy"] = [
 	{"wram": {wOpponentDeckID: b"\x01"}},
 	{"wram": {wOpponentDeckID: b"\xE4"}},
 	dict(POISON, wram={wOpponentDeckID: b"\x00"}),
+    {"wram": {sym("wOpponentDeckID"): bytes([const("GO_GO_RAIN_DANCE_DECK_ID")]),
+              sym("hWhoseTurn"): b"\xC3", sym("wOpponentArenaCard"): b"\x00",
+              sym("wOpponentDeck"): deck_bytes([const("BLASTOISE")]),
+              sym("wOpponentArenaCardStatus"): b"\x00", sym("wOpponentBench"): b"\xFF",
+              sym("wOpponentNumberOfCardsInHand"): b"\x00",
+              sym("wPlayerArenaCard"): b"\xFF", sym("wPlayerBench"): b"\xFF"},
+     "read": {sym("wAIEnergyAttachLogicFlags"): 1}},
 ]
 # <<< factory HandleAIGoGoRainDanceEnergy
 
@@ -168,7 +175,6 @@ CASES["HandleAICowardice"] = [
 # <<< factory HandleAICowardice
 
 # >>> factory AIEnergyTransTransferEnergyToBench
-# The carry-set path drives live duel state through subsequent AI routines and is omitted because it cannot be reproducibly exited from this case schema.
 CONTRACT["AIEnergyTransTransferEnergyToBench"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["AIEnergyTransTransferEnergyToBench"] = [
 	{"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wOpponentArenaCard"): b"\x00", sym("wPlayerBench"): b"\x00\xC5", sym("wOpponentBench"): b"\x01\xC5", sym("wBoosterCardsDrawn"): b"\x27", sym("wOpponentDeck"): b"\x27", sym("wNameBuffer"): b"\xFF", sym("wNameBuffer") + 1: b"\xFF"}, "read": {hTempPlayAreaLocation_ff9d: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
@@ -235,7 +241,12 @@ MUTATIONS["HandleAIHeal"] = {"source_symbol": "HandleAIHeal", "before": "\t\t\tg
 MUTATIONS["HandleAIPkmnPowers"] = {"source_symbol": "HandleAIPkmnPowers", "before": "\treturn (HandleAIPkmnPowersResult){c, 0xC0u};", "after": "\treturn (HandleAIPkmnPowersResult){c, 0x80u};", "case_ids": ["HandleAIPkmnPowers-0"]}
 # <<< factory-mutation HandleAIPkmnPowers
 # >>> factory-mutation HandleAIGoGoRainDanceEnergy
-MUTATIONS["HandleAIGoGoRainDanceEnergy"] = {"source_symbol": "HandleAIGoGoRainDanceEnergy", "before": "\t\treturn (HandleAIGoGoRainDanceEnergyResult){deck, f};", "after": "\t\treturn (HandleAIGoGoRainDanceEnergyResult){deck, (uint8_t)(f ^ 0x10u)};", "case_ids": ["HandleAIGoGoRainDanceEnergy-0", "HandleAIGoGoRainDanceEnergy-1", "HandleAIGoGoRainDanceEnergy-2", "HandleAIGoGoRainDanceEnergy-3"]}
+MUTATIONS["HandleAIGoGoRainDanceEnergy"] = {
+    "source_symbol": "HandleAIGoGoRainDanceEnergy",
+    "before": "\t\t\treturn (HandleAIGoGoRainDanceEnergyResult){energy.a, energy.f};",
+    "after": "\t\t\treturn (HandleAIGoGoRainDanceEnergyResult){energy.a, (uint8_t)(energy.f ^ 0x10u)};",
+    "case_ids": ["HandleAIGoGoRainDanceEnergy-4"],
+}
 # <<< factory-mutation HandleAIGoGoRainDanceEnergy
 # >>> factory-mutation HandleAICowardice
 MUTATIONS["HandleAICowardice"] = {"source_symbol": "HandleAICowardice", "before": "\t\tuint8_t used = card_id < TENTACOOL;", "after": "\t\tuint8_t used = 0u;", "case_ids": ["HandleAICowardice-3"]}

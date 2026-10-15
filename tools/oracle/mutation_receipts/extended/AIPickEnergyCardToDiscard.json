@@ -1,9 +1,9 @@
 {
   "fn": "AIPickEnergyCardToDiscard",
-  "case": "tests/profiles/extended/cases/common.py",
-  "index": 0,
+  "case": "/home/matheus/git/poketcg/tests/profiles/extended/cases/common.py",
+  "index": 3,
   "status": "RED",
-  "baseline": "{\"fn\": \"AIPickEnergyCardToDiscard\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"50432\": \"ff00000000000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"AIPickEnergyCardToDiscard\", \"mismatches\": {\"a\": [255, 254]}}\n",
-  "restored": "{\"fn\": \"AIPickEnergyCardToDiscard\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"50432\": \"ff00000000000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"AIPickEnergyCardToDiscard\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"101010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"49851\": \"00\", \"50176\": \"440006000200\", \"52543\": \"4400\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPickEnergyCardToDiscard\", \"mismatches\": {\"a\": [2, 1], \"bus\": {\"address\": 52544, \"reference\": \"0002004400c2\", \"native\": \"0002004401c2\", \"reference_size\": 70, \"native_size\": 70, \"spans\": [[49664, 60], [49851, 1], [50176, 6], [52543, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIPickEnergyCardToDiscard\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"101010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"49851\": \"00\", \"50176\": \"440006000200\", \"52543\": \"4400\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }

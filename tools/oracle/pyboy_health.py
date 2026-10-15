@@ -37,6 +37,22 @@ def main() -> int:
     version = importlib.metadata.version("pyboy")
     with Oracle(ROM, SYMBOLS) as oracle:
         result = oracle.call("_ResetAnimationQueue", b=0xBB, c=0xCC, hl=0x1234)
+        for select in (0x00, 0x10, 0x20, 0x30):
+            oracle.pyboy.memory[0xFF00] = select
+            observed = oracle.pyboy.memory[0xFF00]
+            expected = select | 0xCF
+            if observed != expected:
+                print(f"BACKEND_QUARANTINED pyboy reason=JOYP expected={expected:02X} actual={observed:02X}")
+                return 2
+        oracle.pyboy.memory[0x0000] = 0x0A
+        oracle.pyboy.memory[0xA000] = 0x5A
+        oracle.pyboy.memory[0x0000] = 0x00
+        snapshot = oracle._snapshot()
+        if (snapshot.mem(0xA000) != b"\xFF" or
+                snapshot.mem(0xA000, bank=0) != b"\x5A" or
+                oracle.pyboy.memory[0xA000] != 0xFF):
+            print("BACKEND_QUARANTINED pyboy reason=SRAM_snapshot_changes_bus")
+            return 2
     print(
         f"PYBOY version={version} python={sys.version_info.major}."
         f"{sys.version_info.minor}.{sys.version_info.micro}"
@@ -48,7 +64,7 @@ def main() -> int:
             f"actual={actual:04X} hl={result.hl:04X}"
         )
         return 2
-    print("BACKEND_HEALTHY pyboy POP_BC=BBCC HL=1234")
+    print("BACKEND_HEALTHY pyboy POP_BC=BBCC HL=1234 JOYP=preserved SRAM=preserved")
     return 0
 
 

@@ -26,6 +26,7 @@ NAME_RE = re.compile(
     re.MULTILINE | re.IGNORECASE,
 )
 PRINT_RE = re.compile(r"^([A-Za-z_]\w*)=(-?\d+)$")
+DECK_RE = re.compile(r"^\s*deck_const\s+([A-Za-z_]\w*)", re.MULTILINE | re.IGNORECASE)
 STRING_FORMAT_ERROR = "Formatting string as type 'd'"
 DENYLIST = frozenset({"NULL", "TRUE", "FALSE", "EOF"})
 
@@ -33,10 +34,13 @@ DENYLIST = frozenset({"NULL", "TRUE", "FALSE", "EOF"})
 def constant_names(disasm: Path) -> list[str]:
     names: set[str] = set()
     for path in sorted((disasm / "src" / "constants").glob("*.asm")):
-        for match in NAME_RE.finditer(path.read_text(encoding="utf-8", errors="replace")):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for match in NAME_RE.finditer(text):
             name = match.group(1) or match.group(2) or match.group(3)
             if name and name not in DENYLIST:
                 names.add(name)
+        for name in DECK_RE.findall(text):
+            names.update((name, name + "_ID"))
     return sorted(names)
 
 

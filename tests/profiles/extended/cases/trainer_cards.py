@@ -2608,3 +2608,54 @@ CASES["AIDecide_FullHeal"] += [_full_heal_case(0x03), _full_heal_case(0x01)]
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 MUTATIONS['AIDecide_Pokeball'] = {'source_symbol': 'AIDecide_Pokeball', 'before': '\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, JIGGLYPUFF_LV12);\n\t\td = 0u;\n\t\treturn (AIDecide_PokeballResult){r.a, r.f, d};', 'after': '\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, JIGGLYPUFF_LV12);\n\t\td = 0u;\n\t\treturn (AIDecide_PokeballResult){(uint8_t)((r.a) ^ 1u), r.f, d};', 'case_ids': ['AIDecide_Pokeball-1'], 'source': 'src/profiles/extended/home/trainer_cards.c'}
+MUTATIONS.update({
+    'AIDecide_Recycle': {
+        'source_symbol': 'AIDecide_Recycle',
+        'before': '\t\td = (uint8_t)(card_id >> 8);',
+        'after': '\t\td = 0xC5u;',
+        'case_ids': ['AIDecide_Recycle-2'],
+        'source': 'src/home/trainer_cards.c',
+    },
+    'AIDecide_PokemonBreeder': {
+        'source_symbol': 'AIDecide_PokemonBreeder',
+        'before': '\t\t\t\tevolution_index = d;',
+        'after': '\t\t\t\tevolution_index = deck_index;',
+        'case_ids': ['AIDecide_PokemonBreeder-1'],
+        'source': 'src/home/trainer_cards.c',
+    },
+    'AIDecide_ComputerSearch_RockCrusher': {
+        'source_symbol': 'AIDecide_ComputerSearch_RockCrusher',
+        'before': '\t\td = (uint8_t)(wce1a_ADDR >> 8);',
+        'after': '\t\td = 0xC5u;',
+        'case_ids': ['AIDecide_ComputerSearch_RockCrusher-3'],
+        'source': 'src/home/trainer_cards.c',
+    },
+    'AIDecide_SuperEnergyRemoval': {
+        'source_symbol': 'AIDecide_SuperEnergyRemoval',
+        'before': '#if PROFILE_FEATURE_NINE_BIT_CARD_IDS\n\t\tlist = wLoadedCard1ID_ADDR;\n#endif',
+        'after': '#if !PROFILE_FEATURE_NINE_BIT_CARD_IDS\n\t\tlist = wLoadedCard1ID_ADDR;\n#endif',
+        'case_ids': ['AIDecide_SuperEnergyRemoval-2'],
+        'source': 'src/home/trainer_cards.c',
+    },
+    'AIDecide_PokemonTrader_Flamethrower': {
+        'source_symbol': 'AIDecide_PokemonTrader_Flamethrower',
+        'before': '\t\tLookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r2 =\n\t\t\tLookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARIZARD, CHARMELEON);\n\t\td = r2.d;\n\t\ta = r2.a;\n\t\tif (!(r2.f & 0x10u)) {\n\t\t\tLookForCardIDInDeck_GivenCardIDInHandResult r3 =\n\t\t\t\tLookForCardIDInDeck_GivenCardIDInHand(CHARMANDER, CHARMELEON);',
+        'after': '\t\tLookForCardIDInDeck_GivenCardIDInHandResult r2 =\n\t\t\tLookForCardIDInDeck_GivenCardIDInHand(CHARMANDER, CHARMELEON);\n\t\td = r2.d;\n\t\ta = r2.a;\n\t\tif (!(r2.f & 0x10u)) {\n\t\t\tLookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r3 =\n\t\t\t\tLookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARIZARD, CHARMELEON);',
+        'case_ids': ['AIDecide_PokemonTrader_Flamethrower-2'],
+        'source': 'src/home/trainer_cards.c',
+    },
+    'AIDecide_PokemonTrader_LegendaryDragonite': {
+        'source_symbol': 'AIDecide_PokemonTrader_LegendaryDragonite',
+        'before': '\t\th = CheckIfHasCardIDInHand(DRATINI);\n\t\td = PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u;',
+        'after': '\t\th = CheckIfHasCardIDInHand(DRATINI);\n\t\td = 0xC5u;',
+        'case_ids': ['AIDecide_PokemonTrader_LegendaryDragonite-3'],
+        'source': 'src/home/trainer_cards.c',
+    },
+})
+MUTATIONS['AIDecide_PokemonTrader_SoundOfTheWaves'] = {
+    'source_symbol': 'AIDecide_PokemonTrader_SoundOfTheWaves',
+    'before': 'return (AIDecide_PokemonTrader_SoundOfTheWavesResult){target_a, f, d};',
+    'after': 'return (AIDecide_PokemonTrader_SoundOfTheWavesResult){target_a, (uint8_t)(f ^ 0x10u), d};',
+    'case_ids': ['AIDecide_PokemonTrader_SoundOfTheWaves-1'],
+    'source': 'src/home/trainer_cards.c',
+}

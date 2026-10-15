@@ -18,9 +18,6 @@
 #include "home/damage_calculation.h"
 #include "home/substatus.h"
 /* <<< part includes_2 */
-/* >>> part BOOM_BOOM_SELFDESTRUCT_DECK_ID */
-#define BOOM_BOOM_SELFDESTRUCT_DECK_ID 0x26u
-/* <<< part BOOM_BOOM_SELFDESTRUCT_DECK_ID */
 /* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xBBu
 /* <<< part DUELVARS_ARENA_CARD */
@@ -39,18 +36,9 @@
 /* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 /* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
-/* >>> part POWER_GENERATOR_DECK_ID */
-#define POWER_GENERATOR_DECK_ID 0x27u
-/* <<< part POWER_GENERATOR_DECK_ID */
-/* >>> part ROCK_CRUSHER_DECK_ID */
-#define ROCK_CRUSHER_DECK_ID 0x11u
-/* <<< part ROCK_CRUSHER_DECK_ID */
 /* >>> part TRUE */
 #define TRUE 0x01u
 /* <<< part TRUE */
-/* >>> part ZAPPING_SELFDESTRUCT_DECK_ID */
-#define ZAPPING_SELFDESTRUCT_DECK_ID 0x13u
-/* <<< part ZAPPING_SELFDESTRUCT_DECK_ID */
 
 /* >>> part includes_tail */
 #include "generated/wram.h"

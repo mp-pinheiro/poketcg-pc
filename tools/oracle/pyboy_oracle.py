@@ -228,20 +228,15 @@ class Oracle:
     def __exit__(self, *_exc) -> None:
         self.close()
 
-    def _snapshot(self, latch: bool = True) -> Result:
-        """RAM as it stands. `latch` opens RAMG for the unbanked SRAM view; the
-        entry snapshot must not, since a case may enter with RAM disabled, so it
-        carries the banked views only (the banked getter bypasses RAMG)."""
+    def _snapshot(self, include_sram: bool = True) -> Result:
         pb = self.pyboy
         rf = pb.register_file
-        if latch:
-            pb.memory[0x0000] = 0x0A
         return Result(
             a=rf.A, f=rf.F, b=rf.B, c=rf.C, d=rf.D, e=rf.E,
             hl=rf.HL, sp=rf.SP, pc=rf.PC,
             wram=bytes(pb.memory[WRAM_BASE:WRAM_END]),
             hram=bytes(pb.memory[HRAM_BASE:HRAM_END]),
-            sram=bytes(pb.memory[SRAM_BASE:SRAM_END]) if latch else b"",
+            sram=bytes(pb.memory[SRAM_BASE:SRAM_END]) if include_sram else b"",
             sram_banks=tuple(_read_bank(pb, bank, SRAM_BASE, SRAM_END) for bank in range(4)),
             vram=bytes(pb.memory[VRAM_BASE:VRAM_END]),
             vram_banks=tuple(_read_bank(pb, bank, VRAM_BASE, VRAM_END) for bank in range(2)),
@@ -495,7 +490,7 @@ class Oracle:
         for pre in setup or []:
             self._run(pre["fn"], pre)
 
-        self.entry_state = self._snapshot(latch=False)
+        self.entry_state = self._snapshot(include_sram=False)
         for bit, button in enumerate(BUTTONS):
             if timeline[0] & (1 << bit):
                 pb.button_press(button)

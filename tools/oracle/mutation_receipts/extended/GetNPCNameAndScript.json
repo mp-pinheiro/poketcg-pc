@@ -1,0 +1,30 @@
+{
+  "fn": "GetNPCNameAndScript",
+  "case": "tests/profiles/extended/cases/npc_data.py",
+  "index": 5,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetNPCNameAndScript\", \"registers\": {\"a\": 3, \"b\": 74, \"c\": 115, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53430\": \"6827\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetNPCNameAndScript\", \"mismatches\": {\"a\": [3, 39]}}\n",
+  "restored": "{\"fn\": \"GetNPCNameAndScript\", \"registers\": {\"a\": 3, \"b\": 74, \"c\": 115, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53430\": \"6827\"}}, \"status\": \"PASS\"}\n",
+  "mutation": {
+    "source_symbol": "GetNPCNameAndScript",
+    "before": "return (GetNPCNameAndScriptResult){rom_ptr(NPC_HEADER_POINTERS_BANK, header.hl)[4], f, script_high, script_low};",
+    "after": "return (GetNPCNameAndScriptResult){name_high, f, script_high, script_low};",
+    "case_ids": [
+      "GetNPCNameAndScript-5"
+    ],
+    "source": "src/profiles/extended/home/npc_data.c"
+  },
+  "proof": {
+    "schema": "override-mutation-receipt-v2",
+    "baseline_source_sha256": "5f13a941987361e62c074ea1a67acbb6d9d9778c8381a941b6f3026e89027d52",
+    "case_sha256": "3037e6f169965ab051db38ac6e7c6431f5bc236a8e5af7b9fc3b55871232bbfa",
+    "schema_sha256": "820db088d82ee993166ab356d1596b1de9918a24de17218e6e295b91199d28ce",
+    "mutation_sha256": "b4ebd523ef3bbe4b41de2dd8e0ebb845af325f154d6f6e9499e9c7553bd328e9",
+    "source": "src/profiles/extended/home/npc_data.c",
+    "source_symbol": "GetNPCNameAndScript",
+    "case": "tests/profiles/extended/cases/npc_data.py",
+    "fn": "GetNPCNameAndScript",
+    "index": 5
+  }
+}

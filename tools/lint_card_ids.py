@@ -20,7 +20,8 @@ TOKEN_RE = re.compile(
     r"|(?P<name>[A-Za-z_]\w*)"
     r"|(?P<op><<=|>>=|->|\+\+|--|<<|>>|<=|>=|==|!=|&&|\|\||[-+*/%&|^]=|[{}()\[\];,=+\-*/%&|^!~<>?:.])"
 )
-TRACKED = {"uint8_t", "CardId"}
+WIDE_STORAGE = {"uint16_t", "uint32_t", "int16_t", "int32_t", "int", "size_t"}
+TRACKED = {"uint8_t", "CardId"} | WIDE_STORAGE
 QUALIFIERS = {"const", "static", "volatile", "register", "inline"}
 TYPE_WORDS = {
     "uint8_t", "uint16_t", "uint32_t", "int8_t", "int16_t", "int32_t", "int", "unsigned", "signed",
@@ -260,8 +261,11 @@ class Checker:
                     cursor = self.matching(cursor + 1) + 1
                 else:
                     value, cursor = self.parse_expression(cursor + 1, 2)
-                    if kind == "uint8_t" and self.wide(value):
-                        self.hits.append((name.start, name.text))
+                    if self.wide(value):
+                        if kind == "uint8_t":
+                            self.hits.append((name.start, name.text))
+                        elif kind in WIDE_STORAGE:
+                            kind = "CardId"
             self.scopes[-1][name.text] = kind
             if in_parameters or self.text(cursor) != ",":
                 return
@@ -279,14 +283,45 @@ class Checker:
             return "pointer"
         return self.tokens[cursor].text if cursor >= 0 else None
 
+    def statement_end(self, index: int) -> int:
+        text = self.text(index)
+        if text == "{":
+            return self.matching(index) + 1
+        if text in {"if", "for", "while", "switch"} and self.text(index + 1) == "(":
+            end = self.statement_end(self.matching(index + 1) + 1)
+            if text == "if" and self.text(end) == "else":
+                return self.statement_end(end + 1)
+            return end
+        if text == "do":
+            end = self.statement_end(index + 1)
+            if self.text(end) == "while" and self.text(end + 1) == "(":
+                return self.matching(end + 1) + 2
+            return end
+        if self.text(index + 1) == ":":
+            return self.statement_end(index + 2)
+        cursor = index
+        while cursor < len(self.tokens) and self.text(cursor) != ";":
+            if self.text(cursor) in {"(", "[", "{"}:
+                cursor = self.matching(cursor) + 1
+            else:
+                cursor += 1
+        return min(cursor + 1, len(self.tokens))
+
     def run(self) -> list[tuple[int, str]]:
         braces: list[tuple[str, str | None]] = []
         returns: str | None = None
         pending: str | None = None
         index = 0
+        loop_ends: dict[int, int] = {}
         while index < len(self.tokens):
+            for _ in range(loop_ends.pop(index, 0)):
+                self.scopes.pop()
             token = self.tokens[index]
             text = token.text
+            if text == "for" and self.text(index + 1) == "(":
+                self.scopes.append({})
+                end = self.statement_end(self.matching(index + 1) + 1)
+                loop_ends[end] = loop_ends.get(end, 0) + 1
             if text == "{":
                 if pending is not None:
                     braces.append(("function", returns))
@@ -328,11 +363,18 @@ class Checker:
                     self.hits.append((token.start, "return"))
             if (text in WIDENING_ASSIGN and index not in self.declaration_assignments and index > 0
                     and self.tokens[index - 1].kind == "name"
-                    and self.text(index - 2) not in {".", "->"}
-                    and self.resolve(self.tokens[index - 1].text) == "uint8_t"):
+                    and self.text(index - 2) not in {".", "->"}):
+                target = self.tokens[index - 1]
+                kind = self.resolve(target.text)
                 value, _ = self.parse_expression(index + 1, 2)
                 if self.wide(value):
-                    self.hits.append((self.tokens[index - 1].start, self.tokens[index - 1].text))
+                    if kind == "uint8_t":
+                        self.hits.append((target.start, target.text))
+                    elif kind in WIDE_STORAGE:
+                        for scope in reversed(self.scopes):
+                            if target.text in scope:
+                                scope[target.text] = "CardId"
+                                break
             index += 1
         return self.hits
 

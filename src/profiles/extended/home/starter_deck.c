@@ -50,7 +50,7 @@ static void store_deck_id_in_sram(uint8_t deck_id, uint16_t destination)
 		if ((id & 0x0100u) != 0u)
 			command |= (uint8_t)(1u << (7u - bit));
 	}
-	gb_write8(compressed++, (uint8_t)(command << 4));
+	gb_write8(compressed++, command);
 	for (uint8_t bit = 0u; bit < 4u; bit++) {
 		uint8_t index = (uint8_t)(56u + bit);
 		CardId id = card_id_read_at(card_id_index_address(wPlayerDeck_ADDR, index));

@@ -1,5 +1,6 @@
 /* >>> part includes */
 #include "home/booster_pack.h"
+#include "home/card_id_bus.h"
 
 #include "generated/text_ids.h"
 #include "generated/constants.h"
@@ -32,12 +33,12 @@ void _OpenBoosterPack(void)
 	for (uint8_t i = 0u; i < DECK_SIZE; i++)
 		variables[i] = 0u;
 
-	uint8_t *cards = wBoosterCardsDrawn_PTR;
+	uint16_t cards = wBoosterCardsDrawn_ADDR;
 	uint8_t *list = wDuelTempList_PTR;
 	uint8_t index = 0u;
-	while (*cards != 0u) {
+	while (card_id_read_at(cards) != 0u) {
 		*list++ = index;
-		cards++;
+		cards = (uint16_t)(cards + sizeof(CardId));
 		index++;
 	}
 	*list = 0xFFu;

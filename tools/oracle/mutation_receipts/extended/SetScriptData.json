@@ -4,25 +4,26 @@
   "index": 0,
   "status": "RED",
   "baseline": "{\"fn\": \"SetScriptData\", \"registers\": {\"a\": 3, \"b\": 113, \"c\": 189, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 29117, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53420\": \"03\", \"53422\": \"02\", \"53427\": \"bd71\", \"54049\": \"00\", \"54071\": \"4a000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"54179\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"SetScriptData\", \"mismatches\": {\"bus\": {\"address\": 53420, \"reference\": \"0302bd7100\", \"native\": \"0002bd7100\", \"reference_size\": 103, \"native_size\": 103, \"spans\": [[53420, 1], [53422, 1], [53427, 2], [54049, 1], [54071, 97], [54179, 1]]}}}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetScriptData\", \"mismatches\": {\"a\": [3, 189]}}\n",
   "restored": "{\"fn\": \"SetScriptData\", \"registers\": {\"a\": 3, \"b\": 113, \"c\": 189, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 29117, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53420\": \"03\", \"53422\": \"02\", \"53427\": \"bd71\", \"54049\": \"00\", \"54071\": \"4a000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"54179\": \"00\"}}, \"status\": \"PASS\"}\n",
   "mutation": {
     "source_symbol": "SetScriptData",
-    "before": "wOverworldMode = OWMODE_SCRIPT;",
-    "after": "wOverworldMode = 0u;",
+    "before": "return (SetScriptDataResult){entry_bank, npc.f, entered.b, entered.c, entered.hl};",
+    "after": "return (SetScriptDataResult){entered.a, entered.f, entered.b, entered.c, entered.hl};",
     "case_ids": [
       "SetScriptData-0",
       "SetScriptData-1",
-      "SetScriptData-2"
+      "SetScriptData-2",
+      "SetScriptData-3"
     ],
     "source": "src/profiles/extended/home/overworld.c"
   },
   "proof": {
     "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "4135fef9f8fa19c4ec0b073e0d1f7ac4bb7a7393ddccffe46c53d48f664b278c",
-    "case_sha256": "adc0037e39c0eeedfa9fe76181048e81a053df4b5b1c76b75752bfddf6d4071c",
+    "baseline_source_sha256": "b79b811ac5f735901456cc87cc6bf72a860e0d72ea8eed74b36d1593902c742e",
+    "case_sha256": "2345eafe82e8e15dfac9b9c62b0f1699039db6eb9567602d97a01f553d8f7454",
     "schema_sha256": "50a612c0412929311a98643ac7a3760daae0ddfe3ae3d2df6df8a37dc10dcd44",
-    "mutation_sha256": "8ffc9b295bfcc40d50b623c7cc31bd530a7c5b83302056c3cd6784ba66dacc36",
+    "mutation_sha256": "95592d79a28cc221a4eb0f9323e36dd451ca3a1ec9cfc01cf500ee34a86406ae",
     "source": "src/profiles/extended/home/overworld.c",
     "source_symbol": "SetScriptData",
     "case": "tests/profiles/extended/cases/overworld.py",

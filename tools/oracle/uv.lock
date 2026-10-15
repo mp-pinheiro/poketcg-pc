@@ -63,7 +63,7 @@ dependencies = [
 requires-dist = [
     { name = "cython", specifier = "==3.0.9" },
     { name = "numpy" },
-    { name = "pyboy", specifier = "==2.7.0" },
+    { name = "pyboy", path = "vendor/pyboy-2.7.0.tar.gz" },
     { name = "setuptools" },
     { name = "wheel" },
 ]
@@ -71,21 +71,27 @@ requires-dist = [
 [[package]]
 name = "pyboy"
 version = "2.7.0"
-source = { registry = "https://pypi.org/simple" }
+source = { path = "vendor/pyboy-2.7.0.tar.gz" }
 dependencies = [
     { name = "numpy" },
     { name = "pysdl2" },
     { name = "pysdl2-dll" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/90/60ab95f484d1d792488ea30852b0820c0527b0f79fa555c57f214028c7b7/pyboy-2.7.0.tar.gz", hash = "sha256:b97db94c366f5e54af04f94641c6107454821543015716b7182df29684ad9180", size = 171904, upload-time = "2026-01-24T08:41:13.996Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/05/af/c84b122a051b51d5fa76bffcf30b4585fa3c8efbaedb070c609382d2f4e9/pyboy-2.7.0-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:11be1062563c565d53c63485bf9c37080a809cea9faf78330e73dbd452b72d63", size = 11168865, upload-time = "2026-01-24T08:57:32.72Z" },
-    { url = "https://files.pythonhosted.org/packages/95/99/9b93efaf52eee3db84a09916d9f42a660630ece8c0f5698caebc4eb9388a/pyboy-2.7.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:8eb63ee10e4c2028b1ca54aa893c6020a0f09282cb34bf8dae90be23693da2e4", size = 5498331, upload-time = "2026-01-24T08:56:38.49Z" },
-    { url = "https://files.pythonhosted.org/packages/5c/d9/16a6c353b37b573e1c11c1eef0de69fef74bde74f3229afb3111521444af/pyboy-2.7.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:b5858a6bbcec32bb47a3e673a5cfefc1b0839cf9e27bbaed7c996656ff73c40f", size = 5944465, upload-time = "2026-01-24T09:00:25.994Z" },
-    { url = "https://files.pythonhosted.org/packages/23/20/017b1b37316daf76eb56aebc28ef18016a49f8efbb2830e25afe60cc479e/pyboy-2.7.0-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:1ec35bbe7516b388427b27d47daae4476357b41016292c58506523c43ce8f92f", size = 5507449, upload-time = "2026-01-24T08:46:22.514Z" },
-    { url = "https://files.pythonhosted.org/packages/50/38/ef59b6a35349610e55ce84e887d7d9dccce08aeed13215351095d8559d89/pyboy-2.7.0-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:3193781f0d2fcb2237171c5f90ee22a3dd9a19926626edb8b7f78509b2634357", size = 5974144, upload-time = "2026-01-24T08:43:29.654Z" },
-    { url = "https://files.pythonhosted.org/packages/13/27/5b4de060073b228665254ccee3a6132404ddd3b6679efddcd83292c3ecdb/pyboy-2.7.0-cp312-cp312-win_amd64.whl", hash = "sha256:dfdc0c07a60abe42728f14cf7b0ce3274397fd360568fb9ece01cb7e605b8660", size = 4428190, upload-time = "2026-01-24T08:49:08.317Z" },
+sdist = { hash = "sha256:7e7a18e0bbb15ddc23458e9fb995b5f99d453ca2e5124471820bf2d062040ace" }
+
+[package.metadata]
+requires-dist = [
+    { name = "glfw", marker = "extra == 'all'" },
+    { name = "gym", marker = "extra == 'all'" },
+    { name = "markdown", marker = "extra == 'all'" },
+    { name = "numpy" },
+    { name = "pdoc3", marker = "extra == 'all'" },
+    { name = "pyopenal", marker = "extra == 'all'" },
+    { name = "pyopengl", marker = "extra == 'all'" },
+    { name = "pysdl2" },
+    { name = "pysdl2-dll" },
 ]
+provides-extras = ["all"]
 
 [[package]]
 name = "pysdl2"

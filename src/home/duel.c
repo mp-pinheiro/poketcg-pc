@@ -103,8 +103,8 @@ DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl)
 {
 	uint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR + a));
 	hTempCardIndex_ff98 = entry;
-	uint16_t id = GetCardIDFromDeckIndex(entry);
-	return (DeckEntryResult){entry, (uint8_t)(id >> 8), (uint8_t)id, hl};
+	CardId id = GetCardIDFromDeckIndex(entry);
+	return (DeckEntryResult){entry, (uint8_t)(id >> 8), (uint8_t)(id & 0xFFu), hl};
 }
 /* <<< factory GetCardInDuelTempList */
 
@@ -1862,7 +1862,7 @@ DiscardIfInPlayResult MoveCardToDiscardPileIfInPlayArea(uint16_t de, uint8_t pag
 		if (!(gb_read8(loc_addr) & PLAY_AREA_MASK))
 			continue;
 		id = GetCardIDFromDeckIndex(l);
-		if ((uint8_t)id != c)
+		if ((uint8_t)(id & 0xFFu) != c)
 			continue;
 		if ((uint8_t)(id >> 8) != b)
 			continue;
@@ -2043,11 +2043,11 @@ DuelRoutineResult UpdateArenaCardIDsAndClearTwoTurnDuelVars(
 	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	hTempCardIndex_ff9f = arena.a;
 	uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
-	wTempTurnDuelistCardID = (uint8_t)card_id;
+	wTempTurnDuelistCardID = (uint8_t)(card_id & 0xFFu);
 	SwapTurn();
 	arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	card_id = GetCardIDFromDeckIndex(arena.a);
-	wTempNonTurnDuelistCardID = (uint8_t)card_id;
+	wTempNonTurnDuelistCardID = (uint8_t)(card_id & 0xFFu);
 	SwapTurn();
 	wSentAttackDataToLinkOpponent = 0;
 	wStatusConditionQueueIndex = 0;
@@ -2063,7 +2063,7 @@ DuelRoutineResult UpdateArenaCardIDsAndClearTwoTurnDuelVars(
 	DuelistVarResult clear_start =
 		GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX);
 	return (DuelRoutineResult){0, 0x80u, b, c,
-		(uint8_t)(card_id >> 8), (uint8_t)card_id,
+		(uint8_t)(card_id >> 8), (uint8_t)(card_id & 0xFFu),
 		(uint16_t)(clear_start.hl + 7u)};
 }
 /* <<< factory UpdateArenaCardIDsAndClearTwoTurnDuelVars */
@@ -2694,14 +2694,12 @@ TempListResult HandleCheckMenuInput_YourOrOppPlayArea(void)
 			}
 			if (horiz) {
 				uint8_t low7 = (uint8_t)(gb_read8(WCE5E_ADDR) & 0x7Fu);
-				if (low7 != 0u) {
+				if (low7 == 0u) {
 					if (e != 0u) {
-						e = (uint8_t)(e + 1u);
-					}
-				} else {
-					if (e == 0u) {
 						e = (uint8_t)(e - 1u);
 					}
+				} else if (e == 0u) {
+					e = (uint8_t)(e + 1u);
 				}
 				d = (uint8_t)(d ^ 0x01u);
 				goto erase;
@@ -2740,7 +2738,7 @@ skip:
 			return (TempListResult){MENU_CONFIRM, 0x10u};
 		}
 		PlaySFXConfirmOrCancel(MENU_CANCEL);
-		return (TempListResult){MENU_CANCEL, 0x10u};
+		return (TempListResult){MENU_CANCEL, 0x90u};
 	}
 
 	uint8_t sfx = gb_read8(wMenuInputSFX_ADDR);
@@ -3237,7 +3235,7 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 	index = hTempCardIndex_ff98;
 	hTempCardIndex_ff9f = index;
 	uint16_t card_id = GetCardIDFromDeckIndex(index);
-	d = (uint8_t)(card_id >> 8); e = (uint8_t)card_id;
+	d = (uint8_t)(card_id >> 8); e = (uint8_t)(card_id & 0xFFu);
 	wTempTurnDuelistCardID = e;
 	{
 		uint8_t category = wLoadedAttackCategory;

@@ -50,16 +50,16 @@ AIDoTurn_LegendaryZapdosResult AIDoTurn_LegendaryZapdos(uint8_t a, uint8_t f, ui
 		f = trainer.f;
 		if (wAlreadyPlayedEnergy == 0u) {
 			DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-			uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
+			CardId card_id = GetCardIDFromDeckIndex(arena.a);
 			uint8_t skip_energy = 0u;
-			if ((uint8_t)card_id == VOLTORB) {
+			if (card_id == VOLTORB) {
 				CoreCardListResult found = LookForCardIDInHandList_Bank5(ELECTRODE_LV35);
 				if ((found.f & 0x10u) != 0u)
 					card_id = VOLTORB;
 				else
 					skip_energy = 0u;
 			}
-			if ((uint8_t)card_id == VOLTORB || (uint8_t)card_id == ELECTABUZZ_LV35) {
+			if (card_id == VOLTORB || card_id == ELECTABUZZ_LV35) {
 				CoreCardListResult energy = CreateEnergyCardListFromHand(arena.a);
 				if ((energy.f & 0x10u) != 0u)
 					skip_energy = 1u;

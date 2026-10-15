@@ -19,26 +19,11 @@
 /* >>> part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 /* <<< part DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
-/* >>> part INVINCIBLE_RONALD_DECK_ID */
-#define INVINCIBLE_RONALD_DECK_ID 0x1Au
-/* <<< part INVINCIBLE_RONALD_DECK_ID */
-/* >>> part LEGENDARY_DRAGONITE_DECK_ID */
-#define LEGENDARY_DRAGONITE_DECK_ID 0x0Fu
-/* <<< part LEGENDARY_DRAGONITE_DECK_ID */
-/* >>> part LEGENDARY_RONALD_DECK_ID */
-#define LEGENDARY_RONALD_DECK_ID 0x1Bu
-/* <<< part LEGENDARY_RONALD_DECK_ID */
 
 /* >>> part includes_LEGENDARY_ARTICUNO_DECK_ID */
 #include "home/retreat.h"
 /* <<< part includes_LEGENDARY_ARTICUNO_DECK_ID */
 
-/* >>> part LEGENDARY_ARTICUNO_DECK_ID */
-#define LEGENDARY_ARTICUNO_DECK_ID 0x0Eu
-/* <<< part LEGENDARY_ARTICUNO_DECK_ID */
-/* >>> part LEGENDARY_ZAPDOS_DECK_ID */
-#define LEGENDARY_ZAPDOS_DECK_ID 0x0Du
-/* <<< part LEGENDARY_ZAPDOS_DECK_ID */
 /* >>> part DUELVARS_ARENA_CARD */
 #define DUELVARS_ARENA_CARD 0xBBu
 /* <<< part DUELVARS_ARENA_CARD */
@@ -56,9 +41,6 @@
 #include "home/core.h"
 #include "home/duel.h"
 /* <<< part includes_PIKACHU_DECK_ID */
-/* >>> part PIKACHU_DECK_ID */
-#define PIKACHU_DECK_ID 0x25u
-/* <<< part PIKACHU_DECK_ID */
 
 /* >>> factory AIDecideSpecialEvolutions */
 void AIDecideSpecialEvolutions(void)

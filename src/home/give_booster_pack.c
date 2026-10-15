@@ -1,3 +1,7 @@
+/* >>> part DEFAULT_BOOSTER_TEXT_BOX_FRAME_TYPE */
+#define DEFAULT_BOOSTER_TEXT_BOX_FRAME_TYPE 4u
+/* <<< part DEFAULT_BOOSTER_TEXT_BOX_FRAME_TYPE */
+
 /* >>> part includes */
 #include "home/give_booster_pack.h"
 #include "mem.h"
@@ -109,7 +113,7 @@ GiveBoosterPackResult GiveBoosterPack(uint8_t a, uint8_t f)
 	SetDefaultPalettes();
 	ZeroObjectPositions();
 	wVBlankOAMCopyToggle = TRUE;
-	wTextBoxFrameType = 4u;
+	wTextBoxFrameType = DEFAULT_BOOSTER_TEXT_BOX_FRAME_TYPE;
 	OpenBoosterPack();
 	WhiteOutDMGPals();
 	DoFrameIfLCDEnabled();

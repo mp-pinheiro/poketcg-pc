@@ -114,8 +114,8 @@ PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(uint8_t a)
 	uint8_t count = 0;
 	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
 	if (arena != 0xFF) {
-		uint16_t arena_id = GetCardIDFromDeckIndex(arena);
-		if ((uint8_t)arena_id == gb_read8(wTempPokemonID_ADDR)) {
+		CardId arena_id = GetCardIDFromDeckIndex(arena);
+		if (arena_id == gb_read8(wTempPokemonID_ADDR)) {
 			uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
 			if (!(status & CNF_SLP_PRZ))
 				count++;
@@ -123,8 +123,8 @@ PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(uint8_t a)
 	}
 	uint16_t bench = GetTurnDuelistVariable(DUELVARS_BENCH).hl;
 	while (gb_read8(bench) != 0xFF) {
-		uint16_t slot_id = GetCardIDFromDeckIndex(gb_read8(bench));
-		if ((uint8_t)slot_id == gb_read8(wTempPokemonID_ADDR))
+		CardId slot_id = GetCardIDFromDeckIndex(gb_read8(bench));
+		if (slot_id == gb_read8(wTempPokemonID_ADDR))
 			count++;
 		bench++;
 	}
@@ -483,8 +483,8 @@ uint8_t GetLoadedCard1RetreatCost(void)
 	uint8_t dodrio_count = 0;
 	uint16_t bench = GetTurnDuelistVariable(DUELVARS_BENCH).hl;
 	while (gb_read8(bench) != 0xFFu) {
-		uint16_t id = GetCardIDFromDeckIndex(gb_read8(bench));
-		if ((uint8_t)id == DODRIO)
+		CardId id = GetCardIDFromDeckIndex(gb_read8(bench));
+		if (id == DODRIO)
 			dodrio_count++;
 		bench++;
 	}
@@ -604,8 +604,8 @@ static void zero_changed_type_run(void)
 /* >>> factory ClearChangedTypesIfMuk */
 void ClearChangedTypesIfMuk(uint8_t a)
 {
-	uint16_t id = GetCardIDFromDeckIndex(a);
-	if ((uint8_t)id != MUK)
+	CardId id = GetCardIDFromDeckIndex(a);
+	if (id != MUK)
 		return;
 	SwapTurn();
 	zero_changed_type_run();

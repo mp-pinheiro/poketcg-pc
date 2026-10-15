@@ -55,7 +55,7 @@ void PrintCardToSendText(void);
 void PrintReceivedTheseCardsText(void);
 /* <<< factory PrintReceivedTheseCardsText */
 /* >>> factory PrintNumSavedDecks */
-void PrintNumSavedDecks(void);
+uint8_t PrintNumSavedDecks(void);
 /* <<< factory PrintNumSavedDecks */
 /* >>> factory Func_b568 */
 void Func_b568(void);

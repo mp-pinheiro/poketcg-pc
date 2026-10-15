@@ -148,6 +148,48 @@ static int ensure_directory(const char *path)
 	return -1;
 }
 
+static int ensure_directories(const char *path)
+{
+	if (ensure_directory(path) == 0)
+		return 0;
+	if (errno != ENOENT)
+		return -1;
+	char parents[PATH_MAX];
+	size_t length = strlen(path);
+	if (length >= sizeof parents) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+	memcpy(parents, path, length + 1u);
+	size_t cursor = length;
+	for (;;) {
+		while (cursor) {
+			if (parents[cursor] == '/')
+				break;
+#ifdef _WIN32
+			if (parents[cursor] == '\\')
+				break;
+#endif
+			cursor--;
+		}
+		if (!cursor)
+			return -1;
+		parents[cursor] = '\0';
+		if (ensure_directory(parents) == 0)
+			break;
+		if (errno != ENOENT)
+			return -1;
+	}
+	for (size_t index = cursor; index < length; index++) {
+		if (parents[index] != '\0')
+			continue;
+		parents[index] = path[index];
+		if (ensure_directory(parents) != 0)
+			return -1;
+	}
+	return 0;
+}
+
 static int save_directory(char *buffer, size_t size)
 {
 #ifdef _WIN32
@@ -162,14 +204,14 @@ static int save_directory(char *buffer, size_t size)
 			return -1;
 		if (snprintf(buffer, size, "%s/.local/share/poketcg", home) >= (int)size)
 			return -1;
-		if (ensure_directory(buffer) != 0)
+		if (ensure_directories(buffer) != 0)
 			return -1;
 		goto profile_dir;
 	}
 #endif
 	if (snprintf(buffer, size, "%s/poketcg", base) >= (int)size)
 		return -1;
-	if (ensure_directory(buffer) != 0)
+	if (ensure_directories(buffer) != 0)
 		return -1;
 profile_dir:
 	return 0;

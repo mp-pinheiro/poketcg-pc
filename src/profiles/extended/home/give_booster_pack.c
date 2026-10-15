@@ -1,1 +1,5 @@
+/* >>> part DEFAULT_BOOSTER_TEXT_BOX_FRAME_TYPE */
+#define DEFAULT_BOOSTER_TEXT_BOX_FRAME_TYPE 1u
+/* <<< part DEFAULT_BOOSTER_TEXT_BOX_FRAME_TYPE */
+
 /* === factory GiveBoosterPack */

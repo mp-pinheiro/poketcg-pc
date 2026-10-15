@@ -43,18 +43,6 @@
 
 
 
-/* >>> part SAMS_PRACTICE_DECK_ID */
-#define SAMS_PRACTICE_DECK_ID 0u
-/* <<< part SAMS_PRACTICE_DECK_ID */
-/* >>> part SAMS_NORMAL_DECK_ID */
-#define SAMS_NORMAL_DECK_ID 2u
-/* <<< part SAMS_NORMAL_DECK_ID */
-/* >>> part PRACTICE_PLAYER_DECK_ID */
-#define PRACTICE_PLAYER_DECK_ID 1u
-/* <<< part PRACTICE_PLAYER_DECK_ID */
-/* >>> part PRACTICE_PLAYER_DECK */
-#define PRACTICE_PLAYER_DECK 3u
-/* <<< part PRACTICE_PLAYER_DECK */
 /* >>> part DUELVARS_DUELIST_TYPE */
 #define DUELVARS_DUELIST_TYPE 0xF1u
 /* <<< part DUELVARS_DUELIST_TYPE */

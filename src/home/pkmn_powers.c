@@ -81,8 +81,7 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #define OPPACTION_DUEL_MAIN_SCENE_269 OPPACTION_DUEL_MAIN_SCENE
 /* <<< part OPPACTION_DUEL_MAIN_SCENE_269 */
 /* >>> part GRASS_ENERGY_COUNT_ADDR */
-/* wAttachedEnergies ($CC1B) indexed by GRASS ($01). */
-#define GRASS_ENERGY_COUNT_ADDR 0xCC1Cu
+#define GRASS_ENERGY_COUNT_ADDR (wAttachedEnergies_ADDR + GRASS)
 /* <<< part GRASS_ENERGY_COUNT_ADDR */
 
 /* >>> part includes_DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA */
@@ -120,9 +119,6 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #include "home/energy.h"
 #include "home/substatus.h"
 /* <<< part includes_GO_GO_RAIN_DANCE_DECK_ID */
-/* >>> part GO_GO_RAIN_DANCE_DECK_ID */
-#define GO_GO_RAIN_DANCE_DECK_ID 0x12u
-/* <<< part GO_GO_RAIN_DANCE_DECK_ID */
 
 /* >>> part includes_tail */
 #include "home/core.h"
@@ -553,8 +549,11 @@ HandleAIGoGoRainDanceEnergyResult HandleAIGoGoRainDanceEnergy(void)
 	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 	if (muk.f & 0x10u)
 		return (HandleAIGoGoRainDanceEnergyResult){muk.a, muk.f};
-	AIProcessAndTryToPlayEnergy();
-	return (HandleAIGoGoRainDanceEnergyResult){0u, 0u};
+	for (;;) {
+		AIEnergyResult energy = AIProcessAndTryToPlayEnergy();
+		if ((energy.f & 0x10u) == 0u)
+			return (HandleAIGoGoRainDanceEnergyResult){energy.a, energy.f};
+	}
 }
 /* <<< factory HandleAIGoGoRainDanceEnergy */
 

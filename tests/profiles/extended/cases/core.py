@@ -55,6 +55,7 @@ CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('core', remove=(
     '_ContinueDuel',
 ))
 OWN = (
+    'AIAttachEnergyInHandToCardInBench',
     'AIAttachEnergyInHandToCardInPlayArea',
     'AISelectSpecialAttackParameters',
     'CardListFunction',
@@ -81,6 +82,7 @@ OWN = (
     'LookForCardIDInHandList_Bank5',
     'LookForCardIDInLocation_Bank5',
     'LookForCardIDInPlayArea_Bank5',
+    'LookForEnergyNeededForAttackInHand',
     'LookForEnergyNeededInHand',
     'MainDuelLoop',
     'OppAction_BeginUseAttack',
@@ -134,7 +136,7 @@ CONTRACT.update({
     'CreateEnergyCardListFromHand': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'LookForCardIDInHand': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'd', 'e', 'hl')},
     'LookForCardIDInHandList_Bank5': {'compare': ('a', 'f'), 'preserve': ()},
-    'RaiseAIScoreToAllMatchingIDsInBench': {'compare': ('hl',), 'preserve': (), 'wram_out': True},
+    'AIAttachEnergyInHandToCardInBench': {'compare': ('a', 'f'), 'preserve': (), 'wram_out': True},
     'GetDamageNumberChars': {'compare': (), 'preserve': ()},
     'GetDamageNumberChars.ConvertDigitToCharTile': {'compare': ('a', 'f', 'd', 'e', 'hl'), 'preserve': ()},
     'IsLoadedCard1BasicPokemon': {'compare': ('a', 'f'), 'preserve': ()},
@@ -150,7 +152,7 @@ CONTRACT.update({
     'ConvertColorToEnergyCardID': {'compare': ('a', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ('b', 'c', 'hl')},
     'PracticeDuelVerify_Turn1': {'compare': ('f',), 'preserve': ()},
     'CheckEnergyNeededForAttack': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
-    'LookForEnergyNeededInHand': {'compare': ('f',), 'preserve': ()},
+    'LookForEnergyNeededForAttackInHand': {'compare': ('a', 'f', 'd'), 'preserve': ()},
     'PrintAttackOrPkmnPowerInformation': {'compare': ('a', 'f', 'b', 'c', 'd', 'e', 'hl'), 'preserve': ()},
     'PrintPokemonCardLength': {'compare': (), 'preserve': ()},
     'CardListFunction': {'compare': ('a', 'f'), 'preserve': ()},
@@ -10103,11 +10105,9 @@ MUTATIONS.update({
         'source': 'src/profiles/extended/home/core.c'},
     'GetAnimationData': {'source_symbol': 'GetAnimationData', 'before': 'uint16_t offset = (uint16_t)animation * 5u;', 'after': 'uint16_t offset = (uint16_t)animation * 6u;', 'case_ids': ['GetAnimationData-1', 'GetAnimationData-2'], 'source': 'src/profiles/extended/home/core.c'},
     'RaiseAIScoreToAllMatchingIDsInBench': {   'source_symbol': 'RaiseAIScoreToAllMatchingIDsInBench',
-        'before': 'bench.hl = (uint16_t)(bench.hl + 1u);',
-        'after': 'bench.hl = (uint16_t)(bench.hl + 2u);',
-        'case_ids': [   'RaiseAIScoreToAllMatchingIDsInBench-0',
-                        'RaiseAIScoreToAllMatchingIDsInBench-1',
-                        'RaiseAIScoreToAllMatchingIDsInBench-2'],
+        'before': 'if (GetCardIDFromDeckIndex(deck_index) != card_id)',
+        'after': 'if (GetCardIDFromDeckIndex(deck_index) != (CardId)0u)',
+        'case_ids': ['RaiseAIScoreToAllMatchingIDsInBench-3'],
         'source': 'src/home/core.c'},
     'GetDamageNumberChars': {'source_symbol': 'GetDamageNumberChars', 'before': 'gb_write8(digit.de, (uint8_t)((uint8_t)digit.hl + SPRITE_ANIM_DAMAGE_0));', 'after': 'gb_write8(digit.de, (uint8_t)digit.hl);', 'case_ids': ['GetDamageNumberChars-0'], 'source': 'src/profiles/extended/home/core.c'},
     'GetDamageNumberChars.ConvertDigitToCharTile': {   'source_symbol': 'GetDamageNumberChars_ConvertDigitToCharTile',
@@ -10527,6 +10527,141 @@ for _name, _indices in {
 }.items():
     for _index in _indices:
         CASES[_name][_index].get("wram", {}).pop(0x8000, None)
+_AIAttachEnergyInHandToCardInBench = dict(CASES["AIAttachEnergyInHandToCardInPlayArea"][0])
+_AIAttachEnergyInHandToCardInBench["b"] = 0x01
+_AIAttachEnergyInHandToCardInBench["c"] = 0x7D
+_AIAttachEnergyInHandToCardInBench["d"] = 0x00
+_AIAttachEnergyInHandToCardInBench["e"] = 0x05
+_AIAttachEnergyInHandToCardInBench["wram"] = {
+    **_AIAttachEnergyInHandToCardInBench["wram"],
+    sym("hWhoseTurn"): b"\xc2",
+    sym("wDoFrameFunction"): b"\xc9\x32",
+    sym("wActiveScreenAnim"): b"\xff",
+    sym("wd4c0"): b"\xff",
+    sym("wAnimationQueue"): b"\xff" * 7,
+    sym("wDuelAnimBufferCurPos"): b"\x00",
+    sym("wDuelAnimBufferSize"): b"\x08",
+    sym("wSkipDuelistIsThinkingDelay"): b"\x01",
+    sym("wPlayerNumberOfCardsInHand"): b"\x01",
+    sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02",
+    sym("wPlayerHand"): b"\x05",
+    sym("wPlayerCardLocations"): b"\x10",
+    sym("wPlayerCardLocations") + 5: b"\x01",
+    sym("wPlayerCardLocations") + 10: b"\x11",
+    sym("wPlayerArenaCard"): b"\x00",
+    sym("wPlayerBench"): b"\x0a\xff",
+    **deck_entry(0, 0x007D, base=sym("wPlayerDeck")),
+    **deck_entry(5, 0x0005, base=sym("wPlayerDeck")),
+    **deck_entry(10, 0x007D, base=sym("wPlayerDeck")),
+}
+_AIAttachEnergyInHandToCardInBench["setup"] = [
+    {"fn": "CopyDMAFunction"},
+    {"fn": "SetupText", "d": 0x20, "e": 0x40},
+]
+_AIAttachEnergyInHandToCardInBench["instruction_budget"] = 40000000
+_AIAttachEnergyInHandToCardInBench["cycle_budget"] = 160000000
+_AIAttachEnergyInHandToCardInBench["read"] = {
+    sym("hTempPlayAreaLocation_ffa1"): 1,
+    sym("wPlayerCardLocations") + 5: 1,
+}
+_AIAttachEnergyInHandToCardInBenchMismatch = dict(_AIAttachEnergyInHandToCardInBench)
+_AIAttachEnergyInHandToCardInBenchMismatch["wram"] = dict(
+    _AIAttachEnergyInHandToCardInBench["wram"])
+_AIAttachEnergyInHandToCardInBenchMismatch["d"] = 0x01
+CASES["AIAttachEnergyInHandToCardInBench"] = [
+    *CASES["AIAttachEnergyInHandToCardInBench"],
+    _AIAttachEnergyInHandToCardInBenchMismatch,
+    _AIAttachEnergyInHandToCardInBench,
+]
+_energy_lookup_witness = {
+    "wram": {
+        sym("hWhoseTurn"): b"\xc2",
+        sym("wPlayerArenaCard"): b"\x00",
+        sym("wSelectedAttack"): b"\x00",
+        sym("wPlayerNumberOfCardsInHand"): b"\x01",
+        sym("wPlayerHand"): b"\x02",
+        sym("wPlayerCardLocations"): b"\x10\x10\x01",
+        **deck_entry(0, 0x00A7, base=sym("wPlayerDeck")),
+        **deck_entry(1, 0x0002, base=sym("wPlayerDeck")),
+        **deck_entry(2, 0x0054, base=sym("wPlayerDeck")),
+    },
+}
+CASES["LookForEnergyNeededInHand"].append(dict(_energy_lookup_witness))
+CASES["LookForEnergyNeededForAttackInHand"].append(dict(_energy_lookup_witness))
+CASES["RaiseAIScoreToAllMatchingIDsInBench"].append({
+    "a": 0x02,
+    "b": 0x01,
+    "c": 0x59,
+    "wram": {
+        sym("hWhoseTurn"): b"\xc2",
+        sym("wPlayerBench"): b"\x01\xff",
+        **deck_entry(1, 0x0159, base=sym("wPlayerDeck")),
+        sym("wPlayAreaEnergyAIScore") + 1: b"\x00",
+    },
+    "read": {sym("wPlayAreaEnergyAIScore") + 1: 1},
+})
+CASES["PlayBufferedDuelAnimations"].append({
+    "wram": {
+        sym("wLCDC"): b"\xe7",
+        sym("wDuelAnimBufferCurPos"): b"\x00",
+        sym("wDuelAnimBufferSize"): b"\x08",
+        sym("wDuelAnim1ID"): b"\x05\x01\xc2\x02\x10\x00\x00\x07",
+        sym("wDoFrameFunction"): b"\x00\x00",
+        sym("wActiveScreenAnim"): b"\xff",
+        sym("wd4c0"): b"\xff",
+        sym("wAnimationQueue"): b"\xff" * 7,
+    },
+    "read": {sym("wLCDC"): 1},
+})
+CASES["AISelectSpecialAttackParameters"].append({
+    "wram": {
+        sym("hWhoseTurn"): b"\xc2",
+        sym("wPlayerArenaCard"): b"\x00",
+        sym("wSelectedAttack"): b"\x00",
+        sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00",
+        **deck_entry(0, 0x009E, base=sym("wPlayerDeck")),
+        sym("wPlayerCardLocations"): b"\x10",
+    },
+})
+CASES["AISelectSpecialAttackParameters"].append({
+    "wram": {
+        sym("hWhoseTurn"): b"\xc2",
+        sym("wPlayerArenaCard"): b"\x00",
+        sym("wSelectedAttack"): b"\x00",
+        sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+        sym("wPlayerCardLocations"): b"\x10\x02\x02\x02",
+        sym("wPlayerNumberOfCardsInDiscardPile") - 0xED + 0x7E: b"\x01\x02\x03",
+        **deck_entry(0, 0x009E, base=sym("wPlayerDeck")),
+        **deck_entry(1, 0x0006, base=sym("wPlayerDeck")),
+        **deck_entry(2, 0x0002, base=sym("wPlayerDeck")),
+        **deck_entry(3, 0x0003, base=sym("wPlayerDeck")),
+    },
+    "read": {sym("hTempPlayAreaLocation_ffa1"): 1},
+})
+CASES["AISelectSpecialAttackParameters"].append({
+    "wram": {
+        sym("hWhoseTurn"): b"\xc2",
+        sym("wPlayerArenaCard"): b"\x00",
+        sym("wSelectedAttack"): b"\x00",
+        sym("wPlayerNumberOfCardsInDiscardPile"): b"\x01",
+        sym("wPlayerCardLocations"): b"\x10\x02",
+        sym("wPlayerNumberOfCardsInDiscardPile") - 0xED + 0x7E: b"\x01",
+        **deck_entry(0, 0x009E, base=sym("wPlayerDeck")),
+        **deck_entry(1, 0x0006, base=sym("wPlayerDeck")),
+    },
+})
+CASES["AISelectSpecialAttackParameters"].append({
+    "wram": {
+        sym("hWhoseTurn"): b"\xc2",
+        sym("wPlayerArenaCard"): b"\x00",
+        sym("wSelectedAttack"): b"\x01",
+        sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
+        **deck_entry(0, 0x00A2, base=sym("wPlayerDeck")),
+        sym("wPlayerCardLocations"): b"\x10",
+    },
+    "instruction_budget": 0x1000000,
+    "cycle_budget": 0x4000000,
+})
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _name, _entries in ((_fn, CASES[_fn]) for _fn in OWN):
@@ -10534,3 +10669,39 @@ for _name, _entries in ((_fn, CASES[_fn]) for _fn in OWN):
         if "completion" in _entry:
             SCHEMA2_CASES[_name][_index]["completion"] = _entry["completion"]
 MUTATIONS['DuelMenu_Retreat'] = {'source_symbol': 'DuelMenu_Retreat', 'before': '\thTemp_ffa0 = status;', 'after': '\thTemp_ffa0 = (uint8_t)((status) ^ 1u);', 'case_ids': ['DuelMenu_Retreat-0'], 'source': 'src/profiles/extended/home/core.c'}
+MUTATIONS.update({
+    "AIAttachEnergyInHandToCardInBench": {
+        "source_symbol": "adapt_AIAttachEnergyInHandToCardInBench",
+        "before": "CardId pokemon = (CardId)s->c;\n\tCardId energy = (CardId)((uint16_t)s->d << 8 | s->e);",
+        "after": "CardId pokemon = (CardId)((uint16_t)s->b << 8 | s->c);\n\tCardId energy = (CardId)s->e;",
+        "case_ids": ["AIAttachEnergyInHandToCardInBench-1"],
+        "source": "src/profiles/extended/probe/core.c",
+    },
+    "PlayBufferedDuelAnimations": {
+        "source_symbol": "PlayBufferedDuelAnimations",
+        "before": "Set_OBJ_8x8();",
+        "after": "Set_OBJ_8x16();",
+        "case_ids": ["PlayBufferedDuelAnimations-6"],
+        "source": "src/home/core.c",
+    },
+    "LookForEnergyNeededInHand": {
+        "source_symbol": "LookForEnergyNeededInHand",
+        "before": "LookForCardIDInHandList_Bank5((CardId)((uint16_t)r1.d << 8 | r1.e))",
+        "after": "LookForCardIDInHandList_Bank5(r1.e)",
+        "case_ids": ["LookForEnergyNeededInHand-3"],
+        "source": "src/home/core.c",
+    },
+    "LookForEnergyNeededForAttackInHand": {
+        "source_symbol": "LookForEnergyNeededForAttackInHand",
+        "before": "LookForCardIDInHandList_Bank5((CardId)((uint16_t)energy.d << 8 | energy.e))",
+        "after": "LookForCardIDInHandList_Bank5(energy.e)",
+        "case_ids": ["LookForEnergyNeededForAttackInHand-2"],
+        "source": "src/home/core.c",
+    },
+    "AISelectSpecialAttackParameters": {
+        "source_symbol": "AISelectSpecialAttackParameters",
+        "before": "found = 1u;\n\t\t\t\t\tbreak;",
+        "after": "found = 1u;\n\t\t\t\t\tcontinue;",
+        "case_ids": ["AISelectSpecialAttackParameters-6"],
+    },
+})

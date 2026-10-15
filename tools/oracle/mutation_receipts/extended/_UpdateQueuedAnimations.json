@@ -1,0 +1,9 @@
+{
+  "fn": "_UpdateQueuedAnimations",
+  "case": "/home/matheus/git/poketcg/tests/profiles/extended/cases/duel_animation_core.py",
+  "index": 5,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_UpdateQueuedAnimations\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"0000\", \"54288\": \"00ffffffffffffff\", \"54297\": \"0501c20210000007\", \"54425\": \"0808\", \"54445\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_UpdateQueuedAnimations\", \"mismatches\": {\"bus\": {\"address\": 54425, \"reference\": \"100000070808ff\", \"native\": \"100000070008ff\", \"reference_size\": 21, \"native_size\": 21, \"spans\": [[51923, 2], [54288, 8], [54297, 8], [54425, 2], [54445, 1]]}}}\n",
+  "restored": "{\"fn\": \"_UpdateQueuedAnimations\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51923\": \"0000\", \"54288\": \"00ffffffffffffff\", \"54297\": \"0501c20210000007\", \"54425\": \"0808\", \"54445\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

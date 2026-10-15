@@ -5,7 +5,7 @@
 /* card_collection.asm:129-146 .AddDeckCards. */
 static void add_deck_cards(uint16_t de)
 {
-	if ((uint8_t)(gb_read8(de) | gb_read8((uint16_t)(de + 1u))) == 0u)
+	if (gb_read8(de) == 0u)
 		return;
 	uint16_t source = (uint16_t)(de + 24u);
 	uint16_t cards = wCurDeckCards_ADDR;

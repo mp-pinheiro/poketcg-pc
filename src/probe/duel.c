@@ -70,9 +70,9 @@ static void adapt__GetCardIDFromDeckIndex(ProbeState *s)
 /* >>> factory GetCardIDFromDeckIndex */
 static void adapt_GetCardIDFromDeckIndex(ProbeState *s)
 {
-	uint16_t id = GetCardIDFromDeckIndex(s->a);
+	CardId id = GetCardIDFromDeckIndex(s->a);
 	s->d = (uint8_t)(id >> 8);
-	s->e = (uint8_t)id;
+	s->e = (uint8_t)(id & 0xFFu);
 }
 /* <<< factory GetCardIDFromDeckIndex */
 

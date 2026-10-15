@@ -1,0 +1,9 @@
+{
+  "fn": "SetSamsStartingPlayArea",
+  "case": "/home/matheus/git/poketcg/tests/profiles/extended/cases/sams_practice.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetSamsStartingPlayArea\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 224, \"frame_budget_reached\": 0, \"hl\": 50434, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"01\", \"49730\": \"00\", \"49851\": \"ffff\", \"49902\": \"0100\", \"50176\": \"7d01\", \"52146\": \"06\", \"52182\": \"0800\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetSamsStartingPlayArea\", \"mismatches\": {\"bus\": {\"address\": 49664, \"reference\": \"0100ffff01\", \"native\": \"100000ff00\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49664, 1], [49730, 1], [49851, 2], [49902, 2], [50176, 2], [52146, 1], [52182, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetSamsStartingPlayArea\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 224, \"frame_budget_reached\": 0, \"hl\": 50434, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"01\", \"49730\": \"00\", \"49851\": \"ffff\", \"49902\": \"0100\", \"50176\": \"7d01\", \"52146\": \"06\", \"52182\": \"0800\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

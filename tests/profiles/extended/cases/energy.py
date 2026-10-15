@@ -190,7 +190,7 @@ MUTATIONS.update({
         'before': 'AIEnergyResult AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;',
         'after': 'AIEnergyResult AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 1u;',
         'case_ids': ['AIProcessAndTryToPlayEnergy-0', 'AIProcessAndTryToPlayEnergy-1'],
-        'source': 'src/profiles/extended/home/energy.c'},
+        'source': 'src/home/energy.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))

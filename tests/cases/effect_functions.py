@@ -1,5 +1,5 @@
-from tests.cases._symbols import STACK_CANARY, STACK_TOP, sym, sym_bank
-from tests.cases._fixtures import Fixture
+from tests.cases._symbols import STACK_CANARY, STACK_TOP, const, deck_bytes, sym, sym_bank
+from tests.cases._fixtures import Fixture, lass_hand_fixture
 from tests.cases._fixtures import trainer_discard_list_fixture as _trainer_discard_list_fixture, TRAINER_DISCARD_LIST_REGS as _TRAINER_DISCARD_LIST_REGS
 from tests.cases._fixtures import color_name_fixture as _color_name_fixture, COLOR_NAME_REGS as _COLOR_NAME_REGS
 from tests.cases._fixtures import discard_basic_list_fixture as _discard_basic_list_fixture, DISCARD_BASIC_LIST_REGS as _DISCARD_BASIC_LIST_REGS
@@ -6188,6 +6188,18 @@ CONTRACT["NidoranFCallForFamily_PlayerSelectEffect"] = {"compare": ("a", "f"), "
 CASES["NidoranFCallForFamily_PlayerSelectEffect"] = [
     {"keys": [0x00, 0x10, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x3C", sym("wLCDC"): b"\x00"}, "read": {sym("hTempList"): 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x10, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x3C", sym("wLCDC"): b"\x00"}, read={sym("hTempList"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0, 1, 0, 2, 0, 1],
+     "wram": {sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00",
+              sym("wPlayerNumberOfCardsNotInDeck"): b"\x3B",
+              sym("wPlayerNumberOfCardsInDiscardPile"): b"\x3A",
+              sym("wPlayerDeckCards"): bytes(range(1, 60)) + b"\x00",
+              sym("wPlayerCardLocations"): b"\x00" + b"\x02" * 58 + b"\x10",
+              sym("wPlayerArenaCard"): b"\x3B", sym("wPlayerBench"): b"\xFF",
+              sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
+              sym("wPlayerDeck"): deck_bytes([const("NIDORANM")] + [const("GRASS_ENERGY")] * 58 + [const("NIDORANF")])},
+     "read": {sym("hTemp_ffa0"): 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory NidoranFCallForFamily_PlayerSelectEffect
 
@@ -7421,6 +7433,8 @@ CONTRACT["LassEffect"] = {"compare": (), "preserve": ()}
 CASES["LassEffect"] = [
     {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wDuelType: b"\x00", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", hTempCardIndex_ff9f: b"\x00", sym("wLCDC"): b"\x00"}, "read": {hCurSelectionItem: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", wDuelType: b"\x00", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", hTempCardIndex_ff9f: b"\x00", sym("wLCDC"): b"\x00"}, read={hCurSelectionItem: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    lass_hand_fixture((const("LASS"),), (const("POTION"),)),
+    lass_hand_fixture((const("GRASS_ENERGY"),) * 7, (const("LASS"),), ai_turn=True, duel_type=0x81),
 ]
 # <<< factory LassEffect
 
@@ -8470,7 +8484,7 @@ MUTATIONS["ClairvoyanceEffect"] = {
 }
 # <<< factory-mutation ClairvoyanceEffect
 # >>> factory-mutation KrabbyCallForFamily_AISelectEffect
-MUTATIONS["KrabbyCallForFamily_AISelectEffect"] = {"source_symbol": "KrabbyCallForFamily_AISelectEffect", "before": "if ((uint8_t)card_id == KRABBY)", "after": "if ((uint8_t)card_id != KRABBY)", "case_ids": ["KrabbyCallForFamily_AISelectEffect-0", "KrabbyCallForFamily_AISelectEffect-1"]}
+MUTATIONS["KrabbyCallForFamily_AISelectEffect"] = {"source_symbol": "KrabbyCallForFamily_AISelectEffect", "before": "if (card_id == KRABBY)", "after": "if (card_id != KRABBY)", "case_ids": ["KrabbyCallForFamily_AISelectEffect-0", "KrabbyCallForFamily_AISelectEffect-1"]}
 # <<< factory-mutation KrabbyCallForFamily_AISelectEffect
 # >>> factory-mutation CreateListOfEnergyAttachedToArena
 MUTATIONS["CreateListOfEnergyAttachedToArena"] = {
@@ -10848,7 +10862,10 @@ MUTATIONS["BigThunderEffect"] = {"source_symbol": "BigThunderEffect", "before": 
 MUTATIONS["EnergySearch_AddToHandEffect"] = {"source_symbol": "EnergySearch_AddToHandEffect", "before": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t card = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult EnergySearch_AddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t card = 0xFFu;", "case_ids": ["EnergySearch_AddToHandEffect-0", "EnergySearch_AddToHandEffect-2"]}
 # <<< factory-mutation EnergySearch_AddToHandEffect
 # >>> factory-mutation LassEffect
-MUTATIONS["LassEffect"] = {"source_symbol": "LassEffect", "before": "\thCurSelectionItem = 0u;", "after": "\thCurSelectionItem = 1u;", "case_ids": ["LassEffect-0", "LassEffect-1"]}
+MUTATIONS["LassEffect"] = {"source_symbol": "LassEffect",
+    "before": "\tSwapTurn();\n\tfor (uint8_t hand = 0u; hand < 2u; hand++) {",
+    "after": "\tfor (uint8_t hand = 1u; hand < 2u; hand++) {",
+    "case_ids": ["LassEffect-2"], "source": "src/home/effect_functions.c"}
 # <<< factory-mutation LassEffect
 # >>> factory-mutation ComputerSearch_DiscardAddToHandEffect
 MUTATIONS["ComputerSearch_DiscardAddToHandEffect"] = {"source_symbol": "ComputerSearch_DiscardAddToHandEffect", "before": "ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thl = hTempList_ADDR;\n\tuint8_t first = gb_read8(hl++);\n\tRemoveCardFromHand(first);\n\tPutCardInDiscardPile(first);\n\tuint8_t second = gb_read8(hl++);", "after": "ShuffleCardsInDeckResult ComputerSearch_DiscardAddToHandEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\thl = hTempList_ADDR;\n\tuint8_t first = (uint8_t)(gb_read8(hl++) + 1u);\n\tRemoveCardFromHand(first);\n\tPutCardInDiscardPile(first);\n\tuint8_t second = gb_read8(hl++);", "case_ids": ["ComputerSearch_DiscardAddToHandEffect-0", "ComputerSearch_DiscardAddToHandEffect-1"]}

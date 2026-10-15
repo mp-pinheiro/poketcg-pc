@@ -13,7 +13,7 @@ import sysconfig
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-ESSENTIAL_MODULES = ("pyboy", "pyboy.core.cpu", "pyboy.core.opcodes", "pyboy.core.mb")
+ESSENTIAL_MODULES = ("pyboy", "pyboy.core.cpu", "pyboy.core.opcodes", "pyboy.core.mb", "pyboy.core.interaction")
 
 
 def sha256(path: Path) -> str:

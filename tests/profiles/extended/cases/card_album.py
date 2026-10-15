@@ -7,6 +7,7 @@ OWN = (
     'CreateCardSetList',
     'HandleCardAlbumCardPage',
     'PrintCardSetListEntries',
+    'CreateCardSetListAndInitListCoords',
 )
 CONTRACT.update({
     'PrintCardSetListEntries': {'compare': ('hl',), 'preserve': ()},
@@ -145,6 +146,63 @@ MUTATIONS.update({
         'source': 'src/home/card_album.c'},
     'CardAlbum': {'source_symbol': 'CardAlbum', 'before': '{\n\twTileMapFill = 0u;', 'after': '{\n\twTileMapFill = (uint8_t)((0u) ^ 1u);', 'case_ids': ['CardAlbum-0'], 'source': 'src/home/card_album.c'},
 })
+CASES['CreateCardSetListAndInitListCoords'] = [
+    *CASES['CreateCardSetListAndInitListCoords'],
+    {'a': 0,
+     'sram': {0: {sym("sCardCollection") + 0xFF: b'\x05',
+                  sym("sCardCollection") + 0x1FD: b'\x07'}},
+     'wram': {sym("wTempCardCollection") + 0xFF: bytes(0xFF)},
+     'read': {sym("wTempCardCollection") + 0xFF: 0xFF},
+     'instruction_budget': 2000000, 'cycle_budget': 8000000},
+]
+CASES['HandleCardAlbumCardPage'] = [
+    *CASES['HandleCardAlbumCardPage'],
+    {'wram': {sym("wCardListCursorPos"): b'\x01', sym("wCardListVisibleOffset"): b'\x00',
+              sym("wOwnedCardsCountList") + 1: b'\x01',
+              sym("wCurCardListPtr"): sym("wFilteredCardList").to_bytes(2, 'little'),
+              sym("wFilteredCardList"): b'\x08\x00\x09\x00\x00\x00'},
+     'read': {sym("wLoadedCard1ID"): 2},
+     'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
+     'keys': [0, 2, 0, 2],
+     'instruction_budget': 20000000, 'cycle_budget': 80000000},
+]
+CASES['CardAlbum'] = [
+    *CASES['CardAlbum'],
+    {'wram': {sym("wConsole"): b'\x02', sym("wLCDC"): b'\x00',
+              sym("hCurMenuItem"): b'\x00'},
+     'sram': {0: {sym("sCardCollection"): b'\x00' + b'\x01' * 228}},
+     'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
+     'keys': [0, 1],
+     'read': {sym("wNumCardListEntries"): 1, sym("wNumEntriesInCurFilter"): 1},
+     'completion': {'mode': 'entry', 'pc': sym("HandleCardAlbumCardPage"),
+                    'bank': sym_bank("HandleCardAlbumCardPage"), 'routine': 'HandleCardAlbumCardPage'},
+     'instruction_budget': 20000000, 'cycle_budget': 80000000},
+]
+MUTATIONS['CreateCardSetListAndInitListCoords'] = {
+    'source': 'src/home/card_album.c',
+    'source_symbol': 'CreateCardSetListAndInitListCoords',
+    'before': 'CopyNBytesFromHLToDE_Long(&hl, &de, (uint16_t)(CARD_COLLECTION_SIZE - 2u));',
+    'after': 'CopyNBytesFromHLToDE(&hl, &de, (uint8_t)(CARD_COLLECTION_SIZE - 1u));',
+    'case_ids': ['CreateCardSetListAndInitListCoords-3'],
+}
+MUTATIONS['CardAlbum'] = {
+    'source': 'src/home/card_album.c',
+    'source_symbol': 'CardAlbum',
+    'before': 'for (uint16_t hl = wFilteredCardList_ADDR;; hl = (uint16_t)(hl + sizeof(CardId))) {\n'
+              '\t\tif (card_id_read_at(hl) == 0u)\n\t\t\tbreak;\n\t\tcount++;\n\t}',
+    'after': 'for (uint16_t hl = wFilteredCardList_ADDR; gb_read8(hl) != 0u; hl++)\n\t\tcount++;',
+    'case_ids': ['CardAlbum-3'],
+}
+MUTATIONS['HandleCardAlbumCardPage'] = {
+    'source': 'src/home/card_album.c',
+    'source_symbol': 'HandleCardAlbumCardPage',
+    'before': 'hl = (uint16_t)(hl + (uint16_t)c * sizeof(CardId));\n'
+              '\t\t\tCardId card_id = card_id_read_at(hl);',
+    'after': 'hl = (uint16_t)(hl + c);\n\t\t\tCardId card_id = card_id_read_at(hl);',
+    'case_ids': ['HandleCardAlbumCardPage-3'],
+}
+
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _name, _entries in ((_fn, CASES[_fn]) for _fn in OWN):

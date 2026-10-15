@@ -12905,8 +12905,8 @@ MUTATIONS["LookForCardIDInHand"] = {
 # >>> factory-mutation LookForCardIDInHandList_Bank5
 MUTATIONS["LookForCardIDInHandList_Bank5"] = {
     "source_symbol": "LookForCardIDInHandList_Bank5",
-    "before": "if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) == a)",
-    "after": "if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) != a)",
+    "before": "if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) == card_id)",
+    "after": "if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) != card_id)",
     "case_ids": ["LookForCardIDInHandList_Bank5-0"],
 }
 # <<< factory-mutation LookForCardIDInHandList_Bank5

@@ -18,8 +18,8 @@
   },
   "proof": {
     "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "4135fef9f8fa19c4ec0b073e0d1f7ac4bb7a7393ddccffe46c53d48f664b278c",
-    "case_sha256": "adc0037e39c0eeedfa9fe76181048e81a053df4b5b1c76b75752bfddf6d4071c",
+    "baseline_source_sha256": "b79b811ac5f735901456cc87cc6bf72a860e0d72ea8eed74b36d1593902c742e",
+    "case_sha256": "2345eafe82e8e15dfac9b9c62b0f1699039db6eb9567602d97a01f553d8f7454",
     "schema_sha256": "cecacda65ab566f96c437bac84f376c83f86ccf1eba79b442d9e9fe55e9f46e1",
     "mutation_sha256": "8a3335eb58ed8baff1fb7ba79a75603ac8b1fd33857dfc7e9f4f960f81e9deb8",
     "source": "src/profiles/extended/home/overworld.c",

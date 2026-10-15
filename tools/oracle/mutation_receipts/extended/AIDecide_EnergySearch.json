@@ -18,7 +18,7 @@
   "proof": {
     "schema": "override-mutation-receipt-v2",
     "baseline_source_sha256": "3badf508a4e599b2f2e67f7bf0d243f331f6a88af0963a2cb4682c2c7e1a1bf7",
-    "case_sha256": "5e43a5ddd8e45cb4c6da392394b7929204077f7ef553d8ea6f0c3653d65ad921",
+    "case_sha256": "9cdf8fd57aa0bcb127dc86a0c4381a4e2994af9db080009ee8824d53d0c4a059",
     "schema_sha256": "9134e2a504b7f5d5b1e19faf6b679f56858f3e5d17ef41892a8e520da6db57f9",
     "mutation_sha256": "3b506e13837f3aad31648776be3e88bf22789f1d242a0d47c296b7a730699ef0",
     "source": "src/profiles/extended/home/trainer_cards.c",

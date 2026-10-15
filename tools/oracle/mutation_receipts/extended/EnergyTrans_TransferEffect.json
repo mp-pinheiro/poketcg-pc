@@ -18,8 +18,8 @@
   },
   "proof": {
     "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "4325d685515edd6bee14ddda694a5c43c175a2bc3b918ab387cd1ef4a355344c",
-    "case_sha256": "5077651cecc67715ab300895cd738d5b2b4e381a461fef6c20495ea67c349eb5",
+    "baseline_source_sha256": "135eeb62d1e7d6a93fac61ec2ea2ccc6d1f1af971750bb5ca3405ea0cdda5fdf",
+    "case_sha256": "94aa089bd9e51cfbc87df3db8cc37b89d026bded304c9cad307a92011ff3a146",
     "schema_sha256": "68485f84e885135645a0e573c7b80146fece804289820495ace980d7d0e98855",
     "mutation_sha256": "2ebd9930f677dce676c6831cfbe217324c34384fc0f5c1e1af4683ac97e8a20c",
     "source": "src/profiles/extended/home/effect_functions.c",

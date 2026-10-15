@@ -22,11 +22,17 @@ Start an override file with `just profile-override <profile> <basename> <routine
 
 Use the same block grammar for declarations in `src/home/*.h` and probe adapters in `src/probe/*.c`. Composition is checked with `python3 tools/compose_profile.py check --profile <profile>`; block boundaries are checked with `python3 tools/factory_blocks.py lint`.
 
+After a shared fix makes override bodies identical, run `python3 tools/compose_profile.py deduplicate --profile <profile>`. It replaces identical C bodies with shared declarations and removes identical header and adapter blocks. Update affected mutation sources to the shared file and regenerate their receipts.
+
 Shared C uses `CardId` and the card-id accessors for semantic IDs. `nine_bit_card_ids` selects `CardId`'s width and whether the accessors read or write one byte or two. Shared C names ROM banks and data with generated `<Label>_BANK` and `<Label>_ADDR` symbols. `lint_card_ids.py` resolves `CardId` locals, parameters and calls by lexical scope and rejects any `uint8_t` declaration, assignment, return or cast whose complete operand still carries a semantic ID. Byte extraction for registers or storage uses an explicit `id & 0xFFu` or `id >> 8`, and boolean comparisons remain byte-sized. A routine that leaves the compared byte in `a` after `cp` or `cp16` returns `card_id_compare_a(id, CONSTANT)`, which yields the high byte when a nine-bit compare rejects on it. Run `python3 tools/lint_card_ids.py` and `python3 tools/lint_placement.py` after changing these paths.
+
+The CardId checker retains semantic-ID provenance through wide integer aliases such as `uint16_t`. Console restrictions use `cgb_only`; behavior differences unrelated to ID width use their own feature or named-part constant rather than `nine_bit_card_ids`.
 
 ## Write cases for the changed routines
 
 Shared case modules resolve RAM addresses from the active profile's sym file with `sym("wVariable")` or `sym("wVariable") + offset`. `python3 tools/case_symbols.py --profile <profile>` rewrites a profile's case namespace, and `python3 tools/lint_case_literals.py` rejects raw RAM addresses in all profile case namespaces.
+
+Use `const("NAME")` and `text_id("NameText")` for generated constants and text identifiers. The constant generator includes `deck_const` declarations and their derived `_DECK_ID` values.
 
 A profile case module imports the shared records with `inherit("<basename>", remove=(...))`, then defines only its own routines in `OWN`. Routines with unchanged assembly and no profile-specific C use the shared cases. Routines absent from the profile ROM are listed in `remove`. The `deck_entry(index, card_id)` helper in `tests/cases/_symbols.py` writes one or two bytes according to `nine_bit_card_ids`; profile-specific layout helpers belong there or in a small typed helper module, and case expectations remain tied to ROM behavior.
 

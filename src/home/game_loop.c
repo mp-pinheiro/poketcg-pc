@@ -7,6 +7,7 @@
 #include "home/duel_core.h"
 #include "home/lcd.h"
 #include "home/process_text.h"
+#include "home/text_box.h"
 #include "home/tiles.h"
 /* <<< part includes */
 /* >>> part includes_2 */

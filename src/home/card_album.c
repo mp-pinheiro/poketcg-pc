@@ -323,13 +323,14 @@ HandleCardAlbumCardPageResult HandleCardAlbumCardPage(uint8_t d, uint8_t e)
 		if (gb_read8(hl) != CARD_NOT_OWNED) {
 			hl = (uint16_t)(gb_read8(wCurCardListPtr_ADDR) |
 					((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8));
-			hl = (uint16_t)(hl + c);
-			e = gb_read8(hl);
-			d = 0u;
+			hl = (uint16_t)(hl + (uint16_t)c * sizeof(CardId));
+			CardId card_id = card_id_read_at(hl);
+			e = (uint8_t)(card_id & 0xFFu);
+			d = (uint8_t)(card_id >> 8);
 			/* push de: the pair below is what the matching pop restores,
 			 * so the $38/$9f handed to SetupText and the card page is a
 			 * separate de that never reaches the input handler. */
-			LoadCardDataToBuffer1_FromCardID(e);
+			LoadCardDataToBuffer1_FromCardID(card_id);
 			hl = SetupText(0x38u, 0x9Fu);
 			OpenCardPage_FromCheckHandOrDiscardPile(0u, 0u, 0u, 0u, 0x38u, 0x9Fu, hl);
 		}
@@ -371,11 +372,10 @@ HandleCardAlbumCardPageResult HandleCardAlbumCardPage(uint8_t d, uint8_t e)
 					((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8));
 			c = wCardListCursorPos;
 			b = 0u;
-			hl = (uint16_t)(hl + c);
+			hl = (uint16_t)(hl + (uint16_t)c * sizeof(CardId));
 			c = (uint8_t)(wCardListVisibleOffset + 1u);
-			b = 0u;
-			hl = (uint16_t)(hl + c);
-			if (gb_read8(hl) == 0u) {
+			hl = (uint16_t)(hl + (uint16_t)c * sizeof(CardId));
+			if (card_id_read_at(hl) == 0u) {
 				a = saved_a;
 				goto open_card_page;
 			}
@@ -399,7 +399,7 @@ HandleCardAlbumCardPageResult HandleCardAlbumCardPage(uint8_t d, uint8_t e)
 		}
 		if ((b & PAD_RIGHT) == 0u)
 			goto open_card_page;
-		(void)TryAddCardToDeck(e);
+		(void)TryAddCardToDeck((CardId)((uint16_t)e | ((uint16_t)d << 8)));
 		goto open_card_page;
 
 	got_new_pos:
@@ -444,7 +444,11 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 	uint16_t hl = sCardCollection_ADDR;
 	uint16_t de = wTempCardCollection_ADDR;
 	EnableSRAM();
+#if PROFILE_FEATURE_NINE_BIT_CARD_IDS
+	CopyNBytesFromHLToDE_Long(&hl, &de, (uint16_t)(CARD_COLLECTION_SIZE - 2u));
+#else
 	CopyNBytesFromHLToDE(&hl, &de, (uint8_t)(CARD_COLLECTION_SIZE - 1u));
+#endif
 	DisableSRAM();
 
 	uint8_t prefix = 0x30u;
@@ -498,8 +502,11 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 static uint8_t card_album_num_card_entries(void)
 {
 	uint8_t count = 0u;
-	for (uint16_t hl = wFilteredCardList_ADDR; gb_read8(hl) != 0u; hl++)
+	for (uint16_t hl = wFilteredCardList_ADDR;; hl = (uint16_t)(hl + sizeof(CardId))) {
+		if (card_id_read_at(hl) == 0u)
+			break;
 		count++;
+	}
 	wNumCardListEntries = count;
 	return count;
 }

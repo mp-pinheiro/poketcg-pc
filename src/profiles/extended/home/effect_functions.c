@@ -1,3 +1,7 @@
+/* >>> part NIDORAN_F_CANCEL_CHECK_M */
+#define NIDORAN_F_CANCEL_CHECK_M 1
+/* <<< part NIDORAN_F_CANCEL_CHECK_M */
+
 /* >>> part includes */
 #include "home/effect_functions.h"
 
@@ -604,25 +608,7 @@ CheckAttackResult CheckIfDefendingPokemonHasAnyAttack(void)
 /* <<< factory CheckIfDefendingPokemonHasAnyAttack */
 /* --- factory DodrioRage_DamageBoostEffect */
 /* --- factory CuboneRage_DamageBoostEffect */
-/* >>> factory KrabbyCallForFamily_AISelectEffect */
-/* effect_functions.asm:2946-2966 */
-void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
-{
-	(void)CreateDeckCardList(c, de);
-
-	uint16_t hl = wDuelTempList_ADDR;
-	for (;;) {
-		uint8_t card = gb_read8(hl);
-		hl = (uint16_t)(hl + 1u);
-		hTemp_ffa0 = card;
-		if (card == 0xffu)
-			return;
-		CardId card_id = GetCardIDFromDeckIndex(card);
-		if (card_id == KRABBY)
-			return;
-	}
-}
-/* <<< factory KrabbyCallForFamily_AISelectEffect */
+/* === factory KrabbyCallForFamily_AISelectEffect */
 /* --- factory ArcanineFlamethrower_CheckEnergy */
 /* --- factory ArcanineFlamethrower_DiscardEffect */
 /* >>> factory SolarPower_CheckUse */
@@ -704,21 +690,7 @@ void FocusEnergyEffect(void)
 /* --- factory MagnetonSonicboom_NullEffect */
 /* --- factory ElectrodeSonicboom_UnaffectedByColorEffect */
 /* --- factory ElectrodeSonicboom_NullEffect */
-/* >>> factory BoyfriendsEffect */
-void BoyfriendsEffect(void)
-{
-	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	uint16_t hl = arena.hl;
-	uint8_t c = PLAY_AREA_ARENA;
-	while (gb_read8(hl) != 0xffu) {
-		CardId id = GetCardIDFromDeckIndex(gb_read8(hl));
-		if (id == NIDOKING)
-			c++;
-		hl++;
-	}
-	AddToDamage(ATimes10((uint8_t)(c << 1)));
-}
-/* <<< factory BoyfriendsEffect */
+/* === factory BoyfriendsEffect */
 /* >>> factory ClefairyDoll_BenchCheck */
 ClefairyDollBenchCheckResult ClefairyDoll_BenchCheck(void)
 {

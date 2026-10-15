@@ -29,7 +29,7 @@ def _jj_source_revision(root: Path) -> str:
         root,
         ["jj", "--ignore-working-copy", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
     )
-    for _ in range(256):
+    while True:
         parents = _run(
             root,
             ["jj", "--ignore-working-copy", "log", "-r", revision, "--no-graph",
@@ -46,25 +46,27 @@ def _jj_source_revision(root: Path) -> str:
         if any(path not in DERIVED_PATHS for path in changed):
             return revision
         revision = parent
-    return revision
 
 
 def _git_source_revision(root: Path) -> str:
-    revisions = _run(
-        root, ["git", "rev-list", "--first-parent", "--parents", "--max-count=256", "HEAD"],
-    ).splitlines()
-    if not revisions:
-        raise RuntimeError("no committed revisions")
-    for row in revisions:
-        revision, *parents = row.split()
-        command = (
-            ["git", "diff", "--name-only", parents[0], revision]
-            if parents else ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "--root", revision]
-        )
-        changed = _run(root, command).splitlines()
-        if any(path not in DERIVED_PATHS for path in changed):
-            return revision
-    return revision
+    offset = 0
+    while True:
+        revisions = _run(
+            root, ["git", "rev-list", "--first-parent", "--parents",
+                   "--max-count=256", f"--skip={offset}", "HEAD"],
+        ).splitlines()
+        if not revisions:
+            raise RuntimeError("no committed source revision")
+        for row in revisions:
+            revision, *parents = row.split()
+            command = (
+                ["git", "diff", "--name-only", parents[0], revision]
+                if parents else ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "--root", revision]
+            )
+            changed = _run(root, command).splitlines()
+            if not parents or any(path not in DERIVED_PATHS for path in changed):
+                return revision
+        offset += len(revisions)
 
 
 def current_source_revision(root: Path) -> str:

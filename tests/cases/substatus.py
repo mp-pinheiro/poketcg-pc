@@ -652,8 +652,8 @@ MUTATIONS["CheckUnableToRetreatDueToEffect"] = {
 }
 MUTATIONS["ClearChangedTypesIfMuk"] = {
     "source_symbol": "ClearChangedTypesIfMuk",
-    "before": "\tif ((uint8_t)id != MUK)",
-    "after": "\tif ((uint8_t)id == MUK)",
+    "before": "\tif (id != MUK)",
+    "after": "\tif (id == MUK)",
     "case_ids": ["ClearChangedTypesIfMuk-0"],
 }
 MUTATIONS["ClearDamageReductionSubstatus2"] = {

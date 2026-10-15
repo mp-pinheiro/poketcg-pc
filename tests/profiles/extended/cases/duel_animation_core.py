@@ -505,6 +505,18 @@ CASES.update({
             'hl': 0x3BA2},
     ],
 })
+CASES["_UpdateQueuedAnimations"].append({
+    "wram": {
+        sym("wActiveScreenAnim"): b"\xff",
+        sym("wd4c0"): b"\x80",
+        sym("wAnimationQueue"): b"\x00\xff\xff\xff\xff\xff\xff",
+        sym("wDuelAnimBufferCurPos"): b"\x00",
+        sym("wDuelAnimBufferSize"): b"\x08",
+        sym("wDuelAnim1ID"): b"\x05\x01\xc2\x02\x10\x00\x00\x07",
+        sym("wDoFrameFunction"): b"\x00\x00",
+    },
+    "expect_regs": {"a": 0x00},
+})
 MUTATIONS.update({
     'PlayLoadedDuelAnimation': {   'source_symbol': 'PlayLoadedDuelAnimation',
         'before': '    ClearSpriteVRAMBuffer();\n    ZeroObjectPositions();\n    write(wVBlankOAMCopyToggle_ADDR, 1u);',
@@ -512,11 +524,9 @@ MUTATIONS.update({
         'case_ids': ['PlayLoadedDuelAnimation-1'],
         'source': 'src/profiles/extended/home/duel_animation_core.c'},
     '_UpdateQueuedAnimations': {   'source_symbol': '_UpdateQueuedAnimations',
-        'before': '        uint16_t hl = CallScreenAnimationUpdate();\n'
-                  '        active = read(wActiveScreenAnim_ADDR);',
-        'after': '        uint16_t hl = (uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u);\n'
-                 '        active = read(wActiveScreenAnim_ADDR);',
-        'case_ids': ['_UpdateQueuedAnimations-3'],
+        'before': '        uint8_t a = play_buffered_duel_animations();',
+        'after': '        uint8_t a = read(wDuelAnimBufferCurPos_ADDR);',
+        'case_ids': ['_UpdateQueuedAnimations-5'],
         'source': 'src/home/duel_animation_core.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema

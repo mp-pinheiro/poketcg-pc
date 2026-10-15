@@ -14,3 +14,6 @@ dependencies = [
 [tool.uv]
 no-binary-package = ["pyboy"]
 no-build-isolation-package = ["pyboy"]
+
+[tool.uv.sources]
+pyboy = { path = "vendor/pyboy-2.7.0.tar.gz" }

@@ -1,3 +1,19 @@
+/* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
+static void adapt_RaiseAIScoreToAllMatchingIDsInBench(ProbeState *s)
+{
+	s->hl = RaiseAIScoreToAllMatchingIDsInBench((CardId)((uint16_t)s->b << 8 | s->c));
+}
+/* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
+/* >>> factory AIAttachEnergyInHandToCardInBench */
+static void adapt_AIAttachEnergyInHandToCardInBench(ProbeState *s)
+{
+	CardId pokemon = (CardId)s->c;
+	CardId energy = (CardId)((uint16_t)s->d << 8 | s->e);
+	AIAttachEnergyInHandToCardInBenchResult r = AIAttachEnergyInHandToCardInBench(pokemon, energy);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIAttachEnergyInHandToCardInBench */
 /* --- factory ValidateSavedDuelDataFromHL */
 /* === factory DrawHPBar */
 /* >>> factory ValidateSavedDuelData */

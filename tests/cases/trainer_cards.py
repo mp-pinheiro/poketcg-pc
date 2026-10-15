@@ -1,4 +1,4 @@
-from tests.cases._symbols import sym, sym_bank
+from tests.cases._symbols import card_id_bytes, const, deck_bytes, deck_entry, sym, sym_bank
 from tests.cases._fixtures import ai_energy_retrieval_fixture as _ai_energy_retrieval_fixture, AI_ENERGY_RETRIEVAL_REGS as _AI_ENERGY_RETRIEVAL_REGS
 from tests.cases._fixtures import energy_removal_fixture as _energy_removal_fixture, ENERGY_REMOVAL_REGS as _ENERGY_REMOVAL_REGS
 from tests.cases._fixtures import energy_retrieval_fixture as _energy_retrieval_fixture, ENERGY_RETRIEVAL_REGS as _ENERGY_RETRIEVAL_REGS
@@ -101,6 +101,12 @@ CASES["AIDecide_Recycle"] = [
     dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x00"}),
 ]
 # <<< factory AIDecide_Recycle
+CASES["AIDecide_Recycle"].append({
+    "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x01",
+             sym("wPlayerDeckCards"): b"\x07", sym("wPlayerCardLocations") + 7: b"\x02",
+             **deck_entry(7, const("CHANSEY"), base=sym("wPlayerDeck")),
+             sym("wOpponentDeckID"): b"\x00"},
+})
 
 # >>> factory AIDecide_Imakuni
 CONTRACT["AIDecide_Imakuni"] = {"compare": ("a", "f", "d"), "preserve": ()}
@@ -281,6 +287,28 @@ CASES["AIDecide_PokemonBreeder"] = [
         "expect_regs": {"a": 0x00, "f": 0x80},
     },
 ]
+CASES["AIDecide_PokemonBreeder"].append({
+    "instruction_budget": 2000000, "cycle_budget": 8000000,
+    "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x01",
+             sym("wPlayerHand"): b"\x05", sym("wPlayerCardLocations") + 5: b"\x01",
+             **deck_entry(0, const("BLASTOISE"), base=sym("wPlayerDeck")),
+             **deck_entry(1, const("BULBASAUR"), base=sym("wPlayerDeck")),
+             **deck_entry(5, const("VENUSAUR_LV64"), base=sym("wPlayerDeck")),
+             sym("wPlayerArenaCard"): b"\x01", sym("wPlayerCardLocations") + 1: b"\x10",
+             sym("wPlayerBench"): b"\xFF", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
+             sym("wPlayerArenaCardFlags"): b"\x80", sym("wPlayerArenaCardHP"): b"\x28"},
+})
+CASES["AIDecide_PokemonBreeder"].append({
+    "instruction_budget": 2000000, "cycle_budget": 8000000,
+    "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x01",
+             sym("wPlayerHand"): b"\x00", sym("wPlayerCardLocations"): b"\x01\x10",
+             **deck_entry(0, const("VENUSAUR_LV64"), base=sym("wPlayerDeck")),
+             **deck_entry(1, const("BULBASAUR"), base=sym("wPlayerDeck")),
+             sym("wPlayerArenaCard"): b"\x01", sym("wPlayerBench"): b"\xFF",
+             sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
+             sym("wPlayerArenaCardFlags"): b"\x80", sym("wPlayerArenaCardHP"): b"\x28"},
+    "read": {sym("wce06"): 2, sym("wce08"): 7, sym("wce0f"): 7, sym("wce1a"): 1},
+})
 # <<< factory AIDecide_PokemonBreeder
 
 # >>> factory-cases-statics
@@ -653,6 +681,15 @@ CASES["AIDecide_ComputerSearch_RockCrusher"] = [
     }, "expect": {wce06: b"\x05"}, "read": {sym("wDuelTempList"): 32}},
     dict(POISON, b=0x00, c=0x00, wram={hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00"}, read={sym("wDuelTempList"): 32}),
 ]
+CASES["AIDecide_ComputerSearch_RockCrusher"].append({
+    "b": 0x00, "c": 0x00,
+    "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x03",
+             sym("wPlayerHand"): b"\x01\x02\x03", sym("wPlayerCardLocations"): b"\x00",
+             sym("wPlayerCardLocations") + 1: b"\x01", sym("wPlayerCardLocations") + 2: b"\x01",
+             sym("wPlayerCardLocations") + 3: b"\x01",
+             sym("wPlayerDeck"): deck_bytes([const("PROFESSOR_OAK")] + [const("FIGHTING_ENERGY")] * 3),
+             sym("wAITrainerCardToPlay"): b"\xFF"},
+})
 # <<< factory AIDecide_ComputerSearch_RockCrusher
 
 # >>> factory AIDecide_ComputerSearch
@@ -736,6 +773,12 @@ CASES["AIDecide_PokemonTrader_LegendaryDragonite"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01"}, read={sym("wDuelTempList"): 32}),
 ]
 # <<< factory AIDecide_PokemonTrader_LegendaryDragonite
+CASES["AIDecide_PokemonTrader_LegendaryDragonite"].append({
+    "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00",
+             sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
+             sym("wPlayerDeck"): card_id_bytes(const("KANGASKHAN")),
+             sym("wPlayerCardLocations"): b"\x00"},
+})
 
 # >>> factory AIDecide_Pokeball
 CONTRACT["AIDecide_Pokeball"] = {"compare": ("a", "f", "d"), "preserve": ()}
@@ -800,6 +843,14 @@ CASES["AIDecide_PokemonTrader_Flamethrower"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", sym("wDeckToBuild"): b"\x00" * 0xF00}),
 ]
 # <<< factory AIDecide_PokemonTrader_Flamethrower
+CONTRACT["AIDecide_PokemonTrader_Flamethrower"]["wram_out"] = True
+CASES["AIDecide_PokemonTrader_Flamethrower"].append({
+    "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x00",
+             sym("wPlayerArenaCard"): b"\xFF",
+             sym("wPlayerDeck"): deck_bytes([const("CHARIZARD"), const("CHARMANDER")]),
+             sym("wPlayerCardLocations"): b"\x00\x00"},
+    "read": {sym("wTempAIPokemonCard"): 1},
+})
 
 # >>> factory AIDecide_PokemonTrader_FlowerGarden
 CONTRACT["AIDecide_PokemonTrader_FlowerGarden"] = {"compare": ("a", "f", "d"), "preserve": ()}
@@ -998,6 +1049,26 @@ CASES["AIDecide_SuperEnergyRemoval"] = [
     dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wPlayerArenaCard"): b"\xFF\xFF\xFF\xFF\xFF", sym("wDuelTempList"): b"\xFF"}, keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory AIDecide_SuperEnergyRemoval
+CASES["AIDecide_SuperEnergyRemoval"].append({
+    "instruction_budget": 20000000, "cycle_budget": 80000000,
+    "wram": {sym("hWhoseTurn"): b"\xC3",
+             sym("wOpponentNumberOfPokemonInPlayArea"): b"\x02",
+             sym("wOpponentArenaCard"): b"\x00", sym("wOpponentArenaCardHP"): b"\x32",
+             sym("wOpponentBench"): b"\x0A\xFF",
+             sym("wOpponentDeck"): deck_bytes(
+                 [const("MACHOP")] + [const("GRASS_ENERGY")] * 6 + [const("FIRE_ENERGY")]
+                 + [const("GRASS_ENERGY")] * 2 + [const("MACHOP")]
+                 + [const("GRASS_ENERGY")] * 9 + [const("DOUBLE_COLORLESS_ENERGY")]
+                 + [const("GRASS_ENERGY")] * 39),
+             sym("wOpponentCardLocations"): b"\x10" + bytes(9) + b"\x11" + bytes(9) + b"\x11" + bytes(39),
+             sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
+             sym("wPlayerArenaCard"): b"\x00", sym("wPlayerArenaCardHP"): b"\x28",
+             sym("wPlayerBench"): b"\xFF",
+             sym("wPlayerDeck"): deck_bytes([const("BULBASAUR")] + [const("GRASS_ENERGY")] * 59),
+             sym("wPlayerCardLocations"): b"\x10" + bytes(59),
+             sym("wce0f"): b"\x00"},
+    "read": {sym("wce0f"): 1, sym("hWhoseTurn"): 1},
+})
 
 # >>> factory AIDecide_ScoopUp
 CONTRACT["AIDecide_ScoopUp"] = {"compare": ("a", "f", "d"), "preserve": ()}

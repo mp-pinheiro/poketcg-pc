@@ -3,6 +3,7 @@ from tests.cases._symbols import sym
 from tests.cases._inherit import inherit
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('npc_data', remove=('_GetNPCDuelConfigurations',))
 OWN = (
+    'GetNPCNameAndScript',
     'LoadNPCSpriteData',
 )
 CONTRACT.update({
@@ -42,6 +43,16 @@ CASES.update({
             'read': {sym("wTempNPC"): 0x01, sym("wNPCSpriteID"): 0x01, sym("wNPCAnim"): 0x01, sym("wNPCAnimFlags"): 0x01}},
     ],
 })
+CASES['GetNPCNameAndScript'].append(
+    {'a': 0x67, 'read': {sym("wCurrentNPCNameTx"): 2}}
+)
+MUTATIONS['GetNPCNameAndScript'] = {
+    'source_symbol': 'GetNPCNameAndScript',
+    'before': 'return (GetNPCNameAndScriptResult){rom_ptr(NPC_HEADER_POINTERS_BANK, header.hl)[4], f, script_high, script_low};',
+    'after': 'return (GetNPCNameAndScriptResult){name_high, f, script_high, script_low};',
+    'case_ids': ['GetNPCNameAndScript-5'],
+    'source': 'src/profiles/extended/home/npc_data.c',
+}
 MUTATIONS.update({
     'LoadNPCSpriteData': {   'source_symbol': 'LoadNPCSpriteData',
         'before': '\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, header.hl);',

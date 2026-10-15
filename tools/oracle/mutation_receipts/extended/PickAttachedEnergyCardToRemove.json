@@ -1,0 +1,9 @@
+{
+  "fn": "PickAttachedEnergyCardToRemove",
+  "case": "/home/matheus/git/poketcg/tests/profiles/extended/cases/common.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PickAttachedEnergyCardToRemove\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"101010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"49851\": \"00\", \"50176\": \"280002000600\", \"52543\": \"2800\", \"52600\": \"00\", \"52602\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PickAttachedEnergyCardToRemove\", \"mismatches\": {\"a\": [2, 1], \"bus\": {\"address\": 52544, \"reference\": \"00060028000000c2\", \"native\": \"00060028ff0000c2\", \"reference_size\": 72, \"native_size\": 72, \"spans\": [[49664, 60], [49851, 1], [50176, 6], [52543, 2], [52600, 1], [52602, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"PickAttachedEnergyCardToRemove\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49664\": \"101010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"49851\": \"00\", \"50176\": \"280002000600\", \"52543\": \"2800\", \"52600\": \"00\", \"52602\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

@@ -2,6 +2,7 @@
 #include "home/time.h"
 
 #include "generated/constants.h"
+#include "generated/profile_features.h"
 #include "generated/rom.h"
 #include "generated/wram.h"
 #include "mem.h"
@@ -116,8 +117,10 @@ void SwitchToCGBNormalSpeed(void)
 /* >>> part SwitchToCGBDoubleSpeed */
 void SwitchToCGBDoubleSpeed(void)
 {
+#if !PROFILE_FEATURE_CGB_ONLY
 	if ((CheckForCGB() & 0x10u) != 0u)
 		return;
+#endif
 	uint8_t spd = gb_read8(rSPD);
 	if ((spd & (uint8_t)(1u << B_SPD_DOUBLE)) != 0u)
 		return;

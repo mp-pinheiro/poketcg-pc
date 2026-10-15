@@ -3,7 +3,7 @@
 
 # Concurrent ports set POKETCG_BUILD to a private directory and POKETCG_PORTS to
 # their own pret basenames, so neither ninja state nor a compile error is shared.
-build_dir := env_var_or_default("POKETCG_BUILD", "build")
+build_dir := `python3 tools/profile_path.py build`
 port_files := env_var_or_default("POKETCG_PORTS", "")
 ninja_jobs := env_var_or_default("POKETCG_NINJA_JOBS", "")
 profile_rom := `python3 tools/profile_path.py rom`
@@ -116,7 +116,7 @@ oracle-build-gbref:
     set -euo pipefail
     runtime="${GBRT_RUNTIME_DIR:-$HOME/.local/gbrecomp/gb-recompiled-linux/runtime}"
     cmake -G Ninja -S tools/oracle/gbref -B tools/oracle/gbref/build -DGBRT_RUNTIME_DIR="$runtime" -DCMAKE_BUILD_TYPE=Debug
-    ninja -C tools/oracle/gbref/build gbref_runner
+    ninja {{ninja_jobs}} -C tools/oracle/gbref/build gbref_runner
 
 oracle-audit-cases STAGE:
     python3 tools/audit_oracle_cases.py --stage {{STAGE}}
@@ -138,7 +138,7 @@ hatch-ratchet:
 # Configure + build the C side (gbmem, poketcg_probe).
 build:
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPORT_FILES="{{port_files}}"
-    ninja -C {{build_dir}}
+    ninja {{ninja_jobs}} -C {{build_dir}}
 build-extended: extended-configure
     ninja {{ninja_jobs}} -C {{build_dir}} poketcg-extended poketcg_extended_probe
 
@@ -208,11 +208,11 @@ build-profiles:
     POKETCG_PROFILE=vanilla python3 tools/gen_data.py --sparse-pack --verify --pack {{build_dir}}/completion/data-pack.bin --pack-manifest {{build_dir}}/completion/data-pack.json
     POKETCG_PROFILE=extended python3 tools/gen_data.py --sparse-pack --verify --pack {{build_dir}}/completion/data-pack-extended.bin --pack-manifest {{build_dir}}/completion/data-pack-extended.json
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_ENABLE_EXTENDED=ON -DPOKETCG_ENABLE_LAUNCHER=ON -DPOKETCG_DATA_PACK="{{build_dir}}/completion/data-pack.bin" -DPOKETCG_PROFILE_EXTENDED_DATA_PACK="{{build_dir}}/completion/data-pack-extended.bin" -DPORT_FILES=""
-    ninja -C {{build_dir}} poketcg poketcg_probe poketcg-extended poketcg_extended_probe poketcg-launcher
+    ninja {{ninja_jobs}} -C {{build_dir}} poketcg poketcg_probe poketcg-extended poketcg_extended_probe poketcg-launcher
 
 debug-build:
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_DEBUG_MENU=ON -DPORT_FILES=""
-    ninja -C {{build_dir}}
+    ninja {{ninja_jobs}} -C {{build_dir}}
 
 # Launch the port with a window. Requires `just build` and `just completion-data-pack`;
 # the configure step must have printed "SDL2 backend: compiled in". Extra arguments
@@ -231,7 +231,7 @@ play-extended *ARGS:
 # Fixed central barrier build; ignores slice-scoped environment variables.
 build-barrier:
     cmake -G Ninja -B build-barrier -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPORT_FILES=""
-    ninja -C build-barrier
+    ninja {{ninja_jobs}} -C build-barrier
 
 # Rebuild an already configured private tree without re-running CMake.
 build-incremental:
@@ -246,7 +246,7 @@ build-incremental:
         echo "run just build after choosing a new POKETCG_BUILD or POKETCG_PORTS" >&2
         exit 2
     }
-    ninja -C "{{build_dir}}"
+    ninja {{ninja_jobs}} -C "{{build_dir}}"
 
 oracle-warm FN: build-incremental
     #!/usr/bin/env bash
@@ -282,8 +282,8 @@ oracle-diff-group GROUP: build
 oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
     python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath {{profile_rom}})" --symbols "$(realpath {{profile_sym}})" --probe "$(realpath {{profile_probe}})" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 
-oracle-fn-all: oracle-build-gbref build-barrier lint-adapters lint-blocks lint-placement lint-card-ids
-    python3 tools/oracle/fn_all.py --rom "$(realpath {{profile_rom}})" --symbols "$(realpath {{profile_sym}})" --probe "$(realpath {{profile_probe}})" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
+oracle-fn-all JOBS="1": oracle-build-gbref build-barrier lint-adapters lint-blocks lint-placement lint-card-ids
+    python3 tools/oracle/fn_all.py --rom "$(realpath {{profile_rom}})" --symbols "$(realpath {{profile_sym}})" --probe "$(realpath {{profile_probe}})" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)" --jobs {{JOBS}}
 
 oracle-fn-gate: oracle-health-gbref oracle-fn-all
     python3 tools/audit_oracle_cases.py --stage routine
@@ -563,7 +563,7 @@ completion-frame-census SCENARIO *ARGS:
 # Instrumented lane for the bilateral call-count diff and the CFG audit producer.
 build-trace:
     cmake -G Ninja -S . -B {{build_dir}}-trace -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPOKETCG_TRACE=ON
-    ninja -C {{build_dir}}-trace
+    ninja {{ninja_jobs}} -C {{build_dir}}-trace
 
 # Per-routine call-count diff, native against the reference stream.
 completion-trace-diff SCENARIO *ARGS:

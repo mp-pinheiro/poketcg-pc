@@ -43,3 +43,28 @@ class SourceRevisionTests(unittest.TestCase):
             progress.write_text("{}\n")
             commit("chore(progress): daily snapshot")
             self.assertEqual(_git_source_revision(root), merge)
+
+    def test_more_than_256_daily_snapshots_keep_the_source_revision(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+
+            def git(*args: str) -> str:
+                return subprocess.run(
+                    ["git", *args], cwd=root, text=True, capture_output=True, check=True,
+                ).stdout.strip()
+
+            git("init", "-q", "-b", "main")
+            git("config", "user.name", "Fixture")
+            git("config", "user.email", "fixture@example.invalid")
+            git("config", "commit.gpgsign", "false")
+            (root / "runtime.c").write_text("base\n")
+            progress = root / "site/data/history.jsonl"
+            progress.parent.mkdir(parents=True)
+            progress.write_text("{}\n")
+            git("add", ".")
+            git("commit", "-qm", "feat(runtime): establish base")
+            source = git("rev-parse", "HEAD")
+            for day in range(260):
+                progress.write_text(f'{{"day":{day}}}\n')
+                git("commit", "-qam", "chore(progress): daily snapshot")
+            self.assertEqual(_git_source_revision(root), source)

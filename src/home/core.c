@@ -1,3 +1,7 @@
+/* >>> part BUFFERED_ANIM_RESET_OBJ_SIZE */
+#define BUFFERED_ANIM_RESET_OBJ_SIZE 0
+/* <<< part BUFFERED_ANIM_RESET_OBJ_SIZE */
+
 /* >>> part includes */
 #include "home/core.h"
 #include <setjmp.h>
@@ -420,27 +424,6 @@ CardPageResult CardPageSwitch_00(void)
 #include "home/random.h"
 /* <<< part includes_MUSCLES_FOR_BRAINS_DECK_ID */
 
-/* >>> part MUSCLES_FOR_BRAINS_DECK_ID */
-/* Opponent deck IDs (deck_constants.asm). These six non-boss decks are the ones
- * whose AI skips a pending Trainer-card action half the time instead of a
- * quarter of the time. */
-#define MUSCLES_FOR_BRAINS_DECK_ID      0x1cu
-/* <<< part MUSCLES_FOR_BRAINS_DECK_ID */
-/* >>> part BLISTERING_POKEMON_DECK_ID */
-#define BLISTERING_POKEMON_DECK_ID      0x20u
-/* <<< part BLISTERING_POKEMON_DECK_ID */
-/* >>> part WATERFRONT_POKEMON_DECK_ID */
-#define WATERFRONT_POKEMON_DECK_ID      0x22u
-/* <<< part WATERFRONT_POKEMON_DECK_ID */
-/* >>> part BOOM_BOOM_SELFDESTRUCT_DECK_ID */
-#define BOOM_BOOM_SELFDESTRUCT_DECK_ID  0x26u
-/* <<< part BOOM_BOOM_SELFDESTRUCT_DECK_ID */
-/* >>> part KALEIDOSCOPE_DECK_ID */
-#define KALEIDOSCOPE_DECK_ID            0x2au
-/* <<< part KALEIDOSCOPE_DECK_ID */
-/* >>> part RESHUFFLE_DECK_ID */
-#define RESHUFFLE_DECK_ID               0x33u
-/* <<< part RESHUFFLE_DECK_ID */
 
 /* >>> part includes_PlayInOrderResult */
 #include "home/duel.h"
@@ -2475,6 +2458,9 @@ AnimBufferResult PlayBufferedDuelAnimations(void)
 		wDuelAnimSetScreen = gb_read8((uint16_t)(src + 6u));
 		wDuelAnimReturnBank = gb_read8((uint16_t)(src + 7u));
 
+#if BUFFERED_ANIM_RESET_OBJ_SIZE
+		Set_OBJ_8x8();
+#endif
 		PlayLoadedDuelAnimation();
 		AnimationStatusResult r = CheckAnyAnimationPlaying();
 		a = r.a;
@@ -2992,9 +2978,9 @@ CoreCardListResult LookForCardIDInHand(uint8_t a)
 /* >>> factory LookForCardIDInHandList_Bank5 */
 /* ai/core.asm:724-742. Every candidate index is parked in
  * hTempCardIndex_ff98 as it is tried; the card id to find in wTempCardIDToLook. */
-CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a)
+CoreCardListResult LookForCardIDInHandList_Bank5(CardId card_id)
 {
-	wTempCardIDToLook = a;
+	wTempCardIDToLook = card_id;
 	(void)CreateHandCardList(0u);
 	uint16_t list = wDuelTempList_ADDR;
 	for (;;) {
@@ -3002,7 +2988,7 @@ CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a)
 		if (deck_index == 0xFFu)
 			return (CoreCardListResult){0xFFu, 0xC0u};
 		hTempCardIndex_ff98 = deck_index;
-		if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) == a)
+		if ((uint8_t)LoadCardDataToBuffer1_FromDeckIndex(deck_index) == card_id)
 			return (CoreCardListResult){deck_index, 0x90u};
 	}
 }
@@ -3099,7 +3085,7 @@ CheckIfOpponentHasBossDeckIDResult CheckIfOpponentHasBossDeckID(uint8_t a)
 
 
 /* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
-uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a)
+uint16_t RaiseAIScoreToAllMatchingIDsInBench(CardId card_id)
 {
 	DuelistVarResult bench = GetTurnDuelistVariable(0xBCu);
 	uint8_t e = 0u;
@@ -3109,7 +3095,7 @@ uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a)
 		bench.hl = (uint16_t)(bench.hl + 1u);
 		if (deck_index == 0xFFu)
 			return bench.hl;
-		if (GetCardIDFromDeckIndex(deck_index) != a)
+		if (GetCardIDFromDeckIndex(deck_index) != card_id)
 			continue;
 		uint16_t score = (uint16_t)(wPlayAreaEnergyAIScore_ADDR + e);
 		gb_write8(score, (uint8_t)(gb_read8(score) + 5u));
@@ -4405,15 +4391,15 @@ void PrintPracticeDuelLetsPlayTheGame(void)
 /* <<< factory PrintPracticeDuelLetsPlayTheGame */
 
 /* >>> factory AIAttachEnergyInHandToCardInBench */
-AIAttachEnergyInHandToCardInBenchResult AIAttachEnergyInHandToCardInBench(uint8_t d, uint8_t e)
+AIAttachEnergyInHandToCardInBenchResult AIAttachEnergyInHandToCardInBench(CardId pokemon_id, CardId energy_id)
 {
-	CoreCardListResult hand = LookForCardIDInHandList_Bank5(e);
+	CoreCardListResult hand = LookForCardIDInHandList_Bank5(energy_id);
 	if ((hand.f & 0x10u) == 0u)
 		return (AIAttachEnergyInHandToCardInBenchResult){hand.a, hand.f};
 	/* ai/core.asm:807-814: the same attach, but the Pokemon is looked up
 	 * from PLAY_AREA_BENCH_1. */
 	uint8_t energy = hand.a;
-	LookResult location = LookForCardIDInPlayArea_Bank5(d, PLAY_AREA_BENCH_1);
+	LookResult location = LookForCardIDInPlayArea_Bank5(pokemon_id, PLAY_AREA_BENCH_1);
 	hTempPlayAreaLocation_ffa1 = location.a;
 	hTemp_ffa0 = energy;
 	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY, 0u, 0u, 0u, 0u);
@@ -5560,7 +5546,7 @@ uint8_t LookForEnergyNeededInHand(void)
 				return (uint8_t)((cr.f & 0x80u) | 0x10u);
 			last = cr.a;
 		} else {
-			CoreCardListResult cr = LookForCardIDInHandList_Bank5(r1.e);
+			CoreCardListResult cr = LookForCardIDInHandList_Bank5((CardId)((uint16_t)r1.d << 8 | r1.e));
 			if (cr.f & 0x10u)
 				return cr.f;
 			last = cr.a;
@@ -5584,7 +5570,7 @@ uint8_t LookForEnergyNeededInHand(void)
 				return (uint8_t)((cr.f & 0x80u) | 0x10u);
 			last = cr.a;
 		} else {
-			CoreCardListResult cr = LookForCardIDInHandList_Bank5(r2.e);
+			CoreCardListResult cr = LookForCardIDInHandList_Bank5((CardId)((uint16_t)r2.d << 8 | r2.e));
 			if (cr.f & 0x10u)
 				return cr.f;
 			last = cr.a;
@@ -7449,7 +7435,7 @@ void OpenActivePokemonScreen(void)
 	LoadCardDataToBuffer1_FromCardID(card_id);
 	wCurPlayAreaSlot = 0u;
 	wCurPlayAreaY = 0u;
-	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
+	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)(card_id & 0xFFu), card_id);
 }
 /* <<< factory OpenActivePokemonScreen */
 
@@ -7512,7 +7498,7 @@ draw_screen:
 			DuelistVarResult arena = GetTurnDuelistVariable(item);
 			uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
 			LoadCardDataToBuffer1_FromCardID(card_id);
-			OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
+			OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)(card_id & 0xFFu), card_id);
 			goto draw_screen;
 		}
 		uint8_t menu_item = hCurMenuItem;
@@ -8720,10 +8706,10 @@ LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void
 				return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u), d};
 			return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)((list.f & 0x80u) | 0x10u), d};
 		}
-		CoreCardListResult list = LookForCardIDInHandList_Bank5(energy.e);
+		CoreCardListResult list = LookForCardIDInHandList_Bank5((CardId)((uint16_t)energy.d << 8 | energy.e));
 		if ((list.f & 0x10u) != 0u)
-			return (LookForEnergyNeededForAttackInHandResult){list.a, list.f, 0xC5u};
-		return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u), 0xC5u};
+			return (LookForEnergyNeededForAttackInHandResult){list.a, list.f, PROFILE_FEATURE_NINE_BIT_CARD_IDS ? energy.d : 0xC5u};
+		return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u), PROFILE_FEATURE_NINE_BIT_CARD_IDS ? energy.d : 0xC5u};
 	}
 	if (total != 2u)
 		return (LookForEnergyNeededForAttackInHandResult){total, (uint8_t)(total == 0u ? 0x80u : 0u), d};
@@ -8731,8 +8717,8 @@ LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void
 		return (LookForEnergyNeededForAttackInHandResult){energy.c, (uint8_t)(energy.c == 0u ? 0x80u : 0u), d};
 	CoreCardListResult list = LookForCardIDInHandList_Bank5(DOUBLE_COLORLESS_ENERGY);
 	if ((list.f & 0x10u) != 0u)
-		return (LookForEnergyNeededForAttackInHandResult){list.a, list.f, 0xC5u};
-	return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u), 0xC5u};
+		return (LookForEnergyNeededForAttackInHandResult){list.a, list.f, PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u};
+	return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u), PROFILE_FEATURE_NINE_BIT_CARD_IDS ? 0u : 0xC5u};
 }
 /* <<< factory LookForEnergyNeededForAttackInHand */
 
@@ -8944,7 +8930,7 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
 			hTemp_ffa0 = 0x01u;
 			LookForCardThatIsKnockedOutOnDevolutionResult r = LookForCardThatIsKnockedOutOnDevolution(0x00u);
 			hTempPlayAreaLocation_ffa1 = r.a;
-			flags = 0x10u;
+			flags = (uint8_t)(0x10u | (r.f & 0x80u));
 		}
 	} else if (card_id == MEWTWO_ALT_LV60 || card_id == MEWTWO_LV60) {
 		last_a = selected_attack;
@@ -8954,14 +8940,18 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
 			LookForCardIDInLocationResult psychic = LookForCardIDInLocation_Bank5(CARD_LOCATION_DISCARD_PILE, PSYCHIC_ENERGY);
 			hTemp_ffa0 = psychic.a;
 			(void)CreateEnergyCardListFromDiscardPile_AllEnergy();
+			uint8_t found = 0u;
 			for (uint8_t i = 0u; i != 0xFFu; ++i) {
 				uint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR + i));
 				if (entry == 0xFFu)
 					break;
-				if (entry != hTemp_ffa0)
+				if (entry != hTemp_ffa0) {
 					hTempPlayAreaLocation_ffa1 = entry;
+					found = 1u;
+					break;
+				}
 			}
-			flags = 0x10u;
+			flags = found != 0u ? 0x10u : 0x90u;
 		}
 	} else if (card_id == EXEGGUTOR) {
 		last_a = selected_attack;
@@ -9937,7 +9927,7 @@ HandleSpecialDuelMainSceneHotkeysResult HandleSpecialDuelMainSceneHotkeys(uint8_
 		LoadCardDataToBuffer1_FromCardID(card_id);
 		wCurPlayAreaSlot = 0u;
 		wCurPlayAreaY = 0u;
-		OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
+		OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)(card_id & 0xFFu), card_id);
 		return (HandleSpecialDuelMainSceneHotkeysResult){0u, 0x10u};
 	}
 	if ((pressed & PAD_SELECT) != 0u) {

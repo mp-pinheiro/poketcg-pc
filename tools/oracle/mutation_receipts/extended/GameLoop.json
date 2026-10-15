@@ -1,31 +1,30 @@
 {
   "fn": "GameLoop",
   "case": "tests/profiles/extended/cases/game_loop.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"GameLoop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40966\": \"02\", \"40969\": \"01\"}}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"52384\": \"01\", \"52411\": \"01\", \"52749\": \"02\", \"65424\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"GameLoop\", \"mismatches\": {\"bus\": {\"address\": 52411, \"reference\": \"0201010200\", \"native\": \"0201000200\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51892, 1], [52384, 1], [52411, 1], [52749, 1], [65424, 1]]}}}\n",
-  "restored": "{\"fn\": \"GameLoop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40966\": \"02\", \"40969\": \"01\"}}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"52384\": \"01\", \"52411\": \"01\", \"52749\": \"02\", \"65424\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"GameLoop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"39264\": \"181c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c19\", \"39332\": \"38393a3b3c393d3e3f404100000000\", \"51892\": \"00\", \"51894\": \"00\", \"65424\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GameLoop\", \"mismatches\": {\"bus\": {\"address\": 39264, \"reference\": \"181c1c1c1c\", \"native\": \"0000000000\", \"reference_size\": 38, \"native_size\": 38, \"spans\": [[39264, 20], [39332, 15], [51892, 1], [51894, 1], [65424, 1]]}}}\n",
+  "restored": "{\"fn\": \"GameLoop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"39264\": \"181c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c19\", \"39332\": \"38393a3b3c393d3e3f404100000000\", \"51892\": \"00\", \"51894\": \"00\", \"65424\": \"00\"}}, \"status\": \"PASS\"}\n",
   "mutation": {
     "source_symbol": "GameLoop",
-    "before": "\twUppercaseHalfWidthLetters = 1u;",
-    "after": "\twUppercaseHalfWidthLetters = 0u;",
+    "before": "\tif (wConsole != 2u)",
+    "after": "\tif (wConsole == 2u)",
     "case_ids": [
-      "GameLoop-0",
-      "GameLoop-1"
+      "GameLoop-2"
     ],
     "source": "src/profiles/extended/home/game_loop.c"
   },
   "proof": {
     "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "58b8b03befe9030a51c3c1629eda7dbd39aecc5a718540d7394bedffae735f7f",
-    "case_sha256": "fdaa8eba3cd918a5dd77d4678a5ca1659cd77856fbd24847b4767a2af3f1642e",
-    "schema_sha256": "b0f76ef500b558f0fb101a0035cf611409005d3d411ba2fa96dc39b8f944622c",
-    "mutation_sha256": "3b4061aebdb9e5846c9aab5a2b94a32ee9b3432ecf244db304bb6cdb837734b2",
+    "baseline_source_sha256": "ee4256a1e8eb9baecf8d19b1f01b5ba1844e1008cbda9409694ae199c4702476",
+    "case_sha256": "009b160a40d73c2553bb1a49680334813e04604a89fcea67f745f5934c6abf74",
+    "schema_sha256": "1e52dbb5a4791176352272f6e40756b1c7970792d68592827f9a4ec991314747",
+    "mutation_sha256": "372f77e38b4189df6c06eba9edb07a99c85bc7b14d0fb2a17fecfeed678b3ead",
     "source": "src/profiles/extended/home/game_loop.c",
     "source_symbol": "GameLoop",
     "case": "tests/profiles/extended/cases/game_loop.py",
     "fn": "GameLoop",
-    "index": 0
+    "index": 2
   }
 }

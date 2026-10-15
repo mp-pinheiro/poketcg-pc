@@ -60,8 +60,8 @@ def run_group(group: str, probe: Path, rom: Path, deadline: int) -> dict[str, ob
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--build", type=Path, default=Path(os.environ.get("POKETCG_BUILD", "build-ext-cmake")))
-    parser.add_argument("--output", type=Path, default=ROOT / "build-extended" / "completion" / "scoreboard.json")
+    parser.add_argument("--build", type=Path)
+    parser.add_argument("--output", type=Path)
     parser.add_argument("--jobs", type=int, default=3)
     parser.add_argument("--deadline", type=int, default=900)
     parser.add_argument("groups", nargs="*")
@@ -71,7 +71,9 @@ def main() -> int:
     import routines
 
     profile = get_profile("extended", ROOT)
-    build = args.build if args.build.is_absolute() else ROOT / args.build
+    selected_build = args.build or profile.build_path(ROOT)
+    build = selected_build if selected_build.is_absolute() else ROOT / selected_build
+    output = args.output or build / "completion" / "scoreboard.json"
     probe = build / profile.probe
     rom = profile.rom_path(ROOT)
     groups = args.groups or sorted(routines.ROUTINES)
@@ -87,8 +89,8 @@ def main() -> int:
     registered = len(routines.ALL)
     summary = {"schema": 1, "build": str(build), "registered": registered, "evaluated": total,
                "passing": total_pass, "groups": results}
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
     print(f"scoreboard: registered={registered} evaluated={total} passing={total_pass}")
     return 0
 

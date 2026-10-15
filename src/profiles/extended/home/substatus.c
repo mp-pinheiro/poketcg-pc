@@ -185,31 +185,7 @@ PkmnPowerCountResult IsClairvoyanceActive(void)
 	return CountTurnDuelistPokemonWithActivePkmnPower(OMANYTE);
 }
 /* <<< factory IsClairvoyanceActive */
-/* >>> factory GetLoadedCard1RetreatCost */
-uint8_t GetLoadedCard1RetreatCost(void)
-{
-	uint8_t dodrio_count = 0;
-	uint16_t bench = GetTurnDuelistVariable(DUELVARS_BENCH).hl;
-	while (gb_read8(bench) != 0xFFu) {
-		CardId id = GetCardIDFromDeckIndex(gb_read8(bench));
-		if (id == DODRIO)
-			dodrio_count++;
-		bench++;
-	}
-
-	uint8_t regular_cost = gb_read8(wLoadedCard1RetreatCost_ADDR);
-	if (dodrio_count == 0)
-		return regular_cost;
-
-	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
-	if (muk.f & 0x10u)
-		return regular_cost;
-
-	if (regular_cost >= dodrio_count)
-		return (uint8_t)(regular_cost - dodrio_count);
-	return 0;
-}
-/* <<< factory GetLoadedCard1RetreatCost */
+/* === factory GetLoadedCard1RetreatCost */
 /* >>> factory IsPrehistoricPowerActive */
 PrehistoricPowerResult IsPrehistoricPowerActive(uint16_t hl)
 {
@@ -232,18 +208,7 @@ PkmnPowerCountResult IsRainDanceActive(void)
 	return (PkmnPowerCountResult){muk.a, f, muk.de};
 }
 /* <<< factory IsRainDanceActive */
-/* >>> factory ClearChangedTypesIfMuk */
-void ClearChangedTypesIfMuk(uint8_t a)
-{
-	CardId id = GetCardIDFromDeckIndex(a);
-	if (id != MUK)
-		return;
-	SwapTurn();
-	zero_changed_type_run();
-	SwapTurn();
-	zero_changed_type_run();
-}
-/* <<< factory ClearChangedTypesIfMuk */
+/* === factory ClearChangedTypesIfMuk */
 /* >>> factory CheckRainDanceScenario */
 RainDanceResult CheckRainDanceScenario(void)
 {

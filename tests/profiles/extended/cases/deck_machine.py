@@ -19,6 +19,7 @@ OWN = (
     'HandleDeckMissingCardsList',
     'PrintDeckMachineEntry',
     'TryBuildDeckMachineDeck',
+    'HandleDeckMachineSelection',
 )
 CONTRACT.update({
     'PrintDeckMachineEntry': {'compare': ('a', 'f'), 'preserve': ()},
@@ -2479,6 +2480,28 @@ for _index, _record in enumerate(CASES['HandleDeckMissingCardsList']):
                                  'routine': 'DoFrame'}
     else:
         _record['evidence'] = 'native-stress'
+CASES['HandleDeckMachineSelection'] = [
+    *CASES['HandleDeckMachineSelection'],
+    {'wram': {sym("wLCDC"): b'\x00', sym("wCardListVisibleOffset"): b'\x00',
+              sym("wCardListCursorPos"): b'\x00', sym("wNumDeckMachineEntries"): b'\x05',
+              sym("wMachineDeckPtrs"): sym("sSavedDeck1").to_bytes(2, 'little') * 5,
+              sym("hffb3"): b'\x00'},
+     'sram': {0: {sym("sSavedDeck1Name"): b'\x03\x30' + bytes(22),
+                  sym("sSavedDeck1Cards"): (b'\x00' + b'\x01' * 8) * 7 + b'\x00' + b'\x01' * 4}},
+     'setup': [{'fn': 'CopyDMAFunction'}, {'fn': 'SetupText', 'd': 0x20, 'e': 0x40}],
+     'keys': [0, 8, 0, 2, 0, 2],
+     'read': {sym("wCurDeck"): 1, sym("wCardListVisibleOffset"): 1,
+              sym("wTempCardListVisibleOffset"): 1, sym("wCardListCursorPos"): 1},
+     'instruction_budget': 20000000, 'cycle_budget': 80000000},
+]
+MUTATIONS['HandleDeckMachineSelection'] = {
+    'source': 'src/home/deck_machine.c',
+    'source_symbol': 'HandleDeckMachineSelection',
+    'before': 'n |= gb_read8((uint16_t)(deck + DECK_NAME_SIZE + 1u));',
+    'after': 'n |= 0u;',
+    'case_ids': ['HandleDeckMachineSelection-2'],
+}
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 SCHEMA2_CASES['HandleDeckMissingCardsList'][0]['completion'] = {

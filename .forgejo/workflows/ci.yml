@@ -84,7 +84,7 @@ jobs:
       - name: Lint CardId width
         run: python3 tools/lint_card_ids.py
       - name: Run tooling tests
-        run: python3 -m unittest tests.test_coverage_loop tests.test_completion_evidence tests.test_compose_profile tests.test_profile_path tests.test_lint_card_ids tests.test_profile_audit tests.test_release_attestation tests.test_progress_history tests.test_source_revision
+        run: python3 -m unittest tests.test_coverage_loop tests.test_completion_evidence tests.test_compose_profile tests.test_profile_path tests.test_lint_card_ids tests.test_profile_audit tests.test_release_attestation tests.test_progress_history tests.test_source_revision tests.test_gen_constants tests.test_package_profiles
       - name: Ensure .jj marker
         run: mkdir -p .jj
       - name: Verify PreToolUse guards

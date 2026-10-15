@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_PokemonBreeder",
+  "case": "/home/matheus/git/poketcg/tests/profiles/extended/cases/trainer_cards.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49665\": \"10\", \"49669\": \"01\", \"49730\": \"05\", \"49851\": \"01ff\", \"49858\": \"80\", \"49864\": \"28\", \"49902\": \"0101\", \"50176\": \"43000800\", \"50186\": \"0a00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_PokemonBreeder\", \"mismatches\": {\"a\": [255, 0], \"f\": [0, 144]}}\n",
+  "restored": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49665\": \"10\", \"49669\": \"01\", \"49730\": \"05\", \"49851\": \"01ff\", \"49858\": \"80\", \"49864\": \"28\", \"49902\": \"0101\", \"50176\": \"43000800\", \"50186\": \"0a00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

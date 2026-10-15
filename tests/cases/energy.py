@@ -217,7 +217,7 @@ MUTATIONS["DetermineAIScoreOfAttackEnergyRequirement"] = {"source_symbol": "Dete
 MUTATIONS["AIProcessEnergyCards"] = {"source_symbol": "AIProcessEnergyCards", "before": "\t\tgb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR + i), 0x80u);", "after": "\t\tgb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR + i), 0x81u);", "case_ids": ["AIProcessEnergyCards-0", "AIProcessEnergyCards-2"]}
 # <<< factory-mutation AIProcessEnergyCards
 # >>> factory-mutation AIProcessAndTryToPlayEnergy
-MUTATIONS["AIProcessAndTryToPlayEnergy"] = {"source_symbol": "AIProcessAndTryToPlayEnergy", "before": "void AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;", "after": "void AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 1u;", "case_ids": ["AIProcessAndTryToPlayEnergy-0", "AIProcessAndTryToPlayEnergy-1"]}
+MUTATIONS["AIProcessAndTryToPlayEnergy"] = {"source_symbol": "AIProcessAndTryToPlayEnergy", "before": "AIEnergyResult AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;", "after": "AIEnergyResult AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 1u;", "case_ids": ["AIProcessAndTryToPlayEnergy-0", "AIProcessAndTryToPlayEnergy-1"]}
 # <<< factory-mutation AIProcessAndTryToPlayEnergy
 # >>> factory-mutation AIProcessButDontPlayEnergy_SkipEvolution
 MUTATIONS["AIProcessButDontPlayEnergy_SkipEvolution"] = {"source_symbol": "AIProcessButDontPlayEnergy_SkipEvolution", "before": "\tgb_write8(de, wAIScore);\n\treturn AIProcessEnergyCards();\n}\n/* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */", "after": "\twAIScore = gb_read8(hl);\n\treturn AIProcessEnergyCards();\n}\n/* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */", "case_ids": ["AIProcessButDontPlayEnergy_SkipEvolution-0"]}

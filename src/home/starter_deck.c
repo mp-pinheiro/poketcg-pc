@@ -2,6 +2,7 @@
 #include "home/starter_deck.h"
 #include "home/deck_selection.h"
 #include "home/duel.h"
+#include "home/card_id_bus.h"
 
 #include "generated/constants.h"
 #include "generated/hram.h"
@@ -18,15 +19,6 @@
 /* >>> part PLAYER_TURN */
 #define PLAYER_TURN 0xc2u
 /* <<< part PLAYER_TURN */
-/* >>> part CHARMANDER_AND_FRIENDS_DECK */
-#define CHARMANDER_AND_FRIENDS_DECK 0x05u
-/* <<< part CHARMANDER_AND_FRIENDS_DECK */
-/* >>> part SQUIRTLE_AND_FRIENDS_DECK */
-#define SQUIRTLE_AND_FRIENDS_DECK 0x07u
-/* <<< part SQUIRTLE_AND_FRIENDS_DECK */
-/* >>> part BULBASAUR_AND_FRIENDS_DECK */
-#define BULBASAUR_AND_FRIENDS_DECK 0x09u
-/* <<< part BULBASAUR_AND_FRIENDS_DECK */
 
 
 /* >>> part kStarterCardIDs */

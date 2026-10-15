@@ -1516,7 +1516,17 @@ CASES["HandleCheckMenuInput_YourOrOppPlayArea"] = [
     dict(POISON, wram={hDPadHeld: b"\x00", hKeysPressed: b"\x00", wCheckMenuCursorBlinkCounter: b"\x00",
                        wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00"},
          vread={0: {0x9800: 0x400}}),
+    {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x02",
+              wCheckMenuCursorBlinkCounter: b"\x00",
+              wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00"}},
 ]
+for _mode, _y in ((0, 0), (0, 1), (1, 0), (1, 1)):
+    CASES["HandleCheckMenuInput_YourOrOppPlayArea"].append({
+        "wram": {hDPadHeld: b"\x10", hKeysPressed: b"\x00", sym("wce5e"): bytes([_mode]),
+                 wCheckMenuCursorBlinkCounter: b"\x00",
+                 wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: bytes([_y])},
+        "read": {wCheckMenuCursorXPosition: 1, wCheckMenuCursorYPosition: 1},
+    })
 # <<< factory HandleCheckMenuInput_YourOrOppPlayArea
 
 # >>> factory DrawYourOrOppPlayArea_Icons
@@ -2192,9 +2202,9 @@ MUTATIONS["DisplayCheckMenuCursor_YourOrOppPlayArea"] = {"source_symbol": "Displ
 # >>> factory-mutation HandleCheckMenuInput_YourOrOppPlayArea
 MUTATIONS["HandleCheckMenuInput_YourOrOppPlayArea"] = {
     "source_symbol": "HandleCheckMenuInput_YourOrOppPlayArea",
-    "before": "\tif ((new_counter & (1u << B_CURSOR_BLINK_PERIOD)) == 0u) {",
-    "after": "\tif ((new_counter & (1u << B_CURSOR_BLINK_PERIOD)) != 0u) {",
-    "case_ids": ["HandleCheckMenuInput_YourOrOppPlayArea-0", "HandleCheckMenuInput_YourOrOppPlayArea-1"],
+    "before": "\t\treturn (TempListResult){MENU_CANCEL, 0x90u};",
+    "after": "\t\treturn (TempListResult){MENU_CANCEL, 0x10u};",
+    "case_ids": ["HandleCheckMenuInput_YourOrOppPlayArea-2"],
 }
 # <<< factory-mutation HandleCheckMenuInput_YourOrOppPlayArea
 # >>> factory-mutation DrawYourOrOppPlayArea_Icons
@@ -2594,8 +2604,8 @@ MUTATIONS["LoadNonPokemonCardEffectCommands"] = {
 }
 MUTATIONS["MoveCardToDiscardPileIfInPlayArea"] = {
     "source_symbol": "MoveCardToDiscardPileIfInPlayArea",
-    "before": "\t\tif ((uint8_t)id != c)",
-    "after": "\t\tif ((uint8_t)id == c)",
+    "before": "\t\tif ((uint8_t)(id & 0xFFu) != c)",
+    "after": "\t\tif ((uint8_t)(id & 0xFFu) == c)",
     "case_ids": ["MoveCardToDiscardPileIfInPlayArea-0"],
 }
 MUTATIONS["MoveDiscardPileCardToHand"] = {

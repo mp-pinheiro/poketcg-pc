@@ -271,10 +271,10 @@ void OpenInPlayAreaScreen_TurnHolderPlayArea(void)
 	DuelistVarResult duel = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));
 	if (duel.a == 0xFFu)
 		return;
-	uint16_t card_id = GetCardIDFromDeckIndex(duel.a);
+	CardId card_id = GetCardIDFromDeckIndex(duel.a);
 	LoadCardDataToBuffer1_FromCardID(card_id);
 	wCurPlayAreaY = 0u;
-	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
+	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)(card_id & 0xFFu), card_id);
 }
 /* <<< factory OpenInPlayAreaScreen_TurnHolderPlayArea */
 
@@ -289,10 +289,10 @@ void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void)
 	if (duel.a == 0xFFu)
 		return;
 	SwapTurn();
-	uint16_t card_id = GetCardIDFromDeckIndex(duel.a);
+	CardId card_id = GetCardIDFromDeckIndex(duel.a);
 	LoadCardDataToBuffer1_FromCardID(card_id);
 	wCurPlayAreaY = 0u;
-	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
+	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)(card_id & 0xFFu), card_id);
 	SwapTurn();
 }
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderPlayArea */

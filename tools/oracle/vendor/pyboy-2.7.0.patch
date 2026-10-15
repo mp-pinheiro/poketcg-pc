@@ -1,0 +1,41 @@
+--- a/pyboy/core/interaction.py
++++ b/pyboy/core/interaction.py
+@@ -87,7 +87,7 @@
+         elif not P15:
+             joystickByte &= self.standard
+ 
+-        return joystickByte | 0b11000000
++        return (joystickByte & 0x0F) | (joystickbyte & 0x30) | 0xC0
+ 
+     def save_state(self, f):
+         f.write(self.directional)
+--- a/setup.py
++++ b/setup.py
+@@ -2,7 +2,6 @@
+ import os
+ import platform
+ import sys
+-from multiprocessing import cpu_count
+ import numpy as np
+ 
+ from setuptools import Extension, setup
+@@ -45,7 +44,7 @@
+         if sys.platform == "win32":
+             thread_count = 0  # Disables multiprocessing
+         else:
+-            thread_count = cpu_count()
++            thread_count = 1
+ 
+         # Fixing issue with nthreads in Cython
+         if ((3, 8) <= sys.version_info[:2] and sys.platform == "darwin") or (
+@@ -92,9 +91,8 @@
+         )
+ 
+     def finalize_options(self):
+-        # Use '-j' on the commandline to specify parallelism. Otherwise auto-detect.
+         if getattr(self, "parallel", None) is None:
+-            self.parallel = cpu_count()
++            self.parallel = 1
+         super().finalize_options()
+ 
+ 

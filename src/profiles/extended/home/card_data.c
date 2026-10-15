@@ -7,8 +7,13 @@ static CardPtrResult get_card_pointer(CardId cardid)
 	uint16_t entry = (uint16_t)(CARD_POINTERS + (uint16_t)cardid * 3u);
 	if (entry >= GETCARDPTR_BOUND)
 		return (CardPtrResult){entry, 1u, 0u};
-	const uint8_t *p = rom_ptr(BANK_CARD_DATA, entry);
-	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0u, p[2]};
+	uint8_t saved = hBankROM;
+	BankswitchROM(BANK_CARD_DATA);
+	uint8_t lo = gb_read8(entry);
+	uint8_t hi = gb_read8((uint16_t)(entry + 1u));
+	uint8_t bank = gb_read8((uint16_t)(entry + 2u));
+	BankswitchROM(saved);
+	return (CardPtrResult){(uint16_t)(lo | (uint16_t)hi << 8), 0u, bank};
 }
 /* <<< part get_card_pointer */
 /* >>> factory GetCardType */

@@ -112,8 +112,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "SetSamsStartingPlayArea": {
         "source_symbol": "SetSamsStartingPlayArea",
-        "before": "LoadCardDataToBuffer1_FromDeckIndex(a) == 0x7du",
-        "after": "LoadCardDataToBuffer1_FromDeckIndex(a) == 0x7eu",
+        "before": "if (card_id == MACHOP)",
+        "after": "if (card_id == (CardId)(MACHOP + 1u))",
         "case_ids": ["SetSamsStartingPlayArea-1", "SetSamsStartingPlayArea-3"],
     },
     "IsAIPracticeScriptedTurn": {

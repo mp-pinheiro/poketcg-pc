@@ -193,9 +193,10 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 
 	loc = hTempPlayAreaLocation_ff9d;
 	uint8_t deckindex = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc)).a;
-	uint16_t id = GetCardIDFromDeckIndex(deckindex);
+	CardId id = GetCardIDFromDeckIndex(deckindex);
 	d = (uint8_t)(id >> 8);
-	wTempCardID = (uint8_t)id;
+	uint16_t temp_card_id = wTempCardID_ADDR;
+	card_id_write(&temp_card_id, id);
 	LoadCardDataToBuffer1_FromCardID(id);
 	wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
 	wTempAI = 0xffu;
@@ -207,7 +208,9 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 		v = gb_read8(hl);
 		if (v == 0xffu)
 			break;
-		if (GetCardIDFromDeckIndex(v) == DOUBLE_COLORLESS_ENERGY) {
+		CardId energy_id = GetCardIDFromDeckIndex(v);
+		d = (uint8_t)(energy_id >> 8);
+		if (energy_id == DOUBLE_COLORLESS_ENERGY) {
 			if (wTempAI != 0xffu) {
 				exit_f = pick_two_cp_flags(wTempAI, 0xffu);
 				wCurCardCanAttack = gb_read8(hl);
@@ -225,7 +228,10 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
 		v = gb_read8(hl);
 		if (v == 0xffu)
 			break;
-		if (CheckIfEnergyIsUseful(v).f & 0x10u) {
+		CheckIfEnergyIsUsefulResult useful = CheckIfEnergyIsUseful(v);
+		CardId energy_id = GetCardIDFromDeckIndex(v);
+		d = (uint8_t)(energy_id >> 8);
+		if (useful.f & 0x10u) {
 			if (wTempAI != 0xffu) {
 				exit_f = pick_two_cp_flags(wTempAI, 0xffu);
 				wCurCardCanAttack = gb_read8(hl);
@@ -280,11 +286,11 @@ PickEnergyResult PickAttachedEnergyCardToRemove(uint8_t a)
 		return (PickEnergyResult){0xffu, d};
 
 	uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc)).a;
-	uint16_t id = GetCardIDFromDeckIndex(deck_index);
+	CardId id = GetCardIDFromDeckIndex(deck_index);
 	d = (uint8_t)(id >> 8);
-	uint8_t card_id = (uint8_t)id;
-	wTempCardID = card_id;
-	LoadCardDataToBuffer1_FromCardID(card_id);
+	uint16_t temp_card_id = wTempCardID_ADDR;
+	card_id_write(&temp_card_id, id);
+	LoadCardDataToBuffer1_FromCardID(id);
 	wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
 
 	uint16_t hl = wDuelTempList_ADDR;
@@ -292,7 +298,9 @@ PickEnergyResult PickAttachedEnergyCardToRemove(uint8_t a)
 		uint8_t deck = gb_read8(hl);
 		if (deck == 0xffu)
 			break;
-		if (GetCardIDFromDeckIndex(deck) == DOUBLE_COLORLESS_ENERGY)
+		CardId energy_id = GetCardIDFromDeckIndex(deck);
+		d = (uint8_t)(energy_id >> 8);
+		if (energy_id == DOUBLE_COLORLESS_ENERGY)
 			return (PickEnergyResult){deck, d};
 		hl = (uint16_t)(hl + 1u);
 	}
@@ -302,7 +310,10 @@ PickEnergyResult PickAttachedEnergyCardToRemove(uint8_t a)
 		uint8_t deck = gb_read8(hl);
 		if (deck == 0xffu)
 			break;
-		if (CheckIfEnergyIsUseful(deck).f & 0x10u)
+		CardId energy_id = GetCardIDFromDeckIndex(deck);
+		CheckIfEnergyIsUsefulResult useful = CheckIfEnergyIsUseful(deck);
+		d = (uint8_t)(energy_id >> 8);
+		if (useful.f & 0x10u)
 			return (PickEnergyResult){deck, d};
 		hl = (uint16_t)(hl + 1u);
 	}
@@ -520,8 +531,8 @@ LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t locatio
 		uint8_t loc = GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + e)).a;
 		if (loc != location)
 			continue;
-		uint16_t card_id = GetCardIDFromDeckIndex(e);
-		if ((uint8_t)card_id == card_id_byte)
+		CardId card_id = GetCardIDFromDeckIndex(e);
+		if (card_id == card_id_byte)
 			return (LookForCardIDInLocationBank8Result){e, 0x90u};
 	}
 	return (LookForCardIDInLocationBank8Result){DECK_SIZE, 0x00u};
@@ -655,17 +666,20 @@ FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
 
 	uint16_t list = wDuelTempList_ADDR;
 	uint8_t outer = 0u;
+	uint8_t d = (uint8_t)(wDuelTempList_ADDR >> 8);
 	for (;;) {
 		uint8_t outer_idx = gb_read8((uint16_t)(list + outer));
 		if (outer_idx == 0xFFu)
 			break;
 		CardId outer_id = GetCardIDFromDeckIndex(outer_idx);
+		d = (uint8_t)(outer_id >> 8);
 		uint8_t inner = (uint8_t)(outer + 1u);
 		for (;;) {
 			uint8_t inner_idx = gb_read8((uint16_t)(list + inner));
 			if (inner_idx == 0xFFu)
 				break;
 			CardId inner_id = GetCardIDFromDeckIndex(inner_idx);
+			d = (uint8_t)(inner_id >> 8);
 			if (inner_id == outer_id) {
 				uint8_t type = GetCardType(inner_id);
 				if (type < TYPE_ENERGY)
@@ -678,7 +692,6 @@ FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
 	}
 
 	uint8_t final_val = wTempAI;
-	uint8_t d = gb_read8(wDuelTempList_ADDR) != 0xFFu ? 0u : 0xC5u;
 	if (final_val == 0xFFu)
 		return (FindDuplicatePokemonCardsResult){final_val, 0x00u, d};
 	return (FindDuplicatePokemonCardsResult){final_val, 0x10u, d};
@@ -698,11 +711,11 @@ PickEnergyResult AIPickEnergyCardToDiscard(uint8_t a)
 
 	uint8_t b = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 	DuelistVarResult var = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_480 + b));
-	uint16_t id16 = GetCardIDFromDeckIndex(var.a);
-	d = (uint8_t)(id16 >> 8);
-	uint8_t card_id = (uint8_t)id16;
-	gb_write8(wTempCardID_ADDR, card_id);
-	LoadCardDataToBuffer1_FromCardID(card_id);
+	CardId id = GetCardIDFromDeckIndex(var.a);
+	d = (uint8_t)(id >> 8);
+	uint16_t temp_card_id = wTempCardID_ADDR;
+	card_id_write(&temp_card_id, id);
+	LoadCardDataToBuffer1_FromCardID(id);
 	uint8_t type = (uint8_t)(gb_read8(wLoadedCard1Type_ADDR) | TYPE_ENERGY_480);
 	gb_write8(wTempCardType_ADDR, type);
 

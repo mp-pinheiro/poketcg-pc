@@ -1,5 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/booster_pack.asm."""
-from tests.cases._symbols import sym
+from tests.cases._symbols import deck_bytes, sym
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -19,6 +19,12 @@ CONTRACT["_OpenBoosterPack"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["_OpenBoosterPack"] = [
     {"wram": {sym("wPlayerCardLocations"): b"\xAA" * 0x3C, sym("wBoosterCardsDrawn"): b"\x00", sym("wLCDC"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {sym("hWhoseTurn"): 1, sym("wPlayerCardLocations"): 0x3C, sym("wDuelTempList"): 1, sym("wNoItemSelectionMenuKeys"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, wram={sym("wPlayerCardLocations"): b"\xAA" * 0x3C, sym("wBoosterCardsDrawn"): b"\x00", sym("wLCDC"): b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={sym("hWhoseTurn"): 1, sym("wPlayerCardLocations"): 0x3C, sym("wDuelTempList"): 1, sym("wNoItemSelectionMenuKeys"): 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {sym("wPlayerCardLocations"): b"\x00" * 60,
+              sym("wBoosterCardsDrawn"): deck_bytes([8, 9, 0]), sym("wLCDC"): b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0, 2],
+     "read": {sym("wDuelTempList"): 3, sym("wNoItemSelectionMenuKeys"): 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory _OpenBoosterPack
 

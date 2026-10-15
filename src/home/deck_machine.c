@@ -529,7 +529,7 @@ void PrintReceivedTheseCardsText(void)
 /* <<< factory PrintReceivedTheseCardsText */
 
 /* >>> factory PrintNumSavedDecks */
-void PrintNumSavedDecks(void)
+uint8_t PrintNumSavedDecks(void)
 {
 	uint8_t num = wNumSavedDecks;
 	uint16_t hl = wDefaultText_ADDR;
@@ -544,7 +544,7 @@ void PrintNumSavedDecks(void)
 	gb_write8(hl, TX_END);
 	InitTextPrinting(14u, 1u);
 	uint16_t text_hl = wDefaultText_ADDR;
-	ProcessText(&text_hl);
+	return ProcessText(&text_hl).f;
 }
 /* <<< factory PrintNumSavedDecks */
 
@@ -1066,13 +1066,20 @@ HandleDeckMachineSelectionResult HandleDeckMachineSelection(void)
 		wCurDeck = (uint8_t)((i + 1u) | 0x80u);
 		uint16_t p = (uint16_t)(wMachineDeckPtrs_ADDR + (uint16_t)i * 2u);
 		uint16_t deck = (uint16_t)(gb_read8(p) | ((uint16_t)gb_read8((uint16_t)(p + 1u)) << 8));
-		EnableSRAM(); uint8_t n = gb_read8((uint16_t)(deck + DECK_NAME_SIZE)); DisableSRAM();
+		EnableSRAM();
+		uint8_t n = gb_read8((uint16_t)(deck + DECK_NAME_SIZE));
+#if PROFILE_FEATURE_NINE_BIT_CARD_IDS
+		n |= gb_read8((uint16_t)(deck + DECK_NAME_SIZE + 1u));
+#endif
+		DisableSRAM();
 		if (!n) continue;
 		PlaySFXConfirmOrCancel(MENU_CONFIRM); OpenDeckConfirmationMenu((uint16_t)(deck + DECK_NAME_SIZE), deck);
 		wCardListVisibleOffset = wTempCardListVisibleOffset;
-		ClearScreenAndDrawDeckMachineScreen(); DrawListScrollArrows(); PrintNumSavedDecks();
+		ClearScreenAndDrawDeckMachineScreen();
+		DrawListScrollArrows();
+		uint8_t flags = PrintNumSavedDecks();
 		wCardListCursorPos = wTempDeckMachineCursorPos;
-		return (HandleDeckMachineSelectionResult){0u, CARRY_FLAG};
+		return (HandleDeckMachineSelectionResult){wCardListCursorPos, (uint8_t)((flags & 0x80u) | CARRY_FLAG)};
 	}
 }
 /* <<< factory HandleDeckMachineSelection */

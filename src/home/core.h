@@ -242,7 +242,7 @@ CoreCardListResult CreateEnergyCardListFromHand(uint8_t a);
 CoreCardListResult LookForCardIDInHand(uint8_t a);
 /* <<< factory LookForCardIDInHand */
 /* >>> factory LookForCardIDInHandList_Bank5 */
-CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a);
+CoreCardListResult LookForCardIDInHandList_Bank5(CardId card_id);
 /* <<< factory LookForCardIDInHandList_Bank5 */
 /* >>> factory CheckForEvolutionInDeck */
 typedef struct { uint8_t a; uint8_t f; } CheckForEvolutionInDeckResult;
@@ -272,7 +272,7 @@ typedef struct { uint8_t a; uint8_t carry; } CheckIfOpponentHasBossDeckIDResult;
 CheckIfOpponentHasBossDeckIDResult CheckIfOpponentHasBossDeckID(uint8_t a);
 /* <<< factory CheckIfOpponentHasBossDeckID */
 /* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
-uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a);
+uint16_t RaiseAIScoreToAllMatchingIDsInBench(CardId card_id);
 /* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
 /* >>> factory GetDamageNumberChars_ConvertDigitToCharTile */
 typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; } DamageDigitResult;
@@ -565,7 +565,7 @@ void PrintPracticeDuelLetsPlayTheGame(void);
 /* <<< factory PrintPracticeDuelLetsPlayTheGame */
 /* >>> factory AIAttachEnergyInHandToCardInBench */
 typedef struct { uint8_t a; uint8_t f; } AIAttachEnergyInHandToCardInBenchResult;
-AIAttachEnergyInHandToCardInBenchResult AIAttachEnergyInHandToCardInBench(uint8_t d, uint8_t e);
+AIAttachEnergyInHandToCardInBenchResult AIAttachEnergyInHandToCardInBench(CardId pokemon_id, CardId energy_id);
 /* <<< factory AIAttachEnergyInHandToCardInBench */
 /* >>> factory DrawPracticeDuelInstructionsTextBox */
 void DrawPracticeDuelInstructionsTextBox(void);

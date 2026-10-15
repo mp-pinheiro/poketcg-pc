@@ -1,0 +1,9 @@
+{
+  "fn": "GiveBoosterPack",
+  "case": "/home/matheus/git/poketcg/tests/profiles/extended/cases/give_booster_pack.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GiveBoosterPack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52741\": \"4c03\", \"52745\": \"0100\", \"53508\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GiveBoosterPack\", \"mismatches\": {\"bus\": {\"address\": 52745, \"reference\": \"804c03010000\", \"native\": \"804c03020000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[51899, 1], [52741, 2], [52745, 2], [53508, 1]]}}}\n",
+  "restored": "{\"fn\": \"GiveBoosterPack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"stop_reached\": 1, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52741\": \"4c03\", \"52745\": \"0100\", \"53508\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

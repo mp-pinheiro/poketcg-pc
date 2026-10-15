@@ -14,6 +14,7 @@ OWN = (
     'Func_c1f8',
     'LoadMap',
     'SetScriptData',
+    'HandleOverworldMode',
 )
 CONTRACT.update({
     'Func_c1f8': {'compare': (), 'preserve': ()},
@@ -163,6 +164,23 @@ CASES.update({
             'read': {sym("wActiveGameEvent"): 0x01}},
     ],
 })
+CASES['HandleOverworldMode'].append(
+    {'wram': {sym("wOverworldMode"): b'\x03',
+              sym("wNextScript"): b'\x00\x00',
+              sym("wNextScriptBank"): b'\x03',
+              sym("hBankROM"): b'\x03'}}
+)
+_set_script_data_torch_case = dict(CASES['SetScriptData'][0])
+_set_script_data_torch_case['wram'] = dict(_set_script_data_torch_case['wram'])
+_set_script_data_torch_case['wram'][sym("wLoadedNPC1ID")] = b'\x67' + b'\x00' * 95
+CASES['SetScriptData'].append(_set_script_data_torch_case)
+MUTATIONS['HandleOverworldMode'] = {
+    'source_symbol': 'HandleOverworldMode',
+    'before': 'if (target != 0u)\n\t\t\t(void)ScriptEntryEnterWithBank(',
+    'after': 'if (target != 0u)\n\t\t\t(void)ScriptEntryEnterWithBank(\n\t\t\t\ttarget, wNextScriptBank, 0u, 0u, 0u, 0u, 0u);\n\t\telse\n\t\t\twOverworldMode = 0u;',
+    'case_ids': ['HandleOverworldMode-5'],
+    'source': 'src/profiles/extended/home/overworld.c',
+}
 MUTATIONS.update({
     'Func_c1f8': {   'source_symbol': 'Func_c1f8',
         'before': '\twRonaldIsInMap = 0u;',
@@ -183,7 +201,7 @@ MUTATIONS.update({
         'after': '\t\t\t\t0x10u,',
         'case_ids': ['FindNPCOrObject-0', 'FindNPCOrObject-1', 'FindNPCOrObject-2'],
         'source': 'src/home/overworld.c'},
-    'SetScriptData': {'source_symbol': 'SetScriptData', 'before': 'wOverworldMode = OWMODE_SCRIPT;', 'after': 'wOverworldMode = 0u;', 'case_ids': ['SetScriptData-0', 'SetScriptData-1', 'SetScriptData-2'], 'source': 'src/profiles/extended/home/overworld.c'},
+    'SetScriptData': {'source_symbol': 'SetScriptData', 'before': 'return (SetScriptDataResult){entry_bank, npc.f, entered.b, entered.c, entered.hl};', 'after': 'return (SetScriptDataResult){entered.a, entered.f, entered.b, entered.c, entered.hl};', 'case_ids': ['SetScriptData-0', 'SetScriptData-1', 'SetScriptData-2', 'SetScriptData-3'], 'source': 'src/profiles/extended/home/overworld.c'},
     'HandlePlayerMoveMode': {   'source_symbol': 'HandlePlayerMoveMode',
         'before': 'void HandlePlayerMoveMode(void)\n{\n\twWhichSprite = wPlayerSpriteIndex;',
         'after': 'void HandlePlayerMoveMode(void)\n{\n\twWhichSprite = 0u;',
@@ -205,4 +223,4 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _record in SCHEMA2_CASES["LoadMap"]:
     _record["completion"] = {"mode": "entry", "pc": sym("SetScreenScroll"), "bank": sym_bank("SetScreenScroll"), "routine": "SetScreenScroll"}
-MUTATIONS['HandleOverworldMode'] = {'source_symbol': 'HandleOverworldMode', 'before': '\tuint8_t mode = (uint8_t)(wOverworldMode & 0x7fu);', 'after': '\tuint8_t mode = (uint8_t)(wOverworldMode & 0x7eu);', 'case_ids': ['HandleOverworldMode-3'], 'source': 'src/profiles/extended/home/overworld.c'}
+MUTATIONS['HandleOverworldMode'] = {'source_symbol': 'HandleOverworldMode', 'before': 'if (target != 0u)\n\t\t\t(void)ScriptEntryEnterWithBank(\n\t\t\t\ttarget, wNextScriptBank, 0u, 0u, 0u, 0u, 0u);', 'after': 'if (target != 0u)\n\t\t\t(void)ScriptEntryEnterWithBank(\n\t\t\t\ttarget, wNextScriptBank, 0u, 0u, 0u, 0u, 0u);\n\t\telse\n\t\t\twOverworldMode = 0u;', 'case_ids': ['HandleOverworldMode-5'], 'source': 'src/profiles/extended/home/overworld.c'}

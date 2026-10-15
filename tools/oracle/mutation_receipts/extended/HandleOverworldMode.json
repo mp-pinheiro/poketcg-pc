@@ -1,30 +1,30 @@
 {
   "fn": "HandleOverworldMode",
   "case": "tests/profiles/extended/cases/overworld.py",
-  "index": 3,
+  "index": 5,
   "status": "RED",
-  "baseline": "{\"fn\": \"HandleOverworldMode\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"c9\", \"53420\": \"03\", \"53427\": \"00c0\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"HandleOverworldMode\", \"mismatches\": {\"bus\": {\"address\": 49152, \"reference\": \"c90300c0\", \"native\": \"05037455\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49152, 1], [53420, 1], [53427, 2]]}}}\n",
-  "restored": "{\"fn\": \"HandleOverworldMode\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49152\": \"c9\", \"53420\": \"03\", \"53427\": \"00c0\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"HandleOverworldMode\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53420\": \"03\", \"53427\": \"000003\", \"65408\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleOverworldMode\", \"mismatches\": {\"bus\": {\"address\": 53420, \"reference\": \"0300000303\", \"native\": \"0000000303\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[53420, 1], [53427, 3], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleOverworldMode\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"53420\": \"03\", \"53427\": \"000003\", \"65408\": \"03\"}}, \"status\": \"PASS\"}\n",
   "mutation": {
     "source_symbol": "HandleOverworldMode",
-    "before": "\tuint8_t mode = (uint8_t)(wOverworldMode & 0x7fu);",
-    "after": "\tuint8_t mode = (uint8_t)(wOverworldMode & 0x7eu);",
+    "before": "if (target != 0u)\n\t\t\t(void)ScriptEntryEnterWithBank(\n\t\t\t\ttarget, wNextScriptBank, 0u, 0u, 0u, 0u, 0u);",
+    "after": "if (target != 0u)\n\t\t\t(void)ScriptEntryEnterWithBank(\n\t\t\t\ttarget, wNextScriptBank, 0u, 0u, 0u, 0u, 0u);\n\t\telse\n\t\t\twOverworldMode = 0u;",
     "case_ids": [
-      "HandleOverworldMode-3"
+      "HandleOverworldMode-5"
     ],
     "source": "src/profiles/extended/home/overworld.c"
   },
   "proof": {
     "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "4135fef9f8fa19c4ec0b073e0d1f7ac4bb7a7393ddccffe46c53d48f664b278c",
-    "case_sha256": "adc0037e39c0eeedfa9fe76181048e81a053df4b5b1c76b75752bfddf6d4071c",
-    "schema_sha256": "e926d097e6dfb6c53cd10b250b5c846f5b3cf9f9dc2d2372f5bf823386888931",
-    "mutation_sha256": "10c208d9cd93eaaa3917710f237550ae41d56bb64bde9397976b12546f107ff4",
+    "baseline_source_sha256": "b79b811ac5f735901456cc87cc6bf72a860e0d72ea8eed74b36d1593902c742e",
+    "case_sha256": "2345eafe82e8e15dfac9b9c62b0f1699039db6eb9567602d97a01f553d8f7454",
+    "schema_sha256": "520170851b720aff48135c3bf461a590e0804ea3ec59e26369b6975a6b4dc8af",
+    "mutation_sha256": "6a545a1e2da3427e5485465a348c9016c8971134195cd749d83de5ddec7573d2",
     "source": "src/profiles/extended/home/overworld.c",
     "source_symbol": "HandleOverworldMode",
     "case": "tests/profiles/extended/cases/overworld.py",
     "fn": "HandleOverworldMode",
-    "index": 3
+    "index": 5
   }
 }

@@ -1440,3 +1440,36 @@ GIFT_CENTER_SEND_DECK_REGS = GIFT_CENTER_SEND_DECK.regs
 def gift_center_send_deck_fixture(changes: dict[int, bytes] | None = None, vram: bool = True, bank: int | None = None,
                                   **named: bytes) -> dict:
     return GIFT_CENTER_SEND_DECK.case(changes, vram=vram, bank=bank, **named)
+
+
+def lass_hand_fixture(player_cards: tuple[int, ...], opponent_cards: tuple[int, ...],
+                      *, ai_turn: bool = False, duel_type: int = 0) -> dict:
+    from tests.cases._symbols import const, deck_bytes, sym
+
+    turn = "Opponent" if ai_turn else "Player"
+    seeds = {
+        sym("hWhoseTurn"): bytes([sym(f"w{turn}DuelVariables") >> 8]),
+        sym("wDuelType"): bytes([duel_type]),
+        sym("hTempCardIndex_ff9f"): b"\x00",
+        sym("wLCDC"): b"\x00",
+        sym("wRNG1"): b"\x01\x02\x03",
+        sym("wPlayerArenaCard"): b"\xFF", sym("wOpponentArenaCard"): b"\xFF",
+        sym("wPlayerBench"): b"\xFF", sym("wOpponentBench"): b"\xFF",
+    }
+    reads = {sym("hWhoseTurn"): 1, sym("wNoItemSelectionMenuKeys"): 1}
+    for prefix, cards in (("Player", player_cards), ("Opponent", opponent_cards)):
+        seeds[sym(f"w{prefix}Deck")] = deck_bytes(list(cards) + [const("GRASS_ENERGY")] * (60 - len(cards)))
+        seeds[sym(f"w{prefix}Hand")] = bytes(range(len(cards)))
+        seeds[sym(f"w{prefix}NumberOfCardsInHand")] = bytes([len(cards)])
+        seeds[sym(f"w{prefix}NumberOfCardsInDiscardPile")] = b"\x00"
+        seeds[sym(f"w{prefix}NumberOfCardsNotInDeck")] = bytes([len(cards)])
+        seeds[sym(f"w{prefix}CardLocations")] = b"\x01" * len(cards) + bytes(60 - len(cards))
+        seeds[sym(f"w{prefix}DeckCards")] = bytes(range(60))
+        reads[sym(f"w{prefix}NumberOfCardsInHand")] = 1
+        reads[sym(f"w{prefix}CardLocations")] = len(cards)
+    return {
+        "wram": seeds, "read": reads,
+        "keys": [0, 1, 0, 2] * 4,
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000, "cycle_budget": 80000000,
+    }

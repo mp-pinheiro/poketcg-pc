@@ -1,9 +1,10 @@
 """Extended oracle-diff cases for sams_practice: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import sym, sym_bank
+from tests.cases._symbols import card_id_bytes, const, sym, sym_bank
 from tests.cases._inherit import inherit
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('sams_practice')
 OWN = (
     'AIPerformScriptedTurn',
+    'SetSamsStartingPlayArea',
 )
 CONTRACT.update({
     'AIPerformScriptedTurn': {'compare': ('a', 'f'), 'preserve': ()},
@@ -145,6 +146,22 @@ MUTATIONS.update({
         'case_ids': ['AIPerformScriptedTurn-1'],
         'source': 'src/profiles/extended/home/sams_practice.c'},
 })
+CASES['SetSamsStartingPlayArea'] = [
+    *CASES['SetSamsStartingPlayArea'],
+    {'wram': {sym("hWhoseTurn"): b'\xC2', sym("wPlayerNumberOfCardsInHand"): b'\x01',
+              sym("wPlayerHand"): b'\x00', sym("wPlayerCardLocations"): b'\x01',
+              sym("wPlayerDeck"): card_id_bytes(0x017D),
+              sym("wLoadedCard1ID"): card_id_bytes(const("BULBASAUR")),
+              sym("wPlayerArenaCard"): b'\xFF', sym("wPlayerBench"): b'\xFF',
+              sym("wPlayerNumberOfPokemonInPlayArea"): b'\x00', sym("wDuelInitialPrizes"): b'\x06'},
+     'read': {sym("wDuelInitialPrizes"): 1, sym("wPlayerArenaCard"): 1,
+              sym("wPlayerCardLocations"): 1, sym("wPlayerNumberOfCardsInHand"): 1}},
+]
+MUTATIONS['SetSamsStartingPlayArea'] = {
+    'source': 'src/home/sams_practice.c', 'source_symbol': 'SetSamsStartingPlayArea',
+    'before': 'if (card_id == MACHOP)', 'after': 'if (loaded == MACHOP)',
+    'case_ids': ['SetSamsStartingPlayArea-4'],
+}
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _name, _entries in ((_fn, CASES[_fn]) for _fn in OWN):

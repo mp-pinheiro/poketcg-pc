@@ -60,8 +60,8 @@ AIDoTurn_LegendaryMoltresResult AIDoTurn_LegendaryMoltres(uint8_t a, uint8_t f, 
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_11); a = trainer.a; f = trainer.f;
 		if (wAlreadyPlayedEnergy == 0u) {
 			DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-			uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
-			if ((uint8_t)card_id == MAGMAR_LV31) {
+			CardId card_id = GetCardIDFromDeckIndex(arena.a);
+			if (card_id == MAGMAR_LV31) {
 				CoreCardListResult energy = CreateEnergyCardListFromHand(arena.a);
 				if ((energy.f & 0x10u) == 0u) {
 					CountNumberOfEnergyCardsAttachedResult attached = CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA);

@@ -206,15 +206,6 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "generated/wram.h"
 #include "mem.h"
 /* <<< part includes_LIGHTNING_AND_FIRE_DECK_ID */
-/* >>> part LIGHTNING_AND_FIRE_DECK_ID */
-#define LIGHTNING_AND_FIRE_DECK_ID 0x09u
-/* <<< part LIGHTNING_AND_FIRE_DECK_ID */
-/* >>> part WATER_AND_FIGHTING_DECK_ID */
-#define WATER_AND_FIGHTING_DECK_ID 0x0Au
-/* <<< part WATER_AND_FIGHTING_DECK_ID */
-/* >>> part GRASS_AND_PSYCHIC_DECK_ID */
-#define GRASS_AND_PSYCHIC_DECK_ID 0x0Bu
-/* <<< part GRASS_AND_PSYCHIC_DECK_ID */
 /* >>> part sAaronDeckIDs */
 static const uint8_t sAaronDeckIDs[] = {
 	LIGHTNING_AND_FIRE_DECK_ID, WATER_AND_FIGHTING_DECK_ID,

@@ -254,6 +254,39 @@ def identical_overrides(unit: Unit) -> list[str]:
             if block.name in shared and block.name not in moved and shared[block.name].body == block.body]
 
 
+def deduplicate(profile: Profile, root: Path = ROOT) -> int:
+    removed = 0
+    for unit in units(profile, root):
+        names = set(identical_overrides(unit))
+        if not names:
+            continue
+        patch = parse(unit.override.read_text(), unit.override)
+        if patch.errors:
+            raise BlockError("\n".join(patch.errors))
+        lines = patch.lines
+        keep_anchors = (
+            (unit.tree == "home" and unit.suffix == ".c")
+            or any(block.name not in names for block in patch.blocks)
+        )
+        for block in reversed(patch.blocks):
+            if block.name not in names:
+                continue
+            declaration = (
+                [f"/* === {block.kind} {block.name} */"]
+                if keep_anchors else []
+            )
+            lines[block.open_line:block.close_line + 1] = declaration
+            removed += 1
+        text = "\n".join(lines)
+        if text.strip():
+            unit.override.write_text(text)
+        else:
+            unit.override.unlink()
+        print(f"shared {unit.relative}: {', '.join(sorted(names))}")
+    print(f"deduplicate: profile={profile.name} blocks={removed}")
+    return 0
+
+
 def seed(profile: Profile, basename: str, names: list[str], root: Path = ROOT) -> int:
     overlay = profile.overlay_path(root)
     if overlay is None:
@@ -304,6 +337,8 @@ def main() -> int:
     seed_parser.add_argument("names", nargs="+")
     check_parser = sub.add_parser("check", help="compose every unit and report errors")
     check_parser.add_argument("--profile", required=True)
+    deduplicate_parser = sub.add_parser("deduplicate", help="replace identical overrides with shared declarations")
+    deduplicate_parser.add_argument("--profile", required=True)
     args = parser.parse_args()
     if args.command == "unit":
         shared = args.shared.resolve() if args.shared else None
@@ -317,6 +352,8 @@ def main() -> int:
     profile = get_profile(args.profile, ROOT)
     if args.command == "seed":
         return seed(profile, args.basename, args.names)
+    if args.command == "deduplicate":
+        return deduplicate(profile)
     if args.command == "sources":
         category = {("home", ".c"): "home", ("home", ".h"): "header", ("probe", ".c"): "probe"}
         for unit in units(profile):

@@ -10,18 +10,21 @@
   },
   "pyboy": {
     "version": "2.7.0",
-    "sdist_sha256": "b97db94c366f5e54af04f94641c6107454821543015716b7182df29684ad9180"
+    "sdist_sha256": "7e7a18e0bbb15ddc23458e9fb995b5f99d453ca2e5124471820bf2d062040ace",
+    "source": "tools/oracle/vendor/pyboy-2.7.0.tar.gz",
+    "upstream_sdist_sha256": "b97db94c366f5e54af04f94641c6107454821543015716b7182df29684ad9180"
   },
   "identity": {
     "python_implementation": "CPython",
     "python_version": "3.12.3",
     "soabi_family": "cpython-312",
     "pyboy_sdist_version": "2.7.0",
-    "pyboy_sdist_sha256": "b97db94c366f5e54af04f94641c6107454821543015716b7182df29684ad9180",
+    "pyboy_sdist_sha256": "7e7a18e0bbb15ddc23458e9fb995b5f99d453ca2e5124471820bf2d062040ace",
     "wheel_tag": "cp312-cp312-linux_x86_64",
-    "uv_lock_sha256": "a976dacaf1ade74779091bac174874886f8f7e74081e7e75b485fa7f90b0bbd5",
+    "uv_lock_sha256": "e22daa05e54e0094bde3ad761ffb224a8e319fda3a71b76b334dea6a2310b59d",
     "compiled_modules": [
       "pyboy",
+      "pyboy.core.interaction",
       "pyboy.core.cpu",
       "pyboy.core.mb",
       "pyboy.core.opcodes"

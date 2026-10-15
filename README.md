@@ -41,11 +41,15 @@ just build
 
 `just bootstrap` clones the pinned `pret/poketcg` disassembly and verifies its ROM checksum. `uv sync --project tools/oracle --frozen` installs the pinned PyBoy project. `just completion-gambatte-bootstrap` downloads the pinned Gambatte source archive, builds its shared library with the pinned SCons version, and rejects archive or core hash drift.
 
+The pinned PyBoy 2.7.0 source archive is vendored under `tools/oracle/vendor`, with its upstream license and the exact patch alongside it. The patch preserves the JOYP select bits and builds one Cython module or C extension at a time. `tools/oracle/artifacts.json` records both the upstream and patched source hashes; `uv.lock` pins the local archive. `just oracle-health-pyboy` checks the compiled modules, register preservation, JOYP reads, and non-mutating SRAM snapshots.
+
 ## Profiles
 
 Vanilla remains the default direct profile. Extended is selected from the launcher or with `POKETCG_PROFILE=extended` for build and oracle commands.
 
 Set up the pinned Extended checkout and build the isolated profile with `just bootstrap-extended` and `just build-extended`. Generate its sparse data pack with `just completion-data-pack-extended`.
+
+Use `POKETCG_NINJA_JOBS=-j1` to serialize builds. Routine gates use one comparison worker by default; `just oracle-fn-all 4` selects four workers.
 
 Build both native targets and the SDL chooser with `just build-profiles`, then start the chooser with `just play`. Direct profile recipes are `just play-vanilla` and `just play-extended`; automation can use `build/poketcg-launcher --profile extended`.
 

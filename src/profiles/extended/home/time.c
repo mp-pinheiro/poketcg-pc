@@ -16,5 +16,5 @@ void TimerHandler(void)
 	wReentrancyFlag = (uint8_t)(wReentrancyFlag & (uint8_t)~(1u << IN_TIMER));
 }
 /* <<< factory TimerHandler */
-/* === factory SwitchToCGBDoubleSpeed */
 /* === factory SwitchToCGBNormalSpeed */
+/* === part SwitchToCGBDoubleSpeed */

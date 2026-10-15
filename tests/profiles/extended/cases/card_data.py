@@ -29,6 +29,8 @@ CASES.update({
         {'e': 0xFF},
         {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xDD, 'e': 0x08, 'hl': 0x1234},
         {'a': 0xAA, 'f': 0xF0, 'b': 0xBB, 'c': 0xCC, 'd': 0xD8, 'e': 0x08, 'hl': 0x1234},
+        {'d': 0x55, 'e': 0x55},
+        {'d': 0xAA, 'e': 0xAA},
     ],
 })
 MUTATIONS.update({
@@ -52,10 +54,10 @@ MUTATIONS.update({
         'after': '\treturn (CardTRS){p[(CARD_DATA_TYPE + 1u)], p[CARD_DATA_RARITY], p[CARD_DATA_SET], 0u};',
         'case_ids': ['GetCardTypeRarityAndSet-0'],
         'source': 'src/profiles/extended/home/card_data.c'},
-    'GetCardPointer': {   'source_symbol': 'get_card_pointer',
-        'before': '\tif (entry >= GETCARDPTR_BOUND)',
-        'after': '\tif (entry > GETCARDPTR_BOUND)',
-        'case_ids': ['GetCardPointer-2'],
+    'GetCardPointer': {'source_symbol': 'get_card_pointer',
+        'before': 'uint8_t hi = gb_read8((uint16_t)(entry + 1u));',
+        'after': 'uint8_t hi = rom_ptr(BANK_CARD_DATA, entry)[1];',
+        'case_ids': ['GetCardPointer-7'],
         'source': 'src/profiles/extended/home/card_data.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema

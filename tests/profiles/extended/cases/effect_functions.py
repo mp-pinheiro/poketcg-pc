@@ -1,6 +1,7 @@
 """Extended oracle-diff cases for effect_functions: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import STACK_CANARY, STACK_TOP, WRAMX_START, sym, sym_bank
+from tests.cases._symbols import STACK_CANARY, STACK_TOP, WRAMX_START, const, sym, sym_bank
 from tests.cases._inherit import inherit
+from tests.cases._fixtures import lass_hand_fixture
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 _COIN_FIXTURE = {
     "keys": [0x00, 0x01],
@@ -1822,7 +1823,7 @@ MUTATIONS.update({
         'case_ids': [   'CheckIfDefendingPokemonHasAnyAttack-0',
                         'CheckIfDefendingPokemonHasAnyAttack-1'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
-    'KrabbyCallForFamily_AISelectEffect': {'source_symbol': 'KrabbyCallForFamily_AISelectEffect', 'before': 'if (card_id == KRABBY)', 'after': 'if (card_id != KRABBY)', 'case_ids': ['KrabbyCallForFamily_AISelectEffect-0', 'KrabbyCallForFamily_AISelectEffect-1'], 'source': 'src/profiles/extended/home/effect_functions.c'},
+    'KrabbyCallForFamily_AISelectEffect': {'source_symbol': 'KrabbyCallForFamily_AISelectEffect', 'before': 'if (card_id == KRABBY)', 'after': 'if (card_id != KRABBY)', 'case_ids': ['KrabbyCallForFamily_AISelectEffect-0', 'KrabbyCallForFamily_AISelectEffect-1'], 'source': 'src/home/effect_functions.c'},
     'SolarPower_CheckUse': {   'source_symbol': 'SolarPower_CheckUse',
         'before': 'return (SolarPowerCheckUseResult){0x10u, OnlyOncePerTurnText};',
         'after': 'return (SolarPowerCheckUseResult){0x90u, OnlyOncePerTurnText};',
@@ -2358,7 +2359,7 @@ MUTATIONS.update({
                  '\treturn RandomlyDamagePlayAreaPokemon(0u);',
         'case_ids': ['BigThunderEffect-0', 'BigThunderEffect-1', 'BigThunderEffect-2'],
         'source': 'src/profiles/extended/home/effect_functions.c'},
-    'LassEffect': {'source_symbol': 'LassEffect', 'before': '\thCurSelectionItem = 0u;', 'after': '\thCurSelectionItem = 1u;', 'case_ids': ['LassEffect-0', 'LassEffect-1'], 'source': 'src/home/effect_functions.c'},
+    'LassEffect': {'source_symbol': 'LassEffect', 'before': 'if (PROFILE_FEATURE_LINK_DUEL && wDuelType != 0u) {', 'after': 'if (wDuelType != 0u) {', 'case_ids': ['LassEffect-3'], 'source': 'src/home/effect_functions.c'},
     'TakeDownEffect': {   'source_symbol': 'TakeDownEffect',
         'before': 'DealRecoilDamageToSelf(30u, f, d, e)',
         'after': 'DealRecoilDamageToSelf(40u, f, d, e)',
@@ -2731,6 +2732,25 @@ MUTATIONS.update({
     'HyperBeam_AISelectEffect': {'source_symbol': 'HyperBeam_AISelectEffect', 'before': '\thTemp_ffa0 = selected.a;', 'after': '\thTemp_ffa0 = (uint8_t)((selected.a) ^ 1u);', 'case_ids': ['HyperBeam_AISelectEffect-0'], 'source': 'src/profiles/extended/home/effect_functions.c'},
     'HyperBeam_DiscardEffect': {'source_symbol': 'HyperBeam_DiscardEffect', 'before': '\tif (no_effect.f & 0x10u)', 'after': '\tif (!(no_effect.f & 0x10u))', 'case_ids': ['HyperBeam_DiscardEffect-2'], 'source': 'src/profiles/extended/home/effect_functions.c'},
 })
+CASES['LassEffect'] = [
+    *CASES['LassEffect'],
+    lass_hand_fixture((const("LASS"),), (const("POTION"),)),
+    lass_hand_fixture((const("GRASS_ENERGY"),) * 7, (const("LASS"),), ai_turn=True, duel_type=0x81),
+]
+MUTATIONS['LassEffect'] = {
+    'source': 'src/home/effect_functions.c', 'source_symbol': 'LassEffect',
+    'before': 'if (PROFILE_FEATURE_LINK_DUEL && wDuelType != 0u)',
+    'after': 'if (wDuelType != 0u)',
+    'case_ids': ['LassEffect-3'],
+}
+MUTATIONS['NidoranFCallForFamily_PlayerSelectEffect'] = {
+    'source': 'src/profiles/extended/home/effect_functions.c',
+    'source_symbol': 'NIDORAN_F_CANCEL_CHECK_M',
+    'before': '#define NIDORAN_F_CANCEL_CHECK_M 1',
+    'after': '#define NIDORAN_F_CANCEL_CHECK_M 0',
+    'case_ids': ['NidoranFCallForFamily_PlayerSelectEffect-2'],
+}
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _name in (
