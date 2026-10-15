@@ -491,13 +491,13 @@ appimage:
 windows:
     just completion-data-pack
     tools/windows/build.sh build/completion/data-pack.bin
-appimage-profiles:
-    python3 tools/check_profile_distribution.py
-    python3 tools/package_profiles.py --format appimage
+appimage-profiles: build-profiles
+    python3 tools/package_profiles.py --format appimage --private
 
 windows-profiles:
-    python3 tools/check_profile_distribution.py
-    python3 tools/package_profiles.py --format windows
+    POKETCG_PROFILE=vanilla just completion-data-pack
+    POKETCG_PROFILE=extended just completion-data-pack-extended
+    python3 tools/package_profiles.py --format windows --private
 
 
 completion-lanes-health:

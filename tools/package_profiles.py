@@ -3,20 +3,16 @@
 from __future__ import annotations
 
 import argparse
-import os
 import shutil
 import subprocess
 import sys
 import zipfile
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from tools.completion.package_smoke import FORBIDDEN_SUFFIXES  # noqa: E402
-from tools.profiles import get_profile  # noqa: E402
-LINUXDEPLOY_URL = "https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20251107-1/linuxdeploy-x86_64.AppImage"
-LINUXDEPLOY_SHA256 = "c20cd71e3a4e3b80c3483cef793cda3f4e990aca14014d23c544ca3ce1270b4d"
+from tools.completion.package_smoke import FORBIDDEN_SUFFIXES
+from tools.profiles import get_profile
 
 
 def build_root() -> Path:
@@ -50,41 +46,37 @@ def verify_stage(stage: Path) -> None:
             raise SystemExit(f"profile package contains forbidden file: {path}")
 
 
-def appimage(output: Path) -> Path:
+def appimage(output: Path, name: str) -> Path:
     appdir = output / "AppDir"
     stage = appdir / "usr" / "bin"
     shutil.rmtree(appdir, ignore_errors=True)
     output.mkdir(parents=True, exist_ok=True)
     copy_product(stage)
     verify_stage(appdir)
-    tool = output / "tools" / "linuxdeploy-x86_64.AppImage"
-    tool.parent.mkdir(parents=True, exist_ok=True)
-    if not tool.is_file():
-        subprocess.run(["curl", "-fsSL", "-o", str(tool), LINUXDEPLOY_URL], check=True)
-        subprocess.run(["sha256sum", "-c"], input=f"{LINUXDEPLOY_SHA256}  {tool}\n", text=True, check=True)
-        tool.chmod(0o755)
-    version = (ROOT / "VERSION").read_text().strip()
-    result = output / f"poketcg-profiles-{version}-x86_64.AppImage"
+    result = output / f"{name}.AppImage"
     if result.exists():
         result.unlink()
-    subprocess.run([
-        str(tool), "--appdir", str(appdir), "--executable", str(stage / "poketcg-launcher"),
-        "--desktop-file", str(ROOT / "tools/appimage/poketcg.desktop"),
-        "--icon-file", str(ROOT / "tools/appimage/poketcg.png"),
-        "--custom-apprun", str(ROOT / "tools/appimage/AppRun"), "--output", "appimage",
-    ], cwd=output, env={**os.environ, "APPIMAGE_EXTRACT_AND_RUN": "1", "LDAI_OUTPUT": str(result), "LDAI_NO_APPSTREAM": "1"}, check=True)
+    subprocess.run(
+        [str(ROOT / "tools/appimage/build.sh"), "--profiles", str(appdir), str(output), name],
+        cwd=ROOT, check=True,
+    )
     verify_stage(appdir)
     return result
 
 
-def windows(output: Path) -> Path:
-    stage = output / "poketcg-profiles"
+def windows(output: Path, name: str) -> Path:
+    stage = output / name
     shutil.rmtree(stage, ignore_errors=True)
     output.mkdir(parents=True, exist_ok=True)
-    copy_product(stage)
+    vanilla = get_profile("vanilla", ROOT).data_pack_path(ROOT)
+    extended = get_profile("extended", ROOT).data_pack_path(ROOT)
+    subprocess.run(
+        [str(ROOT / "tools/windows/build.sh"), "--profiles", str(vanilla), str(extended), str(stage)],
+        cwd=ROOT, check=True,
+    )
+    shutil.copy2(ROOT / "profiles/extended/provenance.toml", stage / "NOTICE-EXTENDED.txt")
     verify_stage(stage)
-    version = (ROOT / "VERSION").read_text().strip()
-    archive = output / f"poketcg-profiles-{version}-windows.zip"
+    archive = output / f"{name}.zip"
     if archive.exists():
         archive.unlink()
     with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
@@ -97,9 +89,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--format", choices=("appimage", "windows"), required=True)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--private", action="store_true", help="mark artifact filenames as private")
     args = parser.parse_args()
-    output = (args.output or ROOT / "build" / f"{args.format}-profiles").resolve()
-    result = appimage(output) if args.format == "appimage" else windows(output)
+    output = (args.output or build_root() / f"{args.format}-profiles").resolve()
+    version = (ROOT / "VERSION").read_text().strip()
+    purpose = "-private" if args.private else ""
+    platform = "x86_64" if args.format == "appimage" else "windows"
+    name = f"poketcg-profiles-{version}{purpose}-{platform}"
+    result = appimage(output, name) if args.format == "appimage" else windows(output, name)
     print(result)
     return 0
 

@@ -2,7 +2,7 @@ repository = "https://github.com/ElectroDeoxys/Pokemon-TCG-Extended.git"
 tag = "v2.0.0"
 commit = "8257bd26c1dff868ca5bf90da8e7affff30ddc4d"
 license = "none-declared"
-distribution = "blocked"
+distribution = "unverified"
 permission_evidence = []
 copied_paths = [
   "profiles/extended/source-fixes.patch",
