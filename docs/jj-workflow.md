@@ -58,7 +58,11 @@ is just `jj commit` then `jj git push --remote origin --bookmark main` — no ma
   GitHub-side refs. `just init-repo` tracks `main@origin` but does not create
   this optional remote.
 
-Forgejo mirrors repository refs to GitHub on commits, with an eight-hour interval. The mirror does not copy Release objects. `.forgejo/workflows/ci.yml` creates a GitHub Release object after each mirrored stable or nightly tag appears, and marks nightly releases as prereleases. It skips a nightly when the source tree matches the latest nightly tag for the current `VERSION`. Progress snapshot commits reach GitHub through the ref mirror. `main@origin` and `main@github-mirror` can differ until sync; fetch the remote whose state you are inspecting.
+Forgejo mirrors repository refs to GitHub on commits, with an eight-hour interval. The mirror does not copy Release objects. `.forgejo/workflows/ci.yml` creates a GitHub Release object after each mirrored stable or nightly tag appears, and marks nightly releases as prereleases.
+
+Nightly creation compares tracked source with the latest nightly tag for the current `VERSION`, or the matching stable tag when that version has no nightly. `tools/nightly_release.py` shares `DERIVED_PATHS` with completion attestation, so updates limited to `site/data/gate.json`, `site/data/history.jsonl` and `site/data/progress.json` do not create another release. With no matching baseline tag, the first nightly is created.
+
+Progress snapshot commits reach GitHub through the ref mirror. `main@origin` and `main@github-mirror` can differ until sync; fetch the remote whose state you are inspecting.
 
 ## One-time Forgejo HTTPS authentication
 

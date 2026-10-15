@@ -84,7 +84,7 @@ jobs:
       - name: Lint CardId width
         run: python3 tools/lint_card_ids.py
       - name: Run tooling tests
-        run: python3 -m unittest tests.test_coverage_loop tests.test_completion_evidence tests.test_compose_profile tests.test_profile_path tests.test_lint_card_ids tests.test_profile_audit tests.test_release_attestation tests.test_progress_history tests.test_source_revision tests.test_gen_constants tests.test_package_profiles
+        run: python3 -m unittest tests.test_coverage_loop tests.test_completion_evidence tests.test_compose_profile tests.test_profile_path tests.test_lint_card_ids tests.test_profile_audit tests.test_release_attestation tests.test_progress_history tests.test_source_revision tests.test_gen_constants tests.test_package_profiles tests.test_nightly_release
       - name: Ensure .jj marker
         run: mkdir -p .jj
       - name: Verify PreToolUse guards
@@ -140,9 +140,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
-      - name: Install jq
+      - name: Install Python and jq
         run: |
           set -euo pipefail
+          curl --proto '=https' --tlsv1.2 -LsSf https://astral.sh/uv/install.sh \
+            | env UV_INSTALL_DIR=/usr/local/bin sh
+          uv python install 3.13
+          ln -sf "$(uv python find 3.13)" /usr/local/bin/python3
           arch="$(uname -m)"
           case "$arch" in
             x86_64) jq_arch=amd64 ;;
@@ -164,12 +168,11 @@ jobs:
           git fetch origin main --tags
           commit="$(git rev-parse origin/main)"
           base="$(tr -d '[:space:]' < VERSION)"
-          previous_tag="$(git for-each-ref --count=1 --sort=-refname --format='%(refname:short)' "refs/tags/v${base}-nightly.*")"
+          previous_tag="$(git for-each-ref --count=1 --sort=-refname --format='%(refname:short)' "refs/tags/v${base}-nightly.*" "refs/tags/v${base}")"
           if [ -n "$previous_tag" ]; then
-            previous_tree="$(git rev-parse "${previous_tag}^{tree}")"
-            current_tree="$(git rev-parse "${commit}^{tree}")"
-            if [ "$previous_tree" = "$current_tree" ]; then
-              echo "No content changes since ${previous_tag}; skipping nightly."
+            decision="$(python3 tools/nightly_release.py "$previous_tag" "$commit")"
+            if [ "$decision" = unchanged ]; then
+              echo "No source changes since ${previous_tag}; skipping nightly."
               exit 0
             fi
           fi
