@@ -36,7 +36,20 @@ jobs:
           chmod +x /usr/local/bin/jq
           curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh \
             | bash -s -- --tag 1.58.0 --to /usr/local/bin
+      - name: Restore pret and rgbds
+        id: pret
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            poketcg
+            poketcg2
+            /usr/local/bin/rgbasm
+            /usr/local/bin/rgblink
+            /usr/local/bin/rgbfix
+            /usr/local/bin/rgbgfx
+          key: pret-${{ runner.arch }}-${{ hashFiles('justfile', 'tools/oracle/artifacts.json', 'tools/install_rgbds.sh') }}
       - name: Install rgbds
+        if: steps.pret.outputs.cache-hit != 'true'
         run: bash tools/install_rgbds.sh
       - name: Bootstrap pret disassembly
         run: just bootstrap
