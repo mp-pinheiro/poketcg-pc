@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Compute the port progress report from the pret inventory, scope rules,
-registry, and gate record. Writes site/data/progress.json.
+registry, and release attestation. Writes site/data/progress.json.
 
-Reads only site/data/inventory.json, tools/progress/scope.toml,
-tests/routines.py, and (if present) site/data/gate.json — never poketcg/,
-so it runs in CI without a disassembly checkout.
+Reads site/data/inventory.json, tools/progress/scope.toml, tests/routines.py,
+site/data/coverage.json, tools/completion/session_ratchet.json and
+site/data/gate.json. Registry case modules resolve the vanilla ROM's symbols
+and generated constants, so CI bootstraps pret before running it.
 """
 from __future__ import annotations
 
@@ -30,7 +31,6 @@ GATE = ROOT / "site" / "data" / "gate.json"
 PROGRESS = ROOT / "site" / "data" / "progress.json"
 HISTORY = ROOT / "site" / "data" / "history.jsonl"
 BLOCKED = ROOT / ".factory" / "blocked.toml"
-COMPLETION_TOOL = ROOT / "tools" / "completion" / "completion.py"
 
 TIER_BOUNDS = ((1, 0, 100), (2, 100, 300), (3, 300, 800), (4, 800, None))
 
@@ -63,18 +63,20 @@ def canonical_work_id(source: str, name: str) -> str:
     return f"port:v1:{source}:{name}"
 
 
-def gate_is_trusted(gate_data: dict | None) -> bool:
+def attestation_state(gate_data: dict | None) -> tuple[bool, dict]:
     if not isinstance(gate_data, dict):
-        return False
+        return False, {"complete": False, "errors": ["no release attestation"]}
     try:
-        valid, _reason = validate_attestation(
-            gate_data,
-            ROOT,
-            current_source_revision(ROOT),
-        )
-    except (GateError, OSError, ValueError):
-        return False
-    return valid
+        trusted, reason = validate_attestation(gate_data, ROOT, current_source_revision(ROOT))
+    except (GateError, OSError, ValueError) as error:
+        trusted, reason = False, str(error)
+    attestation = gate_data.get("attestation")
+    audit = attestation.get("audit") if isinstance(attestation, dict) else None
+    completion = dict(audit) if isinstance(audit, dict) else {}
+    if not trusted:
+        completion["complete"] = False
+        completion["errors"] = [*completion.get("errors", []), reason]
+    return trusted, completion
 
 
 def load_operational_blockers() -> dict[str, dict]:
@@ -98,14 +100,11 @@ def load_operational_blockers() -> dict[str, dict]:
 
 def project_work_records(
     functions: list[dict],
-    gate_data: dict | None,
+    trusted: bool,
     *,
     active_packets: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Project report rows into stable, issue-sized desired work records."""
-    trusted = gate_is_trusted(gate_data)
-    gate_complete = trusted
-    gate_routines = (gate_data or {}).get("routines") or {}
     operational = load_operational_blockers()
     active_packets = active_packets or {}
     records = []
@@ -129,11 +128,7 @@ def project_work_records(
         }
         if work["excluded"]:
             work["state"] = "excluded"
-        elif gate_complete or gate_routines.get(name, {}).get("status") == "pass":
-            work["state"] = "complete"
-        elif gate_routines.get(name, {}).get("status") == "fail" or function["status"] == "failing":
-            work["state"] = "failing"
-        elif function["status"] == "verified":
+        elif trusted:
             work["state"] = "complete"
         elif function["status"] == "ported":
             work["state"] = "awaiting-check"
@@ -272,37 +267,6 @@ def load_gate() -> dict | None:
     with open(GATE) as f:
         return json.load(f)
 
-def load_completion_status() -> dict | None:
-    if not COMPLETION_TOOL.exists():
-        return None
-    try:
-        result = subprocess.run(
-            [sys.executable, str(COMPLETION_TOOL), "status", "--json"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            timeout=120,
-            check=False,
-        )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return {"schema": 2, "complete": False, "errors": [str(exc)]}
-    try:
-        value = json.loads(result.stdout)
-    except json.JSONDecodeError as exc:
-        return {
-            "schema": 2,
-            "complete": False,
-            "errors": [f"completion status is not JSON: {exc}"],
-        }
-    if not isinstance(value, dict):
-        return {"schema": 2, "complete": False, "errors": ["completion status is not an object"]}
-    if result.returncode:
-        value.setdefault("errors", []).append(
-            f"completion status exited {result.returncode}"
-        )
-        value["complete"] = False
-    return value
-
 
 def _read_json(path: Path, default: dict) -> dict:
     try:
@@ -312,12 +276,12 @@ def _read_json(path: Path, default: dict) -> dict:
     return value if isinstance(value, dict) else default
 
 
-def workflow_axes(completion: dict | None, functions: list[dict]) -> dict:
-    mapping = _read_json(ROOT / "build" / "completion" / "routine-mapping.json", {})
+def workflow_axes(completion: dict, functions: list[dict], trusted: bool) -> dict:
+    mapping = completion.get("mapping") or {}
     coverage = _read_json(ROOT / "site" / "data" / "coverage.json", {})
     ratchet = _read_json(ROOT / "tools" / "completion" / "session_ratchet.json", {})
-    requirements = (completion or {}).get("counts", {}).get("requirements", {})
-    milestones = (completion or {}).get("counts", {}).get("milestone_gates", {})
+    requirements = completion.get("counts", {}).get("requirements", {})
+    milestones = completion.get("counts", {}).get("milestone_gates", {})
     routines = coverage.get("routines", {}) if isinstance(coverage, dict) else {}
     unmeasurable = [
         name for name, row in routines.items()
@@ -350,17 +314,8 @@ def workflow_axes(completion: dict | None, functions: list[dict]) -> dict:
         },
         "requirements": requirements,
         "milestones": milestones,
-        "final_release": gate_is_trusted(load_gate()),
+        "final_release": trusted,
     }
-
-
-EVIDENCE_AXES = ("requirements", "milestones")
-
-
-def reproducible_axes(axes: dict | None) -> dict | None:
-    if not isinstance(axes, dict):
-        return axes
-    return {name: value for name, value in axes.items() if name not in EVIDENCE_AXES}
 
 
 def jj_commit_short() -> str | None:
@@ -485,7 +440,7 @@ def recent_ports(inventory: dict, limit: int = 8) -> list[dict]:
     return entries[:limit]
 
 
-def compute(inventory: dict, routines: set[str], gate_data: dict | None) -> dict:
+def compute(inventory: dict, routines: set[str], gate_data: dict | None, trusted: bool) -> dict:
     funcs = inventory["functions"]
     excluded_map, excluded_set, excl_funcs, excl_bytes = resolve_scope(
         load_scope(), funcs, inventory,
@@ -499,10 +454,6 @@ def compute(inventory: dict, routines: set[str], gate_data: dict | None) -> dict
     for name in sorted(routines):
         if name not in funcs:
             fail(f"ROUTINES names {name}, not a code label in the inventory")
-
-    gate_routines: dict[str, dict] = {}
-    if gate_data and gate_data.get("routines"):
-        gate_routines = gate_data["routines"]
 
     functions_out: list[dict] = []
     categories: dict[str, dict] = {}
@@ -542,18 +493,8 @@ def compute(inventory: dict, routines: set[str], gate_data: dict | None) -> dict
             units[file]["functions_total"] += 1
 
         ported = name in routines
-        is_failing = False
-        is_verified = False
-        if ported:
-            gate_r = gate_routines.get(name)
-            if gate_r is not None:
-                is_verified = gate_r["status"] == "pass"
-                is_failing = gate_r["status"] == "fail"
-
-        if is_verified:
+        if ported and trusted:
             status = "verified"
-        elif is_failing:
-            status = "failing"
         elif ported:
             status = "ported"
         else:
@@ -574,7 +515,7 @@ def compute(inventory: dict, routines: set[str], gate_data: dict | None) -> dict
             "excluded_kind": None, "excluded_reason": None,
         })
 
-        if status in ("verified", "ported", "failing"):
+        if status in ("verified", "ported"):
             categories[cat]["code"] += size
             categories[cat]["functions"] += 1
             if file:
@@ -603,9 +544,9 @@ def compute(inventory: dict, routines: set[str], gate_data: dict | None) -> dict
             "present": True,
             "complete": gate_data.get("complete", False),
             "commit": gate_data.get("commit"),
-            "trusted": gate_is_trusted(gate_data),
+            "trusted": trusted,
         }
-    work_records = project_work_records(functions_out, gate_data)
+    work_records = project_work_records(functions_out, trusted)
     work_ids = [record["work_id"] for record in work_records
                 if not record["excluded"]]
     if None in work_ids or len(work_ids) != len(set(work_ids)):
@@ -647,13 +588,12 @@ def subcommand_build():
     inv = load_inventory()
     routines_set, _ = load_routines()
     gate_data = load_gate()
+    trusted, completion = attestation_state(gate_data)
     commit = jj_commit_short()
-    report = compute(inv, routines_set, gate_data)
-    completion = load_completion_status()
-    if completion is not None:
-        report["completion"] = completion
+    report = compute(inv, routines_set, gate_data, trusted)
+    report["completion"] = completion
     report["recent"] = recent_ports(inv)
-    report["workflow_axes"] = workflow_axes(completion, report["functions"])
+    report["workflow_axes"] = workflow_axes(completion, report["functions"], trusted)
     previous_report = None
     if PROGRESS.exists():
         try:
@@ -712,9 +652,11 @@ def subcommand_check():
     inv = load_inventory()
     routines_set, _ = load_routines()
     gate_data = load_gate()
-    current = compute(inv, routines_set, gate_data)
+    trusted, completion = attestation_state(gate_data)
+    current = compute(inv, routines_set, gate_data, trusted)
+    current["completion"] = completion
     current["recent"] = recent_ports(inv)
-    current["workflow_axes"] = workflow_axes(load_completion_status(), current["functions"])
+    current["workflow_axes"] = workflow_axes(completion, current["functions"], trusted)
     committed = None
     if PROGRESS.exists():
         with open(PROGRESS) as f:
@@ -724,12 +666,9 @@ def subcommand_check():
     diffs = []
     for key in (
         "measures", "categories", "units", "functions", "work_records",
-        "id_migrations", "recent", "workflow_axes",
+        "id_migrations", "completion", "recent", "workflow_axes",
     ):
-        a, b = current.get(key), committed.get(key)
-        if key == "workflow_axes":
-            a, b = reproducible_axes(a), reproducible_axes(b)
-        if json.dumps(a, sort_keys=True) != json.dumps(b, sort_keys=True):
+        if json.dumps(current.get(key), sort_keys=True) != json.dumps(committed.get(key), sort_keys=True):
             diffs.append(key)
     if diffs:
         for key in diffs:
@@ -748,7 +687,8 @@ def subcommand_frontier(args: list[str]):
     inv = load_inventory()
     routines_set, _ = load_routines()
     gate_data = load_gate()
-    report = compute(inv, routines_set, gate_data)
+    trusted, _ = attestation_state(gate_data)
+    report = compute(inv, routines_set, gate_data, trusted)
     ready = [f for f in report["functions"]
              if f["status"] == "todo" and f["ready"]]
     ready.sort(key=lambda f: f["size"], reverse=True)
@@ -774,7 +714,7 @@ def subcommand_backfill():
         if routines is None:
             skipped += 1
             continue
-        report = compute(inv, routines, None)
+        report = compute(inv, routines, None, False)
         points.append({
             "commit": commit_id,
             "timestamp": timestamp,
