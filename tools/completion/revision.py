@@ -25,52 +25,46 @@ def _run(root: Path, command: list[str]) -> str:
 
 
 def _jj_source_revision(root: Path) -> str:
-    revisions = _run(
+    revision = _run(
         root,
-        [
-            "jj",
-            "--ignore-working-copy",
-            "log",
-            "-r",
-            "ancestors(@-, 256)",
-            "--no-graph",
-            "-T",
-            "commit_id ++ \"\\n\"",
-        ],
-    ).splitlines()
-    if not revisions:
-        raise RuntimeError("no committed revisions")
-    for revision in revisions:
+        ["jj", "--ignore-working-copy", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
+    )
+    for _ in range(256):
+        parents = _run(
+            root,
+            ["jj", "--ignore-working-copy", "log", "-r", revision, "--no-graph",
+             "-T", 'parents.map(|p| p.commit_id()).join("\\n")'],
+        ).splitlines()
+        if not parents:
+            return revision
+        parent = parents[0]
         changed = _run(
             root,
-            [
-                "jj",
-                "--ignore-working-copy",
-                "diff",
-                "--name-only",
-                "--from",
-                f"{revision}-",
-                "--to",
-                revision,
-            ],
+            ["jj", "--ignore-working-copy", "diff", "--name-only",
+             "--from", parent, "--to", revision],
         ).splitlines()
         if any(path not in DERIVED_PATHS for path in changed):
             return revision
-    return revisions[-1]
+        revision = parent
+    return revision
 
 
 def _git_source_revision(root: Path) -> str:
-    revisions = _run(root, ["git", "rev-list", "--max-count=256", "HEAD"]).splitlines()
+    revisions = _run(
+        root, ["git", "rev-list", "--first-parent", "--parents", "--max-count=256", "HEAD"],
+    ).splitlines()
     if not revisions:
         raise RuntimeError("no committed revisions")
-    for revision in revisions:
-        changed = _run(
-            root,
-            ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "--root", revision],
-        ).splitlines()
+    for row in revisions:
+        revision, *parents = row.split()
+        command = (
+            ["git", "diff", "--name-only", parents[0], revision]
+            if parents else ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "--root", revision]
+        )
+        changed = _run(root, command).splitlines()
         if any(path not in DERIVED_PATHS for path in changed):
             return revision
-    return revisions[-1]
+    return revision
 
 
 def current_source_revision(root: Path) -> str:

@@ -50,6 +50,33 @@ def _write_json_atomic(path: Path, payload: dict) -> None:
             os.unlink(temp)
 
 
+def append_history(path: Path, point: dict) -> None:
+    measure_keys = ("code", "code_total", "functions", "functions_total")
+    day = point["timestamp"] // 86400
+    previous = None
+    if path.exists():
+        with path.open() as stream:
+            for line in stream:
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if (
+                    isinstance(record, dict)
+                    and isinstance(record.get("timestamp"), int)
+                    and record["timestamp"] // 86400 == day
+                    and all(key in record for key in measure_keys)
+                ):
+                    previous = record
+    if previous is not None and all(previous[key] == point[key] for key in measure_keys):
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a") as stream:
+        stream.write(json.dumps(point, sort_keys=True, separators=(",", ":")) + "\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
 def tier_for(size: int) -> int:
     for tier, lower, upper in TIER_BOUNDS:
         if upper is None or size < upper:
@@ -625,24 +652,7 @@ def subcommand_build():
         "functions": report["measures"]["functions"],
         "functions_total": report["measures"]["functions/total"],
     }
-    points_by_day = {}
-    if HISTORY.exists():
-        with open(HISTORY) as f:
-            for entry_line in f:
-                try:
-                    point = json.loads(entry_line)
-                    points_by_day[point["timestamp"] // 86400] = point
-                except (json.JSONDecodeError, KeyError, TypeError):
-                    pass
-    day = line["timestamp"] // 86400
-    existing = points_by_day.get(day)
-    measure_keys = ("code", "code_total", "functions", "functions_total")
-    if existing is None or any(existing.get(key) != line[key] for key in measure_keys):
-        points_by_day[day] = line
-    points = sorted(points_by_day.values(), key=lambda p: p.get("timestamp", 0))
-    with open(HISTORY, "w") as f:
-        for p in points:
-            f.write(json.dumps(p, sort_keys=True, separators=(",", ":")) + "\n")
+    append_history(HISTORY, line)
     m = report["measures"]
     pct = m["code"] * 100 / m["code/total"]
     print(f"progress: {m['code']}/{m['code/total']} code bytes ({pct:.2f}%)")

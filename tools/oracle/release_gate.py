@@ -23,6 +23,10 @@ COMPLETION = ROOT / "tools" / "completion" / "completion.py"
 GAMBATTE_PINS = ROOT / "tools" / "completion" / "gambatte_pins.toml"
 RELEASE_SMOKE_FRAMES = 200
 CONSTITUENT_TIMEOUTS = {"function-gate": 1800.0}
+REQUIRED_CONSTITUENTS = frozenset({
+    "package-smoke", "completion-audit", "hatches", "mutations",
+    "function-gate", "lane-health", "gambatte-health", "gambatte-capture",
+})
 
 
 class GateError(RuntimeError):
@@ -186,29 +190,31 @@ def all_release_conditions(
     audit_report: dict[str, Any] | None,
     constituents: dict[str, dict[str, Any]],
 ) -> bool:
-    if not audit_report or audit_report.get("complete") is not True:
+    if not isinstance(audit_report, dict) or audit_report.get("complete") is not True:
         return False
-    counts = audit_report.get("counts", {})
-    if counts.get("unclassified_bytes") != 0:
+    counts = audit_report.get("counts")
+    if not isinstance(counts, dict):
         return False
-    if counts.get("orphan_registrations") != 0:
+    if counts.get("unclassified_bytes") != 0 or counts.get("orphan_registrations") != 0:
         return False
-    final = counts.get("final_routines", {})
-    if final.get("count") != final.get("total"):
-        return False
-    production = counts.get("production_integration", {})
-    if production.get("roots") != production.get("root_total"):
-        return False
-    requirements = counts.get("requirements", {})
-    if requirements.get("passing") != requirements.get("total"):
-        return False
-    milestones = counts.get("milestone_gates", {})
-    if milestones.get("passing") != milestones.get("total"):
-        return False
-    trusted = counts.get("trusted_oracle_evidence", {})
-    if trusted.get("count") != trusted.get("total"):
-        return False
-    return all(item.get("status") == "PASS" for item in constituents.values())
+    for name, numerator, denominator in (
+        ("final_routines", "count", "total"),
+        ("production_integration", "roots", "root_total"),
+        ("requirements", "passing", "total"),
+        ("milestone_gates", "passing", "total"),
+        ("trusted_oracle_evidence", "count", "total"),
+    ):
+        row = counts.get(name)
+        if not isinstance(row, dict):
+            return False
+        total = row.get(denominator)
+        count = row.get(numerator)
+        if type(total) is not int or type(count) is not int or total <= 0 or count != total:
+            return False
+    return isinstance(constituents, dict) and set(constituents) == REQUIRED_CONSTITUENTS and all(
+        isinstance(item, dict) and item.get("status") == "PASS" and item.get("returncode") == 0
+        for item in constituents.values()
+    )
 
 
 def validate_attestation(

@@ -62,14 +62,16 @@ function renderHeader(p) {
 }
 
 function renderChart(points) {
-  if (!points || points.length < 2) {
+  const measurements = (points || []).filter(point =>
+    Number.isFinite(point.code) && Number.isFinite(point.code_total));
+  if (measurements.length < 2) {
     CHART.innerHTML = '';
     CHART_RANGE.textContent = '';
     CHART_SUMMARY.textContent = '';
     return;
   }
 
-  const sorted = [...points].sort((a, b) => a.timestamp - b.timestamp);
+  const sorted = [...measurements].sort((a, b) => a.timestamp - b.timestamp);
   const utcDay = timestamp => new Date(timestamp * 1000).toISOString().slice(0, 10);
   const endDay = new Date();
   endDay.setUTCHours(0, 0, 0, 0);

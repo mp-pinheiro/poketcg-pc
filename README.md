@@ -86,10 +86,9 @@ just oracle-release-gate
 `just progress-serve` serves a port-progress dashboard at `http://127.0.0.1:8765`.
 Published at `https://poketcg-pc.pages.dev` via Cloudflare Pages.
 
-The release gate requires the ROM produced by `just bootstrap` and the core
-produced by `just completion-gambatte-bootstrap`. It runs package smoke, the
-completion and CFG audits, independent-lane health, Gambatte health, and a
-one-frame `release-smoke` Gambatte capture.
+The release gate requires the ROM produced by `just bootstrap` and the core produced by `just completion-gambatte-bootstrap`. It runs package smoke, completion audit, hatch and mutation audits, the function gate, independent-lane and Gambatte health, and a 200-frame `release-smoke` Gambatte capture.
+
+`site/data/gate.json` embeds the release attestation, including its source-tree identity and constituent results. `python3 tools/progress/report.py build` derives completion from that tracked attestation rather than local build evidence. Daily snapshots preserve release-history records and do not invalidate an attestation when only the gate, history or progress output changes. Source changes require fresh completion evidence and a new release gate.
 
 ## Issues
 
