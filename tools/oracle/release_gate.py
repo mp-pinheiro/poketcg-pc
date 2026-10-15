@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-"""Run the revision-pinned completion constituents and publish one attestation."""
 
 from __future__ import annotations
 
@@ -11,12 +10,25 @@ import subprocess
 import sys
 import tempfile
 import time
+import tomllib
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
+from tools.completion.evidence import (
+    EvidenceError,
+    requirements_file_identity,
+    validate_documentation,
+)
 from tools.completion.revision import DERIVED_PATHS, current_source_revision
+from tools.profiles import get_profile
+
+DOCS_PATHS = ("README.md", "CHANGELOG.md")
+DOCS_PREFIX = "docs/"
+DOCS_SUFFIX = ".md"
+ATTESTATION_SCHEMA = 4
+POINTER_SCHEMA = 4
 GATE_PATH = ROOT / "site" / "data" / "gate.json"
 HISTORY_PATH = ROOT / "site" / "data" / "history.jsonl"
 COMPLETION = ROOT / "tools" / "completion" / "completion.py"
@@ -69,6 +81,63 @@ def ensure_clean() -> None:
         raise GateError("release gate requires a clean working tree")
 
 
+def documentation_only_path(path: str) -> bool:
+    return path in DOCS_PATHS or (
+        path.startswith(DOCS_PREFIX) and path.endswith(DOCS_SUFFIX)
+    )
+
+
+def execution_tree_digest(root: Path = ROOT) -> str:
+    try:
+        tracked = subprocess.run(
+            ["git", "ls-files", "-z"], cwd=root, capture_output=True, timeout=30, check=False
+        )
+        untracked = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard", "-z"],
+            cwd=root, capture_output=True, timeout=30, check=False
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise GateError(f"cannot enumerate execution tree: {exc}") from exc
+    if tracked.returncode or untracked.returncode:
+        raise GateError("cannot enumerate execution tree")
+    paths = sorted(filter(None, tracked.stdout.split(b"\0")))
+    untracked_paths = [os.fsdecode(path) for path in untracked.stdout.split(b"\0") if path]
+    execution_untracked = [
+        path for path in untracked_paths
+        if path not in DERIVED_PATHS and not documentation_only_path(path)
+    ]
+    if execution_untracked:
+        raise GateError("untracked execution inputs prevent release proof reuse")
+    digest = hashlib.sha256()
+    for raw_path in paths:
+        name = os.fsdecode(raw_path)
+        if name in DERIVED_PATHS or documentation_only_path(name):
+            continue
+        path = root / name
+        try:
+            metadata = path.lstat()
+            if path.is_symlink():
+                content = runtime_file_digest(path).encode()
+                mode = b"symlink"
+            else:
+                content = path.read_bytes()
+                mode = str(metadata.st_mode & 0o111).encode()
+        except OSError as exc:
+            raise GateError(f"cannot read tracked path {path}: {exc}") from exc
+        if name == "tools/completion/requirements.toml":
+            try:
+                content = requirements_file_identity(root, name)["contract_sha256"].encode()
+            except (EvidenceError, KeyError, TypeError) as exc:
+                raise GateError(f"cannot identify requirements contract: {exc}") from exc
+        digest.update(raw_path)
+        digest.update(b"\0")
+        digest.update(mode)
+        digest.update(b"\0")
+        digest.update(len(content).to_bytes(8, "big"))
+        digest.update(content)
+    return digest.hexdigest()
+
+
 def source_tree_digest(root: Path = ROOT) -> str:
     try:
         result = subprocess.run(
@@ -93,7 +162,6 @@ def source_tree_digest(root: Path = ROOT) -> str:
         digest.update(content)
     return digest.hexdigest()
 
-
 def file_digest(path: Path) -> str:
     digest = hashlib.sha256()
     try:
@@ -105,17 +173,131 @@ def file_digest(path: Path) -> str:
     return digest.hexdigest()
 
 
+def runtime_file_digest(path: Path) -> str:
+    content = file_digest(path)
+    if content == "missing":
+        return content
+    try:
+        identity = {
+            "sha256": content,
+            "executable": path.stat().st_mode & 0o111,
+            "symlink": os.readlink(path) if path.is_symlink() else None,
+        }
+    except OSError:
+        return "missing"
+    return hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
+
+
+def directory_digest(path: Path) -> str:
+    if not path.is_dir():
+        return "missing"
+    digest = hashlib.sha256()
+    for item in sorted(path.rglob("*")):
+        if "__pycache__" in item.parts or item.suffix == ".pyc":
+            continue
+        relative = item.relative_to(path).as_posix().encode()
+        metadata = item.lstat()
+        if item.is_symlink():
+            content = runtime_file_digest(item).encode()
+            kind = b"symlink"
+        elif item.is_file():
+            content = item.read_bytes()
+            kind = b"file:" + str(metadata.st_mode & 0o111).encode()
+        elif item.is_dir():
+            content = b""
+            kind = b"dir:" + str(metadata.st_mode & 0o111).encode()
+        else:
+            continue
+        digest.update(relative)
+        digest.update(b"\0")
+        digest.update(kind)
+        digest.update(b"\0")
+        digest.update(len(content).to_bytes(8, "big"))
+        digest.update(content)
+    return digest.hexdigest()
+
+
 def external_identity(args: argparse.Namespace) -> dict[str, str]:
-    values = {
-        "baseline": str(ROOT / "tools/completion/baseline.toml"),
-        "requirements": str(ROOT / "tools/completion/requirements.toml"),
-        "gambatte_pins": str(GAMBATTE_PINS),
-        "rom": str(args.rom or ROOT / "poketcg/poketcg.gbc"),
-        "symbols": str(args.symbols or ROOT / "poketcg/poketcg.sym"),
-        "binary": str(args.binary or ROOT / "build/poketcg"),
-        "data_pack": str(args.data_pack or ROOT / "build/completion/data-pack.bin"),
+    from tools.completion import gambatte_runner
+
+    profile = get_profile(os.environ.get("POKETCG_PROFILE"), ROOT)
+    try:
+        pins = gambatte_runner.load_pins()
+    except gambatte_runner.GambatteError as exc:
+        raise GateError(f"cannot identify Gambatte runtime: {exc}") from exc
+    core = pins.get("core")
+    if not isinstance(core, dict) or not isinstance(core.get("path"), str) or not core["path"]:
+        raise GateError("Gambatte core pin has no runtime path")
+    core_path = gambatte_runner.resolve(core["path"])
+    boot = pins.get("boot", {})
+    boot_path = (
+        gambatte_runner.resolve(str(boot.get("path", "")))
+        if boot.get("mode") == "bios" else None
+    )
+    paths = {
+        "baseline": ROOT / "tools/completion/baseline.toml",
+        "requirements": ROOT / "tools/completion/requirements.toml",
+        "gambatte_pins": gambatte_runner.PINS_PATH,
+        "rom": args.rom or profile.rom_path(ROOT),
+        "symbols": args.symbols or profile.sym_path(ROOT),
+        "binary": args.binary or profile.binary_path(ROOT),
+        "data_pack": args.data_pack or profile.data_pack_path(ROOT),
+        "profile_map": profile.map_path(ROOT),
+        "profile_symbols": profile.sym_path(ROOT),
+        "profile_rom": profile.rom_path(ROOT),
+        "pack_manifest": profile.artifact_path("pack_manifest", ROOT),
+        "probe": profile.probe_path(ROOT),
+        "package_binary": ROOT / "build/poketcg",
+        "package_data_pack": ROOT / "build/completion/data-pack.bin",
+        "package_pack_manifest": ROOT / "build/completion/data-pack.json",
+        "completion_map": ROOT / "poketcg/poketcg.map",
+        "completion_symbols": ROOT / "poketcg/poketcg.sym",
+        "barrier_probe": ROOT / "build-barrier/poketcg_probe",
+        "health_rom": ROOT / "poketcg/poketcg.gbc",
+        "gbref_runner": ROOT / "tools/oracle/gbref/build/gbref_runner",
+        "gambatte_core": core_path,
+        "gambatte_source": gambatte_runner.resolve(pins["source"]["path"]),
+        "gambatte_rom": gambatte_runner.resolve(pins["rom"]["path"]),
+        "python": Path(sys.executable),
     }
-    return {name: file_digest(Path(path)) for name, path in values.items()}
+    result: dict[str, str] = {}
+    for name, path in paths.items():
+        if name == "requirements":
+            try:
+                result[name] = requirements_file_identity(ROOT, path)["contract_sha256"]
+            except (EvidenceError, KeyError, TypeError):
+                result[name] = "missing"
+        else:
+            result[name] = (
+                file_digest(Path(path)) if name in {"baseline", "gambatte_pins"}
+                else runtime_file_digest(Path(path))
+            )
+    result["gambatte_boot"] = runtime_file_digest(boot_path) if boot_path is not None else "not-required"
+    runtime = Path(os.environ.get(
+        "GBRT_RUNTIME_DIR", str(Path.home() / ".local/gbrecomp/gb-recompiled-linux/runtime")
+    ))
+    result["gbrt_runtime_tree"] = directory_digest(runtime)
+    result["case_corpus"] = directory_digest(profile.case_path(ROOT))
+    result["generated_headers"] = directory_digest(
+        profile.build_path(ROOT) / "generated" / profile.name / "generated"
+    )
+    result["oracle_b"] = runtime_file_digest(Path(os.environ.get(
+        "POKETCG_ORACLEB", str(Path.home() / ".local/share/gbrecompiled/poketcg/poketcg")
+    )))
+    result["python_version"] = hashlib.sha256(sys.version.encode()).hexdigest()
+    profile_inputs = {
+        "profile": profile.as_dict(),
+        "variant": profile.variant,
+        "case_path": os.environ.get("POKETCG_CASE_PATH"),
+        "build": os.environ.get("POKETCG_BUILD"),
+        "profile_variant": os.environ.get("POKETCG_PROFILE_VARIANT"),
+        "gbrt_runtime_dir": os.environ.get("GBRT_RUNTIME_DIR"),
+        "oracle_b": os.environ.get("POKETCG_ORACLEB"),
+    }
+    result["profile"] = hashlib.sha256(
+        json.dumps(profile_inputs, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    return result
 
 
 def content_key(revision_id: str, tree: str, external: dict[str, str]) -> str:
@@ -197,6 +379,46 @@ def all_release_conditions(
         return False
     if counts.get("unclassified_bytes") != 0 or counts.get("orphan_registrations") != 0:
         return False
+    registry = audit_report.get("routine_registry")
+    if (
+        not isinstance(registry, dict)
+        or not registry
+        or not all(isinstance(stem, str) and stem for stem in registry)
+        or not all(
+            isinstance(names, list) and names
+            and all(isinstance(name, str) and name for name in names)
+            for names in registry.values()
+        )
+    ):
+        return False
+    registered = [name for names in registry.values() for name in names]
+    mapping = audit_report.get("mapping")
+    if (
+        len(set(registered)) != len(registered)
+        or not isinstance(mapping, dict)
+        or type(mapping.get("registrations")) is not int
+        or mapping["registrations"] != len(registered)
+    ):
+        return False
+    final_routines = counts.get("final_routines")
+    if (
+        not isinstance(final_routines, dict)
+        or len({name.split(".", 1)[0] for name in registered})
+        != final_routines.get("total")
+    ):
+        return False
+    for field, count_name in (("requirements", "requirements"), ("milestones", "milestone_gates")):
+        rows = audit_report.get(field)
+        count = counts.get(count_name)
+        if not isinstance(rows, dict) or not isinstance(count, dict) or count.get("total") != len(rows):
+            return False
+        if field == "requirements":
+            if count.get("remaining") != 0 or not all(
+                isinstance(row, dict) and row.get("status") == "pass" for row in rows.values()
+            ):
+                return False
+        elif not all(value is True for value in rows.values()):
+            return False
     for name, numerator, denominator in (
         ("final_routines", "count", "total"),
         ("production_integration", "roots", "root_total"),
@@ -223,10 +445,8 @@ def validate_attestation(
     expected_revision: str,
 ) -> tuple[bool, str | None]:
     root = root.resolve()
-    if not isinstance(pointer, dict) or pointer.get("schema") != 3:
+    if not isinstance(pointer, dict) or pointer.get("schema") != POINTER_SCHEMA:
         return False, "release pointer schema differs"
-    if pointer.get("revision") != expected_revision:
-        return False, "release pointer revision differs"
     if pointer.get("complete") is not True:
         return False, "release pointer is incomplete"
     attestation = pointer.get("attestation")
@@ -236,10 +456,31 @@ def validate_attestation(
     material = json.dumps(attestation, sort_keys=True, separators=(",", ":"))
     if hashlib.sha256(material.encode()).hexdigest() != digest:
         return False, "release attestation digest differs"
-    if attestation.get("revision") != expected_revision:
-        return False, "release attestation revision differs"
-    if attestation.get("source_tree_sha256") != source_tree_digest(root):
-        return False, "release attestation source tree differs"
+    if attestation.get("schema") != ATTESTATION_SCHEMA:
+        return False, "release attestation schema differs"
+    if attestation.get("complete") is not True:
+        return False, "release attestation is incomplete"
+    measured_revision = attestation.get("revision")
+    if not isinstance(measured_revision, str) or not measured_revision.strip():
+        return False, "release attestation revision is malformed"
+    if pointer.get("revision") != measured_revision:
+        return False, "release pointer and attestation revisions differ"
+    if attestation.get("proof_inputs_stable") is not True:
+        return False, "release attestation inputs were not stable during measurement"
+    source_digest = attestation.get("source_tree_sha256")
+    if not isinstance(source_digest, str) or len(source_digest) != 64 or any(
+        char not in "0123456789abcdef" for char in source_digest
+    ):
+        return False, "release attestation source tree identity is malformed"
+    try:
+        validate_documentation(root)
+        if attestation.get("execution_tree_sha256") != execution_tree_digest(root):
+            return False, "release attestation execution tree differs"
+    except (GateError, EvidenceError, OSError, ValueError) as exc:
+        return False, str(exc)
+    if measured_revision == expected_revision:
+        if attestation.get("source_tree_sha256") != source_tree_digest(root):
+            return False, "release attestation source tree differs"
     external = attestation.get("external")
     if not isinstance(external, dict):
         return False, "release attestation external identity is malformed"
@@ -248,17 +489,26 @@ def validate_attestation(
         "requirements": root / "tools/completion/requirements.toml",
         "gambatte_pins": root / "tools/completion/gambatte_pins.toml",
     }
-    for name, path_value in paths.items():
-        if external.get(name) != file_digest(path_value):
+    try:
+        identities = {
+            "baseline": file_digest(paths["baseline"]),
+            "requirements": requirements_file_identity(root, paths["requirements"])["contract_sha256"],
+            "gambatte_pins": file_digest(paths["gambatte_pins"]),
+        }
+        document = tomllib.loads(paths["requirements"].read_text())
+        declared_requirements = {row["id"] for row in document["requirement"]}
+        declared_milestones = set(document["manifest"]["milestones"])
+    except (EvidenceError, KeyError, TypeError, OSError, ValueError) as exc:
+        return False, str(exc)
+    for name, value in identities.items():
+        if external.get(name) != value:
             return False, f"release attestation external identity differs: {name}"
     constituents = attestation.get("constituents")
-    if not isinstance(constituents, dict) or not all(
-        isinstance(value, dict) and value.get("status") == "PASS"
-        for value in constituents.values()
-    ):
-        return False, "release attestation constituents are incomplete"
     if not all_release_conditions(attestation.get("audit"), constituents):
         return False, "release conditions are not met"
+    audit = attestation["audit"]
+    if set(audit["requirements"]) != declared_requirements or set(audit["milestones"]) != declared_milestones:
+        return False, "release attestation does not cover the declared requirements and milestones"
     return True, None
 
 
@@ -277,9 +527,32 @@ def main(argv: list[str] | None = None) -> int:
     try:
         ensure_clean()
         revision_id = revision()
-        tree = source_tree_digest()
+        source_tree = source_tree_digest(ROOT)
+        tree = execution_tree_digest(ROOT)
         external = external_identity(args)
         key = content_key(revision_id, tree, external)
+        try:
+            prior = json.loads(GATE_PATH.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            prior = None
+        if isinstance(prior, dict):
+            valid, _ = validate_attestation(prior, ROOT, revision_id)
+            attestation = prior.get("attestation")
+            local_runtime_ready = all(value not in (None, "missing") for value in external.values())
+            if (
+                valid and local_runtime_ready and isinstance(attestation, dict)
+                and attestation.get("external") == external
+            ):
+                print(json.dumps({
+                    "status": "PASS",
+                    "complete": True,
+                    "reused": True,
+                    "measured_revision": attestation["revision"],
+                    "validated_revision": revision_id,
+                    "content_key": prior.get("content_key"),
+                    "attestation_sha256": prior["attestation_sha256"],
+                }, sort_keys=True))
+                return 0
         run_base = ROOT / "build" / "completion" / "runs" / key
         run_base.mkdir(parents=True, exist_ok=True)
         run_dir = run_base / f"{int(time.time())}-{os.getpid()}"
@@ -306,8 +579,8 @@ def main(argv: list[str] | None = None) -> int:
             str(run_dir / "gambatte-smoke.imported.json"),
         ]
         commands = {
-            "package-smoke": package_command,
             "completion-audit": [sys.executable, str(COMPLETION), "audit"],
+            "package-smoke": package_command,
             "hatches": [sys.executable, str(ROOT / "tools/audit_hatches.py"), "--stage", "release"],
             "mutations": [sys.executable, str(ROOT / "tools/audit_mutations.py"), "--stage", "release"],
             "function-gate": ["just", "oracle-fn-gate"],
@@ -320,30 +593,42 @@ def main(argv: list[str] | None = None) -> int:
                 name, command, run_dir / f"{name}.log",
                 max(args.timeout, CONSTITUENT_TIMEOUTS.get(name, 0.0)),
             )
+            if constituents[name].get("status") != "PASS":
+                break
         audit_report = parse_json_log(run_dir / "completion-audit.log")
+        try:
+            proof_inputs_stable = (
+                execution_tree_digest(ROOT) == tree and external_identity(args) == external
+            )
+            validate_documentation(ROOT)
+        except (EvidenceError, GateError, OSError, ValueError):
+            proof_inputs_stable = False
         summary = {
-            "schema": 3,
+            "schema": ATTESTATION_SCHEMA,
             "revision": revision_id,
-            "source_tree_sha256": tree,
+            "source_tree_sha256": source_tree,
+            "execution_tree_sha256": tree,
+            "proof_inputs_stable": proof_inputs_stable,
             "content_key": key,
             "external": external,
             "constituents": constituents,
             "audit": audit_report or {},
         }
-        complete = all_release_conditions(audit_report, constituents)
+        complete = proof_inputs_stable and all_release_conditions(audit_report, constituents)
         canonical = dict(summary)
         canonical["complete"] = complete
         attestation_material = json.dumps(canonical, sort_keys=True, separators=(",", ":"))
         attestation_digest = hashlib.sha256(attestation_material.encode()).hexdigest()
         (run_dir / "attestation.json").write_text(attestation_material + "\n", encoding="utf-8")
         pointer = {
-            "schema": 3,
+            "schema": POINTER_SCHEMA,
             "complete": complete,
             "content_key": key,
             "attestation_sha256": attestation_digest,
             "attestation": canonical,
             "run_dir": str(run_dir.relative_to(ROOT)),
             "revision": revision_id,
+            "validated_revision": revision_id,
             "constituents": constituents,
             "counts": (audit_report or {}).get("counts", {}),
         }

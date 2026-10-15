@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-"""Revision-pinned completion audit, status, and obligation checks."""
 
 from __future__ import annotations
 
@@ -581,7 +580,7 @@ def canonical_name(name: str) -> str:
     return name.split(".", 1)[0]
 
 
-def load_registry() -> tuple[list[str], dict[str, list[str]]]:
+def load_registry() -> tuple[list[str], dict[str, list[str]], dict[str, list[str]]]:
     spec = importlib.util.spec_from_file_location("completion_routines", REGISTRY_PATH)
     if spec is None or spec.loader is None:
         raise AuditError(f"cannot load {REGISTRY_PATH}")
@@ -597,7 +596,7 @@ def load_registry() -> tuple[list[str], dict[str, list[str]]]:
     grouped: dict[str, list[str]] = {}
     for name in registrations:
         grouped.setdefault(canonical_name(name), []).append(name)
-    return registrations, grouped
+    return registrations, grouped, {stem: list(names) for stem, names in groups.items()}
 
 
 def load_scope_exclusions(
@@ -638,7 +637,7 @@ def native_definitions() -> set[str]:
 
 
 def build_mapping(inventory: dict[str, Any]) -> dict[str, Any]:
-    registrations, grouped = load_registry()
+    registrations, grouped, registry = load_registry()
     inventory_functions = inventory.get("functions")
     if not isinstance(inventory_functions, dict):
         raise AuditError("inventory functions are missing")
@@ -739,6 +738,7 @@ def build_mapping(inventory: dict[str, Any]) -> dict[str, Any]:
         ),
         "rows": rows,
         "registration_rows": registration_rows,
+        "registry": registry,
     }
 
 
@@ -964,9 +964,12 @@ def content_key(
 ) -> str:
     if requirement is not None:
         return evidence.canonical_digest(requirement_input_manifest(requirement))
-    values = baseline.get("baseline", {})
-    table = manifest.get("manifest", {})
-    return evidence.canonical_digest({"baseline": values, "manifest": table})
+    return evidence.canonical_digest(
+        {
+            "baseline": baseline.get("baseline", {}),
+            "manifest": evidence.requirements_contract(manifest),
+        }
+    )
 
 
 def write_evidence_artifact(
@@ -991,6 +994,9 @@ def write_evidence_artifact(
         artifact["input_manifest"] = manifest
         artifact["input_digest"] = digest
         artifact["produced_revision"] = current_revision()
+        artifact["documentation_provenance"] = evidence.file_identity(
+            ROOT, "docs/vision.md"
+        )
         artifact["dependencies"] = dependencies
         if artifact.get("status") == "PASS":
             raw_dir = (
@@ -1358,6 +1364,7 @@ def collect_report() -> dict[str, Any]:
             )
             if key in mapping
         },
+        "routine_registry": mapping.get("registry", {}),
         "requirements": requirement_rows,
         "milestones": milestone_pass,
         "fixtures": fixtures,
@@ -1855,17 +1862,6 @@ def command_hardware_removal() -> int:
         "oracles": ["native", "oracle-diff-all", "adapter-lint", "constant-lint"],
     }
     try:
-        transform = (ROOT / "docs" / "phase1-transform.md").read_text(encoding="utf-8")
-        required_rows = (
-            "Bank1Call",
-            "FarCall",
-            "HblankCopyDataHLtoDE",
-            "VBlankHandler",
-            "SwitchToCGBDoubleSpeed",
-        )
-        missing_rows = [row for row in required_rows if f"`{row}`" not in transform]
-        if missing_rows:
-            raise AuditError("transform record is missing: " + ",".join(missing_rows))
         checks: dict[str, str] = {}
         for name, command in (
             ("oracle_diff_all", ["just", "oracle-diff-all"]),

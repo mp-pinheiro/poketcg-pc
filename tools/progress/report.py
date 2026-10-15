@@ -201,17 +201,20 @@ def _load_registry() -> dict[str, tuple[str, ...]] | None:
     return module.ROUTINES
 
 
-def load_routines() -> tuple[set[str], dict[str, str]]:
-    raw = _load_registry()
-    if raw is None:
-        fail(f"cannot load {REGISTRY}")
+def load_routines(
+    registry: dict[str, list[str] | tuple[str, ...]] | None = None,
+) -> tuple[set[str], dict[str, str]]:
+    if registry is None:
+        registry = _load_registry()
+        if registry is None:
+            fail(f"cannot load {REGISTRY}")
+    registrations = [name for entries in registry.values() for name in entries]
     ported_parents: set[str] = set()
     name_to_parent: dict[str, str] = {}
-    for entries in raw.values():
-        for name in entries:
-            p = parent(name)
-            ported_parents.add(p)
-            name_to_parent[name] = p
+    for name in registrations:
+        p = parent(name)
+        ported_parents.add(p)
+        name_to_parent[name] = p
     return ported_parents, name_to_parent
 
 
@@ -415,7 +418,10 @@ def get_routines_at(rev: str) -> set[str] | None:
         return None
 
 
-def recent_ports(inventory: dict, limit: int = 8) -> list[dict]:
+def recent_ports(
+    inventory: dict, limit: int = 8, *,
+    registry: dict[str, list[str] | tuple[str, ...]] | None = None,
+) -> list[dict]:
     """Newest port files by creation date.
 
     Returns [{"name": str, "file": str | None, "timestamp": int}, ...]
@@ -423,7 +429,7 @@ def recent_ports(inventory: dict, limit: int = 8) -> list[dict]:
     maps 1:1 to a pret file, else None (ambiguous stems like core/debug/save).
     Degrades to [] when git is unavailable.
     """
-    routines = _load_registry()
+    routines = registry if registry is not None else _load_registry()
     if routines is None:
         return []
 
@@ -613,13 +619,14 @@ def compute(inventory: dict, routines: set[str], gate_data: dict | None, trusted
 
 def subcommand_build():
     inv = load_inventory()
-    routines_set, _ = load_routines()
     gate_data = load_gate()
     trusted, completion = attestation_state(gate_data)
+    registry = completion["routine_registry"] if trusted else None
+    routines_set, _ = load_routines(registry)
     commit = jj_commit_short()
     report = compute(inv, routines_set, gate_data, trusted)
     report["completion"] = completion
-    report["recent"] = recent_ports(inv)
+    report["recent"] = recent_ports(inv, registry=registry)
     report["workflow_axes"] = workflow_axes(completion, report["functions"], trusted)
     previous_report = None
     if PROGRESS.exists():
@@ -660,12 +667,13 @@ def subcommand_build():
 
 def subcommand_check():
     inv = load_inventory()
-    routines_set, _ = load_routines()
     gate_data = load_gate()
     trusted, completion = attestation_state(gate_data)
+    registry = completion["routine_registry"] if trusted else None
+    routines_set, _ = load_routines(registry)
     current = compute(inv, routines_set, gate_data, trusted)
     current["completion"] = completion
-    current["recent"] = recent_ports(inv)
+    current["recent"] = recent_ports(inv, registry=registry)
     current["workflow_axes"] = workflow_axes(completion, current["functions"], trusted)
     committed = None
     if PROGRESS.exists():
@@ -695,9 +703,9 @@ def subcommand_frontier(args: list[str]):
     ap.add_argument("--json", action="store_true")
     opts = ap.parse_args(args)
     inv = load_inventory()
-    routines_set, _ = load_routines()
     gate_data = load_gate()
-    trusted, _ = attestation_state(gate_data)
+    trusted, completion = attestation_state(gate_data)
+    routines_set, _ = load_routines(completion["routine_registry"] if trusted else None)
     report = compute(inv, routines_set, gate_data, trusted)
     ready = [f for f in report["functions"]
              if f["status"] == "todo" and f["ready"]]

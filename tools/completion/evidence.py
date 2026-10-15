@@ -79,6 +79,72 @@ def file_identity(root: Path, path: str | Path) -> dict[str, str]:
         raise EvidenceError(f"missing evidence input: {relative}")
     return {"path": relative, "sha256": sha256_path(resolved)}
 
+def requirements_contract(document: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(document, dict):
+        raise EvidenceError("requirements document is malformed")
+    contract = _canonical(document)
+    manifest = contract.get("manifest")
+    requirements = contract.get("requirement")
+    if not isinstance(manifest, dict) or not isinstance(requirements, list):
+        raise EvidenceError("requirements document is malformed")
+    manifest.pop("source", None)
+    manifest.pop("source_sha256", None)
+    for requirement in requirements:
+        if not isinstance(requirement, dict):
+            raise EvidenceError("requirements document is malformed")
+        requirement.pop("anchor", None)
+    return contract
+
+
+def requirements_file_identity(root: Path, path: str | Path) -> dict[str, str]:
+    resolved, relative = repository_path(root, path)
+    if relative == "tools/completion/requirements.toml":
+        document = _load_toml(resolved)
+        return {
+            "path": relative,
+            "contract_sha256": canonical_digest(requirements_contract(document)),
+        }
+    return file_identity(root, path)
+
+
+def validate_documentation(root: Path, document: dict[str, Any] | None = None) -> None:
+    root = root.resolve()
+    manifest_path = root / "tools/completion/requirements.toml"
+    vision_path = root / "docs/vision.md"
+    actual = _load_toml(manifest_path)
+    if document is not None and _canonical(document) != _canonical(actual):
+        raise EvidenceError("requirements document differs from current file")
+    manifest = actual.get("manifest")
+    requirements = actual.get("requirement")
+    if not isinstance(manifest, dict) or manifest.get("source") != "docs/vision.md":
+        raise EvidenceError("requirements documentation source is malformed")
+    if not vision_path.is_file() or manifest.get("source_sha256") != sha256_path(vision_path):
+        raise EvidenceError("requirements documentation source hash is stale")
+    if not isinstance(requirements, list):
+        raise EvidenceError("requirements are malformed")
+    try:
+        text = vision_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        raise EvidenceError(f"cannot read documentation source: {exc}") from exc
+    lines = text.splitlines()
+    for requirement in requirements:
+        if not isinstance(requirement, dict) or not isinstance(requirement.get("id"), str):
+            raise EvidenceError("requirement is malformed")
+        anchor = requirement.get("anchor")
+        prefix = "docs/vision.md:"
+        if not isinstance(anchor, str) or not anchor.startswith(prefix):
+            raise EvidenceError(f"documentation anchor is malformed for {requirement['id']}")
+        try:
+            line_number = int(anchor[len(prefix):])
+        except ValueError as exc:
+            raise EvidenceError(f"documentation anchor is malformed for {requirement['id']}") from exc
+        if (
+            line_number < 1
+            or line_number > len(lines)
+            or f"`{requirement['id']}`" not in lines[line_number - 1]
+        ):
+            raise EvidenceError(f"documentation anchor does not identify {requirement['id']}")
+
 
 def _declared_child(path: Path) -> bool:
     return (
@@ -127,10 +193,7 @@ def _declared_files(root: Path, values: Any) -> list[dict[str, str]]:
                 paths[child_relative] = child
         else:
             raise EvidenceError(f"missing declared input: {relative}")
-    return [
-        {"path": relative, "sha256": sha256_path(path)}
-        for relative, path in sorted(paths.items())
-    ]
+    return [requirements_file_identity(root, relative) for relative in sorted(paths)]
 
 
 def _load_toml(path: Path) -> dict[str, Any]:
@@ -154,31 +217,23 @@ def _specification(root: Path, requirement: dict[str, Any]) -> dict[str, Any]:
         return _canonical(supplied)
     baseline_path = root / "tools" / "completion" / "baseline.toml"
     manifest_path = root / "tools" / "completion" / "requirements.toml"
-    vision_path = root / "docs" / "vision.md"
+    manifest_document = _load_toml(manifest_path)
+    validate_documentation(root, manifest_document)
     baseline = _load_toml(baseline_path).get("baseline")
-    manifest = _load_toml(manifest_path).get("manifest")
+    manifest = manifest_document.get("manifest")
     if not isinstance(baseline, dict) or not isinstance(manifest, dict):
         raise EvidenceError("baseline or manifest table is malformed")
-    if not vision_path.is_file():
-        raise EvidenceError("missing normative vision source")
     return {
         "requirement": {
             key: _canonical(value)
             for key, value in requirement.items()
-            if key
-            not in {
-                "producer_files",
-                "comparator_files",
-                "runtime",
-                "native",
-                "reference",
-                "corpus",
-                "dependencies",
+            if key not in {
+                "producer_files", "comparator_files", "runtime", "native",
+                "reference", "corpus", "dependencies", "anchor",
             }
         },
         "baseline": _canonical(baseline),
-        "manifest": _canonical(manifest),
-        "vision": {"path": "docs/vision.md", "sha256": sha256_path(vision_path)},
+        "manifest": requirements_contract(manifest_document)["manifest"],
     }
 
 
@@ -322,7 +377,7 @@ def input_manifest(
     producer_files = requirement.get("producer_files")
     comparator_files = requirement.get("comparator_files")
     return {
-        "schema": 1,
+        "schema": 2,
         "requirement": requirement["id"],
         "specification": _specification(root, requirement),
         "producer_files": _declared_files(root, producer_files),

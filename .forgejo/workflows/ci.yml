@@ -47,7 +47,30 @@ jobs:
             "https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1-${cliff_arch}-unknown-linux-gnu.tar.gz"
           tar -xzf /tmp/git-cliff.tar.gz --strip-components=1 -C /tmp
           install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
+      - name: Classify changed inputs
+        id: scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_BASE: ${{ github.event.before }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base=
+          case "$EVENT_NAME" in
+            push) base="$PUSH_BASE" ;;
+            pull_request) base="$PR_BASE" ;;
+            schedule) base="$(python3 -c 'import json; print(json.load(open("site/data/gate.json")).get("attestation", {}).get("revision", ""))')" ;;
+          esac
+          scope=full
+          if [ -n "$base" ] && git cat-file -e "${base}^{commit}" 2>/dev/null; then
+            scope="$(python3 tools/ci_scope.py "$base" HEAD)"
+          fi
+          printf 'verification=%s\n' "$scope" >> "$GITHUB_OUTPUT"
+          printf 'Verification scope: %s\n' "$scope"
+      - name: Check documentation bindings
+        run: python3 -c 'from pathlib import Path; from tools.completion.evidence import validate_documentation; validate_documentation(Path.cwd())'
       - name: Restore pret and rgbds
+        if: steps.scope.outputs.verification != 'docs'
         id: pret
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
@@ -60,11 +83,13 @@ jobs:
             /usr/local/bin/rgbgfx
           key: pret-${{ runner.arch }}-${{ hashFiles('justfile', 'tools/oracle/artifacts.json', 'tools/install_rgbds.sh') }}
       - name: Install rgbds
-        if: steps.pret.outputs.cache-hit != 'true'
+        if: steps.scope.outputs.verification != 'docs' && steps.pret.outputs.cache-hit != 'true'
         run: bash tools/install_rgbds.sh
       - name: Bootstrap pret disassembly
+        if: steps.scope.outputs.verification != 'docs'
         run: just bootstrap
       - name: Generate vanilla constant headers
+        if: steps.scope.outputs.verification != 'docs'
         run: python3 tools/gen_constants.py --profile vanilla --out build/generated/vanilla/generated
       - name: Validate changelog generation
         run: |
@@ -74,20 +99,28 @@ jobs:
             git cliff --unreleased --strip header >/dev/null
           fi
       - name: Lint probe adapters
+        if: steps.scope.outputs.verification != 'docs'
         run: python3 tools/lint_adapters.py
       - name: Lint case literals
+        if: steps.scope.outputs.verification != 'docs'
         run: python3 tools/lint_case_literals.py
       - name: Lint factory blocks
+        if: steps.scope.outputs.verification != 'docs'
         run: python3 tools/factory_blocks.py lint
       - name: Lint placement constants
+        if: steps.scope.outputs.verification != 'docs'
         run: python3 tools/lint_placement.py
       - name: Lint CardId width
+        if: steps.scope.outputs.verification != 'docs'
         run: python3 tools/lint_card_ids.py
       - name: Run tooling tests
-        run: python3 -m unittest tests.test_coverage_loop tests.test_completion_evidence tests.test_compose_profile tests.test_profile_path tests.test_lint_card_ids tests.test_profile_audit tests.test_release_attestation tests.test_progress_history tests.test_source_revision tests.test_gen_constants tests.test_package_profiles tests.test_nightly_release
+        if: steps.scope.outputs.verification != 'docs'
+        run: python3 -m unittest tests.test_coverage_loop tests.test_completion_evidence tests.test_compose_profile tests.test_profile_path tests.test_lint_card_ids tests.test_profile_audit tests.test_release_attestation tests.test_progress_history tests.test_source_revision tests.test_gen_constants tests.test_package_profiles tests.test_nightly_release tests.test_ci_scope
       - name: Ensure .jj marker
+        if: steps.scope.outputs.verification != 'docs'
         run: mkdir -p .jj
       - name: Verify PreToolUse guards
+        if: steps.scope.outputs.verification != 'docs'
         run: just verify-hooks
       - name: Check progress report is current
         run: python3 tools/progress/report.py check
