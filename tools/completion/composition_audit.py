@@ -51,12 +51,6 @@ DISPATCHERS = (
     "ScriptEntryEnter", "DispatchIndirect", "LookupOpcode", "LookupAddress",
     "CallDoFrameFunction", "switch (",
 )
-# ExecuteReceivedIRCommands is the IR link's command loop, whose physical layer
-# docs/vision.md Phase 7 deletes outright rather than porting. EnterScript and
-# CallMapScriptPointerIfExists return the target on purpose: their own oracle
-# cases are captured at the entry (completion mode `pre-ret`), so the consumer
-# that actually runs past it dispatches -- HandleOverworldMode, Func_c17a and
-# HandleMoveModeAPress each call ScriptEntryEnter.
 JUMP_EXEMPT = frozenset({
     "ExecuteReceivedIRCommands",
     "EnterScript",

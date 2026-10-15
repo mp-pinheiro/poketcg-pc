@@ -1,161 +1,36 @@
 # poketcg-pc
 
-A hand-port of the Pokémon Trading Card Game for Game Boy Color to C11 + SDL2. The C routines are checked against the original ROM through PyBoy; the build-time disassembly checkout is created by `just bootstrap` and is not committed.
+A native C11/SDL2 port of Pokémon Trading Card Game for Game Boy Color, with Vanilla and [Extended](https://github.com/ElectroDeoxys/Pokemon-TCG-Extended) profiles. The game preserves the original 160x144 pixel canvas.
 
-The release presentation preserves the original 160×144 pixel grid. The host
-scales it with nearest-neighbour integer scaling and pillarboxes unused window
-space; it does not invent widescreen game pixels.
+## Build and play
 
-## Dependencies
-
-On Linux, install:
-
-```sh
-sudo apt install \
-  build-essential cmake ninja-build python3 python3-venv \
-  git libsdl2-dev
-```
-
-The project also uses:
-
-- `just` for repository commands.
-- `jj` for version control writes.
-- `tools/git-credential-forgejo` (in-repo) for non-interactive Forgejo HTTPS
-  authentication; verify with `just forgejo-auth-check`.
-- `uv` for the PyBoy virtual environment.
-- `git-cliff` for the generated `CHANGELOG.md` and release recipe.
-- Python packages installed by `just oracle-venv`.
-
-The CMake project requires CMake 3.20 or newer, C11, Python 3, and usable SDL2 headers and libraries. The native build uses Ninja.
-
-## Initial setup
-
-From the repository root:
+Install the [build dependencies](docs/building.md#dependencies), then run from the repository root:
 
 ```sh
 just bootstrap
-uv sync --project tools/oracle --frozen
-just completion-gambatte-bootstrap
-just build
+just bootstrap-profile extended
+POKETCG_NINJA_JOBS=-j1 just build-profiles
+just play
 ```
 
-`just bootstrap` clones the pinned `pret/poketcg` disassembly and verifies its ROM checksum. `uv sync --project tools/oracle --frozen` installs the pinned PyBoy project. `just completion-gambatte-bootstrap` downloads the pinned Gambatte source archive, builds its shared library with the pinned SCons version, and rejects archive or core hash drift.
+The launcher offers both games and remembers the last selection.
 
-The pinned PyBoy 2.7.0 source archive is vendored under `tools/oracle/vendor`, with its upstream license and the exact patch alongside it. The patch preserves the JOYP select bits and builds one Cython module or C extension at a time. `tools/oracle/artifacts.json` records both the upstream and patched source hashes; `uv.lock` pins the local archive. `just oracle-health-pyboy` checks the compiled modules, register preservation, JOYP reads, and non-mutating SRAM snapshots.
+## Packages
 
-## Profiles
+[GitHub releases](https://github.com/mp-pinheiro/poketcg-pc/releases) currently contain source snapshots, not attached game binaries. The [packaging guide](docs/building.md#create-packages) builds Linux AppImages and 64-bit Windows ZIPs locally.
 
-Vanilla remains the default direct profile. Extended is selected from the launcher or with `POKETCG_PROFILE=extended` for build and oracle commands.
+## Guides
 
-Set up the pinned Extended checkout and build the isolated profile with `just bootstrap-extended` and `just build-extended`. Generate its sparse data pack with `just completion-data-pack-extended`.
+| Task | Read |
+|---|---|
+| Controls, profiles, saves, and diary import | [Playing](docs/playing.md) |
+| Dependencies, source builds, and packages | [Build and package](docs/building.md) |
+| Architecture, verification, maintenance, and profile authoring | [Documentation index](docs/README.md) |
 
-Use `POKETCG_NINJA_JOBS=-j1` to serialize builds. Routine gates use one comparison worker by default; `just oracle-fn-all 4` selects four workers.
+## Project links
 
-Build both native targets and the SDL chooser with `just build-profiles`, then start the chooser with `just play`. Direct profile recipes are `just play-vanilla` and `just play-extended`; automation can use `build/poketcg-launcher --profile extended`.
+- [Canonical repository](https://forgejo.yfrit.com/fairfruit/poketcg-pc)
+- [GitHub mirror](https://github.com/mp-pinheiro/poketcg-pc)
+- [Verification dashboard](https://poketcg-pc.pages.dev/)
+- [Generated changelog](CHANGELOG.md)
 
-The launcher starts the game played last (stored in `last-game` next to the saves) and shows the chooser only the first time. Inside either game, PC OPTIONS has a third GAMEPLAY row, PLAY EXTENDED or PLAY ORIGINAL, that writes the cartridge save the same way closing the window does and restarts in the other game; the row appears only when the launcher started the game with `--switch-to`. The first time Extended starts without `poketcg-extended.sav`, the launcher converts the vanilla diary save into it with `poketcg-extended --convert-vanilla-save poketcg.sav poketcg-extended.sav`, so the game continues where the original diary left off: name, medals, card collection, built and saved decks, map position, events and play time. The conversion reads what vanilla's Continue from Diary restores (the SRAM2 backup), leaves the vanilla save untouched, drops an unfinished duel, and drops saved decks only when more than Extended's 50 deck save slots are in use (it prints how many). `tools/gen_save_import.py` derives the field map from both disassemblies at build time and fails the build if a field the conversion copies moved or lost its counterpart; `tests/sessions/extended/vanilla-save-import` continues from a converted save on the Extended reference ROM and the native port.
-
-Create private bundles with `just appimage-profiles` for Linux or `just windows-profiles` for 64-bit Windows. Both include the profile chooser, Vanilla and Extended, separate data packs and the required runtime files. Artifact names contain `private`; the commands do not upload them. Outputs are placed under `appimage-profiles` or `windows-profiles` in the selected build directory.
-
-These recipes pass `--private` to `tools/package_profiles.py`, which only marks artifact filenames. After `just build-profiles`, use `python3 tools/package_profiles.py --format appimage` or `python3 tools/package_profiles.py --format windows` to create artifacts without that marker.
-
-Artifact creation does not require a permission record and does not assert a license grant. `profiles/extended/provenance.toml` records distribution status as `unverified`, with no declared license or recorded permission evidence. The record is copied into each package; it does not impose a packaging or distribution gate.
-
-Extended game code is shared code plus routine overrides. Every top-level C construct in `src/home` and `src/probe` sits in a named block (`/* >>> factory <Routine> */` for a routine, `/* >>> part <name> */` for includes, defines, types, helpers and tables; `python3 tools/factory_blocks.py lint` checks it). `src/profiles/extended/home/<basename>.{c,h}` and `src/profiles/extended/probe/<basename>.c` hold only the blocks Extended changes: a block replaces the shared block of the same name, a new block lands after the nearest preceding block the fragment names, `/* --- factory <Routine> */` removes a shared block, and `/* === factory <Routine> */` states that a routine whose asm differs is served by the shared code. `tools/compose_profile.py` composes each translation unit into `<build>/generated/extended/{home,probe}` at build time (`check --profile extended` composes every unit and rejects an override identical to its shared block). `python3 tools/profile_audit.py` diffs the asm routine by routine after normalizing tail calls, jumps to the next label, local label names and constant spellings, and fails on a routine that differs without an override, removal or declaration (`--routines <basename>` lists the classes); `just profile-override extended <basename> <Routine>...` copies shared blocks into the fragments as a starting point; `just extended-check <basename>` oracle-diffs a basename against the Extended ROM in the `POKETCG_BUILD` directory (`just extended-configure-lane` configures a private one without regenerating the shared inventory or pack).
-
-Extended cases follow the same rule. Shared case modules in `tests/cases` spell RAM addresses with `sym("...")` from `tests/cases/_symbols.py`, so under `POKETCG_PROFILE=extended` they resolve against the Extended sym file and Extended runs them unchanged for every routine whose asm and C it shares. `tests/profiles/extended/cases/<basename>.py` exists only for a basename where Extended differs: it starts with `CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit("<basename>", remove=(...))` from `tests/cases/_inherit.py` (a fresh deep copy of the shared module's tables without the routines Extended does not build), lists its own routines in `OWN` (asm class `semantic` or `new` in `tools/profile_audit.py --routines`, an override block in `src/profiles/extended/home/<basename>.c`, or a routine the shared module has no cases for), and adds only their contracts, cases, mutations and schema-2 records. A basename with no own routines and nothing to remove has no Extended module, and `Profile.case_modules()` loads the shared one. `python3 tools/case_symbols.py --profile extended` rewrites address literals in Extended modules against the Extended sym file, and `python3 tools/lint_case_literals.py` rejects raw RAM literals in every profile's case namespace.
-
-Extended evidence: `python3 tools/extended_scoreboard.py --build build-extended` oracle-checks every Extended case group in its own process (a wedging case kills only its group) and writes `build-extended/completion/scoreboard.json`; `just extended-check-fn Foo Bar` checks named routines. The gates are `just extended-boundary-gate` (source-built fixture ROM with `CardPointers` padded to `$1ff` entries, record in `build-extended/completion/extended-boundary.json`, contract in `profiles/extended/boundary.toml`), `just extended-presentation-gate` (the three-palette surfaces in `profiles/extended/presentation.toml`: each needs passing oracle cases for its routines and fully ratcheted sessions that show it), `just extended-animation-gate` (one scene per imported animation and SFX under `tests/profiles/extended/scenes/`, derived from verified Extended sessions by `python3 tools/extended_scenes.py`), `just extended-fixes-gate` (one row in `profiles/extended/fixes.toml` per heading of `poketcg-extended/bugs_and_glitches.md`; a ported code fix names a revert that puts the vanilla behavior back into the port, and `python3 tools/profile_fixes.py --profile extended --prove --build build-extended` writes the receipt in `tools/oracle/fix_receipts/` showing an Extended case fails on that revert), and `just extended-reference-gate` (the sessions `profiles/extended/reference.toml` requires, ratcheted to full length in `tools/completion/session_ratchet_extended.json`). Extended sessions use the same tooling as vanilla with `POKETCG_PROFILE=extended`: `session.py verify`, `pilot.py`, and the shared Gambatte core pinned in `tools/completion/gambatte_pins_extended.toml`. Evidence paths are per profile in `profiles/profiles.json`: Extended mutation receipts go to `tools/oracle/mutation_receipts/extended/`, and its hatch registry is `tests/profiles/extended/hatches.py` with the ratchet `tools/oracle/hatch_ratchet_extended.json`, so an Extended run never overwrites vanilla evidence.
-
-The vanilla campaign input does not drive the Extended reference: replayed against the Extended ROM, `practice-win`'s input is still in Dr. Mason's pre-duel explanation where vanilla has already won the practice duel, so the Extended campaign is its own route. `credits-extended` continues `deck-save` (New Game, the practice duel, the starter deck, a diary save) out of Mason Lab to the Pokemon Dome, pokes the ending state the way vanilla's `credits-1` does (eight medals, the Dome duelists defeated, the Hall of Honor door open), and plays the Legendary Cards, the save and the whole credits sequence.
-
-`POKETCG_PROFILE_VARIANT=boundary` swaps the Extended profile's checkout, build directory, inventory and session namespace for the boundary fixture (`[variant]` in `profiles/extended/boundary.toml`; the reference ROM is pinned by its SHA-256 there), so the same tools record and verify sessions on the fixture ROM: `POKETCG_PROFILE=extended POKETCG_PROFILE_VARIANT=boundary POKETCG_BUILD=build-extended/completion/boundary/native python3 tools/completion/session.py verify extended-boundary` replays `tests/sessions/extended-boundary/extended-boundary` (high card ids in the deck builder, a card page, and a deck saved through `CompressDeckToSRAM` and read back). `just extended-boundary-gate` builds the fixture checkout, its native game binary and its data pack first.
-
-## Linux AppImage
-
-`just appimage` builds `build/appimage/poketcg-VERSION-x86_64.AppImage`: the windowed binary, the data pack, and the bundled SDL2 and PulseAudio libraries. It runs until the window closes and keeps its save at `${XDG_DATA_HOME:-~/.local/share}/poketcg/poketcg.sav`; arguments after the AppImage path pass through to `poketcg`. The build host's glibc sets the floor (2.38 when built on Ubuntu 24.04).
-
-## Windows build
-
-`just windows` cross-compiles with MinGW GCC (unpacked from the host's Ubuntu apt archive, no root needed) and the pinned SDL2 2.32.10 MinGW package, then writes `build/windows/poketcg-VERSION-windows.zip`: `poketcg.exe`, `SDL2.dll`, the data pack, licences, and `Play.bat`. `Play.bat` runs the game until the window closes and keeps its save and options under `%APPDATA%\poketcg`. The link cable (`--link-fd`) is Linux-only.
-
-## Verification
-
-```sh
-export POKETCG_BUILD=build
-export POKETCG_PORTS=""
-just oracle-diff <RoutineName>
-just oracle-fn-gate
-just oracle-audit-all
-just completion-gambatte-health
-just completion-capture release-smoke --frames 1
-just oracle-release-gate
-```
-`just progress-serve` serves a port-progress dashboard at `http://127.0.0.1:8765`.
-Published at `https://poketcg-pc.pages.dev` via Cloudflare Pages.
-
-The release gate requires the ROM produced by `just bootstrap` and the core produced by `just completion-gambatte-bootstrap`. It runs package smoke, completion audit, hatch and mutation audits, the function gate, independent-lane and Gambatte health, and a 200-frame `release-smoke` Gambatte capture.
-
-`site/data/gate.json` embeds the release attestation, including its source-tree identity and constituent results. `python3 tools/progress/report.py build` derives completion from that tracked attestation rather than local build evidence. Daily snapshots preserve release-history records and do not invalidate an attestation when only the gate, history or progress output changes. Source changes require fresh completion evidence and a new release gate.
-
-## Issues
-
-The Forgejo issues are the loop's worklist, projected from measured facts:
-
-```sh
-just issues-next       # where to start, with the commands that reproduce it
-just issues-sync       # after a landing: open new facts, close resolved ones
-just issues-status     # the route's milestones and the sessions that prove them
-```
-
-`docs/grind.md`, "Issues", is the contract. Tracker state is not evidence.
-
-## GB Recompiled replay oracle
-
-`just oracleb-replay` runs `tests/scene_diff.py` in replay-only mode. It expects the generated executable at:
-
-```text
-$HOME/.local/share/gbrecompiled/poketcg/poketcg
-```
-
-The project’s `just oracleb-regenerate` recipe expects the recompiler at:
-
-```text
-$HOME/.local/gbrecomp/gb-recompiled-linux/gbrecomp
-```
-
-A Linux x64 prebuilt recompiler is available in the upstream `GB Recompiled 0.1.0` release:
-
-<https://github.com/arcanite24/gb-recompiled/releases/tag/v0.1.0>
-
-Install the verified archive into the path expected by this repository:
-
-```sh
-mkdir -p "$HOME/.local/gbrecomp"
-curl -L --fail --silent --show-error \
-  -o /tmp/gb-recompiled-linux-x64.tar.gz \
-  https://github.com/arcanite24/gb-recompiled/releases/download/v0.1.0/gb-recompiled-linux-x64.tar.gz
-printf '%s  %s\n' \
-  b77fbf8913a9dd770097df81e8e0f84cf2e0d9e3a44dc1a1ee4d1846c5035535 \
-  /tmp/gb-recompiled-linux-x64.tar.gz | sha256sum -c -
-
-tar -xzf /tmp/gb-recompiled-linux-x64.tar.gz -C "$HOME/.local/gbrecomp"
-"$HOME/.local/gbrecomp/gb-recompiled-linux/gbrecomp" --version
-```
-For a lower-memory build, set `POKETCG_GBRECOMP_JOBS=1`; the regeneration
-recipe defaults to one job.
-
-Then regenerate and build the replay executable:
-
-```sh
-just oracleb-regenerate
-just oracleb-replay
-```
-
-`oracleb-regenerate` analyzes the pinned ROM and builds generated native code. It can be substantially more resource-intensive than the routine oracle; stop it if system load becomes unacceptable. The ROM and symbol inputs remain the locally bootstrapped files under `poketcg/`.
-
-GB Recompiled does not include ROMs. Use only ROM images you are legally allowed to use.
-
-## Repository guidance
-
-Read `AGENTS.md` before making changes. The normative porting contract is `docs/port-contract.md`; architecture is in `docs/vision.md`. Routines are hand-ported and verified one at a time; there is no autonomous port controller.

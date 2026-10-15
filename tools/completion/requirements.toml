@@ -2,7 +2,7 @@
 schema = 2
 version = "completion-v2-epoch-4"
 source = "docs/vision.md"
-source_sha256 = "ad9586cc321c77cd370ba4fc5b003fb6228292b429bbf7b676ab6432f22b80a9"
+source_sha256 = "9d60e45a4833f2810c37430b8926fbee2d327f6ac743af6136cbe6a3f43cf224"
 
 milestones = [
   "reset",
@@ -177,7 +177,7 @@ refinement = "named transform row required for LY and DIV"
 
 [[requirement]]
 id = "completion:v2:reset:baseline"
-anchor = "docs/vision.md:21-60"
+anchor = "docs/vision.md:30"
 milestone = "reset"
 deps = []
 command = "just completion-check completion:v2:reset:baseline"
@@ -191,7 +191,7 @@ tracker_issue = 3164
 
 [[requirement]]
 id = "completion:v2:reset:rom-coverage"
-anchor = "docs/vision.md:45-60"
+anchor = "docs/vision.md:31"
 milestone = "reset"
 deps = ["completion:v2:reset:baseline"]
 command = "just completion-check completion:v2:reset:rom-coverage"
@@ -205,7 +205,7 @@ tracker_issue = 3165
 
 [[requirement]]
 id = "completion:v2:reset:routine-bijection"
-anchor = "docs/vision.md:190-217"
+anchor = "docs/vision.md:32"
 milestone = "reset"
 deps = ["completion:v2:reset:baseline"]
 command = "just completion-check completion:v2:reset:routine-bijection"
@@ -220,7 +220,7 @@ tracker_issue = 3167
 
 [[requirement]]
 id = "completion:v2:p0:substrate"
-anchor = "docs/vision.md:262-270"
+anchor = "docs/vision.md:33"
 milestone = "phases-0-2"
 deps = ["completion:v2:reset:routine-bijection"]
 command = "just completion-check completion:v2:p0:substrate"
@@ -234,7 +234,7 @@ tracker_issue = 3176
 
 [[requirement]]
 id = "completion:v2:p1:hardware-removal"
-anchor = "docs/vision.md:284-299"
+anchor = "docs/vision.md:34"
 milestone = "phases-0-2"
 deps = ["completion:v2:p0:substrate"]
 command = "just completion-check completion:v2:p1:hardware-removal"
@@ -248,7 +248,7 @@ tracker_issue = 3177
 
 [[requirement]]
 id = "completion:v2:p2:leaves"
-anchor = "docs/vision.md:269-272"
+anchor = "docs/vision.md:38"
 milestone = "phases-0-2"
 deps = ["completion:v2:p1:hardware-removal"]
 command = "just completion-check completion:v2:p2:leaves"
@@ -262,7 +262,7 @@ tracker_issue = 3180
 
 [[requirement]]
 id = "completion:v2:p2:save-interchange"
-anchor = "docs/vision.md:269-272"
+anchor = "docs/vision.md:39"
 milestone = "phases-0-2"
 deps = ["completion:v2:p2:leaves"]
 command = "just completion-check completion:v2:p2:save-interchange"
@@ -276,7 +276,7 @@ tracker_issue = 3181
 
 [[requirement]]
 id = "completion:v2:p2:boot-title"
-anchor = "docs/vision.md:32-43"
+anchor = "docs/vision.md:40"
 milestone = "phases-0-2"
 deps = ["completion:v2:p2:save-interchange"]
 command = "just completion-check completion:v2:p2:boot-title"
@@ -290,7 +290,7 @@ tracker_issue = 3182
 
 [[requirement]]
 id = "completion:v2:p2:boot-title-negative"
-anchor = "docs/vision.md:190-217"
+anchor = "docs/vision.md:41"
 milestone = "phases-0-2"
 deps = ["completion:v2:p2:boot-title"]
 command = "just completion-check completion:v2:p2:boot-title-negative"
@@ -304,7 +304,7 @@ tracker_issue = 3184
 
 [[requirement]]
 id = "completion:v2:p3:audio-trace"
-anchor = "docs/vision.md:272-273"
+anchor = "docs/vision.md:45"
 milestone = "phase-3-audio"
 deps = ["completion:v2:p2:boot-title"]
 command = "just completion-check completion:v2:p3:audio-trace"
@@ -318,7 +318,7 @@ tracker_issue = 3183
 
 [[requirement]]
 id = "completion:v2:p3:audio-pcm"
-anchor = "docs/vision.md:272-273"
+anchor = "docs/vision.md:46"
 milestone = "phase-3-audio"
 deps = ["completion:v2:p3:audio-trace"]
 command = "just completion-check completion:v2:p3:audio-pcm"
@@ -332,7 +332,7 @@ tracker_issue = 3185
 
 [[requirement]]
 id = "completion:v2:p4:ui-corpus"
-anchor = "docs/vision.md:273-274"
+anchor = "docs/vision.md:47"
 milestone = "phase-4-ui"
 deps = ["completion:v2:p2:boot-title"]
 command = "just completion-check completion:v2:p4:ui-corpus"
@@ -346,7 +346,7 @@ tracker_issue = 3189
 
 [[requirement]]
 id = "completion:v2:p4:raster-effects"
-anchor = "docs/vision.md:182-188"
+anchor = "docs/vision.md:48"
 milestone = "phase-4-ui"
 deps = ["completion:v2:p4:ui-corpus"]
 command = "just completion-check completion:v2:p4:raster-effects"
@@ -360,7 +360,7 @@ tracker_issue = 3193
 
 [[requirement]]
 id = "completion:v2:p5:duel-state"
-anchor = "docs/vision.md:301-314"
+anchor = "docs/vision.md:52"
 milestone = "phase-5-duel"
 deps = ["completion:v2:p4:ui-corpus"]
 command = "just completion-check completion:v2:p5:duel-state"
@@ -374,7 +374,7 @@ tracker_issue = 3188
 
 [[requirement]]
 id = "completion:v2:p5:seeded-duel"
-anchor = "docs/vision.md:246-255"
+anchor = "docs/vision.md:53"
 milestone = "phase-5-duel"
 deps = ["completion:v2:p5:duel-state"]
 command = "just completion-check completion:v2:p5:seeded-duel"
@@ -388,7 +388,7 @@ tracker_issue = 3190
 
 [[requirement]]
 id = "completion:v2:p6:script-vm"
-anchor = "docs/vision.md:316-329"
+anchor = "docs/vision.md:54"
 milestone = "phase-6-overworld"
 deps = ["completion:v2:p4:ui-corpus"]
 command = "just completion-check completion:v2:p6:script-vm"
@@ -402,7 +402,7 @@ tracker_issue = 3191
 
 [[requirement]]
 id = "completion:v2:p6:maps-and-campaign"
-anchor = "docs/vision.md:274-276"
+anchor = "docs/vision.md:55"
 milestone = "phase-6-overworld"
 deps = ["completion:v2:p6:script-vm", "completion:v2:p5:seeded-duel"]
 command = "just completion-check completion:v2:p6:maps-and-campaign"
@@ -416,7 +416,7 @@ tracker_issue = 3196
 
 [[requirement]]
 id = "completion:v2:p7:link-ir"
-anchor = "docs/vision.md:331-345"
+anchor = "docs/vision.md:59"
 milestone = "phase-7-transport"
 deps = ["completion:v2:p5:seeded-duel"]
 command = "just completion-check completion:v2:p7:link-ir"
@@ -430,7 +430,7 @@ tracker_issue = 3192
 
 [[requirement]]
 id = "completion:v2:p7:printer"
-anchor = "docs/vision.md:347-351"
+anchor = "docs/vision.md:60"
 milestone = "phase-7-transport"
 deps = ["completion:v2:p4:ui-corpus"]
 command = "just completion-check completion:v2:p7:printer"
@@ -444,7 +444,7 @@ tracker_issue = 3201
 
 [[requirement]]
 id = "completion:v2:faithful-4x3:release"
-anchor = "docs/vision.md:21-25"
+anchor = "docs/vision.md:61"
 milestone = "faithful-4x3"
 deps = ["completion:v2:p2:boot-title-negative", "completion:v2:p3:audio-pcm", "completion:v2:p4:raster-effects", "completion:v2:p6:maps-and-campaign", "completion:v2:p7:link-ir", "completion:v2:p7:printer"]
 command = "just completion-check completion:v2:faithful-4x3:release"
@@ -458,7 +458,7 @@ tracker_issue = 3178
 
 [[requirement]]
 id = "completion:v2:faithful-4x3:package"
-anchor = "docs/vision.md:353-391"
+anchor = "docs/vision.md:62"
 milestone = "faithful-4x3"
 deps = ["completion:v2:faithful-4x3:release"]
 command = "just completion-check completion:v2:faithful-4x3:package"

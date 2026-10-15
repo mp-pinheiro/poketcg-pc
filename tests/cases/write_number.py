@@ -1,17 +1,3 @@
-"""Oracle-diff cases for poketcg/src/home/write_number.asm.
-
-WriteOneByteNumber (90-111) and WriteTwoByteNumber (115-125) drive
-TwoByteNumberToText. WriteBCDDigitInTextFormat (78-86) and
-WriteBCDNumberInTextFormat (69-74) are BCD digit/number primitives, portable
-even though every caller in this file (WriteOneDigitBCDNumber,
-WriteTwoDigitBCDNumber, WriteFourDigitBCDNumber) remains dead code per
-docs/port-contract.md:370-372 (zero external callsites in poketcg/src).
-WriteTwoDigitBCDNumber (3-19) and WriteFourDigitBCDNumber (43-64) are ported
-below for the same reason: they call BCCoordToBGMap0Address and
-SafeCopyDataHLtoDE (already landed in bg_map.c/empty_screen.c) through the
-JPHblankCopyDataHLtoDE alias, so nothing left blocks them even though
-WriteOneDigitBCDNumber does not yet exist in C.
-"""
 from tests.cases._symbols import data, sym
 
 DEST = sym("wOpponentCardLocations")

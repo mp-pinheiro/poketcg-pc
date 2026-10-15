@@ -1,53 +1,76 @@
 # Porting a profile
 
-A profile adds one pinned TCG1 ROM to the native port. Its C code is the shared `src/home` and `src/probe` code composed with named routine blocks under `src/profiles/<profile>/`. Its cases use the same routine-level rule: shared modules supply unchanged routines, while profile modules contain only routines with profile-specific evidence.
+This page owns profile authoring: catalog identity, composed source, profile-native cases, evidence isolation, and readiness gates. Player profile selection and saves belong in [playing](playing.md); build and packaging prerequisites belong in [building](building.md). The shared translation and memory invariants belong in [port-contract](port-contract.md), and quartet/output derivation rules belong in [factory-contract](factory-contract.md).
 
-## Pin the source inputs
+## Catalog and source identity
 
-Add the profile to `profiles/profiles.json`. Record the source repository, checkout directory, full commit, ROM, map, sym and RGBDS version under `source`; record the binary and probe names, generated-header path, default build directory, overlay root and removed basenames under `build`; record inventory and data-pack paths under `artifacts`; record oracle, session, case and mutation-receipt namespaces under `evidence`; and record save identity and supported features under `save` and `features`.
+Add the profile to `profiles/profiles.json`. Record its source repository, checkout, full commit, ROM, map, sym file, and RGBDS version; build binary/probe names, generated header, build directory, overlay root, and removed basenames; inventory and data-pack paths; oracle, session, case, and mutation-receipt namespaces; and save identity and supported features.
 
-Clone and build the pinned source with `just bootstrap-profile <profile>`. The bootstrap checks out the catalog commit, uses the catalog's RGBDS version, applies `profiles/<profile>/source-fixes.patch` when present, verifies the resulting ROM hash and reproducibility, then records the hash in the catalog.
+`just bootstrap-profile <profile>` checks out the catalog commit, uses the pinned RGBDS version, applies an optional `profiles/<profile>/source-fixes.patch`, verifies ROM hash and reproducibility, and records the hash in the catalog. Build prerequisites and the normal single- or multi-profile build commands are owned by [building](building.md).
 
-The generated CMake option is `POKETCG_ENABLE_<PROFILE_IN_UPPERCASE>`. `just build-profile <profile>` regenerates the inventory and data pack, configures the profile and builds its catalog `binary` and `probe` targets. For a probe-only build, run `cmake -G Ninja -B build-<profile> -DPOKETCG_ENABLE_<PROFILE_IN_UPPERCASE>=ON -DPORT_FILES=""`, then build those two targets with Ninja. CMake gets the source, ROM, map, sym, inventory, data pack and override root from `profiles.json` and `tools/profile_path.py`.
+`profiles.json` and `tools/profile_path.py` are the source of profile paths and identities. Keep each profile's generated inventory, data pack, save identity, cases, fixtures, sessions, and mutation receipts in its own configured namespace. Never let one profile's evidence or generated outputs masquerade as another's.
 
-## Find the routines to port
+## Routine composition
 
-Run `POKETCG_PROFILE=<profile> python3 tools/profile_audit.py --routines --all`. The audit compares normalized assembly routines, not basenames. `semantic` and `new` routines need profile-specific C or an explicit `===` declaration when shared C already implements them; `identical`, `local-label`, `tail-call`, `jump-to-next` and `constant-spelling` routines use shared code; `removed` routines are declared with `---` when shared C still defines them.
+Run `POKETCG_PROFILE=<profile> python3 tools/profile_audit.py --routines --all`. The audit compares normalized assembly routines, not filenames. Semantic or new routines need profile-specific C or an explicit shared implementation declaration; identical, local-label, tail-call, jump-to-next, and constant-spelling differences use shared code; routines removed from a profile use removal declarations where shared C still defines them. Check the profile ROM and symbols for register contracts, data layout, and routine locations before authoring. A moved assembly routine keeps its C block at its existing shared path.
 
-Check the profile's source and sym files before porting. Confirm each normalized routine's register contract, data layout and routine location against the profile ROM. A routine that moved between asm files keeps its C block at its existing shared path.
+Shared source and profile overlays use paired named blocks:
 
-## Add routine overrides
+| Block | Marker pair | Content |
+|---|---|---|
+| Routine | `/* >>> factory <Routine> */` / `/* <<< factory <Routine> */` | Routine, declaration, or probe adapter. |
+| Named part | `/* >>> part <name> */` / `/* <<< part <name> */` | Includes, defines, types, helpers, and tables. |
 
-Start an override file with `just profile-override <profile> <basename> <routine>`. The shared and profile files use `/* >>> factory <Routine> */` blocks. Replacing a block uses the same routine name; new blocks follow the nearest preceding shared block. A `/* --- factory <Routine> */` directive removes a routine from the composed unit, and a `/* === factory <Routine> */` directive records that shared C serves the routine without a replacement block.
+A profile block replaces the shared block of the same name. A new block follows the nearest preceding block named by its fragment. `/* --- factory <Routine> */` removes a routine; `/* === factory <Routine> */` declares that shared C already implements it.
 
-Use the same block grammar for declarations in `src/home/*.h` and probe adapters in `src/probe/*.c`. Composition is checked with `python3 tools/compose_profile.py check --profile <profile>`; block boundaries are checked with `python3 tools/factory_blocks.py lint`.
+Keep shared routines profile-neutral. Express differences through overlays, named parts, and the appropriate feature axis; do not add per-profile `#ifdef` branches inside shared game logic. Start an override with `just profile-override <profile> <basename> <routine>`.
 
-After a shared fix makes override bodies identical, run `python3 tools/compose_profile.py deduplicate --profile <profile>`. It replaces identical C bodies with shared declarations and removes identical header and adapter blocks. Update affected mutation sources to the shared file and regenerate their receipts.
+Check composition with `python3 tools/compose_profile.py check --profile <profile>` and block boundaries with `python3 tools/factory_blocks.py lint`. After a shared fix makes override bodies identical, `python3 tools/compose_profile.py deduplicate --profile <profile>` replaces identical C bodies with shared declarations and removes identical header/adapter blocks. Update affected mutation sources and regenerate receipts after deduplication.
 
-Shared C uses `CardId` and the card-id accessors for semantic IDs. `nine_bit_card_ids` selects `CardId`'s width and whether the accessors read or write one byte or two. Shared C names ROM banks and data with generated `<Label>_BANK` and `<Label>_ADDR` symbols. `lint_card_ids.py` resolves `CardId` locals, parameters and calls by lexical scope and rejects any `uint8_t` declaration, assignment, return or cast whose complete operand still carries a semantic ID. Byte extraction for registers or storage uses an explicit `id & 0xFFu` or `id >> 8`, and boolean comparisons remain byte-sized. A routine that leaves the compared byte in `a` after `cp` or `cp16` returns `card_id_compare_a(id, CONSTANT)`, which yields the high byte when a nine-bit compare rejects on it. Run `python3 tools/lint_card_ids.py` and `python3 tools/lint_placement.py` after changing these paths.
+## Card IDs and cases
 
-The CardId checker retains semantic-ID provenance through wide integer aliases such as `uint16_t`. Console restrictions use `cgb_only`; behavior differences unrelated to ID width use their own feature or named-part constant rather than `nine_bit_card_ids`.
+Shared C uses `CardId` and card-ID accessors for semantic IDs. The `nine_bit_card_ids` feature determines ID width and whether accessors read or write one or two bytes.
 
-## Write cases for the changed routines
+- Use generated `<Label>_BANK` and `<Label>_ADDR` symbols for ROM data.
+- Do not narrow a still-semantic ID to `uint8_t`. The lint follows lexical scope and wide integer aliases.
+- Extract a byte intentionally with `id & 0xFFu` or `id >> 8`; boolean comparisons remain byte-sized.
+- Use `card_id_compare_a(id, CONSTANT)` when returning the byte compared by `cp` or `cp16`; a rejected nine-bit comparison must expose the high byte.
+- Use `cgb_only` for console restrictions. Unrelated behavior needs its own feature or named-part constant, not `nine_bit_card_ids`.
 
-Shared case modules resolve RAM addresses from the active profile's sym file with `sym("wVariable")` or `sym("wVariable") + offset`. `python3 tools/case_symbols.py --profile <profile>` rewrites a profile's case namespace, and `python3 tools/lint_case_literals.py` rejects raw RAM addresses in all profile case namespaces.
+Case modules resolve RAM with `sym("wVariable")` or `sym("wVariable") + offset`; use `const("NAME")` and `text_id("NameText")` for generated constants and text identifiers. `python3 tools/case_symbols.py --profile <profile>` rewrites the profile case namespace and `python3 tools/lint_case_literals.py` rejects raw RAM addresses. Use `sym_pointer("Callback")` for stored routine pointers and `map_script_offset(slot)` for variable-width map-script selectors.
 
-Use `const("NAME")` and `text_id("NameText")` for generated constants and text identifiers. The constant generator includes `deck_const` declarations and their derived `_DECK_ID` values.
+A profile case module imports shared records with `inherit("<basename>", remove=(...))` and declares profile-specific records in `OWN`. Unchanged routines use inherited cases; absent routines go in `remove`. Do not add a profile module when it owns or removes nothing: the profile loader uses the shared module directly.
 
-A profile case module imports the shared records with `inherit("<basename>", remove=(...))`, then defines only its own routines in `OWN`. Routines with unchanged assembly and no profile-specific C use the shared cases. Routines absent from the profile ROM are listed in `remove`. The `deck_entry(index, card_id)` helper in `tests/cases/_symbols.py` writes one or two bytes according to `nine_bit_card_ids`; profile-specific layout helpers belong there or in a small typed helper module, and case expectations remain tied to ROM behavior.
+`deck_entry(index, card_id)` writes the profile-correct one- or two-byte ID. Shared schema inventories, including `SCHEMA2_CASES`, are derived; never hand-author derived entries.
 
-Use `sym_pointer("Callback")` for stored routine pointers and `map_script_offset(slot)` for map-script selectors whose entries are two or three bytes. A literal pointer or selector from another profile can name a different routine or the middle of an entry.
+## Fixtures and proof inputs
 
-Raw reference captures retain the data layout and game state of their source profile. Shared case logic selects profile-native captures with `profile_fixture({...})`; the captures are data, not copied case modules. Generate a missing capture with `POKETCG_PROFILE=<profile> python3 tools/completion/session.py capture <session> --routine <routine> --out tests/profiles/<profile>/fixtures/<name>.json`. Preserve the original exercised path and observations when selecting an entry. An early-exit input cannot replace a live movement, script-dispatch or callback scenario.
+Reference captures retain the data layout and game state of their source profile. Shared case logic selects native captures with `profile_fixture({...})`; fixtures are data, not copied case modules. Generate a missing capture with `POKETCG_PROFILE=<profile> python3 tools/completion/session.py capture <session> --routine <routine> --out tests/profiles/<profile>/fixtures/<name>.json`. Preserve the exercised path and observations: an early exit cannot substitute for live movement, script dispatch, or callback behavior.
 
-Every overridden routine needs a profile mutation whose `before` text resolves to the override source and whose `after` mutation makes a case fail. Run `POKETCG_PROFILE=<profile> python3 tools/run_mutation.py <Routine> tests/profiles/<profile>/cases/<basename>.py --build build-<profile> --index <case-index>` and require `MUTATION_RED`. Mutation receipts are written to the namespace in `profiles.json`.
+Every overridden routine needs a profile mutation whose `before` text resolves to the override source and whose `after` mutation causes a case failure. Run `POKETCG_PROFILE=<profile> python3 tools/run_mutation.py <Routine> tests/profiles/<profile>/cases/<basename>.py --build build-<profile> --index <case-index>` and require `MUTATION_RED`. Receipts belong in the profile's configured mutation namespace.
 
-If the source documents profile-specific upstream fixes, add `profiles/<profile>/fixes.toml` with one row for each documented heading and revert proofs for fixed routines. Run `python3 tools/profile_fixes.py --profile <profile>` after the profile scoreboard is current.
+When source documentation records profile-specific upstream fixes, `profiles/<profile>/fixes.toml` records one row per documented heading and revert proofs for fixed routines. Run `python3 tools/profile_fixes.py --profile <profile>` only after the profile scoreboard is current.
 
-## Verify the profile
+## Gates and fixture variants
 
-Run `python3 tools/profile_audit.py`, `python3 tools/factory_blocks.py lint`, `python3 tools/compose_profile.py check --profile <profile>`, `python3 tools/lint_card_ids.py`, `python3 tools/lint_placement.py` and `python3 tools/lint_case_literals.py`.
+The implemented Extended gates are an example of separate proof obligations:
 
-Run `POKETCG_PROFILE=<profile> python3 tools/audit_oracle_cases.py --stage routine`, `POKETCG_PROFILE=<profile> python3 tools/audit_mutations.py`, then the profile's complete gbref and PyBoy case suites. Run the configured profile gates and every session in `evidence.session_namespace` before recording the profile as ready.
+| Recipe | Contract |
+|---|---|
+| `just extended-boundary-gate` | Stress nine-bit IDs using the padded `CardPointers` fixture, lookup limits, collection, deck SRAM, and card UI. |
+| `just extended-presentation-gate` | Require the configured presentation routines and full recorded sessions. |
+| `just extended-animation-gate` | Verify animation/SFX scenes derived from confirmed session evidence. |
+| `just extended-fixes-gate` | Prove documented upstream fixes and their behavioral reverts. |
+| `just extended-reference-gate` | Verify the required profile sessions, fields, ratchets, and fixture variants. |
 
-Run the vanilla `just oracle-release-gate` after shared C changes. The vanilla sparse data-pack hash and size are fixed in `profiles/profiles.json`; a profile port must leave both unchanged.
+The boundary fixture pads `CardPointers` through `0x1ff`, checks `0x00fe`, `0x00ff`, `0x0100`, and `0x01ff`, and rejects `0x0200`. It tests width and boundary behavior; it does not define a subset of supported routines.
+
+Gate contracts live in profile TOMLs and executable recipes in `justfile`. Inspect both rather than copying another profile's paths.
+
+Fixture variants preserve meaningfully different source-profile layouts or state. Select the correct native fixture for a case rather than coercing another profile's bytes. Campaign evidence is cumulative and depends on its configured session namespace; a partial campaign, fixture-only check, or stale scoreboard is not complete profile evidence.
+
+## Readiness
+
+Run `python3 tools/profile_audit.py`, `python3 tools/factory_blocks.py lint`, `python3 tools/compose_profile.py check --profile <profile>`, `python3 tools/lint_card_ids.py`, `python3 tools/lint_placement.py`, and `python3 tools/lint_case_literals.py`. Run `POKETCG_PROFILE=<profile> python3 tools/audit_oracle_cases.py --stage routine` and `POKETCG_PROFILE=<profile> python3 tools/audit_mutations.py`, then the configured complete gbref and PyBoy case suites, gates, and every session in `evidence.session_namespace`.
+
+After shared C changes, run the vanilla `just oracle-release-gate`. The vanilla sparse data-pack hash and size are fixed in `profiles/profiles.json`; a profile port must leave both unchanged. Profile readiness requires the complete configured evidence set, not a changed scoreboard count alone.

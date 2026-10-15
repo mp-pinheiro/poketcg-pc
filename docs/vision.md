@@ -1,466 +1,64 @@
-# poketcg-pc — native port plan
+# poketcg-pc architecture and acceptance
 
-## Status
+## Product architecture
 
-Complete. All 21 rows of `tools/completion/requirements.toml` pass
-(`just completion-chain`), and `tools/oracle/release_gate.py` attests the
-revision recorded in `site/data/gate.json` (schema 3). The gate no longer
-requires static CFG edge coverage (owner decision, 2026-09-24): it asked a
-600-frame packaged boot to cover all 15,828 asm edges, `engine/sgb.asm`
-included, which no run can do; `just completion-cfg-audit` still reports it.
-What follows is the measured state; nothing below is a plan.
+poketcg-pc is a native C11/SDL2 port of the Pokémon Trading Card Game for Game Boy Color. Game logic runs without an emulator or ROM at runtime. The simulation and verified framebuffer are fixed at 160×144 pixels; host-side integer scaling and letterboxing/pillarboxing do not change game state or canvas dimensions.
 
-**Delivered.** All 3,012 in-scope routines have C bodies; the 3,026 oracle
-registrations are clean (`just oracle-diff-all`), every one has a RED mutation
-witness (`tools/completion/mutation_campaign.py --report`, complete), and the
-hatch audit passes at release stage. All 670 recorded sessions hold their full
-length in `tools/completion/session_ratchet.json`: each has replayed
-byte-identical on WRAM, HRAM, OAM, both VRAM banks, palettes and framebuffer at
-every DoFrame anchor against Gambatte — boot, naming, the lab, the practice
-duel, the deck machines and editor, all eight clubs, Ronald, the Challenge
-Hall, the Dome, arranged and seeded AI duels, the card-effect corpus, a new
-game through the credits (`credits-1-explore-1`, 876,358 ordinals, audio
-included), a Game Boy Printer card-list print against a linked printer
-reference (`printer-card-list`, 95,453), and a two-console link duel
-(`link-duel-a`/`-b`, 50,392 and 52,372) against two Gambatte cores joined
-through their serial ports. Coverage on the reference at `bf0e27e0`: 2,487 of
-the 3,062 ledger routines execute on some recorded session (81%). The port
-boots and plays in the SDL2 shell with no emulator and no ROM at runtime.
+The port retains the cartridge memory model and generated symbol layout. Game routines access emulated addresses through the memory bus, while host services provide presentation, audio output, and serial transport. ROM-derived data is supplied through the generated data pack. Profile-specific data and evidence remain isolated; the profile build configuration selects the `CardId` width.
 
-**Requirements** (`just completion-check <id>`): all 21 pass — `reset` (3),
-`p0`–`p2` (6), `p3` audio (2), `p4` UI and raster (2), `p5` duel (2), `p6`
-script VM and campaign (2), `p7` link and printer (2), `faithful-4x3` release
-and package (2).
+The game RNG is deterministic software state: `UpdateRNGSources` advances `wRNG1`, `wRNG2`, and `wRNGCounter`; the codebase has zero reads of `rDIV`. This supports reproducible seeded verification, not exhaustive session coverage.
 
-**How the last ten closed:**
+IR remains bus-level behavior. Ported transmit/receive routines access RP through the memory bus, whose runtime model supplies a synthetic response stream. The host socket transport implements serial SB/SC exchanges; it does not replace IR. Recorded linked-reference sessions establish serial link-duel behavior and printer output, but do not cover complete Card Pop or Gift Center IR routes. The bounded hardware transform is recorded in [phase1-transform.md](phase1-transform.md).
 
-| requirement | mechanism and evidence |
-|---|---|
-| `p6:maps-and-campaign`, `faithful-4x3:release` | ISR delivery at two recorded ROM sites (LCD disable, the credits LYC arm) plus a busy-wait hook that lets the ROM's ISRs run inside the sound-driver polling loops that have no DoFrame. `credits-1-explore-1` is clean on every release field, the APU write trace included. |
-| `p7:printer` | the SM83 stack addresses that PRINT packets store into `wPrinterPacketDataPtr` replay from a per-interval stack track; `printer-card-list` is clean end to end and its pages match the linked reference printer's. |
-| `p7:link-ir` | two linked Gambatte cores record each serial interrupt's byte and each `SerialTimerHandler` memory step, positioned by the main thread's accesses to serial state (`serial-track.bin`); the native replays them into the ported handlers, nested interrupts included. Both sides of the link duel are clean. |
-| `faithful-4x3:package` | binary plus generated data pack and nothing ROM-derived; a 600-frame smoke passes and a pack with a span removed fails with `MISSING_DATA`. |
+## Component boundaries
 
-**Presentation** is canonical 4:3: the verified 160×144 framebuffer is
-integer-scaled and pillarboxed by the host.
-
-**Not covered by a session.** Card Pop and the Gift Center (IR) are ported and
-oracle-verified per routine, but no recorded session drives them end to end;
-the Phase 7 gate ("a link duel round-trips; a card exports to PNG") does not
-require one.
-
-**Reproduce.** `just build`, then `just completion-chain` regenerates every
-artifact under `build/completion/evidence/` in dependency order (hours; the
-credits, link and corpus rows dominate), and `tools/oracle/release_gate.py`
-re-attests a clean tree. `just session-verify <name>` replays one session
-against its cached Gambatte reference; a linked session records both cores.
-
-**Open session facts:** none. Every session's ratchet reaches its full length,
-and `tas-5530s` its declared ceiling (the Duel Escape glitch).
-
-- **Phase 0 — Substrate** (#1): closed.
-- **Phase 1 — Delete the hardware** (#2): closed; transform in
-  `docs/phase1-transform.md`.
-- **Phase 2 — Leaves and save** (#3): closed.
-- **Phase 3 — Timer, APU, audio** (#4): closed; software APU (`src/apu.c`),
-  register trace and PCM window evidence (`docs/audio-harness.md`).
-- **Phase 4 — Text, tiles, menus** (#5, #18): closed.
-- **Phase 5 — Duel engine** (#6): closed; the effect corpus is the duel
-  vector set.
-- **Phase 6 — Overworld and scripts** (#7): closed; the campaign row runs on
-  `credits-1-explore-1`.
-- **Phase 7 — Link, IR, printer** (#8): closed; linked link-duel and printer
-  oracles.
-- **Presentation** — canonical 4:3; the game canvas remains the original 160×144 pixel grid.
-
-SGB (`engine/sgb.asm`, 19 routines) is excluded as hardware-only in
-`tools/progress/scope.toml`: the CGB target never takes the path and neither
-oracle emulates the Super Game Boy.
-
-
-A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
-from the [`pret/poketcg`](https://github.com/pret/poketcg) disassembly into C11
-(`static_assert` locks the generated WRAM/HRAM/SRAM layout headers against the
-disassembly) + SDL2. No emulator bundled, no ROM required at runtime. The release
-surface is a fixed 160×144 canvas scaled by the host; extra window area is
-pillarboxed rather than treated as game space.
-
-This document is the synthesis of ten parallel investigations: four on prior art
-(`zelda3`, `suiCune`, `Gen1Recomp`, `Links-Awakening-DX-HD`, `CppRed`) and six
-mapping this codebase (graphics, duel engine, overworld/scripts, audio/save/link,
-timing dependencies, build/data pipeline).
-
-## TL;DR — the decision
-
-Hand-port every function to C, keeping a **software PPU for the fixed 160×144
-Game Boy Color canvas**. Preserve the original memory layout byte-for-byte so a
-whole-state `memcmp` against the ROM is a valid correctness oracle. Host scaling
-is presentation only; it never changes game state or the verified framebuffer.
-
-This uses the virtual PPU + RAM oracle architecture with the conversion
-discipline of function-by-function hand-porting. The product does not invent
-off-grid game pixels or re-layout screens for modern aspect ratios.
-
-The decisive constraint, verified directly from the built ROM's symbol table:
-
-| region | size | notes |
+| Component | Implementation | Boundary |
 |---|---|---|
-| WRAM | 7,909 B | **flat** — all 8 rgbds sections are `WRAM0`, zero `WRAMX` |
-| HRAM | 128 B | 44 named symbols |
-| SRAM | 4 banks × 8 KiB | 272 symbols; bank 0 mirrors into bank 2 as backup |
-| VRAM | 16 KiB | 2 banks |
-| OAM | 160 B | |
-| palettes | 128 B | |
+| Native game routines | `src/home/`, `src/profiles/<profile>/` | Shared logic plus composed profile-specific blocks. |
+| Cartridge state and bus | `src/mem.c`, generated layout headers | Game addresses, bank state, and mutable memory retain cartridge semantics. |
+| Rendering and sound | `src/ppu.c`, `src/apu.c` | Software rendering and audio state produce the game's fixed-canvas output. |
+| Host interface | `src/runtime.c`, `src/shell.c`, `src/presentation.c` | Input, frame execution, devices, and host scaling surround the simulation. |
+| Persistence and selection | `src/persistence.c`, `src/profile.c`, `src/launcher.c` | Tagged saves and the launcher keep game identities separate. |
+| Build and proof tools | `tools/`, `tests/`, `profiles/profiles.json` | Generate data and compare independent reference execution; they are not a runtime emulator requirement. |
 
-The entire mutable state of the game is ~56 KiB. `zelda3` `memcmp`s 128 KiB of
-SNES WRAM + 64 KiB VRAM every frame and still runs at turbo speed. Full-state
-diffing here is free. That single fact turns this from "a multi-year rewrite you
-hope is correct" into "a multi-month rewrite that is provably correct at every
-step."
+## Acceptance claims
 
-## Architecture
+The claims below are machine-bound by `tools/completion/requirements.toml`. A successful reference-backed result requires native/reference agreement for every required representation field at the comparison anchors throughout the complete declared recording, with no early truncation. Each claim remains bounded to its configured scenario or corpus; measured evidence is not exhaustive coverage.
 
-```mermaid
-graph TB
-  subgraph host["host layer — new C code"]
-    SDL["SDL2 — window, input, audio sink"]
-    PPU["virtual PPU<br/>scanline rasteriser<br/>SCREEN_W &amp; TILEMAP_W are variables"]
-    APU["software APU<br/>NRxx → samples"]
-    NET["TCP transport<br/>link duel + IR + Card Pop"]
-  end
-  subgraph mem["state layer — layout-locked"]
-    RAM["g_wram 8K · g_hram · g_sram 32K<br/>g_vram 16K · g_oam 160 · g_pal 128"]
-    VARS["wram.h / hram.h / sram.h<br/>1,518 aliasing macros from poketcg.sym"]
-  end
-  subgraph game["game layer — hand-ported (59,179 asm instruction lines)"]
-    HOME["home/ — utilities, text, tiles, menus"]
-    DUEL["duel engine + card-effect VM + AI"]
-    OW["overworld + 104-opcode script VM"]
-    SND["audio sequencer — original driver, ported"]
-  end
-  subgraph oracle["oracle — dev only, excluded from release"]
-    PB["PyBoy — per-function"]
-    GBR["gb-recompiled — per-scene"]
-    GAM["Gambatte — pinned release capture"]
-    CMP["memcmp harness + replay corpus"]
-  end
-  game --> VARS --> RAM --> PPU --> SDL
-  SND --> APU --> SDL
-  NET --> game
-  CMP -.diff.-> RAM
-```
+### Reset and substrate
 
-Three rules make it work:
+- `completion:v2:reset:baseline`: pin the source ROM identity, map, symbols, and canonical routine inventory in a baseline artifact with `BASELINE_PINNED`.
+- `completion:v2:reset:rom-coverage`: account for every ROM byte as code, data, header, or padding; close the partition with `ROM_COVERAGE_CLOSED`.
+- `completion:v2:reset:routine-bijection`: establish the canonical routine-to-registration mapping, native disposition, and source span; close with `ROUTINE_MAPPING_CLOSED`.
+- `completion:v2:p0:substrate`: demonstrate routine and replay comparison over required memory and the 160×144 framebuffer; emit `SUBSTRATE_READY`.
+- `completion:v2:p1:hardware-removal`: evidence the named hardware-transform state, timer/frame, mapper, and input-latch semantics; emit `HARDWARE_TRANSFORM_CLOSED`.
 
-**(a) Game code never sees a host type.** It writes `g_vram`, `g_oam`, `g_wram`
-exactly where the asm wrote `$9800`, `$ca00`, `$c200`. The `wram.h` header is
-generated mechanically from `poketcg.sym` (`make DEBUG=1` emits all 20,280
-symbols; 1,518 are WRAM, at known flat offsets):
+### Save, boot, and leaves
 
-```c
-#define wRNG1                  (*(uint8_t *)(g_wram + 0x0aca))
-#define wPlayerDuelVariables   ((uint8_t *)(g_wram + 0x2200))
-#define wOAM                   ((OamEnt   *)(g_wram + 0x0a00))
-```
+- `completion:v2:p2:leaves`: close the leaf routine corpus with memory and function-boundary register observations; emit `LEAF_CORPUS_CLOSED`.
+- `completion:v2:p2:save-interchange`: prove save interchange through the declared round-trip event and all four SRAM banks; emit `SAVE_ROUND_TRIP`.
+- `completion:v2:p2:boot-title`: from pinned CGB boot, enter a new game after at least 600 rendered frames and compare required game state and pixels; emit `NEW_GAME_ENTERED`.
+- `completion:v2:p2:boot-title-negative`: perturb one expected state byte and report the first mismatch region and offset; emit `FIRST_MISMATCH`.
 
-`suiCune` proves the layout with
-`static_assert(offsetof(struct wram_s, f) == f - WRAM_0_ADDR)`; do the same for
-every struct you promote from raw bytes.
+### Audio and presentation
 
-**(b) The PPU is the only thing that knows about pixels**, and it is a normal,
-editable C module — not an emulator you vendored. The PPU owns the fixed
-160×144 game canvas and the pixel comparison surface; host scaling happens
-outside the game renderer.
+- `completion:v2:p3:audio-trace`: close the APU register-write trace with timer/frame state observations; emit `AUDIO_TRACE_CLOSED`.
+- `completion:v2:p3:audio-pcm`: close the declared PCM window with trace and framebuffer evidence; emit `PCM_WINDOW_CLOSED`.
+- `completion:v2:p4:ui-corpus`: close the UI scene corpus with memory, VRAM, OAM, palette, and fixed-canvas framebuffer observations; emit `UI_CORPUS_CLOSED`.
+- `completion:v2:p4:raster-effects`: close raster-effect scenes with framebuffer and both VRAM banks observed; emit `RASTER_EFFECTS_CLOSED`.
 
-**(c) Dimensions are fixed at the product boundary.** Internal PPU buffers may
-retain bounded capacity for diagnostics, but the release path renders exactly
-160×144 pixels. No game state, tilemap stride or UI layout is re-authored for
-modern aspect ratios.
+### Duel and campaign
 
-## Why not the alternatives
+- `completion:v2:p5:duel-state`: close the duel-state vector with memory, deterministic RNG, and input observations; emit `DUEL_VECTOR_CLOSED`.
+- `completion:v2:p5:seeded-duel`: replay the seeded duel through terminal outcome with native/reference agreement on required state, RNG, framebuffer, and save observations throughout the full declared session; emit `DUEL_TERMINAL_OUTCOME`.
+- `completion:v2:p6:script-vm`: close script opcode coverage with memory, mapper, and input-latch observations; emit `SCRIPT_OPCODE_CLOSED`.
+- `completion:v2:p6:maps-and-campaign`: reach credits through the complete declared campaign recording with native/reference agreement on required game state, framebuffer, save, and RNG observations; emit `CREDITS_REACHED`.
 
-| Rejected | Reason |
-|---|---|
-| Vendor `suiCune`'s substrate | It compiles Peanut-GB into the binary and keeps `gb.cpu_reg.pc` live forever. `constants/gfx_constants.h` hardcodes `SCREEN_WIDTH 20`, `BG_MAP_WIDTH 32`; output is locked to a 160×144 RGB555 texture with `SDL_RenderSetLogicalSize`. Every ported function then does tilemap math against a 32-tile stride permanently. Excellent method, wrong substrate. |
-| Native renderer, drop tilemaps | Forecloses the `memcmp` oracle — and the oracle is the entire reason this is finishable. Also breaks the printer, which composes 160-px bands through the tile pipeline (`src/engine/link/printer.asm:419`). |
-| Any asm→C transpiler | `CharlesAverill/poketcg` is the worked counterexample: one commit, `lift_skeleton.py` maps `jr`/`jp` to *comments*, 75% of its 212k lines are commented-out asm, `src/home/hblank.c` has an empty body, and it does not compile (`registers.h:15: 'CPURegs' has no member named 'regs'`). Do not join, do not salvage. More fundamentally: `farcall`/`bank1call` rewrite return addresses on the stack (`src/home/farcall.asm:3-79`) and 149 event macros read their operand *from the return address*. No line-by-line lifter survives that. A human deletes it in a second. |
-| Bundle the ROM or extracted assets | Links Awakening DX HD shipped assets and was DMCA'd within a day of publicity — the widescreen and 120fps did not save it. Its *source* fork is still up. |
+### Transport, printer, and release
 
-## Presentation
+- `completion:v2:p7:link-ir`: compare both native consoles against their linked serial reference cores through the complete recorded link-duel sessions, including required transport, memory, and input observations; this is not an end-to-end IR claim. Emit `LINK_SESSION_CLOSED`.
+- `completion:v2:p7:printer`: produce printer pages whose rendered output matches the linked reference pages, with no missing or extra pages; emit `PRINTER_PNG_CLOSED`.
+- `completion:v2:faithful-4x3:release`: attest the faithful fixed-canvas release across the declared memory, hardware, runtime, audio, render, persistence, transport, and printer fields, with reference agreement through the complete required recordings; emit `CREDITS_REACHED`.
+- `completion:v2:faithful-4x3:package`: pass the 600-frame package smoke and prove a package missing a required data span fails with `MISSING_DATA`; verify the executable and generated data pack contain no ROM; emit `PACKAGE_ROM_FREE`.
 
-The game's art is hand-drawn for the Game Boy Color's 160×144 pixel grid.
-Widening the logical canvas does not reveal additional authored content; it
-mostly creates filled margins around a fixed composition. That is the wrong
-visual contract for this game.
-
-The release presentation is therefore fixed 4:3:
-
-- render the original 160×144 framebuffer;
-- scale it by an integer factor for the host window;
-- preserve nearest-neighbour pixels;
-- pillarbox or letterbox unused host area.
-
-The former `--widescreen` path remains developer archaeology only. It is not a
-release option, completion requirement, or promise of additional game content.
-Future border work may add decorative host-side art without changing the game
-canvas or its verified state.
-## Verification harness
-
-This is what decides whether the project ships, and it is what `suiCune` did
-*not* have (manual playtesting; 4.4 years, 70% done).
-
-**Snapshot vector — everything**, since it is only 56 KiB: WRAM + HRAM + SRAM +
-VRAM (2 banks) + OAM + palette RAM + the CPU register file. `smw`'s wider vector
-(adds OAM and CGRAM over `zelda3`'s) is the right model.
-
-**Three independent lanes.**
-
-- **Per-function — PyBoy.** `hook_register(None, "Label", ...)` resolves
-  breakpoints against `poketcg.sym` directly, with full read/write on registers,
-  all WRAM, both VRAM banks, OAM, and cart RAM. Synthesise an input state, run
-  one ROM routine to its `RET`, capture the output state. This is `zelda3`'s
-  `RunEmulatedFunc(pc, a, x, y, ...)` tier, and it is the daily loop — port a
-  function, diff it, move on.
-- **Per-scene — gb-recompiled.** Deterministic headless replay (`--input`,
-  `--limit-frames`), savestates carrying full memory, and `--trace-entries`
-  emitting `bank:addr` in the exact `BB:AAAA` convention of rgblink's `.sym` — so
-  joining a trace against the symbol table tells you which routines a scene
-  actually exercises, letting you order work by real coverage instead of guessing.
-- **Release capture — headless Gambatte.** The completion bootstrap downloads
-  and source-builds the pinned `libgambatte` core. The release gate checks the
-  source, core, ROM, C ABI, domains, registers, trace schema, framebuffer schema,
-  and the pinned boot mode, then runs a `release-smoke` capture from power-on
-  through the CGB boot ROM to the cartridge entry at `$0150`. The capture
-  records pre/post SM83 registers, both VRAM banks, direct memory domains, the
-  full system bus, an anchored execution trace, a 160×144 PNG, and pinned
-  provenance.
-
-gb-recompiled's cheap JSON `--dump-state` covers `wram_bank_0_c000_cfff` +
-`wram_bank_1_d000_dfff` — which, because poketcg's WRAM is flat and unbanked, is
-**100% of the game's WRAM**. Lucky fit. VRAM/OAM/SRAM come from
-`--save-state-file`, whose header is self-describing (`'GBSV'` magic, explicit
-per-region sizes) and parseable without patching anything.
-
-**Three traps hit while measuring, documented so you don't repeat them:**
-
-1. A stale `.sav` in `--save-dir` silently changes the route — the game takes
-   *Continue* instead of *New Game*. Wipe the save dir before every run.
-2. Frame numbering is **not** comparable across oracles. gb-recompiled starts
-   from a configured post-boot state (no CGB boot ROM; `GBC.md` discloses the
-   `boot_div-cgb*` failures); PyBoy runs its own bundled `bootrom_cgb.bin` and
-   overlays a splash. Anchor on game events, never frame indices.
-3. Screen comparison is exactly solvable. Both derive from the same CGB 5-bit
-   values and differ only in expansion — gb-recompiled does `c*255/31` truncated
-   (`runtime/src/ppu.c:138-143`), PyBoy does `c<<3`. Invert both to the 5-bit
-   domain and comparison is bit-exact. Also: `--dump-frames` silently truncates
-   to 100 indices per run (`MAX_DUMP_FRAMES`), and `--input` caps at 2048 entries
-   — use the periodic `p<start>-<last>/<period>` form for long routes.
-
-**Structure it as `smw` does, not `zelda3`.** A per-game vtable — `run_frame`,
-`run_frame_emulated`, `fix_snapshot_for_compare`, `patch_bugs` — plus a tri-state
-`RM_BOTH / RM_MINE / RM_THEIRS`. And steal `smw`'s best idea: on mismatch, write
-`saves/bug-<timestamp>.sav` and show an on-screen countdown. **Ship the oracle to
-testers as a crowd-sourced bug reporter.**
-
-**Budget an exclusion list.** `zelda3`'s is ~25 lines, each with a one-line
-justification, in three categories: emulator-authoritative (scratch,
-uninitialised temporaries, the SM83 stack region — your C has no GB stack),
-C-authoritative, and port-only state. For poketcg, day-one exclusions are
-`rSTAT`/`rLY`, DIV/TIMA, and anything the audio path touches.
-
-**Regression corpus.** Base snapshot + RLE'd input log + interleaved patch-byte
-commands. `zelda3` got full-game regression from 13 chapter saves and no test
-framework. Here the analogue is **seeded duel replays** — and they will be
-bit-exact, because:
-
-> `UpdateRNGSources` (`src/home/random.asm`) is a pure software LFSR over
-> `wRNG1`/`wRNG2`/`wRNGCounter`. **Zero hardware entropy — 0 reads of `rDIV`
-> anywhere in the codebase.** Duel outcomes are fully determined by inputs.
-
-That is the single most favourable fact about this game for porting.
-
-**Gate the oracle at the game canvas.** All product verification compares the
-160×144 framebuffer and game state. Host scaling and future decorative borders
-are outside the simulation and oracle contract.
-
-## Phases
-
-Ordered by dependency and by how cheaply each slice can be oracle-diffed. Line
-counts are measured.
-
-| Phase | Scope | Lines | Weeks | Gate |
-|---|---|---|---|---|
-| 0 — Substrate | memory arrays; `wram.h`/`hram.h`/`sram.h` from `.sym`; virtual PPU (variable dims + per-scanline offsets); SDL2 shell; PyBoy + gb-recompiled harnesses; snapshot/compare/replay | — | 2–3 | a trivial leaf (e.g. `ClearSRAMBGMaps`) diffs clean; a recorded replay round-trips |
-| 1 — Delete the hardware | mechanical removal of banking, HBlank gating, interrupts, DMA, speed switching (see table below) | — | 1 | clean compile; same leaf still diffs |
-| 2 — Leaves and save | `home/` pure utilities; SRAM + save + validation | 673 + 1,157 | 2–3 | a C-written save loads in an emulator and vice versa |
-| 3 — Timer, APU, audio | tick the original driver against a software APU | 4,812 code + 26,252 data | 4–6 | `(tick, register, value)` write trace matches |
-| 4 — Text, tiles, menus | text engine, tilemap/BG-map, menu framework | 1,740 + 1,160 + 14,813 | 8–10 | screens render byte-identically |
-| 5 — Duel engine | state, turn loop, card-effect VM, AI, RNG | 44,614 | 12–16 | replay a seeded duel, `memcmp` the 826-byte state every turn |
-| 6 — Overworld and scripts | 104-opcode VM, maps, NPCs | 12,129 | 6–8 | walk every map; scripts fire correctly |
-| 7 — Link, IR, printer | TCP transport; Card Pop / Gift Center; printer→PNG | 3,468 | 4–5 | a link duel round-trips; a card exports to PNG |
-
-Presentation is host-side scaling of the verified 160×144 framebuffer, not a
-game-content phase.
-
-**Total: 12–18 months solo; 6–9 months with 2–3 developers** (Phase 5 splits
-cleanly). Calibration: `suiCune` reached 70% of pokecrystal in 4.4 years solo
-*without* an oracle, on a codebase twice this size (8.56 MB vs 4.26 MB of asm);
-`zelda3` is ~70–80 kLOC of C *with* an oracle.
-
-### Phase 1 — the hardware-removal transform
-
-Highest leverage; must come first.
-
-| Construct | sites | resolution |
-|---|---|---|
-| `farcall` / `bank1call` + `rst $18`/`$28` trampolines | 994 | plain C call. Delete `Bank1Call`, `FarCall`, `SwitchToBankAtSP`, `BankpushROM`, `BankpopROM`, `hBankROM` |
-| `SafeCopyDataHLtoDE` HBlank gate | all tilemap writes | unconditional `memcpy` — proven safe, it writes identical bytes on both branches (`src/home/bg_map.asm:100-115`) |
-| `HblankCopyDataHLtoDE` busy-wait | `src/home/hblank.asm` | delete; a software PPU has no VRAM access window |
-| `halt` / `WaitForVBlank` | 3 `halt` | `DoFrame()` becomes the frame boundary |
-| `stop` + KEY1 double-speed | 1 | delete; `SetupTimer` already rate-compensates |
-| inline-operand event macros | 149 | `SetEventValue(EVENT_FOO, c)` |
-| `jp hl` / jump tables | 17 / 33 | C function-pointer tables — remarkably small and fully enumerable |
-| OAM DMA (`hDMAFunction` copied into HRAM) | 1 | `memcpy(g_oam, wOAM, 160)` |
-| SGB path | 24 branch sites | drop, or keep behind a flag |
-| HDMA / GDMA | 0 | nothing to do |
-
-### Phase 5 — the duel engine is tractable
-
-The entire duel state is **826 bytes**, and the game itself enumerates it —
-`DuelDataToSave` (`src/engine/duel/core.asm:6117-6126`, in-tree comment
-`; 826 bytes`, matching `SAVE_DUEL_DATA_SIZE`). Seven regions: two 256-byte
-page-aligned per-duelist blocks, 272 bytes of decks + name, 22 bytes of duel
-state, `hWhoseTurn`, 3 bytes of RNG, 16 bytes of AI vars. Anything it omits is
-derived or presentation. **That is the C struct, exactly.**
-
-Two structural notes: the per-duelist blocks are `$100`-aligned by assertion
-because `PLAYER_TURN`/`OPPONENT_TURN` *are* the page bytes — all access is
-`ld l,offset / ld h,hWhoseTurn`, so the duelist selector is the high byte. And
-the card-effect layer is a command VM whose opcode tables come from
-`src/macros/`; port it as a VM, not as unrolled logic.
-
-### Phase 6 — scripts are hybrid
-
-One trap: scripts interleave native asm and bytecode inside a single function.
-`start_script` is `rst $20`; the handler pops its own return address as the
-bytecode pointer, interprets until `wBreakScriptLoop`, then `retbc`
-(`push bc; ret`) resumes native asm at the byte after the last command — see
-`src/scripts/mason_laboratory.asm:57-77`. **You cannot split "VM" from "game
-code" along file boundaries.** Each script file becomes a C function mixing
-statements with `RunScript(&blob)` calls.
-
-Also: bank co-residency is load-bearing. `Func_c943` and `HandleMoveModeAPress`
-hardcode `BANK(MapScripts)` while dereferencing into `npc_map_data.asm` /
-`map_objects.asm`, which only works because both sections land in ROMX `$04`.
-Deleting banking (Phase 1) resolves it — just don't preserve it by accident.
-
-### Phase 7 — link, IR, printer
-
-One TCP transport with a session-type byte serves both link duels and IR. IR's
-physical layer is cycle-counted bit-banging (a bit is pulse-present-vs-absent in
-a fixed slot, the two code paths deliberately length-matched, `di` held for the
-whole session) — it has no portable meaning: **delete `ir_core.asm:6-240`
-wholesale.** Keep only what is above it: the 8-byte register-frame ABI, the
-`IRCMD_*` dispatcher, param/magic matching, the Card Pop name-list exchange and
-its name-hash rarity roll, the Gift Center payloads. The `rSTAT` VBlank
-rendezvous in `CloseIRCommunications` becomes a no-op.
-
-Two security fixes while there: drop `IRCMD_CALL_FUNCTION` (`ir_core.asm:350-357`)
-— it is `jp hl` to a *peer-supplied address* (remote code execution by design,
-no local caller ever sends it). And bounds-check the `de`/`c` pair in
-`IRCMD_RECEIVE_DATA`, an otherwise unchecked remote memory write.
-
-Printer: cut at `SendPrinterPacket`. Keep the composition (layout, 1bpp→2bpp
-expansion, 40-tile band slicing — ordinary rendering); replace the 12-step IRQ
-state machine, RLE compressor and checksum with a band accumulator that writes a
-PNG. Strictly less code than emulating a printer, and "printer not connected"
-becomes "saved to `~/poketcg/prints/`".
-
-## Data pipeline
-
-**Extract from the built ROM using `poketcg.map` section extents + `poketcg.sym`**
-— not from the `.asm` sources, and not by keeping rgbds in the loop. Rejected
-options fail concretely:
-
-- *Keep assembling and `INCBIN` the ROM's data sections* — leaves every
-  `dw Label` as a 16-bit bank-relative GB address requiring a permanent
-  bank-resolution shim.
-- *Parse the `.asm` macros directly* — `textpointer`, `gfx`, and `frame_table`
-  cannot be evaluated without final link addresses, and rgbds' stateful
-  4-charmap text engine has no standalone equivalent.
-- *Use the existing Python tools* — all eleven are dead. `wram.py` and `gfx.py`
-  are Python 2 and don't parse under 3; `script_extractor*.py` and
-  `extract_anim_data.py` are one-shot bootstrappers reading `baserom.gbc` at
-  hardcoded offsets; `constants.py` is a stale hand-maintained duplicate. Also:
-  `tools/gfx.c` and `tools/bgmap.c` never run — guarded by
-  `$(if $(tools/gfx),...)` and nothing in the repo ever sets those variables.
-
-Drive extraction from a hand-written schema (~20 entries) harvested from
-`src/macros/wram.asm`'s struct macros and the existing `table_width` /
-`assert_table_length` annotations. Follow `CppRed`'s two-stage codegen shape
-(tables in, C arrays out).
-
-**Assets:** convert from the built `.2bpp`/`.1bpp`/`.pal` artifacts, not the
-PNGs — going back to PNG erases the whole rgbgfx flag matrix, including all 26
-`-x N` trim-end overrides and the cards' `--columns --colors embedded
---auto-palette`. Keep 2bpp tile data (175 KB for cards, vs 2.8 MB as RGBA) and
-decode to paletted indices at load. Decompress the ~207 `.lz` blobs at build
-time but keep the ~40-line decompressor — two call sites use it as a streaming
-row-at-a-time API into strided destinations. Note that byte-exactness of 128 of
-those blobs depends on checked-in `.lz.match` files the greedy compressor cannot
-reproduce.
-
-**Legal posture:** commit the engine and the extractor; commit nothing generated.
-`Gen1Recomp` ships a metadata-only manifest (label → `[bank, addr]`, no dialogue,
-no images, no ROM bytes) and is still up; LADX-HD bundled assets and was taken
-down. The in-tree PNGs make bundling tempting — that is precisely the failure
-mode.
-
-## Top risks
-
-| # | risk | mitigation |
-|---|---|---|
-| 1 | Scope collapse from unbounded per-function verification | Phase 0 harness **before any game code**. This is what cost `suiCune` years. |
-| 2 | Dimensions baked in during Phases 2–6, forcing a second pass | `SCREEN_W`/`TILEMAP_W` symbolic from the first commit; assert no literal 32/20/18 in tilemap math in review |
-| 3 | Hybrid asm+bytecode scripts resist clean C structure | Design the `RunScript` re-entry contract in Phase 0, before touching `src/scripts/` |
-| 4 | Hand-drawn pixel art has no valid extra game canvas | Keep the release viewport fixed at 160×144; treat future borders as host decoration |
-| 5 | Audio timing at 60.235 Hz, not 60 Hz | Derive the tick from `16384/68/4` exactly; `sPlayTimeCounter` must stay cartridge-compatible |
-| 6 | Bug-compatibility vs. correctness | Preserve original bugs by default behind a `faithful`/`fixed` ruleset gate. Known ones to keep: the Card Pop name-check loop that discards its result (`card_pop.asm:195-208`); `VENUSAUR_LV64` unobtainable because both hash halves share parity (`:328-337`); SFX preemption not silencing the previous SFX (`sfx.asm:485-499`). |
-
-## Start here
-
-1. **Build the ROM with full symbols:**
-   ```sh
-   cd poketcg && make DEBUG=1   # emits poketcg.sym (20,280 symbols, incl. 1,518 WRAM)
-   ```
-2. **Write the `.sym` → `wram.h`/`hram.h`/`sram.h` generator.** Half a day, and
-   it makes the oracle possible.
-3. **Stand up the PyBoy function-oracle harness:** load state → set registers →
-   break at symbol → run to `RET` → dump full state. Install with
-   `uv tool install pyboy` (or `uv venv && uv pip install pyboy`); it auto-loads
-   `poketcg.sym`.
-4. **Port `UpdateRNGSources` (`src/home/random.asm`) first** — ~20 lines, pure,
-   zero dependencies, and it proves the whole loop end to end.
-5. **Keep gb-recompiled as the scene oracle.** Generate a project with
-   `gbrecomp poketcg.gbc --symbols poketcg.sym`; regenerate with `--native-patch`
-   when you want function-level A/B on that side too.
-
-The one thing not to compromise on: **nothing enters the game layer before the
-oracle works.** Every precedent that shipped had one; the precedent that stalled
-at 70% did not.
-
-## Prior art referenced
-
-- [`snesrev/zelda3`](https://github.com/snesrev/zelda3) — ALTTP→C, software PPU,
-  `memcmp` lockstep oracle, span-widened widescreen.
-- [`DanZC/suiCune`](https://github.com/DanZC/suiCune) — Pokémon Crystal→C,
-  function-by-function hand port; the conversion methodology (wrong substrate
-  for widescreen).
-- [`bryanthaboi/gen1recomp`](https://github.com/bryanthaboi/gen1recomp) —
-  Pokémon R/B/Y→Lua, variable logical canvas (`setUISize`), manifest boundary.
-- [`ihm-tswow/Links-Awakening-DX-HD`](https://github.com/ihm-tswow/Links-Awakening-DX-HD)
-  — LADX→C#, single-viewport-rect widescreen; DMCA'd for bundling assets.
-- `CppRed` — Pokémon Red→C++, per-scanline `bg_offsets[]`/`window_offsets[]`,
-  CSV→codegen data pipeline.
-- [`arcanite24/gb-recompiled`](https://github.com/arcanite24/gb-recompiled) —
-  the static recompiler used here only as the per-scene oracle.
+The completion manifest defines each claim's dependencies, minimum frames/events, state fields, artifact schema, and command. Audio PCM acceptance uses its declared thresholds, not byte-exact waveform equality. A scenario or corpus proves only its complete recorded inputs and declared scope. Current measured evidence is recorded in generated completion artifacts; it is not exhaustive coverage of all routines, branches, scenes, or hardware behavior.

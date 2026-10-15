@@ -1,27 +1,44 @@
-# docs/
+# Documentation
 
-There is no autonomous runbook. Every document here is a contract, the
-architecture, or a technical diagnostic reference for hand-porting.
+Choose the task, then use its owning guide. Commands are implemented in `justfile` and `tools`; current verification state comes from tracked evidence rather than repeated status claims in prose.
 
-| doc | role |
+## Play and build
+
+| Task | Guide |
 |---|---|
-| `port-contract.md` | Normative routine-port contract. |
-| `factory-contract.md` | Normative `CONTRACT`/`CASES`/`MUTATIONS` case-module format. |
-| `grind.md` | Diagnostic interpretations and repair recipes. |
-| `coverage-program.md` | Coverage ledger, Target, Discover, and Intake diagnostics. |
-| `tas-progress-loop.md` | TAS diagnostic reference. |
-| `audio-harness.md` | Audio evidence mechanics. |
-| `reach-harness.md` | Save, peer, link, IR, and printer reach mechanics. |
-| `jj-workflow.md` | jj and Forgejo mechanics. |
-| `vision.md` | Normative architecture and release destination. |
-| `phase1-transform.md` | Hardware-transform record. |
+| Controls, profiles, save locations, and diary import | [Playing](playing.md) |
+| Dependencies, source builds, local packages, and oracle installation | [Build and package](building.md) |
 
-Machine-readable state wins over prose: `site/data/coverage.json`, `site/data/progress.json`, `site/data/gate.json`, and `tools/progress/scope.toml`. Forgejo is an idempotent projection, not a scheduler or evidence source.
+## Change and verify
 
-The Forgejo issues are a projection of the loop's measured facts - session
-divergences, sweep rows, composition audits - kept by `just issues-sync`
-(`docs/grind.md`, "Issues"). The tracker does not contribute evidence.
+| Task | Guide |
+|---|---|
+| Reproduce a defect, diagnose a session, refresh evidence, and publish | [Maintenance and diagnostics](grind.md) |
+| Commit, fetch, review, push, and understand release/mirror ownership | [jj workflow](jj-workflow.md) |
+| Add or maintain a game profile and its isolated evidence | [Porting a profile](porting-a-profile.md) |
 
-The wave-era slice plan (`plan.md`) is deleted. Its per-slice history is in jj
-history and `site/data/history.jsonl`; its conventions live in
-`port-contract.md`; its exclusion table is `tools/progress/scope.toml`.
+## Contracts
+
+| Authority | Document |
+|---|---|
+| Current architecture and the machine-bound completion claims | [Architecture and acceptance](vision.md) |
+| Routine translation, memory, ABI, observations, and mutation proof | [Port contract](port-contract.md) |
+| Quartet, factory output markers, and derived case inventories | [Factory translation contract](factory-contract.md) |
+| Bounded hardware-disposition audit | [Phase 1 transform](phase1-transform.md) |
+
+## Specialist references
+
+| Mechanism | Reference |
+|---|---|
+| Coverage ledger, Discover, Intake, and Target | [Coverage program](coverage-program.md) |
+| Driver ticks, game requests, scheduling, and PCM proof | [Audio proof](audio-harness.md) |
+| Seeded saves, peer transport, and linked reference evidence | [Seeded state and peer reach](reach-harness.md) |
+| TAS metrics and composition diagnostics | [TAS diagnostic reference](tas-progress-loop.md) |
+
+## Sources of truth
+
+- [`requirements.toml`](../tools/completion/requirements.toml) declares the completion requirements and binds them to `vision.md`.
+- [`gate.json`](../site/data/gate.json) contains the source-bound release attestation; [`progress.json`](../site/data/progress.json) is its generated dashboard projection.
+- [`scope.toml`](../tools/progress/scope.toml) owns exclusions. Coverage and session ledgers own measured execution and confirmed prefixes.
+- Forgejo issues project measured worklist facts. Tracker state does not establish correctness.
+

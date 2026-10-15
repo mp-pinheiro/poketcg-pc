@@ -1,147 +1,33 @@
 # Factory translation contract
 
-You translate Game Boy assembly routines from pret/poketcg into C11 for the
-poketcg-pc port. Your output is verified byte-for-byte against the real ROM
-running in an emulator, then mutation-tested. Follow this contract exactly;
-the completed example in the prompt shows every convention working.
+This document owns the prompt/output protocol used to generate one source quartet. Shared ABI, memory, register, observation, case-strength and exclusion rules are defined by [port-contract.md](port-contract.md); follow them without creating a second convention.
 
-## Memory model
+## Quartet and markers
 
-All game state lives behind a bus. Never take host pointers into it.
+A source `<file>` produces exactly these owned files: `src/home/<file>.h`, `src/home/<file>.c`, `src/probe/<file>.c`, and `tests/cases/<file>.py`. The probe table is named `probe_entries_<file>[]`. The surrounding skeleton supplies includes, guards, probe table, `POISON`, and schema tail. Do not hand-edit derived `tests/routines.py` or `SCHEMA2_CASES`.
 
-```c
-uint8_t  gb_read8(uint16_t addr);            /* any bus read  */
-void     gb_write8(uint16_t addr, uint8_t v);/* writes below $8000 are dropped */
-const uint8_t *rom_ptr(uint8_t bank, uint16_t addr);
-void     BankswitchROM(uint8_t bank);        /* home/switch_rom.h */
-```
+The output uses the exact marker names supplied by the factory prompt. Preserve their spelling and order; do not add surrounding prose, markers, or unrelated files. The documented markers include `===STATICS` for local constants/includes, `===PROBE` for adapters and entries, `===CASES` for case declarations, and `===MUTATION` for mutation declarations. Put prototypes and function bodies only in their corresponding requested sections; preserve the supplied skeleton, including its header guards, probe table, `POISON`, and schema tail.
 
-- Named RAM locations come from generated headers (`generated/wram.h`,
-  `generated/hram.h`, `generated/sram.h`, included by the file skeleton).
-  Every pret symbol `wFoo`/`hFoo` yields `wFoo` (a `uint8_t` lvalue you can
-  read/assign), `wFoo_ADDR` (its numeric address), and `wFoo_PTR`.
-  Use the lvalue for single-byte access, `_ADDR` for address arithmetic.
-- **Representation rule:** routines that walk memory take and return
-  `uint16_t` Game Boy addresses, never host pointers. A pointer the asm
-  advances (`hl`/`de` past a copied block) becomes a `uint16_t *` in/out
-  parameter — callers read the advanced value. 16-bit wraparound must be
-  exact: do arithmetic in `uint16_t`.
+Preserve the supplied machine/protocol markers. Use tab indentation in C and unsigned `u` suffixes; do not add explanatory code comments, placeholders, TODOs, or dead code.
 
-## The three C rules
+## Probe output
 
-1. **Zero means maximum.** Counted loops are post-test: a 16-bit count of 0
-   means 65536, an 8-bit count of 0 means 256. Encode as
-   `uint32_t n = n_raw ? n_raw : 0x10000u;` (or `0x100u`).
-2. **Advanced pointers are load-bearing.** If the asm leaves `hl`/`de`
-   advanced past what it processed, write the advanced address back through a
-   `uint16_t *` parameter.
-3. **Carry is only sometimes an output.** Model flags (`f`) as an output only
-   when the asm contract really produces them (`scf`/`or a` before `ret`, a
-   comparison result callers branch on). A routine ending in `pop af`
-   restores the CALLER's flags — then `f` is preserved, not produced.
-   Flag bit layout: Z=0x80, N=0x40, H=0x20, C=0x10; the low nibble is always 0.
+An adapter is named `adapt_<RoutineName>` (replace `.` with `_`) and accepts `ProbeState *s`. It only marshals inputs, makes exactly one routine call, and marshals real outputs back. Never recompute an answer, hardcode an output, write a preserved register, or use an integer literal at or above `0x8000` in the adapter. Pair assembly/splitting is marshalling, not another routine call.
 
-## Signatures
+The adapter table contains `{ "PretName", adapt_PretName }` entries and ends with `{ NULL, NULL }`. Local pret labels retain their exact dotted symbol name in the registration string.
 
-- Inputs = the registers the asm reads before writing; outputs = registers
-  meaningful to callers at `ret`. Multiple outputs use a small returned
-  struct (see the example). Preserved registers (push/pop pairs) are neither.
-- `ld a,[hl]` under a bank the routine did NOT switch itself is a **bus
-  read**: `gb_read8(hl)` — never `rom_ptr` for a table the caller banked.
-- `farcall`/`bank1call` become plain C calls to the named routine.
-- A wrong signature shows up as a scatter of unrelated register mismatches
-  in the diff. Re-derive the exit registers from the asm tail before
-  changing logic.
-- A `_b`-suffixed pret symbol is a distinct adjacent byte field, not the
-  high byte of a 16-bit pair.
+## Cases and mutation declarations
 
-## Probe adapter (===PROBE block)
+Each routine gets `CONTRACT["Name"]` and `CASES["Name"]` declarations. Use symbolic addresses from `tests/cases/_symbols.py`, not raw address literals. Cases must exercise required semantics and observe the behavior under test as specified by port-contract. Oracle-inaccessible cases require `oracle: False`, a nonempty `why`, and at least one assembly-derived expectation family.
 
-`ProbeState` is `{ uint8_t a, f, b, c, d, e; uint16_t hl; }`.
+An entry cutpoint is emitted into the schema by a `# >>> factory-completion <Routine>` block that sets `completion` on the derived `SCHEMA2_CASES` records. `_completion` on loaded case dictionaries is readback state, not the authoring hook. Schema inventories are derived; never hand-edit `SCHEMA2_CASES`.
 
-```c
-static void adapt_Foo(ProbeState *s)
-{
-    uint16_t de = (uint16_t)(s->d << 8 | s->e);
-    Foo(&s->hl, &de, (uint16_t)(s->b << 8 | s->c));
-    s->d = (uint8_t)(de >> 8);
-    s->e = (uint8_t)de;
-}
-```
+Each mutation declares `MUTATIONS["Name"]` with `source_symbol`, `before`, `after`, and `case_ids`. `after` is a shape-preserving behavioral corruption; the port contract owns anchor resolution and execution requirements.
 
-Hard rules (CI-linted):
-- Marshal only. Exactly ONE routine call. Never recompute or hardcode an
-  answer; never write a register the routine does not produce.
-- A register the asm preserves must be left untouched by the adapter.
-- No integer literal >= 0x8000 in the adapter body.
-- Name it `adapt_<RoutineName>` with `.` replaced by `_`.
+Execution and receipt requirements belong to [mutation evidence](port-contract.md#mutation-evidence). A declaration or static anchor audit alone does not satisfy them.
 
-## Cases (===CASES block)
+## Constants and includes
 
-Two statements, exactly:
+Use local `#define NAME value` entries in `===STATICS` for constants supplied by the source prompt. Do not invent values. Permitted quoted includes are callee `home/<basename>.h` headers named by the prompt and `generated/wram.h`, `generated/hram.h`, `generated/sram.h`, or `mem.h`. Do not add another constants header or invent include paths.
 
-```python
-CONTRACT["Foo"] = {"compare": ("a", "f", "hl"), "preserve": ("b", "c")}
-CASES["Foo"] = [
-    {"wram": {0xC100: b"\x00\x00"}, "read": {0xC200: 2}},
-    dict(POISON, wram={0xC100: b"\x01\x02"}),
-    {"b": 1, "c": 0, "wram": {0xC100: b"\xFF"}},
-]
-```
-
-- `compare` = registers the diff checks (real outputs + everything the asm
-  preserves). `preserve` = the subset the routine must not change. Leave
-  incidental loop residue (`bc==0` after a counted loop) OUT of compare.
-- Case keys: `a f b c d e hl` (entry registers, default 0); `wram`
-  `{addr: bytes}` seeded AND diffed; `read` `{addr: count}` diffed only;
-  `sram` `{bank: {addr: bytes}}` seeded+diffed; `sread`/`vread`
-  `{bank: {addr: count}}` diffed only (vread for VRAM, banks 0/1); `ramg`
-  bool (SRAM enable latch state); `setup` `[{"fn": "SetupText", "d": 0x20}]`
-  preludes for warm state; `keys` int (held buttons, bit0 A, 1 B, 2 SELECT,
-  3 START, 4 RIGHT, 5 LEFT, 6 UP, 7 DOWN — required for input-waiting
-  routines, which otherwise spin forever).
-- Required coverage per routine:
-  1. an all-zero case;
-  2. a poisoned case — `dict(POISON, ...)` overriding only consumed fields —
-     proving every preservation claim;
-  3. every boundary: count 0 (must act as maximum, never no-op), 1, and
-     256/257 for 16-bit counters.
-- Python case files spell RAM addresses through `tests/cases/_symbols.py`, never as raw literals: `sym("wFoo")` or `sym("wFoo") + offset` for a game variable (resolved at import from the active profile's `.sym`, so one module serves every profile; an unknown name raises), `data(0x...)` for a value in a RAM range that is not an address (a dividend, a junk register word), and the harness constants `CALL_FRAME`, `STACK_WINDOW`, `STACK_TOP`, `STACK_CANARY` and hardware bases `WRAM_START`, `WRAMX_START`, `SRAM_START`, `HRAM_START` for the oracle frame, the reserved stack and whole-region images. `just lint-case-literals` rejects any integer literal in `$A000-$BFFF`, `$C000-$DFFF` or `$FF80-$FFFE`; `tools/case_symbols.py` performs the rewrite. Name a module-level constant after the symbol (`wFoo = sym("wFoo")`) only if it helps readability.
-- Reserved WRAM: `CALL_FRAME` (`$CFF0-$CFF5`) and `STACK_WINDOW` (`$DC30-$DCFF`) belong to the oracle's call frame and stack: never seed or write them. Use the routine's real pret symbols, or `$C100-$CA00` scratch named by the symbol that contains it.
-- A case the live oracle physically cannot run uses `"oracle": False` plus
-  `"why": "..."` plus asm-derived `"expect": {addr: bytes}` /
-  `"expect_regs": {...}` — derived from the asm, never guessed.
-
-## Mutation (===MUTATION block)
-
-One statement declaring a shape-preserving corruption of YOUR C that the
-cases must catch:
-
-```python
-MUTATIONS["Foo"] = {
-    "source_symbol": "Foo",
-    "before": "if (flags & 0x10u)",     # exact substring of the C file,
-    "after": "if (flags & 0x20u)",      # occurring exactly once
-    "case_ids": ["Foo-0", "Foo-1"],     # cases that go RED under it
-}
-```
-
-Pick a mutation that changes observable behavior (flip a comparison, wrong
-constant, dropped term). If no case can catch a corruption of some line,
-you are missing a case — add it.
-
-## Output discipline
-
-- C body only inside your blocks; the file skeleton (includes, header
-  guard, probe table, POISON, schema tail) already exists.
-- Local constants: `#define NAME 0x..u` lines at the top of the ===STATICS
-  block, with values from the prompt's constant table.
-- Extra headers (`#include "home/x.h"` for callees) also go at the top of
-  ===STATICS. NEVER invent include paths: the only valid quoted includes are
-  `home/<basename>.h` for callees named in the prompt, `generated/wram.h`,
-  `generated/hram.h`, `generated/sram.h`, and `mem.h` — there are no
-  constants headers; `#define` constants locally from the prompt's table.
-- Comment each function with its pret source range:
-  `/* foo.asm:12-34 */`.
-- Tabs for C indentation, `u` suffix on unsigned literals, no TODOs, no
-  placeholders, no dead code.
+The marker-delimited factory owns generated output shape; port-contract owns the technical semantics. Keep each rule in its owner and link to it rather than paraphrasing a second version.
