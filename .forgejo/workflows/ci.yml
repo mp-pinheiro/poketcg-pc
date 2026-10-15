@@ -47,6 +47,12 @@ jobs:
             "https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1-${cliff_arch}-unknown-linux-gnu.tar.gz"
           tar -xzf /tmp/git-cliff.tar.gz --strip-components=1 -C /tmp
           install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
+      - name: Install rgbds
+        run: bash tools/install_rgbds.sh
+      - name: Bootstrap pret disassembly
+        run: just bootstrap
+      - name: Generate vanilla constant headers
+        run: python3 tools/gen_constants.py --profile vanilla --out build/generated/vanilla/generated
       - name: Validate changelog generation
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then

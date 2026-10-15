@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Install python3 and jq
+      - name: Install python3, jq and just
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -34,6 +34,14 @@ jobs:
           curl -fsSL -o /usr/local/bin/jq \
             "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-${jq_arch}"
           chmod +x /usr/local/bin/jq
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh \
+            | bash -s -- --tag 1.58.0 --to /usr/local/bin
+      - name: Install rgbds
+        run: bash tools/install_rgbds.sh
+      - name: Bootstrap pret disassembly
+        run: just bootstrap
+      - name: Generate vanilla constant headers
+        run: python3 tools/gen_constants.py --profile vanilla --out build/generated/vanilla/generated
       - name: Build daily snapshot
         run: python3 tools/progress/report.py build
       - name: Commit snapshot
