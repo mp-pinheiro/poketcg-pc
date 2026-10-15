@@ -354,6 +354,15 @@ def workflow_axes(completion: dict | None, functions: list[dict]) -> dict:
     }
 
 
+EVIDENCE_AXES = ("requirements", "milestones")
+
+
+def reproducible_axes(axes: dict | None) -> dict | None:
+    if not isinstance(axes, dict):
+        return axes
+    return {name: value for name, value in axes.items() if name not in EVIDENCE_AXES}
+
+
 def jj_commit_short() -> str | None:
     commands = (
         ["jj", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
@@ -704,11 +713,8 @@ def subcommand_check():
     routines_set, _ = load_routines()
     gate_data = load_gate()
     current = compute(inv, routines_set, gate_data)
-    completion = load_completion_status()
-    if completion is not None:
-        current["completion"] = completion
     current["recent"] = recent_ports(inv)
-    current["workflow_axes"] = workflow_axes(completion, current["functions"])
+    current["workflow_axes"] = workflow_axes(load_completion_status(), current["functions"])
     committed = None
     if PROGRESS.exists():
         with open(PROGRESS) as f:
@@ -718,11 +724,12 @@ def subcommand_check():
     diffs = []
     for key in (
         "measures", "categories", "units", "functions", "work_records",
-        "id_migrations", "completion", "recent", "workflow_axes",
+        "id_migrations", "recent", "workflow_axes",
     ):
-        a = json.dumps(current.get(key), sort_keys=True)
-        b = json.dumps(committed.get(key), sort_keys=True)
-        if a != b:
+        a, b = current.get(key), committed.get(key)
+        if key == "workflow_axes":
+            a, b = reproducible_axes(a), reproducible_axes(b)
+        if json.dumps(a, sort_keys=True) != json.dumps(b, sort_keys=True):
             diffs.append(key)
     if diffs:
         for key in diffs:
