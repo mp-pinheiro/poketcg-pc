@@ -62,3 +62,11 @@ The claims below are machine-bound by `tools/completion/requirements.toml`. A su
 - `completion:v2:faithful-4x3:package`: pass the 600-frame package smoke and prove a package missing a required data span fails with `MISSING_DATA`; verify the executable and generated data pack contain no ROM; emit `PACKAGE_ROM_FREE`.
 
 The completion manifest defines each claim's dependencies, minimum frames/events, state fields, artifact schema, and command. Audio PCM acceptance uses its declared thresholds, not byte-exact waveform equality. A scenario or corpus proves only its complete recorded inputs and declared scope. Current measured evidence is recorded in generated completion artifacts; it is not exhaustive coverage of all routines, branches, scenes, or hardware behavior.
+
+## Proof identity and provenance
+
+The executable acceptance contract is the parsed completion manifest and its producer/comparator code. Evidence keys retain every contract field except the documentation source path, source SHA, and requirement anchors. Those excluded fields are checked against this page separately; moving or rewriting prose does not change the game inputs.
+
+The release attestation records the measured source revision, full source hash, and an execution hash. The execution hash excludes only `README.md`, `CHANGELOG.md`, and Markdown under `docs/`, plus generated dashboard outputs. Code, cases, configuration, agent instructions, and runtime artifacts retain their checks. A reused attestation keeps its original measurement revision, logs, and durations; the gate reports the current validated revision separately.
+
+The attestation includes the measured routine registry and completion audit. A source-only checkout can validate and regenerate the dashboard without ROMs, native binaries, or local evidence. Publication commands belong to [maintenance and diagnostics](grind.md#source-bound-release).

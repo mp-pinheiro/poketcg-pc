@@ -2,7 +2,7 @@
 schema = 2
 version = "completion-v2-epoch-4"
 source = "docs/vision.md"
-source_sha256 = "9d60e45a4833f2810c37430b8926fbee2d327f6ac743af6136cbe6a3f43cf224"
+source_sha256 = "3e616e9d9c1de4eb2df171f5ce0648b1abbc497cf8eea45155950c5f4afdf6d3"
 
 milestones = [
   "reset",

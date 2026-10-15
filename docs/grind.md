@@ -78,7 +78,7 @@ Singular `session-sweep` diagnoses routine entries in a reported window. Plural 
 
 ### Source-bound release
 
-Install the [verification tools](building.md#verification-tools) first. Finish and commit the final source changes before producing revision-pinned evidence.
+Install the [verification tools](building.md#verification-tools) first when execution inputs change. Finish and commit those changes before measuring them. The attestation retains that measured revision; its validity follows the execution inputs rather than later documentation commits.
 
 Use the canonical Vanilla paths because some completion producers use `build/` directly:
 
@@ -90,7 +90,7 @@ python3 tools/completion/completion.py validate-requirements
 just completion-chain
 ```
 
-The chain refreshes stale records and their dependencies. Changes to declared test or specification inputs can invalidate cached evidence even without a game-code change. Check freshness before starting the expensive full gate; never rebind hashes or bypass validators.
+The chain refreshes stale records and their dependencies. Code, comparator, corpus, runtime, and semantic acceptance changes invalidate proof. Documentation source hashes and requirement anchors are validated separately. Check freshness before starting the full gate; never rebind hashes or bypass validators.
 
 Require a clean tree, then generate and publish the attestation and dashboard:
 
@@ -103,4 +103,18 @@ jj git push --remote origin --bookmark main
 ```
 
 Only the existing generators maintain gate, history, and progress data. Preserve their audit history and never publish an incomplete attestation. The [jj workflow](jj-workflow.md) owns ordinary VCS operations.
+
+### Documentation-only publication
+
+For `README.md`, `CHANGELOG.md`, or Markdown under `docs/`, commit the edits and run the snapshot check before pushing:
+
+```sh
+python3 tools/progress/report.py check
+jj git push --remote origin --bookmark main
+```
+
+Editing `vision.md` also requires updating `manifest.source_sha256` and any moved requirement anchors in `tools/completion/requirements.toml`. These metadata changes preserve the executable contract. The snapshot check validates the current binding and recorded proof without requiring a ROM, build, or local evidence.
+
+CI compares the complete push or pull-request range. Documentation-only changes run source-binding, changelog, and progress checks without ROM bootstrap or game tooling. Source, cases, configuration, agent instructions, and changed acceptance rules take the full check path. A matching local `oracle-release-gate` call can also reuse its original attestation; it additionally checks the current private runtime artifacts.
+
 

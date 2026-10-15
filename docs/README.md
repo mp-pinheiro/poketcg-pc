@@ -37,8 +37,8 @@ Choose the task, then use its owning guide. Commands are implemented in `justfil
 
 ## Sources of truth
 
-- [`requirements.toml`](../tools/completion/requirements.toml) declares the completion requirements and binds them to `vision.md`.
-- [`gate.json`](../site/data/gate.json) contains the source-bound release attestation; [`progress.json`](../site/data/progress.json) is its generated dashboard projection.
+- [`requirements.toml`](../tools/completion/requirements.toml) declares the executable completion contract and checks its documentation binding to `vision.md`.
+- [`gate.json`](../site/data/gate.json) records the measured source and reusable execution identity; [`progress.json`](../site/data/progress.json) is its generated dashboard projection.
 - [`scope.toml`](../tools/progress/scope.toml) owns exclusions. Coverage and session ledgers own measured execution and confirmed prefixes.
 - Forgejo issues project measured worklist facts. Tracker state does not establish correctness.
 
