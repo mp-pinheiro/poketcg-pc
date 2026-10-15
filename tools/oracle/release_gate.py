@@ -16,7 +16,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from tools.completion.revision import current_source_revision
+from tools.completion.revision import DERIVED_PATHS, current_source_revision
 GATE_PATH = ROOT / "site" / "data" / "gate.json"
 HISTORY_PATH = ROOT / "site" / "data" / "history.jsonl"
 COMPLETION = ROOT / "tools" / "completion" / "completion.py"
@@ -76,6 +76,8 @@ def source_tree_digest(root: Path = ROOT) -> str:
         raise GateError("cannot enumerate committed source tree")
     digest = hashlib.sha256()
     for raw_path in sorted(filter(None, result.stdout.split(b"\0"))):
+        if os.fsdecode(raw_path) in DERIVED_PATHS:
+            continue
         path = root / os.fsdecode(raw_path)
         try:
             content = path.read_bytes()
@@ -221,22 +223,10 @@ def validate_attestation(
         return False, "release pointer revision differs"
     if pointer.get("complete") is not True:
         return False, "release pointer is incomplete"
-    run_dir_text = pointer.get("run_dir")
+    attestation = pointer.get("attestation")
     digest = pointer.get("attestation_sha256")
-    if not isinstance(run_dir_text, str) or not isinstance(digest, str):
+    if not isinstance(attestation, dict) or not isinstance(digest, str):
         return False, "release pointer lacks attestation identity"
-    run_dir = (root / run_dir_text).resolve()
-    try:
-        run_dir.relative_to(root)
-    except ValueError:
-        return False, "release attestation path escapes root"
-    path = run_dir / "attestation.json"
-    try:
-        attestation = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        return False, f"cannot load release attestation: {exc}"
-    if not isinstance(attestation, dict):
-        return False, "release attestation is malformed"
     material = json.dumps(attestation, sort_keys=True, separators=(",", ":"))
     if hashlib.sha256(material.encode()).hexdigest() != digest:
         return False, "release attestation digest differs"
@@ -345,13 +335,14 @@ def main(argv: list[str] | None = None) -> int:
             "complete": complete,
             "content_key": key,
             "attestation_sha256": attestation_digest,
+            "attestation": canonical,
             "run_dir": str(run_dir.relative_to(ROOT)),
             "revision": revision_id,
             "constituents": constituents,
             "counts": (audit_report or {}).get("counts", {}),
         }
         atomic_write(GATE_PATH, json.dumps(pointer, sort_keys=True, separators=(",", ":")) + "\n")
-        history = dict(pointer)
+        history = {name: value for name, value in pointer.items() if name != "attestation"}
         history["timestamp"] = int(time.time())
         with HISTORY_PATH.open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(history, sort_keys=True, separators=(",", ":")) + "\n")

@@ -59,11 +59,24 @@ def _jj_source_revision(root: Path) -> str:
     return revisions[-1]
 
 
+def _git_source_revision(root: Path) -> str:
+    revisions = _run(root, ["git", "rev-list", "--max-count=256", "HEAD"]).splitlines()
+    if not revisions:
+        raise RuntimeError("no committed revisions")
+    for revision in revisions:
+        changed = _run(
+            root,
+            ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "--root", revision],
+        ).splitlines()
+        if any(path not in DERIVED_PATHS for path in changed):
+            return revision
+    return revisions[-1]
+
+
 def current_source_revision(root: Path) -> str:
-    try:
-        return _jj_source_revision(root)
-    except (OSError, RuntimeError, subprocess.SubprocessError):
+    for resolve in (_jj_source_revision, _git_source_revision):
         try:
-            return _run(root, ["git", "rev-parse", "HEAD"])
+            return resolve(root)
         except (OSError, RuntimeError, subprocess.SubprocessError):
-            return "unknown"
+            continue
+    return "unknown"
