@@ -1,4 +1,3 @@
-/* --- part MINT_NAME */
 /* --- part NAMING_BANK */
 /* >>> factory DisplayPlayerNamingScreen */
 /* naming.asm:1-40 (poketcg.sym 04:68a9, 66 bytes of code). Clears the name
@@ -14,9 +13,17 @@ DisplayPlayerNamingScreenResult DisplayPlayerNamingScreen(void)
 	DisableLCD();
 	uint16_t hl = wNameBuffer_ADDR;
 	if (gb_read8(hl) == 0u)
-		hl = DEFAULT_PLAYER_NAME;
+		hl = runtime_player_gender() ? MINT_NAME : DEFAULT_PLAYER_NAME;
 	EnableSRAM();
-	CopyDataHLtoDE_SaveRegisters(hl, sPlayerName_ADDR, NAME_BUFFER_LENGTH);
+	if (hl == MINT_NAME) {
+		static const uint8_t name[NAME_BUFFER_LENGTH] = {
+			0x03u, 0x3Cu, 0x03u, 0x38u, 0x03u, 0x3Du, 0x03u, 0x43u
+		};
+		for (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)
+			gb_write8((uint16_t)(sPlayerName_ADDR + i), name[i]);
+	} else {
+		CopyDataHLtoDE_SaveRegisters(hl, sPlayerName_ADDR, NAME_BUFFER_LENGTH);
+	}
 	uint8_t a = UpdateRNGSources();
 	gb_write8((uint16_t)(sPlayerName_ADDR + 0x0Eu), a);
 	uint8_t counter = wRNGCounter;

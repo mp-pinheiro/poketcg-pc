@@ -11,9 +11,16 @@ uint8_t MainMenu_NewGame(void)
 		DisplayPlayerNamingScreen();
 		return 0x00u;
 	}
-	runtime_set_player_gender(0);
+	if (runtime_character_selection_enabled())
+		PlayerGenderSelection();
+	else
+		runtime_set_player_gender(0);
 	(void)DisplayPlayerNamingScreen();
 	InitSaveData();
+	if (runtime_pc_options_enabled()) {
+		runtime_load_pc_config_cursors();
+		SaveConfigSettings();
+	}
 	EnableSRAM();
 	wAnimationsDisabled = sAnimationsDisabled;
 	wTextSpeed = sTextSpeed;

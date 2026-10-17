@@ -15,6 +15,9 @@ typedef struct PcOptions {
 	int sgb_border;
 	int text_case;
 	int character_select;
+	int message_speed;
+	int duel_animation;
+	int display;
 } PcOptions;
 void pc_options_defaults(PcOptions *options);
 int pc_options_load(PcOptions *options);

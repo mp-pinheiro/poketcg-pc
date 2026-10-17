@@ -11,12 +11,17 @@
 #define PC_FONT_COUNT 4
 #define PC_OPTION_PLAYER_CHARACTER 10u
 #define PC_OPTION_CHARACTER_SELECT 11u
+#define PC_OPTION_MESSAGE_SPEED 13u
+#define PC_OPTION_DUEL_ANIMATION 14u
+#define PC_MESSAGE_SPEED_COUNT 5
+#define PC_DUEL_ANIMATION_COUNT 3
 #define EVENT_PLAYER_GENDER_OFFSET 0x1du
 
 static RuntimeEvent g_terminal_event;
 static uint32_t g_event_mask;
 static uint32_t g_event_count;
 static int g_player_gender_dirty;
+static int g_pc_config_dirty;
 
 void runtime_events_reset(void)
 {
@@ -24,6 +29,7 @@ void runtime_events_reset(void)
 	g_event_mask = 0u;
 	g_event_count = 0u;
 	g_player_gender_dirty = 0;
+	g_pc_config_dirty = 0;
 }
 
 static void record_event(RuntimeEvent event)
@@ -99,6 +105,38 @@ void runtime_clear_player_gender_dirty(void)
 	g_player_gender_dirty = 0;
 }
 
+int runtime_pc_config_dirty(void)
+{
+	return g_pc_config_dirty;
+}
+
+void runtime_clear_pc_config_dirty(void)
+{
+	g_pc_config_dirty = 0;
+}
+
+void runtime_load_pc_config_cursors(void)
+{
+	if (!g_pc_options_enabled || !g_pc_options)
+		return;
+	wConfigMessageSpeedCursorPos = (uint8_t)g_pc_options->message_speed;
+	wConfigDuelAnimationCursorPos = (uint8_t)g_pc_options->duel_animation;
+}
+
+void runtime_store_pc_config_cursors(void)
+{
+	if (!g_pc_options_enabled || !g_pc_options)
+		return;
+	g_pc_options->message_speed = wConfigMessageSpeedCursorPos % PC_MESSAGE_SPEED_COUNT;
+	g_pc_options->duel_animation = wConfigDuelAnimationCursorPos % PC_DUEL_ANIMATION_COUNT;
+}
+
+static uint8_t cycle_cursor(uint8_t cursor, int direction, int count)
+{
+	g_pc_config_dirty = 1;
+	return (uint8_t)(((int)cursor % count + direction + count) % count);
+}
+
 int runtime_character_selection_enabled(void)
 {
 	return g_pc_options_enabled && g_pc_options && g_pc_options->character_select;
@@ -120,6 +158,8 @@ int runtime_pc_option_value(unsigned option)
 	case 9u: return g_pc_options->small_font;
 	case PC_OPTION_PLAYER_CHARACTER: return runtime_player_gender();
 	case PC_OPTION_CHARACTER_SELECT: return g_pc_options->character_select;
+	case PC_OPTION_MESSAGE_SPEED: return wConfigMessageSpeedCursorPos % PC_MESSAGE_SPEED_COUNT;
+	case PC_OPTION_DUEL_ANIMATION: return wConfigDuelAnimationCursorPos % PC_DUEL_ANIMATION_COUNT;
 	default: return 0;
 	}
 }
@@ -183,6 +223,14 @@ void runtime_pc_option_adjust(unsigned option, int direction)
 		break;
 	case PC_OPTION_CHARACTER_SELECT:
 		g_pc_options->character_select = !g_pc_options->character_select;
+		break;
+	case PC_OPTION_MESSAGE_SPEED:
+		wConfigMessageSpeedCursorPos = cycle_cursor(wConfigMessageSpeedCursorPos, direction,
+			PC_MESSAGE_SPEED_COUNT);
+		break;
+	case PC_OPTION_DUEL_ANIMATION:
+		wConfigDuelAnimationCursorPos = cycle_cursor(wConfigDuelAnimationCursorPos, direction,
+			PC_DUEL_ANIMATION_COUNT);
 		break;
 	default:
 		return;

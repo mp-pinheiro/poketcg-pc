@@ -188,39 +188,56 @@ def single_palette_tiles(tiles: list[list[int]], attributes: list[int]) -> list[
     return [[remap[attribute][value] for value in tile] for tile, attribute in zip(tiles, attributes)]
 
 
-def text_from_rom(rom: bytes, text_id: int) -> bytes:
-    def rom_offset(bank: int, address: int) -> int:
-        return address if address < 0x4000 else bank * 0x4000 + address - 0x4000
+TEXT_TABLE_BANK = 0x0D
+PRONOUN_CHANGES = (
+    (b"He, too, has", b"She, too, has"),
+    (b"with him for", b"with her for"),
+    (b"handed his cards", b"handed her cards"),
+    (b"make his Pok", b"make her Pok"),
+    (b"\nhis Energy", b"\nher Energy"),
+)
 
-    entry = rom_offset(0x0D, 0x4000 + text_id * 3)
+
+def rom_offset(bank: int, address: int) -> int:
+    return address if address < 0x4000 else bank * 0x4000 + address - 0x4000
+
+
+def text_from_rom(rom: bytes, text_id: int) -> bytes:
+    entry = rom_offset(TEXT_TABLE_BANK, 0x4000 + text_id * 3)
     low, high, bank_bits = rom[entry:entry + 3]
-    bank = 0x0D + (bank_bits << 2) + (high >> 6)
+    bank = TEXT_TABLE_BANK + (bank_bits << 2) + (high >> 6)
     address = 0x4000 | ((high & 0x3F) << 8) | low
     start = rom_offset(bank, address)
     end = rom.index(0, start) + 1
     return rom[start:end]
 
 
-def build_texts(rom: bytes) -> dict[int, bytes]:
-    replacements = {
-        0x05A6: ((b"He, too, has", b"She, too, has"),),
-        0x05E3: ((b"with him for", b"with her for"),),
-        0x05F1: ((b"handed his cards", b"handed her cards"),),
-        0x0657: ((b"make his Pok", b"make her Pok"),),
-        0x06A0: ((b"\nhis Energy", b"\nher Energy"),),
-    }
-    result: dict[int, bytes] = {}
-    for text_id, changes in replacements.items():
-        data = text_from_rom(rom, text_id)
-        for old, new in changes:
-            count = data.count(old)
-            if count == 0:
-                continue
-            if count != 1:
-                raise ValueError(f"text {text_id:04X}: expected one {old!r}")
-            data = data.replace(old, new)
-        result[text_id] = data
+def rom_texts(rom: bytes) -> dict[int, bytes]:
+    texts: dict[int, bytes] = {}
+    table_end = 0x8000
+    text_id = 1
+    while 0x4000 + text_id * 3 < table_end:
+        entry = rom_offset(TEXT_TABLE_BANK, 0x4000 + text_id * 3)
+        low, high, bank_bits = rom[entry:entry + 3]
+        if TEXT_TABLE_BANK + (bank_bits << 2) + (high >> 6) == TEXT_TABLE_BANK:
+            table_end = min(table_end, 0x4000 | ((high & 0x3F) << 8) | low)
+        try:
+            texts[text_id] = text_from_rom(rom, text_id)
+        except ValueError:
+            pass
+        text_id += 1
+    return texts
 
+
+def build_texts(rom: bytes) -> dict[int, bytes]:
+    texts = rom_texts(rom)
+    result: dict[int, bytes] = {}
+    for old, new in PRONOUN_CHANGES:
+        matches = [text_id for text_id, data in texts.items() if old in data]
+        if len(matches) != 1 or texts[matches[0]].count(old) != 1:
+            raise ValueError(f"expected exactly one text containing {old!r}, found {len(matches)}")
+        text_id = matches[0]
+        result[text_id] = result.get(text_id, texts[text_id]).replace(old, new)
     return result
 
 

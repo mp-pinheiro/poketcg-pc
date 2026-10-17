@@ -31,56 +31,6 @@
 #include "runtime.h"
 /* <<< part includes_BANK_GAME_LOOP */
 /* --- part DISCLAIMER_TEXT_ID */
-/* >>> part kPcPages */
-static const PcOptionPage kPcPages[] = {
-	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
-	{"SOUND", 3u, {3u, 4u, 8u}},
-	{"GAMEPLAY", 2u, {11u, PC_OPTION_SWITCH_GAME}},
-};
-/* <<< part kPcPages */
-/* >>> part print_pc_option_line */
-static void print_pc_option_line(uint8_t y, uint8_t option)
-{
-	char text[24];
-	int value = runtime_pc_option_value(option);
-	switch (option) {
-	case 0u:
-		snprintf(text, sizeof text, "RESOLUTION %dX", value);
-		break;
-	case 2u:
-		snprintf(text, sizeof text, "SGB %s", value ? "ON" : "OFF");
-		break;
-	case 3u:
-		snprintf(text, sizeof text, "MASTER VOL %d", value);
-		break;
-	case 4u:
-		snprintf(text, sizeof text, "MUSIC VOL %d", value);
-		break;
-	case 5u:
-		snprintf(text, sizeof text, "BIG FONT %s", kPcFontNames[value & 3]);
-		break;
-	case 6u:
-		snprintf(text, sizeof text, "BORDER %s", kPcBorderNames[value & 3]);
-		break;
-	case 7u:
-		snprintf(text, sizeof text, "TEXT CASE %s", value ? "NORMAL" : "UPPER");
-		break;
-	case 8u:
-		snprintf(text, sizeof text, "SFX VOL %d", value);
-		break;
-	case 11u:
-		snprintf(text, sizeof text, "NEW GAME SELECT %s", value ? "ON" : "OFF");
-		break;
-	case PC_OPTION_SWITCH_GAME:
-		snprintf(text, sizeof text, "PLAY %s", runtime_game_switch_label());
-		break;
-	default:
-		snprintf(text, sizeof text, "SMALL FONT %s", value ? "TOM THUMB" : "ORIGINAL");
-		break;
-	}
-	print_pc_row(y, text);
-}
-/* <<< part print_pc_option_line */
 /* --- part SYM_BOX_BOTTOM */
 /* --- factory ShowCardPopCGBDisclaimer */
 /* >>> factory CheckIfHasSaveData */
@@ -351,12 +301,7 @@ title_screen:
 		LoadEventsFromSRAM();
 	HandleStartMenu();
 	if (wStartMenuChoice == START_MENU_PC_OPTIONS) {
-		uint8_t had_save = wHasSaveData;
-		if (had_save) {
-			LoadBackupGeneralSaveData();
-			LoadGeneralSaveData();
-		}
-		RunPCOptionsMenu();
+		run_pc_options_from_title();
 		wLastSelectedStartMenuItem = 0u;
 		goto title_screen;
 	}

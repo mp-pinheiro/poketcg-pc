@@ -44,6 +44,7 @@ void DrawOpponentPortrait(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory DrawOpponentPortrait */
 /* >>> factory DrawPlayerPortrait */
 void DrawPlayerPortrait(uint8_t b, uint8_t c);
+void DrawPlayerChoicePortrait(uint8_t female, uint8_t b, uint8_t c);
 /* <<< factory DrawPlayerPortrait */
 /* >>> factory Func_3e31 */
 void Func_3e31(void);

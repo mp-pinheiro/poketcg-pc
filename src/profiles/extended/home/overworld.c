@@ -133,9 +133,10 @@ void Func_c4b9(void)
 	wWhichOBP = 0u;
 	wWhichOBPalIndex = 0u;
 	LoadOBPalette(PALETTE_29);
-	wPlayerSpriteBaseAnimation = SPRITE_ANIM_RED_NPC_UP;
+	uint8_t female = runtime_player_gender() && rom_mint_asset(ROM_MINT_SPRITE_BANK) != NULL;
+	wPlayerSpriteBaseAnimation = female ? SPRITE_ANIM_BLUE_NPC_UP : SPRITE_ANIM_RED_NPC_UP;
 
-	(void)CreateSpriteAndAnimBufferEntry(SPRITE_OW_PLAYER, 0u);
+	(void)CreateSpriteAndAnimBufferEntry(female ? NUM_SPRITES : SPRITE_OW_PLAYER, 0u);
 	wPlayerSpriteIndex = wWhichSprite;
 
 	uint8_t cur_map = wCurMap;

@@ -6,7 +6,6 @@
 /* --- part MINT_PALETTE_BYTES */
 /* --- part MINT_SINGLE_PALETTE_OFFSET */
 /* --- part MINT_SINGLE_PALETTE_BYTES */
-/* --- part MINT_ASSET_ADDR */
 /* --- part mint_tileset_bank */
 /* === part TILE_SIZE */
 /* >>> part GFX_TABLE_POINTERS_BANK */
@@ -52,10 +51,53 @@ static void load_extended_palette_data(uint8_t palette)
 	BankswitchROM(saved_bank);
 	CopyBankedDataToDE((uint16_t)((uint16_t)count * 8u + 1u), wLoadedPalData_ADDR);
 }
+
+#define MINT_TILES_ADDR (MINT_ASSET_ADDR + 2u)
+#define MINT_PORTRAIT_PALETTE_OFFSET 2u
+#define MINT_PORTRAIT_PALETTE_COUNT 3u
+#define MINT_PORTRAIT_ATTRIBUTE_OFFSET 26u
+
+static int draw_mint_portrait(uint8_t b, uint8_t c)
+{
+	const uint8_t *palettes = rom_mint_asset(ROM_MINT_PALETTE_BANK);
+	if (!palettes || !rom_mint_asset(ROM_MINT_PORTRAIT_BANK))
+		return 0;
+	uint8_t base = wPortraitSlot == PORTRAIT_SLOT_1 ? 2u : 5u;
+	wTempPointerBank = ROM_MINT_PORTRAIT_BANK;
+	uint16_t source = MINT_TILES_ADDR;
+	uint8_t swapped_slot = (uint8_t)((wPortraitSlot << 4) | (wPortraitSlot >> 4));
+	uint16_t destination = (uint16_t)(((uint16_t)(swapped_slot | 0x80u)) << 8);
+	CopyGfxDataFromTempBank(&source, &destination, PORTRAIT_TILE_COUNT, TILE_SIZE);
+
+	uint16_t bg_map = BCCoordToBGMap0Address(b, c);
+	uint8_t tile = wPortraitSlot;
+	for (uint8_t y = 0u; y < 6u; y++)
+		for (uint8_t x = 0u; x < 6u; x++)
+			gb_write8((uint16_t)(bg_map + y * TILEMAP_WIDTH + x), tile++);
+
+	wBGMapCGBMode = 1u;
+	wd291 = base;
+	hBankVRAM = 1u;
+	gb_write8(VRAM_BANK_REGISTER, 1u);
+	const uint8_t *attributes = palettes + MINT_PORTRAIT_ATTRIBUTE_OFFSET;
+	for (uint8_t y = 0u; y < 6u; y++)
+		for (uint8_t x = 0u; x < 6u; x++)
+			gb_write8((uint16_t)(bg_map + y * TILEMAP_WIDTH + x),
+				(uint8_t)(base + attributes[y * 6u + x]));
+	hBankVRAM = 0u;
+	gb_write8(VRAM_BANK_REGISTER, 0u);
+
+	for (uint8_t i = 0u; i < MINT_PORTRAIT_PALETTE_COUNT * 8u; i++)
+		wLoadedPalData_PTR[i] = palettes[MINT_PORTRAIT_PALETTE_OFFSET + i];
+	LoadPaletteDataFromHL(wLoadedPalData_ADDR, base, MINT_PORTRAIT_PALETTE_COUNT);
+	return 1;
+}
 /* <<< part load_extended_palette_data */
 /* >>> factory _DrawPortrait */
 void _DrawPortrait(uint8_t b, uint8_t c)
 {
+	if (wCurPortrait == NUM_PORTRAITS && runtime_pc_options_enabled() && draw_mint_portrait(b, c))
+		return;
 	uint16_t entry = extended_gfx_entry(GFXTABLE_PORTRAITS, wCurPortrait);
 	LoadGraphicsPointerFromHL(&entry);
 
@@ -161,10 +203,17 @@ void SafelyCopyBGMapFromSRAMToVRAM(void)
 uint8_t LoadSpriteGfx(uint8_t a)
 {
 	uint8_t saved = hBankROM;
-	BankswitchROM(GfxTablePointers_BANK);
-	uint16_t hl = GetMapDataPointer(a, GFX_TABLE_SPRITES).hl;
-	LoadGraphicsPointerFromHL(&hl);
-	uint8_t total = gb_read8(hl);
+	uint8_t total;
+	if (a == NUM_SPRITES && runtime_pc_options_enabled() && rom_mint_asset(ROM_MINT_SPRITE_BANK)) {
+		put16(wTempPointer_ADDR, MINT_TILES_ADDR);
+		wTempPointerBank = ROM_MINT_SPRITE_BANK;
+		total = GetFarByte(ROM_MINT_SPRITE_BANK, MINT_ASSET_ADDR);
+	} else {
+		BankswitchROM(GfxTablePointers_BANK);
+		uint16_t hl = GetMapDataPointer(a, GFX_TABLE_SPRITES).hl;
+		LoadGraphicsPointerFromHL(&hl);
+		total = gb_read8(hl);
+	}
 	BankswitchROM(saved);
 	wTotalNumTiles = total;
 	wCurSpriteTileSize = TILE_SIZE;

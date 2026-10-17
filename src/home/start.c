@@ -17,6 +17,7 @@
 /* >>> part includes_2 */
 #include "home/start.h"
 #include "home/save.h"
+#include "home/config.h"
 #include "home/core.h"
 #include "generated/wram.h"
 /* <<< part includes_2 */
@@ -221,7 +222,7 @@ typedef struct {
 static const PcOptionPage kPcPages[] = {
 	{"DISPLAY", 6u, {0u, PC_OPTION_SGB, PC_OPTION_BORDER, 5u, 9u, 7u}},
 	{"SOUND", 3u, {3u, 4u, 8u}},
-	{"GAMEPLAY", 3u, {10u, 11u, PC_OPTION_SWITCH_GAME}},
+	{"GAMEPLAY", 5u, {10u, 11u, 13u, 14u, PC_OPTION_SWITCH_GAME}},
 };
 /* <<< part kPcPages */
 /* >>> part PC_PAGE_COUNT */
@@ -284,6 +285,7 @@ static void print_pc_row(uint8_t y, const char *text)
 static void print_pc_option_line(uint8_t y, uint8_t option)
 {
 	char text[24];
+	static const char *const duel_animation_names[] = {"SHOW ALL", "SKIP SOME", "NONE"};
 	int value = runtime_pc_option_value(option);
 	switch (option) {
 	case 0u:
@@ -315,6 +317,12 @@ static void print_pc_option_line(uint8_t y, uint8_t option)
 		break;
 	case 11u:
 		snprintf(text, sizeof text, "NEW GAME SELECT %s", value ? "ON" : "OFF");
+		break;
+	case 13u:
+		snprintf(text, sizeof text, "MESSAGE SPEED %u", (unsigned)(value % 5) + 1u);
+		break;
+	case 14u:
+		snprintf(text, sizeof text, "DUEL ANIM %s", duel_animation_names[value % 3]);
 		break;
 	case PC_OPTION_SWITCH_GAME:
 		snprintf(text, sizeof text, "PLAY %s", runtime_game_switch_label());
@@ -416,7 +424,7 @@ static uint8_t draw_pc_options(uint8_t page, uint8_t *options)
 static int pc_option_toggles(uint8_t option)
 {
 	return option == 2u || option == 5u || option == 6u || option == 7u ||
-		option == 9u || option == 10u || option == 11u;
+		option == 9u || option == 10u || option == 11u || option == 13u || option == 14u;
 }
 /* <<< part pc_option_toggles */
 
@@ -496,6 +504,30 @@ static void RunPCOptionsMenu(void)
 		wCursorBlinkCounter++;
 		(void)WriteByteToBGMap0((wCursorBlinkCounter & 0x10u) != 0u ? SYM_SPACE : SYM_CURSOR_R,
 			1u, pc_row_y(row, count));
+	}
+}
+
+static void run_pc_options_from_title(void)
+{
+	uint8_t had_save = wHasSaveData;
+	if (had_save) {
+		LoadBackupGeneralSaveData();
+		LoadGeneralSaveData();
+		GetConfigCursorPositions();
+	} else {
+		runtime_load_pc_config_cursors();
+	}
+	RunPCOptionsMenu();
+	if (had_save && runtime_player_gender_dirty()) {
+		SaveGeneralSaveData();
+		WriteBackupGeneralSaveData();
+		runtime_clear_player_gender_dirty();
+	}
+	if (runtime_pc_config_dirty()) {
+		if (had_save)
+			SaveConfigSettings();
+		runtime_store_pc_config_cursors();
+		runtime_clear_pc_config_dirty();
 	}
 }
 /* <<< part RunPCOptionsMenu */
@@ -854,17 +886,7 @@ title_screen:
 		LoadEventsFromSRAM();
 	HandleStartMenu();
 	if (wStartMenuChoice == START_MENU_PC_OPTIONS) {
-		uint8_t had_save = wHasSaveData;
-		if (had_save) {
-			LoadBackupGeneralSaveData();
-			LoadGeneralSaveData();
-		}
-		RunPCOptionsMenu();
-		if (had_save && runtime_player_gender_dirty()) {
-			SaveGeneralSaveData();
-			WriteBackupGeneralSaveData();
-			runtime_clear_player_gender_dirty();
-		}
+		run_pc_options_from_title();
 		wLastSelectedStartMenuItem = 0u;
 		goto title_screen;
 	}

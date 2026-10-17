@@ -336,6 +336,12 @@ void DrawPlayerPortrait(uint8_t b, uint8_t c)
 	wCurPortrait = runtime_player_gender() ? MINT_PIC : PLAYER_PIC;
 	DrawPortrait(TILEMAP_PLAYER, b, c);
 }
+
+void DrawPlayerChoicePortrait(uint8_t female, uint8_t b, uint8_t c)
+{
+	wCurPortrait = female ? MINT_PIC : PLAYER_PIC;
+	DrawPortrait(female ? TILEMAP_OPPONENT : TILEMAP_PLAYER, b, c);
+}
 /* <<< factory DrawPlayerPortrait */
 
 /* >>> factory Func_3e31 */

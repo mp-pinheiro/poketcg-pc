@@ -15,6 +15,7 @@
 #include "home/palettes.h"
 #include "home/switch_rom.h"
 #include "home/switch_sram.h"
+#include "runtime.h"
 #include "mem.h"
 /* <<< part includes */
 

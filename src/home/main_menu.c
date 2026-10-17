@@ -7,6 +7,7 @@
 #include "generated/wram.h"
 #include "mem.h"
 #include "runtime.h"
+#include "home/config.h"
 #include "generated/sram.h"
 #include "home/map.h"
 #include "home/naming.h"
@@ -66,6 +67,10 @@ uint8_t MainMenu_NewGame(void)
 		runtime_set_player_gender(0);
 	(void)DisplayPlayerNamingScreen();
 	InitSaveData();
+	if (runtime_pc_options_enabled()) {
+		runtime_load_pc_config_cursors();
+		SaveConfigSettings();
+	}
 	EnableSRAM();
 	wAnimationsDisabled = sAnimationsDisabled;
 	wTextSpeed = sTextSpeed;

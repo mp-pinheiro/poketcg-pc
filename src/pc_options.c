@@ -56,6 +56,9 @@ static void normalize(PcOptions *options)
 	options->sgb_border = clamp(options->sgb_border, 0, 3);
 	options->text_case = options->text_case ? 1 : 0;
 	options->character_select = options->character_select ? 1 : 0;
+	options->message_speed = clamp(options->message_speed, 0, 4);
+	options->duel_animation = clamp(options->duel_animation, 0, 2);
+	options->display = clamp(options->display, 0, 15);
 }
 
 void pc_options_defaults(PcOptions *options)
@@ -72,6 +75,9 @@ void pc_options_defaults(PcOptions *options)
 	options->sgb_border = 2;
 	options->text_case = 0;
 	options->character_select = 1;
+	options->message_speed = 2;
+	options->duel_animation = 0;
+	options->display = 0;
 }
 
 int pc_options_load(PcOptions *options)
@@ -90,6 +96,9 @@ int pc_options_load(PcOptions *options)
 		{"sgb_border", offsetof(PcOptions, sgb_border)},
 		{"text_case", offsetof(PcOptions, text_case)},
 		{"character_select", offsetof(PcOptions, character_select)},
+		{"message_speed", offsetof(PcOptions, message_speed)},
+		{"duel_animation", offsetof(PcOptions, duel_animation)},
+		{"display", offsetof(PcOptions, display)},
 	};
 	if (!options)
 		return -1;
@@ -155,11 +164,13 @@ int pc_options_save(const PcOptions *options)
 	int result = fprintf(file,
 		"scale=%d\nsgb=%d\nmaster_volume=%d\nmusic_volume=%d\n"
 		"sfx_volume=%d\nbig_font=%d\nsmall_font=%d\nsgb_border=%d\n"
-		"text_case=%d\ncharacter_select=%d\n",
+		"text_case=%d\ncharacter_select=%d\nmessage_speed=%d\n"
+		"duel_animation=%d\ndisplay=%d\n",
 		normalized.scale, normalized.sgb,
 		normalized.master_volume, normalized.music_volume, normalized.sfx_volume,
 		normalized.big_font, normalized.small_font, normalized.sgb_border,
-		normalized.text_case, normalized.character_select) < 0;
+		normalized.text_case, normalized.character_select,
+		normalized.message_speed, normalized.duel_animation, normalized.display) < 0;
 	if (fclose(file) != 0)
 		result = 1;
 	if (result || file_replace(temporary, path) != 0) {

@@ -1,22 +1,3 @@
-/* >>> factory GetTextOffsetFromTextID */
-uint16_t GetTextOffsetFromTextID(uint16_t text_id)
-{
-	uint16_t index = (uint16_t)(text_id * 3u);
-	uint16_t table = (uint16_t)(TextOffsets_ADDR + index);
-	uint8_t lo;
-	uint8_t hi;
-	uint8_t bank_bits;
-
-	BankswitchROM(TextOffsets_BANK);
-	lo = gb_read8(table);
-	table++;
-	hi = gb_read8(table);
-	table++;
-	bank_bits = gb_read8(table);
-	BankswitchROM((uint8_t)(TextOffsets_BANK + (bank_bits << 2) + (hi >> 6)));
-	return (uint16_t)(0x4000u | ((uint16_t)(hi & 0x3fu) << 8) | lo);
-}
-/* <<< factory GetTextOffsetFromTextID */
 /* >>> factory TwoByteNumberToText_CountLeadingZeros */
 /* Contract fields are b, c, d, e, hl. b is preserved on both paths; c and de are
  * preserved on the full-width path only, so they come in to be echoed back out. */

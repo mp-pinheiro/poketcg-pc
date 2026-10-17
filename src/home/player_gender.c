@@ -16,9 +16,6 @@
 #include "runtime.h"
 /* <<< part includes */
 
-/* >>> part MINT_PIC */
-#define MINT_PIC 0x2Bu
-/* <<< part MINT_PIC */
 /* >>> part SYM_CURSOR_R */
 #define SYM_CURSOR_R 0x0Fu
 /* <<< part SYM_CURSOR_R */
@@ -69,10 +66,8 @@ void PlayerGenderSelection(void)
 	print_host_text("ARE YOU A BOY OR A GIRL?", 2u, 1u);
 	print_host_text("BOY", 4u, 3u);
 	print_host_text("GIRL", 14u, 3u);
-	wCurPortrait = PLAYER_PIC;
-	DrawPortrait(TILEMAP_PLAYER, 2u, 5u);
-	wCurPortrait = MINT_PIC;
-	DrawPortrait(TILEMAP_OPPONENT, 12u, 5u);
+	DrawPlayerChoicePortrait(0u, 2u, 5u);
+	DrawPlayerChoicePortrait(1u, 12u, 5u);
 	draw_cursor(3u);
 	(void)FlashWhiteScreen();
 	for (;;) {

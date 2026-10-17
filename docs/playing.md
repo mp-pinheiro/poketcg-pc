@@ -37,6 +37,10 @@ When started through the launcher, PC OPTIONS offers PLAY EXTENDED or PLAY ORIGI
 
 Each profile has its own save. Their tagged formats are different; renaming one profile's save is not a conversion.
 
+## Gameplay options
+
+The GAMEPLAY section of PC OPTIONS holds PLAYER (Mark or Mint), NEW GAME SELECT, MESSAGE SPEED (1 to 5), and DUEL ANIM (SHOW ALL, SKIP SOME, NONE) in both profiles. With a save present, MESSAGE SPEED and DUEL ANIM show and change the values stored in that save, the same bytes the in-game Config menu edits. Without a save, the choices are kept in `options.conf` and applied when New Game starts, so the intro and the practice duel already use them.
+
 ## Saves and settings
 
 These locations apply to the launcher and packaged entry points:
@@ -49,6 +53,8 @@ These locations apply to the launcher and packaged entry points:
 Vanilla uses `poketcg.sav`; Extended uses `poketcg-extended.sav`. `last-game` in the save directory records the launcher selection. Both profiles share the options file.
 
 Native source builds and Linux AppImages accept `POKETCG_CONFIG` as an options-file override. Windows `Play.bat` sets that variable to the options path shown above.
+
+`display` in `options.conf` selects the monitor the window opens on, counted from 0 in the order the system reports displays. The window is centered on that monitor and stays centered on it when RESOLUTION or SGB changes its size.
 
 An explicit `--save`, `--load-save`, or `--data-pack` selects custom launcher paths and disables automatic Vanilla-to-Extended import and launcher-backed profile switching.
 
