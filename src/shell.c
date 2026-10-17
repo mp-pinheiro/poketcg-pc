@@ -23,7 +23,8 @@
 #define SHELL_AUDIO_BUFFER_SAMPLES 4096u
 #define SHELL_AUDIO_GAIN 2
 #define SHELL_AUDIO_FRAME_BYTES 4u
-#define SHELL_AUDIO_TARGET_FRAMES 2048u
+#define SHELL_AUDIO_DEVICE_FRAMES 1024u
+#define SHELL_AUDIO_TARGET_FRAMES (3u * SHELL_AUDIO_DEVICE_FRAMES)
 
 struct Shell {
 	int headless;
@@ -114,6 +115,21 @@ static void destroy_video(Shell *shell)
 	shell->presentation_frame = NULL;
 }
 
+static int window_position(const Shell *shell)
+{
+	int display = shell->options ? shell->options->display : 0;
+	if (display >= SDL_GetNumVideoDisplays())
+		display = 0;
+	return (int)SDL_WINDOWPOS_CENTERED_DISPLAY(display);
+}
+
+static void resize_window(Shell *shell)
+{
+	int position = window_position(shell);
+	SDL_SetWindowSize(shell->window, shell->width * shell->scale, shell->height * shell->scale);
+	SDL_SetWindowPosition(shell->window, position, position);
+}
+
 static int create_video(Shell *shell)
 {
 	if (shell->presentation == PRESENTATION_SGB_FRAME) {
@@ -128,9 +144,9 @@ static int create_video(Shell *shell)
 	}
 	if (shell->presentation == PRESENTATION_SGB_FRAME && !shell->presentation_frame)
 		return -1;
-	shell->window = SDL_CreateWindow("poketcg", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, shell->width * shell->scale,
-		shell->height * shell->scale, 0);
+	int position = window_position(shell);
+	shell->window = SDL_CreateWindow("poketcg", position, position,
+		shell->width * shell->scale, shell->height * shell->scale, 0);
 	shell->renderer = shell->window ? SDL_CreateRenderer(shell->window, -1,
 		SDL_RENDERER_ACCELERATED) : NULL;
 	shell->texture = shell->renderer ? SDL_CreateTexture(shell->renderer,
@@ -167,7 +183,7 @@ static int switch_presentation(Shell *shell)
 	shell->width = width;
 	shell->height = height;
 	SDL_RenderSetLogicalSize(shell->renderer, width, height);
-	SDL_SetWindowSize(shell->window, width * shell->scale, height * shell->scale);
+	resize_window(shell);
 	return 0;
 }
 
@@ -175,8 +191,7 @@ static void set_scale(Shell *shell, int scale)
 {
 	shell->scale = clamp_int(scale, 1, 6);
 	if (shell->window)
-		SDL_SetWindowSize(shell->window, shell->width * shell->scale,
-		                  shell->height * shell->scale);
+		resize_window(shell);
 }
 
 #endif
@@ -205,7 +220,7 @@ Shell *shell_create(const ShellConfig *config)
 			desired.freq = APU_SAMPLE_RATE;
 			desired.format = AUDIO_S16SYS;
 			desired.channels = 2;
-			desired.samples = 1024;
+			desired.samples = SHELL_AUDIO_DEVICE_FRAMES;
 			shell->audio_device = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, 0);
 			if (shell->audio_device) {
 				shell->have_audio = 1;
