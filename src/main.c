@@ -853,12 +853,15 @@ int main(int argc, char **argv)
 			return 2;
 		}
 	}
+	if (!pack_path) {
+		const char *env_pack = getenv("POKETCG_DATA_PACK");
+		if (env_pack && *env_pack)
+			pack_path = env_pack;
+	}
 #ifdef POKETCG_DATA_PACK_PATH
 	if (!pack_path)
 		pack_path = POKETCG_DATA_PACK_PATH;
 #endif
-	if (!pack_path)
-		pack_path = getenv("POKETCG_DATA_PACK");
 	if (!pack_path || !*pack_path) {
 		fprintf(stderr, "missing production data pack\n");
 		return 2;
