@@ -15,8 +15,10 @@
 #include "home/start.h"
 #include "mem.h"
 #include "ppu.h"
+#include "profile.h"
 #include "shell.h"
 #include "apu.h"
+#include "title_badge.h"
 #include "trace.h"
 #ifdef POKETCG_DEBUG_MENU
 #include "persistence.h"
@@ -339,6 +341,8 @@ typedef struct {
 	Ppu ppu;
 	uint16_t framebuffer[SCREEN_W * SCREEN_H];
 	uint16_t present[(SCREEN_W + 2 * WIDE_EXTRA_MAX) * SCREEN_H];
+	uint16_t host_frame[(SCREEN_W + 2 * WIDE_EXTRA_MAX) * SCREEN_H];
+	uint16_t host_background[SCREEN_W * SCREEN_H];
 	WidescreenRect present_rect;
 	int16_t audio[AUDIO_SAMPLES_PER_FRAME_MAX];
 	uint64_t audio_phase;
@@ -457,6 +461,20 @@ static void present_frame(RuntimeState *state)
 {
 	ppu_render_span(&state->ppu, state->present, g_present_extra, g_present_extra, g_present_limit);
 	state->present_rect = widescreen_apply_viewport(state->present, g_present_extra);
+}
+
+static const uint16_t *presented_frame(RuntimeState *state)
+{
+	const uint16_t *frame = presentation_on() ? state->present : state->framebuffer;
+	if (!runtime_pc_options_enabled() || profile_current().id != PROFILE_ID_EXTENDED ||
+	    !title_badge_title_visible(state->framebuffer))
+		return frame;
+	int extra = presentation_on() ? g_present_extra : 0;
+	int stride = SCREEN_W + 2 * extra;
+	memcpy(state->host_frame, frame, (size_t)stride * SCREEN_H * sizeof *frame);
+	ppu_render_span(&state->ppu, state->host_background, 0, 0, 0);
+	title_badge_draw(state->host_frame, stride, extra, state->host_background);
+	return state->host_frame;
 }
 
 static void fill_result(const RuntimeState *state, uint32_t frame_limit,
@@ -1173,7 +1191,7 @@ int runtime_run_with_input(
 		/* A recorded prefix replays at full speed; only live play is paced. */
 		if (!timeline_live)
 			shell_pace(shell);
-		shell_present(shell, presentation_on() ? state.present : state.framebuffer);
+		shell_present(shell, presented_frame(&state));
 		shell_queue_audio(shell, state.audio, pcm_count);
 		if (g_pcm_sink) {
 			uint32_t tag = ordinal ? ordinal - 1u : 0u;

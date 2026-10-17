@@ -60,7 +60,7 @@ static int fetch_bgwin_pixel(int mapx, int mapy, uint16_t map_base, uint8_t lcdc
 
 static void render_sprites(int ly, uint8_t lcdc, uint16_t *row, const uint8_t *ab, int x0, int x1, int limit)
 {
-	if (!(lcdc & 0x02))
+	if (!(lcdc & 0x02) || limit <= 0)
 		return;
 
 	int sheight = (lcdc & 0x04) ? 16 : 8;

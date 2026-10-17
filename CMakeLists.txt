@@ -364,7 +364,7 @@ function(add_poketcg_profile profile)
   target_compile_options(${probe_target} PRIVATE -Wall -Wextra)
   set_target_properties(${probe_target} PROPERTIES ENABLE_EXPORTS ON)
 
-  set(shell_sources src/main.c src/checkpoint.c src/digest.c src/persistence.c src/profile.c src/pc_options.c src/presentation.c src/runtime.c src/shell.c src/state_dump.c ${save_import_sources})
+  set(shell_sources src/main.c src/checkpoint.c src/digest.c src/persistence.c src/profile.c src/pc_options.c src/presentation.c src/runtime.c src/shell.c src/state_dump.c src/title_badge.c ${save_import_sources})
   if(profile STREQUAL POKETCG_DEFAULT_PROFILE)
     add_executable(${shell_target} ${shell_sources})
   else()
