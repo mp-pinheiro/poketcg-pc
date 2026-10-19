@@ -2391,7 +2391,7 @@ ProphecyCheckDeckResult Prophecy_CheckDeck(void)
 			nonturn.hl
 		};
 
-	return (ProphecyCheckDeckResult){nonturn.a, 0x10u, NoCardsLeftInTheDeckText};
+	return (ProphecyCheckDeckResult){nonturn.a, 0x90u, NoCardsLeftInTheDeckText};
 }
 /* <<< factory Prophecy_CheckDeck */
 

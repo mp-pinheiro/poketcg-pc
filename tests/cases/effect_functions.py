@@ -771,6 +771,7 @@ CASES["Prophecy_CheckDeck"] = [
     {},
     dict(POISON),
 ]
+CASES["Prophecy_CheckDeck"].append({"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x3C", sym("wOpponentNumberOfCardsNotInDeck"): b"\x3C"}})
 # <<< factory Prophecy_CheckDeck
 
 # >>> factory TryGiveDamageCounter_DamageSwap
@@ -8575,7 +8576,7 @@ MUTATIONS["BigEggsplosion_AIEffect"] = {"source_symbol": "BigEggsplosion_AIEffec
 MUTATIONS["Thrash_AIEffect"] = {"source_symbol": "Thrash_AIEffect", "before": "\tSetExpectedAIDamage(35u, 30u, 40u);", "after": "\tSetExpectedAIDamage(36u, 30u, 40u);", "case_ids": ["Thrash_AIEffect-0", "Thrash_AIEffect-1", "Thrash_AIEffect-2"]}
 # <<< factory-mutation Thrash_AIEffect
 # >>> factory-mutation Prophecy_CheckDeck
-MUTATIONS["Prophecy_CheckDeck"] = {"source_symbol": "Prophecy_CheckDeck", "before": "\tif (turn.a < DECK_SIZE)", "after": "\tif (turn.a >= DECK_SIZE)", "case_ids": ["Prophecy_CheckDeck-0", "Prophecy_CheckDeck-1"]}
+MUTATIONS["Prophecy_CheckDeck"] = {"source_symbol": "Prophecy_CheckDeck", "before": "0x90u", "after": "0x10u", "case_ids": ["Prophecy_CheckDeck-2"]}
 # <<< factory-mutation Prophecy_CheckDeck
 # >>> factory-mutation TryGiveDamageCounter_DamageSwap
 MUTATIONS["TryGiveDamageCounter_DamageSwap"] = {"source_symbol": "TryGiveDamageCounter_DamageSwap", "before": "uint8_t new_hp = (uint8_t)(10u + gb_read8(source_hp));", "after": "uint8_t new_hp = (uint8_t)(20u + gb_read8(source_hp));", "case_ids": ["TryGiveDamageCounter_DamageSwap-0", "TryGiveDamageCounter_DamageSwap-1", "TryGiveDamageCounter_DamageSwap-2"]}
