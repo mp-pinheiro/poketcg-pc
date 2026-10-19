@@ -12094,7 +12094,7 @@ DevolutionBeam_PlayerSelectEffectResult DevolutionBeam_PlayerSelectEffect(void)
 	(void)DrawWholeScreenTextBox(ProcedureForDevolutionBeamText);
 	for (;;) {
 		DrawDuelMainScene();
-		HandleYesOrNoMenuResult menu = TwoItemHorizontalMenu(PleaseSelectThePlayAreaText);
+		(void)TwoItemHorizontalMenu(PleaseSelectThePlayAreaText);
 		if ((hKeysHeld & PAD_B) != 0u)
 			return (DevolutionBeam_PlayerSelectEffectResult){0x10u};
 		uint8_t selected_duelist = 0u;
