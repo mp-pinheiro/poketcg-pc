@@ -460,6 +460,13 @@ CASES["HandleDeckMissingCardsList"] = [
                    HDMC_CARDS_SRAM: b"\x0a" * 30 + b"\x05" * 30}},
          read=dict(HDMC_READ), setup=HDMC_SETUP,
          instruction_budget=20000000, cycle_budget=80000000),
+    {"hl": HDMC_NAME_SRAM, "d": HDMC_CARDS_SRAM >> 8, "e": HDMC_CARDS_SRAM & 0xFF,
+     "keys": [0x00, 0x80] * 7 + HDMC_KEYS, "rom_bank": 2, "ramg": True,
+     "wram": {**HDMC_SEEDS, sym("wCurDeck"): b"\x02"},
+     "sram": {0: {HDMC_NAME_SRAM: b"ABC\x00",
+                  HDMC_CARDS_SRAM: b"".join(bytes([card]) * 5 for card in range(0x0B, 0x17))}},
+     "read": {**HDMC_READ, sym("wc600"): 0x400, sym("wCurTextTile"): 2}, "setup": HDMC_SETUP,
+     "instruction_budget": 40000000, "cycle_budget": 160000000},
 ]
 # <<< factory HandleDeckMissingCardsList
 
@@ -817,16 +824,9 @@ MUTATIONS["TryDeleteSavedDeck"] = {
 # >>> factory-mutation HandleDeckMissingCardsList
 MUTATIONS["HandleDeckMissingCardsList"] = {
     "source_symbol": "HandleDeckMissingCardsList",
-    # wCardListUpdateFunction ($CECE) is seeded, so both of its bytes are
-    # compared: corrupting the low half of the stored $6E9A is visible to every
-    # case, and no sibling in deck_machine.c names this constant.
-    "before": "gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)CARD_LIST_UPDATE_FUNCTION_ADDR);",
-    "after": "gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)(CARD_LIST_UPDATE_FUNCTION_ADDR + 1u));",
-    "case_ids": [
-        "HandleDeckMissingCardsList-0",
-        "HandleDeckMissingCardsList-1",
-        "HandleDeckMissingCardsList-2",
-    ],
+    "before": "\t(void)ProcessTextFromID((uint16_t)(wCardConfirmationText\n\t\t| ((uint16_t)gb_read8((uint16_t)(wCardConfirmationText_ADDR + 1u)) << 8)));",
+    "after": "\t(void)ProcessTextFromID((uint16_t)wCardConfirmationText);",
+    "case_ids": ["HandleDeckMissingCardsList-3"],
 }
 # <<< factory-mutation HandleDeckMissingCardsList
 # >>> factory-mutation HandleDismantleDeckToMakeSpace

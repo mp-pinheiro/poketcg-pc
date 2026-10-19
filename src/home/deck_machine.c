@@ -900,7 +900,8 @@ void HandleDeckMissingCardsList_CardListUpdateFunction(void)
 	hffb0 = 0x01u;
 	PrintDeckIndexAndName();
 	InitTextPrinting(1u, 14u);
-	(void)ProcessTextFromID(wCardConfirmationText);
+	(void)ProcessTextFromID((uint16_t)(wCardConfirmationText
+		| ((uint16_t)gb_read8((uint16_t)(wCardConfirmationText_ADDR + 1u)) << 8)));
 	hffb0 = 0x00u;
 	PrintConfirmationCardList(0u, 3u, 3u, (uint16_t *)0);
 }

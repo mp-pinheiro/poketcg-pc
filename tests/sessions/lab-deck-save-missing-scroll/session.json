@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with deck save machine slot 1 holding a 60-card deck of distinct cards the player lacks; sTempMap DECK_MACHINE_ROOM, x 2, y 20, facing north, resealed): the Deck Save Machine, BUILD A DECK on slot 1, the missing-cards list scrolled down eight rows (its card list update function reprints wCardConfirmationText), a card page opened and closed, back out",
+  "name": "lab-deck-save-missing-scroll",
+  "ordinals": 1971,
+  "pokes": {},
+  "recorded": "2026-10-19T18:19:41+00:00",
+  "save": "deck-missing-scroll.sav",
+  "save_sha256": "ab62a813ef5b11fe3636645d17cc634c99f4aad8fb645e221cc1344825129aa4",
+  "schema": 1
+}
