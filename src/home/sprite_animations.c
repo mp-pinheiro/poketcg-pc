@@ -116,6 +116,7 @@ uint8_t CreateSpriteAndAnimBufferEntry(uint8_t a, uint8_t f)
 			return 0;
 		}
 	}
+	wWhichSprite = SLOT_COUNT;
 	return 0x90;
 }
 /* <<< factory CreateSpriteAndAnimBufferEntry */

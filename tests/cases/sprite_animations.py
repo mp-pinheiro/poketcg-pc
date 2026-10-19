@@ -158,6 +158,8 @@ CASES = {
         dict(POISON, a=7, f=0, wram={H_BANK: b"\x04", CACHE_SIZE: b"\x00"},
              read={SPRITE_BUFFER: 16, CACHE_SIZE: 1}),
         {"a": 1, "f": 0xF0, "wram": {sym("wAllSpriteAnimationsDisabled"): b"\x01"}},
+        {"a": 1, "f": 0, "wram": {H_BANK: b"\x04", SPRITE_BUFFER: b"\x01" * 256},
+         "read": {W_WHICH_SPRITE: 1}},
     ],
     "FillNewSpriteAnimBufferEntry": [
         {"hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\xaa" * 16, CUR_TILE: b"\x12"},
@@ -333,7 +335,7 @@ MUTATIONS["CreateSpriteAndAnimBufferEntry"] = {
     "source_symbol": "CreateSpriteAndAnimBufferEntry",
     "before": "\t\tif (gb_read8(slot_addr(i, 0)) == 0) {",
     "after": "\t\tif (gb_read8(slot_addr(i, 0)) != 0) {",
-    "case_ids": ["CreateSpriteAndAnimBufferEntry-0"],
+    "case_ids": ["CreateSpriteAndAnimBufferEntry-3"],
 }
 MUTATIONS["DisableCurSpriteAnim"] = {
     "source_symbol": "DisableCurSpriteAnim",
