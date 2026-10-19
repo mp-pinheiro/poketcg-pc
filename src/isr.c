@@ -154,6 +154,11 @@ int isr_deliver_pending(unsigned kind)
 	return 1;
 }
 
+int isr_track_active(void)
+{
+	return g_track != NULL;
+}
+
 void isr_close_interval(void)
 {
 	if (!g_track)

@@ -717,6 +717,11 @@ SendPrinterPacketResult SendPrinterPacket(uint8_t b, uint8_t c, uint8_t d, uint8
 	unsigned starved = 0;
 	for (;;) {
 		unsigned budget = runtime_serial_budget();
+		if (budget == UINT_MAX && isr_track_active()) {
+			while (gb_read8(wPrinterPacketSequence_ADDR) != 0u && isr_deliver_pending(ISR_KIND_SERIAL))
+				;
+			budget = 0u;
+		}
 		if (budget == 0u && ++starved > 600u)
 			budget = 1u;
 		while (budget && gb_read8(wPrinterPacketSequence_ADDR) != 0u) {
@@ -738,8 +743,6 @@ SendPrinterPacketResult SendPrinterPacket(uint8_t b, uint8_t c, uint8_t d, uint8
 				budget--;
 			}
 		}
-		if (budget == UINT_MAX)
-			break;
 		DoFrame();
 		if (gb_read8(wPrinterPacketSequence_ADDR) == 0u)
 			break;

@@ -30,6 +30,7 @@ void isr_begin_interval(uint32_t interval);
 void isr_on_entry(const void *fn);
 void isr_on_site(unsigned site);
 int isr_deliver_pending(unsigned kind);
+int isr_track_active(void);
 void isr_close_interval(void);
 void isr_context_enter(void);
 void isr_context_leave(void);

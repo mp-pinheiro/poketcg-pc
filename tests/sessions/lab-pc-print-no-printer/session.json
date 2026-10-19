@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap MASON_LABORATORY, x 2, y 4, facing north, resealed): the lab PC on with no Game Boy Printer on the link, the Card Album left, PRINT shows the printer connection error (Error No. 02, printer is not connected), back to the PC menu and Shut Down",
+  "name": "lab-pc-print-no-printer",
+  "ordinals": 4733,
+  "pokes": {},
+  "recorded": "2026-10-19T19:35:51+00:00",
+  "save": "pc-print-noprinter.sav",
+  "save_sha256": "9e1056caedd1474765d23cda4c99da8bbcd99f8b3249d2ae331c0fc613f23c3e",
+  "schema": 1
+}
