@@ -12358,13 +12358,17 @@ HandlePokemonAndEnergySelectionScreenResult SuperEnergyRemoval_PlayerSelection(v
 
 		saved_bank = hBankROM;
 		BankswitchROM(OpenPlayAreaScreenForSelection_BANK);
-		while ((OpenPlayAreaScreenForSelection().f & 0x10u) != 0u) {
+		PlayAreaScreenResult opponent = OpenPlayAreaScreenForSelection();
+		if ((opponent.f & 0x10u) != 0u) {
+			BankswitchROM(saved_bank);
+			SwapTurn();
+			return (HandlePokemonAndEnergySelectionScreenResult){opponent.a, (uint8_t)(opponent.f & 0x10u)};
 		}
 		BankswitchROM(saved_bank);
-		uint8_t location = hCurMenuItem;
+		uint8_t location = opponent.a;
 		if (location == 0xffu) {
 			SwapTurn();
-			return (HandlePokemonAndEnergySelectionScreenResult){location, 0x90u};
+			return (HandlePokemonAndEnergySelectionScreenResult){location, (uint8_t)(opponent.f & 0x10u)};
 		}
 
 		(void)GetPlayAreaCardAttachedEnergies(location);
