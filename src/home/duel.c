@@ -3018,13 +3018,12 @@ void _DrawAIPeekScreen(uint8_t b)
 	if ((b & 0x80u) != 0u) {
 		SwapTurn();
 		wIsSwapTurnPending = 1u;
-		turn = hWhoseTurn;
 		transition_table = PeekOppPlayAreaTransitionTable_ADDR;
 	} else {
 		transition_table = PeekYourPlayAreaTransitionTable_ADDR;
 	}
 
-	DrawYourOrOppPlayAreaScreen((uint16_t)(((uint16_t)turn << 8) | turn));
+	DrawYourOrOppPlayAreaScreen((uint16_t)(((uint16_t)hWhoseTurn << 8) | turn));
 	wMenuInputTablePointer = (uint8_t)transition_table;
 	gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u), (uint8_t)(transition_table >> 8));
 

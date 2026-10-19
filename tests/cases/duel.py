@@ -1658,7 +1658,14 @@ CASES["_DrawAIPeekScreen"] = [
                sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16},
      "read": {wIsSwapTurnPending: 1, wMenuInputTablePointer: 2, wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
      "vread": {0: {0x9800: 32, 0x9C00: 32}},
-     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]}]
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"b": 0xC2, "keys": 0x01, "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "wram": {hWhoseTurn: b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x05", sym("wPlayerNumberOfCardsNotInDeck"): b"\x0A", sym("wPlayerNumberOfCardsInDiscardPile"): b"\x03",
+              sym("wOpponentNumberOfCardsInHand"): b"\x02", sym("wOpponentNumberOfCardsNotInDeck"): b"\x37", sym("wOpponentNumberOfCardsInDiscardPile"): b"\x00", wDefaultText: b"\x00" * 16},
+     "read": {wIsSwapTurnPending: 1, wCheckMenuPlayAreaWhichLayout: 1, wMenuInputTablePointer: 2, wYourOrOppPlayAreaCurPosition: 1, wDefaultText: 7},
+     "vread": {0: {0x9800: 0x400}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+]
 # <<< factory _DrawAIPeekScreen
 
 # >>> factory PrintPokemonsAttackText
