@@ -806,7 +806,7 @@ HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de)
 	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e));
 	CardId card = GetCardIDFromDeckIndex(arena.a);
 	if (card == MEW_LV8) {
-		DuelistVarResult stage = GetNonTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + e));
+		DuelistVarResult stage = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STAGE);
 		if (stage.a != 0u) {
 			gb_write8(wNoDamageOrEffect_ADDR, NO_DAMAGE_OR_EFFECT_NSHIELD);
 			(void)DrawWideTextBox_WaitForInput(NoDamageOrEffectDueToNShieldText);

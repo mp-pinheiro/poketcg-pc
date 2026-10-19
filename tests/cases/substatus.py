@@ -536,7 +536,8 @@ CONTRACT["HandleNShieldAndTransparency"] = {"compare": ("d", "e", "f"), "preserv
 CASES["HandleNShieldAndTransparency"] = [
     {"e": 0, "d": 0x12, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x01", sym("wBoosterCardsDrawn") + 1: b"\x01", sym("wNoDamageOrEffect"): b"\x00"}, "read": {sym("wNoDamageOrEffect"): 1}},
     {"e": 0, "d": 0x12, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x01", sym("wBoosterCardsDrawn") + 1: b"\xA0", sym("wOpponentArenaCardStage"): b"\x01", sym("wNoDamageOrEffect"): b"\x00", sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {sym("wNoDamageOrEffect"): 1}},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x01", sym("wBoosterCardsDrawn") + 1: b"\x01", sym("wNoDamageOrEffect"): b"\x00"}, "read": {sym("wNoDamageOrEffect"): 1}}
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x01", sym("wBoosterCardsDrawn") + 1: b"\x01", sym("wNoDamageOrEffect"): b"\x00"}, "read": {sym("wNoDamageOrEffect"): 1}},
+    {"e": 1, "d": 0x12, "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerBench"): b"\x01", sym("wBoosterCardsDrawn") + 1: b"\xA0", sym("wOpponentArenaCardStage"): b"\x01", sym("wNoDamageOrEffect"): b"\x00", sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {sym("wNoDamageOrEffect"): 1}},
 ]
 # <<< factory HandleNShieldAndTransparency
 
