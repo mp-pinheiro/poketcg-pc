@@ -4944,7 +4944,8 @@ CASES["BellsproutCallForFamily_PutInPlayAreaEffect"] = [
 CONTRACT["Wildfire_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["Wildfire_PlayerSelectEffect"] = [
     {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wLCDC: b"\x00", wDuelTempList: b"\xFF"}, "read": {wEnergyDiscardPlayAreaLocation: 1, hTemp_ffa0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wLCDC: b"\x00", wDuelTempList: b"\xFF"}, "read": {wEnergyDiscardPlayAreaLocation: 1, hTemp_ffa0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wLCDC: b"\x00", wDuelTempList: b"\xFF"}, "read": {wEnergyDiscardPlayAreaLocation: 1, hTemp_ffa0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x02], "wram": {hWhoseTurn: b"\xC2", wLCDC: b"\x00", wDuelTempList: b"\xFF"}, "read": {wEnergyDiscardPlayAreaLocation: 1, hTemp_ffa0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory Wildfire_PlayerSelectEffect
 
@@ -10306,7 +10307,7 @@ MUTATIONS["BellsproutCallForFamily_PutInPlayAreaEffect"] = {
 }
 # <<< factory-mutation BellsproutCallForFamily_PutInPlayAreaEffect
 # >>> factory-mutation Wildfire_PlayerSelectEffect
-MUTATIONS["Wildfire_PlayerSelectEffect"] = {"source_symbol": "Wildfire_PlayerSelectEffect", "before": "Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(DiscardOppDeckAsManyFireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(DisplayEnergyDiscardScreen_BANK);\n\t\tDisplayEnergyDiscardScreen(PLAY_AREA_ARENA);","after":"Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(DiscardOppDeckAsManyFireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(DisplayEnergyDiscardScreen_BANK);\n\t\tDisplayEnergyDiscardScreen(0x01u);","case_ids": ["Wildfire_PlayerSelectEffect-0", "Wildfire_PlayerSelectEffect-1"]}
+MUTATIONS["Wildfire_PlayerSelectEffect"] = {"source_symbol": "Wildfire_PlayerSelectEffect", "before": "count ? 0u : 0x90u}", "after": "count ? 0u : 0x10u}", "case_ids": ["Wildfire_PlayerSelectEffect-2"]}
 # <<< factory-mutation Wildfire_PlayerSelectEffect
 # >>> factory-mutation Whirlpool_PlayerSelectEffect
 MUTATIONS["Whirlpool_PlayerSelectEffect"] = {"source_symbol": "Whirlpool_PlayerSelectEffect", "before": "void Whirlpool_PlayerSelectEffect(void)\n{\n\tSwapTurn();\n\tHandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\tif ((list.f & 0x10u) != 0u) {\n\t\tSwapTurn();\n\t\thTemp_ffa0 = 0xffu;", "after": "void Whirlpool_PlayerSelectEffect(void)\n{\n\tSwapTurn();\n\tHandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\tif ((list.f & 0x10u) != 0u) {\n\t\tSwapTurn();\n\t\thTemp_ffa0 = 0x00u;", "case_ids": ["Whirlpool_PlayerSelectEffect-0", "Whirlpool_PlayerSelectEffect-1"]}

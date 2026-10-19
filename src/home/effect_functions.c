@@ -7468,7 +7468,7 @@ Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)
 	}
 	uint8_t count = hCurSelectionItem;
 	hTemp_ffa0 = count;
-	return (Wildfire_PlayerSelectEffectResult){count, count ? 0u : 0x10u};
+	return (Wildfire_PlayerSelectEffectResult){count, count ? 0u : 0x90u};
 }
 /* <<< factory Wildfire_PlayerSelectEffect */
 
