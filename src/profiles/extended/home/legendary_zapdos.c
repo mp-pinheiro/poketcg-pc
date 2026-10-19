@@ -28,14 +28,10 @@ AIDoTurn_LegendaryZapdosResult AIDoTurn_LegendaryZapdos(uint8_t a, uint8_t f, ui
 			DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
 			uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
 			uint8_t skip_energy = 0u;
-			if (card_id == VOLTORB) {
-				CoreCardListResult found = LookForCardIDInHandList_Bank5(ELECTRODE_LV35);
-				if ((found.f & 0x10u) != 0u)
-					card_id = VOLTORB;
-				else
-					skip_energy = 0u;
-			}
-			if (card_id == VOLTORB || card_id == ELECTABUZZ_LV35) {
+			uint8_t attach_to_arena = card_id == ELECTABUZZ_LV35;
+			if (card_id == VOLTORB)
+				attach_to_arena = (LookForCardIDInHandList_Bank5(ELECTRODE_LV35).f & 0x10u) != 0u;
+			if (attach_to_arena) {
 				CoreCardListResult energy = CreateEnergyCardListFromHand(arena.a);
 				if ((energy.f & 0x10u) != 0u)
 					skip_energy = 1u;

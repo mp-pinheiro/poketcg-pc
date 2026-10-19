@@ -20,16 +20,22 @@ CONTRACT.update({
 })
 CASES.update({
     'AIDoTurn_LegendaryZapdos': [
-        dict(_fixture_case(_ZAPDOS_AI), **_ZAPDOS_AI.regs),
-        dict(_fixture_case(_ZAPDOS_AI), **POISON),
-        _fixture_case(_ZAPDOS_AI),
+        _ZAPDOS_AI.case({
+            sym("wOpponentArenaCard"): b"\x00",
+            sym("wOpponentBench"): b"\x03\xFF\xFF\xFF\xFF\xFF",
+            sym("wOpponentNumberOfPokemonInPlayArea"): b"\x02",
+            sym("wOpponentHand"): b"\x01\x02",
+            sym("wOpponentNumberOfCardsInHand"): b"\x02",
+            sym("wOpponentDeck"): b"\x6D\x00\x04\x00\x0F\x00\x75\x00",
+            sym("wPlayerNumberOfCardsInHand"): b"\x04",
+        }),
     ],
 })
 MUTATIONS.update({
     'AIDoTurn_LegendaryZapdos': {   'source_symbol': 'AIDoTurn_LegendaryZapdos',
-        'before': 'if (skip_energy == 0u)',
-        'after': 'if (skip_energy == 1u)',
-        'case_ids': ['AIDoTurn_LegendaryZapdos-0', 'AIDoTurn_LegendaryZapdos-1'],
+        'before': 'attach_to_arena = (LookForCardIDInHandList_Bank5(ELECTRODE_LV35).f & 0x10u) != 0u;',
+        'after': 'attach_to_arena = (LookForCardIDInHandList_Bank5(ELECTRODE_LV35).f & 0x10u) == 0u;',
+        'case_ids': ['AIDoTurn_LegendaryZapdos-0'],
         'source': 'src/profiles/extended/home/legendary_zapdos.c'},
 })
 from tests.cases._schema_migration import legacy_to_schema
