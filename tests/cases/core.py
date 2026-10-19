@@ -6531,6 +6531,7 @@ CONTRACT["ApplyBGP6OrSGB3ToCardImage"] = {
 CASES["ApplyBGP6OrSGB3ToCardImage"] = [
     {"wram": {sym("wConsole"): b"\x00"}},
     dict(POISON, wram={sym("wConsole"): b"\x00"}),
+    {"wram": {sym("wConsole"): b"\x02"}},
 ]
 # <<< factory ApplyBGP6OrSGB3ToCardImage
 
@@ -14585,7 +14586,7 @@ MUTATIONS["ApplyBGP6OrSGB3ToCardImage"] = {
     "source_symbol": "ApplyBGP6OrSGB3ToCardImage",
     "before": "if (console == CONSOLE_DMG) {",
     "after": "if (console != CONSOLE_DMG) {",
-    "case_ids": ["ApplyBGP6OrSGB3ToCardImage-0", "ApplyBGP6OrSGB3ToCardImage-1"],
+    "case_ids": ["ApplyBGP6OrSGB3ToCardImage-0", "ApplyBGP6OrSGB3ToCardImage-1", "ApplyBGP6OrSGB3ToCardImage-2"],
 }
 # <<< factory-mutation ApplyBGP6OrSGB3ToCardImage
 # >>> factory-mutation DrawLargePictureOfCard

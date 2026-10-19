@@ -6542,7 +6542,7 @@ SendCardAttrBlkPacketResult ApplyBGP6OrSGB3ToCardImage(uint8_t a, uint8_t f, uin
 		return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
 	}
 	if (console == CONSOLE_SGB) {
-		a = 0x0Cu;
+		a = 0x0Fu;
 		f = 0x80u;
 		return SendCardAttrBlkPacket(a, f, b, c, d, e, hl);
 	}
