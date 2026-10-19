@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap FIGHTING_CLUB_LOBBY, x 10, y 10, facing south, resealed): pause menu, DECK, deck 1, CHANGE NAME, six letters deleted and AB typed, END; the deck list shows CHARMANDER & FAB DECK; back to the pause menu and DECK again, the stored name is shown again; back out",
+  "name": "deck-rename-change-name",
+  "ordinals": 2976,
+  "pokes": {},
+  "recorded": "2026-10-19T18:15:55+00:00",
+  "save": "deck-rename.sav",
+  "save_sha256": "38c191a3870b96108fd6657a5e5954a72f646cba591ed8039f1d0f85e89dc97b",
+  "schema": 1
+}

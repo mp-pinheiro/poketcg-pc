@@ -323,6 +323,9 @@
   "deck-modify-cancel": {
     "confirmed_ordinal": 4741
   },
+  "deck-rename-change-name": {
+    "confirmed_ordinal": 2976
+  },
   "deck-select-cancel": {
     "confirmed_ordinal": 2721
   },
@@ -1957,6 +1960,9 @@
   },
   "lab-deck-save-left-clamp": {
     "confirmed_ordinal": 2740
+  },
+  "lab-deck-save-machine-ops": {
+    "confirmed_ordinal": 3039
   },
   "lab-deck-save-missing-scroll": {
     "confirmed_ordinal": 1971

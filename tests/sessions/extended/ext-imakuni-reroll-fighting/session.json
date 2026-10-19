@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Extended. Placed save (imported mitch-ready.sav, Imakuni talked to and placed in the Fighting Club lobby; sTempMap FIGHTING_CLUB_LOBBY, x 10, y 10, facing south, resealed): Continue runs DetermineImakuniRoom, which rerolls until Imakuni's room is not the saved lobby",
+  "name": "ext-imakuni-reroll-fighting",
+  "ordinals": 1390,
+  "pokes": {},
+  "recorded": "2026-10-19T18:07:54+00:00",
+  "save": "ext-imakuni-reroll.sav",
+  "save_sha256": "2505b0291687410ca431a23a3845cea2d4fd06fd486a4a19e2d4a971c55314d9",
+  "schema": 1
+}

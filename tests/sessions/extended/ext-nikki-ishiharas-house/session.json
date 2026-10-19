@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Extended. Placed save (vanilla mitch-ready.sav imported with --convert-vanilla-save, Brittany, Kristin and Heather beaten, EVENT_NIKKI_STATE at NIKKI_IN_ISHIHARAS_HOUSE; sTempMap ISHIHARAS_HOUSE, x 6, y 4, facing west, resealed): Nikki's house script through Script_Nikki's start_script branch, she leaves for the club",
+  "name": "ext-nikki-ishiharas-house",
+  "ordinals": 2744,
+  "pokes": {},
+  "recorded": "2026-10-19T18:07:46+00:00",
+  "save": "ext-nikki-house.sav",
+  "save_sha256": "d959363d370caeb61a0896ce0482a552c6ffe458a33f1b5f9c08de642335c5b9",
+  "schema": 1
+}

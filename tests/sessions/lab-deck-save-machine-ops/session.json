@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with deck save machine slots 1-3 holding a Squirtle and Water deck; sTempMap DECK_MACHINE_ROOM, x 2, y 20, facing north, resealed): the Deck Save Machine: SAVE A DECK over occupied slot 1 (OK if this file is deleted? YES, deck 1 saved), SAVE A DECK into empty slot 4, DELETE A DECK on slot 2 (YES), BUILD A DECK from slot 3 with the missing-cards list (Water Energy x52, Squirtle x4), back out",
+  "name": "lab-deck-save-machine-ops",
+  "ordinals": 3039,
+  "pokes": {},
+  "recorded": "2026-10-19T18:18:38+00:00",
+  "save": "deck-save-ops.sav",
+  "save_sha256": "902b5a68a4a063f18b64775600dad3703e363cc5c4cc029217faf3e213d8c0db",
+  "schema": 1
+}
