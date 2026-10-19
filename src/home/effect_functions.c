@@ -9736,18 +9736,9 @@ PlayerPickAttackForAmnesiaResult PlayerPickAttackForAmnesia(void)
 	(void)DrawWideTextBox_WaitForInput(ChooseAttackOpponentWillNotBeAbleToUseText);
 
 	HandleDefendingPokemonAttackSelectionResult selection = HandleDefendingPokemonAttackSelection();
-
-	/* The asm stores the selection routine's exit e. The ported callee reports
-	 * only hl/f, so the attack index is re-read from the wDuelTempList entry its
-	 * own asm loaded e out of - exit hCurMenuItem, doubled with 8-bit
-	 * wraparound - exactly as HandlePlayerMetronomeEffect does. */
 	uint8_t selected = (uint8_t)(hCurMenuItem + hCurMenuItem);
 	uint8_t attack_index = gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u));
 	hTemp_ffa0 = attack_index;
-
-	/* `ld a, e` / `ldh [hTemp_ffa0], a` touch no flag, so f is whatever the
-	 * callee returned: its `scf` on the cancelled exit, and its `or a` over
-	 * a = the doubled menu item on the selected exit. */
 	uint8_t f = ((selection.f & 0x10u) != 0u) ? selection.f
 	                                          : (uint8_t)((selected == 0u) ? 0x80u : 0x00u);
 	return (PlayerPickAttackForAmnesiaResult){attack_index, f};
@@ -11609,7 +11600,7 @@ PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)
 				(void)LoadCardDataToBuffer2_FromDeckIndex(index);
 				if (wLoadedCard2Type < TYPE_ENERGY) break;
 			}
-			PlaySFX_InvalidChoice(); continue;
+			continue;
 		}
 		uint8_t index = hTempCardIndex_ff98;
 		(void)LoadCardDataToBuffer2_FromDeckIndex(index);

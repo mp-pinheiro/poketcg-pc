@@ -2498,7 +2498,7 @@ PokeBallPlayerSelectionResult PokeBall_PlayerSelection(void)
 				(void)LoadCardDataToBuffer2_FromDeckIndex(index);
 				if (wLoadedCard2Type < TYPE_ENERGY) break;
 			}
-			PlaySFX_InvalidChoice(); continue;
+			continue;
 		}
 		uint8_t index = hTempCardIndex_ff98;
 		(void)LoadCardDataToBuffer2_FromDeckIndex(index);
