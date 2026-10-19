@@ -1,30 +1,9 @@
 {
   "fn": "Peek_SelectEffect",
   "case": "tests/profiles/extended/cases/effect_functions.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"Peek_SelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49724\": \"00\", \"49858\": \"20\", \"49900\": \"3f\", \"49905\": \"00\", \"50176\": \"08\", \"51899\": \"84\", \"65431\": \"c2\", \"65440\": \"0040\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"Peek_SelectEffect\", \"mismatches\": {\"bus\": {\"address\": 49858, \"reference\": \"00203f000884\", \"native\": \"00003f000884\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49724, 1], [49858, 1], [49900, 1], [49905, 1], [50176, 1], [51899, 1], [65431, 1], [65440, 2]]}}}\n",
-  "restored": "{\"fn\": \"Peek_SelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49724\": \"00\", \"49858\": \"20\", \"49900\": \"3f\", \"49905\": \"00\", \"50176\": \"08\", \"51899\": \"84\", \"65431\": \"c2\", \"65440\": \"0040\"}}, \"status\": \"PASS\"}\n",
-  "mutation": {
-    "source_symbol": "Peek_SelectEffect",
-    "before": "\tgb_write8(arena_flags.hl, (uint8_t)(arena_flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));",
-    "after": "\tgb_write8(arena_flags.hl, arena_flags.a);",
-    "case_ids": [
-      "Peek_SelectEffect-0",
-      "Peek_SelectEffect-1"
-    ]
-  },
-  "proof": {
-    "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "135eeb62d1e7d6a93fac61ec2ea2ccc6d1f1af971750bb5ca3405ea0cdda5fdf",
-    "case_sha256": "94aa089bd9e51cfbc87df3db8cc37b89d026bded304c9cad307a92011ff3a146",
-    "schema_sha256": "030fb42eef2ff6b8918be989ad9f1548e0f6e504c3c8dd9334cf6c3e90e876cc",
-    "mutation_sha256": "425839b74af5eba641ffc14aa516a24500439f62474ce12f157cbba03235ee6b",
-    "source": "src/profiles/extended/home/effect_functions.c",
-    "source_symbol": "Peek_SelectEffect",
-    "case": "tests/profiles/extended/cases/effect_functions.py",
-    "fn": "Peek_SelectEffect",
-    "index": 0
-  }
+  "baseline": "{\"fn\": \"Peek_SelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"80\", \"50176\": \"080808200808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808\", \"51899\": \"80\", \"52175\": \"c900000000000000c900000000000000c900000000000000c366080000000000c3764a0000000000c3a1080000000000c900000000000000c900000000000000\", \"65344\": \"80\", \"65431\": \"c2\", \"65441\": \"83\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Peek_SelectEffect\", \"mismatches\": {\"bus\": {\"address\": 52175, \"reference\": \"08080880c900000000\", \"native\": \"080808800000000000\", \"reference_size\": 129, \"native_size\": 129, \"spans\": [[49905, 1], [50176, 60], [51899, 1], [52175, 64], [65344, 1], [65431, 1], [65441, 1]]}}}\n",
+  "restored": "{\"fn\": \"Peek_SelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49905\": \"80\", \"50176\": \"080808200808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808\", \"51899\": \"80\", \"52175\": \"c900000000000000c900000000000000c900000000000000c366080000000000c3764a0000000000c3a1080000000000c900000000000000c900000000000000\", \"65344\": \"80\", \"65431\": \"c2\", \"65441\": \"83\"}}, \"status\": \"PASS\"}\n"
 }

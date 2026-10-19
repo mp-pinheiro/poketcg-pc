@@ -10790,7 +10790,7 @@ void Peek_SelectEffect(void)
 			uint8_t masked = (uint8_t)(param & (uint8_t)~AI_PEEK_TARGET_HAND);
 			if (masked < 0x40u) {
 				SwapTurn();
-				(void)DisplayCardDetailScreen(0u, PeekWasUsedToLookInYourHandText);
+				(void)DisplayCardDetailScreen(masked, PeekWasUsedToLookInYourHandText);
 				SwapTurn();
 				return;
 			}

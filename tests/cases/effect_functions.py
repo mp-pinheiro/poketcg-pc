@@ -7366,6 +7366,7 @@ CONTRACT["Peek_SelectEffect"] = {"compare": (), "preserve": ()}
 CASES["Peek_SelectEffect"] = [
     {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", sym("wPlayerDuelistType"): b"\x00", sym("wPlayerArenaCardFlags"): b"\x00", hTemp_ffa0: b"\x00", hAIPkmnPowerEffectParam: b"\x00", sym("wLCDC"): b"\x00", sym("wPlayerPrizeCards"): b"\x00", sym("wPlayerPrizes"): b"\x3F", sym("wBoosterCardsDrawn"): b"\x08"}, "read": {sym("wPlayerArenaCardFlags"): 1, hAIPkmnPowerEffectParam: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 30000000, "cycle_budget": 120000000},
     dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", sym("wPlayerDuelistType"): b"\x00", sym("wPlayerArenaCardFlags"): b"\x00", hTemp_ffa0: b"\x00", hAIPkmnPowerEffectParam: b"\x00", sym("wLCDC"): b"\x00", sym("wPlayerPrizeCards"): b"\x00", sym("wPlayerPrizes"): b"\x3F", sym("wBoosterCardsDrawn"): b"\x08"}, read={sym("wPlayerArenaCardFlags"): 1, hAIPkmnPowerEffectParam: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=30000000, cycle_budget=120000000),
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", sym("wPlayerDuelistType"): b"\x80", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", hAIPkmnPowerEffectParam: b"\x83", sym("wBoosterCardsDrawn"): b"\x08\x08\x08\x20" + b"\x08" * 0x38}, "read": {sym("wLoadedCard1"): 64}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 30000000, "cycle_budget": 120000000},
 ]
 # <<< factory Peek_SelectEffect
 
@@ -10866,7 +10867,7 @@ MUTATIONS["SpitPoison_Poison50PercentEffect"] = {
 }
 # <<< factory-mutation SpitPoison_Poison50PercentEffect
 # >>> factory-mutation Peek_SelectEffect
-MUTATIONS["Peek_SelectEffect"] = {"source_symbol": "Peek_SelectEffect", "before": "\tgb_write8(arena_flags.hl, (uint8_t)(arena_flags.a | (1u << USED_PKMN_POWER_THIS_TURN_F)));", "after": "\tgb_write8(arena_flags.hl, arena_flags.a);", "case_ids": ["Peek_SelectEffect-0", "Peek_SelectEffect-1"]}
+MUTATIONS["Peek_SelectEffect"] = {"source_symbol": "Peek_SelectEffect", "before": "\tuint8_t param = hAIPkmnPowerEffectParam;", "after": "\tuint8_t param = 0u;", "case_ids": ["Peek_SelectEffect-2"]}
 # <<< factory-mutation Peek_SelectEffect
 # >>> factory-mutation MagneticStormEffect
 MUTATIONS["MagneticStormEffect"] = {"source_symbol": "MagneticStormEffect", "before": "void MagneticStormEffect(void)\n{\n\tDuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);\n\tuint16_t energy_list = wDuelTempList_ADDR;", "after": "void MagneticStormEffect(void)\n{\n\tDuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);\n\tuint16_t energy_list = (uint16_t)(wDuelTempList_ADDR + 1u);", "case_ids": ["MagneticStormEffect-1", "MagneticStormEffect-2"]}
