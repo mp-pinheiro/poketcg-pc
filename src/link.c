@@ -3,6 +3,7 @@
 
 #include "isr.h"
 #include "mem.h"
+#include "serial_track.h"
 #include "home/serial.h"
 
 #include <errno.h>
@@ -234,7 +235,7 @@ void link_pump(void)
 
 void link_wait_transfer(void)
 {
-	if (isr_deliver_pending(ISR_KIND_SERIAL) || g_fd >= 0)
+	if (g_fd >= 0 || g_serial_track_on || isr_deliver_pending(ISR_KIND_SERIAL))
 		return;
 	uint8_t control = gb_read8(LINK_SC);
 	if ((control & 0x81u) != 0x81u)
