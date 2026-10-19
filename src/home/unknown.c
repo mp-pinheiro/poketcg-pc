@@ -48,13 +48,12 @@
 /* >>> part draw_check_menu_cursor_tile */
 /* unknown.asm:126-142 (.draw_tile). Column/row come straight from the
  * stored cursor position, exactly as the asm re-reads it after any move. */
-static void draw_check_menu_cursor_tile(uint8_t tile)
+static uint8_t draw_check_menu_cursor_tile(uint8_t tile)
 {
 	uint16_t product = HtimesL((uint16_t)(((uint16_t)wCheckMenuCursorXPosition << 8) | 10u));
 	uint8_t col = (uint8_t)((product & 0xffu) + 1u);
-	uint8_t row = (uint8_t)((uint16_t)(wCheckMenuCursorYPosition * 2u) + 14u);
-
-	WriteByteToBGMap0(tile, col, row);
+	uint8_t row = (uint8_t)((wCheckMenuCursorYPosition * 2u) + 14u);
+	return WriteByteToBGMap0(tile, col, row);
 }
 /* <<< part draw_check_menu_cursor_tile */
 
@@ -97,16 +96,12 @@ CheckMenuInputResult Func_18661(void)
 	}
 
 	if ((hKeysPressed & (PAD_A | PAD_B)) != 0) {
-		uint8_t button;
-
-		if ((hKeysPressed & PAD_A) != 0) {
-			draw_check_menu_cursor_tile(SYM_CURSOR_R);
-			button = MENU_CONFIRM;
-		} else {
-			button = MENU_CANCEL;
+		uint8_t button = (hKeysPressed & PAD_A) != 0 ? MENU_CONFIRM : MENU_CANCEL;
+		if (button == MENU_CONFIRM) {
+			wDuelAnimationScreen = DUEL_ANIM_SCREEN_MAIN_SCENE;
+			if (wDuelDisplayedScreen != DUEL_MAIN_SCENE)
+				DrawDuelMainScene();
 		}
-		PlaySFXConfirmOrCancel(button);
-		/* scf */
 		return (CheckMenuInputResult){button, 0x10u};
 	}
 
@@ -124,8 +119,8 @@ CheckMenuInputResult Func_18661(void)
 	uint8_t tile = ((new_count & (uint8_t)(1u << B_CURSOR_BLINK_PERIOD)) != 0)
 		? SYM_SPACE : SYM_CURSOR_R;
 
-	draw_check_menu_cursor_tile(tile);
-	/* or a */
-	return (CheckMenuInputResult){tile, (uint8_t)(tile != 0 ? 0x00u : 0x80u)};
+	uint8_t drawn = draw_check_menu_cursor_tile(tile);
+	return (CheckMenuInputResult){drawn,
+		(uint8_t)(drawn != 0 ? 0x00u : 0x80u)};
 }
 /* <<< factory Func_18661 */

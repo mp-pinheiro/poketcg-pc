@@ -58,6 +58,9 @@ CASES["Func_18661"] = [
 	{"keys": 0x60, "wram": {hDPadHeld: b"\x60"},
 	 "read": {wCheckMenuCursorBlinkCounter: 1, wCheckMenuCursorXY: 2},
 	 "vread": {0: {0x99C0: 0x50}}},
+	{"wram": {sym("wCheckMenuCursorBlinkCounter"): b"\x00", sym("wLCDC"): b"\x80"},
+	 "read": {sym("wCheckMenuCursorBlinkCounter"): 1},
+	 "vread": {0: {0x99C0: 0x50}}},
 ]
 # <<< factory Func_18661
 
