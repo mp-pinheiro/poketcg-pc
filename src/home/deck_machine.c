@@ -1055,6 +1055,7 @@ HandleDeckMachineSelectionResult HandleDeckMachineSelection(void)
 			uint8_t next = old;
 			if (held == PAD_RIGHT) { next = (uint8_t)(old + NUM_DECK_MACHINE_SLOTS); if ((uint8_t)(next + NUM_DECK_MACHINE_SLOTS) >= wNumDeckMachineEntries) next = (uint8_t)(wNumDeckMachineEntries - NUM_DECK_MACHINE_SLOTS); }
 			else if (old >= NUM_DECK_MACHINE_SLOTS) next = (uint8_t)(old - NUM_DECK_MACHINE_SLOTS);
+			else next = 0u;
 			wCardListVisibleOffset = next;
 			if (next != old) { PlaySFX(SFX_CURSOR); DrawDeckMachineScreen(); PrintNumSavedDecks(); }
 			continue;
