@@ -1527,7 +1527,7 @@ SetEventValueResult DetermineImakuniRoom(void)
 	if (state >= IMAKUNI_TALKED) {
 		do {
 			picked = (uint8_t)(UpdateRNGSources() & 0x03u);
-		} while (gb_read8(wTempMap) == rooms[picked]);
+		} while (wTempMap == rooms[picked]);
 	}
 	return SetEventValue(EVENT_IMAKUNI_ROOM, 0u, 0u, picked);
 }

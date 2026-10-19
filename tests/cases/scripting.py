@@ -2346,6 +2346,13 @@ CASES["DetermineImakuniRoom"] = [
         "wram": {sym("wEventVars") + 2: b"\x80", sym("wRNG1"): b"\x00\x00\x00", sym("wTempMap"): b"\xff"},
         "read": {sym("wEventVars") + 0xB: 1, sym("wLoadedEventBits"): 1},
     },
+    *(
+        {
+            "wram": {sym("wEventVars") + 2: b"\x80", sym("wRNG1"): b"\x00\x00\x00", sym("wTempMap"): bytes([lobby])},
+            "read": {sym("wEventVars") + 0xB: 1, sym("wLoadedEventBits"): 1, sym("wRNG1"): 3},
+        }
+        for lobby in (0x05, 0x17, 0x0E, 0x0B)
+    ),
 ]
 # <<< factory DetermineImakuniRoom
 
