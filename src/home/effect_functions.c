@@ -11985,16 +11985,20 @@ TerrorStrike50PercentSelectSwitchPokemonResult TerrorStrike_50PercentSelectSwitc
  * flags under the carry are the ones it was entered with: the alive check's. */
 Potion_PlayerSelectionResult Potion_PlayerSelection(void)
 {
-	HasAlivePokemonInPlayAreaResult alive = HasAlivePokemonInPlayArea();
+	(void)HasAlivePokemonInPlayArea();
+	uint8_t undamaged = 0u;
 	for (;;) {
 		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
 		if ((screen.f & 0x10u) != 0u)
-			return (Potion_PlayerSelectionResult){screen.a, (uint8_t)((alive.f & 0x80u) | 0x10u)};
+			return (Potion_PlayerSelectionResult){screen.a,
+				undamaged != 0u ? 0x90u : 0x10u};
 		uint8_t location = hTempPlayAreaLocation_ff9d;
 		hTemp_ffa0 = location;
 		CardDamageResult damage = GetCardDamageAndMaxHP(location);
-		if (damage.a == 0u)
+		if (damage.a == 0u) {
+			undamaged = 1u;
 			continue;
+		}
 		uint8_t amount = damage.a;
 		if (amount > 20u)
 			amount = 20u;
