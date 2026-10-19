@@ -56,5 +56,5 @@ MUTATIONS = {}
 MUTATIONS["AIProcessRetreat"] = {"source_symbol": "AIProcessRetreat", "before": "AIProcessRetreatResult AIProcessRetreat(void)\n{\n\tuint8_t already_retreated = wAIRetreatedThisTurn;", "after": "AIProcessRetreatResult AIProcessRetreat(void)\n{\n\tuint8_t already_retreated = 0u;", "case_ids": ["AIProcessRetreat-0"]}
 # <<< factory-mutation AIProcessRetreat
 # >>> factory-mutation AIMainTurnLogic
-MUTATIONS["AIMainTurnLogic"] = {"source_symbol": "AIMainTurnLogic", "before": "AIMainTurnLogicResult AIMainTurnLogic(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tInitAITurnVars();", "after": "AIMainTurnLogicResult AIMainTurnLogic(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t unused = 0u;", "case_ids": ["AIMainTurnLogic-0", "AIMainTurnLogic-1"]}
+MUTATIONS["AIMainTurnLogic"] = {"source_symbol": "AIMainTurnLogic", "before": "\treturn (AIMainTurnLogicResult){decision.f};", "after": "\treturn (AIMainTurnLogicResult){(uint8_t)(decision.f ^ 0x10u)};", "case_ids": ["AIMainTurnLogic-0", "AIMainTurnLogic-1"]}
 # <<< factory-mutation AIMainTurnLogic

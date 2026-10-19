@@ -73,6 +73,7 @@ AIMainTurnLogicResult AIMainTurnLogic(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 		if ((f & 0x10u) != 0u) return (AIMainTurnLogicResult){f};
 		HandleAICowardiceResult cowardice = HandleAICowardice(); a = cowardice.a; f = cowardice.f;
 	}
+	if ((f & 0x10u) != 0u) {
 	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02); a = trainer.a; f = trainer.f;
 	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_03); a = trainer.a; f = trainer.f;
 	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_04); a = trainer.a; f = trainer.f;
@@ -122,6 +123,7 @@ AIMainTurnLogicResult AIMainTurnLogic(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_13); a = trainer.a; f = trainer.f;
 	}
 	HandleAIEnergyTransResult bench = HandleAIEnergyTrans(AI_ENERGY_TRANS_TO_BENCH); a = bench.a; f = bench.f;
+	}
 	AIProcessAttacksResult attack = AIProcessAndTryToUseAttack();
 	if ((attack.f & 0x10u) != 0u) return (AIMainTurnLogicResult){attack.f};
 	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_FINISH_NO_ATTACK, b, c, d, e);
