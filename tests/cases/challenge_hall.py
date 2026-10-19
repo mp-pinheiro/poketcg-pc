@@ -122,6 +122,8 @@ CASES["Preload_ChallengeHallOpponent"] = [
     {"wram": {sym("wEventVars") + 0x10: b"\x80", sym("wTempNPC"): b"\x00"}},
     {"wram": {sym("wEventVars") + 0x10: b"\x82", sym("wTempNPC"): b"\x00", sym("wEventVars") + 0x15: b"\x00"}},
     dict(POISON, wram={sym("wEventVars") + 0x10: b"\x82", sym("wTempNPC"): b"\x00", sym("wEventVars") + 0x15: b"\x00"}),
+    {"wram": {sym("wEventVars") + 0x10: b"\x88", sym("wTempNPC"): b"\x00", sym("wChallengeHallNPC"): b"\x00", sym("wd698"): b"\x00\x00\x00\x00"}, "read": {sym("wChallengeHallNPC"): 1, sym("wd698"): 4}},
+    {"wram": {sym("wEventVars") + 0x10: b"\x8c", sym("wTempNPC"): b"\x00", sym("wChallengeHallNPC"): b"\x00", sym("wd698"): b"\x00\x00\x00\x00"}, "read": {sym("wChallengeHallNPC"): 1, sym("wd698"): 4}},
 ]
 # <<< factory Preload_ChallengeHallOpponent
 

@@ -65,23 +65,8 @@ PreloadChallengeHallOpponentResult Preload_ChallengeHallOpponent(void)
 		return (PreloadChallengeHallOpponentResult){wTempNPC, 0x10u};
 	}
 	(void)Func_f5db();
-	uint8_t opponent_number = (uint8_t)(GetEventValue(EVENT_CHALLENGE_CUP_OPPONENT_NUMBER) + 1u);
-	(void)SetEventValue(EVENT_CHALLENGE_CUP_OPPONENT_NUMBER, 0u, 0u, opponent_number);
-	uint8_t cup_number = GetEventValue(EVENT_CHALLENGE_CUP_NUMBER);
-	uint8_t picked;
-	if (cup_number != 3u && opponent_number == 3u) {
-		picked = NPC_RONALD1;
-	} else {
-		uint8_t count = (cup_number == 3u) ? 25u : 24u;
-		uint8_t index;
-		do {
-			index = Random(count);
-		} while ((Func_f5cc(index).f & 0x10u) != 0u);
-		(void)Func_f5d4(index);
-		picked = gb_read8((uint16_t)(ChallengeHallNPCs_ADDR + index));
-	}
-	wTempNPC = picked;
-	wChallengeHallNPC = picked;
+	(void)SetEventValue(EVENT_CHALLENGE_CUP_OPPONENT_NUMBER, 0u, 0u, 1u);
+	(void)Func_f580();
 	SetEventValueResult max = MaxOutEventValue(EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN, 0u, 0u, 0u);
 	return (PreloadChallengeHallOpponentResult){max.a, 0x10u};
 }
