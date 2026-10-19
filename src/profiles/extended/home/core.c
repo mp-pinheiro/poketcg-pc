@@ -3825,7 +3825,7 @@ void DuelMenu_Retreat(void)
 				PrintDuelMenuAndHandleInput();
 				return;
 			}
-			if ((DisplayRetreatScreen(status).f & 0x10u) != 0u) {
+			if ((DisplayRetreatScreen().f & 0x10u) != 0u) {
 				DuelMainInterface();
 				return;
 			}
@@ -3858,7 +3858,7 @@ void DuelMenu_Retreat(void)
 		PrintDuelMenuAndHandleInput();
 		return;
 	}
-	if ((DisplayRetreatScreen(status).f & 0x10u) != 0u) {
+	if ((DisplayRetreatScreen().f & 0x10u) != 0u) {
 		DuelMainInterface();
 		return;
 	}

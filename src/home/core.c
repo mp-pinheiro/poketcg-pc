@@ -7177,14 +7177,14 @@ HandleEnergyDiscardMenuInputResult HandleEnergyDiscardMenuInput(void)
 /* >>> factory DisplayRetreatScreen */
 /* core.asm:837-889. Carry (f bit 4) is the B press that abandons the energy
  * selection; both other exits leave it clear. */
-DisplayRetreatScreenResult DisplayRetreatScreen(uint8_t a)
+DisplayRetreatScreenResult DisplayRetreatScreen(void)
 {
 	hTempRetreatCostCards = 0xFFu;
 	uint8_t required = wEnergyCardsRequiredToRetreat;
 	if (required == 0u)
 		return (DisplayRetreatScreenResult){0x80u};
 	wNumRetreatEnergiesSelected = 0u;
-	(void)CreateArenaOrBenchEnergyCardList(a);
+	(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
 	(void)SortCardsInDuelTempListByID(0u, 0u, wDuelTempList_ADDR);
 	wTempRetreatCostCardsPos = (uint8_t)hTempRetreatCostCards_ADDR;
 	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
@@ -10359,7 +10359,7 @@ void DuelMenu_Retreat(void)
 				PrintDuelMenuAndHandleInput();
 				return;
 			}
-			if ((DisplayRetreatScreen(status).f & 0x10u) != 0u) {
+			if ((DisplayRetreatScreen().f & 0x10u) != 0u) {
 				DuelMainInterface();
 				return;
 			}
@@ -10392,7 +10392,7 @@ void DuelMenu_Retreat(void)
 		PrintDuelMenuAndHandleInput();
 		return;
 	}
-	if ((DisplayRetreatScreen(status).f & 0x10u) != 0u) {
+	if ((DisplayRetreatScreen().f & 0x10u) != 0u) {
 		DuelMainInterface();
 		return;
 	}

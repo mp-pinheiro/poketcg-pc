@@ -2156,7 +2156,7 @@ static void adapt_HandleEnergyDiscardMenuInput(ProbeState *s)
 /* >>> factory DisplayRetreatScreen */
 static void adapt_DisplayRetreatScreen(ProbeState *s)
 {
-	DisplayRetreatScreenResult r = DisplayRetreatScreen(s->a);
+	DisplayRetreatScreenResult r = DisplayRetreatScreen();
 	s->f = r.f;
 }
 /* <<< factory DisplayRetreatScreen */

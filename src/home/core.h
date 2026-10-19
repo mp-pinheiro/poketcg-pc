@@ -972,7 +972,7 @@ HandleEnergyDiscardMenuInputResult HandleEnergyDiscardMenuInput(void);
 /* <<< factory HandleEnergyDiscardMenuInput */
 /* >>> factory DisplayRetreatScreen */
 typedef struct { uint8_t f; } DisplayRetreatScreenResult;
-DisplayRetreatScreenResult DisplayRetreatScreen(uint8_t a);
+DisplayRetreatScreenResult DisplayRetreatScreen(void);
 /* <<< factory DisplayRetreatScreen */
 /* >>> factory PrintPracticeDuelInstructions_Fast */
 void PrintPracticeDuelInstructions_Fast(uint16_t hl);

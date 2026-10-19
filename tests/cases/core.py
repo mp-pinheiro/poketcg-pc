@@ -7685,6 +7685,41 @@ CASES["DisplayRetreatScreen"] = [
         wram={wEnergyCardsRequiredToRetreat: b"\x00"},
         read={wEnergyCardsRequiredToRetreat: 1, hTempRetreatCostCards: 1},
     ),
+    {
+        "a": 0x01,
+        "keys": 0x02,
+        "wram": {
+            hWhoseTurn: b"\xc2",
+            wEnergyCardsRequiredToRetreat: b"\x01",
+            sym("wPlayerCardLocations"): b"\x10\x11",
+            sym("wPlayerDeck"): b"\x01\x02",
+            wPlayerArenaCard: b"\x00",
+            sym("wDuelTempList"): b"\xff",
+            sym("wLCDC"): b"\x00",
+        },
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "read": {sym("wDuelTempList"): 3, hTempRetreatCostCards: 1},
+        "instruction_budget": 4000000,
+        "cycle_budget": 16000000,
+    },
+    dict(
+        POISON,
+        a=0x01,
+        keys=0x02,
+        wram={
+            hWhoseTurn: b"\xc2",
+            wEnergyCardsRequiredToRetreat: b"\x01",
+            sym("wPlayerCardLocations"): b"\x10\x11",
+            sym("wPlayerDeck"): b"\x01\x02",
+            wPlayerArenaCard: b"\x00",
+            sym("wDuelTempList"): b"\xff",
+            sym("wLCDC"): b"\x00",
+        },
+        setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        read={sym("wDuelTempList"): 3, hTempRetreatCostCards: 1},
+        instruction_budget=4000000,
+        cycle_budget=16000000,
+    ),
 ]
 # <<< factory DisplayRetreatScreen
 
