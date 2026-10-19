@@ -1,9 +1,9 @@
 {
   "fn": "DeckSelectionSubMenu",
   "case": "tests/cases/deck_selection.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"DeckSelectionSubMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52911\": \"000000\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"DeckSelectionSubMenu\", \"mismatches\": {\"bus\": {\"address\": 52911, \"reference\": \"80000000\", \"native\": \"80010000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51899, 1], [52911, 3]]}}}\n",
-  "restored": "{\"fn\": \"DeckSelectionSubMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52911\": \"000000\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"DeckSelectionSubMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41472\": \"064465636b20303031000000000000000000000000000000080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808\", \"46848\": \"000200\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52807\": \"00\", \"52913\": \"0001\", \"53177\": \"064465636b2030303100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DeckSelectionSubMenu\", \"mismatches\": {\"bus\": {\"address\": 51899, \"reference\": \"8000000106\", \"native\": \"0000000100\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[51899, 1], [52807, 1], [52913, 2], [53177, 10]]}, \"sram\": {\"byte\": 0, \"reference\": \"064465636b\", \"native\": \"0000000000\"}}}\n",
+  "restored": "{\"fn\": \"DeckSelectionSubMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41472\": \"064465636b20303031000000000000000000000000000000080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808080808\", \"46848\": \"000200\"}}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52807\": \"00\", \"52913\": \"0001\", \"53177\": \"064465636b2030303100\"}}, \"status\": \"PASS\"}\n"
 }

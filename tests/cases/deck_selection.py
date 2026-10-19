@@ -315,7 +315,9 @@ CASES["DeckSelectionSubMenu"] = [
     dict(POISON, keys=[0x00, 0x02, 0x02],
          wram={sym("wCheckMenuCursorXPosition"): b"\xAA", sym("wCheckMenuCursorYPosition"): b"\x00", sym("wCurDeck"): b"\x00", sym("wLCDC"): b"\x00"}, read={sym("wCheckMenuCursorXPosition"): 1},
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
-         instruction_budget=20000000, cycle_budget=80000000)]
+         instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x80, 0x00, 0x01, 0x00, 0x08, 0x00, 0x01, 0x00, 0x02], "rom_bank": 2, "wram": {sym("wCurDeck"): b"\x00", sym("wDeck1Valid"): b"\x01", sym("wLCDC"): b"\x00", sym("wTextSpeed"): b"\x00"}, "sram": {0: {sDeck1Name: bytes(24), sDeck1Cards: bytes([0x08]) * 60, sCurrentlySelectedDeck: b"\x00", sUnnamedDeckCounter: b"\x01\x00"}}, "read": {wCurDeckName: 10}, "sread": {0: {sDeck1Name: 10, sUnnamedDeckCounter: 2}}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
 # <<< factory DeckSelectionSubMenu
 
 # >>> factory DeckSelectionSubMenu_SelectOrCancel

@@ -114,7 +114,7 @@ get_input_deck_name:
 		(void)CopyListFromHLToDEInSRAM(old_name, wCurDeckName_ADDR);
 		InputCurDeckName();
 		uint16_t new_name = GetPointerToDeckName();
-		(void)CopyListFromHLToDEInSRAM(new_name, wCurDeckName_ADDR);
+		(void)CopyListFromHLToDEInSRAM(wCurDeckName_ADDR, new_name);
 		DrawDecksScreen(ALL_DECKS);
 		DeckSelectionMenu_InitMenuParams(wCurDeck);
 		return;
