@@ -43,6 +43,7 @@ AIDoTurn_GeneralNoRetreatResult AIDoTurn_GeneralNoRetreat(uint8_t a, uint8_t f, 
 		a = cowardice.a;
 		f = cowardice.f;
 	}
+	if ((f & 0x10u) != 0u) {
 	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02); a = trainer.a; f = trainer.f;
 	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_03); a = trainer.a; f = trainer.f;
 	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_04); a = trainer.a; f = trainer.f;
@@ -98,6 +99,7 @@ AIDoTurn_GeneralNoRetreatResult AIDoTurn_GeneralNoRetreat(uint8_t a, uint8_t f, 
 		HandleAIGoGoRainDanceEnergyResult rain3 = HandleAIGoGoRainDanceEnergy();
 		a = rain3.a; f = rain3.f;
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_13); a = trainer.a; f = trainer.f;
+	}
 	}
 	AIProcessAttacksResult attack = AIProcessAndTryToUseAttack();
 	if ((attack.f & 0x10u) != 0u)

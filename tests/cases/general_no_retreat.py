@@ -38,5 +38,5 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {}
 # >>> factory-mutation AIDoTurn_GeneralNoRetreat
-MUTATIONS["AIDoTurn_GeneralNoRetreat"] = {"source_symbol": "AIDoTurn_GeneralNoRetreat", "before": "AIDoTurn_GeneralNoRetreatResult AIDoTurn_GeneralNoRetreat(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tInitAITurnVars();", "after": "AIDoTurn_GeneralNoRetreatResult AIDoTurn_GeneralNoRetreat(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t unused = 0u;", "case_ids": ["AIDoTurn_GeneralNoRetreat-0", "AIDoTurn_GeneralNoRetreat-1"]}
+MUTATIONS["AIDoTurn_GeneralNoRetreat"] = {"source_symbol": "AIDoTurn_GeneralNoRetreat", "before": "\treturn (AIDoTurn_GeneralNoRetreatResult){decision.f};", "after": "\treturn (AIDoTurn_GeneralNoRetreatResult){(uint8_t)(decision.f ^ 0x10u)};", "case_ids": ["AIDoTurn_GeneralNoRetreat-0", "AIDoTurn_GeneralNoRetreat-1"]}
 # <<< factory-mutation AIDoTurn_GeneralNoRetreat
