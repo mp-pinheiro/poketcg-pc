@@ -208,6 +208,7 @@ CASES["QueueStatusCondition"] = [
     {"b": 3, "c": 4, "wram": {hWhoseTurn: b"\x02", wWhoseTurn: b"\x02", wStatusConditionQueueIndex: b"\x00"},
      "read": {wStatusConditionQueue: 3, wStatusConditionQueueIndex: 1}},
 ]
+CASES["QueueStatusCondition"].append({"b": 1, "c": 2, "wram": {hWhoseTurn: b"\x00", wWhoseTurn: b"\x01", wStatusConditionQueueIndex: b"\xFD"}, "read": {wStatusConditionQueueIndex: 1}})
 # <<< factory QueueStatusCondition
 
 # >>> factory CommentedOut_2c086
@@ -8268,9 +8269,9 @@ MUTATIONS["GetNextPositionInTempList"] = {
 # >>> factory-mutation QueueStatusCondition
 MUTATIONS["QueueStatusCondition"] = {
     "source_symbol": "QueueStatusCondition",
-    "before": "return (QueueStatusConditionResult){0x10u};",
-    "after": "return (QueueStatusConditionResult){0x00u};",
-    "case_ids": ["QueueStatusCondition-0", "QueueStatusCondition-3", "QueueStatusCondition-4"],
+    "before": "return (QueueStatusConditionResult){(uint8_t)(0x10u | (next_idx == 0u ? 0x80u : 0u))};",
+    "after": "return (QueueStatusConditionResult){0x10u};",
+    "case_ids": ["QueueStatusCondition-5"],
 }
 # <<< factory-mutation QueueStatusCondition
 # >>> factory-mutation CommentedOut_2c086
