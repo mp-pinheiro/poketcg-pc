@@ -1787,6 +1787,8 @@ CASES["DealDamageToPlayAreaPokemon"] = [
     {"b": 0x00, "d": 0x00, "e": 0x14, "wram": {sym("wNoDamageOrEffect"): b"\x01", sym("wTempPlayAreaLocation_cceb"): b"\xAA"}, "read": {sym("wTempPlayAreaLocation_cceb"): 1}},
     dict(POISON, b=0x00, d=0x00, e=0x14, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCard"): b"\x00", sym("wBoosterCardsDrawn"): b"\x01", sym("wNoDamageOrEffect"): b"\x01", sym("wTempPlayAreaLocation_cceb"): b"\xAA"}, read={sym("wTempPlayAreaLocation_cceb"): 1}),
     {"b": 0x00, "d": 0x00, "e": 0x0A, "wram": {sym("wNoDamageOrEffect"): b"\x02", sym("wTempPlayAreaLocation_cceb"): b"\xAA"}, "read": {sym("wTempPlayAreaLocation_cceb"): 1}},
+    dict(_attack_fixture(changes={sym("wPlayerDeck"): b"\xd9", sym("wPlayerCardLocations"): b"\x10", sym("wLoadedAttackCategory"): b"\x00"}), **{**_ATTACK_REGS, "b": 0x00, "d": 0x00, "e": 0x14}),
+    dict(_attack_fixture(changes={sym("wPlayerDeck"): b"\xd9", sym("wPlayerCardLocations"): b"\x11", sym("wPlayerBench"): b"\x04", sym("wLoadedAttackCategory"): b"\x04"}), **{**_ATTACK_REGS, "b": 0x01, "d": 0x00, "e": 0x14}),
 ]
 # <<< factory DealDamageToPlayAreaPokemon
 
@@ -2281,7 +2283,7 @@ MUTATIONS["ApplyTransparencyIfApplicable"] = {"source_symbol": "ApplyTransparenc
 # <<< factory-mutation ApplyTransparencyIfApplicable
 #
 # >>> factory-mutation DealDamageToPlayAreaPokemon
-MUTATIONS["DealDamageToPlayAreaPokemon"] = {"source_symbol": "DealDamageToPlayAreaPokemon", "before": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twTempPlayAreaLocation_cceb = b;", "after": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twTempPlayAreaLocation_cceb = (uint8_t)(b ^ 1u);", "case_ids": ["DealDamageToPlayAreaPokemon-0", "DealDamageToPlayAreaPokemon-1"]}
+MUTATIONS["DealDamageToPlayAreaPokemon"] = {"source_symbol": "DealDamageToPlayAreaPokemon", "before": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twTempPlayAreaLocation_cceb = b;", "after": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twTempPlayAreaLocation_cceb = (uint8_t)(b ^ 1u);", "case_ids": ["DealDamageToPlayAreaPokemon-0", "DealDamageToPlayAreaPokemon-1", "DealDamageToPlayAreaPokemon-3", "DealDamageToPlayAreaPokemon-4"]}
 # <<< factory-mutation DealDamageToPlayAreaPokemon
 # >>> factory-mutation DealDamageToPlayAreaPokemon_RegularAnim
 MUTATIONS["DealDamageToPlayAreaPokemon_RegularAnim"] = {"source_symbol": "DealDamageToPlayAreaPokemon_RegularAnim", "before": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twLoadedAttackAnimation = ATK_ANIM_BENCH_HIT;", "after": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_BENCH_HIT ^ 1u);", "case_ids": ["DealDamageToPlayAreaPokemon_RegularAnim-0", "DealDamageToPlayAreaPokemon_RegularAnim-1"]}

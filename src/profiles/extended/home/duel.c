@@ -916,7 +916,8 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_
 		de = plus.de;
 		if (wIsDamageToSelf == 0u)
 			SwapTurn();
-	} else {
+	}
+	if (wLoadedAttackCategory != POKEMON_POWER) {
 		PowerModifierResult defender = ApplyAttachedDefender((uint8_t)(b | CARD_LOCATION_PLAY_AREA), de);
 		de = defender.de;
 	}
@@ -940,8 +941,9 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_
 	}
 	{
 		DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + b));
-		PlayAttackAnimation_DealAttackDamageSimpleResult animation = PlayAttackAnimation_DealAttackDamageSimple(hp.a, 0u, b, 0u, (uint8_t)(de >> 8), (uint8_t)de, hp.hl);
-		if (animation.a != 0u)
+		uint8_t hp_before_animation = hp.a;
+		(void)PlayAttackAnimation_DealAttackDamageSimple(hp.a, 0u, b, 0u, (uint8_t)(de >> 8), (uint8_t)de, hp.hl);
+		if (hp_before_animation != 0u)
 			(void)PrintKnockedOutIfHLZero(hp.hl);
 	}
 	{
