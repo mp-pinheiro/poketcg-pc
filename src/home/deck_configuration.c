@@ -2547,7 +2547,7 @@ SaveDeckConfigurationResult SaveDeckConfiguration(uint16_t w0)
 			if ((basic.f & 0x10u) != 0u) {
 				/* add sp, $2 / scf / ret: scf keeps Z, clears N and H */
 				return (SaveDeckConfigurationResult){
-					basic.a, (uint8_t)((basic.f & 0x80u) | 0x10u), 1u};
+					basic.a, 0x10u, 1u};
 			}
 			(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInThisDeckText);
 			(void)DrawWideTextBox_WaitForInput(YouMustIncludeABasicPokemonInTheDeckText);

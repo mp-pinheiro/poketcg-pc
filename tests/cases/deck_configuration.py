@@ -1116,6 +1116,12 @@ CASES["SaveDeckConfiguration"] = [
          setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          keys=[0x00, 0x01],
          instruction_budget=20000000, cycle_budget=80000000),
+    {"stack": [0],
+     "wram": {sym("wTotalCardCount"): b"\x3C", sym("wDefaultYesOrNo"): b"\x01", sym("wLCDC"): b"\x80", 0xFF40: b"\x80",
+              sym("wCurDeckCards"): bytes([const("BULBASAUR"), 0])},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory SaveDeckConfiguration
 
@@ -1653,9 +1659,9 @@ MUTATIONS["ConfirmDeckConfiguration"] = {"source_symbol": "ConfirmDeckConfigurat
 # >>> factory-mutation SaveDeckConfiguration
 MUTATIONS["SaveDeckConfiguration"] = {
     "source_symbol": "SaveDeckConfiguration",
-    "before": "\t\t\t/* add sp, $2 / or a / ret */\n\t\t\tuint8_t or_a = keep.a;",
-    "after": "\t\t\t/* add sp, $2 / or a / ret */\n\t\t\tuint8_t or_a = (uint8_t)(keep.a + 1u);",
-    "case_ids": ["SaveDeckConfiguration-0", "SaveDeckConfiguration-1"],
+    "before": "basic.a, 0x10u, 1u};",
+    "after": "basic.a, (uint8_t)((basic.f & 0x80u) | 0x10u), 1u};",
+    "case_ids": ["SaveDeckConfiguration-2"],
 }
 # <<< factory-mutation SaveDeckConfiguration
 # >>> factory-mutation DismantleDeck
