@@ -1176,7 +1176,8 @@ typedef struct { uint8_t f; uint16_t hl; } StrangeBehavior_CheckDamageResult;
 StrangeBehavior_CheckDamageResult StrangeBehavior_CheckDamage(void);
 /* <<< factory StrangeBehavior_CheckDamage */
 /* >>> factory EnergyTrans_PrintProcedure */
-void EnergyTrans_PrintProcedure(void);
+typedef struct { uint8_t f; } EnergyTrans_PrintProcedureResult;
+EnergyTrans_PrintProcedureResult EnergyTrans_PrintProcedure(void);
 /* <<< factory EnergyTrans_PrintProcedure */
 /* >>> factory ItemFinder_HandDiscardPileCheck */
 typedef struct { uint8_t f; uint16_t hl; } ItemFinder_HandDiscardPileCheckResult;
@@ -1371,7 +1372,8 @@ typedef struct { uint8_t a; uint8_t f; } DestinyBond_PlayerSelectEffectResult;
 DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void);
 /* <<< factory DestinyBond_PlayerSelectEffect */
 /* >>> factory FlamesOfRage_PlayerSelectEffect */
-void FlamesOfRage_PlayerSelectEffect(void);
+typedef struct { uint8_t f; } FlamesOfRage_PlayerSelectEffectResult;
+FlamesOfRage_PlayerSelectEffectResult FlamesOfRage_PlayerSelectEffect(void);
 /* <<< factory FlamesOfRage_PlayerSelectEffect */
 /* >>> factory HandleColorChangeScreen */
 typedef struct { uint8_t a; uint8_t f; } HandleColorChangeScreenResult;
@@ -1450,7 +1452,8 @@ Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void);
 void Whirlpool_PlayerSelectEffect(void);
 /* <<< factory Whirlpool_PlayerSelectEffect */
 /* >>> factory FireSpin_PlayerSelectEffect */
-void FireSpin_PlayerSelectEffect(void);
+typedef struct { uint8_t f; } FireSpin_PlayerSelectEffectResult;
+FireSpin_PlayerSelectEffectResult FireSpin_PlayerSelectEffect(void);
 /* <<< factory FireSpin_PlayerSelectEffect */
 /* >>> factory EnergySpike_AttachEnergyEffect */
 ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, uint8_t d,
@@ -1649,14 +1652,16 @@ ShuffleCardsInDeckResult Firegiver_AddToHandEffect(uint8_t b);
 void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory PlayAttackAnimationOverAttackingPokemon */
 /* >>> factory PokemonTrader_PlayerHandSelection */
-void PokemonTrader_PlayerHandSelection(void);
+typedef struct { uint8_t f; } PokemonTrader_PlayerHandSelectionResult;
+PokemonTrader_PlayerHandSelectionResult PokemonTrader_PlayerHandSelection(void);
 /* <<< factory PokemonTrader_PlayerHandSelection */
 /* >>> factory EnergyRetrieval_PlayerDiscardPileSelection */
 typedef struct { uint8_t a; uint8_t f; } EnergyRetrieval_PlayerDiscardPileSelectionResult;
 EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPileSelection(void);
 /* <<< factory EnergyRetrieval_PlayerDiscardPileSelection */
 /* >>> factory EnergyRetrieval_PlayerHandSelection */
-void EnergyRetrieval_PlayerHandSelection(void);
+typedef struct { uint8_t f; } EnergyRetrieval_PlayerHandSelectionResult;
+EnergyRetrieval_PlayerHandSelectionResult EnergyRetrieval_PlayerHandSelection(void);
 /* <<< factory EnergyRetrieval_PlayerHandSelection */
 /* >>> factory HandleEnergyCardsInDiscardPileSelection */
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } HandleEnergyCardsInDiscardPileSelectionResult;
@@ -1744,7 +1749,8 @@ RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d
 void BigEggsplosion_MultiplierEffect(void);
 /* <<< factory BigEggsplosion_MultiplierEffect */
 /* >>> factory PokemonFlute_PlayerSelection */
-void PokemonFlute_PlayerSelection(void);
+typedef struct { uint8_t f; } PokemonFlute_PlayerSelectionResult;
+PokemonFlute_PlayerSelectionResult PokemonFlute_PlayerSelection(void);
 /* <<< factory PokemonFlute_PlayerSelection */
 /* >>> factory DevolutionBeam_DevolveEffect */
 void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e);
@@ -1772,7 +1778,8 @@ typedef struct { uint8_t a; uint8_t f; } Thunderpunch_RecoilEffectResult;
 Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory Thunderpunch_RecoilEffect */
 /* >>> factory Revive_PlayerSelection */
-void Revive_PlayerSelection(void);
+typedef struct { uint8_t f; } Revive_PlayerSelectionResult;
+Revive_PlayerSelectionResult Revive_PlayerSelection(void);
 /* <<< factory Revive_PlayerSelection */
 /* >>> factory BellsproutCallForFamily_PlayerSelectEffect */
 typedef struct { uint8_t a; uint8_t f; } BellsproutCallForFamily_PlayerSelectEffectResult;
@@ -2164,26 +2171,31 @@ typedef struct { uint8_t a; uint8_t f; } HandlePokemonAndEnergySelectionScreenRe
 HandlePokemonAndEnergySelectionScreenResult HandlePokemonAndEnergySelectionScreen(void);
 /* <<< factory HandlePokemonAndEnergySelectionScreen */
 /* >>> factory Defender_PlayerSelection */
-void Defender_PlayerSelection(void);
+typedef struct { uint8_t f; } Defender_PlayerSelectionResult;
+Defender_PlayerSelectionResult Defender_PlayerSelection(void);
 /* <<< factory Defender_PlayerSelection */
 /* >>> factory EnergyRemoval_PlayerSelection */
 HandlePokemonAndEnergySelectionScreenResult EnergyRemoval_PlayerSelection(void);
 /* <<< factory EnergyRemoval_PlayerSelection */
 /* >>> factory MrFuji_PlayerSelection */
-void MrFuji_PlayerSelection(void);
+typedef struct { uint8_t f; } MrFuji_PlayerSelectionResult;
+MrFuji_PlayerSelectionResult MrFuji_PlayerSelection(void);
 /* <<< factory MrFuji_PlayerSelection */
 /* >>> factory Switch_PlayerSelection */
-void Switch_PlayerSelection(void);
+typedef struct { uint8_t f; } Switch_PlayerSelectionResult;
+Switch_PlayerSelectionResult Switch_PlayerSelection(void);
 /* <<< factory Switch_PlayerSelection */
 /* >>> factory Cowardice_PlayerSelectEffect */
-void Cowardice_PlayerSelectEffect(void);
+typedef struct { uint8_t f; } Cowardice_PlayerSelectEffectResult;
+Cowardice_PlayerSelectEffectResult Cowardice_PlayerSelectEffect(void);
 /* <<< factory Cowardice_PlayerSelectEffect */
 /* >>> factory PealOfThunder_RandomlyDamageEffect */
 typedef struct { uint8_t a; uint8_t f; } PealOfThunderRandomlyDamageEffectResult;
 PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
 /* <<< factory PealOfThunder_RandomlyDamageEffect */
 /* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
-void TrainerCardAsPokemon_PlayerSelectSwitch(void);
+typedef struct { uint8_t f; } TrainerCardAsPokemon_PlayerSelectSwitchResult;
+TrainerCardAsPokemon_PlayerSelectSwitchResult TrainerCardAsPokemon_PlayerSelectSwitch(void);
 /* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
 /* >>> factory ButterfreeWhirlwind_CheckBench */
 typedef struct { uint8_t a; uint8_t f; } ButterfreeWhirlwind_CheckBenchResult;
@@ -2201,7 +2213,8 @@ typedef struct { uint8_t a; uint8_t f; } Ram_SelectSwitchEffectResult;
 Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void);
 /* <<< factory Ram_SelectSwitchEffect */
 /* >>> factory GustOfWind_PlayerSelection */
-void GustOfWind_PlayerSelection(void);
+typedef struct { uint8_t f; } GustOfWind_PlayerSelectionResult;
+GustOfWind_PlayerSelectionResult GustOfWind_PlayerSelection(void);
 /* <<< factory GustOfWind_PlayerSelection */
 /* >>> factory Teleport_PlayerSelectEffect */
 void Teleport_PlayerSelectEffect(void);
@@ -2237,7 +2250,8 @@ void HypnoDarkMind_PlayerSelectEffect(void);
 void Spark_PlayerSelectEffect(void);
 /* <<< factory Spark_PlayerSelectEffect */
 /* >>> factory DevolutionBeam_PlayerSelectEffect */
-void DevolutionBeam_PlayerSelectEffect(void);
+typedef struct { uint8_t f; } DevolutionBeam_PlayerSelectEffectResult;
+DevolutionBeam_PlayerSelectEffectResult DevolutionBeam_PlayerSelectEffect(void);
 /* <<< factory DevolutionBeam_PlayerSelectEffect */
 /* >>> factory DevolutionSpray_DevolutionEffect */
 void DevolutionSpray_DevolutionEffect(void);

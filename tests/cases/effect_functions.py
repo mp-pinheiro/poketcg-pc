@@ -3812,7 +3812,7 @@ CASES["StrangeBehavior_CheckDamage"] = [
 # <<< factory StrangeBehavior_CheckDamage
 
 # >>> factory EnergyTrans_PrintProcedure
-CONTRACT["EnergyTrans_PrintProcedure"] = {"compare": (), "preserve": ()}
+CONTRACT["EnergyTrans_PrintProcedure"] = {"compare": ("f",), "preserve": ()}
 CASES["EnergyTrans_PrintProcedure"] = [
     {"wram": {hWhoseTurn: b"\xC2"}, "keys": 0x01,
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
@@ -4568,7 +4568,7 @@ CASES["DestinyBond_PlayerSelectEffect"] = [
 # <<< factory DestinyBond_PlayerSelectEffect
 
 # >>> factory FlamesOfRage_PlayerSelectEffect
-CONTRACT["FlamesOfRage_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CONTRACT["FlamesOfRage_PlayerSelectEffect"] = {"compare": ("f",), "preserve": ()}
 CASES["FlamesOfRage_PlayerSelectEffect"] = [
     {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("hTempCardIndex_ff98"): 1, sym("hCurSelectionItem"): 1, sym("wEnergyDiscardPlayAreaLocation"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={sym("hTempCardIndex_ff98"): 1, sym("hCurSelectionItem"): 1, sym("wEnergyDiscardPlayAreaLocation"): 1}, instruction_budget=20000000, cycle_budget=80000000),
@@ -4954,7 +4954,7 @@ CASES["Whirlpool_PlayerSelectEffect"] = [
 # <<< factory Whirlpool_PlayerSelectEffect
 
 # >>> factory FireSpin_PlayerSelectEffect
-CONTRACT["FireSpin_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CONTRACT["FireSpin_PlayerSelectEffect"] = {"compare": ("f",), "preserve": ()}
 CASES["FireSpin_PlayerSelectEffect"] = [
     {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("hTempCardIndex_ff98"): 1, sym("hCurSelectionItem"): 1, sym("wEnergyDiscardPlayAreaLocation"): 1, sym("wEnergyDiscardMenuDenominator"): 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wLCDC"): b"\x00", sym("wDuelTempList"): b"\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={sym("hTempCardIndex_ff98"): 1, sym("hCurSelectionItem"): 1, sym("wEnergyDiscardPlayAreaLocation"): 1, sym("wEnergyDiscardMenuDenominator"): 1}, instruction_budget=20000000, cycle_budget=80000000),
@@ -5803,7 +5803,7 @@ CASES["PlayAttackAnimationOverAttackingPokemon"] = [
 # <<< factory PlayAttackAnimationOverAttackingPokemon
 
 # >>> factory PokemonTrader_PlayerHandSelection
-CONTRACT["PokemonTrader_PlayerHandSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["PokemonTrader_PlayerHandSelection"] = {"compare": ("f",), "preserve": ()}
 CASES["PokemonTrader_PlayerHandSelection"] = [
     {"keys": [0x00, 0x02], "wram": {sym("wPlayerNumberOfCardsInHand"): b"\x01", sym("wPlayerHand"): b"\x00", sym("wDuelTempList"): b"\xFF", sym("wLCDC"): b"\x00", sym("wSelectedDuelSubMenuItem"): b"\x00", sym("wSelectedDuelSubMenuScrollOffset"): b"\x00", sym("wNoItemSelectionMenuKeys"): b"\x00", sym("wSortCardListByID"): b"\x00", sym("hKeysPressed"): b"\x02", sym("hCurMenuItem"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {sym("hTempList"): 1}, "rom_bank": 1, "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x02], wram={sym("wPlayerNumberOfCardsInHand"): b"\x01", sym("wPlayerHand"): b"\x00", sym("wDuelTempList"): b"\xFF", sym("wLCDC"): b"\x00", sym("wSelectedDuelSubMenuItem"): b"\x00", sym("wSelectedDuelSubMenuScrollOffset"): b"\x00", sym("wNoItemSelectionMenuKeys"): b"\x00", sym("wSortCardListByID"): b"\x00", sym("hKeysPressed"): b"\x02", sym("hCurMenuItem"): b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={sym("hTempList"): 1}, rom_bank=1, instruction_budget=20000000, cycle_budget=80000000),
@@ -6071,7 +6071,7 @@ CASES["BigEggsplosion_MultiplierEffect"] = [
 # <<< factory BigEggsplosion_MultiplierEffect
 
 # >>> factory PokemonFlute_PlayerSelection
-CONTRACT["PokemonFlute_PlayerSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["PokemonFlute_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
 CASES["PokemonFlute_PlayerSelection"] = [
     {"keys": [0x00, 0x02],
      "wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentDeckCards"): b"\x00", sym("wDuelTempList"): b"\xFF", sym("wLCDC"): b"\x00",
@@ -6158,7 +6158,7 @@ CASES["Thunderpunch_RecoilEffect"] = [
 # <<< factory Thunderpunch_RecoilEffect
 
 # >>> factory Revive_PlayerSelection
-CONTRACT["Revive_PlayerSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["Revive_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
 CASES["Revive_PlayerSelection"] = [
     {"keys": [0x00, 0x02],
      "wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentDeckCards"): b"\x00", sym("wDuelTempList"): b"\xFF", sym("wLCDC"): b"\x00",
@@ -7773,7 +7773,7 @@ CASES["HandlePokemonAndEnergySelectionScreen"] = [
 # <<< factory HandlePokemonAndEnergySelectionScreen
 
 # >>> factory Defender_PlayerSelection
-CONTRACT["Defender_PlayerSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["Defender_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
 CASES["Defender_PlayerSelection"] = [
     {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wPlayerArenaCardHP"): b"\x01", sym("wPlayerArenaCardStage"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "read": {sym("hTempList"): 1}, "expect": {sym("hTempList"): b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wPlayerArenaCardHP"): b"\x01", sym("wPlayerArenaCardStage"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, read={sym("hTempList"): 1}, expect={sym("hTempList"): b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
@@ -7789,7 +7789,7 @@ CASES["EnergyRemoval_PlayerSelection"] = [
 # <<< factory EnergyRemoval_PlayerSelection
 
 # >>> factory MrFuji_PlayerSelection
-CONTRACT["MrFuji_PlayerSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["MrFuji_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
 CASES["MrFuji_PlayerSelection"] = [
     # Prompt, then bench 1 is chosen to return to the deck.
     {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02", sym("wPlayerArenaCard"): b"\x00\x00", sym("wPlayerArenaCardHP"): b"\x01\x01", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("hTempList"): b"\xFF"}, "read": {sym("hTempList"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}, "expect": {sym("hTempList"): b"\x01", sym("hTempPlayAreaLocation_ff9d"): b"\x01"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
@@ -7798,7 +7798,7 @@ CASES["MrFuji_PlayerSelection"] = [
 # <<< factory MrFuji_PlayerSelection
 
 # >>> factory Switch_PlayerSelection
-CONTRACT["Switch_PlayerSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["Switch_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
 CASES["Switch_PlayerSelection"] = [
     # Prompt, then bench 1 is chosen for the switch.
     {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02", sym("wPlayerArenaCard"): b"\x00\x00", sym("wPlayerArenaCardHP"): b"\x01\x01", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("hTempList"): b"\xFF"}, "read": {sym("hTempList"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}, "expect": {sym("hTempList"): b"\x01", sym("hTempPlayAreaLocation_ff9d"): b"\x01"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
@@ -7807,7 +7807,7 @@ CASES["Switch_PlayerSelection"] = [
 # <<< factory Switch_PlayerSelection
 
 # >>> factory Cowardice_PlayerSelectEffect
-CONTRACT["Cowardice_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CONTRACT["Cowardice_PlayerSelectEffect"] = {"compare": ("f",), "preserve": ()}
 CASES["Cowardice_PlayerSelectEffect"] = [
     # Arena Pokemon retreats to hand: prompt, then select bench 1 as the replacement.
     {"keys": [0x00, 0x01, 0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempList"): b"\x00", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("hAIPkmnPowerEffectParam"): b"\xFF", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02", sym("wPlayerArenaCard"): b"\x00\x00", sym("wPlayerArenaCardHP"): b"\x01\x01", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "setup": DISPLAY_SETUP, "read": {sym("hAIPkmnPowerEffectParam"): 1, sym("hTempPlayAreaLocation_ff9d"): 1}, "expect": {sym("hAIPkmnPowerEffectParam"): b"\x01", sym("hTempPlayAreaLocation_ff9d"): b"\x01"}, "instruction_budget": 20000000, "cycle_budget": 80000000},
@@ -7830,7 +7830,7 @@ CASES["PealOfThunder_RandomlyDamageEffect"] = [
 # <<< factory PealOfThunder_RandomlyDamageEffect
 
 # >>> factory TrainerCardAsPokemon_PlayerSelectSwitch
-CONTRACT["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"compare": (), "preserve": ()}
+CONTRACT["TrainerCardAsPokemon_PlayerSelectSwitch"] = {"compare": ("f",), "preserve": ()}
 CASES["TrainerCardAsPokemon_PlayerSelectSwitch"] = [
     # The arena card leaves: prompt, then bench 1 replaces it.
     {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02", sym("wPlayerArenaCard"): b"\x00\x00", sym("wPlayerArenaCardHP"): b"\x01\x01", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("hTempList"): b"\x00", sym("hAIPkmnPowerEffectParam"): b"\xFF"}, "read": {sym("hAIPkmnPowerEffectParam"): 1}, "expect": {sym("hAIPkmnPowerEffectParam"): b"\x01"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
@@ -7872,7 +7872,7 @@ CASES["Ram_SelectSwitchEffect"] = [
 # <<< factory Ram_SelectSwitchEffect
 
 # >>> factory GustOfWind_PlayerSelection
-CONTRACT["GustOfWind_PlayerSelection"] = {"compare": (), "preserve": ()}
+CONTRACT["GustOfWind_PlayerSelection"] = {"compare": ("f",), "preserve": ()}
 CASES["GustOfWind_PlayerSelection"] = [
     # Prompt, then the opponent's bench 1 is chosen; the turn swaps back.
     {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x02", sym("wOpponentArenaCard"): b"\x00\x01", sym("wOpponentArenaCardHP"): b"\x20\x20", sym("wOpponentDeck"): b"\x08\x09", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("hTempList"): b"\xFF"}, "read": {sym("hTempList"): 1, sym("hWhoseTurn"): 1}, "expect": {sym("hTempList"): b"\x01", sym("hWhoseTurn"): b"\xC2"}, "setup": DISPLAY_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
@@ -7974,7 +7974,7 @@ CASES["Spark_PlayerSelectEffect"] = [
 # <<< factory Spark_PlayerSelectEffect
 
 # >>> factory DevolutionBeam_PlayerSelectEffect
-CONTRACT["DevolutionBeam_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CONTRACT["DevolutionBeam_PlayerSelectEffect"] = {"compare": ("f",), "preserve": ()}
 CASES["DevolutionBeam_PlayerSelectEffect"] = [
     {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("hTempList"): b"\x00", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wPlayerArenaCardHP"): b"\x01", sym("wPlayerArenaCardStage"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, "read": {sym("hTempList"): 1, sym("hAIPkmnPowerEffectParam"): 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
     dict(POISON, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("hTempList"): b"\x00", sym("hTempPlayAreaLocation_ff9d"): b"\x00", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wPlayerArenaCardHP"): b"\x01", sym("wPlayerArenaCardStage"): b"\x01", sym("wPlayerArenaCard"): b"\x00", sym("wLCDC"): b"\x80", 0xFF40: b"\x80"}, read={sym("hTempList"): 1, sym("hAIPkmnPowerEffectParam"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
@@ -10168,7 +10168,7 @@ MUTATIONS["StarmieRecover_PlayerSelectEffect"] = {
 MUTATIONS["DestinyBond_PlayerSelectEffect"] = {"source_symbol": "DestinyBond_PlayerSelectEffect", "before": "DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void)\n{\n\t(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);\n\tuint8_t saved = hBankROM;\n\tBankswitchROM(DisplayEnergyDiscardScreen_BANK);\n\tDisplayEnergyDiscardScreen(0x00);\n\tBankswitchROM(saved);\n\tHandleEnergyDiscardMenuInputResult result = HandleEnergyDiscardMenuInput();\n\tif (result.f & 0x10)\n\t\treturn (DestinyBond_PlayerSelectEffectResult){result.a, result.f};\n\thTempList = hTempCardIndex_ff98;", "after": "DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void)\n{\n\t(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);\n\tuint8_t saved = hBankROM;\n\tBankswitchROM(DisplayEnergyDiscardScreen_BANK);\n\tDisplayEnergyDiscardScreen(0x00);\n\tBankswitchROM(saved);\n\tHandleEnergyDiscardMenuInputResult result = HandleEnergyDiscardMenuInput();\n\tif (result.f & 0x10)\n\t\treturn (DestinyBond_PlayerSelectEffectResult){result.a, result.f};\n\thTempList = 0x00;", "case_ids": ["DestinyBond_PlayerSelectEffect-0"]}
 # <<< factory-mutation DestinyBond_PlayerSelectEffect
 # >>> factory-mutation FlamesOfRage_PlayerSelectEffect
-MUTATIONS["FlamesOfRage_PlayerSelectEffect"] = {"source_symbol": "FlamesOfRage_PlayerSelectEffect", "before": "void FlamesOfRage_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardScreen_BANK); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);", "after": "void FlamesOfRage_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardScreen_BANK); DisplayEnergyDiscardScreen(0x01);", "case_ids": ["FlamesOfRage_PlayerSelectEffect-0", "FlamesOfRage_PlayerSelectEffect-1"]}
+MUTATIONS["FlamesOfRage_PlayerSelectEffect"] = {"source_symbol": "FlamesOfRage_PlayerSelectEffect", "before": "FlamesOfRage_PlayerSelectEffectResult FlamesOfRage_PlayerSelectEffect(void)", "after": "void FlamesOfRage_PlayerSelectEffect(void)", "case_ids": ["FlamesOfRage_PlayerSelectEffect-0"]}
 # <<< factory-mutation FlamesOfRage_PlayerSelectEffect
 # >>> factory-mutation HandleColorChangeScreen
 MUTATIONS["HandleColorChangeScreen"] = {"source_symbol": "HandleColorChangeScreen", "before": "\t\tuint8_t color = gb_read8((uint16_t)(SHIFT_LIST_ITEM_TO_COLOR + input.a));", "after": "\t\tuint8_t color = gb_read8((uint16_t)(SHIFT_LIST_ITEM_TO_COLOR + input.a + 1u));", "case_ids": ["HandleColorChangeScreen-0"]}
@@ -10304,7 +10304,7 @@ MUTATIONS["Wildfire_PlayerSelectEffect"] = {"source_symbol": "Wildfire_PlayerSel
 MUTATIONS["Whirlpool_PlayerSelectEffect"] = {"source_symbol": "Whirlpool_PlayerSelectEffect", "before": "void Whirlpool_PlayerSelectEffect(void)\n{\n\tSwapTurn();\n\tHandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\tif ((list.f & 0x10u) != 0u) {\n\t\tSwapTurn();\n\t\thTemp_ffa0 = 0xffu;", "after": "void Whirlpool_PlayerSelectEffect(void)\n{\n\tSwapTurn();\n\tHandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\tif ((list.f & 0x10u) != 0u) {\n\t\tSwapTurn();\n\t\thTemp_ffa0 = 0x00u;", "case_ids": ["Whirlpool_PlayerSelectEffect-0", "Whirlpool_PlayerSelectEffect-1"]}
 # <<< factory-mutation Whirlpool_PlayerSelectEffect
 # >>> factory-mutation FireSpin_PlayerSelectEffect
-MUTATIONS["FireSpin_PlayerSelectEffect"] = {"source_symbol": "FireSpin_PlayerSelectEffect", "before": "void FireSpin_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2EnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\t(void)SortCardsInDuelTempListByID(0u, 0u, 0u);\n\t{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardScreen_BANK); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }\n\tuint8_t denominator = 2u;", "after": "void FireSpin_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2EnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\t(void)SortCardsInDuelTempListByID(0u, 0u, 0u);\n\t{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardScreen_BANK); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }\n\tuint8_t denominator = 3u;", "case_ids": ["FireSpin_PlayerSelectEffect-0"]}
+MUTATIONS["FireSpin_PlayerSelectEffect"] = {"source_symbol": "FireSpin_PlayerSelectEffect", "before": "FireSpin_PlayerSelectEffectResult FireSpin_PlayerSelectEffect(void)", "after": "void FireSpin_PlayerSelectEffect(void)", "case_ids": ["FireSpin_PlayerSelectEffect-0"]}
 # <<< factory-mutation FireSpin_PlayerSelectEffect
 # >>> factory-mutation EnergySpike_AttachEnergyEffect
 MUTATIONS["EnergySpike_AttachEnergyEffect"] = {"source_symbol": "EnergySpike_AttachEnergyEffect", "before": "ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t index = hTemp_ffa0;\n\tif (index != 0xFFu) {", "after": "ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t index = hTemp_ffa0;\n\tif (index == 0xFFu) {", "case_ids": ["EnergySpike_AttachEnergyEffect-0", "EnergySpike_AttachEnergyEffect-1"]}

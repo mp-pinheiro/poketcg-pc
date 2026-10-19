@@ -5916,9 +5916,10 @@ StrangeBehavior_CheckDamageResult StrangeBehavior_CheckDamage(void)
 /* <<< factory StrangeBehavior_CheckDamage */
 
 /* >>> factory EnergyTrans_PrintProcedure */
-void EnergyTrans_PrintProcedure(void)
+EnergyTrans_PrintProcedureResult EnergyTrans_PrintProcedure(void)
 {
 	DrawWholeScreenTextBox(ProcedureForEnergyTransferText);
+	return (EnergyTrans_PrintProcedureResult){0u};
 }
 /* <<< factory EnergyTrans_PrintProcedure */
 
@@ -6951,7 +6952,7 @@ DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void)
 /* <<< factory DestinyBond_PlayerSelectEffect */
 
 /* >>> factory FlamesOfRage_PlayerSelectEffect */
-void FlamesOfRage_PlayerSelectEffect(void)
+FlamesOfRage_PlayerSelectEffectResult FlamesOfRage_PlayerSelectEffect(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);
 	hCurSelectionItem = 0u;
@@ -6961,12 +6962,12 @@ void FlamesOfRage_PlayerSelectEffect(void)
 		HandleEnergyDiscardMenuInputResult menu;
 		{ uint8_t saved = hBankROM; BankswitchROM(HandleEnergyDiscardMenuInput_BANK); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
 		if ((menu.f & 0x10u) != 0u)
-			return;
+			return (FlamesOfRage_PlayerSelectEffectResult){menu.f};
 		uint16_t hl = GetNextPositionInTempList();
 		gb_write8(hl, hTempCardIndex_ff98);
 		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
 		if (hCurSelectionItem >= 2u)
-			return;
+			return (FlamesOfRage_PlayerSelectEffectResult){0x80u};
 		{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardMenu_BANK); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
 	}
 }
@@ -7493,7 +7494,7 @@ void Whirlpool_PlayerSelectEffect(void)
 /* <<< factory Whirlpool_PlayerSelectEffect */
 
 /* >>> factory FireSpin_PlayerSelectEffect */
-void FireSpin_PlayerSelectEffect(void)
+FireSpin_PlayerSelectEffectResult FireSpin_PlayerSelectEffect(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2EnergyCardsText);
 	hCurSelectionItem = 0u;
@@ -7506,12 +7507,12 @@ void FireSpin_PlayerSelectEffect(void)
 		HandleEnergyDiscardMenuInputResult menu;
 		{ uint8_t saved = hBankROM; BankswitchROM(HandleEnergyDiscardMenuInput_BANK); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
 		if ((menu.f & 0x10u) != 0u)
-			return;
+			return (FireSpin_PlayerSelectEffectResult){menu.f};
 		uint16_t hl = GetNextPositionInTempList();
 		gb_write8(hl, hTempCardIndex_ff98);
 		wEnergyDiscardMenuNumerator++;
 		if (hCurSelectionItem >= 2u)
-			return;
+			return (FireSpin_PlayerSelectEffectResult){0u};
 		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
 		{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardMenu_BANK); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
 	}
@@ -8639,7 +8640,7 @@ void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, ui
 /* <<< factory PlayAttackAnimationOverAttackingPokemon */
 
 /* >>> factory PokemonTrader_PlayerHandSelection */
-void PokemonTrader_PlayerHandSelection(void)
+PokemonTrader_PlayerHandSelectionResult PokemonTrader_PlayerHandSelection(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChooseCardFromYourHandToSwitchText);
 	(void)CreatePokemonCardListFromHand();
@@ -8647,6 +8648,7 @@ void PokemonTrader_PlayerHandSelection(void)
 	SetCardListHeaderText(DuelistHandText, ChooseCardToSwitchText);
 	DisplayCardListResult result = DisplayCardList();
 	hTemp_ffa0 = result.a;
+	return (PokemonTrader_PlayerHandSelectionResult){result.f};
 }
 /* <<< factory PokemonTrader_PlayerHandSelection */
 
@@ -8683,14 +8685,15 @@ EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPi
 /* <<< factory EnergyRetrieval_PlayerDiscardPileSelection */
 
 /* >>> factory EnergyRetrieval_PlayerHandSelection */
-void EnergyRetrieval_PlayerHandSelection(void)
+EnergyRetrieval_PlayerHandSelectionResult EnergyRetrieval_PlayerHandSelection(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChooseCardToDiscardFromHandText);
 	(void)CreateHandCardList(0u);
 	(void)RemoveCardFromDuelTempList(hTempCardIndex_ff9f);
 	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
-	(void)DisplayCardList();
+	DisplayCardListResult result = DisplayCardList();
 	hTempList = hTempCardIndex_ff98;
+	return (EnergyRetrieval_PlayerHandSelectionResult){result.f};
 }
 /* <<< factory EnergyRetrieval_PlayerHandSelection */
 
@@ -9193,15 +9196,16 @@ void BigEggsplosion_MultiplierEffect(void)
 /* <<< factory BigEggsplosion_MultiplierEffect */
 
 /* >>> factory PokemonFlute_PlayerSelection */
-void PokemonFlute_PlayerSelection(void)
+PokemonFlute_PlayerSelectionResult PokemonFlute_PlayerSelection(void)
 {
 	SwapTurn();
 	(void)CreateBasicPokemonCardListFromDiscardPile();
 	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
 	SetCardListHeaderText(PlayerDiscardPileText, ChoosePokemonToPlaceInPlayText);
-	(void)DisplayCardList();
+	DisplayCardListResult result = DisplayCardList();
 	SwapTurn();
 	hTemp_ffa0 = hTempCardIndex_ff98;
+	return (PokemonFlute_PlayerSelectionResult){result.f};
 }
 /* <<< factory PokemonFlute_PlayerSelection */
 
@@ -9440,14 +9444,15 @@ Thunderpunch_RecoilEffectResult Thunderpunch_RecoilEffect(uint8_t f, uint8_t d, 
 /* <<< factory Thunderpunch_RecoilEffect */
 
 /* >>> factory Revive_PlayerSelection */
-void Revive_PlayerSelection(void)
+Revive_PlayerSelectionResult Revive_PlayerSelection(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChooseBasicPokemonToPlaceOnBenchText);
 	(void)CreateBasicPokemonCardListFromDiscardPile();
 	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
 	SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
-	(void)DisplayCardList();
+	DisplayCardListResult result = DisplayCardList();
 	hTemp_ffa0 = hTempCardIndex_ff98;
+	return (Revive_PlayerSelectionResult){result.f};
 }
 /* <<< factory Revive_PlayerSelection */
 
@@ -11738,12 +11743,13 @@ HandlePokemonAndEnergySelectionScreenResult HandlePokemonAndEnergySelectionScree
 /* <<< factory HandlePokemonAndEnergySelectionScreen */
 
 /* >>> factory Defender_PlayerSelection */
-void Defender_PlayerSelection(void)
+Defender_PlayerSelectionResult Defender_PlayerSelection(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToAttachDefenderToText);
 	(void)HasAlivePokemonInPlayArea();
-	OpenPlayAreaScreenForSelection();
+	PlayAreaScreenResult result = OpenPlayAreaScreenForSelection();
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	return (Defender_PlayerSelectionResult){result.f};
 }
 /* <<< factory Defender_PlayerSelection */
 
@@ -11759,34 +11765,37 @@ HandlePokemonAndEnergySelectionScreenResult EnergyRemoval_PlayerSelection(void)
 /* <<< factory EnergyRemoval_PlayerSelection */
 
 /* >>> factory MrFuji_PlayerSelection */
-void MrFuji_PlayerSelection(void)
+MrFuji_PlayerSelectionResult MrFuji_PlayerSelection(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChoosePokemonToReturnToTheDeckText);
 	(void)HasAlivePokemonInBench();
-	(void)OpenPlayAreaScreenForSelection();
+	PlayAreaScreenResult result = OpenPlayAreaScreenForSelection();
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	return (MrFuji_PlayerSelectionResult){result.f};
 }
 /* <<< factory MrFuji_PlayerSelection */
 
 /* >>> factory Switch_PlayerSelection */
-void Switch_PlayerSelection(void)
+Switch_PlayerSelectionResult Switch_PlayerSelection(void)
 {
 	(void)DrawWideTextBox_WaitForInput(SelectPkmnOnBenchToSwitchWithActiveText);
 	(void)HasAlivePokemonInBench();
-	(void)OpenPlayAreaScreenForSelection();
+	PlayAreaScreenResult result = OpenPlayAreaScreenForSelection();
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
+	return (Switch_PlayerSelectionResult){result.f};
 }
 /* <<< factory Switch_PlayerSelection */
 
 /* >>> factory Cowardice_PlayerSelectEffect */
-void Cowardice_PlayerSelectEffect(void)
+Cowardice_PlayerSelectEffectResult Cowardice_PlayerSelectEffect(void)
 {
 	if (hTemp_ffa0 != 0u)
-		return;
+		return (Cowardice_PlayerSelectEffectResult){0u};
 	(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
 	(void)HasAlivePokemonInBench();
-	(void)OpenPlayAreaScreenForSelection();
+	PlayAreaScreenResult result = OpenPlayAreaScreenForSelection();
 	hAIPkmnPowerEffectParam = hTempPlayAreaLocation_ff9d;
+	return (Cowardice_PlayerSelectEffectResult){result.f};
 }
 /* <<< factory Cowardice_PlayerSelectEffect */
 
@@ -11801,14 +11810,15 @@ PealOfThunderRandomlyDamageEffectResult PealOfThunder_RandomlyDamageEffect(uint8
 /* <<< factory PealOfThunder_RandomlyDamageEffect */
 
 /* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
-void TrainerCardAsPokemon_PlayerSelectSwitch(void)
+TrainerCardAsPokemon_PlayerSelectSwitchResult TrainerCardAsPokemon_PlayerSelectSwitch(void)
 {
 	if (hTemp_ffa0 != 0u)
-		return;
+		return (TrainerCardAsPokemon_PlayerSelectSwitchResult){0u};
 	(void)DrawWideTextBox_WaitForInput(SelectPokemonToPlaceInTheArenaText);
 	(void)HasAlivePokemonInBench();
-	(void)OpenPlayAreaScreenForSelection();
+	PlayAreaScreenResult result = OpenPlayAreaScreenForSelection();
 	hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+	return (TrainerCardAsPokemon_PlayerSelectSwitchResult){result.f};
 }
 /* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
 
@@ -11874,14 +11884,15 @@ Ram_SelectSwitchEffectResult Ram_SelectSwitchEffect(void)
 /* <<< factory Ram_SelectSwitchEffect */
 
 /* >>> factory GustOfWind_PlayerSelection */
-void GustOfWind_PlayerSelection(void)
+GustOfWind_PlayerSelectionResult GustOfWind_PlayerSelection(void)
 {
 	(void)DrawWideTextBox_WaitForInput(ChooseAPokemonToSwitchWithActivePokemonText);
 	SwapTurn();
 	(void)HasAlivePokemonInBench();
-	(void)OpenPlayAreaScreenForSelection();
+	PlayAreaScreenResult result = OpenPlayAreaScreenForSelection();
 	hTemp_ffa0 = hTempPlayAreaLocation_ff9d;
 	SwapTurn();
+	return (GustOfWind_PlayerSelectionResult){result.f};
 }
 /* <<< factory GustOfWind_PlayerSelection */
 
@@ -12068,15 +12079,14 @@ void Spark_PlayerSelectEffect(void)
 /* <<< factory Spark_PlayerSelectEffect */
 
 /* >>> factory DevolutionBeam_PlayerSelectEffect */
-void DevolutionBeam_PlayerSelectEffect(void)
+DevolutionBeam_PlayerSelectEffectResult DevolutionBeam_PlayerSelectEffect(void)
 {
 	(void)DrawWholeScreenTextBox(ProcedureForDevolutionBeamText);
 	for (;;) {
 		DrawDuelMainScene();
-		(void)TwoItemHorizontalMenu(PleaseSelectThePlayAreaText);
+		HandleYesOrNoMenuResult menu = TwoItemHorizontalMenu(PleaseSelectThePlayAreaText);
 		if ((hKeysHeld & PAD_B) != 0u)
-			return;
-
+			return (DevolutionBeam_PlayerSelectEffectResult){menu.f};
 		uint8_t selected_duelist = 0u;
 		HandleEvolvedCardSelectionResult selection;
 		if (hCurMenuItem != 0u) {
@@ -12091,10 +12101,9 @@ void DevolutionBeam_PlayerSelectEffect(void)
 			if ((selection.f & 0x10u) != 0u)
 				continue;
 		}
-
 		hTemp_ffa0 = selected_duelist;
 		hAIPkmnPowerEffectParam = hTempPlayAreaLocation_ff9d;
-		return;
+		return (DevolutionBeam_PlayerSelectEffectResult){selection.f};
 	}
 }
 /* <<< factory DevolutionBeam_PlayerSelectEffect */

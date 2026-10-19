@@ -2859,8 +2859,8 @@ static void adapt_StrangeBehavior_CheckDamage(ProbeState *s)
 /* >>> factory EnergyTrans_PrintProcedure */
 static void adapt_EnergyTrans_PrintProcedure(ProbeState *s)
 {
-	(void)s;
-	EnergyTrans_PrintProcedure();
+	EnergyTrans_PrintProcedureResult result = EnergyTrans_PrintProcedure();
+	s->f = result.f;
 }
 /* <<< factory EnergyTrans_PrintProcedure */
 
@@ -3332,8 +3332,8 @@ static void adapt_DestinyBond_PlayerSelectEffect(ProbeState *s)
 /* >>> factory FlamesOfRage_PlayerSelectEffect */
 static void adapt_FlamesOfRage_PlayerSelectEffect(ProbeState *s)
 {
-	(void)s;
-	FlamesOfRage_PlayerSelectEffect();
+	FlamesOfRage_PlayerSelectEffectResult result = FlamesOfRage_PlayerSelectEffect();
+	s->f = result.f;
 }
 /* <<< factory FlamesOfRage_PlayerSelectEffect */
 
@@ -3552,8 +3552,8 @@ static void adapt_Whirlpool_PlayerSelectEffect(ProbeState *s)
 /* >>> factory FireSpin_PlayerSelectEffect */
 static void adapt_FireSpin_PlayerSelectEffect(ProbeState *s)
 {
-	(void)s;
-	FireSpin_PlayerSelectEffect();
+	FireSpin_PlayerSelectEffectResult result = FireSpin_PlayerSelectEffect();
+	s->f = result.f;
 }
 /* <<< factory FireSpin_PlayerSelectEffect */
 
@@ -4031,8 +4031,8 @@ static void adapt_PlayAttackAnimationOverAttackingPokemon(ProbeState *s)
 /* >>> factory PokemonTrader_PlayerHandSelection */
 static void adapt_PokemonTrader_PlayerHandSelection(ProbeState *s)
 {
-	(void)s;
-	PokemonTrader_PlayerHandSelection();
+	PokemonTrader_PlayerHandSelectionResult result = PokemonTrader_PlayerHandSelection();
+	s->f = result.f;
 }
 /* <<< factory PokemonTrader_PlayerHandSelection */
 
@@ -4048,8 +4048,8 @@ static void adapt_EnergyRetrieval_PlayerDiscardPileSelection(ProbeState *s)
 /* >>> factory EnergyRetrieval_PlayerHandSelection */
 static void adapt_EnergyRetrieval_PlayerHandSelection(ProbeState *s)
 {
-	(void)s;
-	EnergyRetrieval_PlayerHandSelection();
+	EnergyRetrieval_PlayerHandSelectionResult result = EnergyRetrieval_PlayerHandSelection();
+	s->f = result.f;
 }
 /* <<< factory EnergyRetrieval_PlayerHandSelection */
 
@@ -4265,8 +4265,8 @@ static void adapt_BigEggsplosion_MultiplierEffect(ProbeState *s)
 /* >>> factory PokemonFlute_PlayerSelection */
 static void adapt_PokemonFlute_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	PokemonFlute_PlayerSelection();
+	PokemonFlute_PlayerSelectionResult result = PokemonFlute_PlayerSelection();
+	s->f = result.f;
 }
 /* <<< factory PokemonFlute_PlayerSelection */
 
@@ -4350,8 +4350,8 @@ static void adapt_Thunderpunch_RecoilEffect(ProbeState *s)
 /* >>> factory Revive_PlayerSelection */
 static void adapt_Revive_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	Revive_PlayerSelection();
+	Revive_PlayerSelectionResult result = Revive_PlayerSelection();
+	s->f = result.f;
 }
 /* <<< factory Revive_PlayerSelection */
 
@@ -5360,8 +5360,8 @@ static void adapt_HandlePokemonAndEnergySelectionScreen(ProbeState *s)
 /* >>> factory Defender_PlayerSelection */
 static void adapt_Defender_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	Defender_PlayerSelection();
+	Defender_PlayerSelectionResult result = Defender_PlayerSelection();
+	s->f = result.f;
 }
 /* <<< factory Defender_PlayerSelection */
 
@@ -5377,24 +5377,24 @@ static void adapt_EnergyRemoval_PlayerSelection(ProbeState *s)
 /* >>> factory MrFuji_PlayerSelection */
 static void adapt_MrFuji_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	MrFuji_PlayerSelection();
+	MrFuji_PlayerSelectionResult result = MrFuji_PlayerSelection();
+	s->f = result.f;
 }
 /* <<< factory MrFuji_PlayerSelection */
 
 /* >>> factory Switch_PlayerSelection */
 static void adapt_Switch_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	Switch_PlayerSelection();
+	Switch_PlayerSelectionResult result = Switch_PlayerSelection();
+	s->f = result.f;
 }
 /* <<< factory Switch_PlayerSelection */
 
 /* >>> factory Cowardice_PlayerSelectEffect */
 static void adapt_Cowardice_PlayerSelectEffect(ProbeState *s)
 {
-	(void)s;
-	Cowardice_PlayerSelectEffect();
+	Cowardice_PlayerSelectEffectResult result = Cowardice_PlayerSelectEffect();
+	s->f = result.f;
 }
 /* <<< factory Cowardice_PlayerSelectEffect */
 
@@ -5411,8 +5411,8 @@ static void adapt_PealOfThunder_RandomlyDamageEffect(ProbeState *s)
 /* >>> factory TrainerCardAsPokemon_PlayerSelectSwitch */
 static void adapt_TrainerCardAsPokemon_PlayerSelectSwitch(ProbeState *s)
 {
-	(void)s;
-	TrainerCardAsPokemon_PlayerSelectSwitch();
+	TrainerCardAsPokemon_PlayerSelectSwitchResult result = TrainerCardAsPokemon_PlayerSelectSwitch();
+	s->f = result.f;
 }
 /* <<< factory TrainerCardAsPokemon_PlayerSelectSwitch */
 
@@ -5454,8 +5454,8 @@ static void adapt_Ram_SelectSwitchEffect(ProbeState *s)
 /* >>> factory GustOfWind_PlayerSelection */
 static void adapt_GustOfWind_PlayerSelection(ProbeState *s)
 {
-	(void)s;
-	GustOfWind_PlayerSelection();
+	GustOfWind_PlayerSelectionResult result = GustOfWind_PlayerSelection();
+	s->f = result.f;
 }
 /* <<< factory GustOfWind_PlayerSelection */
 
@@ -5545,8 +5545,8 @@ static void adapt_Spark_PlayerSelectEffect(ProbeState *s)
 /* >>> factory DevolutionBeam_PlayerSelectEffect */
 static void adapt_DevolutionBeam_PlayerSelectEffect(ProbeState *s)
 {
-	(void)s;
-	DevolutionBeam_PlayerSelectEffect();
+	DevolutionBeam_PlayerSelectEffectResult result = DevolutionBeam_PlayerSelectEffect();
+	s->f = result.f;
 }
 /* <<< factory DevolutionBeam_PlayerSelectEffect */
 
