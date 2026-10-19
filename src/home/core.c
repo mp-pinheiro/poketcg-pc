@@ -5613,8 +5613,8 @@ Func_7364Result Func_7364(void)
 		if (keys & (PAD_A | PAD_START)) {
 			uint8_t opp = wOpponentDeckID;
 			wNPCDuelDeckID = opp;
-			(void)GetNPCDuelConfigurations(opp, 0u, 0u, 0u, 0u, 0u, 0u);
-			return (Func_7364Result){0u, 0x80u};
+			GetNPCDuelConfigurationsResult cfg = GetNPCDuelConfigurations(opp, 0u, 0u, 0u, 0u, 0u, 0u);
+			return (Func_7364Result){cfg.a, 0u};
 		}
 		if (b & (1u << B_PAD_B)) {
 			return (Func_7364Result){0u, 0x10u};

@@ -5417,6 +5417,14 @@ CASES["Func_7364"] = [
         "instruction_budget": 2000000,
         "cycle_budget": 8000000,
     },
+    {
+        "keys": 0x01,
+        "wram": {sym("wOpponentDeckID"): b"\x00", sym("wOpponentPortrait"): b"\x02", sym("wNPCDuelPrizes"): b"\x03"},
+        "sram": {0: {sym("sPlayerName"): b"\x21\x22\x00"}},
+        "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+    },
     dict(
         POISON,
         keys=0x02,
@@ -14287,9 +14295,9 @@ MUTATIONS["LookForEnergyNeededInHand"] = {
 # >>> factory-mutation Func_7364
 MUTATIONS["Func_7364"] = {
     "source_symbol": "Func_7364",
-    "before": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x10u};",
-    "after": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x20u};",
-    "case_ids": ["Func_7364-0", "Func_7364-1"],
+    "before": "\t\t\tGetNPCDuelConfigurationsResult cfg = GetNPCDuelConfigurations(opp, 0u, 0u, 0u, 0u, 0u, 0u);\n\t\t\treturn (Func_7364Result){cfg.a, 0u};",
+    "after": "\t\t\tGetNPCDuelConfigurationsResult cfg = GetNPCDuelConfigurations(opp, 0u, 0u, 0u, 0u, 0u, 0u);\n\t\t\treturn (Func_7364Result){0u, 0x80u};",
+    "case_ids": ["Func_7364-1"],
 }
 # <<< factory-mutation Func_7364
 # >>> factory-mutation CheckEnergyNeededForAttackAfterDiscard
