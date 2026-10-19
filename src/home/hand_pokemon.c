@@ -96,7 +96,7 @@ void AIDecideSpecialEvolutions(void)
 			CardDamageResult damage = GetCardDamageAndMaxHP(count);
 			total = (uint8_t)(total + damage.a);
 		}
-		if (total < 70u) {
+		if (total <= 70u) {
 			AIDiscourage(10u);
 			return;
 		}

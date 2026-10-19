@@ -32,6 +32,7 @@ CASES["AIDecideSpecialEvolutions"] = [
     {"wram": {wOpponentDeckID: b"\x00", wAIScore: b"\x20"}},
     {"wram": {wOpponentDeckID: b"\x0e", wLoadedCard2ID: b"\x31", wAIScore: b"\x20"}, "hram": {hTempPlayAreaLocation_ff9d: b"\x00"}, "expect": {wAIScore: b"\x20"}},
     {"wram": {wOpponentDeckID: b"\x1a", wLoadedCard2ID: b"\x26", wAIScore: b"\x20"}, "hram": {hTempPlayAreaLocation_ff9d: b"\x00"}},
+    {"wram": {wOpponentDeckID: b"\x1a", wLoadedCard2ID: b"\x26", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x02", sym("wOpponentDeck"): b"\x03\x06", sym("wOpponentArenaCardHP"): b"\x00", sym("wOpponentBench1CardHP"): b"\x00", wAIScore: b"\x20"}, "hram": {hWhoseTurn: b"\xc3", hTempPlayAreaLocation_ff9d: b"\x01"}, "expect": {wAIScore: b"\x16"}},
     dict(POISON, wram={wOpponentDeckID: b"\x00", wAIScore: b"\x20"}),
 ]
 # <<< factory AIDecideSpecialEvolutions
@@ -75,7 +76,7 @@ MUTATIONS["AIDecideSpecialEvolutions"] = {
     "source_symbol": "AIDecideSpecialEvolutions",
     "before": "\tuint8_t deck = wOpponentDeckID;",
     "after": "\tuint8_t deck = (uint8_t)(wOpponentDeckID + 1u);",
-    "case_ids": ["AIDecideSpecialEvolutions-1", "AIDecideSpecialEvolutions-2", "AIDecideSpecialEvolutions-3"],
+    "case_ids": ["AIDecideSpecialEvolutions-3"],
 }
 # <<< factory-mutation AIDecideSpecialEvolutions
 # >>> factory-mutation AIDecideEvolution

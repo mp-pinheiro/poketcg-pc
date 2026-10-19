@@ -1,9 +1,9 @@
 {
   "fn": "AIDecideSpecialEvolutions",
   "case": "tests/cases/hand_pokemon.py",
-  "index": 1,
+  "index": 3,
   "status": "RED",
-  "baseline": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52238\": \"0e\", \"52332\": \"31\", \"52670\": \"20\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecideSpecialEvolutions\", \"mismatches\": {\"bus\": {\"address\": 52670, \"reference\": \"0e3120\", \"native\": \"0e3116\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52238, 1], [52332, 1], [52670, 1]]}}}\n",
-  "restored": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52238\": \"0e\", \"52332\": \"31\", \"52670\": \"20\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50120\": \"0000\", \"50159\": \"02\", \"50304\": \"0306\", \"52238\": \"1a\", \"52332\": \"26\", \"52670\": \"2a\", \"65431\": \"c3\", \"65437\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecideSpecialEvolutions\", \"mismatches\": {\"bus\": {\"address\": 52670, \"reference\": \"03061a262ac301\", \"native\": \"03061a2620c301\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[50120, 2], [50159, 1], [50304, 2], [52238, 1], [52332, 1], [52670, 1], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIDecideSpecialEvolutions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"50120\": \"0000\", \"50159\": \"02\", \"50304\": \"0306\", \"52238\": \"1a\", \"52332\": \"26\", \"52670\": \"2a\", \"65431\": \"c3\", \"65437\": \"01\"}}, \"status\": \"PASS\"}\n"
 }
