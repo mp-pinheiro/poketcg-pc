@@ -1959,8 +1959,10 @@ GiftCenter_ReceiveDeckResult GiftCenter_ReceiveDeck(void)
 		if (!(empty & CARRY_FLAG)) {
 			HandleYesOrNoMenuResult answer =
 				YesOrNoMenuWithText(OKIfFileDeletedText);
-			if (!(answer.f & CARRY_FLAG))
+			if (answer.f & CARRY_FLAG) {
+				cursor = wCardListCursorPos;
 				continue;
+			}
 		}
 
 		wDuelTempList = 0u;
