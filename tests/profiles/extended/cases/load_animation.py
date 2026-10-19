@@ -97,7 +97,7 @@ MUTATIONS.update({
         'after': '\twCurPortrait = (uint8_t)(a ^ 1u);',
         'case_ids': ['DrawOpponentPortrait-0', 'DrawOpponentPortrait-1'],
         'source': 'src/profiles/extended/home/load_animation.c'},
-    'DrawPlayerPortrait': {'source_symbol': 'DrawPlayerPortrait', 'before': '\twCurPortrait = PORTRAIT_PLAYER;', 'after': '\twCurPortrait = (uint8_t)((PORTRAIT_PLAYER) ^ 1u);', 'case_ids': ['DrawPlayerPortrait-0'], 'source': 'src/profiles/extended/home/load_animation.c'},
+    'DrawPlayerPortrait': {'source_symbol': 'DrawPlayerPortrait', 'before': '\twCurPortrait = runtime_player_gender() ? NUM_PORTRAITS : PORTRAIT_PLAYER;', 'after': '\twCurPortrait = runtime_player_gender() ? NUM_PORTRAITS : (uint8_t)((PORTRAIT_PLAYER) ^ 1u);', 'case_ids': ['DrawPlayerPortrait-0'], 'source': 'src/profiles/extended/home/load_animation.c'},
     'LoadScene': {   'source_symbol': 'LoadScene',
         'before': '\t_LoadScene(a, b, c);',
         'after': '\t(void)0;',
