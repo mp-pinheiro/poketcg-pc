@@ -5,6 +5,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "home/frames.h"
 /* <<< part includes */
 /* >>> part includes_2 */
 #include "home/ir_core.h"
@@ -259,6 +260,7 @@ Func_1971eResult Func_1971e(void)
 			(void)TransmitByteThroughIR(0x33u, 0u, 0u, 0u);
 			return (Func_1971eResult){0u, 0x80u};
 		}
+		frame_boundary_busy_wait();
 	}
 }
 /* <<< factory Func_1971e */
@@ -300,6 +302,7 @@ Func_19705Result Func_19705(void)
 		if (r.a == 0x33u) {
 			return (Func_19705Result){0u, 0x80u};
 		}
+		frame_boundary_busy_wait();
 	}
 }
 /* <<< factory Func_19705 */
@@ -514,8 +517,10 @@ TryReceiveIRRequestResult TryReceiveIRRequest(void)
 		uint8_t joyp = gb_read8(RJOYP_ADDR);
 		joyp = (uint8_t)(~joyp);
 		joyp = (uint8_t)(joyp & (P10 | P11));
-		if (joyp == 0u)
+		if (joyp == 0u) {
+			frame_boundary_busy_wait();
 			continue;
+		}
 		TryReceiveIRRequestResult result = {(uint8_t)joyp, 0x10u};
 		CloseIRCommunications();
 		return result;
