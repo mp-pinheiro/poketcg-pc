@@ -2046,13 +2046,13 @@ AIPickEnergyCardToDiscardResult AIPickEnergyCardToDiscardFromDefendingPokemon(vo
 		return (AIPickEnergyCardToDiscardResult){0xFFu};
 	}
 
-	uint8_t color = 0x07u;
-	uint8_t colorless = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 7u));
+	uint8_t color = COLORLESS;
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+	uint8_t colorless = gb_read8((uint16_t)(wAttachedEnergies_ADDR + COLORLESS));
 	if (colorless == 0u) {
-		DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-		LoadCardDataToBuffer1_FromDeckIndex(arena.a);
 		color = wLoadedCard1Type;
-		if (color >= 0x07u ||
+		if (color >= COLORLESS ||
 		    gb_read8((uint16_t)(wAttachedEnergies_ADDR + color)) == 0u)
 			color = 0xFFu;
 	}

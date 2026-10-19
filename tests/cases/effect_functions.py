@@ -1,4 +1,5 @@
 from tests.cases._symbols import STACK_CANARY, STACK_TOP, const, deck_bytes, sym, sym_bank
+from tests.cases._fixtures import energy_removal_fixture as _energy_removal_fixture, ENERGY_REMOVAL_REGS as _ENERGY_REMOVAL_REGS
 from tests.cases._fixtures import Fixture, lass_hand_fixture
 from tests.cases._fixtures import trainer_discard_list_fixture as _trainer_discard_list_fixture, TRAINER_DISCARD_LIST_REGS as _TRAINER_DISCARD_LIST_REGS
 from tests.cases._fixtures import color_name_fixture as _color_name_fixture, COLOR_NAME_REGS as _COLOR_NAME_REGS
@@ -546,11 +547,22 @@ CASES["LoadCardNameAndInputColor"] = [
 
 # >>> factory AIPickEnergyCardToDiscardFromDefendingPokemon
 CONTRACT["AIPickEnergyCardToDiscardFromDefendingPokemon"] = {"compare": ("a",), "preserve": ()}
+_AI_PICK_BASE = {
+    sym("hWhoseTurn"): b"\xC3",
+    sym("wPlayerArenaCard"): b"\x1D",
+    sym("wPlayerCardLocations"): b"\x10" + b"\x00" * 0x1C + b"\x10" + b"\x00" * (60 - 0x1D - 1),
+    sym("wPlayerDeck"): b"\x07\x05" + b"\x00" * 0x1B + b"\x7D" + b"\x00" * (60 - 0x1D - 1),
+}
+def _ai_pick_case(changes):
+    case = dict(_ENERGY_REMOVAL_REGS, **_energy_removal_fixture(
+        changes=changes, vram=False, bank=sym_bank("AIPickEnergyCardToDiscardFromDefendingPokemon")))
+    case["read"][sym("wLoadedCard1")] = 8
+    return case
+
 CASES["AIPickEnergyCardToDiscardFromDefendingPokemon"] = [
-    {"wram": {sym("wDecompressionSecondaryBufferStart"): b"\x00"}},
-    {"wram": {sym("wDecompressionSecondaryBufferStart") + 0x100: b"\x00"}},
-    dict(POISON, wram={sym("wDecompressionSecondaryBufferStart"): b"\x00"}),
-    dict(POISON, wram={sym("wDecompressionSecondaryBufferStart") + 0x100: b"\x00"}),
+    _ai_pick_case({**_AI_PICK_BASE, sym("wPlayerCardLocations"): b"\x10\x10" + b"\x00" * 0x1B + b"\x10" + b"\x00" * (60 - 0x1D - 1)}),
+    _ai_pick_case({**_AI_PICK_BASE, sym("wPlayerCardLocations"): b"\x10" + b"\x00" * 0x1C + b"\x10" + b"\x00" * (60 - 0x1D - 1)}),
+    _ai_pick_case({**_AI_PICK_BASE, sym("wPlayerDeck"): b"\x00\x00" + b"\x00" * 0x1B + b"\xA3" + b"\x00" * (60 - 0x1D - 1)}),
 ]
 # <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon
 
@@ -8438,9 +8450,9 @@ MUTATIONS["LoadCardNameAndInputColor"] = {"source_symbol": "LoadCardNameAndInput
 # >>> factory-mutation AIPickEnergyCardToDiscardFromDefendingPokemon
 MUTATIONS["AIPickEnergyCardToDiscardFromDefendingPokemon"] = {
     "source_symbol": "AIPickEnergyCardToDiscardFromDefendingPokemon",
-    "before": "return (AIPickEnergyCardToDiscardResult){0xFFu};",
-    "after": "return (AIPickEnergyCardToDiscardResult){0xFEu};",
-    "case_ids": ["AIPickEnergyCardToDiscardFromDefendingPokemon-0"],
+    "before": "uint8_t color = COLORLESS;",
+    "after": "uint8_t color = 0x07u;",
+    "case_ids": ["AIPickEnergyCardToDiscardFromDefendingPokemon-0", "AIPickEnergyCardToDiscardFromDefendingPokemon-1", "AIPickEnergyCardToDiscardFromDefendingPokemon-2"],
 }
 # <<< factory-mutation AIPickEnergyCardToDiscardFromDefendingPokemon
 # >>> factory-mutation AIFindTargetForBenchAttack
