@@ -142,6 +142,18 @@ void isr_on_site(unsigned site)
 	isr_deliver_matching((int)site, NULL, seen);
 }
 
+int isr_deliver_pending(unsigned kind)
+{
+	if (!g_track || g_delivering || g_context || g_cursor >= g_end || g_track->kind[g_cursor] != kind)
+		return 0;
+	g_delivering = 1;
+	g_deliver(g_interval, g_track->kind[g_cursor], g_track->ordinal[g_cursor], g_track->value[g_cursor]);
+	g_delivering = 0;
+	g_cursor++;
+	g_placed++;
+	return 1;
+}
+
 void isr_close_interval(void)
 {
 	if (!g_track)

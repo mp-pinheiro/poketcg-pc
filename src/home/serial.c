@@ -8,6 +8,7 @@
 #include "generated/wram.h"
 #include "home/printer.h"
 #include "mem.h"
+#include "link.h"
 /* <<< part includes */
 /* >>> part includes_2 */
 #include "home/menus.h"
@@ -132,7 +133,7 @@ Func0cc5Result Func_0cc5(uint8_t a, uint8_t b, uint8_t c, uint8_t e)
 		gb_write8(rSC, SC_INTERNAL);
 		gb_write8(rSC, (uint8_t)(SC_START | SC_INTERNAL));
 		while (gb_read8(wSerialRecvCounter_ADDR) == 0)
-			;
+			link_wait_transfer();
 		gb_write8(wSerialRecvCounter_ADDR, 0);
 		e = 0x29u;
 		if (gb_read8(wSerialRecvBuf_ADDR) != 0x12u)

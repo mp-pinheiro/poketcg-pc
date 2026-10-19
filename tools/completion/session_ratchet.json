@@ -2009,6 +2009,9 @@
   "link-duel-b": {
     "confirmed_ordinal": 52372
   },
+  "lobby-battle-center-no-link": {
+    "confirmed_ordinal": 8203
+  },
   "lobby-save": {
     "confirmed_ordinal": 110690
   },

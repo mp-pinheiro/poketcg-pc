@@ -13441,8 +13441,8 @@ MUTATIONS["CheckIfEnoughEnergiesToRetreat"] = {
 # >>> factory-mutation DecideLinkDuelVariables
 MUTATIONS["DecideLinkDuelVariables"] = {
     "source_symbol": "DecideLinkDuelVariables",
-    "before": "ResetSerial();\n\t\t\treturn 0x90u;",
-    "after": "return 0x00u;",
+    "before": "\tResetSerial();\n\treturn 0x90u;",
+    "after": "\treturn 0x00u;",
     "case_ids": ["DecideLinkDuelVariables-0", "DecideLinkDuelVariables-1"],
 }
 # <<< factory-mutation DecideLinkDuelVariables

@@ -3776,18 +3776,18 @@ uint8_t DecideLinkDuelVariables(void)
 	for (;;) {
 		DoFrame();
 		uint8_t keys = hKeysPressed;
-		if (keys & PAD_B) {
-			ResetSerial();
-			return 0x90u;
-		}
+		if (keys & PAD_B)
+			break;
 		Func0cc5Result ready = Func_0cc5(keys & PAD_START, 0u, 0u, 0u);
 		if (ready.f & 0x10u) {
-			uint16_t page = gb_read8(wSerialOp_ADDR) == 0x29u ?
-				wPlayerDuelVariables_ADDR : wOpponentDuelVariables_ADDR;
-			(void)page;
-			return 0x00u;
+			uint8_t op = gb_read8(wSerialOp_ADDR);
+			if (op == 0x29u || op == 0x12u)
+				return 0x00u;
+			break;
 		}
 	}
+	ResetSerial();
+	return 0x90u;
 }
 /* <<< factory DecideLinkDuelVariables */
 

@@ -56,6 +56,10 @@ void link_replay_serial(uint8_t received)
 	(void)received;
 }
 
+void link_wait_transfer(void)
+{
+}
+
 uint32_t link_transport_exchanges(void)
 {
 	return 0u;

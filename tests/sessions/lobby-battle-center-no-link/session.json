@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap FIGHTING_CLUB_LOBBY, x 6, y 8, facing north, resealed): the Battle Center counter (map object NORTH 6,6, Script_fc52), 'duel a friend?' Yes, the link screen, START pressed with no link partner: the handshake fails, the not-connected scene and transmission error text, back to the lobby (Script_fc60)",
+  "name": "lobby-battle-center-no-link",
+  "ordinals": 8203,
+  "pokes": {},
+  "recorded": "2026-10-19T16:06:32+00:00",
+  "save": "lobby-battle-center.sav",
+  "save_sha256": "0eeefd0461fe80ed3e56243ca8454c5b339ea5fd8413c6e1007e5a7b75ddb818",
+  "schema": 1
+}
