@@ -2003,6 +2003,9 @@
   "lab-pc-mail-packs": {
     "confirmed_ordinal": 13669
   },
+  "lab-pc-print-no-printer": {
+    "confirmed_ordinal": 4733
+  },
   "lab-sam-normal-duel-win": {
     "confirmed_ordinal": 11627
   },
@@ -2164,6 +2167,12 @@
   },
   "tas-5530s": {
     "confirmed_ordinal": 69494
+  },
+  "title-card-pop-no-partner": {
+    "confirmed_ordinal": 996
+  },
+  "tmp-card-pop-trunc": {
+    "confirmed_ordinal": 686
   },
   "water-2": {
     "confirmed_ordinal": 459041

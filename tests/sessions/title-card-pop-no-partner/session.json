@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Boot with mitch-ready.sav: at the start menu choose CARD POP!, advance the ready text, hold B through the infrared wait with no partner so Card Pop! fails, read the error scene, and return to the start menu",
+  "name": "title-card-pop-no-partner",
+  "ordinals": 996,
+  "pokes": {},
+  "recorded": "2026-10-19T19:51:45+00:00",
+  "save": "mitch-ready.sav",
+  "save_sha256": "0eeefd0461fe80ed3e56243ca8454c5b339ea5fd8413c6e1007e5a7b75ddb818",
+  "schema": 1
+}
