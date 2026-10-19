@@ -5919,7 +5919,7 @@ StrangeBehavior_CheckDamageResult StrangeBehavior_CheckDamage(void)
 EnergyTrans_PrintProcedureResult EnergyTrans_PrintProcedure(void)
 {
 	DrawWholeScreenTextBox(ProcedureForEnergyTransferText);
-	return (EnergyTrans_PrintProcedureResult){0u};
+	return (EnergyTrans_PrintProcedureResult){0x80u};
 }
 /* <<< factory EnergyTrans_PrintProcedure */
 
@@ -6966,8 +6966,10 @@ FlamesOfRage_PlayerSelectEffectResult FlamesOfRage_PlayerSelectEffect(void)
 		uint16_t hl = GetNextPositionInTempList();
 		gb_write8(hl, hTempCardIndex_ff98);
 		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
-		if (hCurSelectionItem >= 2u)
-			return (FlamesOfRage_PlayerSelectEffectResult){0x80u};
+		uint8_t chosen = hCurSelectionItem;
+		if (chosen >= 2u)
+			return (FlamesOfRage_PlayerSelectEffectResult){(uint8_t)(0x40u | (chosen == 2u ? 0x80u : 0u)
+				| ((chosen & 0x0Fu) < 2u ? 0x20u : 0u))};
 		{ uint8_t saved = hBankROM; BankswitchROM(DisplayEnergyDiscardMenu_BANK); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
 	}
 }
@@ -12086,7 +12088,7 @@ DevolutionBeam_PlayerSelectEffectResult DevolutionBeam_PlayerSelectEffect(void)
 		DrawDuelMainScene();
 		HandleYesOrNoMenuResult menu = TwoItemHorizontalMenu(PleaseSelectThePlayAreaText);
 		if ((hKeysHeld & PAD_B) != 0u)
-			return (DevolutionBeam_PlayerSelectEffectResult){menu.f};
+			return (DevolutionBeam_PlayerSelectEffectResult){0x10u};
 		uint8_t selected_duelist = 0u;
 		HandleEvolvedCardSelectionResult selection;
 		if (hCurMenuItem != 0u) {
@@ -12103,7 +12105,7 @@ DevolutionBeam_PlayerSelectEffectResult DevolutionBeam_PlayerSelectEffect(void)
 		}
 		hTemp_ffa0 = selected_duelist;
 		hAIPkmnPowerEffectParam = hTempPlayAreaLocation_ff9d;
-		return (DevolutionBeam_PlayerSelectEffectResult){selection.f};
+		return (DevolutionBeam_PlayerSelectEffectResult){(uint8_t)(hTempPlayAreaLocation_ff9d == 0u ? 0x80u : 0u)};
 	}
 }
 /* <<< factory DevolutionBeam_PlayerSelectEffect */
