@@ -309,6 +309,21 @@ CASES["AIDecide_PokemonBreeder"].append({
              sym("wPlayerArenaCardFlags"): b"\x80", sym("wPlayerArenaCardHP"): b"\x28"},
     "read": {sym("wce06"): 2, sym("wce08"): 7, sym("wce0f"): 7, sym("wce1a"): 1},
 })
+CASES["AIDecide_PokemonBreeder"].append({
+    "instruction_budget": 2000000, "cycle_budget": 8000000,
+    "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsInHand"): b"\x01",
+             sym("wPlayerHand"): b"\x05", sym("wPlayerCardLocations") + 5: b"\x01",
+             **deck_entry(1, const("DRATINI"), base=sym("wPlayerDeck")),
+             **deck_entry(2, const("FIRE_ENERGY"), base=sym("wPlayerDeck")),
+             **deck_entry(3, const("FIRE_ENERGY"), base=sym("wPlayerDeck")),
+             **deck_entry(4, const("FIRE_ENERGY"), base=sym("wPlayerDeck")),
+             **deck_entry(5, const("DRAGONITE_LV41"), base=sym("wPlayerDeck")),
+             sym("wPlayerArenaCard"): b"\x01", sym("wPlayerCardLocations") + 1: b"\x10",
+             sym("wPlayerCardLocations") + 2: b"\x10", sym("wPlayerCardLocations") + 3: b"\x10",
+             sym("wPlayerCardLocations") + 4: b"\x10",
+             sym("wPlayerBench"): b"\xFF", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
+             sym("wPlayerArenaCardFlags"): b"\x80", sym("wPlayerArenaCardHP"): b"\x28"},
+})
 # <<< factory AIDecide_PokemonBreeder
 
 # >>> factory-cases-statics
@@ -1504,9 +1519,9 @@ MUTATIONS["AIDecide_SuperEnergyRetrieval"] = {
 # >>> factory-mutation AIDecide_PokemonBreeder
 MUTATIONS["AIDecide_PokemonBreeder"] = {
     "source_symbol": "AIDecide_PokemonBreeder",
-    "before": "if (wce06 == 0u)\n\t\treturn (AIDecidePokemonBreederResult){0u, 0x80u, d};",
-    "after": "if (wce06 == 0u)\n\t\treturn (AIDecidePokemonBreederResult){0u, 0x00u, d};",
-    "case_ids": ["AIDecide_PokemonBreeder-0"],
+    "before": "if (hp < 5u || energy.a < 3u)\n\t\t\t\t\t\tdragonite_carry = 1u;",
+    "after": "if (hp >= 5u || energy.a < 3u)\n\t\t\t\t\t\tdragonite_carry = 1u;",
+    "case_ids": ["AIDecide_PokemonBreeder-3"],
 }
 # <<< factory-mutation AIDecide_PokemonBreeder
 # >>> factory-mutation AIDecide_PokemonTrader_LegendaryMoltres

@@ -1112,10 +1112,9 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in, uint8_t d)
 			if (evolving_id == DRAGONITE_LV41) {
 				if (e == 0u) {
 					uint8_t hp = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
-					uint8_t counters = ConvertHPToDamageCounters_Bank8(hp);
 					CountNumberOfEnergyCardsAttachedResult energy =
 						CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA);
-					if (counters >= 5u || energy.a < 3u)
+					if (hp < 5u || energy.a < 3u)
 						dragonite_carry = 1u;
 				} else {
 					uint8_t total_count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;

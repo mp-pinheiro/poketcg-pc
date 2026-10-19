@@ -1,9 +1,9 @@
 {
   "fn": "AIDecide_PokemonBreeder",
   "case": "tests/cases/trainer_cards.py",
-  "index": 0,
+  "index": 3,
   "status": "RED",
-  "baseline": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 197, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"49902\": \"00\", \"50108\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_PokemonBreeder\", \"mismatches\": {\"f\": [128, 0]}}\n",
-  "restored": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 197, \"e\": 238, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"49902\": \"00\", \"50108\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 5, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49665\": \"1010101001\", \"49730\": \"05\", \"49851\": \"01ff\", \"49858\": \"80\", \"49864\": \"28\", \"49902\": \"0101\", \"50177\": \"bf020202c1\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_PokemonBreeder\", \"mismatches\": {\"f\": [128, 16], \"d\": [5, 0]}}\n",
+  "restored": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 5, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49665\": \"1010101001\", \"49730\": \"05\", \"49851\": \"01ff\", \"49858\": \"80\", \"49864\": \"28\", \"49902\": \"0101\", \"50177\": \"bf020202c1\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }
