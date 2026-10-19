@@ -983,7 +983,7 @@ TryAddCardToDeckResult TryAddCardToDeck(CardId id)
 	if (wTotalCardCount == max_cards)
 		return (TryAddCardToDeckResult){wTotalCardCount, 0x90u};
 	LoadCardDataToBuffer1_FromCardID(id);
-	if (wLoadedCard1Type != TYPE_ENERGY_DOUBLE_COLORLESS &&
+	if (wLoadedCard1Type == TYPE_ENERGY_DOUBLE_COLORLESS ||
 		(wLoadedCard1Type & TYPE_ENERGY) != TYPE_ENERGY) {
 		uint16_t name = (uint16_t)(wLoadedCard1Name |
 			(uint16_t)wLoadedCard1Name_PTR[1] << 8);
@@ -996,7 +996,7 @@ TryAddCardToDeckResult TryAddCardToDeck(CardId id)
 			if (GetCardName(card) == name) {
 				same = (uint8_t)(same + 1u);
 				if (same == wSameNameCardsLimit)
-					return (TryAddCardToDeckResult){0u, 0x10u};
+					return (TryAddCardToDeckResult){wSameNameCardsLimit, 0x90u};
 			}
 		}
 	}
@@ -1018,7 +1018,7 @@ TryAddCardToDeckResult TryAddCardToDeck(CardId id)
 	uint8_t filter = wCurCardTypeFilter;
 	uint16_t filter_address = (uint16_t)(wCardFilterCounts_ADDR + filter);
 	gb_write8(filter_address, (uint8_t)(gb_read8(filter_address) + 1u));
-	return (TryAddCardToDeckResult){0u, 0u};
+	return (TryAddCardToDeckResult){filter, (filter == 0u) ? 0x80u : 0x00u};
 }
 /* <<< factory TryAddCardToDeck */
 /* >>> factory AddCardToDeckAndUpdateCount */

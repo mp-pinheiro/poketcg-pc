@@ -2194,10 +2194,10 @@ TryAddCardToDeckResult TryAddCardToDeck(uint8_t e)
 {
 	uint8_t d = wMaxNumCardsAllowed;
 	if (wTotalCardCount == d)
-		return (TryAddCardToDeckResult){0u, 0x90u};
+		return (TryAddCardToDeckResult){wTotalCardCount, 0x90u};
 
 	LoadCardDataToBuffer1_FromCardID(e);
-	if (wLoadedCard1Type != TYPE_ENERGY_DOUBLE_COLORLESS &&
+	if (wLoadedCard1Type == TYPE_ENERGY_DOUBLE_COLORLESS ||
 	    (wLoadedCard1Type & TYPE_ENERGY) != TYPE_ENERGY) {
 		uint16_t name = (uint16_t)(wLoadedCard1Name |
 			(uint16_t)wLoadedCard1Name_PTR[1] << 8);
@@ -2206,7 +2206,7 @@ TryAddCardToDeckResult TryAddCardToDeck(uint8_t e)
 		while (*cards != 0u) {
 			uint16_t card_name = GetCardName(*cards);
 			if (card_name == name && ++same == wSameNameCardsLimit)
-				return (TryAddCardToDeckResult){0u, (uint8_t)0x10u};
+				return (TryAddCardToDeckResult){wSameNameCardsLimit, 0x90u};
 			++cards;
 		}
 	}
@@ -2214,7 +2214,7 @@ TryAddCardToDeckResult TryAddCardToDeck(uint8_t e)
 	GetCountOfCardInCurDeckResult count = GetCountOfCardInCurDeck(e);
 	uint8_t *owned = wOwnedCardsCountList_PTR + wCardListVisibleOffset + wCardListCursorPos;
 	if (count.a == *owned)
-		return (TryAddCardToDeckResult){count.a, 0x40u};
+		return (TryAddCardToDeckResult){count.a, 0x90u};
 
 	PlaySFX(SFX_CURSOR);
 	uint8_t *slot = wCurDeckCards_PTR;
@@ -2222,8 +2222,9 @@ TryAddCardToDeckResult TryAddCardToDeck(uint8_t e)
 		++slot;
 	*slot++ = e;
 	*slot = 0u;
-	++(wCardFilterCounts_PTR[wCurCardTypeFilter]);
-	return (TryAddCardToDeckResult){0u, 0u};
+	uint8_t filter = wCurCardTypeFilter;
+	++(wCardFilterCounts_PTR[filter]);
+	return (TryAddCardToDeckResult){filter, (filter == 0u) ? 0x80u : 0x00u};
 }
 /* <<< factory TryAddCardToDeck */
 

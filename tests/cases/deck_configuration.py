@@ -1,5 +1,5 @@
 """Oracle-diff cases for poketcg/src/engine/menus/deck_configuration.asm."""
-from tests.cases._symbols import card_id_size, deck_entries, sym, sym_bank, sym_pointer
+from tests.cases._symbols import card_id_size, const, deck_entries, sym, sym_bank, sym_pointer
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -939,6 +939,10 @@ CASES["TryAddCardToDeck"] = [
     {"wram": {sym("wTotalCardCount"): b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}},
     {"e": 0x01, "wram": {sym("wTotalCardCount"): b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}},
     dict(POISON, e=0xE4, wram={sym("wTotalCardCount"): b"\x00"}, expect_regs={"a": 0x00, "f": 0x90}),
+    dict(POISON, e=const("DOUBLE_COLORLESS_ENERGY"), rom_bank=2, wram={sym("wTotalCardCount"): b"\x04", sym("wMaxNumCardsAllowed"): b"\x3C", sym("wSameNameCardsLimit"): b"\x04", sym("wCurDeckCards"): bytes([const("DOUBLE_COLORLESS_ENERGY")]) * 4 + b"\x00\x00"}, read={sym("wCurDeckCards"): 6, sym("wCardFilterCounts"): 9}, expect_regs={"a": 0x04, "f": 0x90}),
+    {"e": const("BULBASAUR"), "rom_bank": 2, "wram": {sym("wTotalCardCount"): b"\x02", sym("wMaxNumCardsAllowed"): b"\x3C", sym("wCurDeckCards"): bytes([const("BULBASAUR"), const("BULBASAUR"), 0]), sym("wOwnedCardsCountList"): b"\x02", sym("wCardListVisibleOffset"): b"\x00", sym("wCardListCursorPos"): b"\x00"}, "expect_regs": {"a": 0x02, "f": 0x90}},
+    {"e": const("DOUBLE_COLORLESS_ENERGY"), "rom_bank": 2, "wram": {sym("wTotalCardCount"): b"\x03", sym("wMaxNumCardsAllowed"): b"\x3C", sym("wSameNameCardsLimit"): b"\x04", sym("wCurDeckCards"): bytes([const("DOUBLE_COLORLESS_ENERGY")]) * 3 + b"\x00", sym("wOwnedCardsCountList"): b"\x05", sym("wCardListVisibleOffset"): b"\x00", sym("wCardListCursorPos"): b"\x00", sym("wCurCardTypeFilter"): b"\x08", sym("wCardFilterCounts") + 8: b"\x00"}, "read": {sym("wCurDeckCards"): 5, sym("wCardFilterCounts") + 8: 1}, "expect_regs": {"a": 0x08, "f": 0x00}},
+    {"e": 0x00, "rom_bank": 2, "wram": {sym("wTotalCardCount"): b"\x3C", sym("wMaxNumCardsAllowed"): b"\x3C"}, "expect_regs": {"a": 0x3C, "f": 0x90}},
 ]
 # <<< factory TryAddCardToDeck
 
@@ -1601,7 +1605,7 @@ MUTATIONS["PrintConfirmationCardList"] = {"source_symbol": "PrintConfirmationCar
 MUTATIONS["CreateCurDeckUniqueCardList"] = {"source_symbol": "CreateCurDeckUniqueCardList", "before": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 0u;", "after": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 1u;", "case_ids": ["CreateCurDeckUniqueCardList-0", "CreateCurDeckUniqueCardList-1"]}
 # <<< factory-mutation CreateCurDeckUniqueCardList
 # >>> factory-mutation TryAddCardToDeck
-MUTATIONS["TryAddCardToDeck"] = {"source_symbol": "TryAddCardToDeck", "before": "\treturn (TryAddCardToDeckResult){0u, 0x90u};", "after": "\treturn (TryAddCardToDeckResult){0u, 0u};", "case_ids": ["TryAddCardToDeck-0", "TryAddCardToDeck-1", "TryAddCardToDeck-2"]}
+MUTATIONS["TryAddCardToDeck"] = {"source_symbol": "TryAddCardToDeck", "before": "if (wLoadedCard1Type == TYPE_ENERGY_DOUBLE_COLORLESS ||", "after": "if (wLoadedCard1Type != TYPE_ENERGY_DOUBLE_COLORLESS &&", "case_ids": ["TryAddCardToDeck-0", "TryAddCardToDeck-1", "TryAddCardToDeck-2", "TryAddCardToDeck-3"]}
 # <<< factory-mutation TryAddCardToDeck
 # >>> factory-mutation AddCardToDeckAndUpdateCount
 MUTATIONS["AddCardToDeckAndUpdateCount"] = {"source_symbol": "AddCardToDeckAndUpdateCount", "before": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, e};", "after": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, r.a};", "case_ids": ["AddCardToDeckAndUpdateCount-0", "AddCardToDeckAndUpdateCount-1"]}

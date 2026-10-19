@@ -1,9 +1,9 @@
 {
   "fn": "TryAddCardToDeck",
   "case": "tests/cases/deck_configuration.py",
-  "index": 0,
+  "index": 3,
   "status": "RED",
-  "baseline": "{\"fn\": \"TryAddCardToDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52940\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"TryAddCardToDeck\", \"mismatches\": {\"f\": [144, 0]}}\n",
-  "restored": "{\"fn\": \"TryAddCardToDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52940\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"TryAddCardToDeck\", \"registers\": {\"a\": 4, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 7, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52923\": \"000000000000000000\", \"52940\": \"04\", \"53015\": \"070707070000\", \"53201\": \"3c04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryAddCardToDeck\", \"mismatches\": {\"a\": [4, 0], \"f\": [144, 128], \"bus\": {\"address\": 52923, \"reference\": \"0000000000\", \"native\": \"0100000000\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[52923, 9], [52940, 1], [53015, 6], [53201, 2]]}}}\n",
+  "restored": "{\"fn\": \"TryAddCardToDeck\", \"registers\": {\"a\": 4, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 7, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52923\": \"000000000000000000\", \"52940\": \"04\", \"53015\": \"070707070000\", \"53201\": \"3c04\"}}, \"status\": \"PASS\"}\n"
 }
