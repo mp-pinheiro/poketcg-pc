@@ -199,7 +199,14 @@ def struct_members(header_text: str, type_name: str) -> set[str]:
     )
     if match is None:
         return set()
-    return set(re.findall(r"\b(\w+)\s*;", match.group("body")))
+    members: set[str] = set()
+    for declaration in match.group("body").split(";"):
+        declarators = declaration.split(",")
+        if not declarators[0].strip():
+            continue
+        declarators[0] = declarators[0].split()[-1]
+        members.update(re.sub(r"\[.*\]", "", d).strip().lstrip("*") for d in declarators)
+    return members
 
 
 THUNK_PARAMETERS = ("b", "c", "d", "e", "hl")
@@ -215,7 +222,7 @@ def start_script_addresses(header_text: str, symbols: dict[str, tuple[int, int]]
     return found
 
 
-def thunk(name: str, owner: tuple[str, str, str], header_text: str,
+def thunk(name: str, owner: tuple[str, str, str], header_text: str, all_headers: str,
           symbols: dict[str, tuple[int, int]]) -> str:
     _header, ret, args = owner
     continuation = start_script_addresses(header_text, symbols).get(name)
@@ -233,7 +240,11 @@ def thunk(name: str, owner: tuple[str, str, str], header_text: str,
         ('uint16_t hl' if p == 'hl' else f'uint8_t {p}') for p in THUNK_PARAMETERS
     )})", "{"]
     lines.append("\tScriptEntryRegs out = {(uint8_t)hl, 0u, b, c, d, e, hl};")
-    members = struct_members(header_text, ret) if ret != "void" else set()
+    members = set()
+    if ret != "void":
+        members = struct_members(header_text, ret) or struct_members(all_headers, ret)
+        if not members:
+            raise SystemExit(f"{name} returns {ret}, whose members are not declared in any home header")
     if ret == "void":
         lines.append(f"\t{name}({call_args});")
     else:
@@ -264,6 +275,7 @@ def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
     entries = script_entries(sym_path, rom_path, map_scripts, npc_map_data, map_objects, scripts)
     owners = ported_symbols(home, overlay)
     header_text = {p.name: p.read_text() for p in header_files(home, overlay)}
+    all_headers = "\n".join(header_text.values())
     symbols = symbol_table(sym_path)
 
     rows, thunks = [], []
@@ -277,7 +289,7 @@ def render(sym_path: Path, rom_path: Path, home: Path, map_scripts: Path,
         elif ported:
             owner = owners[c_name(name)]
             headers.add(owner[0])
-            thunks.append(thunk(c_name(name), owner, header_text[owner[0]], symbols))
+            thunks.append(thunk(c_name(name), owner, header_text[owner[0]], all_headers, symbols))
             rows.append(f'\t{{ 0x{offset:04X}u, "{name}", SCRIPT_ENTRY_ROUTINE, 0x{bank:02X}u, enter_{c_name(name)} }},')
         else:
             rows.append(f'\t{{ 0x{offset:04X}u, "{name}", SCRIPT_ENTRY_UNPORTED, 0x{bank:02X}u, NULL }},')
