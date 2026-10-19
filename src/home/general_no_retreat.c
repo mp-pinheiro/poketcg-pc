@@ -42,44 +42,12 @@ AIDoTurn_GeneralNoRetreatResult AIDoTurn_GeneralNoRetreat(uint8_t a, uint8_t f, 
 		HandleAICowardiceResult cowardice = HandleAICowardice();
 		a = cowardice.a;
 		f = cowardice.f;
-	}
-	if ((f & 0x10u) != 0u) {
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02); a = trainer.a; f = trainer.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_03); a = trainer.a; f = trainer.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_04); a = trainer.a; f = trainer.f;
-	AIDecidePlayPokemonCardResult played = AIDecidePlayPokemonCard();
-	if ((played.f & 0x10u) != 0u)
-		return (AIDoTurn_GeneralNoRetreatResult){played.f}; /* turn ended */
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_05); a = trainer.a; f = trainer.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_06); a = trainer.a; f = trainer.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07); a = trainer.a; f = trainer.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_08); a = trainer.a; f = trainer.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10); a = trainer.a; f = trainer.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_11); a = trainer.a; f = trainer.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_12); a = trainer.a; f = trainer.f;
-	if (wAlreadyPlayedEnergy == 0u)
-		AIProcessAndTryToPlayEnergy();
-	played = AIDecidePlayPokemonCard();
-	HandleAIDamageSwapResult swap2 = HandleAIDamageSwap(played.f);
-	a = swap2.a; f = swap2.f;
-	HandleAIPkmnPowersResult powers2 = HandleAIPkmnPowers();
-	a = powers2.a; f = powers2.f;
-	if ((f & 0x10u) != 0u)
-		return (AIDoTurn_GeneralNoRetreatResult){f};
-	HandleAIGoGoRainDanceEnergyResult rain2 = HandleAIGoGoRainDanceEnergy();
-	a = rain2.a; f = rain2.f;
-	HandleAIEnergyTransResult energy = HandleAIEnergyTrans(AI_ENERGY_TRANS_ATTACK);
-	a = energy.a; f = energy.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_13); a = trainer.a; f = trainer.f;
-	trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_15); a = trainer.a; f = trainer.f;
-	if ((wPreviousAIFlags & AI_FLAG_USED_PROFESSOR_OAK) != 0u) {
-		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_01); a = trainer.a; f = trainer.f;
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02); a = trainer.a; f = trainer.f;
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_03); a = trainer.a; f = trainer.f;
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_04); a = trainer.a; f = trainer.f;
-		played = AIDecidePlayPokemonCard();
+		AIDecidePlayPokemonCardResult played = AIDecidePlayPokemonCard();
 		if ((played.f & 0x10u) != 0u)
-			return (AIDoTurn_GeneralNoRetreatResult){played.f}; /* turn ended */
+			return (AIDoTurn_GeneralNoRetreatResult){played.f};
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_05); a = trainer.a; f = trainer.f;
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_06); a = trainer.a; f = trainer.f;
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07); a = trainer.a; f = trainer.f;
@@ -90,16 +58,46 @@ AIDoTurn_GeneralNoRetreatResult AIDoTurn_GeneralNoRetreat(uint8_t a, uint8_t f, 
 		if (wAlreadyPlayedEnergy == 0u)
 			AIProcessAndTryToPlayEnergy();
 		played = AIDecidePlayPokemonCard();
-		HandleAIDamageSwapResult swap3 = HandleAIDamageSwap(played.f);
-		a = swap3.a; f = swap3.f;
-		HandleAIPkmnPowersResult powers3 = HandleAIPkmnPowers();
-		a = powers3.a; f = powers3.f;
+		HandleAIDamageSwapResult swap2 = HandleAIDamageSwap(played.f);
+		a = swap2.a; f = swap2.f;
+		HandleAIPkmnPowersResult powers2 = HandleAIPkmnPowers();
+		a = powers2.a; f = powers2.f;
 		if ((f & 0x10u) != 0u)
 			return (AIDoTurn_GeneralNoRetreatResult){f};
-		HandleAIGoGoRainDanceEnergyResult rain3 = HandleAIGoGoRainDanceEnergy();
-		a = rain3.a; f = rain3.f;
+		HandleAIGoGoRainDanceEnergyResult rain2 = HandleAIGoGoRainDanceEnergy();
+		a = rain2.a; f = rain2.f;
+		HandleAIEnergyTransResult energy = HandleAIEnergyTrans(AI_ENERGY_TRANS_ATTACK);
+		a = energy.a; f = energy.f;
 		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_13); a = trainer.a; f = trainer.f;
-	}
+		trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_15); a = trainer.a; f = trainer.f;
+		if ((wPreviousAIFlags & AI_FLAG_USED_PROFESSOR_OAK) != 0u) {
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_01); a = trainer.a; f = trainer.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_02); a = trainer.a; f = trainer.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_03); a = trainer.a; f = trainer.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_04); a = trainer.a; f = trainer.f;
+			played = AIDecidePlayPokemonCard();
+			if ((played.f & 0x10u) != 0u)
+				return (AIDoTurn_GeneralNoRetreatResult){played.f};
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_05); a = trainer.a; f = trainer.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_06); a = trainer.a; f = trainer.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_07); a = trainer.a; f = trainer.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_08); a = trainer.a; f = trainer.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_10); a = trainer.a; f = trainer.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_11); a = trainer.a; f = trainer.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_12); a = trainer.a; f = trainer.f;
+			if (wAlreadyPlayedEnergy == 0u)
+				AIProcessAndTryToPlayEnergy();
+			played = AIDecidePlayPokemonCard();
+			HandleAIDamageSwapResult swap3 = HandleAIDamageSwap(played.f);
+			a = swap3.a; f = swap3.f;
+			HandleAIPkmnPowersResult powers3 = HandleAIPkmnPowers();
+			a = powers3.a; f = powers3.f;
+			if ((f & 0x10u) != 0u)
+				return (AIDoTurn_GeneralNoRetreatResult){f};
+			HandleAIGoGoRainDanceEnergyResult rain3 = HandleAIGoGoRainDanceEnergy();
+			a = rain3.a; f = rain3.f;
+			trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_13); a = trainer.a; f = trainer.f;
+		}
 	}
 	AIProcessAttacksResult attack = AIProcessAndTryToUseAttack();
 	if ((attack.f & 0x10u) != 0u)
