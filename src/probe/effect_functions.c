@@ -1814,7 +1814,7 @@ static void adapt_CopyPlayAreaHPFromBackup_Unreferenced(ProbeState *s) { (void)s
 static void adapt_Gale_LoadAnimation(ProbeState *s) { (void)s; Gale_LoadAnimation(); }
 /* <<< factory Gale_LoadAnimation */
 /* >>> factory EnergySearch_DeckCheck */
-static void adapt_EnergySearch_DeckCheck(ProbeState *s) { s->f = EnergySearch_DeckCheck(); }
+static void adapt_EnergySearch_DeckCheck(ProbeState *s) { EnergySearchDeckCheckResult result = EnergySearch_DeckCheck(); s->f = result.f; s->hl = result.hl; }
 /* <<< factory EnergySearch_DeckCheck */
 /* >>> factory CheckIfCardIsBasicEnergy */
 static void adapt_CheckIfCardIsBasicEnergy(ProbeState *s) { s->f = CheckIfCardIsBasicEnergy(s->a); }

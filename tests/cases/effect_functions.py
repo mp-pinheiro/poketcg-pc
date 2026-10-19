@@ -8156,7 +8156,7 @@ CASES["CopyPlayAreaHPFromBackup_Unreferenced"] = [
 ]
 # <<< factory CopyPlayAreaHPFromBackup_Unreferenced
 # >>> factory EnergySearch_DeckCheck
-CONTRACT["EnergySearch_DeckCheck"] = {"compare": ("f",), "preserve": ()}
+CONTRACT["EnergySearch_DeckCheck"] = {"compare": ("f", "hl"), "preserve": ()}
 CASES["EnergySearch_DeckCheck"] = [
 	{"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x00"}},
 	{"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x3C"}},

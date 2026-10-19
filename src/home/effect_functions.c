@@ -4462,12 +4462,12 @@ void Gale_LoadAnimation(void)
 /* <<< factory Gale_LoadAnimation */
 
 /* >>> factory EnergySearch_DeckCheck */
-uint8_t EnergySearch_DeckCheck(void)
+EnergySearchDeckCheckResult EnergySearch_DeckCheck(void)
 {
 	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
 	if (count.a == DECK_SIZE)
-		return 0x90u;
-	return (count.a > DECK_SIZE) ? 0x10u : 0x00u;
+		return (EnergySearchDeckCheckResult){0x90u, NoCardsLeftInTheDeckText};
+	return (EnergySearchDeckCheckResult){(uint8_t)(count.a > DECK_SIZE ? 0x10u : 0x00u), NoCardsLeftInTheDeckText};
 }
 /* <<< factory EnergySearch_DeckCheck */
 

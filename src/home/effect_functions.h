@@ -760,7 +760,8 @@ void CopyPlayAreaHPFromBackup_Unreferenced(void);
 void Gale_LoadAnimation(void);
 /* <<< factory Gale_LoadAnimation */
 /* >>> factory EnergySearch_DeckCheck */
-uint8_t EnergySearch_DeckCheck(void);
+typedef struct { uint8_t f; uint16_t hl; } EnergySearchDeckCheckResult;
+EnergySearchDeckCheckResult EnergySearch_DeckCheck(void);
 /* <<< factory EnergySearch_DeckCheck */
 /* >>> factory CheckIfCardIsBasicEnergy */
 uint8_t CheckIfCardIsBasicEnergy(uint8_t a);
