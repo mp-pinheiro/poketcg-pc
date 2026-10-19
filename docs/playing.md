@@ -52,6 +52,8 @@ These locations apply to the launcher and packaged entry points:
 
 Vanilla uses `poketcg.sav`; Extended uses `poketcg-extended.sav`. `last-game` in the save directory records the launcher selection. Both profiles share the options file.
 
+The save file is rewritten whenever the game finishes writing cartridge RAM: the diary save, and the save the game makes on its own before every duel. A crash or a forced close keeps everything a cartridge battery would have kept.
+
 Native source builds and Linux AppImages accept `POKETCG_CONFIG` as an options-file override. Windows `Play.bat` sets that variable to the options path shown above.
 
 `display` in `options.conf` selects the monitor the window opens on, counted from 0 in the order the system reports displays. The window is centered on that monitor and stays centered on it when RESOLUTION or SGB changes its size.

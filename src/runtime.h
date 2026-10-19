@@ -88,6 +88,7 @@ void runtime_set_pcm_sink(FILE *sink);
 void runtime_set_state_dump_ordinals(
 	RuntimeStateDumpCb callback, const uint32_t *ordinals, size_t count);
 void runtime_set_stop_ordinal(uint32_t ordinal);
+void runtime_set_save_path(const char *path);
 /* Pokes: bus writes applied at the anchor of the named ordinal, right after
  * the interval's VBlank services and before the digest and any dump, which
  * is where refstream.Core applies the same file. Sorted by ordinal. A poke is

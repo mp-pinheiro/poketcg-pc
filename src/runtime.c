@@ -20,8 +20,8 @@
 #include "apu.h"
 #include "title_badge.h"
 #include "trace.h"
-#ifdef POKETCG_DEBUG_MENU
 #include "persistence.h"
+#ifdef POKETCG_DEBUG_MENU
 #include "state_dump.h"
 #include "generated/hram.h"
 #include "generated/sram.h"
@@ -54,6 +54,8 @@ static uint32_t g_stop_ordinal;
 static const RuntimePoke *g_pokes;
 static size_t g_poke_count;
 static size_t g_poke_next;
+static const char *g_save_path;
+static uint8_t g_sram_persisted[sizeof g_sram];
 static const LagTrack *g_lag;
 /* Timer-ISR schedule progress within the current DoFrame interval. */
 static struct {
@@ -288,6 +290,22 @@ void runtime_set_state_dump_ordinals(
 void runtime_set_stop_ordinal(uint32_t ordinal)
 {
 	g_stop_ordinal = ordinal;
+}
+
+void runtime_set_save_path(const char *path)
+{
+	g_save_path = path;
+	memcpy(g_sram_persisted, g_sram, sizeof g_sram_persisted);
+}
+
+static void persist_sram(void)
+{
+	if (!g_save_path || g_sram_enabled ||
+	    memcmp(g_sram, g_sram_persisted, sizeof g_sram_persisted) == 0)
+		return;
+	memcpy(g_sram_persisted, g_sram, sizeof g_sram_persisted);
+	if (sram_save_atomic(g_save_path, profile_current().id) != 0)
+		fprintf(stderr, "cannot save %s\n", g_save_path);
 }
 
 void runtime_set_pokes(const RuntimePoke *pokes, size_t count)
@@ -1020,6 +1038,7 @@ int runtime_run_with_input(
 		}
 		state.frame_ready = 0;
 		pthread_mutex_unlock(&state.lock);
+		persist_sram();
 
 		ShellInput host_input = {0};
 		if (!shell_pump(shell, &host_input)) {

@@ -1062,6 +1062,7 @@ int main(int argc, char **argv)
 		}
 		runtime_skip_boot(1);
 	}
+	runtime_set_save_path(save_path);
 	RuntimeResult runtime = {0};
 	int status = input_count
 		? runtime_run_with_input(shell, frame_limit, input_buttons, input_count, &runtime)
