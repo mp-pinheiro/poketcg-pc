@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav as recorded, sTempMap DECK_MACHINE_ROOM, x 2, y 4, facing north, resealed): the basic Auto Deck Machine (Script_d932), Charmander & Friends without enough Grass and Water Energy, BUILD A DECK, the missing-cards list (HandleDeckMissingCardsList) whose update function prints the 16-bit wCardConfirmationText TheseCardsAreNeededToBuildThisDeckText (deck_machine.asm:106-110), back out",
+  "name": "lab-auto-deck-missing-cards",
+  "ordinals": 9579,
+  "pokes": {},
+  "recorded": "2026-10-19T17:36:46+00:00",
+  "save": "lab-auto-deck-missing.sav",
+  "save_sha256": "dd994deae6b08ee2b5b501619ad8eadd99cd2f70126b10ddfbedeab68642a886",
+  "schema": 1
+}

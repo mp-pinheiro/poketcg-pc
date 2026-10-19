@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with deck save machine slots 1-8 filled; sTempMap FIGHTING_CLUB_LOBBY, x 10, y 8, facing north, resealed): the Gift Center clerk (Func_fc7a) after a first visit cancelled at the diary question, Receive Deck Configuration, diary saved, slot 1 (occupied) chosen, 'OK if this file is deleted?' answered NO (default), which returns to the slot list (deck_machine.asm:2248-2256), back out to the lobby",
+  "name": "lobby-gift-receive-deck-no",
+  "ordinals": 6380,
+  "pokes": {},
+  "recorded": "2026-10-19T17:49:05+00:00",
+  "save": "lobby-gift-receive-no.sav",
+  "save_sha256": "e6f3afc7abec68016323c6c10f0d3e2a9067cfe0a8f1f59f76c80115ea69ca72",
+  "schema": 1
+}

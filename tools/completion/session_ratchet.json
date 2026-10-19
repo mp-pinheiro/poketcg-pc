@@ -1952,6 +1952,12 @@
   "lab-auto-deck-dismantle": {
     "confirmed_ordinal": 2119
   },
+  "lab-auto-deck-missing-cards": {
+    "confirmed_ordinal": 9579
+  },
+  "lab-deck-save-left-clamp": {
+    "confirmed_ordinal": 2740
+  },
   "lab-gal2-talk": {
     "confirmed_ordinal": 2358
   },
@@ -2011,6 +2017,9 @@
   },
   "lobby-battle-center-no-link": {
     "confirmed_ordinal": 8203
+  },
+  "lobby-gift-receive-deck-no": {
+    "confirmed_ordinal": 6380
   },
   "lobby-save": {
     "confirmed_ordinal": 110690

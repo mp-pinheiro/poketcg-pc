@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with deck save machine slots 1-8 filled; sTempMap DECK_MACHINE_ROOM, x 2, y 20, facing north, resealed): the Deck Save Machine (Script_dad0), the slot list scrolled down one row past the bottom (offset 1), LEFT clamps the offset to 0 with SFX_CURSOR and the redraw (deck_machine.asm:748-753), A opens slot 5's submenu, back out",
+  "name": "lab-deck-save-left-clamp",
+  "ordinals": 2740,
+  "pokes": {},
+  "recorded": "2026-10-19T17:36:20+00:00",
+  "save": "lab-deck-save-left.sav",
+  "save_sha256": "6de004adb0141bbc503e8c633f41759aa196800ec5b7523236b8dd54cd0c5f2e",
+  "schema": 1
+}
