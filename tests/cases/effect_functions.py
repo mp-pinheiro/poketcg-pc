@@ -3323,6 +3323,9 @@ CASES["MirrorMove_ExecuteStatusEffect"] = [
     {"a": 0x01, "wram": {sym("hWhoseTurn"): b"\x00", sym("wWhoseTurn"): b"\x01"}, "read": {sym("wStatusConditionQueue"): 3, sym("wStatusConditionQueueIndex"): 1}},
     {"a": 0x02, "wram": {sym("hWhoseTurn"): b"\x00", sym("wWhoseTurn"): b"\x01"}, "read": {sym("wStatusConditionQueue"): 3, sym("wStatusConditionQueueIndex"): 1}},
     dict(POISON, a=0x03, wram={sym("hWhoseTurn"): b"\x00", sym("wWhoseTurn"): b"\x01"}, read={sym("wStatusConditionQueue"): 3, sym("wStatusConditionQueueIndex"): 1}),
+    {"a": 0x81, "wram": {sym("hWhoseTurn"): b"\x00", sym("wWhoseTurn"): b"\x01"}, "read": {sym("wStatusConditionQueue"): 3, sym("wStatusConditionQueueIndex"): 1}},
+    {"a": 0xc2, "wram": {sym("hWhoseTurn"): b"\x00", sym("wWhoseTurn"): b"\x01"}, "read": {sym("wStatusConditionQueue"): 3, sym("wStatusConditionQueueIndex"): 1}},
+    dict(POISON, a=0x43, wram={sym("hWhoseTurn"): b"\x00", sym("wWhoseTurn"): b"\x01"}, read={sym("wStatusConditionQueue"): 3, sym("wStatusConditionQueueIndex"): 1}),
 ]
 # <<< factory MirrorMove_ExecuteStatusEffect
 
@@ -9735,9 +9738,9 @@ MUTATIONS["DragonairHyperBeam_DiscardEffect"] = {"source_symbol": "DragonairHype
 # >>> factory-mutation MirrorMove_ExecuteStatusEffect
 MUTATIONS["MirrorMove_ExecuteStatusEffect"] = {
     "source_symbol": "MirrorMove_ExecuteStatusEffect",
-    "before": "\treturn (MirrorMoveExecuteStatusEffectResult){0xa0u};",
-    "after": "\treturn (MirrorMoveExecuteStatusEffectResult){0x00u};",
-    "case_ids": ["MirrorMove_ExecuteStatusEffect-0", "MirrorMove_ExecuteStatusEffect-1", "MirrorMove_ExecuteStatusEffect-2", "MirrorMove_ExecuteStatusEffect-3", "MirrorMove_ExecuteStatusEffect-4"],
+    "before": "\tuint8_t poison = (uint8_t)(a & PSN_DBLPSN);",
+    "after": "\tuint8_t poison = a;",
+    "case_ids": ["MirrorMove_ExecuteStatusEffect-0", "MirrorMove_ExecuteStatusEffect-1", "MirrorMove_ExecuteStatusEffect-2", "MirrorMove_ExecuteStatusEffect-3", "MirrorMove_ExecuteStatusEffect-4", "MirrorMove_ExecuteStatusEffect-5", "MirrorMove_ExecuteStatusEffect-6", "MirrorMove_ExecuteStatusEffect-7"],
 }
 # <<< factory-mutation MirrorMove_ExecuteStatusEffect
 # >>> factory-mutation Curse_CheckDamageAndBench

@@ -5394,23 +5394,25 @@ uint16_t DragonairHyperBeam_DiscardEffect(uint16_t hl)
 MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a)
 {
 	uint8_t c = a;
-	if ((a & PSN_DBLPSN) != 0u) {
-		if (a == DOUBLE_POISONED)
+	uint8_t poison = (uint8_t)(a & PSN_DBLPSN);
+	if (poison != 0u) {
+		if (poison == DOUBLE_POISONED)
 			(void)DoublePoisonEffect();
-		if (a == POISONED)
+		if (poison == POISONED)
 			(void)PoisonEffect();
 	}
-	if ((c & CNF_SLP_PRZ) == 0u)
+	uint8_t confusion = (uint8_t)(c & CNF_SLP_PRZ);
+	if (confusion == 0u)
 		return (MirrorMoveExecuteStatusEffectResult){0xa0u};
-	if (c == CONFUSED) {
+	if (confusion == CONFUSED) {
 		QueueStatusConditionResult r = ConfusionEffect();
 		return (MirrorMoveExecuteStatusEffectResult){r.f};
 	}
-	if (c == ASLEEP) {
+	if (confusion == ASLEEP) {
 		QueueStatusConditionResult r = SleepEffect();
 		return (MirrorMoveExecuteStatusEffectResult){r.f};
 	}
-	if (c == PARALYZED) {
+	if (confusion == PARALYZED) {
 		QueueStatusConditionResult r = ParalysisEffect();
 		return (MirrorMoveExecuteStatusEffectResult){r.f};
 	}
