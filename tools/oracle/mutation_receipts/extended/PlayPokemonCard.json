@@ -1,30 +1,9 @@
 {
   "fn": "PlayPokemonCard",
   "case": "tests/profiles/extended/cases/core.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"PlayPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"52185\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"PlayPokemonCard\", \"mismatches\": {\"f\": [144, 0]}}\n",
-  "restored": "{\"fn\": \"PlayPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"52185\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
-  "mutation": {
-    "source_symbol": "PlayPokemonCard",
-    "before": "\t\tif (count.a >= PLAY_POKEMON_CARD_MAX_PLAY_AREA) {",
-    "after": "\t\tif (count.a > PLAY_POKEMON_CARD_MAX_PLAY_AREA) {",
-    "case_ids": [
-      "PlayPokemonCard-0",
-      "PlayPokemonCard-1"
-    ]
-  },
-  "proof": {
-    "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "8ec93c0f951bec18896c1029ee0017dd404d8bf812a99ef19c9d64ee43725ebb",
-    "case_sha256": "f4cf09d7e729bb86544645ff5f352ed3af0d0ad6e819ddf45b4556c24f2e7b34",
-    "schema_sha256": "e88deca86556910e7f1770fba3511cb5e04d596fb679a45f88a5babcf747ee97",
-    "mutation_sha256": "d561998a079ff7f5ad91d93ec533c7a57c4b8ea36484c3ba6a10dc78d8987722",
-    "source": "src/profiles/extended/home/core.c",
-    "source_symbol": "PlayPokemonCard",
-    "case": "tests/profiles/extended/cases/core.py",
-    "fn": "PlayPokemonCard",
-    "index": 0
-  }
+  "baseline": "{\"fn\": \"PlayPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49858\": \"80\", \"49903\": \"01\", \"50176\": \"0809\", \"51899\": \"80\", \"52185\": \"00\", \"65431\": \"c201\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayPokemonCard\", \"mismatches\": {\"f\": [0, 16]}}\n",
+  "restored": "{\"fn\": \"PlayPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49858\": \"80\", \"49903\": \"01\", \"50176\": \"0809\", \"51899\": \"80\", \"52185\": \"00\", \"65431\": \"c201\"}}, \"status\": \"PASS\"}\n"
 }

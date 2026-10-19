@@ -1,9 +1,9 @@
 {
   "fn": "PlayPokemonCard",
   "case": "tests/cases/core.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"PlayPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"52269\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"PlayPokemonCard\", \"mismatches\": {\"f\": [144, 128]}}\n",
-  "restored": "{\"fn\": \"PlayPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49903\": \"06\", \"52269\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"PlayPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49858\": \"80\", \"49903\": \"01\", \"50176\": \"0809\", \"51899\": \"80\", \"52269\": \"00\", \"65431\": \"c201\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayPokemonCard\", \"mismatches\": {\"bus\": {\"address\": 52269, \"reference\": \"0108098000c201\", \"native\": \"0108098001c201\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49851, 1], [49858, 1], [49903, 1], [50176, 2], [51899, 1], [52269, 1], [65431, 2]]}}}\n",
+  "restored": "{\"fn\": \"PlayPokemonCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49858\": \"80\", \"49903\": \"01\", \"50176\": \"0809\", \"51899\": \"80\", \"52269\": \"00\", \"65431\": \"c201\"}}, \"status\": \"PASS\"}\n"
 }

@@ -11138,18 +11138,22 @@ PlayPokemonCardResult PlayPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	}
 	(void)HasAlivePokemonInPlayArea();
 
-	OpenPlayAreaScreenForSelection();
-	hTemp_ffa0 = hTempCardIndex_ff98;
-	hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
-	EvolveResult evolved = EvolvePokemonCardIfPossible(c);
-	if ((evolved.f & 0x10u) != 0u)
-		return (PlayPokemonCardResult){evolved.f};
-	(void)SetOppAction_SerialSendDuelData(PLAY_POKEMON_CARD_OPP_EVOLVE, 0u);
-	(void)PrintPlayAreaCardList_EnableLCD();
-	PrintPokemonEvolvedIntoPokemon();
-	DuelRoutineResult processed = ProcessPlayedPokemonCard(
-		evolved.a, evolved.f, 0u, evolved.c, evolved.d, evolved.e, evolved.hl);
-	(void)a;
-	return (PlayPokemonCardResult){(uint8_t)(processed.a == 0u ? 0x80u : 0x00u)};
+	for (;;) {
+		PlayAreaScreenResult screen = OpenPlayAreaScreenForSelection();
+		if ((screen.f & 0x10u) != 0u)
+			return (PlayPokemonCardResult){0u};
+		hTemp_ffa0 = hTempCardIndex_ff98;
+		hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+		EvolveResult evolved = EvolvePokemonCardIfPossible(c);
+		if ((evolved.f & 0x10u) != 0u)
+			continue;
+		(void)SetOppAction_SerialSendDuelData(PLAY_POKEMON_CARD_OPP_EVOLVE, 0u);
+		(void)PrintPlayAreaCardList_EnableLCD();
+		PrintPokemonEvolvedIntoPokemon();
+		DuelRoutineResult processed = ProcessPlayedPokemonCard(
+			evolved.a, evolved.f, 0u, evolved.c, evolved.d, evolved.e, evolved.hl);
+		(void)a;
+		return (PlayPokemonCardResult){(uint8_t)(processed.a == 0u ? 0x80u : 0x00u)};
+	}
 }
 /* <<< factory PlayPokemonCard */

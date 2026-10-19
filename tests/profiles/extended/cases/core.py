@@ -10705,3 +10705,10 @@ MUTATIONS.update({
         "case_ids": ["AISelectSpecialAttackParameters-6"],
     },
 })
+MUTATIONS["PlayPokemonCard"] = {
+    "source_symbol": "PlayPokemonCard",
+    "before": "\t\tif ((screen.f & 0x10u) != 0u)\n\t\t\treturn (PlayPokemonCardResult){0u};",
+    "after": "\t\tif ((screen.f & 0x10u) != 0u)\n\t\t\treturn (PlayPokemonCardResult){0x10u};",
+    "case_ids": ["PlayPokemonCard-0", "PlayPokemonCard-1", "PlayPokemonCard-2"],
+    "source": "src/profiles/extended/home/core.c",
+}

@@ -12384,6 +12384,23 @@ CASES["PlayPokemonCard"] = [
         instruction_budget=20000000,
         cycle_budget=80000000,
     ),
+    {
+        "keys": [0x00, 0x02],
+        "wram": {
+            sym("hWhoseTurn"): b"\xc2",
+            sym("wLoadedCard1Stage"): b"\x01",
+            sym("hTempCardIndex_ff98"): b"\x01",
+            sym("wPlayerDeck"): b"\x08\x09",
+            sym("wPlayerArenaCard"): b"\x00",
+            sym("wPlayerArenaCardFlags"): b"\x80",
+            sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01",
+            sym("wLCDC"): b"\x00",
+        },
+        "expect_regs": {"f": 0x00},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
 ]
 # <<< factory PlayPokemonCard
 
@@ -16302,9 +16319,9 @@ MUTATIONS["TryContinueDuel"] = {
 # >>> factory-mutation PlayPokemonCard
 MUTATIONS["PlayPokemonCard"] = {
     "source_symbol": "PlayPokemonCard",
-    "before": "\t\tif (count.a >= PLAY_POKEMON_CARD_MAX_PLAY_AREA) {",
-    "after": "\t\tif (count.a > PLAY_POKEMON_CARD_MAX_PLAY_AREA) {",
-    "case_ids": ["PlayPokemonCard-0", "PlayPokemonCard-1"],
+    "before": "\t\tif ((screen.f & 0x10u) != 0u)\n\t\t\treturn (PlayPokemonCardResult){0u};",
+    "after": "\t\tif ((screen.f & 0x10u) == 0u)\n\t\t\treturn (PlayPokemonCardResult){0u};",
+    "case_ids": ["PlayPokemonCard-0", "PlayPokemonCard-1", "PlayPokemonCard-2"],
 }
 # <<< factory-mutation PlayPokemonCard
 # >>> factory-mutation SetOBP1OrSGB3ToCardPalette
