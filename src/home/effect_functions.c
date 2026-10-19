@@ -3361,7 +3361,7 @@ void Gigashock_AISelectEffect(void)
 {
 	uint8_t count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
 	uint16_t list = hTempList_ADDR;
-	if (count < 4u) {
+	if (count < 5u) {
 		for (uint8_t slot = 1u; slot < count; slot++)
 			gb_write8(list++, slot);
 		gb_write8(list, 0xffu);

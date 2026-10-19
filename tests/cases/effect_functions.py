@@ -9003,6 +9003,7 @@ CASES["Fly_AIEffect"] = [{"wram": {sym("wDamage"): b"\x00\x00\x00"}, "read": {sy
 # >>> factory Gigashock_AISelectEffect
 CONTRACT["Gigashock_AISelectEffect"] = {"compare": (), "preserve": ()}
 CASES["Gigashock_AISelectEffect"] = [
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x04", sym("wOpponentBench1CardHP"): b"\x1E\x0A\x28"}, "read": {sym("hTempList"): 4}},
     {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x05", sym("wOpponentBench1CardHP"): b"\x1E\x0A\x14\x28"}, "read": {sym("hTempList"): 4}},
     dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x06", sym("wOpponentBench1CardHP"): b"\x32\x28\x1E\x14\x0A"}, read={sym("hTempList"): 4}),
 ]
@@ -9011,7 +9012,7 @@ CASES["Gigashock_AISelectEffect"] = [
 MUTATIONS["Fly_AIEffect"] = {"source_symbol": "Fly_AIEffect", "before": "SetExpectedAIDamage(15u, 0u, 30u);", "after": "SetExpectedAIDamage(16u, 0u, 30u);", "case_ids": ["Fly_AIEffect-0", "Fly_AIEffect-1"]}
 # <<< factory-mutation Fly_AIEffect
 # >>> factory-mutation Gigashock_AISelectEffect
-MUTATIONS["Gigashock_AISelectEffect"] = {"source_symbol": "Gigashock_AISelectEffect", "before": "gb_write8((uint16_t)(hTempList_ADDR + 3u), 0xffu);", "after": "gb_write8((uint16_t)(hTempList_ADDR + 3u), 0u);", "case_ids": ["Gigashock_AISelectEffect-0", "Gigashock_AISelectEffect-1"]}
+MUTATIONS["Gigashock_AISelectEffect"] = {"source_symbol": "Gigashock_AISelectEffect", "before": "if (count < 5u) {", "after": "if (count < 4u) {", "case_ids": ["Gigashock_AISelectEffect-0", "Gigashock_AISelectEffect-1", "Gigashock_AISelectEffect-2"]}
 # <<< factory-mutation Gigashock_AISelectEffect
 # >>> factory-mutation Wildfire_DiscardDeckEffect
 MUTATIONS["Wildfire_DiscardDeckEffect"] = {
