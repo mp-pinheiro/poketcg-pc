@@ -6589,7 +6589,8 @@ HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelectio
 			uint8_t keys = hKeysPressed;
 			if ((keys & PAD_B) != 0u) {
 				SwapTurn();
-				return (HandleDefendingPokemonAttackSelectionResult){menu_parameters, 0x10u};
+				uint8_t exit_e = (uint8_t)(13u + (uint8_t)(hCurMenuItem + hCurMenuItem) + (hSCY >> 3));
+				return (HandleDefendingPokemonAttackSelectionResult){menu_parameters, 0x10u, exit_e};
 			}
 			if ((keys & PAD_START) != 0u) {
 				hCurSelectionItem = hCurMenuItem;
@@ -6610,7 +6611,7 @@ HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelectio
 			uint8_t d = gb_read8((uint16_t)(wDuelTempList_ADDR + index));
 			uint8_t e = gb_read8((uint16_t)(wDuelTempList_ADDR + index + 1u));
 			SwapTurn();
-			return (HandleDefendingPokemonAttackSelectionResult){GetAttackName(d, e), 0u};
+			return (HandleDefendingPokemonAttackSelectionResult){GetAttackName(d, e), 0u, e};
 		}
 	}
 }
@@ -9736,12 +9737,11 @@ PlayerPickAttackForAmnesiaResult PlayerPickAttackForAmnesia(void)
 	(void)DrawWideTextBox_WaitForInput(ChooseAttackOpponentWillNotBeAbleToUseText);
 
 	HandleDefendingPokemonAttackSelectionResult selection = HandleDefendingPokemonAttackSelection();
+	hTemp_ffa0 = selection.e;
 	uint8_t selected = (uint8_t)(hCurMenuItem + hCurMenuItem);
-	uint8_t attack_index = gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u));
-	hTemp_ffa0 = attack_index;
 	uint8_t f = ((selection.f & 0x10u) != 0u) ? selection.f
 	                                          : (uint8_t)((selected == 0u) ? 0x80u : 0x00u);
-	return (PlayerPickAttackForAmnesiaResult){attack_index, f};
+	return (PlayerPickAttackForAmnesiaResult){selection.e, f};
 }
 /* <<< factory PlayerPickAttackForAmnesia */
 

@@ -1312,7 +1312,7 @@ typedef struct {
 SuperEnergyRetrievalDiscardAndAddToHandEffectResult SuperEnergyRetrieval_DiscardAndAddToHandEffect(uint8_t b, uint8_t c);
 /* <<< factory SuperEnergyRetrieval_DiscardAndAddToHandEffect */
 /* >>> factory HandleDefendingPokemonAttackSelection */
-typedef struct { uint16_t hl; uint8_t f; } HandleDefendingPokemonAttackSelectionResult;
+typedef struct { uint16_t hl; uint8_t f; uint8_t e; } HandleDefendingPokemonAttackSelectionResult;
 HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelection(void);
 /* <<< factory HandleDefendingPokemonAttackSelection */
 /* >>> factory HandleEnergyDiscardEffectSelection */

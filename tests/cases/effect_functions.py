@@ -6341,7 +6341,7 @@ CASES["Paralysis50PercentEffect"] = [
 CONTRACT["PlayerPickAttackForAmnesia"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PlayerPickAttackForAmnesia"] = [
     {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerDuelistType"): b"\x01", sym("wLCDC"): b"\x00", sym("wDuelDisplayedScreen"): b"\x01"}, "read": {sym("hTempList"): 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
-    dict(POISON, keys=[0x00, 0x01], wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerDuelistType"): b"\x01", sym("wLCDC"): b"\x00", sym("wDuelDisplayedScreen"): b"\x01"}, read={sym("hTempList"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x02], wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerDuelistType"): b"\x01", sym("wLCDC"): b"\x00", sym("wDuelDisplayedScreen"): b"\x01"}, read={sym("hTemp_ffa0"): 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory PlayerPickAttackForAmnesia
 
@@ -10621,7 +10621,7 @@ MUTATIONS["ApplyAndAnimateHPRecovery"] = {"source_symbol": "ApplyAndAnimateHPRec
 MUTATIONS["Paralysis50PercentEffect"] = {"source_symbol": "Paralysis50PercentEffect", "before": "uint8_t Paralysis50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn ParalysisEffect().f;", "after": "uint8_t Paralysis50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn (uint8_t)(ParalysisEffect().f ^ 0x10u);", "case_ids": ["Paralysis50PercentEffect-0", "Paralysis50PercentEffect-1"]}
 # <<< factory-mutation Paralysis50PercentEffect
 # >>> factory-mutation PlayerPickAttackForAmnesia
-MUTATIONS["PlayerPickAttackForAmnesia"] = {"source_symbol": "PlayerPickAttackForAmnesia", "before": "\tuint8_t attack_index = gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u));", "after": "\tuint8_t attack_index = (uint8_t)(gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u)) ^ 0xFFu);", "case_ids": ["PlayerPickAttackForAmnesia-0", "PlayerPickAttackForAmnesia-1"]}
+MUTATIONS["PlayerPickAttackForAmnesia"] = {"source_symbol": "PlayerPickAttackForAmnesia", "before": "\thTemp_ffa0 = selection.e;", "after": "\thTemp_ffa0 = (uint8_t)(selection.e ^ 0xFFu);", "case_ids": ["PlayerPickAttackForAmnesia-0", "PlayerPickAttackForAmnesia-1"]}
 # <<< factory-mutation PlayerPickAttackForAmnesia
 
 # >>> factory-mutation ZubatSupersonicEffect
