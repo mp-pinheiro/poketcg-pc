@@ -2100,11 +2100,11 @@ IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c)
 	wd339 = c;
 	wd33a = b;
 	StartScriptedMovement();
-	while ((wPlayerCurrentlyMoving & 0x03u) != 0u) {
+	do {
 		DoFrameIfLCDEnabled();
 		SetScreenScroll();
 		Func_c53d();
-	}
+	} while ((wPlayerCurrentlyMoving & 0x03u) != 0u);
 	DoFrameIfLCDEnabled();
 	SetScreenScroll();
 	return IncreaseScriptPointerBy3();
