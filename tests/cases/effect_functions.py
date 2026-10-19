@@ -1855,6 +1855,9 @@ CASES["Prophecy_ReorderDeckEffect"] = [
     dict(POISON, wram={sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfCardsNotInDeck"): b"\x00",
                        sym("wPlayerDeckCards"): b"\x03\x04\xFF", sym("hTempList"): b"\x00\x03\x04\xFF"},
          read={sym("wPlayerNumberOfCardsNotInDeck"): 1, sym("wPlayerCardLocations") + 3: 1, sym("wPlayerCardLocations") + 4: 1, sym("wPlayerDeckCards"): 3, sym("hTempList"): 4}),
+    {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wOpponentNumberOfCardsNotInDeck"): b"\x00",
+              sym("wOpponentDeckCards"): b"\x01\x02\xFF", sym("hTempList"): b"\x01\x01\x02\xFF"},
+     "read": {sym("hWhoseTurn"): 1, sym("wOpponentNumberOfCardsNotInDeck"): 1, sym("wOpponentCardLocations") + 2: 1, sym("wOpponentCardLocations") + 3: 1, sym("wOpponentDeckCards"): 3, sym("hTempList"): 4}},
 ]
 # <<< factory Prophecy_ReorderDeckEffect
 
@@ -9395,9 +9398,9 @@ MUTATIONS["Prophecy_AISelectEffect"] = {
 # >>> factory-mutation Prophecy_ReorderDeckEffect
 MUTATIONS["Prophecy_ReorderDeckEffect"] = {
     "source_symbol": "Prophecy_ReorderDeckEffect",
-    "before": "if (a == 0xffu)\n\t\treturn (ProphecyReorderDeckEffectResult){a, 0u, 0x00u, hl};",
-    "after": "if (a != 0xffu)\n\t\treturn (ProphecyReorderDeckEffectResult){a, 0u, 0x00u, hl};",
-    "case_ids": ["Prophecy_ReorderDeckEffect-0", "Prophecy_ReorderDeckEffect-1"],
+    "before": "if (gb_read8(hTempList_ADDR) != 0u)\n\t\tSwapTurn();",
+    "after": "if (gb_read8(hTempList_ADDR) == 0u)\n\t\tSwapTurn();",
+    "case_ids": ["Prophecy_ReorderDeckEffect-2"],
 }
 # <<< factory-mutation Prophecy_ReorderDeckEffect
 # >>> factory-mutation SuperEnergyRetrieval_HandEnergyCheck

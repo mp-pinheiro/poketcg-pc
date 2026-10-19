@@ -3816,8 +3816,12 @@ ProphecyReorderDeckEffectResult Prophecy_ReorderDeckEffect(void)
 		WaitResult wait = DrawWideTextBox_WaitForInput(0x0184u);
 		if (a == 0u)
 			a = turn.a;
+		if (gb_read8(hTempList_ADDR) != 0u)
+			SwapTurn();
 		return (ProphecyReorderDeckEffectResult){a, c, wait.f, hl};
 	}
+	if (gb_read8(hTempList_ADDR) != 0u)
+		SwapTurn();
 	return (ProphecyReorderDeckEffectResult){turn.a, c, turn.f, turn.hl};
 }
 /* <<< factory Prophecy_ReorderDeckEffect */
