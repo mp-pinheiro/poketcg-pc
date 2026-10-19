@@ -1,0 +1,24 @@
+# From ronald-3's end (the Pokemon Dome entrance, five medals): out to the
+# overworld map and one cursor step north into the Challenge Hall entrance,
+# where Preload_Clerk9 makes Challenge Cup 2 ready. Up the entrance and west
+# through its side door into the lobby: Preload_ChallengeHallLobbyRonald1
+# loads Ronald with lobby state 5 and ChallengeHallLobbyLoadMap runs his scene
+# (Script_f166), whose scripted player steps west are blocked by him.
+idle
+hold LEFT 40
+idle
+hold DOWN 120
+idle
+press UP
+idle
+press A
+idle
+hold UP 49
+idle
+hold LEFT 74
+idle
+peek
+shot challenge-hall-lobby-ronald
+dismiss
+peek
+shot challenge-hall-lobby-end

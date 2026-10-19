@@ -1,0 +1,39 @@
+{
+  "goal": "From ronald-3's end: the Challenge Hall entrance with Cup 2 made ready, west into the lobby, Ronald's lobby scene (Script_f166) with its blocked scripted steps, to the scene's end",
+  "name": "challenge-hall-lobby",
+  "ordinals": 637640,
+  "pokes": {
+    "342217": [
+      [
+        54233,
+        56
+      ]
+    ],
+    "459041": [
+      [
+        54228,
+        12
+      ]
+    ],
+    "494926": [
+      [
+        54237,
+        32
+      ]
+    ],
+    "582677": [
+      [
+        54226,
+        24
+      ]
+    ],
+    "603055": [
+      [
+        54226,
+        59
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T13:40:33+00:00",
+  "schema": 1
+}

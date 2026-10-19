@@ -212,6 +212,9 @@
   "challenge-hall": {
     "confirmed_ordinal": 702945
   },
+  "challenge-hall-lobby": {
+    "confirmed_ordinal": 637640
+  },
   "challenge-machine": {
     "confirmed_ordinal": 2830
   },
