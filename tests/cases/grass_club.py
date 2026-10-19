@@ -40,7 +40,7 @@ MUTATIONS = {}
 MUTATIONS["GrassClubAfterDuel"] = {"source_symbol": "GrassClubAfterDuel", "before": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(GrassClubAfterDuelTable);", "after": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(GrassClubAfterDuelTable + 1u));", "case_ids": ["GrassClubAfterDuel-0"]}
 # <<< factory-mutation GrassClubAfterDuel
 # >>> factory-mutation Script_Nikki
-MUTATIONS["Script_Nikki"] = {"source_symbol": "Script_Nikki", "before": "return (ScriptNikkiResult){map, nikki_cp_flags(map, ISHIHARAS_HOUSE)};", "after": "return (ScriptNikkiResult){map, nikki_cp_flags(map, 0x04u)};", "case_ids": ["Script_Nikki-0"]}
+MUTATIONS["Script_Nikki"] = {"source_symbol": "Script_Nikki", "before": "return (ScriptNikkiResult){map, nikki_cp_flags(map, ISHIHARAS_HOUSE),", "after": "return (ScriptNikkiResult){map, nikki_cp_flags(map, 0x04u),", "case_ids": ["Script_Nikki-0"]}
 # <<< factory-mutation Script_Nikki
 # >>> factory-mutation Preload_NikkiInGrassClub
 MUTATIONS["Preload_NikkiInGrassClub"] = {"source_symbol": "Preload_NikkiInGrassClub", "before": "uint8_t a = GetEventValue(EVENT_NIKKI_STATE);", "after": "uint8_t a = GetEventValue(0x11u);", "case_ids": ["Preload_NikkiInGrassClub-1"]}

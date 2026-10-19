@@ -39,7 +39,7 @@ typedef struct { uint16_t hl; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint8_
 MasonLabPressedAResult MasonLabPressedA(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory MasonLabPressedA */
 /* >>> factory Script_Tech1 */
-typedef struct { uint8_t a; uint8_t b; uint8_t c; uint16_t hl; } ScriptTech1Result;
+typedef struct { uint8_t a; uint8_t b; uint8_t c; uint16_t hl; uint16_t start_script; } ScriptTech1Result;
 ScriptTech1Result Script_Tech1(void);
 /* <<< factory Script_Tech1 */
 /* >>> part Script_Tech1_START_SCRIPT */

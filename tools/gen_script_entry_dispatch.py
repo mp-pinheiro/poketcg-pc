@@ -33,8 +33,11 @@ Those are named in the scripts sources handed in with --scripts.
 A routine entry whose code portion ends at a `start_script` continues into
 the bytecode after it: the port's header declares the rst's address as
 `#define <CName>_START_SCRIPT 0x....u`, and the thunk hands RST20 the byte
-after it, the return address the rst pushes. A dotted symbol's C name replaces
-the dot with an underscore.
+after it, the return address the rst pushes. A routine with more than one
+`start_script` exit (Script_Nikki's `jp z, Script_NikkiInIshiharasHouse`,
+Script_Tech1's `.low_on_energies`) returns the rst it reached in its result's
+`start_script` member, and the thunk continues after that rst instead. A dotted
+symbol's C name replaces the dot with an underscore.
 """
 
 from __future__ import annotations
@@ -240,7 +243,12 @@ def thunk(name: str, owner: tuple[str, str, str], header_text: str,
                 lines.append(f"\tout.{member} = r.{member};")
         if "f" not in members and "carry" in members:
             lines.append("\tout.f = r.carry ? 0x10u : 0u;")
-    if continuation is not None:
+    if "start_script" in members:
+        lines.append(
+            "\tout = script_entry_regs_from_rst20(RST20(out.a, out.f, out.b, out.c, "
+            "out.d, out.e, (uint16_t)(r.start_script + 1u)));"
+        )
+    elif continuation is not None:
         rst = continuation
         lines.append(
             f"\tout = script_entry_regs_from_rst20(RST20(out.a, out.f, out.b, out.c, "

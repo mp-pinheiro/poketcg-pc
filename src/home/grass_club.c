@@ -38,7 +38,8 @@ static uint8_t nikki_cp_flags(uint8_t a, uint8_t n)
 ScriptNikkiResult Script_Nikki(void)
 {
 	uint8_t map = gb_read8(wCurMap_ADDR);
-	return (ScriptNikkiResult){map, nikki_cp_flags(map, ISHIHARAS_HOUSE)};
+	return (ScriptNikkiResult){map, nikki_cp_flags(map, ISHIHARAS_HOUSE),
+	                           map == ISHIHARAS_HOUSE ? Script_NikkiInIshiharasHouse_ADDR : Script_Nikki_START_SCRIPT};
 }
 /* <<< factory Script_Nikki */
 

@@ -199,7 +199,7 @@ ScriptTech1Result Script_Tech1(void)
 
 	a = b;
 	if (a >= 10u)
-		return (ScriptTech1Result){a, b, c, hl};
+		return (ScriptTech1Result){a, b, c, hl, Script_Tech1_START_SCRIPT};
 
 	c = ENERGY_CARD_LIST_LEN;
 	hl = ENERGY_CARD_LIST;
@@ -213,6 +213,6 @@ ScriptTech1Result Script_Tech1(void)
 		} while (b != 0u);
 		c--;
 	} while (c != 0u);
-	return (ScriptTech1Result){a, b, c, hl};
+	return (ScriptTech1Result){a, b, c, hl, (uint16_t)(Script_Tech1__add_loop_ADDR + 0x0Bu)};
 }
 /* <<< factory Script_Tech1 */
