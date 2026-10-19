@@ -3032,8 +3032,9 @@ CalculateParticularAttachedEnergyNeededResult CalculateParticularAttachedEnergyN
 	uint8_t result = (uint8_t)(low - current);
 	if (low >= current)
 		return (CalculateParticularAttachedEnergyNeededResult){result, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};
+	result = (uint8_t)(current - low);
 	gb_write8(wTempLoadedAttackEnergyNeededAmount_ADDR, result);
-	return (CalculateParticularAttachedEnergyNeededResult){result, (uint8_t)(0x10u | (next_b == 0u ? 0x80u : 0u)), next_b, (uint16_t)(hl + 1u)};
+	return (CalculateParticularAttachedEnergyNeededResult){result, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};
 }
 /* <<< factory CalculateParticularAttachedEnergyNeeded */
 

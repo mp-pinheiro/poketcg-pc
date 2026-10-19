@@ -1,9 +1,9 @@
 {
   "fn": "CalculateParticularAttachedEnergyNeeded",
   "case": "tests/cases/core.py",
-  "index": 0,
+  "index": 3,
   "status": "RED",
-  "baseline": "{\"fn\": \"CalculateParticularAttachedEnergyNeeded\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"CalculateParticularAttachedEnergyNeeded\", \"mismatches\": {\"a\": [0, 1]}}\n",
-  "restored": "{\"fn\": \"CalculateParticularAttachedEnergyNeeded\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"CalculateParticularAttachedEnergyNeeded\", \"registers\": {\"a\": 2, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"03\", \"52663\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CalculateParticularAttachedEnergyNeeded\", \"mismatches\": {\"a\": [2, 4], \"bus\": {\"address\": 52663, \"reference\": \"0302\", \"native\": \"0304\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49408, 1], [52663, 1]]}}}\n",
+  "restored": "{\"fn\": \"CalculateParticularAttachedEnergyNeeded\", \"registers\": {\"a\": 2, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"frame_budget_reached\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"49408\": \"03\", \"52663\": \"02\"}}, \"status\": \"PASS\"}\n"
 }

@@ -1336,6 +1336,9 @@ CASES["CalculateParticularAttachedEnergyNeeded"] = [
     {"a": 0, "b": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x00"}},
     {"a": 3, "b": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11, "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01"}},
     dict(POISON, a=0x12, b=2, hl=sym("wDecompressionSecondaryBufferStart") + 0x11, wram={sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x01"}),
+    {"a": 1, "b": 1, "hl": sym("wDecompressionSecondaryBufferStart") + 0x11,
+     "wram": {sym("wDecompressionSecondaryBufferStart") + 0x11: b"\x03"},
+     "read": {sym("wTempLoadedAttackEnergyNeededAmount"): 1}},
 ]
 # <<< factory CalculateParticularAttachedEnergyNeeded
 
@@ -12990,9 +12993,9 @@ MUTATIONS["LookForCardThatIsKnockedOutOnDevolution"] = {
 # >>> factory-mutation CalculateParticularAttachedEnergyNeeded
 MUTATIONS["CalculateParticularAttachedEnergyNeeded"] = {
     "source_symbol": "CalculateParticularAttachedEnergyNeeded",
-    "before": "return (CalculateParticularAttachedEnergyNeededResult){0u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};",
-    "after": "return (CalculateParticularAttachedEnergyNeededResult){1u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};",
-    "case_ids": ["CalculateParticularAttachedEnergyNeeded-0"],
+    "before": "result = (uint8_t)(current - low);",
+    "after": "result = (uint8_t)(current + low);",
+    "case_ids": ["CalculateParticularAttachedEnergyNeeded-0", "CalculateParticularAttachedEnergyNeeded-3"],
 }
 # <<< factory-mutation CalculateParticularAttachedEnergyNeeded
 # >>> factory-mutation GetAnimationData
