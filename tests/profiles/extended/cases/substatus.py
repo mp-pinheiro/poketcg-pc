@@ -1,6 +1,7 @@
 """Extended oracle-diff cases for substatus: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
 from tests.cases._symbols import WRAMX_START, sym
 from tests.cases._inherit import inherit
+from tests.cases._fixtures import attack_fixture
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('substatus')
 OWN = (
     'ApplyStrikesBack_AgainstResidualAttack',
@@ -800,6 +801,7 @@ CASES['HandleStrikesBack_AgainstDamagingAttack'] += [
 CASES['ApplyStrikesBack_AgainstResidualAttack'] += [
     {'hl': 0x00, 'wram': {sym("hWhoseTurn"): b'\xc2', sym("wTempTurnDuelistCardID"): b'\x01\x01'},
      'setup': [{'fn': 'SetupText', 'd': 0x20, 'e': 0x40}]},
+    dict(attack_fixture({sym("hWhoseTurn"): b'\xc2', sym("wPlayerArenaCardHP"): b'\x05'}), hl=10),
 ]
 CASES['HandleStrikesBack_AgainstResidualAttack'] += [
     {'wram': {sym("wTempNonTurnDuelistCardID"): b'\x7f\x01', sym("wLoadedAttackCategory"): b'\x80'}},
@@ -849,11 +851,13 @@ MUTATIONS.update({
         'case_ids': ['HandleStrikesBack_AgainstDamagingAttack-5'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'ApplyStrikesBack_AgainstResidualAttack': {   'source_symbol': 'ApplyStrikesBack_AgainstResidualAttack',
-        'before': '\tif (subtracted.a == 0)\n'
-                  '\t\treturn (ApplyStrikesBackResult){0, 0x80u};',
-        'after': '\tif (subtracted.a != 0)\n'
-                 '\t\treturn (ApplyStrikesBackResult){0, 0x80u};',
-        'case_ids': ['ApplyStrikesBack_AgainstResidualAttack-0'],
+        'before': '\t(void)SubtractHP(hp.hl, hl);\n'
+                  '\t(void)DrawWideTextBox_PrintText(ReceivesDamageDueToStrikesBackText);\n'
+                  '\tif (hp.a == 0)',
+        'after': '\tSubtractHPResult subtracted = SubtractHP(hp.hl, hl);\n'
+                 '\t(void)DrawWideTextBox_PrintText(ReceivesDamageDueToStrikesBackText);\n'
+                 '\tif (subtracted.a == 0)',
+        'case_ids': ['ApplyStrikesBack_AgainstResidualAttack-4'],
         'source': 'src/profiles/extended/home/substatus.c'},
     'HandleStrikesBack_AgainstResidualAttack': {   'source_symbol': 'HandleStrikesBack_AgainstResidualAttack',
         'before': '\tCardId card_id = card_id_read_at(wTempNonTurnDuelistCardID_ADDR);',

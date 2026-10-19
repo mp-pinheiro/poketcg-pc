@@ -710,9 +710,9 @@ ApplyStrikesBackResult ApplyStrikesBack_AgainstResidualAttack(uint16_t hl)
 		(uint16_t)gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)) << 8);
 	LoadTxRam2(name);
 	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
-	SubtractHPResult subtracted = SubtractHP(hp.hl, hl);
+	(void)SubtractHP(hp.hl, hl);
 	(void)DrawWideTextBox_PrintText(ReceivesDamageDueToStrikesBackText);
-	if (subtracted.a == 0)
+	if (hp.a == 0)
 		return (ApplyStrikesBackResult){0, 0x80u};
 	(void)WaitForWideTextBoxInput();
 	(void)PrintPlayAreaCardKnockedOutIfNoHP(PLAY_AREA_ARENA);

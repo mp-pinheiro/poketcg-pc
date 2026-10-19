@@ -2,6 +2,7 @@ from tests.cases._symbols import const, sym
 from tests.cases._fixtures import SAND_ATTACK_REGS, sand_attack_fixture
 from tests.cases._fixtures import STRIKES_BACK_RESIDUAL_REGS, strikes_back_residual_fixture
 from tests.cases._fixtures import DAMAGE_REDUCTION_REGS, damage_reduction_fixture
+from tests.cases._fixtures import attack_fixture
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -497,6 +498,7 @@ CASES["ApplyStrikesBack_AgainstResidualAttack"] = [
     {"hl": 0, "wram": {sym("hWhoseTurn"): b"\xC2", wTempTurnDuelistCardID: b"\x01"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wLoadedCard2Name: 2}},
     {"hl": 0, "wram": {sym("hWhoseTurn"): b"\xC2", wTempTurnDuelistCardID: b"\xE4"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wLoadedCard2Name: 2}},
     dict(POISON, hl=0, wram={sym("hWhoseTurn"): b"\xC2", wTempTurnDuelistCardID: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wLoadedCard2Name: 2}),
+    dict(attack_fixture({sym("hWhoseTurn"): b"\xC2", sym("wPlayerArenaCardHP"): b"\x05"}), hl=10),
 ]
 # <<< factory ApplyStrikesBack_AgainstResidualAttack
 
@@ -587,7 +589,7 @@ MUTATIONS = {
     },
 }
 # >>> factory-mutation ApplyStrikesBack_AgainstResidualAttack
-MUTATIONS["ApplyStrikesBack_AgainstResidualAttack"] = {"source_symbol": "ApplyStrikesBack_AgainstResidualAttack", "before": "\tuint8_t card_id = wTempTurnDuelistCardID;", "after": "\tuint8_t card_id = 0;", "case_ids": ["ApplyStrikesBack_AgainstResidualAttack-0", "ApplyStrikesBack_AgainstResidualAttack-1", "ApplyStrikesBack_AgainstResidualAttack-2"]}
+MUTATIONS["ApplyStrikesBack_AgainstResidualAttack"] = {"source_symbol": "ApplyStrikesBack_AgainstResidualAttack", "before": "\t(void)SubtractHP(hp.hl, hl);\n\t(void)DrawWideTextBox_PrintText(ReceivesDamageDueToStrikesBackText);\n\tif (hp.a == 0)", "after": "\tSubtractHPResult subtracted = SubtractHP(hp.hl, hl);\n\t(void)DrawWideTextBox_PrintText(ReceivesDamageDueToStrikesBackText);\n\tif (subtracted.a == 0)", "case_ids": ["ApplyStrikesBack_AgainstResidualAttack-3"]}
 # <<< factory-mutation ApplyStrikesBack_AgainstResidualAttack
 # >>> factory-mutation HandleStrikesBack_AgainstResidualAttack
 MUTATIONS["HandleStrikesBack_AgainstResidualAttack"] = {"source_symbol": "HandleStrikesBack_AgainstResidualAttack", "before": "\t\tuint8_t f = 0x40u;\n\t\tif ((card_id & 0x0Fu) < (MACHAMP & 0x0Fu))", "after": "\t\tuint8_t f = 0x50u;\n\t\tif ((card_id & 0x0Fu) < (MACHAMP & 0x0Fu))", "case_ids": ["HandleStrikesBack_AgainstResidualAttack-0"]}
