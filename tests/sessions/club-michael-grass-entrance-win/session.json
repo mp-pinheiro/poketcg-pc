@@ -1,0 +1,62 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, EVENT_PUPIL_MICHAEL_STATE ACTIVE, sTempMap GRASS_CLUB_ENTRANCE, x 14, y 10, facing north, resealed): Michael at the Grass Club entrance, his duel won, the entrance's after-duel script (wDuelResult 0)",
+  "name": "club-michael-grass-entrance-win",
+  "ordinals": 13184,
+  "pokes": {
+    "10088": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "12088": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "4088": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "6088": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "8088": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:28:37+00:00",
+  "save": "club-michael-grass-entrance-win.sav",
+  "save_sha256": "41130fd003163c3c0d7c5f9ed32395dde964e2a95bc85d28d3cecd4be0d9e18c",
+  "schema": 1
+}

@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, EVENT_LASS2_TRADE_STATE at LASS2_TRADES_COMPLETE, sTempMap GRASS_CLUB_LOBBY, x 18, y 10, facing north, resealed): Lass2's re-talk (Script_e61c), twice",
+  "name": "lab-lass2-trades-complete",
+  "ordinals": 3252,
+  "pokes": {},
+  "recorded": "2026-10-19T15:34:18+00:00",
+  "save": "lab-lass2-trades-complete.sav",
+  "save_sha256": "8342d131e1718401af258d707e080299c217119a8001705d2ad2e0d353bd14f5",
+  "schema": 1
+}

@@ -1,0 +1,11 @@
+{
+  "goal": "Tech1 low path: fewer than 10 energy cards, gives 10 each",
+  "name": "lab-tech1-low",
+  "derived_from": "boot-menu",
+  "save": "lab-tech-low-edit.sav",
+  "save_sha256": "4b5027c558d6ddadf876c1afce78485361b27bd4ea2c0081322b43c8d4940fb8",
+  "ordinals": 3787,
+  "pokes": {},
+  "recorded": "2026-10-19T14:48:46+00:00",
+  "schema": 1
+}

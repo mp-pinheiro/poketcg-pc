@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, Ishihara mentioned and wanting trade 1, one Clefable in the collection, sTempMap ISHIHARAS_HOUSE, x 8, y 10, facing north, resealed): trade 1 offered and accepted, jump_if_card_owned and jump_if_card_in_collection pass, take_card CLEFABLE, give_card SURFING_PIKACHU_LV13 and its card screen (EVENT_ISHIHARA_TRADE_STATE ends at 3)",
+  "name": "lab-ishihara-trade1-clefable",
+  "ordinals": 3838,
+  "pokes": {},
+  "recorded": "2026-10-19T15:32:00+00:00",
+  "save": "lab-ishihara-trade1-clefable.sav",
+  "save_sha256": "15325dbda085eab8507a4f042751ef0c3ee30ca5477951d6a4086b2db7ca689f",
+  "schema": 1
+}

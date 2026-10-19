@@ -1,0 +1,62 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap MASON_LABORATORY, x 6, y 14, facing west, resealed): Sam's menu, the normal 2-prize duel with the practice deck forced (LoadOpponentDeck's SAMS_NORMAL_DECK_ID path), won under poked prizes and HP, Script_BeatSam's BOOSTER_ENERGY_RANDOM pack",
+  "name": "lab-sam-normal-duel-win",
+  "ordinals": 11627,
+  "pokes": {
+    "11554": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "3554": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "5554": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "7554": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "9554": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:35:39+00:00",
+  "save": "lab-sam-normal.sav",
+  "save_sha256": "afc9551854ba1bf55188c182f00acb5158489cac761c2c61ae862f726f149abb",
+  "schema": 1
+}

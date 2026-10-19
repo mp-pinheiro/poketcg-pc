@@ -1,0 +1,52 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with Imakuni mentioned, no wins; sTempMap FIGHTING_CLUB_LOBBY, x 18, y 4, facing north, resealed): Preload_ImakuniInFightingClubLobby's mentioned arm, Script_Imakuni (talked), his duel won under poked prizes and HP, Script_BeatImakuni's increment_event_value and give_one_of_each_trainer_booster with the four trainer packs opened (EVENT_IMAKUNI_WIN_COUNT ends at 1)",
+  "name": "hall-imakuni-first-win",
+  "ordinals": 11744,
+  "pokes": {
+    "10521": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "4521": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "6521": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "8521": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:48:34+00:00",
+  "save": "hall-imakuni-first-win.sav",
+  "save_sha256": "aa0ae50d7f89033a09437ed7fcd4e04105607569bc0ccf19265a95436691f3a3",
+  "schema": 1
+}

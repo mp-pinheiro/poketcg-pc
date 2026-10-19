@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap GRASS_CLUB_LOBBY, x 20, y 14, facing south, resealed): Gal2's script, twice",
+  "name": "lab-gal2-talk",
+  "ordinals": 2358,
+  "pokes": {},
+  "recorded": "2026-10-19T15:34:29+00:00",
+  "save": "lab-gal2-talk.sav",
+  "save_sha256": "9000d37b90446e5bf7135bfdbd6020b044d452b8e45eba8ee564fdb516e0dcdb",
+  "schema": 1
+}

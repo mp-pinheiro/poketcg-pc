@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap FIRE_CLUB_LOBBY, x 20, y 6, facing west, resealed): Preload_Lad2 (Slowpoke not yet available), Lad2's script, twice",
+  "name": "lab-lad2-talk",
+  "ordinals": 2816,
+  "pokes": {},
+  "recorded": "2026-10-19T15:34:59+00:00",
+  "save": "lab-lad2-talk.sav",
+  "save_sha256": "b49e4fd3971df3423fb36373d216b764425cb672971268be1525fa3d5573a8bd",
+  "schema": 1
+}

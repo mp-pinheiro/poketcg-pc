@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with one copy of every card, sTempMap FIGHTING_CLUB_LOBBY, x 10, y 14, facing east, resealed): Man1's first request (pick_next_man1_requested_card), Yes, jump_if_man1_requested_card_owned and _in_collection pass, remove_man1_requested_card_from_collection and his gift (EVENT_MAN1_GIFT_SEQUENCE_STATE ends at 1)",
+  "name": "lab-man1-give-card",
+  "ordinals": 3090,
+  "pokes": {},
+  "recorded": "2026-10-19T15:33:26+00:00",
+  "save": "lab-man1-give-card.sav",
+  "save_sha256": "a8e7953c94a2987b126306333679adf4cdf9e0f1a4b1c00b0ef867e697ff4dfe",
+  "schema": 1
+}

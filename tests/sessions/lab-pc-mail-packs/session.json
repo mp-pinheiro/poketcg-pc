@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with PC packs $81 and $82 queued, sTempMap MASON_LABORATORY, x 2, y 4, facing north, resealed): the lab PC on, the Card Album opened and left, Read Mail: Mail 1 and Mail 2 read with both PC booster packs opened and their card lists, then Shut Down",
+  "name": "lab-pc-mail-packs",
+  "ordinals": 13669,
+  "pokes": {},
+  "recorded": "2026-10-19T15:39:27+00:00",
+  "save": "lab-pc-mail.sav",
+  "save_sha256": "9e1056caedd1474765d23cda4c99da8bbcd99f8b3249d2ae331c0fc613f23c3e",
+  "schema": 1
+}

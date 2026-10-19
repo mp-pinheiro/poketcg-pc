@@ -233,6 +233,12 @@
   "challenge-machine-explore-3": {
     "confirmed_ordinal": 11944
   },
+  "club-chris-fighting-rematch-win": {
+    "confirmed_ordinal": 13657
+  },
+  "club-chris-rock-lobby-win": {
+    "confirmed_ordinal": 12039
+  },
   "club-explore": {
     "confirmed_ordinal": 149363
   },
@@ -259,6 +265,36 @@
   },
   "club-explore-tail-explore-1": {
     "confirmed_ordinal": 195011
+  },
+  "club-jessica-fire-lobby-win": {
+    "confirmed_ordinal": 13998
+  },
+  "club-ken-duel": {
+    "confirmed_ordinal": 22090
+  },
+  "club-ken-few-cards": {
+    "confirmed_ordinal": 2886
+  },
+  "club-matthew-rock-lobby-win": {
+    "confirmed_ordinal": 11703
+  },
+  "club-michael-grass-entrance-win": {
+    "confirmed_ordinal": 13184
+  },
+  "club-murray-duel": {
+    "confirmed_ordinal": 17449
+  },
+  "club-murray-three-medals": {
+    "confirmed_ordinal": 1542
+  },
+  "club-nikki-duel": {
+    "confirmed_ordinal": 15863
+  },
+  "club-nikki-ishiharas-house": {
+    "confirmed_ordinal": 2744
+  },
+  "club-rick-duel": {
+    "confirmed_ordinal": 13514
   },
   "credits-1": {
     "confirmed_ordinal": 864424
@@ -1859,8 +1895,47 @@
   "grass-club": {
     "confirmed_ordinal": 580415
   },
+  "hall-cup1-won": {
+    "confirmed_ordinal": 39177
+  },
+  "hall-cup2-after-cup1-won": {
+    "confirmed_ordinal": 42367
+  },
   "hall-explore": {
     "confirmed_ordinal": 712809
+  },
+  "hall-imakuni-first-win": {
+    "confirmed_ordinal": 11744
+  },
+  "hall-imakuni-reroll-fighting": {
+    "confirmed_ordinal": 1390
+  },
+  "hall-imakuni-reroll-water": {
+    "confirmed_ordinal": 1390
+  },
+  "hall-imakuni-third-win": {
+    "confirmed_ordinal": 10893
+  },
+  "hall-ronald-lobby-state1": {
+    "confirmed_ordinal": 2674
+  },
+  "hall-ronald-lobby-state2": {
+    "confirmed_ordinal": 2770
+  },
+  "hall-ronald-lobby-state3": {
+    "confirmed_ordinal": 2443
+  },
+  "hall-ronald-lobby-state4": {
+    "confirmed_ordinal": 2973
+  },
+  "hall-ronald-lobby-state6": {
+    "confirmed_ordinal": 2716
+  },
+  "hall-ronald-lobby-state7": {
+    "confirmed_ordinal": 2674
+  },
+  "hall-ronald-lobby-state8": {
+    "confirmed_ordinal": 3001
   },
   "isaac-duel": {
     "confirmed_ordinal": 410870
@@ -1870,6 +1945,57 @@
   },
   "jennifer-duel": {
     "confirmed_ordinal": 299383
+  },
+  "lab-aaron-water-fighting-win": {
+    "confirmed_ordinal": 18443
+  },
+  "lab-auto-deck-dismantle": {
+    "confirmed_ordinal": 2119
+  },
+  "lab-gal2-talk": {
+    "confirmed_ordinal": 2358
+  },
+  "lab-granny1-talk": {
+    "confirmed_ordinal": 2154
+  },
+  "lab-ishihara-trade1-clefable": {
+    "confirmed_ordinal": 3838
+  },
+  "lab-ishihara-trade1-in-deck": {
+    "confirmed_ordinal": 3132
+  },
+  "lab-ishihara-trade1-none": {
+    "confirmed_ordinal": 2865
+  },
+  "lab-lad2-talk": {
+    "confirmed_ordinal": 2816
+  },
+  "lab-lass2-trades-complete": {
+    "confirmed_ordinal": 3252
+  },
+  "lab-lass3-talk": {
+    "confirmed_ordinal": 2730
+  },
+  "lab-man1-dont-have": {
+    "confirmed_ordinal": 3122
+  },
+  "lab-man1-give-card": {
+    "confirmed_ordinal": 3090
+  },
+  "lab-man2-talk": {
+    "confirmed_ordinal": 2370
+  },
+  "lab-pc-mail-packs": {
+    "confirmed_ordinal": 13669
+  },
+  "lab-sam-normal-duel-win": {
+    "confirmed_ordinal": 11627
+  },
+  "lab-tech1-high": {
+    "confirmed_ordinal": 4063
+  },
+  "lab-tech1-low": {
+    "confirmed_ordinal": 3787
   },
   "lightning-2": {
     "confirmed_ordinal": 316777
@@ -1888,6 +2014,9 @@
   },
   "master-explore": {
     "confirmed_ordinal": 546348
+  },
+  "mitch-duel": {
+    "confirmed_ordinal": 17534
   },
   "mw-win": {
     "confirmed_ordinal": 526236

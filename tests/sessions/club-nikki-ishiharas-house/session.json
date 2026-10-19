@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with Brittany, Kristin and Heather beaten and EVENT_NIKKI_STATE at NIKKI_IN_ISHIHARAS_HOUSE, sTempMap ISHIHARAS_HOUSE, x 6, y 4, facing west, resealed): talking to Nikki runs Script_NikkiInIshiharasHouse (Script_Nikki's jp z branch), she leaves for the club, EVENT_NIKKI_STATE becomes NIKKI_IN_GRASS_CLUB (2)",
+  "name": "club-nikki-ishiharas-house",
+  "ordinals": 2744,
+  "pokes": {},
+  "recorded": "2026-10-19T15:41:34+00:00",
+  "save": "club-nikki-house.sav",
+  "save_sha256": "1b576857202a23031172b1f582d54119df8e97a2e42a75033585d3a12ff27105",
+  "schema": 1
+}

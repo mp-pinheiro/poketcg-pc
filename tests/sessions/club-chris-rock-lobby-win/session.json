@@ -1,0 +1,62 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, EVENT_PUPIL_CHRIS_STATE ACTIVE, sTempMap ROCK_CLUB_LOBBY, x 16, y 8, facing east, resealed): Chris in the Rock Club lobby, his duel won, Script_BeatChrisInRockClubLobby (wDuelResult 0)",
+  "name": "club-chris-rock-lobby-win",
+  "ordinals": 12039,
+  "pokes": {
+    "11558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "3558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "5558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "7558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "9558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:11:32+00:00",
+  "save": "club-chris-rock-lobby-win.sav",
+  "save_sha256": "72182c0f5f4dde0709def631657f96a4a99eb0c13c186b6ec9ce6ef8ada7c33a",
+  "schema": 1
+}

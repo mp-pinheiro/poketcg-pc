@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap ROCK_CLUB_LOBBY, x 16, y 6, facing north, resealed): Preload_Lass3 before the Legendary Cards, Lass3's script, twice",
+  "name": "lab-lass3-talk",
+  "ordinals": 2730,
+  "pokes": {},
+  "recorded": "2026-10-19T15:34:39+00:00",
+  "save": "lab-lass3-talk.sav",
+  "save_sha256": "78978da116572a439d66f4f25171c8ef0d00d745626e10d9db3c0895f568208a",
+  "schema": 1
+}

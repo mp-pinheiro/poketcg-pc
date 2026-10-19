@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap WATER_CLUB_LOBBY, x 6, y 18, facing west, resealed): Preload_Man2 (Joshua not yet defeated), Man2's script, twice",
+  "name": "lab-man2-talk",
+  "ordinals": 2370,
+  "pokes": {},
+  "recorded": "2026-10-19T15:35:10+00:00",
+  "save": "lab-man2-talk.sav",
+  "save_sha256": "8910835cc51d814ec9f550fb2d6c4dcb5f9b8ff8e59657134ca08fa5b543371f",
+  "schema": 1
+}

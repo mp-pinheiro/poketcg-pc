@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with 60 copies of every card, four built decks filling every slot and one deck save machine slot, sTempMap DECK_MACHINE_ROOM, x 2, y 4, facing north, resealed): the Auto Deck Machine, Build a Deck on Charmander & Friends, HandleDismantleDeckToMakeSpace (four decks only), deck 1 dismantled after Yes, the deck built, back out",
+  "name": "lab-auto-deck-dismantle",
+  "ordinals": 2119,
+  "pokes": {},
+  "recorded": "2026-10-19T15:41:11+00:00",
+  "save": "lab-dismantle.sav",
+  "save_sha256": "05c5ec43555e97dde9841a5e28f7c854aee1dcbca98c980a5daf3b2f0d12d97f",
+  "schema": 1
+}

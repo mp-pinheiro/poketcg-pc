@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (as lab-ishihara-trade1-clefable but no Clefable): trade 1 accepted, jump_if_card_owned CLEFABLE fails, Text072d (EVENT_ISHIHARA_TRADE_STATE ends at 2)",
+  "name": "lab-ishihara-trade1-none",
+  "ordinals": 2865,
+  "pokes": {},
+  "recorded": "2026-10-19T15:32:11+00:00",
+  "save": "lab-ishihara-trade1-none.sav",
+  "save_sha256": "25bdf27abe266e7fb8ed00bfb978866117c8c62015c0865c2da05bca6fd1e8e9",
+  "schema": 1
+}

@@ -1,0 +1,72 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Seeded from lobby-save's diary in the Fighting Club lobby (savegen base mitch-base --from lobby-save --at 110690, then edit EVENT_PUPIL_MICHAEL_STATE, EVENT_PUPIL_CHRIS_STATE and EVENT_PUPIL_JESSICA_STATE to 8): decline the Battle Center clerk, into the Fighting Club room, Mitch's duel won under poked prizes and HP, Script_BeatMitch's medal, PC packs and boosters",
+  "name": "mitch-duel",
+  "ordinals": 17534,
+  "save": "mitch-ready.sav",
+  "save_sha256": "0eeefd0461fe80ed3e56243ca8454c5b339ea5fd8413c6e1007e5a7b75ddb818",
+  "pokes": {
+    "6042": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "8042": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "10042": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "12042": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "14042": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "16042": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T14:38:54+00:00",
+  "schema": 1
+}

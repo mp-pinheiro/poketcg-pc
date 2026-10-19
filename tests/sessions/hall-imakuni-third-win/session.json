@@ -1,0 +1,52 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (as hall-imakuni-first-win but two wins already): the third win gives the Imakuni card (give_card IMAKUNI_CARD and its card screen) (EVENT_IMAKUNI_WIN_COUNT ends at 3)",
+  "name": "hall-imakuni-third-win",
+  "ordinals": 10893,
+  "pokes": {
+    "10521": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "4521": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "6521": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "8521": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:49:01+00:00",
+  "save": "hall-imakuni-third-win.sav",
+  "save_sha256": "84987154324d97e3843abd3bb1a6fe563cf17ee79473d199079f34d75dabe732",
+  "schema": 1
+}

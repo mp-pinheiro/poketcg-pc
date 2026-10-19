@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap FIRE_CLUB, x 14, y 6, facing north, resealed), far fewer than 300 cards: Ken's jump_if_enough_cards_owned 300 fails, his first and repeat refusals (EVENT_KEN_TALKED)",
+  "name": "club-ken-few-cards",
+  "ordinals": 2886,
+  "pokes": {},
+  "recorded": "2026-10-19T15:08:51+00:00",
+  "save": "club-ken-few.sav",
+  "save_sha256": "b2f4d5e99f986e13e4168d0ca927ce16858d98c68af0760e7882d6c8a8410bf0",
+  "schema": 1
+}

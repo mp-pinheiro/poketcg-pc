@@ -1,0 +1,11 @@
+{
+  "goal": "Tech1 high path: 10+ energy cards, explanation text",
+  "name": "lab-tech1-high",
+  "derived_from": "boot-menu",
+  "save": "lab-tech-high-edit.sav",
+  "save_sha256": "a31aa8ee081071b1c16cf9e63a68669503d6fdea8147ad38f3d412ab10479ddb",
+  "ordinals": 4063,
+  "pokes": {},
+  "recorded": "2026-10-19T14:47:06+00:00",
+  "schema": 1
+}

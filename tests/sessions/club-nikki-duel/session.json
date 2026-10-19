@@ -1,0 +1,82 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with the Grass Club members beaten and EVENT_NIKKI_STATE at NIKKI_IN_GRASS_CLUB, sTempMap GRASS_CLUB, x 12, y 6, facing north, resealed): Nikki's club script, her duel won under poked prizes and HP, Script_BeatNikki's Grass Medal and rewards, then her repeat greeting",
+  "name": "club-nikki-duel",
+  "ordinals": 15863,
+  "pokes": {
+    "11558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "13558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "15558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "3558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "5558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "7558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "9558": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:41:50+00:00",
+  "save": "club-nikki-duel.sav",
+  "save_sha256": "2c7fc4e85d41841fad5b07368f82404268e8754ff80008d4c62c14be5a2ea096",
+  "schema": 1
+}

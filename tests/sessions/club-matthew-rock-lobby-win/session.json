@@ -1,0 +1,52 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap ROCK_CLUB_LOBBY, x 8, y 14, facing west, resealed): Matthew's text and duel won, RockClubLobbyAfterDuel's Matthew entry (wDuelResult 0)",
+  "name": "club-matthew-rock-lobby-win",
+  "ordinals": 11703,
+  "pokes": {
+    "10022": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "4022": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "6022": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "8022": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:27:38+00:00",
+  "save": "club-matthew-rock-lobby-win.sav",
+  "save_sha256": "64ef8969febc980503d78d466f6050f377e4f3a8b2c2e03c8ffce2a5c9f1b0cc",
+  "schema": 1
+}

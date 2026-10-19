@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with EVENT_BEAT_MITCH, EVENT_BEAT_RICK and EVENT_BEAT_KEN, sTempMap PSYCHIC_CLUB, x 4, y 2, facing west, resealed): Preload_Murray2 loads Murray at the left wall below four medals, his script (try_give_medal_pc_packs, EVENT_MEDAL_COUNT below 4) turns the player away",
+  "name": "club-murray-three-medals",
+  "ordinals": 1542,
+  "pokes": {},
+  "recorded": "2026-10-19T15:10:04+00:00",
+  "save": "club-murray-3.sav",
+  "save_sha256": "9eafec2f5bf191d47f403f4469c073918749fdc0e99fee55dd5f641feefc519e",
+  "schema": 1
+}

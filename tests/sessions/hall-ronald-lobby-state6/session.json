@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, EVENT_BEAT_MITCH, EVENT_BEAT_RICK, EVENT_BEAT_KEN, EVENT_BEAT_AMY, EVENT_BEAT_MURRAY and EVENT_CHALLENGE_CUP_1_STATE=7, EVENT_CHALLENGE_CUP_2_STATE=3, EVENT_CHALLENGE_CUP_2_RESULT=3; sTempMap CHALLENGE_HALL_ENTRANCE, x 2, y 6, facing west, resealed): west into the lobby, Preload_ChallengeHallLobbyRonald1 sets lobby state 6 and loads Ronald, his lobby scene (Script_f166)",
+  "name": "hall-ronald-lobby-state6",
+  "ordinals": 2716,
+  "pokes": {},
+  "recorded": "2026-10-19T15:50:43+00:00",
+  "save": "hall-ronald-lobby-state6.sav",
+  "save_sha256": "475135e6283b514df66d04363a9c7f4ea0205aeb3eacde5e3474dd218f582d3b",
+  "schema": 1
+}

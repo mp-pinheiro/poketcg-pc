@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, Ishihara wanting trade 1, the only Clefable inside built deck 2, sTempMap ISHIHARAS_HOUSE, x 8, y 10, facing north, resealed): trade 1 accepted, jump_if_card_owned passes, jump_if_card_in_collection fails, Text072e (EVENT_ISHIHARA_TRADE_STATE ends at 2)",
+  "name": "lab-ishihara-trade1-in-deck",
+  "ordinals": 3132,
+  "pokes": {},
+  "recorded": "2026-10-19T15:32:39+00:00",
+  "save": "lab-ishihara-clefable-deck.sav",
+  "save_sha256": "39ab7fc4d3baba2bcf848dc0523481c93d0458321a876420faf06fe31eaf30df",
+  "schema": 1
+}

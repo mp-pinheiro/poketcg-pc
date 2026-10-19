@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with Imakuni talked to, sTempMap in the fighting club lobby, x 10, y 10, facing south, resealed): Continue from Diary runs DetermineImakuniRoom, which rerolls until Imakuni's room is not the lobby the player saved in (EVENT_IMAKUNI_ROOM ends at 3)",
+  "name": "hall-imakuni-reroll-fighting",
+  "ordinals": 1390,
+  "pokes": {},
+  "recorded": "2026-10-19T15:49:39+00:00",
+  "save": "hall-imakuni-reroll-fighting.sav",
+  "save_sha256": "7bfd52f34f1f1ebd3751b8812bee9317b8e1856184d66862a3ee3dbaff6b98a6",
+  "schema": 1
+}

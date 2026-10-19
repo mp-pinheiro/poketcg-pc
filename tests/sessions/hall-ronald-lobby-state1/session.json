@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with three medals, Cup 1 not started; sTempMap CHALLENGE_HALL_ENTRANCE, x 2, y 6, facing west, resealed): Preload_Clerk9 on the Continue map load makes Cup 1 ready, west into the lobby, Preload_ChallengeHallLobbyRonald1 sets lobby state 1 and loads Ronald, his lobby scene",
+  "name": "hall-ronald-lobby-state1",
+  "ordinals": 2674,
+  "pokes": {},
+  "recorded": "2026-10-19T15:51:22+00:00",
+  "save": "hall-ronald-lobby-state1.sav",
+  "save_sha256": "45c85d2a95975e46505c2dd64638213502a96c6bedb35b2623f9fabaedd774df",
+  "schema": 1
+}

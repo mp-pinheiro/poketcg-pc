@@ -1,0 +1,62 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with sTempMap SCIENCE_CLUB, x 4, y 6, facing north, no pending game event, resealed): Rick's text, his duel won under poked prizes and HP, Script_BeatRick's medal, PC packs and boosters",
+  "name": "club-rick-duel",
+  "ordinals": 13514,
+  "pokes": {
+    "11843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "3843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "5843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "7843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "9843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:08:16+00:00",
+  "save": "club-rick.sav",
+  "save_sha256": "f351b0fcc249756e26ed330712a48d00e50b423f7c48baae223aad68352c044e",
+  "schema": 1
+}

@@ -1,0 +1,72 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Seeded from aaron-grass's cartridge RAM (savegen base lab-aaron-base --from aaron-grass --at 172303, saved duel cleared at $1C00-$1C02): Dr. Mason's text, into the deck machine room, Aaron's deck menu (ScriptCommand_ChooseDeckToDuelAgainstMultichoice), the Water & Fighting deck won under poked prizes and HP, Script_BeatAaron's reward 1 and its random energy booster",
+  "name": "lab-aaron-water-fighting-win",
+  "ordinals": 18443,
+  "pokes": {
+    "11406": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "13406": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "15406": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "17406": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "7406": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "9406": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:05:23+00:00",
+  "save": "lab-aaron.sav",
+  "save_sha256": "0b21a4416e129a990566576b4348127cb85e01269284dd7e086645c381ad9b70",
+  "schema": 1
+}

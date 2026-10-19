@@ -1,0 +1,82 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with four masters beaten: Mitch, Rick, Ken, Amy; sTempMap PSYCHIC_CLUB, x 12, y 8, facing north, resealed): Preload_Murray1 loads Murray at his table, his duel won under poked prizes and HP, Script_BeatMurray's fifth medal and rewards",
+  "name": "club-murray-duel",
+  "ordinals": 17449,
+  "pokes": {
+    "10050": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "12050": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "14050": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "16050": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "4050": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "6050": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "8050": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:10:19+00:00",
+  "save": "club-murray-4.sav",
+  "save_sha256": "d5c3f619a48de8228e345b44ad6ca1db97829b75e7aacbefe31603fbb84e308f",
+  "schema": 1
+}

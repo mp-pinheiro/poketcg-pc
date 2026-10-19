@@ -1,0 +1,92 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav with every card at 2 copies, sTempMap FIRE_CLUB, x 14, y 6, facing north, resealed): Ken's jump_if_enough_cards_owned 300 passes, his duel won under poked prizes and HP, Script_BeatKen's medal and rewards",
+  "name": "club-ken-duel",
+  "ordinals": 22090,
+  "pokes": {
+    "10068": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "12068": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "14068": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "16068": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "18068": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "4068": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "6068": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "8068": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:09:12+00:00",
+  "save": "club-ken-many.sav",
+  "save_sha256": "5a84c588bd7d1ad0436c534f8752a76befb67bfac8228527ca7fc939f57943d5",
+  "schema": 1
+}

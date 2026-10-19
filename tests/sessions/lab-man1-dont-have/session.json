@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav as diaried, sTempMap FIGHTING_CLUB_LOBBY, x 10, y 14, facing east, resealed): Man1's first request, Yes, jump_if_man1_requested_card_owned fails, Man1DontHaveText (EVENT_MAN1_GIFT_SEQUENCE_STATE ends at 0)",
+  "name": "lab-man1-dont-have",
+  "ordinals": 3122,
+  "pokes": {},
+  "recorded": "2026-10-19T15:33:40+00:00",
+  "save": "lab-man1-dont-have.sav",
+  "save_sha256": "f6a98f8661fe1ecdaf42d70d9088c78cccaffe896a19d6d647c9b1f5937367bf",
+  "schema": 1
+}

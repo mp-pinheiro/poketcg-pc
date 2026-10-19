@@ -1,0 +1,62 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, all three pupils defeated, sTempMap FIGHTING_CLUB, x 4, y 10, facing north, resealed): Chris's rematch in the Fighting Club room won, Script_BeatChrisInFightingClub (wDuelResult 0)",
+  "name": "club-chris-fighting-rematch-win",
+  "ordinals": 13657,
+  "pokes": {
+    "11843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "3843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "5843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "7843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "9843": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:29:06+00:00",
+  "save": "club-chris-fighting-rematch-win.sav",
+  "save_sha256": "8ba439c6aa0654e638d41a84df68b265b09d879be8d2ec6ebafb15ed9cebf995",
+  "schema": 1
+}

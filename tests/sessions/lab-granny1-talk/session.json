@@ -1,0 +1,11 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, sTempMap FIGHTING_CLUB_LOBBY, x 2, y 16, facing east, resealed): Preload_Granny1, Granny1's script, twice",
+  "name": "lab-granny1-talk",
+  "ordinals": 2154,
+  "pokes": {},
+  "recorded": "2026-10-19T15:34:50+00:00",
+  "save": "lab-granny1-talk.sav",
+  "save_sha256": "142c2569006e7c88cc10c487ab6539c91f0c0e10ccbbba065282b20f5065b17b",
+  "schema": 1
+}

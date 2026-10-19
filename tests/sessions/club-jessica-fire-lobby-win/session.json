@@ -1,0 +1,62 @@
+{
+  "derived_from": "boot-menu",
+  "goal": "Placed save (mitch-ready.sav, EVENT_PUPIL_JESSICA_STATE ACTIVE, sTempMap FIRE_CLUB_LOBBY, x 10, y 14, facing east, resealed): Jessica in the Fire Club lobby, her duel won, FireClubLobbyAfterDuel (wDuelResult 0)",
+  "name": "club-jessica-fire-lobby-win",
+  "ordinals": 13998,
+  "pokes": {
+    "10066": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "12066": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "4066": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "6066": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ],
+    "8066": [
+      [
+        49900,
+        0
+      ],
+      [
+        50120,
+        0
+      ]
+    ]
+  },
+  "recorded": "2026-10-19T15:28:07+00:00",
+  "save": "club-jessica-fire-lobby-win.sav",
+  "save_sha256": "9e65c35694f3fef5ba15c95ae86ce7484264206d27aded356997e93184591c70",
+  "schema": 1
+}
