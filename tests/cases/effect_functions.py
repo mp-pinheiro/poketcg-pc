@@ -1960,6 +1960,7 @@ CASES["StepIn_BenchCheck"] = [
 # >>> factory Wail_BenchCheck
 CONTRACT["Wail_BenchCheck"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["Wail_BenchCheck"] = [{"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x05"}}, dict(POISON), {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x06", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x02"}}, {"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x02"}}]
+CASES["Wail_BenchCheck"].append({"wram": {sym("hWhoseTurn"): b"\xC2", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x06", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x06"}})
 # <<< factory Wail_BenchCheck
 
 # >>> factory StepIn_SwitchEffect
@@ -11110,7 +11111,7 @@ MUTATIONS["MarowakCallForFamily_AISelectEffect"] = {"source_symbol": "MarowakCal
 MUTATIONS["Peek_OncePerTurnCheck"] = {"source_symbol": "Peek_OncePerTurnCheck", "before": "if (flags.a & USED_PKMN_POWER_THIS_TURN)", "after": "if (!(flags.a & USED_PKMN_POWER_THIS_TURN))", "case_ids": ["Peek_OncePerTurnCheck-0"]}
 # <<< factory-mutation Peek_OncePerTurnCheck
 # >>> factory-mutation Wail_BenchCheck
-MUTATIONS["Wail_BenchCheck"] = {"source_symbol": "Wail_BenchCheck", "before": "if (turn.a < 6u)", "after": "if (turn.a < 5u)", "case_ids": ["Wail_BenchCheck-0", "Wail_BenchCheck-2"]}
+MUTATIONS["Wail_BenchCheck"] = {"source_symbol": "Wail_BenchCheck", "before": "0x90u", "after": "0x10u", "case_ids": ["Wail_BenchCheck-4"]}
 # <<< factory-mutation Wail_BenchCheck
 # >>> factory-mutation ThickSkinnedEffect
 MUTATIONS["ThickSkinnedEffect"] = {"source_symbol": "ThickSkinnedEffect", "before": "0x10u", "after": "0x00u", "case_ids": ["ThickSkinnedEffect-0"]}

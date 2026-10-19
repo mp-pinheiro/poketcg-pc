@@ -3972,7 +3972,7 @@ MrFujiBenchCheckResult Wail_BenchCheck(void)
 	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
 	if (nonturn.a < 6u)
 		return (MrFujiBenchCheckResult){nonturn.a, nonturn.a == 0u ? 0x80u : 0u, nonturn.hl};
-	return (MrFujiBenchCheckResult){nonturn.a, 0x10u, NoSpaceOnTheBenchText};
+	return (MrFujiBenchCheckResult){nonturn.a, 0x90u, NoSpaceOnTheBenchText};
 }
 /* <<< factory Wail_BenchCheck */
 
