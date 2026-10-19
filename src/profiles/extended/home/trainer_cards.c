@@ -1520,7 +1520,10 @@ decide_switch:
 articuno_bench:
 	{
 		/* `push af` keeps the bench slot around the defender's id lookup. */
-		CardId defender_id = GetCardIDFromDeckIndex(GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a);
+		uint8_t defender_index = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+		SwapTurn();
+		CardId defender_id = GetCardIDFromDeckIndex(defender_index);
+		SwapTurn();
 		d = 0u;
 		if (defender_id == SNORLAX)
 			return (AIDecide_ScoopUpResult){(uint8_t)defender_id, or_a_flags((uint8_t)defender_id), d};

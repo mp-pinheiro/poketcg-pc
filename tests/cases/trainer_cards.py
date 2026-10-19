@@ -1076,6 +1076,16 @@ CASES["AIDecide_ScoopUp"] = [
     {"wram": {sym("hWhoseTurn"): b"\xC5", sym("wOtherIRCommunicationParams"): b"\x01"}, "read": {sym("hTempPlayAreaLocation_ff9d"): 1}, "expect_regs": {"a": 1, "f": 0}, "expect": {sym("hTempPlayAreaLocation_ff9d"): b"\x00"}},
     dict(POISON, wram={sym("hWhoseTurn"): b"\xC5", sym("wOtherIRCommunicationParams"): b"\x01"}, read={sym("hTempPlayAreaLocation_ff9d"): 1}, expect_regs={"a": 1, "f": 0}, expect={sym("hTempPlayAreaLocation_ff9d"): b"\x00"}),
     {"wram": {sym("hWhoseTurn"): b"\xC5", sym("wOtherIRCommunicationParams"): b"\x00"}, "read": {sym("hTempPlayAreaLocation_ff9d"): 1}, "expect_regs": {"a": 0, "f": 0x80}, "expect": {sym("hTempPlayAreaLocation_ff9d"): b"\x00"}},
+    {"wram": {
+        sym("hWhoseTurn"): b"\xC3",
+        sym("wOpponentDeckID"): bytes((const("LEGENDARY_ARTICUNO_DECK_ID"),)),
+        sym("wOpponentNumberOfPokemonInPlayArea"): b"\x03",
+        sym("wOpponentArenaCard"): b"\x01",
+        sym("wOpponentBench"): b"\x02\x03\xFF",
+        sym("wPlayerArenaCard"): b"\x00",
+        sym("wBoosterCardsDrawn"): deck_bytes((const("SNORLAX"), const("CHANSEY"), const("CHANSEY"), const("CHANSEY"))),
+        sym("wOpponentDeck"): deck_bytes((const("CHANSEY"), const("CHANSEY"), const("ARTICUNO_LV37"), const("CHANSEY"))),
+    }, "read": {sym("wce1a"): 1}},
 ]
 # <<< factory AIDecide_ScoopUp
 
@@ -1581,7 +1591,7 @@ MUTATIONS["AIDecide_Switch"] = {"source_symbol": "AIDecide_Switch", "before": "\
 MUTATIONS["AIDecide_SuperEnergyRemoval"] = {"source_symbol": "AIDecide_SuperEnergyRemoval", "before": "\t\tuint8_t card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + own)).a;\n\t\tif (card == 0xFFu)\n\t\t\treturn (AIDecideParameterResult){0xFFu, 0x00u, d};", "after": "\t\tuint8_t card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + own)).a;\n\t\tif (card == 0xFFu)\n\t\t\treturn (AIDecideParameterResult){0xFFu, 0x80u, d};", "case_ids": ["AIDecide_SuperEnergyRemoval-0", "AIDecide_SuperEnergyRemoval-1"]}
 # <<< factory-mutation AIDecide_SuperEnergyRemoval
 # >>> factory-mutation AIDecide_ScoopUp
-MUTATIONS["AIDecide_ScoopUp"] = {"source_symbol": "AIDecide_ScoopUp", "before": "\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u)", "after": "\thTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a < 2u)", "case_ids": ["AIDecide_ScoopUp-0", "AIDecide_ScoopUp-1"]}
+MUTATIONS["AIDecide_ScoopUp"] = {"source_symbol": "AIDecide_ScoopUp", "before": "\t\tuint8_t defender_index = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD).a;", "after": "\t\tuint8_t defender_index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;", "case_ids": ["AIDecide_ScoopUp-3"]}
 # <<< factory-mutation AIDecide_ScoopUp
 # >>> factory-mutation AIDecide_FullHeal
 MUTATIONS["AIDecide_FullHeal"] = {"source_symbol": "AIDecide_FullHeal", "before": "\tuint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;\n\tif (status == 0u)\n\t\treturn (AIDecideFullHealResult){0u, 0x80u, d};", "after": "\tuint8_t status = 0u;\n\tif (status == 0u)\n\t\treturn (AIDecideFullHealResult){0u, 0x80u, d};", "case_ids": ["AIDecide_FullHeal-1", "AIDecide_FullHeal-2"]}
