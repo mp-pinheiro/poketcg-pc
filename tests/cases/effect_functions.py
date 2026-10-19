@@ -6105,6 +6105,9 @@ CONTRACT["DevolutionBeam_DevolveEffect"] = {"compare": (), "preserve": ()}
 CASES["DevolutionBeam_DevolveEffect"] = [
     {"wram": {hTemp_ffa0: b"\xff", wDuelDisplayedScreen: b"\x00"}, "read": {wDuelDisplayedScreen: 1}},
     dict(POISON, wram={hTemp_ffa0: b"\xff", wDuelDisplayedScreen: b"\x00"}, read={wDuelDisplayedScreen: 1}),
+    {"keys": [0x00, 0x01], "wram": {sym("hWhoseTurn"): b"\xC3", hTemp_ffa0: b"\x01", sym("hTempPlayAreaLocation_ffa1"): b"\x00", sym("wPlayerArenaCard"): b"\x01\xFF\xFF\xFF\xFF\xFF", sym("wPlayerNumberOfPokemonInPlayArea"): b"\x01", sym("wPlayerCardLocations"): b"\x10\x10", sym("wBoosterCardsDrawn"): b"\x8E\x8F", sym("wPlayerArenaCardStage"): b"\x01", sym("wOpponentArenaCard"): b"\x00\xFF\xFF\xFF\xFF\xFF", sym("wOpponentNumberOfPokemonInPlayArea"): b"\x01", sym("wOpponentArenaCardHP"): b"\x28", sym("wOpponentDeck"): b"\x08", sym("wOpponentCardLocations"): b"\x10", sym("wLCDC"): b"\x80", 0xFF40: b"\x80", sym("wPlayerArenaCardHP"): b"\x3C", wDuelDisplayedScreen: b"\x00"}, "setup": DISPLAY_SETUP,
+     "read": {sym("hWhoseTurn"): 1, sym("wPlayerArenaCard"): 1, sym("wPlayerArenaCardHP"): 1, sym("wPlayerCardLocations"): 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
 ]
 # <<< factory DevolutionBeam_DevolveEffect
 
@@ -10577,7 +10580,7 @@ MUTATIONS["BigEggsplosion_MultiplierEffect"] = {"source_symbol": "BigEggsplosion
 MUTATIONS["PokemonFlute_PlayerSelection"] = {"source_symbol": "PokemonFlute_PlayerSelection", "before": "\thTemp_ffa0 = hTempCardIndex_ff98;\n\treturn (PokemonFlute_PlayerSelectionResult){result.f};", "after": "\thTemp_ffa0 = 0u;\n\treturn (PokemonFlute_PlayerSelectionResult){result.f};", "case_ids": ["PokemonFlute_PlayerSelection-0", "PokemonFlute_PlayerSelection-1", "PokemonFlute_PlayerSelection-2"]}
 # <<< factory-mutation PokemonFlute_PlayerSelection
 # >>> factory-mutation DevolutionBeam_DevolveEffect
-MUTATIONS["DevolutionBeam_DevolveEffect"] = {"source_symbol": "DevolutionBeam_DevolveEffect", "before": "void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e)\n{\n\tuint8_t target = hTemp_ffa0;\n\tif (target == 0xffu) {\n\t\treturn;\n\t}", "after": "void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e)\n{\n\tuint8_t target = hTemp_ffa0;\n\tif (target == 0xffu) {\n\t\twDuelDisplayedScreen = 1u;\n\t\treturn;\n\t}", "case_ids": ["DevolutionBeam_DevolveEffect-0", "DevolutionBeam_DevolveEffect-1"]}
+MUTATIONS["DevolutionBeam_DevolveEffect"] = {"source_symbol": "DevolutionBeam_DevolveEffect", "before": "\twDuelDisplayedScreen = 0u;\n\tif (target != 0u)\n\t\tSwapTurn();", "after": "\twDuelDisplayedScreen = 0u;", "case_ids": ["DevolutionBeam_DevolveEffect-2"]}
 # <<< factory-mutation DevolutionBeam_DevolveEffect
 # >>> factory-mutation MarowakCallForFamily_PlayerSelectEffect
 MUTATIONS["MarowakCallForFamily_PlayerSelectEffect"] = {"source_symbol": "MarowakCallForFamily_PlayerSelectEffect", "before": "MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["MarowakCallForFamily_PlayerSelectEffect-0", "MarowakCallForFamily_PlayerSelectEffect-1"]}
