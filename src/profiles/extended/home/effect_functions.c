@@ -577,9 +577,9 @@ QueueStatusConditionResult QueueStatusCondition(uint8_t b, uint8_t c)
 	qhl++;
 	gb_write8(qhl, c);
 
-	gb_write8(idxaddr, (uint8_t)(idx + 3u));
-
-	return (QueueStatusConditionResult){0x10u};
+	uint8_t next_idx = (uint8_t)(idx + 3u);
+	gb_write8(idxaddr, next_idx);
+	return (QueueStatusConditionResult){(uint8_t)(0x10u | (next_idx == 0u ? 0x80u : 0u))};
 }
 /* <<< factory QueueStatusCondition */
 /* --- factory CommentedOut_2c086 */
@@ -1699,7 +1699,9 @@ void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e)
 		hl = reduction.hl;
 	NoDamageOrEffectCheckResult check = CheckNoDamageOrEffect(hl);
 	if ((check.f & 0x10u) != 0u) {
-		(void)DrawWideTextBox_WaitForInput(hl);
+		(void)DrawWideTextBox_WaitForInput(check.hl);
+		if (target != 0u)
+			SwapTurn();
 		return;
 	}
 	hTempPlayAreaLocation_ff9d = location;
@@ -1711,6 +1713,8 @@ void DevolutionBeam_DevolveEffect(uint8_t d, uint8_t e)
 	AddCardToHand(below.e);
 	(void)PrintPlayAreaCardKnockedOutIfNoHP(location);
 	wDuelDisplayedScreen = 0u;
+	if (target != 0u)
+		SwapTurn();
 	(void)deck_index;
 }
 /* <<< factory DevolutionBeam_DevolveEffect */

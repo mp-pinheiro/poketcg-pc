@@ -1,31 +1,9 @@
 {
   "fn": "QueueStatusCondition",
   "case": "tests/profiles/extended/cases/effect_functions.py",
-  "index": 0,
+  "index": 5,
   "status": "RED",
-  "baseline": "{\"fn\": \"QueueStatusCondition\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52143\": \"01\", \"52347\": \"03c20102\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"QueueStatusCondition\", \"mismatches\": {\"f\": [16, 0]}}\n",
-  "restored": "{\"fn\": \"QueueStatusCondition\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 16, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52143\": \"01\", \"52347\": \"03c20102\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
-  "mutation": {
-    "source_symbol": "QueueStatusCondition",
-    "before": "return (QueueStatusConditionResult){0x10u};",
-    "after": "return (QueueStatusConditionResult){0x00u};",
-    "case_ids": [
-      "QueueStatusCondition-0",
-      "QueueStatusCondition-3",
-      "QueueStatusCondition-4"
-    ]
-  },
-  "proof": {
-    "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "135eeb62d1e7d6a93fac61ec2ea2ccc6d1f1af971750bb5ca3405ea0cdda5fdf",
-    "case_sha256": "94aa089bd9e51cfbc87df3db8cc37b89d026bded304c9cad307a92011ff3a146",
-    "schema_sha256": "ace08ac6241631556ee487b04cea44cc6dd4a34b32a3519510b7a0be67016b87",
-    "mutation_sha256": "dd5914c9df230cb525f89848dcb914f68ed3a69339aefd4dc67ecde5f6008f1d",
-    "source": "src/profiles/extended/home/effect_functions.c",
-    "source_symbol": "QueueStatusCondition",
-    "case": "tests/profiles/extended/cases/effect_functions.py",
-    "fn": "QueueStatusCondition",
-    "index": 0
-  }
+  "baseline": "{\"fn\": \"QueueStatusCondition\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52143\": \"01\", \"52347\": \"00\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"QueueStatusCondition\", \"mismatches\": {\"f\": [144, 16]}}\n",
+  "restored": "{\"fn\": \"QueueStatusCondition\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 144, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52143\": \"01\", \"52347\": \"00\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
 }
