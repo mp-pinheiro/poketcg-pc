@@ -62,6 +62,8 @@ SCHEMA = (
 PKMN_CARD_DATA_LENGTH = 0x41
 WAVE_TABLE_ENTRIES = 16
 WAVE_LENGTH = 16
+PALETTE_ENTRY_SIZE = 4
+PALETTE_SIZE = 8
 
 NATIVE_DATA_LABELS = (
     ("input_name_question_data", "WhatIsYourNameData", 0, 0x29),
@@ -266,6 +268,45 @@ def wave_table_spans(sym_path: Path, rom: bytes, labels: list[str],
     return spans
 
 
+def palette_table_spans(sym_path: Path, rom: bytes, labels: list[str],
+                        inventory_spans: list[dict[str, object]]) -> list[tuple[str, int, int, int]]:
+    sym_line = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
+    symbols: dict[str, tuple[int, int]] = {}
+    per_bank: dict[int, list[int]] = {}
+    for line in sym_path.read_text().splitlines():
+        match = sym_line.match(line.strip())
+        if match:
+            bank, address = int(match.group(1), 16), int(match.group(2), 16)
+            symbols.setdefault(match.group(3), (bank, address))
+            per_bank.setdefault(bank, []).append(address)
+    covered = [(span["bank"], span["address"], span["address"] + span["length"]) for span in inventory_spans
+               if span.get("kind") == "data"]
+    spans = []
+    for label in labels:
+        if label not in symbols:
+            raise ValueError(f"palette table {label} is not a symbol of this profile")
+        table_bank, table = symbols[label]
+        table_end = min((address for address in per_bank[table_bank] if address > table), default=0x8000)
+        base = rom_offset(table_bank, table)
+        for index in range((table_end - table) // PALETTE_ENTRY_SIZE):
+            entry = base + index * PALETTE_ENTRY_SIZE
+            pointer = rom[entry] | rom[entry + 1] << 8
+            target_bank = 0 if pointer < 0x4000 else table_bank + rom[entry + 2]
+            end = min(pointer + rom[entry + 3] * PALETTE_SIZE + 1, 0x8000)
+            address = pointer
+            while address < end:
+                if any(b == target_bank and start <= address < stop for b, start, stop in covered):
+                    address += 1
+                    continue
+                start = address
+                while address < end and not any(b == target_bank and low <= address < high
+                                                for b, low, high in covered):
+                    address += 1
+                spans.append((f"{label.lower()}_{index}_{start:04x}", target_bank, start, address - start))
+                covered.append((target_bank, start, address))
+    return spans
+
+
 def audio_tail_spans(inventory_spans: list[dict[str, object]], tail: int) -> list[tuple[str, int, int, int]]:
     data = [span for span in inventory_spans if span.get("kind") == "data"]
     covered: dict[int, list[tuple[int, int]]] = {}
@@ -332,6 +373,7 @@ def sparse_items(
     wave_tables: list[str] | None = None,
     audio_tail: int = 0,
     engine_bank_args: list[str] | None = None,
+    palette_tables: list[str] | None = None,
 ) -> list[tuple[dict[str, str], Section, bytes]]:
     try:
         inventory = json.loads(inventory_path.read_text())
@@ -365,7 +407,8 @@ def sparse_items(
             tuple(native_data_spans(sym_path, rom, spans)) + tuple(script_entry_spans(rom, sym_path))
             + tuple(wave_table_spans(sym_path, rom, wave_tables or [], spans))
             + tuple(audio_tail_spans(spans, audio_tail))
-            + tuple(engine_bank_arg_spans(sym_path, rom, engine_bank_args or [], spans))):
+            + tuple(engine_bank_arg_spans(sym_path, rom, engine_bank_args or [], spans))
+            + tuple(palette_table_spans(sym_path, rom, palette_tables or [], spans))):
         start = rom_offset(bank, address)
         end = start + length
         if length < 1 or end > len(rom):
@@ -647,7 +690,8 @@ def main() -> int:
         items = []
     elif args.sparse_pack:
         items = sparse_items(rom, args.inventory, args.sym, declared.get("wave_tables", []),
-                             declared.get("audio_script_tail", 0), declared.get("engine_bank_args", []))
+                             declared.get("audio_script_tail", 0), declared.get("engine_bank_args", []),
+                             declared.get("palette_tables", []))
     else:
         items = slices(SCHEMA, sections, symbols, rom)
     if args.sparse_pack and args.pack_check:
