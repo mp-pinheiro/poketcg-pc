@@ -708,6 +708,8 @@ void DrawInPlayArea_ActiveCardGfx(void)
 		(void)LoadCardDataToBuffer1_FromDeckIndex(result.a);
 		LoadLoaded1CardGfx(0x8A00u);
 		copy_card_palette(2u);
+		FillRectangle(0xA0u, 8u, 6u, 0x0609u, 0x0601u);
+		(void)ApplyCardCGBAttributes(0xA0u, 0x0609u);
 	}
 	result = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
 	if (result.a != 0xFFu) {
@@ -716,21 +718,13 @@ void DrawInPlayArea_ActiveCardGfx(void)
 		(void)LoadCardDataToBuffer1_FromDeckIndex(result.a);
 		LoadLoaded1CardGfx(0x9500u);
 		copy_card_palette(5u);
+		FillRectangle(0x50u, 8u, 6u, 0x0602u, 0x0601u);
+		(void)ApplyCardCGBAttributes(0x50u, 0x0602u);
 		SwapTurn();
 	}
 	if (gb_read8(wArenaCardsInPlayArea_ADDR) == 0u)
 		return;
 	FlushAllPalettes();
-	if ((gb_read8(wArenaCardsInPlayArea_ADDR) & 0x01u) != 0u) {
-		FillRectangle(0xA0u, 8u, 6u, 0x0609u, 0x0601u);
-		(void)ApplyCardCGBAttributes(0xA0u, 0x0609u);
-	}
-	if ((gb_read8(wArenaCardsInPlayArea_ADDR) & 0x02u) == 0u)
-		return;
-	SwapTurn();
-	FillRectangle(0x50u, 8u, 6u, 0x0602u, 0x0601u);
-	(void)ApplyCardCGBAttributes(0x50u, 0x0602u);
-	SwapTurn();
 }
 /* <<< factory DrawInPlayArea_ActiveCardGfx */
 /* >>> factory ProcessPlayedPokemonCard */

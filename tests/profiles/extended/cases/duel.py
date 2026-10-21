@@ -13,6 +13,7 @@ OWN = (
     'CountCardIDInLocation',
     'DrawPlayArea_BenchCards',
     'DrawYourOrOppPlayArea_ActiveCardGfx',
+    'DrawInPlayArea_ActiveCardGfx',
     'DuelCheckMenu_InPlayArea',
     'Func_1bb4',
     'GetCardIDFromDeckIndex',
@@ -1126,6 +1127,16 @@ MUTATIONS.update({
         'case_ids': ['Func_1bb4-0'],
         'source': 'src/profiles/extended/home/duel.c'},
 })
+CASES['DrawInPlayArea_ActiveCardGfx'] = [
+    *CASES['DrawInPlayArea_ActiveCardGfx'],
+    {**CASES['DrawInPlayArea_ActiveCardGfx'][3], 'vread': {0: {0x8A00: 0x300, 0x9500: 0x300, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+]
+MUTATIONS['DrawInPlayArea_ActiveCardGfx'] = {
+    'source_symbol': 'DrawInPlayArea_ActiveCardGfx',
+    'before': '\t\tcopy_card_palette(5u);\n\t\tFillRectangle(0x50u, 8u, 6u, 0x0602u, 0x0601u);\n\t\t(void)ApplyCardCGBAttributes(0x50u, 0x0602u);',
+    'after': '\t\tFillRectangle(0x50u, 8u, 6u, 0x0602u, 0x0601u);\n\t\t(void)ApplyCardCGBAttributes(0x50u, 0x0602u);\n\t\tcopy_card_palette(5u);',
+    'case_ids': ['DrawInPlayArea_ActiveCardGfx-4'],
+    'source': 'src/profiles/extended/home/duel.c'}
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
 for _record in SCHEMA2_CASES["Func_1bb4"]:
