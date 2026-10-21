@@ -109,7 +109,7 @@ uint8_t CountNumberOfCardsOfType(uint8_t a)
 {
 	uint8_t input_type = a;
 	uint8_t count = 0u;
-	for (uint8_t index = 0u; index < DECK_SIZE; index++) {
+	for (uint8_t index = 0u;; index++) {
 		CardId card = card_id_read_at(card_id_index_address(wCurDeckCards_ADDR,
 			index));
 		if (card == 0u)
@@ -251,7 +251,7 @@ GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(CardId id)
 {
 	uint8_t count = 0u;
 	uint16_t cards = wCurDeckCards_ADDR;
-	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
+	for (;;) {
 		CardId card = card_id_read(&cards);
 		if (card == 0u)
 			break;
@@ -806,7 +806,7 @@ exit:
 CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void)
 {
 	uint16_t hl = wCurDeckCards_ADDR;
-	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
+	for (;;) {
 		CardId card = card_id_read(&hl);
 		if (card == 0u)
 			return (CheckIfThereAreAnyBasicCardsInDeckResult){0u, 0x80u, 0u, hl};
@@ -819,7 +819,6 @@ CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void
 			0u, 0x90u, (uint8_t)card, hl
 		};
 	}
-	return (CheckIfThereAreAnyBasicCardsInDeckResult){0u, 0x80u, 0u, hl};
 }
 /* <<< factory CheckIfThereAreAnyBasicCardsInDeck */
 /* >>> factory SortCurDeckCardsByID */
@@ -1008,11 +1007,8 @@ TryAddCardToDeckResult TryAddCardToDeck(CardId id)
 		return (TryAddCardToDeckResult){count.a, 0x90u};
 	PlaySFX(SFX_CURSOR);
 	uint16_t slot = wCurDeckCards_ADDR;
-	for (uint8_t i = 0u; i < DECK_SIZE; i++) {
-		if (card_id_read_at(slot) == 0u)
-			break;
+	while (card_id_read_at(slot) != 0u)
 		slot = (uint16_t)(slot + 2u);
-	}
 	card_id_write(&slot, id);
 	card_id_write(&slot, 0u);
 	uint8_t filter = wCurCardTypeFilter;

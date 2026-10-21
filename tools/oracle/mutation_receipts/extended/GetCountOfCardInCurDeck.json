@@ -1,30 +1,9 @@
 {
   "fn": "GetCountOfCardInCurDeck",
   "case": "tests/profiles/extended/cases/deck_configuration.py",
-  "index": 0,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"GetCountOfCardInCurDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"GetCountOfCardInCurDeck\", \"mismatches\": {\"a\": [0, 1]}}\n",
-  "restored": "{\"fn\": \"GetCountOfCardInCurDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
-  "mutation": {
-    "source_symbol": "GetCountOfCardInCurDeck",
-    "before": "\tuint8_t count = 0u;",
-    "after": "\tuint8_t count = 1u;",
-    "case_ids": [
-      "GetCountOfCardInCurDeck-0",
-      "GetCountOfCardInCurDeck-1"
-    ]
-  },
-  "proof": {
-    "schema": "override-mutation-receipt-v2",
-    "baseline_source_sha256": "b9666f2769d5592ba983d3a83deadf405ff723a08726ad8018ef0c0f06428c8e",
-    "case_sha256": "cbaf187d2aa92e6ac98fabdc5d40827f4cfc849fab5881348df020e862d25a4d",
-    "schema_sha256": "926e62942e906eaeaec9bf6675bdf1447cc443cd2f2326fb1d27a8e169162f90",
-    "mutation_sha256": "bcff38d7724fda931d979365b30a2f6fe1b172eba43a057e2b979d059f6ae83a",
-    "source": "src/profiles/extended/home/deck_configuration.c",
-    "source_symbol": "GetCountOfCardInCurDeck",
-    "case": "tests/profiles/extended/cases/deck_configuration.py",
-    "fn": "GetCountOfCardInCurDeck",
-    "index": 0
-  }
+  "baseline": "{\"fn\": \"GetCountOfCardInCurDeck\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52936\": \"30003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300001000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetCountOfCardInCurDeck\", \"mismatches\": {\"a\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"GetCountOfCardInCurDeck\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 128, \"frame_budget_reached\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"stop_reached\": 0, \"vram\": {}, \"wram\": {\"52936\": \"30003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300001000000\"}}, \"status\": \"PASS\"}\n"
 }

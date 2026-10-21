@@ -1,5 +1,5 @@
 """Extended oracle-diff cases for deck_configuration: the shared cases of its unchanged routines plus Extended cases for the routines it changes."""
-from tests.cases._symbols import STACK_WINDOW, VRAM_START, WRAMX_START, sym, sym_bank
+from tests.cases._symbols import STACK_WINDOW, VRAM_START, WRAMX_START, deck_bytes, sym, sym_bank
 from tests.cases._inherit import inherit
 CONTRACT, CASES, SCHEMA2_CASES, MUTATIONS = inherit('deck_configuration', remove=(
     'AddGiftCenterDeckCardsToCollection',
@@ -23,6 +23,9 @@ OWN = (
     'TryAddCardToDeck',
     'CheckIfHasOtherValidDecks',
     'DrawCardTypeIcons',
+    'GetCountOfCardInCurDeck',
+    'CountNumberOfCardsOfType',
+    'CheckIfThereAreAnyBasicCardsInDeck',
 )
 CONTRACT.update({
     'OpenDeckConfigurationMenu': {'compare': (), 'preserve': ()},
@@ -3544,6 +3547,37 @@ MUTATIONS['DrawCardTypeIcons'] = {
     'after': '#if 1',
     'case_ids': ['DrawCardTypeIcons-2'],
 }
+
+_OVERFULL_DECK = deck_bytes([0x30] * 60 + [0x01, 0x00])
+CASES['GetCountOfCardInCurDeck'] = [
+    *CASES['GetCountOfCardInCurDeck'],
+    {'d': 0x00, 'e': 0x01, 'wram': {sym("wCurDeckCards"): _OVERFULL_DECK}},
+    {'d': 0x00, 'e': 0x30, 'wram': {sym("wCurDeckCards"): _OVERFULL_DECK}},
+]
+CASES['CountNumberOfCardsOfType'] = [
+    *CASES['CountNumberOfCardsOfType'],
+    {'a': 0x20, 'wram': {sym("wCurDeckCards"): _OVERFULL_DECK}},
+]
+CASES['CheckIfThereAreAnyBasicCardsInDeck'] = [
+    *CASES['CheckIfThereAreAnyBasicCardsInDeck'],
+    {'wram': {sym("wCurDeckCards"): deck_bytes([0x01] * 60 + [0x30, 0x00])}},
+]
+CASES['TryAddCardToDeck'] = [
+    *CASES['TryAddCardToDeck'],
+    {'d': 0x00, 'e': 0x01,
+     'wram': {sym("wCurDeckCards"): _OVERFULL_DECK, sym("wTotalCardCount"): b'\x3d',
+              sym("wMaxNumCardsAllowed"): b'\x50\x04', sym("wCardListVisibleOffset"): b'\x00',
+              sym("wCardListCursorPos"): b'\x00', sym("wOwnedCardsCountList"): b'\x01',
+              sym("wCurCardTypeFilter"): b'\x08', sym("wCardFilterCounts"): bytes(8) + b'\x01'},
+     'read': {sym("wCurDeckCards") + 120: 6, sym("wCardFilterCounts"): 9}},
+    {'d': 0x00, 'e': 0x01,
+     'wram': {sym("wCurDeckCards"): _OVERFULL_DECK, sym("wTotalCardCount"): b'\x3d',
+              sym("wMaxNumCardsAllowed"): b'\x50\x04', sym("wCardListVisibleOffset"): b'\x00',
+              sym("wCardListCursorPos"): b'\x00', sym("wOwnedCardsCountList"): b'\x02',
+              sym("wCurCardTypeFilter"): b'\x08', sym("wCardFilterCounts"): bytes(8) + b'\x01'},
+     'read': {sym("wCurDeckCards") + 120: 6, sym("wCardFilterCounts"): 9}},
+]
+MUTATIONS['GetCountOfCardInCurDeck'] = {'source_symbol': 'GetCountOfCardInCurDeck', 'before': '\tuint16_t cards = wCurDeckCards_ADDR;\n\tfor (;;) {', 'after': '\tuint16_t cards = wCurDeckCards_ADDR;\n\tfor (uint8_t i = 0u; i < DECK_SIZE; i++) {', 'case_ids': ['GetCountOfCardInCurDeck-2', 'GetCountOfCardInCurDeck-3'], 'source': 'src/profiles/extended/home/deck_configuration.c'}
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES.update(legacy_to_schema({fn: CASES[fn] for fn in OWN}, CONTRACT))
